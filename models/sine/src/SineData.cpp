@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineData.cpp
-@ingroup TrickHLAModel
 @brief This class is the working class for the Sine HLA/RTI example problem.
 
 @copyright Copyright 2020 United States Government as represented by the
@@ -98,7 +98,7 @@ SineData::~SineData()
    // Make sure we free the memory used by the name.
    if ( name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SineData::~SineData():%d ERROR deleting Trick Memory for 'name'\n", __LINE__ );
+         send_hs( stderr, "TrickHLAModel::SineData::~SineData():%d WARNING failed to delete Trick Memory for 'name'\n", __LINE__ );
       }
       name = NULL;
    }

@@ -95,7 +95,7 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
 {
    if ( this->disable_thread_ids != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {
-         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->disable_thread_ids'%c",
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->disable_thread_ids'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->disable_thread_ids = NULL;
@@ -105,21 +105,21 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
    if ( this->thread_state != NULL ) {
       this->thread_cnt = 0;
       if ( trick_MM->delete_var( static_cast< void * >( this->thread_state ) ) ) {
-         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->thread_state'%c",
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->thread_state'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->thread_state = NULL;
    }
    if ( this->data_cycle_base_time_per_thread != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_thread ) ) ) {
-         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->data_cycle_base_time_per_thread'%c",
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_thread'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_thread = NULL;
    }
    if ( this->data_cycle_base_time_per_obj != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_obj ) ) ) {
-         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->data_cycle_base_time_per_obj'%c",
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_obj'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_obj = NULL;
@@ -342,7 +342,7 @@ void TrickThreadCoordinator::disable_trick_thread_associations(
 {
    if ( this->disable_thread_ids != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {
-         send_hs( stderr, "TrickThreadCoordinator::disable_trick_thread_associations():%d ERROR deleting Trick Memory for 'this->disable_thread_ids'%c",
+         send_hs( stderr, "TrickThreadCoordinator::disable_trick_thread_associations():%d WARNING failed to delete Trick Memory for 'this->disable_thread_ids'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -679,11 +679,16 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
               << __LINE__;
 
       if ( !this->any_child_thread_associated ) {
-         summary << " Detected there are no Trick child threads associated to any"
-                 << " object instances in the input file." << THLA_ENDL;
+         // This status message only makes sense only if we have simulation
+         // with Trick child threads.
+         if ( this->thread_cnt > 1 ) {
+            summary << " Detected no Trick child threads associated to any"
+                    << " object instances configured in the input file.";
+         }
+         summary << THLA_ENDL;
       } else {
-         summary << " Summary of object instance and thread associations from"
-                 << " the input file:" << THLA_ENDL;
+         summary << " Summary of object instance and thread associations configured"
+                 << " in the input file:" << THLA_ENDL;
 
          // Summary of the Object-instances per thread-ID.
          summary << "ThreadID  Cycle  Object-Instances" << THLA_ENDL;

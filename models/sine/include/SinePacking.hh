@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SinePacking.hh
-@ingroup TrickHLAModel
 @brief This class provides data packing.
 
 @copyright Copyright 2020 United States Government as represented by the

@@ -57,6 +57,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/BasicClock.hh"
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/ElapsedTimeStats.hh"
 #include "TrickHLA/Int64Interval.hh"
@@ -104,7 +105,7 @@ class OwnershipHandler;
 class ObjectDeleted;
 class LagCompensation;
 
-class Object
+class Object : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -239,16 +240,19 @@ class Object
    void send_requested_data();
 
    /*! @brief Send the requested attribute value updates.
-    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+    *  @param update_time The time to HLA Logical Time to update the attributes to. */
    void send_requested_data( Int64Time const &update_time );
 
    /*! @brief Send the cyclic and requested attribute value updates.
-    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+    *  @param update_time The time to HLA Logical Time to update the attributes to. */
    void send_cyclic_and_requested_data( Int64Time const &update_time );
 
    /*! @brief Send the zero-lookahead attribute value updates.
-    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+    *  @param update_time The time to HLA Logical Time to update the attributes to. */
    void send_zero_lookahead_and_requested_data( Int64Time const &update_time );
+
+   /*! @brief Send the blocking I/O attribute value updates as Receive Order. */
+   void send_blocking_io_data();
 
    /*! @brief Send initialization data to remote HLA federates. */
    void send_init_data();
@@ -262,6 +266,9 @@ class Object
    /*! @brief Handle the received zero-lookaehad data. */
    void receive_zero_lookahead_data();
 
+   /*! @brief Handle the received blocking I/O data. */
+   void receive_blocking_io_data();
+
    /*! @brief Request an update to the attributes for this object. */
    void request_attribute_value_update();
 
@@ -269,11 +276,9 @@ class Object
     *  @param theAttributes The specified attributes. */
    void provide_attribute_update( RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
    /*! @brief Enqueue the reflected attributes.
     *  @param theAttributes Attributes data. */
    void enqueue_data( RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributes );
-#endif
 
    /*! @brief This function extracts the new attribute values.
     *  @param theAttributes Attributes data.
@@ -294,6 +299,14 @@ class Object
    /*! @brief This function pulls ownership for this object. */
    void pull_ownership();
 
+   /*! @brief Pull ownership of the named object instance at initialization.
+    *  @param attribute_list Comma separated list of attributes FOM names. */
+   void pull_ownership_at_init( char const *attribute_list );
+
+   /*! @brief Wait to handle the remote request to Pull ownership object
+    *  attributes to this federate. */
+   void handle_pulled_ownership_at_init();
+
    /*! @brief This function pulls ownership for all published attributes when
     * the federate rejoins an already running federation. */
    void pull_ownership_upon_rejoin();
@@ -303,6 +316,14 @@ class Object
 
    /*! @brief This function pushes ownership for this object. */
    void push_ownership();
+
+   /*! @brief Push ownership of the named object instance at initialization.
+    *  @param attribute_list Comma separated list of attributes FOM names. */
+   void push_ownership_at_init( char const *attribute_list );
+
+   /*! @brief Wait to handle the remote request to Push ownership object
+    *  attributes to this federate. */
+   void handle_pushed_ownership_at_init();
 
    /*! @brief This function grants a previously "recorded" push request for
     * this object. */
@@ -317,12 +338,15 @@ class Object
    void negotiated_attribute_ownership_divestiture( RTI1516_NAMESPACE::AttributeHandleSet *attr_hdl_set );
 
    /*! @brief Setup the checkpoint data structures. */
-   void setup_ownership_transfer_checkpointed_data();
+   virtual void encode_checkpoint();
 
    /*! @brief If an ownership_transfer object has been created by the user,
     * trigger it's restore() method is re-establish the pull / push
     * AttributeOwnershipMaps. */
-   void restore_ownership_transfer_checkpointed_data();
+   virtual void decode_checkpoint();
+
+   /*! @brief Clears out the push / pull checkpoint-able queues. */
+   virtual void free_checkpoint();
 
    // Instance methods
 
@@ -493,9 +517,15 @@ class Object
    bool any_locally_owned_published_cyclic_data_ready_or_requested_attribute();
 
    /*! @brief Determines if any attribute is locally owned, published, has
-    * a zero-lookahead that is ready for a cyclic send or is requested for update.
+    * a zero-lookahead that is ready to be sent or is requested for update.
     *  @return True for any locally owned, published attribute or is requested for update. */
    bool any_locally_owned_published_zero_lookahead_or_requested_attribute();
+
+   /*! @brief Determines if any attribute is locally owned, published, is
+    * configured for blocking I/O and is ready to be sent or is requested for
+    * update.
+    *  @return True for any locally owned, published attribute or is requested for update. */
+   bool any_locally_owned_published_blocking_io_attribute();
 
    /*! @brief Determines if any attribute is locally owned, published, and has
     * a cycle-time that is ready for a cyclic send.
@@ -543,6 +573,15 @@ class Object
       return any_remotely_owned_subscribed_attribute( CONFIG_ZERO_LOOKAHEAD );
    }
 
+   /*! @brief Determines if any blocking I/O updated attributes are remotely
+    * owned and subscribed.
+    *  @return True if there are any remotely owned, subscribed blocking I/O
+    *  updated attributes. */
+   bool any_remotely_owned_subscribed_blocking_io_attribute()
+   {
+      return any_remotely_owned_subscribed_attribute( CONFIG_BLOCKING_IO );
+   }
+
    /*! @brief Determines if any initialization updated attributes are remotely
     * owned and subscribed.
     *  @return True if there are any remotely owned, subscribed updated
@@ -559,7 +598,6 @@ class Object
     *  @return True if object data has changed. */
    bool is_changed()
    {
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &receive_mutex );
@@ -567,11 +605,10 @@ class Object
       if ( !changed ) {
          if ( !thla_reflected_attributes_queue.empty() ) {
             // The 'changed' flag is set when the data is extracted.
-            extract_data( (RTI1516_NAMESPACE::AttributeHandleValueMap &)thla_reflected_attributes_queue.front() );
+            extract_data( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >( thla_reflected_attributes_queue.front() ) );
             thla_reflected_attributes_queue.pop();
          }
       }
-#endif
       return changed;
    }
 
@@ -588,7 +625,7 @@ class Object
 
    /*! @brief Notify any waiting threads of a change in attribute ownership,
     * which could affect blocking reads. */
-   void notify_attribute_ownership_changed();
+   void set_attribute_ownership_acquired();
 
    /*! @brief Set the Lag Compensation type for object attribute updates.
     *  @param lag_type Desired lag compensation type. */
@@ -609,6 +646,7 @@ class Object
     *  @param request The desired divesiture request state. */
    void set_divest_requested( bool request )
    {
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
       this->divest_requested = request;
    }
 
@@ -616,6 +654,7 @@ class Object
     *  @param request The desired pull request state. */
    void set_pull_requested( bool request )
    {
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
       this->pull_requested = request;
    }
 
@@ -662,7 +701,7 @@ class Object
 
    /*! @brief Get the attribute FOM names.
     *  @return A vector of strings containing the attribute FOM names. */
-   VectorOfStrings get_attribute_FOM_names() const
+   VectorOfStrings const get_attribute_FOM_names() const // cppcheck-suppress [returnByReference]
    {
       return attribute_FOM_names;
    }
@@ -703,6 +742,12 @@ class Object
       pack_attribute_buffers( CONFIG_ZERO_LOOKAHEAD, true );
    }
 
+   /*! @brief Copy the blocking I/O attribute values to the buffer for each attribute. */
+   void pack_blocking_io_attribute_buffers()
+   {
+      pack_attribute_buffers( CONFIG_BLOCKING_IO, false );
+   }
+
    /*! @brief Copy the cyclic attribute values to the buffer for each attribute. */
    void pack_cyclic_attribute_buffers()
    {
@@ -719,6 +764,12 @@ class Object
    void unpack_zero_lookahead_attribute_buffers()
    {
       unpack_attribute_buffers( CONFIG_ZERO_LOOKAHEAD );
+   }
+
+   /*! @brief Copy the packed buffer contents back to each blocking I/O attribute. */
+   void unpack_blocking_io_attribute_buffers()
+   {
+      unpack_attribute_buffers( CONFIG_BLOCKING_IO );
    }
 
    /*! @brief Copy the dynamic initialization attribute values to the buffer for each attribute. */
@@ -797,8 +848,9 @@ class Object
    RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
    RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
 
-   bool pull_requested;   ///< @trick_units{--} Has someone asked to own us?
-   bool divest_requested; ///< @trick_units{--} Are we releasing ownership?
+   bool pull_requested;     ///< @trick_units{--} Has someone asked to own us?
+   bool divest_requested;   ///< @trick_units{--} Are we releasing ownership?
+   bool ownership_acquired; ///< @trick_units{--} True when attribute ownership changed.
 
    VectorOfStrings attribute_FOM_names; ///< @trick_io{**} String array containing the Attribute FOM names.
 

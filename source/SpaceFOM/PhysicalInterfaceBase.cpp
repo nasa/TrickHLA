@@ -15,7 +15,11 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/Attribute.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{PhysicalInterfaceBase.cpp}
 
 
@@ -78,14 +82,14 @@ PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d ERROR deleting Trick Memory for 'this->packing_data.name'%c",
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->packing_data.name = NULL;
    }
    if ( this->packing_data.parent_name != (char *)NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d ERROR deleting Trick Memory for 'this->parent'%c",
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->parent'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->packing_data.parent_name = NULL;
@@ -139,7 +143,7 @@ void PhysicalInterfaceBase::base_config(
    object->packing             = this;
    // Allocate the attributes for the PhysicalInterface HLA object.
    object->attr_count = 9;
-   object->attributes = (TrickHLA::Attribute *)trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count );
+   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the Reference Frame attributes.
@@ -282,7 +286,7 @@ void PhysicalInterfaceBase::set_name( char const *new_name )
 {
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_name():%d ERROR deleting Trick Memory for 'this->packing_data.name'%c",
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -297,7 +301,7 @@ void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
 {
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_parent():%d ERROR deleting Trick Memory for 'this->parent_frame'%c",
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_parent():%d WARNING failed to delete Trick Memory for 'this->parent_frame'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }

@@ -1,6 +1,6 @@
 /*!
+@ingroup SAIntegrator
 @file models/SAIntegrator/include/PhysicalEntityLagCompSA2.hh
-@ingroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM physical entity latency/lag
 compensation class that uses the Trick Stand-Alone (SA) integrators.
 

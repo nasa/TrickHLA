@@ -26,6 +26,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
+@trick_link_dependency{../TrickHLA/ObjectDeleted.cpp}
 @trick_link_dependency{../TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
@@ -144,7 +145,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
    // Free the allocated root reference frame name.
    if ( this->root_frame_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->root_frame_name = NULL;
@@ -246,7 +247,7 @@ void ExecutionConfiguration::configure()
    // make sure it is ExCO regardless of what the user set it to be.
    if ( name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d ERROR deleting Trick Memory for 'name'%c",
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       name = NULL;
@@ -279,7 +280,7 @@ void ExecutionConfiguration::pack()
           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
           << "............................................................." << endl
-          << "\t Object-Name:             " << this->get_name() << "'" << endl
+          << "\t Object-Name:             " << get_name() << "'" << endl
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
@@ -341,7 +342,7 @@ void ExecutionConfiguration::unpack()
           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
           << "............................................................." << endl
-          << "\t Object-Name:            '" << this->get_name() << "'" << endl
+          << "\t Object-Name:            '" << get_name() << "'" << endl
           << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
           << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << endl
           << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << endl
@@ -354,10 +355,25 @@ void ExecutionConfiguration::unpack()
    }
 
    // The following relationships between the Trick real-time software-frame,
-   // Least Common Time Step (LCTS), and lookahead times must hold True:
-   // ( software_frame > 0 ) && ( LCTS > 0 ) && ( lookahead >= 0 )
-   // ( LCTS >= software_frame) && ( LCTS % software_frame == 0 )
-   // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
+   // Least Common Time Step (LCTS), and lookahead times must hold True and
+   // we advance HLA logical time with a dt time step:
+   // ( lookahead > 0 ) && ( dt >= lookahead ) &&
+   // ( software_frame > 0 ) && ( LCTS > 0 ) &&
+   // ( LCTS >= dt ) && ( LCTS % dt == 0 ) &&
+   // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
+   //
+   // For when dt equals lookahead we can simplify:
+   // ( lookahead > 0 ) && ( dt == lookahead ) &&
+   // ( software_frame > 0 ) && ( LCTS > 0 ) &&
+   // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 ) &&
+   // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
+   //
+   // Otherwise, when using zero lookahead (i.e. lookahead == 0) we advance
+   // the HLA logical time with a dt time step:
+   // ( lookahead == 0 ) && ( dt > 0 ) &&
+   // ( software_frame > 0 ) && ( LCTS > 0 ) &&
+   // ( LCTS >= dt ) && ( LCTS % dt == 0 ) &&
+   // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
 
    // Do a bounds check on the least common time step.
    if ( least_common_time_step <= 0 ) {
@@ -456,7 +472,7 @@ void ExecutionConfiguration::set_root_frame_name(
    // Free the Trick memory if it's already allocated.
    if ( this->root_frame_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->root_frame_name = NULL;
@@ -729,7 +745,7 @@ void ExecutionConfiguration::print_execution_configuration()
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
-          << "\t Object-Name:             '" << this->get_name() << "'" << endl
+          << "\t Object-Name:             '" << get_name() << "'" << endl
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
@@ -757,21 +773,21 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
-   if ( this->any_remotely_owned_subscribed_init_attribute() ) {
+   if ( any_remotely_owned_subscribed_init_attribute() ) {
 
       int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
-      while ( !this->is_changed() ) {
+      while ( !is_changed() ) {
 
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
-         if ( !this->is_changed() ) {
+         if ( !is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();
@@ -805,7 +821,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
       }
 
       // Receive the exec-config data from the master federate.
-      this->receive_init_data();
+      receive_init_data();
 
    } else {
       ostringstream errmsg;

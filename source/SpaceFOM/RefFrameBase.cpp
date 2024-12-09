@@ -69,9 +69,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameBase::RefFrameBase()
-   : debug( false ),
-     is_root_frame( false ),
-     parent_frame( NULL ),
+   : parent_frame( NULL ),
      name_attr( NULL ),
      parent_name_attr( NULL ),
      state_attr( NULL ),
@@ -88,14 +86,14 @@ RefFrameBase::~RefFrameBase()
 {
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d ERROR deleting Trick Memory for 'this->name'%c",
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->packing_data.name = NULL;
    }
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.parent_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->packing_data.parent_name = NULL;
@@ -143,7 +141,7 @@ void RefFrameBase::base_config(
 
    // Set the frame name.
    if ( ref_frame_name != NULL ) {
-      this->packing_data.name = trick_MM->mm_strdup( ref_frame_name );
+      this->set_name( ref_frame_name );
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
@@ -155,14 +153,14 @@ void RefFrameBase::base_config(
    if ( ref_frame_parent_name != NULL ) {
       this->packing_data.parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
       if ( ref_frame_parent_name[0] == '\0' ) {
-         this->is_root_frame = true;
+         this->is_root_node = true;
       }
    } else {
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
-      this->is_root_frame            = true;
+      this->is_root_node             = true;
    }
    if ( ref_frame_parent != NULL ) {
-      this->parent_frame = ref_frame_parent;
+      this->set_parent_frame( ref_frame_parent );
    }
 
    //---------------------------------------------------------
@@ -175,7 +173,7 @@ void RefFrameBase::base_config(
    object->packing             = this;
    // Allocate the attributes for the RefFrameBase HLA object.
    object->attr_count = 3;
-   object->attributes = (TrickHLA::Attribute *)trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count );
+   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the Reference Frame attributes.
@@ -215,12 +213,11 @@ void RefFrameBase::base_config(
  */
 void RefFrameBase::configure()
 {
-
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+         errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
                 << "  Setting frame name to empty string." << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
@@ -232,7 +229,7 @@ void RefFrameBase::configure()
    if ( this->packing_data.parent_name == NULL ) {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+         errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
                 << "  Setting parent frame name to empty string." << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
@@ -248,7 +245,6 @@ void RefFrameBase::configure()
  */
 void RefFrameBase::initialize()
 {
-
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
       ostringstream errmsg;
@@ -303,14 +299,14 @@ void RefFrameBase::initialize()
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
 
       // Mark as root reference frame.
-      this->is_root_frame = true;
+      this->is_root_node = true;
 
    } else if ( this->packing_data.parent_name[0] == '\0' ) {
       // Mark as root reference frame.
-      this->is_root_frame = true;
+      this->is_root_node = true;
    } else {
       // Mark as NOT a root reference frame.
-      this->is_root_frame = false;
+      this->is_root_node = false;
    }
 
    // Check to see if the parent reference frame has been set if this frame
@@ -389,11 +385,19 @@ void RefFrameBase::set_name( char const *new_name )
 
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
    this->packing_data.name = trick_MM->mm_strdup( new_name );
+
+   if ( this->name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+   }
+   this->name = trick_MM->mm_strdup( new_name );
    return;
 }
 
@@ -414,20 +418,20 @@ void RefFrameBase::set_parent_name( char const *name )
    // Set the parent frame name appropriately.
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d WARNING failed to delete Trick Memory for 'this->parent_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
    if ( name != NULL ) {
       this->packing_data.parent_name = trick_MM->mm_strdup( name );
       if ( name[0] == '\0' ) {
-         this->is_root_frame = true;
+         this->is_root_node = true;
       } else {
-         this->is_root_frame = false;
+         this->is_root_node = false;
       }
    } else {
       this->packing_data.parent_name = NULL;
-      this->is_root_frame            = true;
+      this->is_root_node             = true;
    }
 
    return;
@@ -449,6 +453,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
 
    // Set the parent frame reference pointer.
    this->parent_frame = pframe_ptr;
+   this->parent       = pframe_ptr;
 
    // Set the parent frame name.
    if ( this->parent_frame != NULL ) {
@@ -474,16 +479,16 @@ bool RefFrameBase::set_root( bool root_status )
 
          if ( this->packing_data.parent_name != NULL ) {
             if ( this->packing_data.parent_name[0] == '\0' ) {
-               // Set the is_root_frame state to true.
-               this->is_root_frame = true;
+               // Set the is_root_node state to true.
+               this->is_root_node = true;
                return ( true );
             } else {
-               // Note that we DO NOT change the is_root_frame state.
+               // Note that we DO NOT change the is_root_node state.
                return ( false );
             }
          } else {
             // Parent name cannot be NULL but it should be safe to set it empty.
-            // Note that this will also set the is_root_frame state to true.
+            // Note that this will also set the is_root_node state to true.
             this->set_parent_name( "" );
             return ( true );
          }
@@ -491,7 +496,7 @@ bool RefFrameBase::set_root( bool root_status )
       } // Parent frame is not null.  Automatic fail.
       else {
 
-         // Note that we DO NOT change the is_root_frame state.
+         // Note that we DO NOT change the is_root_node state.
          return ( false );
       }
 
@@ -503,22 +508,22 @@ bool RefFrameBase::set_root( bool root_status )
 
          // Check for NULL parent name string.
          if ( this->packing_data.parent_name == NULL ) {
-            // Note that we DO NOT change the is_root_frame state.
+            // Note that we DO NOT change the is_root_node state.
             return ( false );
          } // Check for empty parent name string.
          else if ( this->packing_data.parent_name[0] == '\0' ) {
-            // Note that we DO NOT change the is_root_frame state.
+            // Note that we DO NOT change the is_root_node state.
             return ( false );
          } else {
-            // Set the is_root_frame state to false.
-            this->is_root_frame = false;
+            // Set the is_root_node state to false.
+            this->is_root_node = false;
             return ( true );
          }
 
       } // Parent frame is NULL.  Automatic fail.
       else {
 
-         // Note that we DO NOT change the is_root_frame state.
+         // Note that we DO NOT change the is_root_node state.
          return ( false );
       }
    }

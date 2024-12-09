@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/Attribute.cpp}
 @trick_link_dependency{../TrickHLA/Conditional.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{RefFrameConditionalBase.cpp}
 
@@ -134,7 +135,7 @@ bool RefFrameConditionalBase::should_send(
             if ( strcmp( frame.packing_data.name, prev_data.name ) ) {
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.name ) ) ) {
                   send_hs( stderr,
-                           "RefFrameConditionalBase::should_send():%d ERROR deleting Trick Memory for 'prev_data.name'%c",
+                           "RefFrameConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'%c",
                            __LINE__, THLA_NEWLINE );
                }
                // Update the previous value.
@@ -164,7 +165,7 @@ bool RefFrameConditionalBase::should_send(
             if ( strcmp( frame.packing_data.parent_name, prev_data.parent_name ) ) {
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.parent_name ) ) ) {
                   send_hs( stderr,
-                           "RefFrameConditionalBase::should_send():%d ERROR deleting Trick Memory for 'prev_data.parent_name'%c",
+                           "RefFrameConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_name'%c",
                            __LINE__, THLA_NEWLINE );
                }
                // Update the previous value.

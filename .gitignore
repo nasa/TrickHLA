@@ -8,6 +8,7 @@ object_*
 S_library_list_ext
 .S_library_list_ext
 build/
+.DS_Store
 
 # Doxygen generated documentation
 docs/combined

@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/SpaceFOM/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/SpaceFOM/ExecutionControl.cpp}
@@ -50,6 +51,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Interaction.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
@@ -57,6 +59,15 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/MTRInteractionHandler.hh"
 #include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/Types.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA Encoder helper includes.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 namespace SpaceFOM
 {
@@ -74,12 +85,16 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    friend void init_attrSpaceFOM__ExecutionControl();
 
   public:
+   bool designated_late_joiner; /**< @trick_units{--} Flag set by the user to
+      indicate this federate is a designated late joiner, default is false. */
+
    // These are the execution control roles available to a federate.
-   bool pacing;         /**< @trick_units{--}
-      Is true when this federate is the "pacing". (default: false) */
-   bool root_frame_pub; /**< @trick_units{--}
-      Is true when this federate is the "root reference frame publisher"
-      federate for the Multiphase initialization process. (default: false) */
+   bool pacing; /**< @trick_units{--} Is true when this federate is
+                     the "pacing". (default: false) */
+
+   bool root_frame_pub; /**< @trick_units{--} Is true when this federate is
+      the "root reference frame publisher" federate for the Multiphase
+      initialization process. (default: false) */
 
    // The SpaceFOM uses a reference frame tree. This is the root frame.
    RefFrameBase *root_ref_frame; /**< @trick_units{--} Reference to the
@@ -121,11 +136,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void role_determination_process();
    /*! @brief Process to join the federation execution early in initialization. */
    virtual void early_joiner_hla_init_process();
-   /*! @brief Process to determine is a federate is joining late in or after initialization. */
+   /*! @brief Designated later joiner federate initialization process. */
+   virtual void designated_late_joiner_init_process();
+   /*! @brief Late joiner federate HLA initialization process. */
    virtual void late_joiner_hla_init_process();
 
    //
-   // Execution Control support routines.routines.
+   // Execution Control support routines.
    /*! @brief Setup the ExecutionControl object Trick ref ATTRIBUTES. */
    virtual void setup_object_ref_attributes();
    /*! @brief Setup the ExecutionControl interaction Trick ref ATTRIBUTES. */
@@ -137,13 +154,11 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! Add initialization synchronization points to regulate startup. */
    virtual void add_initialization_sync_points();
    /*! @brief The RTI has announced the existence of a synchronization point.
-    *  @param rti_ambassador    Reference to the HLA RTI Ambassador instance.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
-   virtual void announce_sync_point(
-      RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-      std::wstring const               &label,
-      RTI1516_USERDATA const           &user_supplied_tag );
+   virtual void sync_point_announced(
+      std::wstring const     &label,
+      RTI1516_USERDATA const &user_supplied_tag );
 
    /*! @brief Publish the ExecutionControl objects and interactions. */
    virtual void publish();
@@ -266,6 +281,12 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    {
       return this->root_frame_pub;
    }
+   /*! @brief Is this federate a designated late joiner federate.
+    *  @return true if a designated later joiner federate. */
+   bool is_designated_late_joiner()
+   {
+      return this->designated_late_joiner;
+   }
 
    //
    // Federation save and checkpoint
@@ -284,6 +305,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    /*! @brief Refresh the least common time step especially if the HLA base time units changed. */
    virtual void refresh_least_common_time_step();
+
+   /*! @brief Verify the HLA Time Advance Grant (TAR) cycle time.
+    *  @param HLA_cycle_base_time TAR cycle time in the base time units.
+    *  @param lookahead_base_time HLA lookahead time in base time units.
+    *  @return True of the TAR cycle time is valid and False otherwise */
+   virtual bool verify_HLA_cycle_time( int64_t const HLA_cycle_base_time,
+                                       int64_t const lookahead_base_time );
 
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */

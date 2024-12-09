@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SineLagCompensation.hh
-@ingroup TrickHLAModel
 @brief Send and receiving side lag compensation.
 
 @copyright Copyright 2020 United States Government as represented by the

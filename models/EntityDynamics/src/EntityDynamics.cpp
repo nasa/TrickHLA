@@ -1,6 +1,6 @@
 /*!
+@ingroup EntityDynamics
 @file models/EntityDynamics/src/EntityDynamics.cpp
-@ingroup SpaceFOM
 @brief A class to perform a simple propagation of a SpaceFOM PhysicalEntity
 or DynamicalEntity for testing.
 
@@ -17,7 +17,7 @@ NASA, Johnson Space Center\n
 
 @trick_parse{everything}
 
-@python_module{SpaceFOM}
+@python_module{TrickHLAModel}
 
 @tldh
 @trick_link_dependency{../../../source/SpaceFOM/SpaceTimeCoordinateData.cpp}

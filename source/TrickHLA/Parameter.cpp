@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
@@ -103,7 +104,7 @@ Parameter::~Parameter()
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "Parameter::~Parameter():%d ERROR deleting Trick Memory for 'buffer'%c",
+         send_hs( stderr, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'buffer'%c",
                   __LINE__, THLA_NEWLINE );
       }
       buffer          = NULL;
@@ -112,7 +113,7 @@ Parameter::~Parameter()
 
    if ( interaction_FOM_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( interaction_FOM_name ) ) ) {
-         send_hs( stderr, "Parameter::~Parameter():%d ERROR deleting Trick Memory for 'interaction_FOM_name'%c",
+         send_hs( stderr, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'interaction_FOM_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       interaction_FOM_name = NULL;
@@ -1445,7 +1446,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_SHORT: {
-         short  *s_dest = static_cast< short  *>( address );
+         short  *s_dest = static_cast< short * >( address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
@@ -1457,7 +1458,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_INTEGER: {
-         int    *i_dest = static_cast< int    *>( address );
+         int    *i_dest = static_cast< int * >( address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : value;
          break;
@@ -1469,7 +1470,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_LONG: {
-         long   *l_dest = static_cast< long   *>( address );
+         long   *l_dest = static_cast< long * >( address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
@@ -3201,8 +3202,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_SHORT: {
-            short const *s_src  = static_cast< short const  *>( src );
-            short       *s_dest = static_cast< short       *>( dest );
+            short const *s_src  = static_cast< short const * >( src );
+            short       *s_dest = static_cast< short * >( dest );
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
@@ -3213,8 +3214,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_UNSIGNED_SHORT: {
-            unsigned short const *us_src  = static_cast< unsigned short const  *>( src );
-            unsigned short       *us_dest = static_cast< unsigned short       *>( dest );
+            unsigned short const *us_src  = static_cast< unsigned short const * >( src );
+            unsigned short       *us_dest = static_cast< unsigned short * >( dest );
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
@@ -3225,8 +3226,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_INTEGER: {
-            int const *i_src  = static_cast< int const  *>( src );
-            int       *i_dest = static_cast< int       *>( dest );
+            int const *i_src  = static_cast< int const * >( src );
+            int       *i_dest = static_cast< int * >( dest );
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
@@ -3237,8 +3238,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_UNSIGNED_INTEGER: {
-            unsigned int const *ui_src  = static_cast< unsigned int const  *>( src );
-            unsigned int       *ui_dest = static_cast< unsigned int       *>( dest );
+            unsigned int const *ui_src  = static_cast< unsigned int const * >( src );
+            unsigned int       *ui_dest = static_cast< unsigned int * >( dest );
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
@@ -3249,8 +3250,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_LONG: {
-            long const *l_src  = static_cast< long const  *>( src );
-            long       *l_dest = static_cast< long       *>( dest );
+            long const *l_src  = static_cast< long const * >( src );
+            long       *l_dest = static_cast< long * >( dest );
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
@@ -3261,8 +3262,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_UNSIGNED_LONG: {
-            unsigned long const *ul_src  = static_cast< unsigned long const  *>( src );
-            unsigned long       *ul_dest = static_cast< unsigned long       *>( dest );
+            unsigned long const *ul_src  = static_cast< unsigned long const * >( src );
+            unsigned long       *ul_dest = static_cast< unsigned long * >( dest );
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
@@ -3273,8 +3274,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_LONG_LONG: {
-            long long const *ll_src  = static_cast< long long const  *>( src );
-            long long       *ll_dest = static_cast< long long       *>( dest );
+            long long const *ll_src  = static_cast< long long const * >( src );
+            long long       *ll_dest = static_cast< long long * >( dest );
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
@@ -3285,8 +3286,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_UNSIGNED_LONG_LONG: {
-            unsigned long long const *ull_src  = static_cast< unsigned long long const  *>( src );
-            unsigned long long       *ull_dest = static_cast< unsigned long long       *>( dest );
+            unsigned long long const *ull_src  = static_cast< unsigned long long const * >( src );
+            unsigned long long       *ull_dest = static_cast< unsigned long long * >( dest );
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {

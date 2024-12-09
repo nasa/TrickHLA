@@ -1,6 +1,6 @@
 /*!
 @file SpaceFOM/PhysicalInterfaceDeleted.hh
-@ingroup TrickHLAModel
+@ingroup SpaceFOM
 @brief Callback class the user writes to do something once the object has been
 deleted from the RTI.
 
@@ -17,10 +17,11 @@ NASA, Johnson Space Center\n
 
 @trick_parse{everything}
 
-@python_module{TrickHLAModel}
+@python_module{SpaceFOM}
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeleted.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalInterfaceDeleted.cpp}
 
 @revs_title
@@ -56,9 +57,9 @@ class PhysicalInterfaceDeleted : public TrickHLA::ObjectDeleted
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLAModel PhysicalInterfaceDeleted class. */
+   /*! @brief Default constructor for the SpaceFOM PhysicalInterfaceDeleted class. */
    PhysicalInterfaceDeleted();
-   /*! @brief Destructor for the TrickHLAModel PhysicalInterfaceDeleted class. */
+   /*! @brief Destructor for the SpaceFOM PhysicalInterfaceDeleted class. */
    virtual ~PhysicalInterfaceDeleted();
 
    //-----------------------------------------------------------------

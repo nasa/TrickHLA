@@ -57,9 +57,9 @@ class RefFrameOwnershipHandler : public TrickHLA::OwnershipHandler
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLAModel RefFrameOwnershipHandler class. */
+   /*! @brief Default constructor for the SpaceFOM RefFrameOwnershipHandler class. */
    RefFrameOwnershipHandler();
-   /*! @brief Destructor for the TrickHLAModel RefFrameOwnershipHandler class. */
+   /*! @brief Destructor for the SpaceFOM RefFrameOwnershipHandler class. */
    virtual ~RefFrameOwnershipHandler();
 
    /*! @brief Initialization callback as part of the TrickHLA::OwnershipHandler functions.

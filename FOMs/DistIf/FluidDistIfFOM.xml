@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>Fluid Distributed Interface FOM</name>
+        <type>FOM</type>
+        <version>0.2</version>
+        <modificationDate>2024-10-23</modificationDate>
+        <securityClassification>unclassified</securityClassification>
+        <purpose>Fluid Distributed Interface data exchange definitions</purpose>
+        <applicationDomain></applicationDomain>
+        <description>Definition of the data exchanged between FluidDistributed2WayBus or equivalent models.</description>
+        <useLimitation></useLimitation>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Jason Harvey</pocName>
+            <pocOrg>NASA Johnson Space Center, Houston, TX</pocOrg>
+            <pocTelephone>+1-281-244-7759</pocTelephone>
+            <pocEmail>jason.l.harvey@nasa.gov</pocEmail>
+        </poc>
+        <other></other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>FluidDistIfDataBase</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>Base interface data, without the Bulk Fluid and Trace Compounds mixture arrays.  Those arrays will be added in derived object classes.</semantics>
+                <attribute>
+                    <name>DemandModeFlag</name>
+                    <dataType>HLAboolean</dataType>
+                    <updateType>NA</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Sender is in Demand mode when True.</semantics>
+                </attribute>
+                <attribute>
+                    <name>FrameCount</name>
+                    <dataType>FdiInteger32</dataType>
+                    <updateType>NA</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Sender's frame counter.</semantics>
+                </attribute>
+                <attribute>
+                    <name>FrameLoopback</name>
+                    <dataType>FdiInteger32</dataType>
+                    <updateType>NA</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Reflection of the received FrameCount back to its sender.</semantics>
+                </attribute>
+                <attribute>
+                    <name>Capacitance</name>
+                    <dataType>FdiMolarCapacitance</dataType>
+                    <updateType>NA</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Tendency of the local model interface pressure to increase in response to added fluid moles.</semantics>
+                </attribute>
+                <attribute>
+                    <name>Source</name>
+                    <dataType>FdiScalar</dataType>
+                    <updateType>NA</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Supply mode interface pressure (Pa), or Demand mode interface molar flow rate (mol/s).</semantics>
+                </attribute>
+                <attribute>
+                    <name>Energy</name>
+                    <dataType>FdiScalar</dataType>
+                    <updateType>NA</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Fluid temperature (K) or specific enthalpy (J/kg), as agreed upon by both parties.</semantics>
+                </attribute>
+                <objectClass>
+                    <name>FluidDistIfData_6_4</name>
+                    <sharing>PublishSubscribe</sharing>
+                    <semantics>Interface data, with arrays for the mole fractions of 6 bulk fluid constituents and 4 trace compound constituents in the total fluid mixture.  The sum of all 10 constituent mole fractions should always be exactly 1.</semantics>
+                    <attribute>
+                        <name>FluidMixture</name>
+                        <dataType>FdiFluidMixtureVector6</dataType>
+                        <updateType>NA</updateType>
+                        <updateCondition>NA</updateCondition>
+                        <ownership>NoTransfer</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>TimeStamp</order>
+                        <semantics>Array of mole fractions of the 6 bulk fluid constituents in the total fluid mixture.</semantics>
+                    </attribute>
+                    <attribute>
+                        <name>TraceCompoundsMixture</name>
+                        <dataType>FdiFluidMixtureVector4</dataType>
+                        <updateType>NA</updateType>
+                        <updateCondition>NA</updateCondition>
+                        <ownership>NoTransfer</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>TimeStamp</order>
+                        <semantics>Array of mole fractions of the 4 trace compound constituents in the total fluid mixture.</semantics>
+                    </attribute>
+                </objectClass>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <interactions>
+        <interactionClass>
+            <name>HLAinteractionRoot</name>
+        </interactionClass>
+    </interactions>
+    <dimensions/>
+    <transportations/>
+    <switches>
+        <autoProvide isEnabled="false"/>
+        <conveyRegionDesignatorSets isEnabled="false"/>
+        <conveyProducingFederate isEnabled="false"/>
+        <attributeScopeAdvisory isEnabled="false"/>
+        <attributeRelevanceAdvisory isEnabled="false"/>
+        <objectClassRelevanceAdvisory isEnabled="false"/>
+        <interactionRelevanceAdvisory isEnabled="false"/>
+        <serviceReporting isEnabled="false"/>
+        <exceptionReporting isEnabled="false"/>
+        <delaySubscriptionEvaluation isEnabled="false"/>
+        <automaticResignAction resignAction="CancelThenDeleteThenDivest"/>
+    </switches>
+    <updateRates/>
+    <dataTypes>
+        <basicDataRepresentations/>
+        <simpleDataTypes>
+            <simpleData>
+                <name>FdiMolarCapacitance</name>
+                <representation>HLAfloat64LE</representation>
+                <units>Moles per Pascal</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>A value of change in fluid quantity (moles) per unit change in pressure (Pascal).</semantics>
+            </simpleData>
+            <simpleData>
+                <name>FdiScalar</name>
+                <representation>HLAfloat64LE</representation>
+                <units>NA</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>A value whose units and meaning depends on context.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>FdiInteger32</name>
+                <representation>HLAinteger32LE</representation>
+                <units>NA</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>A 32-bit integer value.</semantics>
+            </simpleData>
+        </simpleDataTypes>
+        <enumeratedDataTypes/>
+        <arrayDataTypes>
+            <arrayData>
+                <name>FdiFluidMixtureVector6</name>
+                <dataType>FdiScalar</dataType>
+                <cardinality>6</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>A vector that specifies the relative mole fractions of 6 constituents in a fluid.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>FdiFluidMixtureVector4</name>
+                <dataType>FdiScalar</dataType>
+                <cardinality>4</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>A vector that specifies the relative mole fractions of 4 constituents in a fluid.</semantics>
+            </arrayData>
+        </arrayDataTypes>
+        <fixedRecordDataTypes/>
+        <variantRecordDataTypes/>
+    </dataTypes>
+</objectModel>

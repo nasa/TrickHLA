@@ -1,6 +1,6 @@
 /*!
-@file JEOD/JEODRefFrameState.hh
 @ingroup JEOD
+@file JEOD/JEODRefFrameState.hh
 @brief This class provides data packing for the SpaceFOM Reference Frames and
 the interface with a JEOD Reference Frame State instance.
 

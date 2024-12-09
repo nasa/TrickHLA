@@ -35,6 +35,13 @@
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
+
+//=============================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//=============================================================================
+#include "IMSim/IMSimV3.sm"
+
+
 //=============================================================================
 // SIM_OBJECT: AnalyticSineSimObj
 // Sim-object for an analytic solution of a sine wave.
@@ -42,22 +49,23 @@
 class AnalyticSineSimObj : public Trick::SimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SineOwnershipHandler   ownership_handler;
 
    TrickHLAModel::SinePacking            packing;
 
    TrickHLAModel::SineLagCompensation    lag_compensation;
-   
+
    TrickHLAModel::SineConditional        conditional;
 
    TrickHLAModel::SineObjectDeleted      obj_deleted;
-   
+
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
-   AnalyticSineSimObj() {
+   AnalyticSineSimObj()
+   {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
       //
@@ -72,13 +80,13 @@ class AnalyticSineSimObj : public Trick::SimObject {
       P50 ("initialization") conditional.configure( &packing );
       P50 ("initialization") conditional.initialize();
 
-      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
-      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.imsim_exec_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.imsim_exec_control.get_scenario_time() );
 
-      (DYN_RATE, "scheduled") sim_data.compute_value( THLA.execution_control.get_scenario_time() );
-      (DYN_RATE, "scheduled") sim_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") sim_data.compute_value( THLA.imsim_exec_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") sim_data.compute_derivative( THLA.imsim_exec_control.get_scenario_time() );
 
-      (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
+      (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.imsim_exec_control.get_scenario_time() );
    }
 
  private:
@@ -95,20 +103,21 @@ class AnalyticSineSimObj : public Trick::SimObject {
 class PropagatedSineSimObj : public Trick::SimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SinePacking            packing;
 
    TrickHLAModel::SineLagCompensation    lag_compensation;
-   
+
    TrickHLAModel::SineConditional        conditional;
 
    TrickHLAModel::SineObjectDeleted      obj_deleted;
-   
+
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
-   PropagatedSineSimObj() {
+   PropagatedSineSimObj()
+   {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
       //
@@ -126,8 +135,8 @@ class PropagatedSineSimObj : public Trick::SimObject {
       /*
        * -- Propagate the true sine state.
        */
-      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
-      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.imsim_exec_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.imsim_exec_control.get_scenario_time() );
 
       /*
        * -- Numerically propagate the simulated sine state
@@ -141,7 +150,7 @@ class PropagatedSineSimObj : public Trick::SimObject {
        * integration being used), so we fix it by setting the correct time as a
        * post integration job.
        */
-      ("post_integration") sim_data.set_time( THLA.execution_control.get_scenario_time() );
+      ("post_integration") sim_data.set_time( THLA.imsim_exec_control.get_scenario_time() );
    }
 
  private:
@@ -149,17 +158,6 @@ class PropagatedSineSimObj : public Trick::SimObject {
    PropagatedSineSimObj( PropagatedSineSimObj const & rhs );
    PropagatedSineSimObj & operator=( PropagatedSineSimObj const & rhs );
 };
-
-
-//=============================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
-//=============================================================================
-#include "IMSim/IMSimV3.sm"
-IMSimSimObject THLA( THLA_DATA_CYCLE_TIME,
-                     THLA_INTERACTION_CYCLE_TIME,
-                     P_HLA_EARLY,
-                     P_HLA_INIT,
-                     P_HLA_LATE );
 
 
 //=============================================================================
@@ -173,22 +171,22 @@ class THLAInitSimObj : public Trick::SimObject {
    TrickHLA::ScenarioTimeline scenario_timeline;
 
    THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
-                   TrickHLA::Federate & thla_fed ) 
+                   TrickHLA::Federate & thla_fed )
       : scenario_timeline( sim_timeline, 0.0, 0.0 ),
         thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       //------------------------------------------------------------------------
-      // NOTE: Initialization phase numbers must be greater than P60 
+      // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
       // P60 THLA.manager->initialize() job.
       //------------------------------------------------------------------------
 
       // Data will only be sent if this federate owns it.
-      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
+      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
+      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
 
       // Do some processing here if needed...
 
@@ -197,10 +195,10 @@ class THLAInitSimObj : public Trick::SimObject {
 
 
       // Data will only be sent if this federate owns it.
-      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
+      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
+      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine" );
 
       // Do some processing here if needed...
 
@@ -236,11 +234,20 @@ class THLAInitSimObj : public Trick::SimObject {
 };
 
 
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+IMSimSimObject THLA( THLA_DATA_CYCLE_TIME,
+                     THLA_INTERACTION_CYCLE_TIME,
+                     P_HLA_EARLY,
+                     P_HLA_INIT,
+                     P_HLA_LATE );
+
+THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
+
 // Instantiations
 AnalyticSineSimObj   A;
 PropagatedSineSimObj P;
-THLAInitSimObj       THLA_INIT( THLA.manager, THLA.federate );
-
 
 // Define the simulation objects that have routines involved in integration.
 IntegLoop sim_integ_loop (DYN_RATE) P;
@@ -253,4 +260,3 @@ void create_connections() {
    // Assign a default integrator, which can be overridden in the input file.
    sim_integ_loop.getIntegrator( Runge_Kutta_4, 6 );
 }
-

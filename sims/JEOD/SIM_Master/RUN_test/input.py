@@ -26,10 +26,10 @@ def print_usage_message( ):
 
    print(' ')
    print('TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:')
-   print('  -h -help         : Print this help message.')
-   print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
-   print('  -nostop          : Set no stop time on simulation.')
-   print('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
+   print('  -h --help          : Print this help message.')
+   print('  --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
+   print('  --nostop           : Set no stop time on simulation.')
+   print('  --verbose [on|off] : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -39,7 +39,7 @@ def print_usage_message( ):
    return
 
 
-def parse_command_line( ) :
+def parse_command_line( ):
    
    global print_usage
    global run_duration
@@ -52,41 +52,41 @@ def parse_command_line( ) :
    # Process the command line arguments.
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
-   while (index < argc) :
+   while (index < argc):
       
-      if (str(argv[index]) == '-stop') :
+      if (str(argv[index]) == '--stop'):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             run_duration = float(str(argv[index]))
-         else :
-            print('ERROR: Missing -stop [time] argument.')
+         else:
+            print('ERROR: Missing --stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-nostop') :
+      elif (str(argv[index]) == '--nostop'):
          run_duration = None
          
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
          print_usage = True
       
-      elif (str(argv[index]) == '-verbose') :
+      elif (str(argv[index]) == '--verbose'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                verbose = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                verbose = False
-            else :
-               print('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+            else:
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
-         else :
-            print('ERROR: Missing -verbose [on|off] argument.')
+         else:
+            print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
       
-      elif (str(argv[index]) == '-d') :
+      elif (str(argv[index]) == '-d'):
          # Catch the Trick debug command line option an do NOT terminate.
          print('DEBUG: Specified input file debug uption to Trick.')
          
-      else :
+      else:
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
          
@@ -104,7 +104,7 @@ verbose = False
 
 parse_command_line()
 
-if (print_usage == True) :
+if (print_usage == True):
    print_usage_message()
 
 
@@ -158,13 +158,13 @@ dynamics.dyn_manager.deriv_ephem_update = True
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   'SpaceFOM_JEOD_Test',
-                                   'Master',
-                                   True )
+federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
+                                   thla_manager         = THLA.manager,
+                                   thla_control         = THLA.execution_control,
+                                   thla_config          = THLA.ExCO,
+                                   thla_federation_name = 'SpaceFOM_JEOD_Test',
+                                   thla_federate_name   = 'Master',
+                                   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -173,13 +173,14 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 
 # Set the debug output level.
-if (verbose == True) : 
+if (verbose == True):
    #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
    federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
    #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
-else :
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+else:
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
 
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -200,7 +201,7 @@ federate.add_known_federate( True, 'JEODRefFrames' )
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
+# MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------

@@ -47,12 +47,25 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Types.hh"
 
 // IMSim include files.
+#include "IMSim/ExecutionControl.hh"
 #include "IMSim/FreezeInteractionHandler.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA Encoder helper includes.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
+
 using namespace std;
+using namespace RTI1516_NAMESPACE;
 using namespace TrickHLA;
 using namespace IMSim;
 
@@ -62,7 +75,8 @@ using namespace IMSim;
  * @job_class{initialization}
  */
 FreezeInteractionHandler::FreezeInteractionHandler() // RETURN: -- None.
-   : time( 0.0 )
+   : execution_control( NULL ),
+     time( 0.0 )
 {
    return;
 }
@@ -156,7 +170,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    Int64Time     granted                = interaction->get_granted_time();
    Int64Time     granted_plus_lookahead = granted + lookahead;
 
-   double curr_scenario_time   = interaction->get_federate()->get_scenario_time();
+   double curr_scenario_time   = interaction->get_manager()->get_execution_control()->get_scenario_time();
    double freeze_scenario_time = freeze_time;
    double freeze_hla_time      = granted.get_time_in_seconds() + ( freeze_scenario_time - curr_scenario_time );
 
@@ -249,7 +263,7 @@ new freeze HLA time:%lf %c",
       send_hs( stdout, infomsg.str().c_str() );
 
       // Inform the Federate the scenario time to freeze the simulation on.
-      interaction->get_federate()->add_freeze_scenario_time( time );
+      execution_control->add_freeze_scenario_time( time );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
@@ -293,7 +307,7 @@ void FreezeInteractionHandler::receive_interaction(
       send_hs( stdout, errmsg.str().c_str() );
    } else {
       // Inform the Federate the scenario time to freeze the simulation on.
-      interaction->get_federate()->add_freeze_scenario_time( time );
+      execution_control->add_freeze_scenario_time( time );
 
 #if THLA_FREEZE_INTERACTION_DEBUG
       ostringstream infomsg;

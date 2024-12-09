@@ -65,6 +65,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -114,7 +115,7 @@ Interaction::~Interaction()
 
    if ( user_supplied_tag != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
-         send_hs( stderr, "Interaction::~Interaction():%d ERROR deleting Trick Memory for 'user_supplied_tag'%c",
+         send_hs( stderr, "Interaction::~Interaction():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'%c",
                   __LINE__, THLA_NEWLINE );
       }
       user_supplied_tag      = NULL;
@@ -259,7 +260,7 @@ void Interaction::set_user_supplied_tag(
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
       if ( user_supplied_tag == NULL ) {
-         user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "char", user_supplied_tag_capacity ) );
+         user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", user_supplied_tag_capacity ) );
       } else {
          user_supplied_tag = static_cast< unsigned char * >( TMM_resize_array_1d_a( user_supplied_tag, user_supplied_tag_capacity ) );
       }
@@ -279,7 +280,7 @@ void Interaction::set_user_supplied_tag(
 void Interaction::remove() // RETURN: -- None.
 {
    // Only remove the Interaction if the manager has not been shutdown.
-   if ( is_shutdown_called() ) {
+   if ( !is_shutdown_called() ) {
 
       // Get the RTI-Ambassador and check for NULL.
       RTIambassador *rti_amb = get_RTI_ambassador();
@@ -918,7 +919,7 @@ bool Interaction::send(
       // RECEIVE_ORDER with no timestamp.
 
       // Do not send any interactions if federate save / restore has begun (see
-      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      // IEEE-1516.1-2010 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
          // This call returns an event retraction handle but we
          // don't support event retraction so no need to store it.
@@ -998,12 +999,12 @@ bool Interaction::send(
    bool successfuly_sent = false;
    try {
       // Do not send any interactions if federate save or restore has begun (see
-      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      // IEEE-1516.1-2010 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
 
          // The message will only be sent as TSO if our Federate is in the HLA Time
          // Regulating state and the interaction prefers timestamp order.
-         // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+         // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
          if ( send_with_timestamp ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {

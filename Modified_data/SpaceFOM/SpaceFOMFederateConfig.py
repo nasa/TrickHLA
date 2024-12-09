@@ -17,7 +17,7 @@ import trick
 from trick.top import *
 from ..TrickHLA.TrickHLAFederateConfig import *
 
-class SpaceFOMFederateConfig(TrickHLAFederateConfig):
+class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
    
    # Reference the SpaceFOM Execution Control.
    #execution_control = None
@@ -52,7 +52,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
                  FOMs_path = None ):
       
       # Copy a FOM path if provided.
-      if FOMs_path :
+      if FOMs_path:
          self.SpaceFOMs_path = FOMs_path
 
       # Call the base class constructor.
@@ -79,12 +79,23 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       # self.add_multiphase_init_sync_point( 'sync_point_name' )
 
       return
-   
-   
+
+
+   def set_designated_late_joiner( self, designated_late_joiner ):
+
+      # You can only set the designated late joiner state before initialize method is called.
+      if self.initialized:
+         print( 'SpaceFOMFederateConfig.set_designated_late_joiner(): Warning, already initialized, function ignored!' )
+      else:
+         self.control.designated_late_joiner = designated_late_joiner
+
+      return
+
+
    def set_master_role( self, master_state = True ):
       
       # You can only change master state before initialize method is called.
-      if self.initialized :
+      if self.initialized:
          print('SpaceFOMFederateConfig.set_master_role(): Warning, already initialized, function ignored!')
       else:
          self.is_master = master_state
@@ -96,7 +107,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
    def set_pacing_role( self, pacing_state = True ):
       
       # You can only change pacing state before initialize method is called.
-      if self.initialized :
+      if self.initialized:
          print('SpaceFOMFederateConfig.set_pacing_role(): Warning, already initialized, function ignored!')
       else:
          self.is_pacing = pacing_state
@@ -108,7 +119,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
    def set_RRFP_role( self, RRFP_state = True ):
       
       # You can only change RRFP state before initialize method is called.
-      if self.initialized :
+      if self.initialized:
          print('SpaceFOMFederateConfig.set_RRFP_role(): Warning, already initialized, function ignored!')
       else:
          self.is_RRFP = RRFP_state
@@ -120,7 +131,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
    def set_config_S_define_name( self, config_S_define_name ):
       
       # You can only change RRFP state before initialize method is called.
-      if self.initialized :
+      if self.initialized:
          print('SpaceFOMFederateConfig.set_config_S_define_name(): Warning, already initialized, function ignored!')
       else:
          self.config_S_define_name = config_S_define_name
@@ -131,7 +142,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
    def set_scenario_timeline_epoch( self, epoch ):
       
       # You can only set sim_config path before initialize method is called.
-      if self.initialized :
+      if self.initialized:
          print('SpaceFOMFederateConfig.set_scenario_timeline_epoch(): Warning, already initialized, function ignored!')
          return
 
@@ -145,7 +156,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
    def set_root_frame( self, root_frame ):
       
       # You can only set root frame before initialize method is called.
-      if self.initialized :
+      if self.initialized:
          print('SpaceFOMFederateConfig.set_root_frame: Warning, already initialized, function ignored!')
          return
       
@@ -168,7 +179,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       # attribute can be set to any empty string. It will be overwritten
       # on Root Reference Frame Discovery.
       #
-      if ( self.is_RRFP ) :
+      if ( self.is_RRFP ):
          self.config.set_root_frame_name( root_frame.get_instance_name() )
       else:
          self.config.set_root_frame_name( '' )
@@ -181,29 +192,29 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
 
    def set_FOMs_path( self, FOMs_path ):
       
-      # You can only set SpaceFOM fom module pate before initialize method is called.
-      if self.initialized :
+      # You can only set SpaceFOM FOM module path before initialize method is called.
+      if self.initialized:
          print('SpaceFOMFederateConfig.set_FOMs_path(): Warning, already initialized! Ignoring!')
          return
       
       for item in self.fom_modules:
-         if item.find('SISO_SpaceFOM_switches.xml') != -1:
+         if item.find( 'SISO_SpaceFOM_switches.xml' ) != -1:
             indx = self.fom_modules.index( item )
             self.fom_modules.pop(indx)
       for item in self.fom_modules:
-         if item.find('SISO_SpaceFOM_datatypes.xml') != -1:
+         if item.find( 'SISO_SpaceFOM_datatypes.xml' ) != -1:
             indx = self.fom_modules.index( item )
             self.fom_modules.pop(indx)
       for item in self.fom_modules:
-         if item.find('SISO_SpaceFOM_management.xml') != -1:
+         if item.find( 'SISO_SpaceFOM_management.xml' ) != -1:
             indx = self.fom_modules.index( item )
             self.fom_modules.pop(indx)
       for item in self.fom_modules:
-         if item.find('SISO_SpaceFOM_environment.xml') != -1:
+         if item.find( 'SISO_SpaceFOM_environment.xml' ) != -1:
             indx = self.fom_modules.index( item )
             self.fom_modules.pop(indx)
       for item in self.fom_modules:
-         if item.find('SISO_SpaceFOM_entity.xml') != -1:
+         if item.find( 'SISO_SpaceFOM_entity.xml' ) != -1:
             indx = self.fom_modules.index( item )
             self.fom_modules.pop(indx)
       
@@ -223,7 +234,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
    def initialize( self ):
       
       # You can only initialize once.
-      if self.initialized :
+      if self.initialized:
          print('SpaceFOMFederateConfig.initialize(): Warning, already initialized! Ignoring!')
          return
       

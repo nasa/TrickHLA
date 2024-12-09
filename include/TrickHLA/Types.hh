@@ -1,6 +1,6 @@
 /*!
-@file TrickHLA/Types.hh
 @ingroup TrickHLA
+@file TrickHLA/Types.hh
 @brief Definition of the TrickHLA enumeration types and utilities.
 
 @copyright Copyright 2019 United States Government as represented by the
@@ -55,6 +55,8 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
+static std::string const MULTIPHASE_INIT_SYNC_POINT_LIST = "Multiphase";
+
 /*!
 @enum HLABaseTimeEnum
 @brief Define the HLA Logical Time base units supported.
@@ -93,12 +95,14 @@ typedef enum {
    CONFIG_INITIALIZE     = 0x0002, ///< Dynamic simulation initialization.
    CONFIG_INTERMITTENT   = 0x0004, ///< Intermittent updates.
    CONFIG_CYCLIC         = 0x0008, ///< Cyclic updates.
-   CONFIG_ZERO_LOOKAHEAD = 0x0010, ///< Zero lookahead data updates.
+   CONFIG_ZERO_LOOKAHEAD = 0x0010, ///< Zero lookahead with Timestamp Order (TSO) data updates.
+   CONFIG_BLOCKING_IO    = 0x0020, ///< Blocking I/O with Receiver Order (RO) data updates.
    CONFIG_MAX_VALUE      = ( CONFIG_NONE
                         + CONFIG_INITIALIZE
                         + CONFIG_INTERMITTENT
                         + CONFIG_CYCLIC
-                        + CONFIG_ZERO_LOOKAHEAD ) ///< Maximum configuration value.
+                        + CONFIG_ZERO_LOOKAHEAD
+                        + CONFIG_BLOCKING_IO ) ///< Maximum configuration value.
 
 } DataUpdateEnum;
 
@@ -270,15 +274,15 @@ These sync-point states correspond directly to the sync-point states in HLA.
 */
 typedef enum {
 
-   SYNC_PT_STATE_FIRST_VALUE  = 0,      ///< Set to the First value in the enumeration.
-   SYNC_PT_STATE_ERROR        = 0,      ///< Sync-point error.
-   SYNC_PT_STATE_EXISTS       = 1,      ///< Sync-point exists.
-   SYNC_PT_STATE_REGISTERED   = 2,      ///< Sync-point registered.
-   SYNC_PT_STATE_ANNOUNCED    = 3,      ///< Sync-point announced.
-   SYNC_PT_STATE_ACHIEVED     = 4,      ///< Sync-point achieved.
-   SYNC_PT_STATE_SYNCHRONIZED = 5,      ///< Sync-point synchronized.
-   SYNC_PT_STATE_LAST_VALUE   = 5,      ///< Set to the Last value in the enumeration.
-   SYNC_PT_STATE_UNKNOWN      = INT_MAX ///< Unknown state.
+   SYNC_PT_STATE_FIRST_VALUE  = 0, ///< Set to the First value in the enumeration.
+   SYNC_PT_STATE_ERROR        = 0, ///< Sync-point error.
+   SYNC_PT_STATE_KNOWN        = 1, ///< Sync-point is known.
+   SYNC_PT_STATE_REGISTERED   = 2, ///< Sync-point registered.
+   SYNC_PT_STATE_ANNOUNCED    = 3, ///< Sync-point announced.
+   SYNC_PT_STATE_ACHIEVED     = 4, ///< Sync-point achieved.
+   SYNC_PT_STATE_SYNCHRONIZED = 5, ///< Sync-point synchronized.
+   SYNC_PT_STATE_UNKNOWN      = 6, ///< Unknown state.
+   SYNC_PT_STATE_LAST_VALUE   = 6  ///< Set to the Last value in the enumeration.
 
 } SyncPtStateEnum;
 
@@ -308,10 +312,10 @@ typedef enum {
 
 } TimeAdvanceStateEnum;
 
-#pragma GCC diagnostic                                    push
-#pragma GCC diagnostic                                    ignored "-Wdeprecated"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
 typedef std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > TrickRTIAmbPtr;
-#pragma GCC diagnostic                                    pop
+#pragma GCC diagnostic pop
 
 typedef std::queue< RTI1516_NAMESPACE::AttributeHandleValueMap > HLAAttributeMapQueue;
 

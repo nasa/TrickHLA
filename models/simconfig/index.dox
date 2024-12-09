@@ -1,0 +1,8 @@
+/**
+ * @defgroup SimConfig SimConfig
+ * An example for creating a simple simulation configuration 
+ * @details This model shows how to create a simple simulation configuration as an
+ * extension to the TrickHLA ExecutionControlBase class required for coordinated
+ * federation execution.
+ * @ingroup TrickHLAModels
+ */

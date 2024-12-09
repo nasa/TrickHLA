@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/MutexLock.hh"
@@ -101,7 +102,7 @@ typedef enum {
    TRICKHLA_MANAGER_BUILTIN_MTR_INTERACTION    = 2  ///< MTR Interaction internal to TrickHLA
 } ManagerTypeOfInteractionEnum;
 
-class Manager
+class Manager : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -125,9 +126,9 @@ class Manager
    int          inter_count;  ///< @trick_units{--} Number of TrickHLA Interactions.
    Interaction *interactions; ///< @trick_units{--} Array of TrickHLA Interactions.
 
-   bool  restore_federation;          ///< @trick_io{*i} @trick_units{--} flag indicating whether to trigger the restore
-   char *restore_file_name;           ///< @trick_io{*i} @trick_units{--} file name, which will be the label name
-   bool  initiated_a_federation_save; ///< @trick_io{**} did this manager initiate the federation save?
+   bool  restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore
+   char *restore_file_name;           ///< @trick_io{*i} @trick_units{--} File name, which will be the label name
+   bool  initiated_a_federation_save; ///< @trick_io{**} Did this manager initiate the federation save?
 
   public:
    //
@@ -151,6 +152,9 @@ class Manager
 
    /*! @brief Perform initialization after a checkpoint restart. */
    void restart_initialization();
+
+   /*! @brief Initialize the HLA delta time step which is the data cycle time. */
+   void initialize_HLA_cycle_time();
 
    /*! @brief Verify the user specified object and interaction arrays and counts. */
    void verify_object_and_interaction_arrays();
@@ -319,8 +323,14 @@ class Manager
     *  @param file_name            Checkpoint file name. */
    void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name );
 
-   /*! @brief Setup the checkpoint data structures. */
-   void setup_checkpoint();
+   /*! @brief Encode/setup the checkpoint data structures. */
+   virtual void encode_checkpoint();
+
+   /*! @brief Restore the state of this class from the Trick checkpoint. */
+   virtual void decode_checkpoint();
+
+   /*! @brief Clear/release the memory used for the checkpoint data structures. */
+   virtual void free_checkpoint();
 
    /*! @brief Publishes Object & Interaction classes and their member data. */
    void publish();
@@ -469,8 +479,6 @@ class Manager
    int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
 
-   int64_t job_cycle_base_time; // us Cycle base time for the send_cyclic_and_requested_data and recieve_cyclic_data jobs
-
    bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
    bool restore_determined; ///< @trick_io{**} Internal flag to indicate that the restore status has been determined.
    bool restore_federate;   ///< @trick_io{**} Internal flag to indicate if the federate is to be restored
@@ -495,16 +503,40 @@ class Manager
    //
    // Private member functions.
    //
-  private:
+  public:
    /*! @brief Initializes the federation execution control scheme, which must
     * occur after the TrickHLA::Federate and TrickHLA::FedAmb has been
     * initialized. */
    // void initialize_execution_control();
 
-   /*! @brief Check to see if this is a restored federate. */
+   /*! @brief Check to see if this federate is to be restored.
+    *  @return federate restore state. */
+   bool is_restore_determined() const
+   {
+      return restore_determined;
+   }
+
+   /*! @brief Set the federate to be restored state.
+    *  @param state Restore state of the federate. */
+   void set_restore_determined( bool state )
+   {
+      restore_determined = state;
+      return;
+   }
+
+   /*! @brief Check to see if this is a restored federate.
+    *  @return True is this is a restored federate, false otherwise. */
    bool is_restore_federate() const
    {
       return restore_federate;
+   }
+
+   /*! @brief Mark if this is a restored federate.
+    *  @param state True is federate is restored, false otherwise. */
+   void set_restore_federate( bool state )
+   {
+      restore_federate = state;
+      return;
    }
 
    /*! @brief Set up the Trick ref-attributes for the user specified objects
@@ -544,13 +576,30 @@ class Manager
    Object *get_unregistered_remote_object(
       RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass );
 
-   /*! @brief Determines the job cycle time. */
-   void determine_job_cycle_time();
-
    // Ownership
    /*! @brief Pull ownership from the other federates if the pull ownership
-    * flag has been enabled. */
+    *  flag has been enabled. */
    void pull_ownership();
+
+   /*! @brief Blocking function call to pull ownership of the named object
+    *  instance at initialization.
+    *  @param obj_instance_name Object instance name to pull ownership
+    *  of for all attributes. */
+   void pull_ownership_at_init( char const *obj_instance_name );
+
+   /*! @brief Blocking function call to pull ownership of the named object
+    *  instance at initialization.
+    *  @param obj_instance_name Object instance name to pull ownership
+    *  of for all attributes.
+    *  @param attribute_list Comma separated list of attributes. */
+   void pull_ownership_at_init( char const *obj_instance_name,
+                                char const *attribute_list );
+
+   /*! @brief Blocking function call to wait to handle the remote request to
+    *  Pull ownership object attributes to this federate.
+    *  @param obj_instance_name Object instance name to handle the remote
+    *  pulled ownership attributes from. */
+   void handle_pulled_ownership_at_init( char const *obj_instance_name );
 
    /*! @brief Pull ownership from the other federates when this federate has
     * rejoined the Federation. */
@@ -559,6 +608,26 @@ class Manager
    /*! @brief Push ownership to the other federates if the push ownership flag
     * has been enabled. */
    void push_ownership();
+
+   /*! @brief Blocking function call to push ownership of all the locally
+    *  owned object attributes.
+    *  @param obj_instance_name Object instance name to push ownership
+    *  of for all attributes. */
+   void push_ownership_at_init( char const *obj_instance_name );
+
+   /*! @brief Blocking function call to push ownership of the named object
+    *  instance at initialization.
+    *  @param obj_instance_name Object instance name to push ownership
+    *  of for all attributes.
+    *  @param attribute_list Comma separated list of attribute FOM names. */
+   void push_ownership_at_init( char const *obj_instance_name,
+                                char const *attribute_list );
+
+   /*! @brief Blocking function call to wait to handle the remote request to
+    *  Push ownership object attributes to this federate.
+    *  @param obj_instance_name Object instance name to handle the remote
+    *  pushed ownership attributes from. */
+   void handle_pushed_ownership_at_init( char const *obj_instance_name );
 
    /*! @brief Grant any request to pull the ownership. */
    void grant_pull_request();
@@ -575,17 +644,17 @@ class Manager
    // Checkpoint / clear / restore any interactions
    //
    /*! @brief Decodes interactions queue into an InteractionItem linear array. */
-   void setup_checkpoint_interactions();
+   void encode_checkpoint_interactions();
 
-   /*! @brief Clears InteractionItem linear array. */
-   void clear_interactions();
+   /*! @brief Decodes checkpoint InteractionItem linear arrays back into the
+    * main interaction queue. */
+   void decode_checkpoint_interactions();
+
+   /*! @brief Free/clear InteractionItem checkpoint linear array. */
+   void free_checkpoint_interactions();
 
    /*! @brief Echoes the contents of checkpoint InteractionItem linear array. */
-   void dump_interactions();
-
-   /*! @brief Encodes checkpoint InteractionItem linear arrays back into the
-    * main interaction queue. */
-   void restore_interactions();
+   void print_checkpoint_interactions();
 
   private:
    // Do not allow the copy constructor or assignment operator.

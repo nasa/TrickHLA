@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
 
@@ -63,7 +64,17 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -185,8 +196,10 @@ void FedAmb::synchronizationPointRegistrationSucceeded(
    wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
 
    federate->sync_point_registration_succeeded( label );
@@ -197,19 +210,24 @@ void FedAmb::synchronizationPointRegistrationFailed(
    RTI1516_NAMESPACE::SynchronizationPointFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
-
-   bool not_unique = ( reason == RTI1516_NAMESPACE::SYNCHRONIZATION_POINT_LABEL_NOT_UNIQUE );
-
-   federate->sync_point_registration_failed( label, not_unique );
+   federate->sync_point_registration_failed( label, reason );
 }
 
 void FedAmb::announceSynchronizationPoint(
    wstring const                               &label,
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::announceSynchronizationPoint():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
+   }
    federate->announce_sync_point( label, theUserSuppliedTag );
 }
 
@@ -218,8 +236,10 @@ void FedAmb::federationSynchronized(
    RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationSynchronized():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::federationSynchronized():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
 
    federate->federation_synchronized( label );
@@ -232,9 +252,11 @@ void FedAmb::federationSynchronized(
          strIds += id;
          strIds += " ";
       }
+      string label_str;
+      StringUtilities::to_string( label_str, label );
       send_hs( stderr, "FedAmb::federationSynchronized():%d ERROR: These \
-federate handles failed to synchronize on sync-point '%ls': %s%c",
-               __LINE__, label.c_str(), strIds.c_str(), THLA_NEWLINE );
+federate handles failed to synchronize on sync-point '%s': %s%c",
+               __LINE__, label_str.c_str(), strIds.c_str(), THLA_NEWLINE );
    }
 }
 
@@ -566,12 +588,8 @@ void FedAmb::reflectAttributeValues(
                   __LINE__, trickhla_obj->get_name(), THLA_NEWLINE );
       }
 
-      // Pass the attribute values off to the object.
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
-      trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
-#else
-      trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
-#endif
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
+
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
@@ -606,10 +624,22 @@ void FedAmb::reflectAttributeValues(
       federate->set_MOM_HLAfederation_instance_attributes( theObject, theAttributeValues );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         string id_str;
-         StringUtilities::to_string( id_str, theObject );
-         send_hs( stderr, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s%c",
-                  __LINE__, id_str.c_str(), THLA_NEWLINE );
+         string handle_str;
+         StringUtilities::to_string( handle_str, theObject );
+
+         ostringstream summary;
+         summary << "FedAmb::reflectAttributeValues():" << __LINE__
+                 << " Received update to Unknown Object Instance:"
+                 << handle_str << THLA_ENDL;
+
+         AttributeHandleValueMap::const_iterator attr_iter;
+         for ( attr_iter = theAttributeValues.begin();
+               attr_iter != theAttributeValues.end();
+               ++attr_iter ) {
+            StringUtilities::to_string( handle_str, attr_iter->first );
+            summary << "   + Attribute-Handle:" << handle_str << THLA_ENDL;
+         }
+         send_hs( stdout, summary.str().c_str() );
       }
    }
 }
@@ -637,12 +667,8 @@ void FedAmb::reflectAttributeValues(
                   THLA_NEWLINE );
       }
 
-      // Pass the attribute values off to the object.
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
-      trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
-#else
-      trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
-#endif
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
+
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
@@ -679,12 +705,8 @@ void FedAmb::reflectAttributeValues(
                   __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
-      // Pass the attribute values off to the object.
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
-      trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
-#else
-      trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
-#endif
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
+
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
@@ -719,7 +741,7 @@ void FedAmb::receiveInteraction(
 
       // Process the interaction.
       manager->receive_interaction( theInteraction,
-                                    (ParameterHandleValueMap &)theParameterValues,
+                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
                                     theUserSuppliedTag,
                                     dummyTime.get(),
                                     false );
@@ -749,7 +771,7 @@ void FedAmb::receiveInteraction(
       }
 
       manager->receive_interaction( theInteraction,
-                                    (ParameterHandleValueMap &)theParameterValues,
+                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
                                     theUserSuppliedTag,
                                     theTime,
                                     ( receivedOrder == RTI1516_NAMESPACE::TIMESTAMP ) );
@@ -780,7 +802,7 @@ void FedAmb::receiveInteraction(
 
       // Process the interaction.
       manager->receive_interaction( theInteraction,
-                                    (ParameterHandleValueMap &)theParameterValues,
+                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
                                     theUserSuppliedTag,
                                     theTime,
                                     ( receivedOrder == RTI1516_NAMESPACE::TIMESTAMP ) );
@@ -907,7 +929,7 @@ void FedAmb::provideAttributeValueUpdate(
 {
    if ( manager != NULL ) {
       manager->provide_attribute_update( theObject,
-                                         (AttributeHandleSet &)theAttributes );
+                                         const_cast< AttributeHandleSet & >( theAttributes ) );
    }
 }
 
@@ -998,11 +1020,11 @@ void FedAmb::requestAttributeOwnershipAssumption(
 
    if ( trickhla_obj != NULL ) {
 
-      AttributeHandleSet::const_iterator iter;
-
       bool any_attribute_not_recognized = false;
       bool any_attribute_already_owned  = false;
       bool any_attribute_not_published  = false;
+
+      AttributeHandleSet::const_iterator iter;
 
       // To make the state of the attribute push_requested flag thread safe lock
       // the mutex now. This allows us to handle multiple simultaneous requests
@@ -1122,10 +1144,11 @@ object instance (ID:%s), push request rejected.%c",
       throw FederateInternalError( L"FedAmb::requestDivestitureConfirmation() Unknown object instance." );
    }
 
+   bool any_devist_requested         = false;
+   bool any_attribute_not_recognized = false;
+   bool any_attribute_not_owned      = false;
+
    AttributeHandleSet::const_iterator iter;
-   bool                               any_devist_requested         = false;
-   bool                               any_attribute_not_recognized = false;
-   bool                               any_attribute_not_owned      = false;
 
    // Mark which attributes we need mark for divestiture of ownership.
    for ( iter = releasedAttributes.begin(); iter != releasedAttributes.end(); ++iter ) {
@@ -1211,11 +1234,13 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
 
    if ( trickhla_obj != NULL ) {
+
+      bool any_attribute_acquired       = false;
+      bool any_attribute_not_recognized = false;
+      bool any_attribute_already_owned  = false;
+      bool any_attribute_not_published  = false;
+
       AttributeHandleSet::const_iterator iter;
-      bool                               any_attribute_acquired       = false;
-      bool                               any_attribute_not_recognized = false;
-      bool                               any_attribute_already_owned  = false;
-      bool                               any_attribute_not_published  = false;
 
       // Mark which attributes we now locally own.
       for ( iter = securedAttributes.begin(); iter != securedAttributes.end(); ++iter ) {
@@ -1282,7 +1307,7 @@ Attribute Not Published ERROR: Object '%s' with attribute '%s'->'%s'!%c",
       // If we are doing blocking I/O we need to let the object know that it
       // now owns at least one attribute.
       if ( any_attribute_acquired ) {
-         trickhla_obj->notify_attribute_ownership_changed();
+         trickhla_obj->set_attribute_ownership_acquired();
       }
 
       // Now throw an exceptions for any detected error conditions.
@@ -1333,10 +1358,11 @@ void FedAmb::requestAttributeOwnershipRelease(
 
    if ( trickhla_obj != NULL ) {
 
+      bool any_pull_requested           = false;
+      bool any_attribute_not_recognized = false;
+      bool any_attribute_not_owned      = false;
+
       AttributeHandleSet::const_iterator iter;
-      bool                               any_pull_requested           = false;
-      bool                               any_attribute_not_recognized = false;
-      bool                               any_attribute_not_owned      = false;
 
       // Mark which attributes we now locally own.
       for ( iter = candidateAttributes.begin(); iter != candidateAttributes.end(); ++iter ) {

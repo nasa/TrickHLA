@@ -46,12 +46,6 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/DynamicalEntityData.hh"
 #include "SpaceFOM/PhysicalEntity.hh"
 
-namespace TrickHLA
-{
-class Packing;
-class OpaqueBuffer;
-} // namespace TrickHLA
-
 namespace SpaceFOM
 {
 

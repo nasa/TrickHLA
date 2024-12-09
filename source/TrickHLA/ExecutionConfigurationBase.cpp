@@ -124,7 +124,7 @@ ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
    if ( this->S_define_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         send_hs( stderr, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d ERROR deleting Trick Memory for 'this->S_define_name'%c",
+         send_hs( stderr, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d WARNING failed to delete Trick Memory for 'this->S_define_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->S_define_name = NULL;
@@ -157,7 +157,7 @@ void ExecutionConfigurationBase::set_S_define_name(
 {
    if ( this->S_define_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         send_hs( stderr, "ExecutionConfigurationBase::set_S_define_name():%d ERROR deleting Trick Memory for 'this->S_define_name'%c",
+         send_hs( stderr, "ExecutionConfigurationBase::set_S_define_name():%d WARNING failed to delete Trick Memory for 'this->S_define_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->S_define_name = NULL;
@@ -311,7 +311,7 @@ void ExecutionConfigurationBase::wait_for_registration()
       any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
       // Wait a little while to allow the objects to be registered.
-      if ( any_unregistered_obj ) {
+      if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse]
          sleep_timer.sleep();
 
          // Check again to determine if we have any unregistered objects.

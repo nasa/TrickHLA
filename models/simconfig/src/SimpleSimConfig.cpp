@@ -1,6 +1,6 @@
 /*!
+@ingroup SimConfig
 @file models/simconfig/src/SimpleSimConfig.cpp
-@ingroup TrickHLAModel
 @brief This class contains a basic simulation configuration.
 
 @copyright Copyright 2020 United States Government as represented by the
@@ -78,7 +78,7 @@ SimpleSimConfig::~SimpleSimConfig()
 {
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d ERROR deleting Trick Memory for 'required_federates'%c",
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'required_federates'%c",
                   __LINE__, THLA_NEWLINE );
       }
       required_federates = NULL;
@@ -86,7 +86,7 @@ SimpleSimConfig::~SimpleSimConfig()
 
    if ( owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d ERROR deleting Trick Memory for 'owner'%c",
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'owner'%c",
                   __LINE__, THLA_NEWLINE );
       }
       owner = NULL;
@@ -103,7 +103,7 @@ void SimpleSimConfig::configure(
    // Release the memory used by the required_federates c-string.
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::initialize():%d ERROR deleting Trick Memory for 'required_federates'%c",
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::initialize():%d WARNING failed to delete Trick Memory for 'required_federates'%c",
                   __LINE__, THLA_NEWLINE );
       }
       required_federates = NULL;

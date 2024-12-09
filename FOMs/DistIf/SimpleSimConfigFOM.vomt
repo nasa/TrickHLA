@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="11.0.22" class="java.beans.XMLDecoder">
+ <int>7</int>
+ <object class="se.pitch.vomt2.model.PersistentProjectHelper$PersistentProject">
+  <boolean>true</boolean>
+  <string>SimpleSimConfig</string>
+  <boolean>true</boolean>
+  <boolean>true</boolean>
+  <boolean>true</boolean>
+  <object class="se.pitch.vomt2.model.PersistentProjectHelper$PersistentDefaults">
+   <object class="java.lang.Enum" id="Sharing0" method="valueOf">
+    <class>se.pitch.vomt2.model.Sharing</class>
+    <string>PUBLISH_SUBSCRIBE</string>
+   </object>
+   <object idref="Sharing0"/>
+   <object class="java.lang.Enum" method="valueOf">
+    <class>se.pitch.vomt2.model.Ownership</class>
+    <string>NO_TRANSFER</string>
+   </object>
+   <object class="java.lang.Enum" id="TransportationType0" method="valueOf">
+    <class>se.pitch.vomt2.model.TransportationType</class>
+    <string>HLA_RELIABLE</string>
+   </object>
+   <object class="java.lang.Enum" id="OrderType0" method="valueOf">
+    <class>se.pitch.vomt2.model.OrderType</class>
+    <string>RECEIVE</string>
+   </object>
+   <object idref="Sharing0"/>
+   <object idref="TransportationType0"/>
+   <object idref="OrderType0"/>
+  </object>
+  <object class="java.util.ArrayList">
+   <void method="add">
+    <object class="se.pitch.vomt2.model.PersistentProjectHelper$PersistentModule" id="PersistentProjectHelper$PersistentModule0">
+     <string>MIM</string>
+     <string>HLAstandardMIM.xml</string>
+     <boolean>true</boolean>
+     <boolean>false</boolean>
+     <boolean>true</boolean>
+     <boolean>true</boolean>
+     <object class="java.util.ArrayList"/>
+     <object class="java.util.ArrayList"/>
+     <object class="java.util.ArrayList"/>
+     <boolean>true</boolean>
+     <boolean>true</boolean>
+     <object class="java.awt.Color">
+      <int>253</int>
+      <int>180</int>
+      <int>98</int>
+      <int>255</int>
+     </object>
+    </object>
+   </void>
+   <void method="add">
+    <object class="se.pitch.vomt2.model.PersistentProjectHelper$PersistentModule" id="PersistentProjectHelper$PersistentModule1">
+     <string>MyModule</string>
+     <string>SimpleSimConfigFOM.xml</string>
+     <boolean>false</boolean>
+     <boolean>false</boolean>
+     <boolean>true</boolean>
+     <boolean>true</boolean>
+     <object class="java.util.ArrayList">
+      <void method="add">
+       <int>0</int>
+      </void>
+     </object>
+     <object class="java.util.ArrayList"/>
+     <object class="java.util.ArrayList"/>
+     <boolean>false</boolean>
+     <boolean>false</boolean>
+     <object class="java.awt.Color">
+      <int>177</int>
+      <int>221</int>
+      <int>250</int>
+      <int>255</int>
+     </object>
+    </object>
+   </void>
+  </object>
+  <null/>
+  <null/>
+  <null/>
+  <null/>
+  <null/>
+  <object class="java.util.LinkedHashSet">
+   <void method="add">
+    <object class="se.pitch.vomt2.model.PersistentProjectHelper$PersistentView">
+     <boolean>true</boolean>
+     <object class="java.lang.Enum" method="valueOf">
+      <class>se.pitch.vomt2.model.TableType</class>
+      <string>OBJECT_CLASS_TABLE</string>
+     </object>
+     <object idref="PersistentProjectHelper$PersistentModule1"/>
+     <int>5</int>
+     <int>5</int>
+     <int>1389</int>
+     <int>743</int>
+     <object class="java.util.LinkedHashSet"/>
+     <object class="java.util.Collections" method="emptySet"/>
+    </object>
+   </void>
+  </object>
+  <object class="java.util.LinkedHashSet">
+   <void method="add">
+    <object idref="PersistentProjectHelper$PersistentModule0"/>
+   </void>
+  </object>
+  <boolean>false</boolean>
+  <boolean>false</boolean>
+ </object>
+</java>

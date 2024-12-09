@@ -16,27 +16,29 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 #---------------------------------------------------------------------------
 # Command line usage and parsing.
 #---------------------------------------------------------------------------
-def print_usage_message( ) :
+def print_usage_message( ):
 
    print(' ')
    print('TrickHLA SpaceFOM Other Simulation Command Line Configuration Options:')
-   print('  -h -help                : Print this help message.')
-   print('  -blocking-reads [on|off]: on: Turns on blocking cyclic reads, off: disables it (Default).')
-   print('  -realtime [on|off]      : on: Turns on realtime clock, off: disables it (Default).')
-   print('  -hla-time-mgt [on|off]  : on: Turns on HLA Time Management (Default), off: disables it.')
-   print('  -regulating [on|off]    : on: Turns on HLA Time Regulating (Default), off: disables it.')
-   print('  -constrained [on|off]   : on: Turns on HLA Time Constrained (Default), off: disables it.')
-   print('  -stop [time]            : Time to stop simulation, default is 10.0 seconds.')
-   print('  -nostop                 : Set no stop time on simulation.')
-   print('  -verbose [on|off]       : on: Show verbose messages, off: disable messages (Default).')
+   print('  -h --help                 : Print this help message.')
+   print('  --blocking-reads [on|off] : on: Turns on blocking cyclic reads, off: disables it (Default).')
+   print('  --realtime [on|off]       : on: Turns on realtime clock, off: disables it (Default).')
+   print('  --hla-time-mgt [on|off]   : on: Turns on HLA Time Management (Default), off: disables it.')
+   print('  --regulating [on|off]     : on: Turns on HLA Time Regulating (Default), off: disables it.')
+   print('  --constrained [on|off]    : on: Turns on HLA Time Constrained (Default), off: disables it.')
+   print('  --stop [time]             : Time to stop simulation, default is 10.0 seconds.')
+   print('  --nostop                  : Set no stop time on simulation.')
+   print('  --verbose [on|off]        : on: Show verbose messages, off: disable messages (Default).')
    print(' ')
    
    trick.exec_terminate_with_return( -1,
@@ -45,7 +47,7 @@ def print_usage_message( ) :
                                      'Print usage message.')
    return
 
-def parse_command_line( ) :
+def parse_command_line( ):
    
    global print_usage
    global blocking_reads
@@ -63,108 +65,108 @@ def parse_command_line( ) :
    # Process the command line arguments.
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
-   while (index < argc) :
+   while (index < argc):
       
-      if (str(argv[index]) == '-blocking-reads') :
+      if (str(argv[index]) == '--blocking-reads'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                blocking_reads = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                blocking_reads = False
-            else :
-               print('ERROR: Unknown -blocking-reads argument: ' + str(argv[index]))
+            else:
+               print('ERROR: Unknown --blocking-reads argument: ' + str(argv[index]))
                print_usage = True
-         else :
-            print('ERROR: Missing -blocking-reads [on|off] argument.')
+         else:
+            print('ERROR: Missing --blocking-reads [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-realtime') :
+      elif (str(argv[index]) == '--realtime'):
          index = index + 1
          realtime_clock
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                realtime_clock = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                realtime_clock = False
-            else :
-               print('ERROR: Unknown -realtime argument: ' + str(argv[index]))
+            else:
+               print('ERROR: Unknown --realtime argument: ' + str(argv[index]))
                print_usage = True
-         else :
-            print('ERROR: Missing -realtime [on|off] argument.')
+         else:
+            print('ERROR: Missing --realtime [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-hla-time-mgt') :
+      elif (str(argv[index]) == '--hla-time-mgt'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                hla_time_mgt = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                hla_time_mgt = False
-            else :
-               print('ERROR: Unknown -hla-time-mgt argument: ' + str(argv[index]))
+            else:
+               print('ERROR: Unknown --hla-time-mgt argument: ' + str(argv[index]))
                print_usage = True
-         else :
-            print('ERROR: Missing -hla-time-mgt [on|off] argument.')
+         else:
+            print('ERROR: Missing --hla-time-mgt [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-regulating') :
+      elif (str(argv[index]) == '--regulating'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                time_regulating = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                time_regulating = False
-            else :
-               print('ERROR: Unknown -regulating argument: ' + str(argv[index]))
+            else:
+               print('ERROR: Unknown --regulating argument: ' + str(argv[index]))
                print_usage = True
-         else :
-            print('ERROR: Missing -regulating [on|off] argument.')
+         else:
+            print('ERROR: Missing --regulating [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-constrained') :
+      elif (str(argv[index]) == '--constrained'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                time_constrained = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                time_constrained = False
-            else :
-               print('ERROR: Unknown -constrained argument: ' + str(argv[index]))
+            else:
+               print('ERROR: Unknown --constrained argument: ' + str(argv[index]))
                print_usage = True
-         else :
-            print('ERROR: Missing -constrained [on|off] argument.')
+         else:
+            print('ERROR: Missing --constrained [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-stop') :
+      elif (str(argv[index]) == '--stop'):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             run_duration = float(str(argv[index]))
-         else :
-            print('ERROR: Missing -stop [time] argument.')
+         else:
+            print('ERROR: Missing --stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-nostop') :
+      elif (str(argv[index]) == '--nostop'):
          run_duration = None
          
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
          print_usage = True
       
-      elif (str(argv[index]) == '-verbose') :
+      elif (str(argv[index]) == '--verbose'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                verbose = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                verbose = False
-            else :
-               print('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+            else:
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
-         else :
-            print('ERROR: Missing -verbose [on|off] argument.')
+         else:
+            print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
       
-      else :
+      else:
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
     
@@ -196,9 +198,25 @@ run_duration = 10.0
 # Default no verbose messages.
 verbose = False
 
+# Set the default Federate name.
+federate_name = 'Other'
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_Roles_Test'
+
+# Set the default Master Federate name.
+master_name = 'Master'
+
+# Set the default Paceing Federate name.
+pacing_name = 'Pacing'
+
+# Set the default Root Reference Frame name.
+rrfp_name = 'RRFP'
+
+
 parse_command_line()
 
-if (print_usage == True) :
+if (print_usage == True):
    print_usage_message()
 
 
@@ -212,11 +230,14 @@ trick.exec_set_trap_sigfpe(True)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
 # Setup for Trick real time execution. This is the "Pacing" function.
-if (realtime_clock == True) :   
+if (realtime_clock == True):   
    print('Realtime Clock Enabled.')
    exec(open( "Modified_data/trick/realtime.py" ).read())
-else :
+else:
    print('Realtime Clock Disabled.')
+   # For this non-Pacing/non-realtime federate, set the Trick software frame
+   # to the lookahead time by default.
+   trick.exec_set_software_frame( 0.250 )
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
@@ -231,13 +252,13 @@ exec(open( "Modified_data/elapsed_time.dr" ).read())
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   'SpaceFOM_Roles_Test',
-                                   'Other',
-                                   True )
+federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
+                                   thla_manager         = THLA.manager,
+                                   thla_control         = THLA.execution_control,
+                                   thla_config          = THLA.ExCO,
+                                   thla_federation_name = federation_name,
+                                   thla_federate_name   = federate_name,
+                                   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -245,9 +266,9 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.
-if (verbose == True) : 
+if (verbose == True): 
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-else :
+else:
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
 #--------------------------------------------------------------------------
@@ -263,17 +284,16 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
 federate.add_known_federate( True, str(federate.federate.name) )
-federate.add_known_federate( True, 'Master' )
-federate.add_known_federate( True, 'Pacing' )
-federate.add_known_federate( True, 'RRFP' )
+federate.add_known_federate( True, master_name )
+federate.add_known_federate( True, pacing_name )
+federate.add_known_federate( True, rrfp_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
+# MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------
@@ -292,25 +312,25 @@ federate.set_lookahead_time( 0.250 )
 trick.exec_set_software_frame( 0.250 )
 
 # Setup Time Management parameters.
-if (hla_time_mgt == False) :
+if (hla_time_mgt == False):
    print('HLA Time Management Disabled.')
    federate.set_time_management( False )
-else :
+else:
    print('HLA Time Management Enabled.')
    # True to enable TAR/TAG/Regulating/Constrained HLA API's
    federate.set_time_management( True )
    
-   if (time_regulating == False) :
+   if (time_regulating == False):
       print('HLA Time Regulating Disabled.')
       federate.set_time_regulating( False )
-   else :
+   else:
       print('HLA Time Regulating Enabled.')
       federate.set_time_regulating( True )
    
-   if (time_constrained == False) :
+   if (time_constrained == False):
       print('HLA Time Constrained Disabled.')
       federate.set_time_constrained( False )
-   else :
+   else:
       print('HLA Time Constrained Enabled.')
       federate.set_time_constrained( True )
 
@@ -329,48 +349,68 @@ else :
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
-root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                     'RootFrame',
-                                     root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+root_frame = SpaceFOMRefFrameObject(
+   create_frame_object          = federate.is_RRFP,
+   frame_instance_name          = 'RootFrame',
+   frame_S_define_instance      = root_ref_frame.frame_packing,
+   frame_S_define_instance_name = 'root_ref_frame.frame_packing',
+   frame_conditional            = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
 
 # Blocking cyclic reads.
-if (blocking_reads == True) :
+if (blocking_reads == True):
    print('Blocking cyclic reads for RootFrame Enabled.')
    root_frame.set_blocking_cyclic_read( True )
-else :
+else:
    print('Blocking cyclic reads for RootFrame Disabled.')
    root_frame.set_blocking_cyclic_read( False )
 
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
 
+# Set the lag compensation parameters.
+# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
+
+
 #---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
-frame_A = SpaceFOMRefFrameObject( False,
-                                  'FrameA',
-                                  ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+frame_A = SpaceFOMRefFrameObject(
+   create_frame_object          = False,
+   frame_instance_name          = 'FrameA',
+   frame_S_define_instance      = ref_frame_A.frame_packing,
+   frame_S_define_instance_name = 'ref_frame_A.frame_packing',
+   parent_S_define_instance     = root_ref_frame.frame_packing,
+   parent_name                  = 'RootFrame',
+   frame_conditional            = ref_frame_A.conditional,
+   frame_lag_comp               = ref_frame_A.lag_compensation,
+   frame_ownership              = ref_frame_A.ownership_handler,
+   frame_deleted                = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Blocking cyclic reads.
-if (blocking_reads == True) :
+if (blocking_reads == True):
    print('Blocking cyclic reads for FrameA Enabled.')
    frame_A.set_blocking_cyclic_read( True )
-else :
+else:
    print('Blocking cyclic reads for FrameA Disabled.')
    frame_A.set_blocking_cyclic_read( False )
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation parameters.
+# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
+ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

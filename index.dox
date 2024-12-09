@@ -1,0 +1,43 @@
+/**
+ * @defgroup TrickHLA TrickHLA
+ * An IEEE 1516 High Level Architecture (HLA) Simulation Interoperability
+ * Middleware for the Trick Simulation Environment.
+ * @details The TrickHLA software supports the IEEE-1516 High Level
+ * Architecture (HLA) simulation interoperability standard for the Trick
+ * Simulation Environment. The TrickHLA software abstracts away the details of
+ * using HLA, allowing the user to concentrate on the simulation and not worry
+ * about having to be an HLA distributed simulation expert. The TrickHLA
+ * software is data driven and provides a simple Application Programming
+ * Interface (API) making it relatively easy to take an existing Trick
+ * simulation and make it a HLA distributed simulation.
+ */
+ 
+/**
+ * @defgroup SpaceFOM SpaceFOM
+ * A collection of routines that extend TrickHLA to support SpaceFOM.
+ * @details A collection of routines that extend TrickHLA to support SpaceFOM.
+ * @ingroup TrickHLA
+ */
+ 
+/**
+ * @defgroup IMSim IMSim
+ * A collection of routines that extend TrickHLA to support IMSim.
+ * @details A collection of routines that extend TrickHLA to support an older
+ * federation execution control strategy called the Integrated Mission
+ * Simulations (IMSim).
+ * @ingroup TrickHLA
+ */
+ 
+/**
+ * @defgroup JEOD JEOD
+ * TrickHLA examples
+ * @details This is a collection of TrickHLA examples.
+ * @ingroup TrickHLA
+ */
+ 
+/**
+ * @defgroup TrickHLAModels TrickHLAModels
+ * A collection of TrickHLA example models.
+ * @details This is a collection of TrickHLA examples.
+ */
+

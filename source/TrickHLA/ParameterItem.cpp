@@ -43,6 +43,15 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ParameterItem.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
+
 using namespace std;
 using namespace TrickHLA;
 
@@ -91,7 +100,7 @@ void ParameterItem::clear()
 {
    if ( data != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( data ) ) ) {
-         send_hs( stderr, "ParameterItem::clear():%d ERROR deleting Trick Memory for 'data'\n", __LINE__ );
+         send_hs( stderr, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
       }
       data  = NULL;
       size  = 0;

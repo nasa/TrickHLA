@@ -44,10 +44,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 
 // IMSim include files.
-#include "Types.hh"
+#include "IMSim/Types.hh"
 
 namespace IMSim
 {
+
+class ExecutionControl;
 
 class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 {
@@ -62,155 +64,210 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrIMSim__ExecutionConfiguration();
 
+   // Set up friend classes for controlled access.
+   friend class IMSim::ExecutionControl;
+
   public:
-   // The members below are part of the FOM data ExCO exchange.
-   char *root_frame_name; /**<  @trick_units{--}
-      Specifies the name of the root coordinate frame in the federation
-      execution's reference frame tree. This frame shall remain fixed
-      throughout the federation execution. */
+   // The members below are part of the FOM data IMSim simulation configuration exchange.
+   char *owner; /**< @trick_units{--}
+      Specifies the name of the federate publishing the simulation
+      configuration object. */
 
-   double scenario_time_epoch; /**<  @trick_units{s}
-      Federation execution scenario time epoch. This is the beginning epoch
-      expressed in Terrestrial Time (TT) that corresponds to HLA logical time 0.
-      All joining federates shall use this time to coordinate the offset between
-      their local simulation scenario times, their local simulation execution
-      times and the HLA logical time. */
+   char *scenario; /**< @trick_units{--}
+      Specifies the identifying string associated with the scenario being
+      executed. */
 
-   double next_mode_scenario_time; /**<  @trick_units{s}
-      The time for the next federation execution mode change expressed as a
-      federation scenario time reference. Note: this is value is only
-      meaningful for going into freeze; exiting freeze is coordinated through
-      a sync point mechanism. */
+   char *mode; /**< @trick_units{--}
+      Specifies the mode string describing the current federation execution
+      run status. */
 
-   double next_mode_cte_time; /**<  @trick_units{s}
-      The time for the next federation execution mode change expressed as a
-      Central Timing Equipment (CTE) time reference. The standard for this
-      reference shall be defined in the federation agreement when CTE is used. */
+   int64_t run_duration; /**< @trick_units{us}
+      Duration of the federation execution expressed in microseconds. */
 
-   short current_execution_mode; /**< @trick_units{--}
-      Defines the current running state of the federation execution in terms
-      of a finite set of states expressed in the RunMode enumeration.*/
+   int32_t number_of_federates; /**< @trick_units{--}
+      Number of the required federates for the federation execution. */
 
-   short next_execution_mode; /**< @trick_units{--}
-      Defines the next running state of the federation execution in terms of
-      a finite set of states expressed in the RunMode enumeration. This is
-      used in conjunction with the cte_mode_time, sim_mode_time and
-      associated sync point mechanisms to coordinate federation execution
-      mode transitions.*/
+   char *required_federates; /**< @trick_units{--}
+      Specifies the name of the required federates for the federation execution. */
 
-   int64_t least_common_time_step; /**< @trick_units{--}
-      A 64 bit integer time that represents the base time for the least common
-      value of all the time step values in the federation execution (LCTS).
-      This value is set by the Master Federate and does not change during the
-      federation execution. This is used in the computation to find the next
-      HLA Logical Time Boundary (HLTB) available to all federates in the
-      federation execution. The basic equation is
-            HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
-      where GALT is the greatest available logical time. This is used to
-      synchronize the federates in a federation execution to be on a common
-      logical time boundary. */
+   int32_t start_year; /**< @trick_units{yr}
+      Starting year of the federation execution. */
+
+   double start_seconds; /**< @trick_units{s}
+      Starting time in seconds of year of the federation execution. */
+
+   double DUT1; /**< @trick_units{s} A correction factor that approximates the
+      difference between the UTC and UT1 time scales. UTC ~= UT1 + DUT1 */
+
+   int32_t deltaAT; /**< @trick_units{s} Number of leap seconds that separate
+      the UTC and TAI time scales.  TAI = UTC + deltaAT */
 
   public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the IMSim ExecutionConfiguration class. */
    ExecutionConfiguration();
+   /*! @brief Initialization constructor for the TrickHLA IMSim ExecutionConfiguration class.
+    *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
+   explicit ExecutionConfiguration( char const *s_define_name );
    /*! @brief Pure virtual destructor for the IMSim ExecutionConfiguration class. */
    virtual ~ExecutionConfiguration();
 
    // Default data.
-   /*! @brief Sets up the attributes for the ExCO using default values.
-    *  These can be overridden in the input file.
-    *  @param exco_name S_define level Trick name for ExCO. */
-   virtual void configure_attributes( char const *exco_name );
+   /*! @brief Sets up the attributes for the simulation configuration using default values.
+    *  These can be overridden in the input file. */
+   virtual void configure_attributes();
+
+   /*! @brief Sets up the attributes for the simulation configuration using
+    *  default values.  These can be overridden in the input file.
+    *  @param sim_config_name S_define level Trick name for simulation configuration object. */
+   virtual void configure_attributes( char const *sim_config_name );
+
+   /*! @brief Configure the execution configuration object. */
+   virtual void configure();
+
+   /*! @brief Get the reference to the associated IMSim::ExecutionControl object.
+    *  @param exec_control Pointer to the associated IMSim::ExecutionControl object. */
+   virtual void set_imsim_control( IMSim::ExecutionControl *exec_control );
+
+   /*! @brief Get the reference to the associated IMSim::ExecutionControl object.
+    *  @return Pointer to the associated IMSim::ExecutionControl object. */
+   virtual IMSim::ExecutionControl *get_imsim_control();
 
    // From the TrickHLA::Packing class.
    virtual void pack();
    virtual void unpack();
 
+   //
    // FOM data public accessor interface.
-   /*! @brief Set the root reference frame name.
-    *  @param name Root reference frame name. */
-   virtual void set_root_frame_name( char const *name );
-   /*! @brief Get the root reference frame name.
-    *  @return Root Reference Frame name as a constant string. */
-   virtual char const *get_root_frame_name()
+   //
+   /*! @brief Set the name of the simulation configuration owner.
+    *  @param owner_name Name of the simulation configuration owner. */
+   virtual void set_owner( char const *owner_name );
+   /*! @brief Get the name of the simulation configuration owner.
+    *  @return Name of the simulation configuration owner as a constant string. */
+   virtual char const *get_owner()
    {
-      return root_frame_name;
+      return owner;
    }
 
-   /*! @brief Set the scenario time line epoch.
-    *  @param scenario_time Scenario time line epoch. */
-   virtual void set_scenario_time_epoch( double scenario_time );
-   /*! @brief Get the scenario time line epoch.
-    *  @return The scenario time line epoch. */
-   virtual double get_scenario_time_epoch()
+   /*! @brief Set the scenario execution description string.
+    *  @param scenario_id String describing the federation execution scenario. */
+   virtual void set_scenario( char const *scenario_id );
+   /*! @brief Get the scenario execution description string.
+    *  @return Scenario execution description as a constant string. */
+   virtual char const *get_scenario()
    {
-      return scenario_time_epoch;
+      return scenario;
    }
 
-   /*! @brief Set the scenario time for the next mode transition.
-    *  @param next_mode_time Scenario time for next mode transition. */
-   virtual void set_next_mode_scenario_time( double next_mode_time );
-   /*! @brief Get the next mode scenario time.
-    *  @return The next mode scenario time. */
-   virtual double get_next_mode_scenario_time()
+   /*! @brief Set the execution mode description string.
+    *  @param mode_id String describing the federation execution mode. */
+   virtual void set_mode( char const *mode_id );
+   /*! @brief Get the execution mode description string.
+    *  @return Execution mode description as a constant string. */
+   virtual char const *get_mode()
    {
-      return next_mode_scenario_time;
+      return mode;
    }
 
-   /*! @brief Set the next mode CTE time.
-    *  @param cte_time CTE time for next mode transition. */
-   virtual void set_next_mode_cte_time( double cte_time );
-   /*! @brief Get the next mode CTE time.
-    *  @return The next mode CTE time. */
-   virtual double get_next_mode_cte_time()
+   /*! @brief Set the planned federation execution run duration in microseconds.
+    *  @param run_time Planned federation execution run duration in microseconds. */
+   virtual void set_run_duration( int64_t run_time )
    {
-      return next_mode_cte_time;
+      run_duration = run_time;
+   }
+   /*! @brief Get planned federation execution run duration in microseconds.
+    *  @return The planned federation execution run duration in microseconds. */
+   virtual int64_t get_run_duration()
+   {
+      return run_duration;
    }
 
-   /*! @brief Sets the current ExCO run mode.
-    *  @param mode Current Execution configuration run mode integer value. */
-   virtual void set_current_execution_mode( short mode );
-   /*! @brief Sets the current ExCO run mode.
-    * @param mode Current Execution configuration run mode enumeration value. */
-   virtual void set_current_execution_mode( IMSim::ExecutionModeEnum mode );
-   /*! @brief Get the current execution mode.
-    *  @return The current execution mode as an integer. */
-   virtual short get_current_execution_mode()
+   /*! @brief Set the number of required federates for this federation execution.
+    *  @param num_federates Number of required federates for this federation execution. */
+   virtual void set_number_of_federates( int32_t num_federates )
    {
-      return current_execution_mode;
+      number_of_federates = num_federates;
+   }
+   /*! @brief Get the number of required federates for this federation execution.
+    *  @return The number of required federates for this federation execution. */
+   virtual int32_t get_number_of_federates()
+   {
+      return number_of_federates;
    }
 
-   /*! @brief Sets the next ExCO execution mode.
-    *  @param mode Next Execution configuration execution mode from an integer. */
-   virtual void set_next_execution_mode( short mode );
-   /*! @brief Sets the next ExCO execution mode.
-    *  @param mode Next Execution configuration execution mode from an enumeration value. */
-   virtual void set_next_execution_mode( IMSim::ExecutionModeEnum mode );
-   /*! @brief Get the next execution mode.
-    *  @return The next execution mode as an integer. */
-   virtual short get_next_execution_mode()
+   /*! @brief Set the list of required federates in a comma separated string.
+    *  @param federates List of required federates in a comma separated string. */
+   virtual void set_required_federates( char const *federates );
+   /*! @brief Get the list of required federates.
+    *  @return List of required federates as a comma separated constant string. */
+   virtual char const *get_required_federates()
    {
-      return this->next_execution_mode;
+      return required_federates;
    }
 
-   /*! @brief Set the least common time step in seconds for the federation.
-    *  @param lcts Least Common Time Step time in seconds. */
-   virtual void set_least_common_time_step( double const lcts );
-
-   /*! @brief Get the value of the least common time step.
-    *  @return The value of the least common time step. */
-   virtual int64_t get_least_common_time_step()
+   /*! @brief Set the start year of the federation execution scenario time.
+    *  @param year Start year of the federation execution scenario time. */
+   virtual void set_start_year( int32_t year )
    {
-      return this->least_common_time_step;
+      start_year = year;
+   }
+   /*! @brief Get the start year of the federation execution scenario time.
+    *  @return The start year of the federation execution scenario time. */
+   virtual int32_t get_start_year()
+   {
+      return start_year;
    }
 
-   // ExecutionConfiguration specific functions.
-   /*! @brief Setup the Trick Ref Attributes for the ExCO object.
+   /*! @brief Set the start seconds of year for the federation execution scenario time.
+    *  @param soy Start seconds of year for the federation execution scenario time. */
+   virtual void set_start_seconds( double soy )
+   {
+      start_seconds = soy;
+   }
+   /*! @brief Get the start seconds of the federation execution scenario time..
+    *  @return The start seconds of the federation execution scenario time. */
+   virtual double get_start_seconds()
+   {
+      return start_seconds;
+   }
+
+   /*! @brief Set the offset between UT1 and UTC.
+    *  @param offset The offset between UT1 and UTC. */
+   virtual void set_DUT1( double offset )
+   {
+      DUT1 = offset;
+   }
+   /*! @brief Get the offset between UT1 and UTC.
+    *  @return The offset between UT1 and UTC. */
+   virtual double get_DUT1()
+   {
+      return DUT1;
+   }
+
+   /*! @brief Set the leap second time offset between TAI and UTC.
+    *  @param leap_seconds The leap second time offset between TAI and UTC. */
+   virtual void set_deltaAT( int32_t leap_seconds )
+   {
+      deltaAT = leap_seconds;
+   }
+   /*! @brief Get the leap second time offset between TAI and UTC.
+    *  @return The leap second time offset between TAI and UTC. */
+   virtual int32_t get_deltaAT()
+   {
+      return deltaAT;
+   }
+
+   // IMSim Simulation Configuration specific functions.
+   /*! @brief Setup the Trick Ref Attributes for the ExecutionConfiguration object.
     *  @param packing_obj Associated packing object. */
-   virtual void setup_ref_attributes( Packing *packing_obj );
-   /*! @brief Print the current ExCO state to the console. */
+   virtual void setup_ref_attributes( TrickHLA::Packing *packing_obj );
+
+   /*! @brief Print the current Execution Configuration object to the console. */
    virtual void print_execution_configuration();
+
+   /*! @brief Print the current simulation configuration state to the console. */
+   virtual void print_simconfig( std::ostream &stream = std::cout );
 
    /*! @brief Wait on an ExCO update.
     *  @return True for successful wait. */

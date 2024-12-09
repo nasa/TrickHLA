@@ -27,6 +27,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
+@trick_link_dependency{../../source/SpaceFOM/LRTreeNodeBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/ExecutionControl.cpp}
 @trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
@@ -49,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
+#include "SpaceFOM/LRTreeNodeBase.hh"
 #include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
@@ -69,7 +71,7 @@ namespace SpaceFOM
 // helps to limit issues with recursive includes.
 class ExecutionControl;
 
-class RefFrameBase : public TrickHLA::Packing
+class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 {
 
    friend class RefFrameTree;
@@ -164,12 +166,8 @@ class RefFrameBase : public TrickHLA::Packing
       return parent_frame;
    }
 
-   /*! @brief Check to see if this is a root reference frame.
-    *  @return True if this is a root reference frame, false otherwise. */
-   virtual bool is_root() { return ( is_root_frame ); }
-
    /*! @brief Set this reference frame as the root reference frame.
-    *  @return True is set succeded, false otherwise. */
+    *  @return True if set succeeded, false otherwise. */
    virtual bool set_root( bool root_state );
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
@@ -203,12 +201,7 @@ class RefFrameBase : public TrickHLA::Packing
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 
-  public:
-   bool debug; ///< @trick_units{--} Debug output flag.
-
   protected:
-   bool is_root_frame; ///< @trick_units{--} Indicator that this is a root reference frame.
-
    RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frame's parent frame.
 
    TrickHLA::Attribute *name_attr;        ///< @trick_io{**} Reference frame name Attribute.

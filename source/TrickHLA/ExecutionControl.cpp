@@ -22,7 +22,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
-@trick_link_dependency{SyncPntListBase.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title
@@ -41,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
 
@@ -53,8 +53,17 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 // Simple TrickHL::ExecutionControl file level declarations.
 namespace TrickHLA
@@ -298,7 +307,7 @@ void ExecutionControl::add_initialization_sync_points()
    // This version of ExecutionControl does not have any.
 
    // Add the multiphase initialization synchronization points.
-   this->add_multiphase_init_sync_points();
+   add_multiphase_init_sync_points();
 }
 
 /*!
@@ -306,18 +315,13 @@ void ExecutionControl::add_initialization_sync_points()
  */
 void ExecutionControl::add_multiphase_init_sync_points()
 {
-   return;
-}
-
-void ExecutionControl::announce_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const                    &label,
-   RTI1516_USERDATA const           &user_supplied_tag )
-{
-   // In this case the default SyncPntListBase::announce_sync_point works.
-   // Strictly speaking, we could just not define this. However, this provides
-   // a place to implement if that changes.
-   SyncPntListBase::announce_sync_point( rti_ambassador, label, user_supplied_tag );
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ExecutionControl::add_multiphase_init_sync_points():" << __LINE__
+             << " This call will be ignored because this ExecutionControl does not"
+             << " support multiphase initialization synchronization points." << THLA_ENDL;
+      send_hs( stdout, errmsg.str().c_str() );
+   }
 }
 
 /*!
@@ -332,6 +336,16 @@ void ExecutionControl::clear_multiphase_init_sync_points()
              << " support multiphase initialization synchronization points." << THLA_ENDL;
       send_hs( stdout, errmsg.str().c_str() );
    }
+}
+
+void ExecutionControl::sync_point_announced(
+   wstring const          &label,
+   RTI1516_USERDATA const &user_supplied_tag )
+{
+   // In this case the default SyncPointManagerBase::sync_point_announced()
+   // function works. Strictly speaking, we could just not define this.
+   // However, this provides a place to implement if that changes.
+   SyncPointManagerBase::sync_point_announced( label, user_supplied_tag );
 }
 
 void ExecutionControl::publish()

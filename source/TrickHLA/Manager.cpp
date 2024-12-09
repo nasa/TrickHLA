@@ -47,15 +47,19 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdint>
 #include <float.h>
+#include <iomanip>
+#include <map>
 #include <string>
 
 // Trick include files.
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
@@ -73,6 +77,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -120,7 +125,6 @@ Manager::Manager()
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
-     job_cycle_base_time( 0LL ),
      rejoining_federate( false ),
      restore_determined( false ),
      restore_federate( false ),
@@ -143,7 +147,7 @@ Manager::~Manager()
 {
    object_map.clear();
    obj_name_index_map.clear();
-   clear_interactions();
+   free_checkpoint_interactions();
 
    // Make sure we destroy the mutex.
    obj_discovery_mutex.destroy();
@@ -188,7 +192,7 @@ void Manager::initialize()
       send_hs( stdout, "Manager::initialize():%d%c", __LINE__, THLA_NEWLINE );
    }
 
-   // Check to make sure we have a reference to the TrickHLA::Manager.
+   // Check to make sure we have a reference to the TrickHLA::Federate.
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
@@ -227,6 +231,7 @@ void Manager::restart_initialization()
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -249,6 +254,7 @@ void Manager::restart_initialization()
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'execution_control' pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // The set_master() function set's additional parameter so call it again to
@@ -284,14 +290,34 @@ void Manager::restart_initialization()
 
    // Restore ownership_transfer data for all objects.
    for ( unsigned int n = 0; n < obj_count; ++n ) {
-      objects[n].restore_ownership_transfer_checkpointed_data();
+      objects[n].decode_checkpoint();
    }
 
    // Restore checkpointed interactions.
-   restore_interactions();
+   decode_checkpoint_interactions();
 
    // The manager is now initialized.
    this->mgr_initialized = true;
+}
+
+void Manager::initialize_HLA_cycle_time()
+{
+   if ( !execution_control->verify_HLA_cycle_time( federate->get_HLA_cycle_time_in_base_time(),
+                                                   federate->get_lookahead_in_base_time() ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::initialize_HLA_cycle_time():" << __LINE__
+             << " ERROR: Invalid HLA cycle time ("
+             << setprecision( 18 ) << federate->get_HLA_cycle_time()
+             << " seconds)!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Set the core job cycle time now that we know what it is so that the
+   // attribute cyclic ratios can now be calculated for any multi-rate
+   // attributes.
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      objects[n].set_core_job_cycle_time( federate->get_HLA_cycle_time() );
+   }
 }
 
 /*! @brief Verify the user specified object and interaction arrays and counts. */
@@ -735,7 +761,7 @@ void Manager::receive_init_data(
  */
 void Manager::clear_init_sync_points()
 {
-   // Clear the multiphase initalization synchronization points associated
+   // Clear the multiphase initialization synchronization points associated
    // with ExecutionControl initialization.
    this->execution_control->clear_multiphase_init_sync_points();
 }
@@ -781,13 +807,11 @@ joining federate so this call will be ignored.%c",
    StringUtilities::to_wstring( ws_syc_point_label, sync_point_label );
 
    // Determine if the sync-point label is valid.
-   if ( this->execution_control->contains( ws_syc_point_label ) ) {
+   if ( execution_control->contains_sync_point( ws_syc_point_label ) ) {
 
       // Achieve the specified sync-point and wait for the federation
       // to be synchronized on it.
-      this->execution_control->achieve_and_wait_for_synchronization( *( this->get_RTI_ambassador() ),
-                                                                     this->federate,
-                                                                     ws_syc_point_label );
+      execution_control->achieve_sync_point_and_wait_for_synchronization( ws_syc_point_label );
 
    } else {
       ostringstream errmsg;
@@ -809,8 +833,10 @@ void Manager::request_data_update(
    wstring const &instance_name )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::request_data_update():%d Object:'%ls'%c",
-               __LINE__, instance_name.c_str(), THLA_NEWLINE );
+      string name_str;
+      StringUtilities::to_string( name_str, instance_name );
+      send_hs( stdout, "Manager::request_data_update():%d Object:'%s'%c",
+               __LINE__, name_str.c_str(), THLA_NEWLINE );
    }
 
    bool found = false;
@@ -892,15 +918,18 @@ void Manager::object_instance_name_reservation_failed(
       return;
    }
 
+   string name_str;
+   StringUtilities::to_string( name_str, obj_instance_name );
+
    // Anything beyond this point is fatal.
    send_hs( stderr, "Manager::object_instance_name_reservation_failed():%d \
-Name:'%ls' Please check your input or modified data files to make sure the \
+Name:'%s' Please check your input or modified data files to make sure the \
 object instance name is unique, no duplicates, within the Federation. For \
 example, try using fed_name.object_FOM_name for the object instance name. \
 Also, an object should be owned by only one Federate so one common mistake is \
 to have the 'create_HLA_instance' flag for the same object being set to true \
 for more than one Federate.%c",
-            __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+            __LINE__, name_str.c_str(), THLA_NEWLINE );
 
    wstring obj_name;
    for ( unsigned int n = 0; n < obj_count; ++n ) {
@@ -1232,8 +1261,7 @@ void Manager::setup_object_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string id_str;
-               StringUtilities::to_string( id_str,
-                                           attrs[i].get_attribute_handle() );
+               StringUtilities::to_string( id_str, attrs[i].get_attribute_handle() );
                msg << "\t  Result for Attribute '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'"
@@ -1398,8 +1426,7 @@ void Manager::setup_interaction_RTI_handles(
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string handle_str;
-            StringUtilities::to_string( handle_str,
-                                        in_interactions[n].get_class_handle() );
+            StringUtilities::to_string( handle_str, in_interactions[n].get_class_handle() );
             msg << "  Result for Interaction"
                 << " FOM-Name:'" << inter_FOM_name << "'"
                 << " Interaction-ID:" << handle_str << endl;
@@ -1430,8 +1457,7 @@ void Manager::setup_interaction_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string handle_str;
-               StringUtilities::to_string( handle_str,
-                                           params[i].get_parameter_handle() );
+               StringUtilities::to_string( handle_str, params[i].get_parameter_handle() );
                msg << "\t  Result for Parameter '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'"
                    << " Parameter-ID:" << handle_str << endl;
@@ -2237,51 +2263,6 @@ void Manager::provide_attribute_update(
 /*!
  * @job_class{scheduled}
  */
-void Manager::determine_job_cycle_time()
-{
-   if ( this->job_cycle_base_time > 0LL ) {
-      return;
-   }
-
-   // Get the lookahead time.
-   int64_t const lookahead_time_base_time = federate->get_lookahead_in_base_time();
-
-   // Get the cycle time.
-   double const cycle_time   = exec_get_job_cycle( NULL );
-   this->job_cycle_base_time = Int64BaseTime::to_base_time( cycle_time );
-
-   // Verify the job cycle time against the HLA lookahead time.
-   if ( ( this->job_cycle_base_time <= 0LL ) || ( this->job_cycle_base_time < lookahead_time_base_time ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::determine_job_cycle_time():" << __LINE__
-             << " ERROR: The cycle time for this job is less than the HLA"
-             << " lookahead time! The HLA Lookahead time ("
-             << Int64BaseTime::to_seconds( lookahead_time_base_time )
-             << " seconds) must be less than or equal to the job cycle time ("
-             << cycle_time << " seconds). Make sure the 'lookahead_time' in"
-             << " your input or modified-data file is less than or equal to the"
-             << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
-             << " the send_cyclic_and_requested_data() and"
-             << " receive_cyclic_data() jobs." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::determine_job_cycle_time():%d cycle-time:%f seconds%c",
-               __LINE__, cycle_time, THLA_NEWLINE );
-   }
-
-   // Set the core job cycle time now that we know what it is so that the
-   // attribute cyclic ratios can now be calculated for any multi-rate
-   // attributes.
-   for ( unsigned int n = 0; n < this->obj_count; ++n ) {
-      objects[n].set_core_job_cycle_time( cycle_time );
-   }
-}
-
-/*!
- * @job_class{scheduled}
- */
 void Manager::send_cyclic_and_requested_data()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2295,11 +2276,6 @@ void Manager::send_cyclic_and_requested_data()
    int64_t const lookahead_base_time   = federate->is_zero_lookahead_time()
                                             ? 0LL
                                             : federate->get_lookahead_in_base_time();
-
-   // Determine the main thread cycle time for this job if it is not yet known.
-   if ( this->job_cycle_base_time <= 0LL ) {
-      determine_job_cycle_time();
-   }
 
    // The update_time should be the current granted time plus the data cycle
    // delta time for this job if HLA Time Management is enabled otherwise it
@@ -2322,7 +2298,7 @@ void Manager::send_cyclic_and_requested_data()
    // the case for a late joining federate. The data cycle time (dt) is how
    // often we send and receive data, which may or may not match the lookahead.
    // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
-   int64_t   dt      = this->job_cycle_base_time;
+   int64_t   dt      = federate->get_HLA_cycle_time_in_base_time();
    int64_t   prev_dt = dt;
    Int64Time update_time( granted_base_time + dt );
 
@@ -2347,7 +2323,7 @@ void Manager::send_cyclic_and_requested_data()
       if ( federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
          // Get the cyclic data time for the object.
-         dt = federate->get_data_cycle_base_time_for_obj( obj_index, this->job_cycle_base_time );
+         dt = federate->get_data_cycle_base_time_for_obj( obj_index, federate->get_HLA_cycle_time_in_base_time() );
 
          // Reuse the update_time if the data cycle time (dt) is the same.
          if ( dt != prev_dt ) {
@@ -2457,7 +2433,7 @@ void Manager::process_interactions()
       interactions_queue.pop();
    }
 
-   clear_interactions();
+   free_checkpoint_interactions();
 }
 
 /*!
@@ -2622,7 +2598,7 @@ bool Manager::discover_object_instance(
       federate->add_federate_instance_id( theObject );
       return_value = true;
 
-      // save into my federate's discovered federate storage area
+      // Save into my federate's discovered federate storage area
       federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2780,6 +2756,95 @@ void Manager::pull_ownership()
 }
 
 /*!
+ * @brief Blocking function call to pull ownership of the named object
+ * instance at initialization.
+ * @param obj_instance_name Object instance name to pull ownership
+ *  of for all attributes.
+ */
+void Manager::pull_ownership_at_init(
+   char const *obj_instance_name )
+
+{
+   pull_ownership_at_init( obj_instance_name, NULL );
+}
+
+/*!
+ * @brief Blocking function call to pull ownership of the named object
+ * instance at initialization.
+ * @param obj_instance_name Object instance name to pull ownership
+ * of for all attributes
+ * @param attribute_list Comma separated list of attributes.
+ */
+void Manager::pull_ownership_at_init(
+   char const *obj_instance_name,
+   char const *attribute_list )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::pull_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::pull_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->pull_ownership_at_init( attribute_list );
+}
+
+/*!
+ * @brief Blocking function call to wait to handle the remote request to Pull
+ * ownership object attributes to this federate.
+ * @param obj_instance_name Object instance name to handle the remote
+ *  pulled ownership attributes from.
+ */
+void Manager::handle_pulled_ownership_at_init(
+   char const *obj_instance_name )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->handle_pulled_ownership_at_init();
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void Manager::pull_ownership_upon_rejoin()
+{
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      if ( objects[n].is_create_HLA_instance() ) {
+         objects[n].pull_ownership_upon_rejoin();
+      }
+   }
+}
+
+/*!
  * @job_class{scheduled}
  */
 void Manager::push_ownership()
@@ -2787,6 +2852,82 @@ void Manager::push_ownership()
    for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].push_ownership();
    }
+}
+
+/*!
+ * @brief Blocking function call to push ownership of all the locally owned
+ * object attributes.
+ * @param obj_instance_name Object instance name to push ownership
+ * of for all attributes.
+ */
+void Manager::push_ownership_at_init(
+   char const *obj_instance_name )
+{
+   push_ownership_at_init( obj_instance_name, NULL );
+}
+
+/*!
+ * @brief Blocking function call to push ownership of the named object
+ * instance at initialization.
+ * @param obj_instance_name Object instance name to push ownership
+ * of for all attributes.
+ * @param attribute_list Comma separated list of attribute FOM names.
+ */
+void Manager::push_ownership_at_init(
+   char const *obj_instance_name,
+   char const *attribute_list )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::push_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::push_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->push_ownership_at_init( attribute_list );
+}
+
+/*!
+ * @brief Blocking function call to wait to handle the remote request to
+ * Push ownership object attributes to this federate.
+ * @param obj_instance_name Object instance name to handle the remote
+ * pushed ownership attributes from.
+ */
+void Manager::handle_pushed_ownership_at_init(
+   char const *obj_instance_name )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->handle_pushed_ownership_at_init();
 }
 
 /*!
@@ -2902,10 +3043,10 @@ void Manager::start_federation_save_at_scenario_time(
 /*!
  * @job_class{initialization}
  */
-void Manager::setup_checkpoint()
+void Manager::encode_checkpoint()
 {
    // Call the ExecutionControl method.
-   this->execution_control->setup_checkpoint();
+   execution_control->encode_checkpoint();
 
    for ( unsigned int n = 0; n < obj_count; ++n ) {
       // Any object with a valid instance handle must be marked as required
@@ -2915,16 +3056,44 @@ void Manager::setup_checkpoint()
          objects[n].mark_required();
       }
       // Setup the ownership handler checkpoint data structures.
-      objects[n].setup_ownership_transfer_checkpointed_data();
+      objects[n].encode_checkpoint();
    }
 
-   setup_checkpoint_interactions();
+   encode_checkpoint_interactions();
 }
 
-void Manager::setup_checkpoint_interactions()
+void Manager::decode_checkpoint()
+{
+   // Restore the state of this class from the Trick checkpoint.
+
+   // Call the ExecutionControl method.
+   execution_control->decode_checkpoint();
+
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      objects[n].decode_checkpoint();
+   }
+
+   decode_checkpoint_interactions();
+}
+
+void Manager::free_checkpoint()
+{
+   // Clear/release the memory used for the checkpoint data structures.
+
+   // Call the ExecutionControl method.
+   execution_control->free_checkpoint();
+
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      objects[n].free_checkpoint();
+   }
+
+   free_checkpoint_interactions();
+}
+
+void Manager::encode_checkpoint_interactions()
 {
    // Clear the checkpoint for the interactions so that we don't leak memory.
-   clear_interactions();
+   free_checkpoint_interactions();
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -2932,7 +3101,7 @@ void Manager::setup_checkpoint_interactions()
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::setup_checkpoint_interactions():%d interactions_queue.size()=%d%c",
+         send_hs( stdout, "Manager::encode_checkpoint_interactions():%d interactions_queue.size()=%d%c",
                   __LINE__, interactions_queue.size(), THLA_NEWLINE );
       }
 
@@ -2944,7 +3113,7 @@ void Manager::setup_checkpoint_interactions()
          alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
-         errmsg << "Manager::setup_checkpoint_interactions():" << __LINE__
+         errmsg << "Manager::encode_checkpoint_interactions():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
                 << " linear array of " << check_interactions_count << " elements."
                 << THLA_ENDL;
@@ -2958,7 +3127,7 @@ void Manager::setup_checkpoint_interactions()
          InteractionItem *item = static_cast< InteractionItem * >( interactions_queue.front() );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::setup_checkpoint_interactions():%d \
+            send_hs( stdout, "Manager::encode_checkpoint_interactions():%d \
 Checkpointing into check_interactions[%d] from interaction index %d.%c",
                      __LINE__, i, item->index, THLA_NEWLINE );
          }
@@ -2989,14 +3158,52 @@ Checkpointing into check_interactions[%d] from interaction index %d.%c",
    // auto_unlock_mutex unlocks the mutex lock here
 }
 
-void Manager::clear_interactions()
+void Manager::decode_checkpoint_interactions()
+{
+   if ( check_interactions_count > 0 ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         send_hs( stdout, "Manager::decode_checkpoint_interactions():%d check_interactions_count=%d%c",
+                  __LINE__, check_interactions_count, THLA_NEWLINE );
+      }
+
+      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
+
+         InteractionItem *item = new InteractionItem();
+
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            send_hs( stdout, "Manager::decode_checkpoint_interactions():%d \
+restoring check_interactions[%d] into interaction index %d, parm_count=%d%c",
+                     __LINE__, i, check_interactions[i].index,
+                     check_interactions[i].parm_items_count, THLA_NEWLINE );
+         }
+         item->index            = check_interactions[i].index;
+         item->interaction_type = check_interactions[i].interaction_type;
+         item->parm_items_count = check_interactions[i].parm_items_count;
+         item->parm_items       = check_interactions[i].parm_items;
+         item->restore_queue();
+         item->user_supplied_tag_size = check_interactions[i].user_supplied_tag_size;
+         if ( check_interactions[i].user_supplied_tag_size == 0 ) {
+            item->user_supplied_tag = NULL;
+         } else {
+            item->user_supplied_tag = reinterpret_cast< unsigned char * >(
+               trick_MM->mm_strdup( reinterpret_cast< char const * >( check_interactions[i].user_supplied_tag ) ) );
+         }
+         item->order_is_TSO = check_interactions[i].order_is_TSO;
+         item->time         = check_interactions[i].time;
+
+         interactions_queue.push( item );
+      }
+   }
+}
+
+void Manager::free_checkpoint_interactions()
 {
    if ( check_interactions_count > 0 ) {
       for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
       if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
-         send_hs( stderr, "Manager::clear_interactions():%d ERROR deleting Trick Memory for 'check_interactions'%c",
+         send_hs( stderr, "Manager::free_checkpoint_interactions():%d WARNING failed to delete Trick Memory for 'check_interactions'%c",
                   __LINE__, THLA_NEWLINE );
       }
       check_interactions       = NULL;
@@ -3004,11 +3211,11 @@ void Manager::clear_interactions()
    }
 }
 
-void Manager::dump_interactions()
+void Manager::print_checkpoint_interactions()
 {
    if ( check_interactions_count > 0 ) {
       ostringstream msg;
-      msg << "Manager::dump_interactions():" << __LINE__
+      msg << "Manager::print_checkpoint_interactions():" << __LINE__
           << "check_interactions contains these "
           << check_interactions_count << " elements:" << endl;
       for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
@@ -3035,56 +3242,6 @@ void Manager::dump_interactions()
              << endl;
       }
       send_hs( stdout, msg.str().c_str() );
-   }
-}
-
-void Manager::restore_interactions()
-{
-   if ( check_interactions_count > 0 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::restore_interactions():%d check_interactions_count=%d%c",
-                  __LINE__, check_interactions_count, THLA_NEWLINE );
-      }
-
-      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
-
-         InteractionItem *item = new InteractionItem();
-
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::restore_interactions():%d \
-restoring check_interactions[%d] into interaction index %d, parm_count=%d%c",
-                     __LINE__, i, check_interactions[i].index,
-                     check_interactions[i].parm_items_count, THLA_NEWLINE );
-         }
-         item->index            = check_interactions[i].index;
-         item->interaction_type = check_interactions[i].interaction_type;
-         item->parm_items_count = check_interactions[i].parm_items_count;
-         item->parm_items       = check_interactions[i].parm_items;
-         item->restore_queue();
-         item->user_supplied_tag_size = check_interactions[i].user_supplied_tag_size;
-         if ( check_interactions[i].user_supplied_tag_size == 0 ) {
-            item->user_supplied_tag = NULL;
-         } else {
-            item->user_supplied_tag = reinterpret_cast< unsigned char * >(
-               trick_MM->mm_strdup( reinterpret_cast< char const * >( check_interactions[i].user_supplied_tag ) ) );
-         }
-         item->order_is_TSO = check_interactions[i].order_is_TSO;
-         item->time         = check_interactions[i].time;
-
-         interactions_queue.push( item );
-      }
-   }
-}
-
-/*!
- * @job_class{scheduled}
- */
-void Manager::pull_ownership_upon_rejoin()
-{
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
-      if ( objects[n].is_create_HLA_instance() ) {
-         objects[n].pull_ownership_upon_rejoin();
-      }
    }
 }
 
@@ -3188,8 +3345,8 @@ void Manager::wait_for_discovery_of_objects()
 
          } while ( ( !create_HLA_instance_object_found && // still missing some objects other than
                      ( discovery_count < ( required_count - 1 ) ) )
-                   ||                                          // the one for the rejoining federate, or
-                   ( create_HLA_instance_object_found &&       // missing some other object(s) but
+                   ||                                    // the one for the rejoining federate, or
+                   ( create_HLA_instance_object_found && // missing some other object(s) but
                      ( discovery_count < required_count ) ) ); // found the rejoining federate
       }
    } else {

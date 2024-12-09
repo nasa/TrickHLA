@@ -31,6 +31,9 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/message_proto.h"
 
+// TrickHLA include files.
+#include "TrickHLA/StandardsSupport.hh"
+
 // Model include files.
 #include "SpaceFOM/QuaternionEncoder.hh"
 
@@ -39,7 +42,8 @@ NASA, Johnson Space Center\n
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
-// HLA Encoder helper includes.
+// HLA include files.
+#include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #pragma GCC diagnostic pop
 
