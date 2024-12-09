@@ -297,24 +297,14 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       trickhla_source_dirs.extend ( ['./models/sine/src'] )
    if os.path.isdir( './models/Wheelbot/Battery/src' ):
       trickhla_source_dirs.extend( ['./models/Wheelbot/Battery/src'] )
-   if os.path.isdir( './models/Wheelbot/Battery/test' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Battery/test'] )
    if os.path.isdir( './models/Wheelbot/Control/src' ):
       trickhla_source_dirs.extend( ['./models/Wheelbot/Control/src'] )
-   if os.path.isdir( './models/Wheelbot/Control/test' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Control/test'] )
    if os.path.isdir( './models/Wheelbot/Electrical/src' ):
       trickhla_source_dirs.extend( ['./models/Wheelbot/Electrical/src'] )
-   if os.path.isdir( './models/Wheelbot/Electrical/test' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Electrical/test'] )
    if os.path.isdir( './models/Wheelbot/Guidance/src' ):
       trickhla_source_dirs.extend( ['./models/Wheelbot/Guidance/src'] )
-   if os.path.isdir( './models/Wheelbot/Guidance/test' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Guidance/test'] )
    if os.path.isdir( './models/Wheelbot/Motor/src' ):
       trickhla_source_dirs.extend( ['./models/Wheelbot/Motor/src'] )
-   if os.path.isdir( './models/Wheelbot/Motor/test' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Motor/test'] )
    if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
       trickhla_source_dirs.extend( ['./models/Wheelbot/Vehicle/src'] )
 
