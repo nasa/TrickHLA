@@ -22,13 +22,12 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, January 2015, --, Added release date.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, June 2019, --, Version 3 rewrite.}
 @revs_end
-
 */
 
 #ifndef TRICKHLA_VERSION_HH
 #define TRICKHLA_VERSION_HH
 
 #define TRICKHLA_VERSION "v3.1.0"
-#define TRICKHLA_RELEASE_DATE "2024-11-22"
+#define TRICKHLA_RELEASE_DATE "2024-12-09"
 
 #endif // TRICKHLA_VERSION_HH
