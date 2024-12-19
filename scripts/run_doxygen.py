@@ -39,7 +39,7 @@ def main():
    scripts_docs = False
    sims_docs = False
 
-   version_id = '3.0'
+   version_id = '3.1.0'
    version_tag = None
 
    # Setup command line argument parsing.
@@ -202,14 +202,14 @@ def main():
 
       # Set Doxygen configuration parameters.
       output_dir = 'docs/combined'
-      erro_log_file = 'docs/doxygen/combinedErr.txt'
+      error_log_file = 'docs/doxygen/combinedErr.txt'
       file_patterns = '*.cpp *.hh *.c *.h *.d *.sm S_define *.dox *.md *.markdown *.py'
       exclude = '*/verif */build'
       latex_dir = output_dir + '/latex'
 
       # Check if this is a clean command.
       if clean:
-         cleanup_document_dir( output_dir, erro_log_file, test, verbose_output )
+         cleanup_document_dir( output_dir, error_log_file, test, verbose_output )
 
       # Otherwise, generate the documentation.
       else:
@@ -219,14 +219,14 @@ def main():
          # Set the Doxygen environment variables.
          setup_doxygen_environment( trickhla_version,
                                     output_dir,
-                                    erro_log_file,
+                                    error_log_file,
                                     file_patterns,
                                     exclude,
                                     generate_latex,
                                     verbose_output )
 
          # Generate the documentation.
-         generate_docs( erro_log_file, test, verbose_output )
+         generate_docs( error_log_file, test, verbose_output )
 
          # Build the LaTeX documentation if indicated.
          if generate_latex:
@@ -238,14 +238,14 @@ def main():
 
       # Set Doxygen configuration parameters.
       output_dir = 'docs/models'
-      erro_log_file = 'docs/doxygen/modelsErr.txt'
+      error_log_file = 'docs/doxygen/modelsErr.txt'
       file_patterns = '*.cpp *.hh *.c *.h *.d *.dox *.md *.markdown'
       exclude = '*/verif */build */scripts */sims'
       latex_dir = output_dir + '/latex'
 
       # Check if this is a clean command.
       if clean:
-         cleanup_document_dir( output_dir, erro_log_file, test, verbose_output )
+         cleanup_document_dir( output_dir, error_log_file, test, verbose_output )
 
       # Otherwise, generate the documentation.
       else:
@@ -255,14 +255,14 @@ def main():
          # Set the Doxygen environment variables.
          setup_doxygen_environment( trickhla_version,
                                     output_dir,
-                                    erro_log_file,
+                                    error_log_file,
                                     file_patterns,
                                     exclude,
                                     generate_latex,
                                     verbose_output )
 
          # Generate the documentation.
-         generate_docs( erro_log_file, test, verbose_output )
+         generate_docs( error_log_file, test, verbose_output )
 
          # Build the LaTeX documentation if indicated.
          if generate_latex:
@@ -274,14 +274,14 @@ def main():
 
       # Set Doxygen configuration parameters.
       output_dir = 'docs/scripts'
-      erro_log_file = 'docs/doxygen/scriptsErr.txt'
+      error_log_file = 'docs/doxygen/scriptsErr.txt'
       file_patterns = '*.py *.dox *.md *.markdown'
       exclude = '*/verif */build */include */source'
       latex_dir = output_dir + '/latex'
 
       # Check if this is a clean command.
       if clean:
-         cleanup_document_dir( output_dir, erro_log_file, test, verbose_output )
+         cleanup_document_dir( output_dir, error_log_file, test, verbose_output )
 
       # Otherwise, generate the documentation.
       else:
@@ -291,14 +291,14 @@ def main():
          # Set the Doxygen environment variables.
          setup_doxygen_environment( trickhla_version,
                                     output_dir,
-                                    erro_log_file,
+                                    error_log_file,
                                     file_patterns,
                                     exclude,
                                     generate_latex,
                                     verbose_output )
 
          # Generate the documentation.
-         generate_docs( erro_log_file, test, verbose_output )
+         generate_docs( error_log_file, test, verbose_output )
 
          # Build the LaTeX documentation if indicated.
          if generate_latex:
@@ -310,14 +310,14 @@ def main():
 
       # Set Doxygen configuration parameters.
       output_dir = 'docs/sims'
-      erro_log_file = 'docs/doxygen/simsErr.txt'
+      error_log_file = 'docs/doxygen/simsErr.txt'
       file_patterns = '*.sm S_define *.dox *.md *.markdown *.py'
       exclude = '*/verif */build */scripts */include */source'
       latex_dir = output_dir + '/latex'
 
       # Check if this is a clean command.
       if clean:
-         cleanup_document_dir( output_dir, erro_log_file, test, verbose_output )
+         cleanup_document_dir( output_dir, error_log_file, test, verbose_output )
 
       # Otherwise, generate the documentation.
       else:
@@ -327,14 +327,14 @@ def main():
          # Set the Doxygen environment variables.
          setup_doxygen_environment( trickhla_version,
                                     output_dir,
-                                    erro_log_file,
+                                    error_log_file,
                                     file_patterns,
                                     exclude,
                                     generate_latex,
                                     verbose_output )
 
          # Generate the documentation.
-         generate_docs( erro_log_file, test, verbose_output )
+         generate_docs( error_log_file, test, verbose_output )
 
          # Build the LaTeX documentation if indicated.
          if generate_latex:
