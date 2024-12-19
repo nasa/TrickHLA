@@ -1713,12 +1713,12 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
 
          // Need to be on an LCTS boundary.
-         int64_t next_scenario_base_time = Int64BaseTime::to_base_time( this->get_scenario_time() + get_time_padding() );
-         if ( next_scenario_base_time % this->least_common_time_step == 0 ) {
-            this->next_mode_scenario_time = Int64BaseTime::to_seconds( next_scenario_base_time );
+         int64_t next_mode_scenario_base_time = Int64BaseTime::to_base_time( get_scenario_time() + get_time_padding() );
+         if ( next_mode_scenario_base_time % this->least_common_time_step == 0 ) {
+            this->next_mode_scenario_time = Int64BaseTime::to_seconds( next_mode_scenario_base_time );
          } else {
             this->next_mode_scenario_time = Int64BaseTime::to_seconds(
-               this->least_common_time_step * ( ( next_scenario_base_time / this->least_common_time_step ) + 1 ) );
+               this->least_common_time_step * ( ( next_mode_scenario_base_time / this->least_common_time_step ) + 1 ) );
          }
 
          // Set the next mode times.
@@ -1727,7 +1727,7 @@ void ExecutionControl::set_next_execution_control_mode(
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
             // Use the same delta time used for the next scenario time that is
             // an integer multiple of the LCTS.
-            double delta_time = this->next_mode_scenario_time - this->get_scenario_time();
+            double delta_time = this->next_mode_scenario_time - get_scenario_time();
             ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + delta_time ); // Some time in the future.
          }
 
