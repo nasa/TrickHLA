@@ -275,10 +275,14 @@ void ExecutionConfiguration::pack()
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__ << endl
-          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
-          << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-          << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
-          << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
+          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
+          << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
+          << "\t Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
+          << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl
+          << "\t Current HLA grant time:  " << setprecision( 18 ) << get_federate()->get_granted_time().get_time_in_seconds()
+          << " (" << get_federate()->get_granted_time().get_base_time() << ")" << endl
+          << "\t Current HLA request time:" << setprecision( 18 ) << get_federate()->get_requested_time().get_time_in_seconds()
+          << " (" << get_federate()->get_requested_time().get_base_time() << ")" << endl
           << "............................................................." << endl
           << "\t Object-Name:             " << get_name() << "'" << endl
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
@@ -337,10 +341,14 @@ void ExecutionConfiguration::unpack()
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__ << endl
-          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
-          << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-          << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
-          << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
+          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
+          << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
+          << "\t Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
+          << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl
+          << "\t Current HLA grant time:  " << setprecision( 18 ) << get_federate()->get_granted_time().get_time_in_seconds()
+          << " (" << get_federate()->get_granted_time().get_base_time() << ")" << endl
+          << "\t Current HLA request time:" << setprecision( 18 ) << get_federate()->get_requested_time().get_time_in_seconds()
+          << " (" << get_federate()->get_requested_time().get_base_time() << ")" << endl
           << "............................................................." << endl
           << "\t Object-Name:            '" << get_name() << "'" << endl
           << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
