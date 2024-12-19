@@ -1663,7 +1663,7 @@ void ExecutionControl::set_next_execution_control_mode(
    }
 
    switch ( exec_control ) {
-      case EXECUTION_CONTROL_UNINITIALIZED:
+      case EXECUTION_CONTROL_UNINITIALIZED: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
@@ -1674,8 +1674,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( get_scenario_time() ); // Immediate
          ExCO->set_next_mode_cte_time( get_cte_time() );           // Immediate
          break;
+      }
 
-      case EXECUTION_CONTROL_INITIALIZING:
+      case EXECUTION_CONTROL_INITIALIZING: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_INITIALIZING;
@@ -1687,8 +1688,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( get_scenario_time() ); // Immediate
          ExCO->set_next_mode_cte_time( get_cte_time() );           // Immediate
          break;
+      }
 
-      case EXECUTION_CONTROL_RUNNING:
+      case EXECUTION_CONTROL_RUNNING: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_RUNNING;
@@ -1702,27 +1704,40 @@ void ExecutionControl::set_next_execution_control_mode(
             ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
          }
          break;
+      }
 
-      case EXECUTION_CONTROL_FREEZE:
+      case EXECUTION_CONTROL_FREEZE: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_FREEZE;
          ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
 
+         // Need to be on an LCTS boundary.
+         int64_t next_scenario_base_time = Int64BaseTime::to_base_time( this->get_scenario_time() + get_time_padding() );
+         if ( next_scenario_base_time % this->least_common_time_step == 0 ) {
+            this->next_mode_scenario_time = Int64BaseTime::to_seconds( next_scenario_base_time );
+         } else {
+            this->next_mode_scenario_time = Int64BaseTime::to_seconds(
+               this->least_common_time_step * ( ( next_scenario_base_time / this->least_common_time_step ) + 1 ) );
+         }
+
          // Set the next mode times.
-         this->next_mode_scenario_time = this->get_scenario_time() + get_time_padding(); // Some time in the future.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
+            // Use the same delta time used for the next scenario time that is
+            // an integer multiple of the LCTS.
+            double delta_time = this->next_mode_scenario_time - this->get_scenario_time();
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + delta_time ); // Some time in the future.
          }
 
          // Set the ExecutionControl freeze times.
          this->scenario_freeze_time   = this->next_mode_scenario_time;
          this->simulation_freeze_time = this->scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
          break;
+      }
 
-      case EXECUTION_CONTROL_SHUTDOWN:
+      case EXECUTION_CONTROL_SHUTDOWN: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
@@ -1733,8 +1748,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // Immediate.
          ExCO->set_next_mode_cte_time( get_cte_time() );                     // Immediate
          break;
+      }
 
-      default:
+      default: {
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
@@ -1744,6 +1760,7 @@ void ExecutionControl::set_next_execution_control_mode(
             send_hs( stdout, errmsg.str().c_str() );
          }
          break;
+      }
    }
 }
 

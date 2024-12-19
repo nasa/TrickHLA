@@ -260,10 +260,10 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    trickhla_include_dirs.extend( ['-I', rti_include] )
    if jeod_home:
       trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
+   if os.path.isdir( './models/DistIf/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/DistIf/include'] )
    if os.path.isdir( './models/EntityDynamics/include' ):
       trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
-   if os.path.isdir( './models/FDI/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/FDI/include'] )
    if os.path.isdir( './models/SAIntegrator/include' ):
       trickhla_include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
    if os.path.isdir( './models/simconfig/include' ):
@@ -285,10 +285,10 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
 
    # Form relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./source'] )
+   if os.path.isdir( './models/DistIf/src' ):
+      trickhla_source_dirs.extend( ['./models/DistIf/src'] )
    if os.path.isdir( './models/EntityDynamics/src' ):
       trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
-   if os.path.isdir( './models/FDI/src' ):
-      trickhla_source_dirs.extend( ['./models/FDI/src'] )
    if os.path.isdir( './models/SAIntegrator/src' ):
       trickhla_source_dirs.extend( ['./models/SAIntegrator/src'] )
    if os.path.isdir( './models/simconfig/src' ):

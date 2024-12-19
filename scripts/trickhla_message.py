@@ -17,7 +17,6 @@
 import sys
 import os
 
-
 class TrickHLAMessage():
 
    _COMMENT_COLOR = '\033[95m'
