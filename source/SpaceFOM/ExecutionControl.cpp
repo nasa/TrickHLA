@@ -1105,8 +1105,8 @@ void ExecutionControl::late_joiner_hla_init_process()
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
            << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
            << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-           << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
-           << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
+           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
            << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
            << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
       if ( does_cte_timeline_exist() ) {
@@ -1379,8 +1379,8 @@ void ExecutionControl::post_multi_phase_init_processes()
               << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
               << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
               << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-              << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
-              << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
+              << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+              << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
               << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
               << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
          if ( does_cte_timeline_exist() ) {
@@ -1663,7 +1663,7 @@ void ExecutionControl::set_next_execution_control_mode(
    }
 
    switch ( exec_control ) {
-      case EXECUTION_CONTROL_UNINITIALIZED:
+      case EXECUTION_CONTROL_UNINITIALIZED: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
@@ -1674,8 +1674,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( get_scenario_time() ); // Immediate
          ExCO->set_next_mode_cte_time( get_cte_time() );           // Immediate
          break;
+      }
 
-      case EXECUTION_CONTROL_INITIALIZING:
+      case EXECUTION_CONTROL_INITIALIZING: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_INITIALIZING;
@@ -1687,8 +1688,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( get_scenario_time() ); // Immediate
          ExCO->set_next_mode_cte_time( get_cte_time() );           // Immediate
          break;
+      }
 
-      case EXECUTION_CONTROL_RUNNING:
+      case EXECUTION_CONTROL_RUNNING: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_RUNNING;
@@ -1702,27 +1704,40 @@ void ExecutionControl::set_next_execution_control_mode(
             ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
          }
          break;
+      }
 
-      case EXECUTION_CONTROL_FREEZE:
+      case EXECUTION_CONTROL_FREEZE: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_FREEZE;
          ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
 
+         // Need to be on an LCTS boundary.
+         int64_t next_mode_scenario_base_time = Int64BaseTime::to_base_time( get_scenario_time() + get_time_padding() );
+         if ( next_mode_scenario_base_time % this->least_common_time_step == 0 ) {
+            this->next_mode_scenario_time = Int64BaseTime::to_seconds( next_mode_scenario_base_time );
+         } else {
+            this->next_mode_scenario_time = Int64BaseTime::to_seconds(
+               this->least_common_time_step * ( ( next_mode_scenario_base_time / this->least_common_time_step ) + 1 ) );
+         }
+
          // Set the next mode times.
-         this->next_mode_scenario_time = this->get_scenario_time() + get_time_padding(); // Some time in the future.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
+            // Use the same delta time used for the next mode scenario time
+            // that is an integer multiple of the LCTS.
+            double delta_time = this->next_mode_scenario_time - get_scenario_time();
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + delta_time ); // Some time in the future.
          }
 
          // Set the ExecutionControl freeze times.
          this->scenario_freeze_time   = this->next_mode_scenario_time;
          this->simulation_freeze_time = this->scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
          break;
+      }
 
-      case EXECUTION_CONTROL_SHUTDOWN:
+      case EXECUTION_CONTROL_SHUTDOWN: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
@@ -1733,8 +1748,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // Immediate.
          ExCO->set_next_mode_cte_time( get_cte_time() );                     // Immediate
          break;
+      }
 
-      default:
+      default: {
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
@@ -1744,6 +1760,7 @@ void ExecutionControl::set_next_execution_control_mode(
             send_hs( stdout, errmsg.str().c_str() );
          }
          break;
+      }
    }
 }
 
@@ -1804,8 +1821,8 @@ bool ExecutionControl::process_mode_transition_request()
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
            << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
            << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-           << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
-           << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
+           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
            << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
            << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
       if ( does_cte_timeline_exist() ) {
