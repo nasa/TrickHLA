@@ -85,12 +85,6 @@ def main():
    test = args.test
    verbose_output = args.verbose
 
-   # Set the TrickHLA version string components.
-   if args.version_id:
-      version_id = args.version_id
-   if args.version_tag:
-      version_tag = args.version_tag
-
    # Determine which documentation to generate.
    if args.everything or args.all:
       combined_docs = True
@@ -169,6 +163,14 @@ def main():
 
    if error:
       TrickHLAMessage.failure( 'This is not the TrickHLA directory you are looking for!' )
+
+   # Set the TrickHLA version string components.
+   if args.version_id:
+      version_id = args.version_id
+   else:
+      version_id = determine_version()
+   if args.version_tag:
+      version_tag = args.version_tag
 
    # Build the TrickHLA version string.
    trickhla_version = build_version_string( version_id, version_tag )
@@ -348,6 +350,22 @@ def main():
    return
 
 
+# Determine the TrickHLA version string from the TRICKHLA_VERSION field of the
+# $TRICKHLA_HOME/include/TrickHLA/Version.hh file.
+#
+def determine_version():
+
+   grep_cmd = ['grep', 'define TRICKHLA_VERSION ', 'include/TrickHLA/Version.hh']
+   cut_cmd  = ['cut', '-d', '"', '-f2']
+
+   grep_process = subprocess.Popen( grep_cmd, stdout=subprocess.PIPE )
+   cut_process  = subprocess.Popen( cut_cmd, stdin=grep_process.stdout, stdout=subprocess.PIPE )
+   grep_process.stdout.close()
+
+   output, _ = cut_process.communicate()
+   return output.decode().rstrip()
+
+
 # Build up the TrickHLA version string.
 #
 # This routine builds up the TrickHLA version string for the Doxygen
@@ -366,8 +384,8 @@ def build_version_string(
    # If Tag is set then use it.
    if version_tag:
       version_string = version_id + ': ' + version_tag
-   # Otherwise, get the Git hash.
    else:
+      # Otherwise, get the Git hash.
       version_tag = subprocess.check_output( ['git', 'rev-parse', '--short', 'HEAD'] ).decode('utf8', errors='strict').strip()
       version_string = version_id + ': Git#' + version_tag.rstrip()
 

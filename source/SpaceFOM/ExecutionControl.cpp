@@ -1105,8 +1105,8 @@ void ExecutionControl::late_joiner_hla_init_process()
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
            << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
            << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-           << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
-           << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
+           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
            << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
            << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
       if ( does_cte_timeline_exist() ) {
@@ -1379,8 +1379,8 @@ void ExecutionControl::post_multi_phase_init_processes()
               << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
               << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
               << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-              << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
-              << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
+              << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+              << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
               << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
               << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
          if ( does_cte_timeline_exist() ) {
@@ -1725,8 +1725,8 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            // Use the same delta time used for the next scenario time that is
-            // an integer multiple of the LCTS.
+            // Use the same delta time used for the next mode scenario time
+            // that is an integer multiple of the LCTS.
             double delta_time = this->next_mode_scenario_time - get_scenario_time();
             ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + delta_time ); // Some time in the future.
          }
@@ -1821,8 +1821,8 @@ bool ExecutionControl::process_mode_transition_request()
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
            << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
            << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-           << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
-           << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
+           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
            << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
            << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
       if ( does_cte_timeline_exist() ) {
