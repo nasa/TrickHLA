@@ -86,13 +86,10 @@ class THLABaseSimObject : public Trick::SimObject {
       // the first job so the debug settings are available and valid.
       P1 ("initialization") federate.initialize_debug();
 
-      // Initialize thread state memory associated with the Trick child threads.
+      // Initialize thread state memory associated with the Trick child
+      // threads. Also configure the Trick main thread HLA delta time step,
+      // which is the HLA time advancement and data cycle time.
       P1 ("initialization") federate.initialize_thread_state( data_cycle_time );
-
-      // Associate the Trick main thread. TrickHLA will maintain data coherancy
-      // for the HLA object instances specified in the input file over the data
-      // cycle time specified.
-      P1 ("initialization") federate.associate_to_trick_child_thread( 0, data_cycle_time );
 
       // After all the P2 jobs run in the THLAThreadSimObject sim-object to
       // assoicate Trick child threads to object instances, verify all the
@@ -101,10 +98,6 @@ class THLABaseSimObject : public Trick::SimObject {
 
       // Setup the HLA infrastructure.
       P_INIT ("initialization") federate.initialize();
-
-      // Initialze the HLA delta time step, which is the HLA time advancement
-      // and data cycle time.
-      P_INIT ("initialization") federate.initialize_HLA_cycle_time( data_cycle_time );
 
       // This begins the process of standing up the federate in the federation
       // execution. This preforms all the startup steps prior to any

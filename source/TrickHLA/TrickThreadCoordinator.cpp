@@ -52,8 +52,10 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include "trick/exec_proto.hh"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/realtimesync_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
@@ -211,7 +213,7 @@ void TrickThreadCoordinator::initialize(
    this->main_thread_data_cycle_base_time = Int64BaseTime::to_base_time( main_thread_data_cycle_time );
 
    // Verify the thread state data cycle time.
-   if ( this->main_thread_data_cycle_base_time <= 0LL ) {
+   if ( this->main_thread_data_cycle_base_time <= 0 ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
              << " ERROR: main_thread_data_cycle_time time ("
@@ -238,7 +240,6 @@ void TrickThreadCoordinator::initialize(
              << " for requested size " << this->thread_cnt
              << "!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-      exit( 1 );
    }
 
    // We don't know if the Child threads are running TrickHLA jobs yet so
@@ -305,7 +306,6 @@ void TrickThreadCoordinator::initialize(
              << " for requested size " << this->thread_cnt
              << "!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-      exit( 1 );
    }
    for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
       this->data_cycle_base_time_per_thread[thread_id] = 0LL;
@@ -321,7 +321,6 @@ void TrickThreadCoordinator::initialize(
                 << " for requested size " << this->manager->obj_count
                 << "'!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-         exit( 1 );
       }
       for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
          this->data_cycle_base_time_per_obj[obj_index] = 0LL;
@@ -331,6 +330,20 @@ void TrickThreadCoordinator::initialize(
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::initialize():%d Trick main thread (id:0, data_cycle:%.9f).%c",
                __LINE__, main_thread_data_cycle_time, THLA_NEWLINE );
+   }
+
+   // Associate the Trick main thread. TrickHLA will maintain data coherency
+   // for the HLA object instances specified in the input file over the data
+   // cycle time specified.
+   associate_to_trick_child_thread( 0, main_thread_data_cycle_time );
+
+   if ( !verify_time_constraints( 0, this->main_thread_data_cycle_base_time ) ) {
+      ostringstream errmsg;
+      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+             << " ERROR: Invalid HLA cycle time ("
+             << setprecision( 18 ) << main_thread_data_cycle_time
+             << " seconds)!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -366,9 +379,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    if ( ( this->thread_cnt == 0 ) || ( this->thread_state == NULL ) ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Federate::initialize()"
-             << " must be called once before calling this function."
-             << THLA_ENDL;
+             << " ERROR: Federate::initialize_thread_state() must be called"
+             << " once before calling this function." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -409,8 +421,9 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: You can not associate the same Trick "
-             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ") more than once with TrickHLA!" << THLA_ENDL;
+             << ( ( thread_id == 0 ) ? "main" : "child" )
+             << " thread (thread-id:" << thread_id
+             << ") more than once with TrickHLA!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -421,10 +434,10 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data_cycle time specified (thread-id:" << thread_id
              << ", data_cycle:" << setprecision( 18 ) << data_cycle
-             << " seconds) requires more resolution"
-             << " than whole " << Int64BaseTime::get_units()
-             << ". The HLA Logical Time is a 64-bit integer"
-             << " representing " << Int64BaseTime::get_units()
+             << " seconds) requires more resolution than whole "
+             << Int64BaseTime::get_units()
+             << ". The HLA Logical Time is a 64-bit integer representing "
+             << Int64BaseTime::get_units()
              << " and cannot represent the Trick child thread data-cycle time of "
              << setprecision( 18 )
              << ( data_cycle * Int64BaseTime::get_base_time_multiplier() )
@@ -446,8 +459,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    if ( Int64BaseTime::exceeds_base_time_resolution( data_cycle, exec_get_time_tic_value() ) ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The data_cycle specified (thread-id:0, "
-             << setprecision( 18 ) << data_cycle
+             << " ERROR: The data_cycle time specified (thread-id:" << thread_id
+             << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << " seconds) requires more resolution than the Trick time Tic value ("
              << setprecision( 18 ) << exec_get_time_tic_value()
              << "). Please update the Trick time tic value in your input"
@@ -458,33 +471,17 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
    int64_t const data_cycle_base_time = Int64BaseTime::to_base_time( data_cycle );
 
-   // The child thread data cycle time cannot be less than (i.e. faster)
-   // than the main thread cycle time.
-   if ( data_cycle_base_time < this->main_thread_data_cycle_base_time ) {
+   // Verify all the time constraints for this thread data cycle time are valid.
+   if ( !verify_time_constraints( thread_id, data_cycle_base_time ) ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The data cycle time for the Trick "
-             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
-             << ") cannot be less than the Trick main thread data cycle"
-             << " time (data_cycle:" << setprecision( 18 )
-             << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Only allow child threads with a data cycle time that is an integer
-   // multiple of the Trick main thread cycle time.
-   if ( ( data_cycle_base_time % this->main_thread_data_cycle_base_time ) != 0LL ) {
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The data cycle time for the Trick "
-             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
-             << ") must be an integer multiple of the Trick main thread data"
-             << " cycle time (data_cycle:" << setprecision( 18 )
-             << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
-             << ")!" << THLA_ENDL;
+             << " ERROR: The data_cycle time specified (thread-id:" << thread_id
+             << ", data_cycle:" << setprecision( 18 ) << data_cycle
+             << " seconds) requires more resolution than the Trick time Tic value ("
+             << setprecision( 18 ) << exec_get_time_tic_value()
+             << "). Please update the Trick time tic value in your input"
+             << " file (i.e. by calling 'trick.exec_set_time_tic_value()')."
+             << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1251,4 +1248,272 @@ bool const TrickThreadCoordinator::on_send_data_cycle_boundary_for_thread(
                      % this->data_cycle_base_time_per_thread[thread_id] )
                    == 0LL )
                : true );
+}
+
+bool TrickThreadCoordinator::verify_time_constraints()
+{
+   bool verified = true;
+   for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
+      if ( !verify_time_constraints( thread_id, this->data_cycle_base_time_per_thread[thread_id] ) ) {
+         verified = false;
+      }
+   }
+   return verified;
+}
+
+bool TrickThreadCoordinator::verify_time_constraints(
+   unsigned int const thread_id,
+   int64_t const      data_cycle_base_time )
+{
+   // The following relationships between the Trick realtime-frame (RT),
+   // Least Common Time Step (LCTS), and lookahead (L) times must hold True
+   // and we advance HLA logical time with a dt time step:
+   //
+   // (LCTS ≥ RT) ∧ (LCTS % RT = 0) ∧
+   // N
+   // ∧ (dt[i] > 0) ∧ (dt[i] ≥ L[i]) ∧ (LCTS ≥ dt[i]) ∧ (LCTS % dt[i] = 0)
+   // i=1
+   //
+
+   int64_t lookahead_base_time = this->federate->get_lookahead_in_base_time();
+
+   // Verify the lookahead time.
+   if ( lookahead_base_time < 0 ) {
+      double        lookahead_sec = Int64BaseTime::to_seconds( lookahead_base_time );
+      ostringstream errmsg;
+      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+             << " ERROR: Lookahead time must be greater than or equal zero (lookahead:"
+             << setprecision( 18 ) << lookahead_sec << ")!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Time constraint: (dt[i] > 0)
+   if ( data_cycle_base_time <= 0 ) {
+      double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+      ostringstream errmsg;
+      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+             << " ERROR: The data cycle time for the Trick "
+             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+             << ") cannot be less than or equal zero (0)!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+
+   // Time constraint: (dt[i] ≥ L[i])
+   if ( data_cycle_base_time < lookahead_base_time ) {
+      double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+      ostringstream errmsg;
+      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+             << " ERROR: The data cycle time for the Trick "
+             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+             << ") cannot be less than the lookahead time (" << setprecision( 18 )
+             << Int64BaseTime::to_seconds( lookahead_base_time )
+             << ")!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+
+   // The LCTS in the base time.
+   int64_t lcts_base_time = manager->get_execution_control()->get_least_common_time_step();
+
+   // For the master federate, verify additional time constraints.
+   if ( manager->get_execution_control()->is_master() ) {
+
+      // SpaceFOM requires the use of the LCTS while the TrickHLA simple-init
+      // and IMSim schemes do not.
+      bool enabled_lcts = manager->get_execution_control()->is_enabled_least_common_time_step();
+
+      // Time Constraints: (LCTS > 0)
+      if ( enabled_lcts && ( lcts_base_time <= 0 ) ) {
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                << " ERROR: For this Master federate, the ExCO Least Common Time Step (LCTS:"
+                << lcts_base_time << " " << Int64BaseTime::get_units()
+                << ") is not greater than zero!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
+      }
+
+      // The Master federate padding time must be an integer multiple of the LCTS.
+      double MPT_sec = manager->get_execution_control()->get_time_padding();
+      if ( MPT_sec <= 0.0 ) {
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                << " ERROR: For this Master federate, the time padding ("
+                << setprecision( 18 ) << MPT_sec
+                << " seconds) is not greater than zero!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
+      }
+
+      // Padding time must be an integer multiple of the LCTS.
+      int64_t MPT = Int64BaseTime::to_base_time( MPT_sec );
+      if ( enabled_lcts && ( MPT % lcts_base_time != 0 ) ) {
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                << " ERROR: Mode transition padding time (" << MPT
+                << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the ExCO"
+                << " Least Common Time Step (LCTS:"
+                << lcts_base_time << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // The Master federate padding time must be at least 3 or more
+      // times the Least Common Time Step (LCTS). This will give
+      // commands time to propagate through the system and still have
+      // time for mode transitions.
+      if ( enabled_lcts && ( MPT < ( 3 * lcts_base_time ) ) ) {
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                << " ERROR: Mode transition padding time (" << MPT
+                << " " << Int64BaseTime::get_units()
+                << ") is not a multiple of 3 or more of the ExCO"
+                << " Least Common Time Step (LCTS:"
+                << lcts_base_time << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+   }
+
+   // Perform LCTS checks provided a value has been set.
+   if ( lcts_base_time > 0 ) {
+
+      // If realtime is enabled then verify the time constraints:
+      // (LCTS ≥ RT) ∧ (LCTS % RT = 0)
+      if ( is_real_time() ) {
+
+         // The Real-Time frame time is the Trick software frame time.
+         double RT = exec_get_software_frame();
+
+         // The Trick software frame must be configured.
+         if ( RT <= 0.0 ) {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: The Trick software frame ("
+                   << setprecision( 18 ) << RT
+                   << ") cannot be less than or equal to zero when real-time"
+                   << " is enabled!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
+
+         // Verify the RT frame can be represented in base time.
+         if ( Int64BaseTime::exceeds_base_time_resolution( RT ) ) {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: The Trick software frame ("
+                   << setprecision( 18 ) << RT
+                   << ") cannot be represented in base-time because it exceeds"
+                   << " the base-time resolution of "
+                   << Int64BaseTime::get_units() << "!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
+
+         int64_t RT_base_time = Int64BaseTime::to_base_time( RT );
+
+         // Time Constraint: (LCTS ≥ RT)
+         if ( lcts_base_time < RT_base_time ) {
+            double        lcts_sec = Int64BaseTime::to_seconds( lcts_base_time );
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: The Least Common Time Step (LCTS:"
+                   << setprecision( 18 ) << lcts_sec
+                   << " seconds) must be greater than or equal to the Trick"
+                   << " software frame time (" << setprecision( 18 ) << RT
+                   << " seconds)!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
+
+         // Time Constraint: (LCTS % RT = 0)
+         if ( lcts_base_time % RT_base_time != 0 ) {
+            double        lcts_sec = Int64BaseTime::to_seconds( lcts_base_time );
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: The Least Common Time Step (LCTS:"
+                   << setprecision( 18 ) << lcts_sec
+                   << " seconds) must be an integer multiple of the Trick"
+                   << " software frame time (" << setprecision( 18 ) << RT
+                   << " seconds)!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
+      }
+
+      // Thread data cycle time must be less than the LCTS to be valid.
+      // Time constraint: (LCTS ≥ dt[i])
+      if ( lcts_base_time < data_cycle_base_time ) {
+         double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                << " ERROR: The Least Common Time Step (LCTS:"
+                << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
+                << ") must be greater or equal to the data cycle time for the Trick "
+                << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+                << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+                << ")! Please adjust the LCTS set in your input file as appropriate."
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
+      }
+
+      // Child thread data cycle time must be an integer multiple of the LCTS.
+      // Time constraint: (LCTS % dt[i] = 0)
+      if ( ( lcts_base_time % data_cycle_base_time ) != 0LL ) {
+         double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                << " ERROR: The Least Common Time Step (LCTS:"
+                << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
+                << ") must be an integer multiple of the data cycle time for"
+                << " the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
+                << " thread (thread-id:" << thread_id << ", data_cycle:"
+                << setprecision( 18 ) << data_cycle
+                << ")! Please adjust the LCTS set in your input file as appropriate."
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
+      }
+   }
+
+   // The child thread data cycle time cannot be less than (i.e. faster)
+   // than the main thread cycle time.
+   if ( data_cycle_base_time < this->main_thread_data_cycle_base_time ) {
+      double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+      ostringstream errmsg;
+      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+             << " ERROR: The data cycle time for the Trick "
+             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+             << ") cannot be less than the Trick main thread data cycle"
+             << " time (data_cycle:" << setprecision( 18 )
+             << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
+             << ")!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+
+   // Only allow child threads with a data cycle time that is an integer
+   // multiple of the Trick main thread cycle time.
+   if ( ( data_cycle_base_time % this->main_thread_data_cycle_base_time ) != 0 ) {
+      double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+      ostringstream errmsg;
+      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+             << " ERROR: The data cycle time for the Trick "
+             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+             << ") must be an integer multiple of the Trick main thread data"
+             << " cycle time (data_cycle:" << setprecision( 18 )
+             << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
+             << ")!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+
+   return true;
 }
