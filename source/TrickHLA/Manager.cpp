@@ -302,16 +302,6 @@ void Manager::restart_initialization()
 
 void Manager::initialize_HLA_cycle_time()
 {
-   if ( !execution_control->verify_HLA_cycle_time( federate->get_HLA_cycle_time_in_base_time(),
-                                                   federate->get_lookahead_in_base_time() ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize_HLA_cycle_time():" << __LINE__
-             << " ERROR: Invalid HLA cycle time ("
-             << setprecision( 18 ) << federate->get_HLA_cycle_time()
-             << " seconds)!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
    // Set the core job cycle time now that we know what it is so that the
    // attribute cyclic ratios can now be calculated for any multi-rate
    // attributes.

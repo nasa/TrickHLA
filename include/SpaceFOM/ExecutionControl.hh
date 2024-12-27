@@ -306,13 +306,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Refresh the least common time step especially if the HLA base time units changed. */
    virtual void refresh_least_common_time_step();
 
-   /*! @brief Verify the HLA Time Advance Grant (TAR) cycle time.
-    *  @param HLA_cycle_base_time TAR cycle time in the base time units.
-    *  @param lookahead_base_time HLA lookahead time in base time units.
-    *  @return True of the TAR cycle time is valid and False otherwise */
-   virtual bool verify_HLA_cycle_time( int64_t const HLA_cycle_base_time,
-                                       int64_t const lookahead_base_time );
-
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
    virtual void set_time_padding( double t );

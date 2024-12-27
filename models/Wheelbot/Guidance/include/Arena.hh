@@ -21,7 +21,7 @@ class Arena
   public:
    Arena( unsigned int width, unsigned int height );
    Arena( unsigned int width, unsigned int height, unsigned char const bits[] );
-   ~Arena();
+   virtual ~Arena();
 
    void block( unsigned int const x, unsigned int const y );
 
