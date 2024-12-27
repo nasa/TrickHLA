@@ -198,7 +198,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup the simulation configuration object now that we know if we are
    // the "Master" federate or not.
-   execution_configuration->set_master( this->is_master() );
+   execution_configuration->set_master( is_master() );
+
+   // Verify all the federate time constraints.
+   federate->verify_time_constraints();
 
    if ( this->is_master() ) {
       // Initialize the MOM interface handles.
@@ -457,8 +460,7 @@ void ExecutionControl::set_least_common_time_step(
    double const lcts )
 {
    // WARNING: Only the Master federate should ever set this.
-   if ( this->is_master() ) {
-
+   if ( is_master() ) {
       ExecutionConfiguration const *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == NULL ) {
          ostringstream errmsg;

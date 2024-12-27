@@ -329,6 +329,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // Initialize the MOM interface handles.
    federate->initialize_MOM_handles();
 
+   // Verify all the federate time constraints.
+   federate->verify_time_constraints();
+
    if ( is_master() ) {
       //**** This federate is the Master for the multiphase ****
       //**** initialization process                         ****

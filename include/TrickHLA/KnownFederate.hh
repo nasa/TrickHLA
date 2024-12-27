@@ -68,7 +68,7 @@ class KnownFederate
       return;
    };
    /*! @brief Destructor for the TrickHLA KnownFederate class. */
-   ~KnownFederate()
+   virtual ~KnownFederate()
    {
       return;
    };

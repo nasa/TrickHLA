@@ -225,7 +225,7 @@ federate.add_known_federate( True, str(federate.federate.name) )
 
 if ( req_federate == None ):
    # Default Other federate that is required.
-   ederate.add_known_federate( True, 'Other' )
+   federate.add_known_federate( True, 'Other' )
 else:
    federate.add_known_federate( True, str(req_federate) )
 
