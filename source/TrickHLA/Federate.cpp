@@ -451,13 +451,22 @@ the documented ENUM values.%c",
 void Federate::initialize_thread_state(
    double const main_thread_data_cycle_time )
 {
+   this->HLA_cycle_time              = main_thread_data_cycle_time;
+   this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
+
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).%c",
-               __LINE__, main_thread_data_cycle_time, THLA_NEWLINE );
+               __LINE__, this->HLA_cycle_time, THLA_NEWLINE );
    }
 
-   // Delegate to the Trick thread coordinator.
-   this->thread_coordinator.initialize( main_thread_data_cycle_time );
+   // Make sure the Trick thread coordinator is initialized. This will
+   // also associate the Trick main thread. TrickHLA will maintain data
+   // coherency for the HLA object instances specified in the input file
+   // over the data cycle time specified.
+   thread_coordinator.initialize( this->HLA_cycle_time );
+
+   // Initialize the manager with the verified HLA cycle time.
+   manager->initialize_HLA_cycle_time();
 }
 
 /*!
@@ -656,12 +665,11 @@ void Federate::restart_initialization()
  */
 void Federate::pre_multiphase_initialization()
 {
-   // The P_INIT ("initialization") federate.initialize_HLA_cycle_time( data_cycle_time );
-   // job should be called right before this one, but verify the HLA cycle time
-   // again to catch the case where a user did not pick up the changes to the
-   // THLABase.sm file.
-   if ( !execution_control->verify_HLA_cycle_time( get_HLA_cycle_time_in_base_time(),
-                                                   get_lookahead_in_base_time() ) ) {
+   // The P1 ("initialization") federate.initialize_thread_state( data_cycle_time );
+   // job should be called before this one, but verify the HLA cycle time
+   // again to catch the case where a user did not pick up the changes to
+   // the THLABase.sm file.
+   if ( !verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
              << " ERROR: Invalid HLA cycle time ("
@@ -3160,7 +3168,7 @@ void Federate::set_time_advance_granted(
                   THLA_NEWLINE );
       }
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::set_time_advance_granted():%d WARNING: Federate \"%s\" \
 IGNORING GRANTED TIME %.12G because it is less then requested time %.12G.%c",
                   __LINE__, get_federate_name(), int64_time.get_time_in_seconds(),
@@ -4439,34 +4447,6 @@ void Federate::setup_time_regulation()
 }
 
 /*!
- * @job_class{initialization}
- */
-void Federate::initialize_HLA_cycle_time(
-   double const delta_time_step )
-{
-   this->HLA_cycle_time              = delta_time_step;
-   this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
-
-   if ( !execution_control->verify_HLA_cycle_time( this->HLA_cycle_time_in_base_time,
-                                                   get_lookahead_in_base_time() ) ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize_HLA_cycle_time():" << __LINE__
-             << " ERROR: Invalid HLA cycle time ("
-             << setprecision( 18 ) << this->HLA_cycle_time
-             << " seconds)!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Initialize the manager with the verified HLA cycle time.
-   manager->initialize_HLA_cycle_time();
-
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Federate::initialize_HLA_cycle_time():%d cycle-time:%f seconds %c",
-               __LINE__, this->HLA_cycle_time, THLA_NEWLINE );
-   }
-}
-
-/*!
  * @job_class{scheduled}
  */
 void Federate::time_advance_request()
@@ -4795,6 +4775,14 @@ void Federate::verify_trick_child_thread_associations()
 {
    // Delegate to the Trick thread coordinator.
    this->thread_coordinator.verify_trick_thread_associations();
+}
+
+/*
+ * @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt).
+ */
+bool const Federate::verify_time_constraints()
+{
+   return this->thread_coordinator.verify_time_constraints();
 }
 
 /*!

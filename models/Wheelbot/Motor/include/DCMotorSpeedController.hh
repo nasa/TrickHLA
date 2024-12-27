@@ -23,7 +23,7 @@ class DCMotorSpeedController : public MotorSpeedController
                            const double &actual_speed,
                            const double &supply_voltage );
 
-   ~DCMotorSpeedController() {}
+   virtual ~DCMotorSpeedController() {}
 
    void   set_commanded_speed( double commanded_speed );
    double get_motor_voltage();

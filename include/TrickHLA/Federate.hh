@@ -166,7 +166,7 @@ class Federate
    /*! @brief Default constructor for the TrickHLA Federate class. */
    Federate();
    /*! @brief Destructor for the TrickHLA Federate class. */
-   ~Federate();
+   virtual ~Federate();
 
    /*! @brief Print the TrickHLA version string. */
    void print_version() const;
@@ -188,10 +188,6 @@ class Federate
 
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
    void initialize();
-
-   /*! @brief Initialize the HLA delta time step which is the data cycle time.
-    *  @param delta_time_step The HLA delta time step for advancing/cycling HLA time. */
-   void initialize_HLA_cycle_time( double const delta_time_step );
 
    /*! @brief Get the HLA time advance cycle time.
     *  @return HLA cycle time in seconds. */
@@ -707,6 +703,15 @@ class Federate
 
    /*! @brief Verify the thread IDs associated to the objects. */
    void verify_trick_child_thread_associations();
+
+   /*! @brief Get the main thread data cycle in the base time */
+   virtual int64_t const get_main_thread_data_cycle_base_time() const
+   {
+      return this->thread_coordinator.get_main_thread_data_cycle_base_time();
+   }
+
+   /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
+   virtual bool const verify_time_constraints();
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available();

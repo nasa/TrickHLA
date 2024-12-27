@@ -23,14 +23,14 @@ class PWM
         double low_voltage,
         double duty_cycle );
 
-   ~PWM() {}
+   virtual ~PWM() {}
 
    void   set_duty_cycle( double duty_cycle );
    double get_duty_cycle() const;
    double get_average_voltage() const;
 
   private:
-   PWM() {};
+   PWM() : high_voltage( 0.0 ), low_voltage( 0.0 ), duty_cycle( 0.0 ) {};
    double duty_cycle;
 };
 
