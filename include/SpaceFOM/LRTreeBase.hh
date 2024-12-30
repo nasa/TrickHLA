@@ -63,7 +63,7 @@ namespace SpaceFOM
 
 // Define STL types used for managing the tree.
 typedef std::vector< LRTreeNodeBase * >           LRTreeNodeVector;
-typedef std::set< const LRTreeNodeBase * >        LRTreeNodeSet;
+typedef std::set< LRTreeNodeBase const * >        LRTreeNodeSet;
 typedef std::map< std::string, LRTreeNodeBase * > LRTreeNodeMap;
 
 class LRTreeBase

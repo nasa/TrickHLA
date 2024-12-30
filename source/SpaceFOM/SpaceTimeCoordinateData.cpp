@@ -56,7 +56,7 @@ SpaceTimeCoordinateData::SpaceTimeCoordinateData()
  * @job_class{initialization}
  */
 SpaceTimeCoordinateData::SpaceTimeCoordinateData(
-   const SpaceTimeCoordinateData &source )
+   SpaceTimeCoordinateData const &source )
    : att( source.att ),
      time( source.time )
 {
@@ -81,7 +81,7 @@ void SpaceTimeCoordinateData::initialize()
 /*!
  * @job_class{scheduled}
  */
-void SpaceTimeCoordinateData::copy( const SpaceTimeCoordinateData &stc_data )
+void SpaceTimeCoordinateData::copy( SpaceTimeCoordinateData const &stc_data )
 {
    V_COPY( this->pos, stc_data.pos );
    V_COPY( this->vel, stc_data.vel );
@@ -95,7 +95,7 @@ void SpaceTimeCoordinateData::copy( const SpaceTimeCoordinateData &stc_data )
  * @job_class{scheduled}
  */
 SpaceTimeCoordinateData &SpaceTimeCoordinateData::operator=(
-   const SpaceTimeCoordinateData &rhs )
+   SpaceTimeCoordinateData const &rhs )
 {
    this->copy( rhs );
    return ( *this );
@@ -105,7 +105,7 @@ SpaceTimeCoordinateData &SpaceTimeCoordinateData::operator=(
  * @job_class{scheduled}
  */
 bool SpaceTimeCoordinateData::operator==(
-   const SpaceTimeCoordinateData &rhs )
+   SpaceTimeCoordinateData const &rhs )
 {
    return ( this->is_equal( rhs ) );
 }
@@ -114,7 +114,7 @@ bool SpaceTimeCoordinateData::operator==(
  * @job_class{scheduled}
  */
 bool SpaceTimeCoordinateData::operator!=(
-   const SpaceTimeCoordinateData &rhs )
+   SpaceTimeCoordinateData const &rhs )
 {
    return ( !( this->is_equal( rhs ) ) );
 }
@@ -123,7 +123,7 @@ bool SpaceTimeCoordinateData::operator!=(
  * @job_class{scheduled}
  */
 bool SpaceTimeCoordinateData::is_equal(
-   const SpaceTimeCoordinateData &rhs )
+   SpaceTimeCoordinateData const &rhs )
 {
    // Compare position
    if ( ( this->pos[0] != rhs.pos[0] )

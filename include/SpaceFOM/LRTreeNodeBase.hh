@@ -82,7 +82,7 @@ class LRTreeNodeBase
    /*! @brief Initialization constructor.
     *  @param node_name The name of the node to be constructed.
     *  @param node_parent The parent node in the tree for the constructed node. */
-   LRTreeNodeBase( const char     *node_name,
+   LRTreeNodeBase( char const     *node_name,
                    LRTreeNodeBase *node_parent );
 
    /*! @brief Destructor. */
@@ -97,7 +97,7 @@ class LRTreeNodeBase
 
    /*! @brief Set the name of the node.
     *  @param node_name Name of the node. */
-   virtual void set_name( const char *node_name );
+   virtual void set_name( char const *node_name );
 
    /*! @brief Check to see if this is a root node for the tree.
     *  @return True if this is the root node, false otherwise. */

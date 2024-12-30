@@ -123,8 +123,8 @@ class RefFrameLagCompBase : public TrickHLA::LagCompensation
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
-      const double t_begin,
-      const double t_end ) = 0;
+      double const t_begin,
+      double const t_end ) = 0;
 
    /*! @brief Unload the lag compensation state into the packing data. */
    virtual void unload_lag_comp_data();

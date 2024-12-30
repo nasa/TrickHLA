@@ -1250,7 +1250,7 @@ bool const TrickThreadCoordinator::on_send_data_cycle_boundary_for_thread(
                : true );
 }
 
-bool TrickThreadCoordinator::verify_time_constraints()
+bool const TrickThreadCoordinator::verify_time_constraints()
 {
    bool verified = true;
    for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
@@ -1261,7 +1261,7 @@ bool TrickThreadCoordinator::verify_time_constraints()
    return verified;
 }
 
-bool TrickThreadCoordinator::verify_time_constraints(
+bool const TrickThreadCoordinator::verify_time_constraints(
    unsigned int const thread_id,
    int64_t const      data_cycle_base_time )
 {
@@ -1464,7 +1464,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
 
       // Child thread data cycle time must be an integer multiple of the LCTS.
       // Time constraint: (LCTS % dt[i] = 0)
-      if ( ( lcts_base_time % data_cycle_base_time ) != 0LL ) {
+      if ( lcts_base_time % data_cycle_base_time != 0 ) {
          double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
@@ -1500,7 +1500,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
 
    // Only allow child threads with a data cycle time that is an integer
    // multiple of the Trick main thread cycle time.
-   if ( ( data_cycle_base_time % this->main_thread_data_cycle_base_time ) != 0 ) {
+   if ( data_cycle_base_time % this->main_thread_data_cycle_base_time != 0 ) {
       double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__

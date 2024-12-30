@@ -43,7 +43,7 @@ class Arena
 
    int const get_width() { return width; }
 
-   friend std::ostream &operator<<( std::ostream &s, const Arena &arena );
+   friend std::ostream &operator<<( std::ostream &s, Arena const &arena );
 
   public:
    int         height;
