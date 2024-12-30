@@ -76,8 +76,8 @@ class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase, public Tr
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
-      const double t_begin,
-      const double t_end )
+      double const t_begin,
+      double const t_end )
    {
       this->compensate_dt = t_end - t_begin;
       return ( integrate( t_begin, t_end ) );

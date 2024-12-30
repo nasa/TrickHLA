@@ -66,8 +66,8 @@ LagCompensationInteg::~LagCompensationInteg()
  * @job_class{integration}
  */
 int LagCompensationInteg::integrate(
-   const double t_begin,
-   const double t_end )
+   double const t_begin,
+   double const t_end )
 {
    int    ipass;
    double compensate_dt = t_end - t_begin;

@@ -507,10 +507,10 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for FedAmb class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   FedAmb( const FedAmb &rhs );
+   FedAmb( FedAmb const &rhs );
    /*! @brief Assignment operator for FedAmb class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   FedAmb &operator=( const FedAmb &rhs );
+   FedAmb &operator=( FedAmb const &rhs );
 };
 
 } // namespace TrickHLA

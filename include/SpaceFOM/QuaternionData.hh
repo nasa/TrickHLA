@@ -51,7 +51,7 @@ class QuaternionData
    // Copy constructor.
    /*! @brief Copy constructor for QuaternionData class.
     *  @param source Source data to copy from. */
-   QuaternionData( const QuaternionData &source );
+   QuaternionData( QuaternionData const &source );
 
    // Initialization constructor.
    /*! @brief Euler angle initialization constructor.
@@ -66,15 +66,15 @@ class QuaternionData
 
    /*! @brief Assignment operator for QuaternionData class.
     *  @param rhs Right operand data to copy from. */
-   QuaternionData &operator=( const QuaternionData &rhs );
+   QuaternionData &operator=( QuaternionData const &rhs );
 
    /*! @brief Equal comparison operator for QuaternionData class.
     *  @param rhs Right operand data to compare to. */
-   bool operator==( const QuaternionData &rhs );
+   bool operator==( QuaternionData const &rhs );
 
    /*! @brief Not equal comparison operator for QuaternionData class.
     *  @param rhs Right operand data to compare to. */
-   bool operator!=( const QuaternionData &rhs );
+   bool operator!=( QuaternionData const &rhs );
 
    /***********************************************************************
     * QuaternionData methods.
@@ -125,14 +125,14 @@ class QuaternionData
 
    /*! @brief Copy the attitude quaternion.
     *  @param source Source quaternion to copy from. */
-   void copy( const QuaternionData &source );
+   void copy( QuaternionData const &source );
 
    /*! @brief Compute the conjugate of this quaternion. */
    void conjugate();
 
    /*! @brief Compute the conjugate of the quaternion.
     *  @param source Source quaternion to conjugate from. */
-   void conjugate( const QuaternionData &source );
+   void conjugate( QuaternionData const &source );
 
    /*! @brief Normalize the attitude quaternion. */
    void normalize();
@@ -140,7 +140,7 @@ class QuaternionData
    /*! @brief Normalize the attitude quaternion.
     *  @return True if equal and false if not.
     *  @param source Quaternion to compare to. */
-   bool is_equal( const QuaternionData &source );
+   bool is_equal( QuaternionData const &source );
 
    /*! @brief Multiply quaternions.
     *  @param left  Left quaternion operand.

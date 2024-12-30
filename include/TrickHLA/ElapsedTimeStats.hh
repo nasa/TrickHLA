@@ -67,7 +67,7 @@ class ElapsedTimeStats
    double const confidence_to_Z( double &confidence );
 
    /*! @brief Returns a string summary of the elapsed time statistics. */
-   const std::string to_string();
+   std::string const to_string();
 
   private:
    bool first_pass; ///< @trick_units{--} Flag indicates first pass to determine external clock.
