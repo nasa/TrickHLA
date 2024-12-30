@@ -430,16 +430,14 @@ void LRTreeBase::print_paths( std::ostream &stream )
                   for ( int kinc = 0; kinc < path_size; ++kinc ) {
                      stream << paths[iinc][jinc][kinc]->node_id;
                      if ( kinc < path_size - 1 ) {
-                        //stream << ", ";
-                        if ( paths[iinc][jinc][kinc+1]->parent != NULL ){
-                           if ( paths[iinc][jinc][kinc+1]->parent->node_id == paths[iinc][jinc][kinc]->node_id ){
+                        // stream << ", ";
+                        if ( paths[iinc][jinc][kinc + 1]->parent != NULL ) {
+                           if ( paths[iinc][jinc][kinc + 1]->parent->node_id == paths[iinc][jinc][kinc]->node_id ) {
                               stream << " > ";
-                           }
-                           else {
+                           } else {
                               stream << " < ";
                            }
-                        }
-                        else {
+                        } else {
                            stream << " < ";
                         }
                      }

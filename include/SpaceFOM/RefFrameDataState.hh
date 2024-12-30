@@ -51,7 +51,7 @@ class RefFrameDataState
    // Copy constructor.
    /*! @brief Copy constructor for RefFrameDataState class.
     *  @param source Source data to copy from. */
-   RefFrameDataState( const RefFrameDataState &source );
+   RefFrameDataState( RefFrameDataState const &source );
 
    // Destructor.
    /*! @brief Destructor for the SpaceFOM RefFrameDataState class. */
@@ -59,11 +59,11 @@ class RefFrameDataState
 
    /*! @brief Assignment operator for RefFrameDataState class.
     *  @param rhs Right operand data to copy from. */
-   virtual RefFrameDataState &operator=( const RefFrameDataState &rhs );
+   virtual RefFrameDataState &operator=( RefFrameDataState const &rhs );
 
    /*! @brief Copy the RefFrameDataState.
     *  @param source Source RefFrameDataState to copy from. */
-   virtual void copy( const RefFrameDataState &source );
+   virtual void copy( RefFrameDataState const &source );
 
    /*! @brief Initialize the RefFrameDataState. */
    virtual void initialize();

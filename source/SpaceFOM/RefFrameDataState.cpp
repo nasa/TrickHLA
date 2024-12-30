@@ -57,7 +57,7 @@ RefFrameDataState::RefFrameDataState()
 /*!
  * @job_class{initialization}
  */
-RefFrameDataState::RefFrameDataState( const RefFrameDataState &source )
+RefFrameDataState::RefFrameDataState( RefFrameDataState const &source )
 {
    this->copy( source );
 }
@@ -77,7 +77,7 @@ RefFrameDataState::~RefFrameDataState()
  * @job_class{scheduled}
  */
 RefFrameDataState &RefFrameDataState::operator=(
-   const RefFrameDataState &rhs )
+   RefFrameDataState const &rhs )
 {
 
    this->copy( rhs );
@@ -88,7 +88,7 @@ RefFrameDataState &RefFrameDataState::operator=(
 /*!
  * @job_class{scheduled}
  */
-void RefFrameDataState::copy( const RefFrameDataState &source )
+void RefFrameDataState::copy( RefFrameDataState const &source )
 {
 
    // Copy the state.

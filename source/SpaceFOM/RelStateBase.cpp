@@ -308,7 +308,7 @@ bool RelStateBase::compute_state(
  */
 bool RelStateBase::compute_state(
    PhysicalEntityData const *entity,
-   const char               *wrt_frame )
+   char const               *wrt_frame )
 {
 
    // Set the frame in which to express the state.

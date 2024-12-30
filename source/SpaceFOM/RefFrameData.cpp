@@ -57,7 +57,7 @@ RefFrameData::RefFrameData()
 /*!
  * @job_class{initialization}
  */
-RefFrameData::RefFrameData( const RefFrameData &source )
+RefFrameData::RefFrameData( RefFrameData const &source )
    : RefFrameDataState( source ),
      name( NULL ),
      parent_name( NULL )
@@ -94,7 +94,7 @@ RefFrameData::~RefFrameData()
  * @job_class{scheduled}
  */
 RefFrameData &RefFrameData::operator=(
-   const RefFrameData &rhs )
+   RefFrameData const &rhs )
 {
 
    this->copy( rhs );
@@ -105,7 +105,7 @@ RefFrameData &RefFrameData::operator=(
 /*!
  * @job_class{scheduled}
  */
-void RefFrameData::copy( const RefFrameData &source )
+void RefFrameData::copy( RefFrameData const &source )
 {
    // Copy the names.
    if ( this->name != NULL ) {

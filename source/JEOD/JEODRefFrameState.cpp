@@ -276,14 +276,13 @@ void JEODRefFrameState::unpack_into_working_data()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
 void JEODRefFrameState::print_data( std::ostream &stream )
 {
    double euler_angles[3];
-   double rad_to_deg = (180.0/M_PI);
+   double rad_to_deg = ( 180.0 / M_PI );
 
    // Call the RefFrameBase print_data method.
    RefFrameBase::print_data();

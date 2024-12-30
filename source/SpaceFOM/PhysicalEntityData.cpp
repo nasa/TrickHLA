@@ -63,7 +63,7 @@ PhysicalEntityData::PhysicalEntityData()
 /*!
  * @job_class{initialization}
  */
-PhysicalEntityData::PhysicalEntityData( const PhysicalEntityData &source )
+PhysicalEntityData::PhysicalEntityData( PhysicalEntityData const &source )
    : name( NULL ),
      type( NULL ),
      status( NULL ),
@@ -115,7 +115,7 @@ PhysicalEntityData::~PhysicalEntityData()
  * @job_class{scheduled}
  */
 PhysicalEntityData &PhysicalEntityData::operator=(
-   const PhysicalEntityData &rhs )
+   PhysicalEntityData const &rhs )
 {
 
    this->copy( rhs );
@@ -126,7 +126,7 @@ PhysicalEntityData &PhysicalEntityData::operator=(
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityData::copy( const PhysicalEntityData &source )
+void PhysicalEntityData::copy( PhysicalEntityData const &source )
 {
    // Copy the string based parameters.
    if ( this->name != NULL ) {
