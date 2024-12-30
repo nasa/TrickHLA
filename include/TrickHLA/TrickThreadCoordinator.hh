@@ -120,11 +120,11 @@ class TrickThreadCoordinator
    }
 
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
-   virtual bool verify_time_constraints();
+   virtual bool const verify_time_constraints();
 
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
-   virtual bool verify_time_constraints( unsigned int const thread_id,
-                                         int64_t const      data_cycle_base_time );
+   virtual bool const verify_time_constraints( unsigned int const thread_id,
+                                               int64_t const      data_cycle_base_time );
 
   protected:
    /*! @brief On receive boundary if sim-time is an integer multiple of a valid cycle-time. */

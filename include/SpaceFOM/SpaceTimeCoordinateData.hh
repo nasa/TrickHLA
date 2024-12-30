@@ -58,19 +58,19 @@ class SpaceTimeCoordinateData
    // Copy constructor.
    /*! @brief Copy constructor for SpaceTimeCoordinateData class.
     *  @param source Source data to copy from. */
-   SpaceTimeCoordinateData( const SpaceTimeCoordinateData &source );
+   SpaceTimeCoordinateData( SpaceTimeCoordinateData const &source );
 
    /*! @brief Assignment operator for SpaceTimeCoordinateData class.
     *  @param rhs Right had side data to copy from. */
-   SpaceTimeCoordinateData &operator=( const SpaceTimeCoordinateData &rhs );
+   SpaceTimeCoordinateData &operator=( SpaceTimeCoordinateData const &rhs );
 
    /*! @brief Equal comparison operator for SpaceTimeCoordinateData class.
     *  @param rhs Right operand data to compare to. */
-   bool operator==( const SpaceTimeCoordinateData &rhs );
+   bool operator==( SpaceTimeCoordinateData const &rhs );
 
    /*! @brief Not equal comparison operator for SpaceTimeCoordinateData class.
     *  @param rhs Right operand data to compare to. */
-   bool operator!=( const SpaceTimeCoordinateData &rhs );
+   bool operator!=( SpaceTimeCoordinateData const &rhs );
 
    /*! @brief Initialize the state-time coordinate data. */
    void initialize();
@@ -78,11 +78,11 @@ class SpaceTimeCoordinateData
    /*! @brief Compare a SpaceTimeCoordinateData instance to another.
     *  @return True if instances are the exactly the same, false otherwise.
     *  @param  rhs SpaceTimeCoordinateData to compare against. */
-   bool is_equal( const SpaceTimeCoordinateData &rhs );
+   bool is_equal( SpaceTimeCoordinateData const &rhs );
 
    /*! @brief Copy the state-time coordinate data.
     *  @param stc_data Source to copy from. */
-   void copy( const SpaceTimeCoordinateData &stc_data );
+   void copy( SpaceTimeCoordinateData const &stc_data );
 };
 
 } // namespace SpaceFOM

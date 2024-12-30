@@ -620,7 +620,7 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
    bool                    not_acyclic = false;
    LRTreeNodeSet           path_set;
    LRTreeNodeSet::iterator path_pos;
-   const LRTreeNodeBase   *current_node = node;
+   LRTreeNodeBase const   *current_node = node;
 
    // Get the number of nodes in the tree.
    num_nodes = this->nodes.size();

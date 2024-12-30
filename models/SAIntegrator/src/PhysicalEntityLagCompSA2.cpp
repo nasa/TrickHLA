@@ -199,8 +199,8 @@ void PhysicalEntityLagCompSA2::unload()
  * @job_class{derivative}
  */
 int PhysicalEntityLagCompSA2::integrate(
-   const double t_begin,
-   const double t_end )
+   double const t_begin,
+   double const t_end )
 {
    double compensate_dt = t_end - t_begin;
    double dt_go         = compensate_dt;

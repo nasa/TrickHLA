@@ -183,7 +183,7 @@ class SineData
 
    /*! @brief Get the name of the sine wave object.
     *  @return A constant pointer to the name of the sine wave object. */
-   const char *get_name() const
+   char const *get_name() const
    {
       return name;
    }

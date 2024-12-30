@@ -261,7 +261,7 @@ void SinePacking::pack()
          if ( name_sim_var != NULL ) {
 
             // Number of bytes ref-attributes says this variable is.
-            const int name_sim_var_size = attr->get_attribute_size();
+            int const name_sim_var_size = attr->get_attribute_size();
 
             // NOTE: Make the last character either a '0' through '9' character
             // so that we can see that the name is changing.

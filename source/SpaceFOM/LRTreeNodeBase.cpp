@@ -78,7 +78,7 @@ LRTreeNodeBase::LRTreeNodeBase()
  * @job_class{initialization}
  */
 LRTreeNodeBase::LRTreeNodeBase(
-   const char     *node_name,
+   char const     *node_name,
    LRTreeNodeBase *node_parent )
    : name( NULL ),
      parent( NULL ),
@@ -133,7 +133,7 @@ LRTreeNodeBase::~LRTreeNodeBase()
 /*!
  * @job_class{scheduled}
  */
-void LRTreeNodeBase::set_name( const char *node_name )
+void LRTreeNodeBase::set_name( char const *node_name )
 {
 
    // Check to see if a node name has already been set.

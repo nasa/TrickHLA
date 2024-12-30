@@ -102,8 +102,8 @@ class LagCompensationIntegBase
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int integrate(
-      const double t_begin,
-      const double t_end ) = 0;
+      double const t_begin,
+      double const t_end ) = 0;
 };
 
 } // namespace TrickHLA

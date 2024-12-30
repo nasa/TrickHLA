@@ -20,8 +20,8 @@ class DCMotorSpeedController : public MotorSpeedController
   public:
    DCMotorSpeedController( DCMotor      &dc_motor,
                            double        motor_gain,
-                           const double &actual_speed,
-                           const double &supply_voltage );
+                           double const &actual_speed,
+                           double const &supply_voltage );
 
    virtual ~DCMotorSpeedController() {}
 
@@ -32,8 +32,8 @@ class DCMotorSpeedController : public MotorSpeedController
    double        motor_voltage;
    DCMotor      &motor;
    double        gain;
-   const double &actual_speed;
-   const double &supply_voltage;
+   double const &actual_speed;
+   double const &supply_voltage;
 
    // Don't Allow the default constructor to be used.
    DCMotorSpeedController();
