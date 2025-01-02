@@ -302,7 +302,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( this->is_required() ? "REQUIRED" : "not required" )
                  << " and is "
                  << ( this->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
-                 << THLA_ENDL;
+                 << '\n';
          // Display the summary.
          send_hs( stdout, summary.str().c_str() );
       }
@@ -332,7 +332,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -390,7 +390,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -419,7 +419,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

@@ -177,7 +177,7 @@ void PhysicalEntityBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::default_data():" << __LINE__
-             << " ERROR: Unexpected NULL federation instance PhysicalEntity name!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL federation instance PhysicalEntity name!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -291,7 +291,7 @@ void PhysicalEntityBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
-             << " Setting frame name to empty string." << THLA_ENDL;
+             << " Setting frame name to empty string." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -301,7 +301,7 @@ void PhysicalEntityBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
-             << " Setting type to empty string." << THLA_ENDL;
+             << " Setting type to empty string." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.type = trick_MM->mm_strdup( "" );
    }
@@ -311,7 +311,7 @@ void PhysicalEntityBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
-             << " Setting status to empty string." << THLA_ENDL;
+             << " Setting status to empty string." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.status = trick_MM->mm_strdup( "" );
    }
@@ -321,7 +321,7 @@ void PhysicalEntityBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
-             << " Setting parent_ref_frame to empty string." << THLA_ENDL;
+             << " Setting parent_ref_frame to empty string." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }
@@ -341,7 +341,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
-             << " Setting frame name to empty string." << THLA_ENDL;
+             << " Setting frame name to empty string." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -351,7 +351,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
-             << " Setting type to empty string." << THLA_ENDL;
+             << " Setting type to empty string." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.type = trick_MM->mm_strdup( "" );
    }
@@ -361,7 +361,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
-             << " Setting status to empty string." << THLA_ENDL;
+             << " Setting status to empty string." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.status = trick_MM->mm_strdup( "" );
    }
@@ -371,7 +371,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
-             << " Setting parent_ref_frame to empty string." << THLA_ENDL;
+             << " Setting parent_ref_frame to empty string." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }
@@ -549,50 +549,50 @@ void PhysicalEntityBase::debug_print( std::ostream &stream )
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
-          << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
-          << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
-          << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
-          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
-          << "\ttime: " << pe_packing_data.state.time << endl;
+   stream << "\tObject-Name: '" << object->get_name() << "'" << '\n'
+          << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << '\n'
+          << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << '\n'
+          << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << '\n'
+          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << '\n'
+          << "\ttime: " << pe_packing_data.state.time << '\n';
    stream << "\tposition: "
           << "\t\t" << pe_packing_data.state.pos[0] << ", "
           << "\t\t" << pe_packing_data.state.pos[1] << ", "
-          << "\t\t" << pe_packing_data.state.pos[2] << endl;
+          << "\t\t" << pe_packing_data.state.pos[2] << '\n';
    stream << "\tvelocity: "
           << "\t\t" << pe_packing_data.state.vel[0] << ", "
           << "\t\t" << pe_packing_data.state.vel[1] << ", "
-          << "\t\t" << pe_packing_data.state.vel[2] << endl;
+          << "\t\t" << pe_packing_data.state.vel[2] << '\n';
    stream << "\tacceleration: "
           << "\t\t" << pe_packing_data.accel[0] << ", "
           << "\t\t" << pe_packing_data.accel[1] << ", "
-          << "\t\t" << pe_packing_data.accel[2] << endl;
+          << "\t\t" << pe_packing_data.accel[2] << '\n';
    stream << "\tattitude (s,v): "
           << "\t\t" << pe_packing_data.state.att.scalar << "; "
           << "\t\t" << pe_packing_data.state.att.vector[0] << ", "
           << "\t\t" << pe_packing_data.state.att.vector[1] << ", "
-          << "\t\t" << pe_packing_data.state.att.vector[2] << endl;
+          << "\t\t" << pe_packing_data.state.att.vector[2] << '\n';
    stream << "\tattitude (RPY): "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << endl;
+          << "\t\t" << euler_angles[2] << '\n';
    stream << "\tangular velocity: "
           << "\t\t" << pe_packing_data.state.ang_vel[0] << ", "
           << "\t\t" << pe_packing_data.state.ang_vel[1] << ", "
-          << "\t\t" << pe_packing_data.state.ang_vel[2] << endl;
+          << "\t\t" << pe_packing_data.state.ang_vel[2] << '\n';
    stream << "\tangular acceleration: "
           << "\t\t" << pe_packing_data.ang_accel[0] << ", "
           << "\t\t" << pe_packing_data.ang_accel[1] << ", "
-          << "\t\t" << pe_packing_data.ang_accel[2] << endl;
+          << "\t\t" << pe_packing_data.ang_accel[2] << '\n';
    stream << "\tcenter of mass (cm): "
           << "\t\t" << pe_packing_data.cm[0] << ", "
           << "\t\t" << pe_packing_data.cm[1] << ", "
-          << "\t\t" << pe_packing_data.cm[2] << endl;
+          << "\t\t" << pe_packing_data.cm[2] << '\n';
    stream << "\tbody wrt. struct (s;v): "
           << "\t\t" << pe_packing_data.body_wrt_struct.scalar << "; "
           << "\t\t" << pe_packing_data.body_wrt_struct.vector[0] << ", "
           << "\t\t" << pe_packing_data.body_wrt_struct.vector[1] << ", "
-          << "\t\t" << pe_packing_data.body_wrt_struct.vector[2] << endl;
+          << "\t\t" << pe_packing_data.body_wrt_struct.vector[2] << '\n';
 
    return;
 }

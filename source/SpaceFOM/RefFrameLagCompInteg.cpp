@@ -77,9 +77,9 @@ void RefFrameLagCompInteg::initialize()
    if ( this->integ_dt < this->integ_tol ) {
       ostringstream errmsg;
 
-      errmsg << "SpaceFOM::RefFrameLagCompInteg::initialize():" << __LINE__ << endl
+      errmsg << "SpaceFOM::RefFrameLagCompInteg::initialize():" << __LINE__ << '\n'
              << " ERROR: Tolerance must be less that the dt!: dt = "
-             << this->integ_dt << "; tolerance = " << this->integ_tol << THLA_ENDL;
+             << this->integ_dt << "; tolerance = " << this->integ_tol << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -106,10 +106,10 @@ void RefFrameLagCompInteg::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << endl
-             << " scenario-time:" << get_scenario_time() << endl
-             << "     lookahead:" << this->compensate_dt << endl
-             << " adjusted-time:" << end_t << endl;
+      errmsg << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << '\n'
+             << " scenario-time:" << get_scenario_time() << '\n'
+             << "     lookahead:" << this->compensate_dt << '\n'
+             << " adjusted-time:" << end_t << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -121,7 +121,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data before compensation: " << endl;
+      cout << "Send data before compensation: " << '\n';
       this->print_lag_comp_data();
    }
 
@@ -130,7 +130,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data after compensation: " << endl;
+      cout << "Send data after compensation: " << '\n';
       this->print_lag_comp_data();
    }
 
@@ -155,10 +155,10 @@ void RefFrameLagCompInteg::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-             << "  scenario-time:" << end_t << endl
-             << "      data-time:" << data_t << endl
-             << " comp-time-step:" << this->compensate_dt << endl;
+      errmsg << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << '\n'
+             << "  scenario-time:" << end_t << '\n'
+             << "      data-time:" << data_t << '\n'
+             << " comp-time-step:" << this->compensate_dt << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -173,7 +173,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data before compensation: " << endl;
+         cout << "Receive data before compensation: " << '\n';
          this->print_lag_comp_data();
       }
 
@@ -182,7 +182,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data after compensation: " << endl;
+         cout << "Receive data after compensation: " << '\n';
          this->print_lag_comp_data();
       }
    }

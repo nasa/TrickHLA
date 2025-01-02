@@ -109,7 +109,7 @@ void DynamicalEntityLagComp::initialize()
       ostringstream errmsg;
 
       errmsg << "SpaceFOM::DynamicalEntityLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Trick integrator!" << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

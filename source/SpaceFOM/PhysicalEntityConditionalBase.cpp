@@ -164,7 +164,7 @@ bool PhysicalEntityConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Name for PhysicalEntity!" << THLA_ENDL;
+                << " ERROR: Unexpected NULL Name for PhysicalEntity!" << '\n';
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -194,7 +194,7 @@ bool PhysicalEntityConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Type for PhysicalEntity!" << THLA_ENDL;
+                << " ERROR: Unexpected NULL Type for PhysicalEntity!" << '\n';
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -224,7 +224,7 @@ bool PhysicalEntityConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Status for PhysicalEntity!" << THLA_ENDL;
+                << " ERROR: Unexpected NULL Status for PhysicalEntity!" << '\n';
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -254,7 +254,7 @@ bool PhysicalEntityConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Parent Frame for PhysicalEntity!" << THLA_ENDL;
+                << " ERROR: Unexpected NULL Parent Frame for PhysicalEntity!" << '\n';
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -337,7 +337,7 @@ bool PhysicalEntityConditionalBase::should_send(
       errmsg << "PhysicalEntityConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
              << "ERROR: Could not find the data for the specified FOM attribute!"
-             << THLA_ENDL;
+             << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

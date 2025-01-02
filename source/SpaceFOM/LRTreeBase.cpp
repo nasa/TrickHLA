@@ -142,7 +142,7 @@ bool LRTreeBase::build_tree()
    if ( !allocate_paths() ) {
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
-             << " ERROR: Failed to allocate the tree paths matrix!\"" << THLA_ENDL;
+             << " ERROR: Failed to allocate the tree paths matrix!\"" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -151,7 +151,7 @@ bool LRTreeBase::build_tree()
    if ( root_node == NULL ) {
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
-             << " ERROR: Root node not found!\"" << THLA_ENDL;
+             << " ERROR: Root node not found!\"" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

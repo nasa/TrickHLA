@@ -107,7 +107,7 @@ void RefFrameState::configure(
    if ( ref_frame_data_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -127,7 +127,7 @@ void RefFrameState::initialize()
    if ( ref_frame_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

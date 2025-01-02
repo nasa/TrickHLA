@@ -225,18 +225,18 @@ bool LRTreeNodeBase::set_root( bool root_status )
 void LRTreeNodeBase::print_node( std::ostream &stream )
 {
 
-   stream << "Node Name: '" << this->name << "'" << endl
-          << "\tID: " << this->node_id << endl;
+   stream << "Node Name: '" << this->name << "'" << '\n'
+          << "\tID: " << this->node_id << '\n';
 
    if ( parent == NULL ) {
-      stream << "\tParent: <NULL>" << endl;
+      stream << "\tParent: <NULL>" << '\n';
    } else {
-      stream << "\tParent: '" << this->parent->name << "'" << endl;
+      stream << "\tParent: '" << this->parent->name << "'" << '\n';
    }
    if ( is_root_node ) {
-      stream << "\tIs Root: True" << endl;
+      stream << "\tIs Root: True" << '\n';
    } else {
-      stream << "\tIs Root: False" << endl;
+      stream << "\tIs Root: False" << '\n';
    }
 
    return;

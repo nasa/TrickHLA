@@ -152,7 +152,7 @@ bool RefFrameConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Name for RefFrame!" << THLA_ENDL;
+                << " ERROR: Unexpected NULL Name for RefFrame!" << '\n';
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -182,7 +182,7 @@ bool RefFrameConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Parent Frame for RefFrame!" << THLA_ENDL;
+                << " ERROR: Unexpected NULL Parent Frame for RefFrame!" << '\n';
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -205,7 +205,7 @@ bool RefFrameConditionalBase::should_send(
       errmsg << "RefFrameConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
              << "ERROR: Could not find the data for the specified FOM attribute!"
-             << THLA_ENDL;
+             << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

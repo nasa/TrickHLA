@@ -130,7 +130,7 @@ void OwnershipHandler::encode_checkpoint()
          ostringstream errmsg;
          errmsg << "OwnershipHandler::encode_checkpoint():" << __LINE__
                 << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -167,7 +167,7 @@ void OwnershipHandler::encode_checkpoint()
          ostringstream errmsg;
          errmsg << "OwnershipHandler::encode_checkpoint():" << __LINE__
                 << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 

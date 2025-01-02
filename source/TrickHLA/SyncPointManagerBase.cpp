@@ -128,7 +128,7 @@ void SyncPointManagerBase::setup(
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::setup():" << __LINE__
-             << " ERROR: Unexpected NULL federate pointer." << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate pointer." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -239,7 +239,7 @@ bool const SyncPointManagerBase::add_sync_point_list(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__
                 << " ERROR: Could not allocate memory for the sync-point lists!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -251,7 +251,7 @@ bool const SyncPointManagerBase::add_sync_point_list(
          errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__
                 << " ERROR: Could not allocate memory for the sync-point list at array index:"
                 << sync_pnt_lists_count << " for sync-point list '"
-                << list_name << "'!" << THLA_ENDL;
+                << list_name << "'!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -283,7 +283,7 @@ bool const SyncPointManagerBase::add_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
-             << "' has already been added!" << THLA_ENDL;
+             << "' has already been added!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -295,7 +295,7 @@ bool const SyncPointManagerBase::add_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
                 << " ERROR: Could not add the named sync-point list for '"
-                << list_name << "'!" << THLA_ENDL;
+                << list_name << "'!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -313,15 +313,15 @@ bool const SyncPointManagerBase::add_sync_point(
    errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
           << " ERROR: Could not add the sync-point label '"
           << label_str << "' to the named sync-point list '"
-          << list_name << "'!" << THLA_ENDL;
+          << list_name << "'!" << '\n';
    DebugHandler::terminate_with_message( errmsg.str() );
    return false;
 }
 
 bool const SyncPointManagerBase::add_sync_point(
-   wstring const &label,
-   string const  &list_name,
-   Int64Time      time )
+   wstring const   &label,
+   string const    &list_name,
+   Int64Time const &time )
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
@@ -331,7 +331,7 @@ bool const SyncPointManagerBase::add_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
-             << "' has already been added!" << THLA_ENDL;
+             << "' has already been added!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -343,7 +343,7 @@ bool const SyncPointManagerBase::add_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
                 << " ERROR: Could not add the named sync-point list for '"
-                << list_name << "'!" << THLA_ENDL;
+                << list_name << "'!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -361,7 +361,7 @@ bool const SyncPointManagerBase::add_sync_point(
    errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
           << " ERROR: Could not add the sync-point label '"
           << label_str << "' to the named sync-point list '"
-          << list_name << "'!" << THLA_ENDL;
+          << list_name << "'!" << '\n';
    DebugHandler::terminate_with_message( errmsg.str() );
    return false;
 }
@@ -444,7 +444,7 @@ bool const SyncPointManagerBase::register_sync_point(
          errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
                 << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -472,7 +472,7 @@ bool const SyncPointManagerBase::register_sync_point(
          errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
                 << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -544,7 +544,7 @@ bool const SyncPointManagerBase::wait_for_sync_point_announced(
             errmsg << "SyncPointManagerBase::wait_for_sync_point_announced():" << __LINE__
                    << " ERROR: Failed to add sync-point '" << label_str
                    << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
-                   << THLA_ENDL;
+                   << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
@@ -597,7 +597,7 @@ bool const SyncPointManagerBase::achieve_sync_point(
          errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
                 << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -668,7 +668,7 @@ bool const SyncPointManagerBase::wait_for_sync_point_synchronized(
             errmsg << "SyncPointManagerBase::wait_for_sync_point_synchronized():" << __LINE__
                    << " ERROR: Failed to add sync-point '" << label_str
                    << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
-                   << THLA_ENDL;
+                   << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
@@ -705,7 +705,7 @@ bool const SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():" << __LINE__
                 << " ERROR: Failed to wait for sync-point '" << label_str << "'"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -715,7 +715,7 @@ bool const SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():" << __LINE__
              << " ERROR: Failed to achieve sync-point '" << label_str << "'"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -738,7 +738,7 @@ string SyncPointManagerBase::to_string()
 
 #if SYNC_POINT_LIST_TMM_ARRAY
       msg << "SyncPointManagerBase::to_string():" << __LINE__
-          << " Number of Sync-Point Lists:" << sync_pnt_lists_count << endl;
+          << " Number of Sync-Point Lists:" << sync_pnt_lists_count << '\n';
 
       for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
 #else
@@ -769,14 +769,14 @@ string SyncPointManagerBase::to_string(
    StringUtilities::to_string( label_str, label );
    ostringstream msg;
    msg << "SyncPointManagerBase::to_string():" << __LINE__
-       << " Unknown sync-point label:'" << label_str << "'" << endl;
+       << " Unknown sync-point label:'" << label_str << "'" << '\n';
    return msg.str();
 }
 
 void SyncPointManagerBase::print_sync_points()
 {
    ostringstream msg;
-   msg << "SyncPointManagerBase::print_sync_points():" << __LINE__ << endl
+   msg << "SyncPointManagerBase::print_sync_points():" << __LINE__ << '\n'
        << to_string();
    send_hs( stdout, msg.str().c_str() );
 }
@@ -798,7 +798,7 @@ void SyncPointManagerBase::sync_point_registration_succeeded(
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::sync_point_registration_succeeded():" << __LINE__
              << " ERROR: Failed to mark sync-point '" << label_str
-             << "' as registered!" << THLA_ENDL;
+             << "' as registered!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -828,7 +828,7 @@ void SyncPointManagerBase::sync_point_registration_failed(
             ostringstream errmsg;
             errmsg << "SyncPointManagerBase::sync_point_registration_failed():" << __LINE__
                    << " ERROR: Failed to mark sync-point '" << label_str
-                   << "' as registered." << THLA_ENDL;
+                   << "' as registered." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
       } else {
@@ -837,7 +837,7 @@ void SyncPointManagerBase::sync_point_registration_failed(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::sync_point_registration_failed():" << __LINE__
                 << " ERROR: Failed to register sync-point label '" << label_str
-                << "'" << THLA_ENDL;
+                << "'" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    } else {
@@ -851,7 +851,7 @@ void SyncPointManagerBase::sync_point_registration_failed(
          errmsg << "SyncPointManagerBase::sync_point_registration_failed():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
                 << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -899,7 +899,7 @@ void SyncPointManagerBase::sync_point_announced(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::sync_point_announced():" << __LINE__
                 << " ERROR: Failed to mark sync-point '" << label_str
-                << "' as announced." << THLA_ENDL;
+                << "' as announced." << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -925,7 +925,7 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::sync_point_federation_synchronized():" << __LINE__
              << " ERROR: Unexpected unmanaged sync-point '" << label_str << "'"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }

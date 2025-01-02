@@ -112,7 +112,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
              << " ERROR: 'interaction' was not initialized to callback an"
              << " Interaction class. Cannot send out an interaction in"
              << " order for the rest of the federates to participate in a"
-             << " federation freeze." << THLA_ENDL;
+             << " federation freeze." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       return;
    }
@@ -208,13 +208,13 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
          freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.get_time_in_seconds() );
 
          ostringstream infomsg;
-         infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__ << endl
-                 << "  Invalid freeze scenario time:" << freeze_time << endl
-                 << "  Current scenario time:" << curr_scenario_time << endl
-                 << "  Updated Freeze scenario time:" << freeze_scenario_time << endl
-                 << "  Freeze federation at HLA time:" << freeze_hla_time << endl
-                 << "  Freeze Interaction sent for HLA time:" << interaction_hla_time.get_time_in_seconds() << endl
-                 << "  Current granted HLA time:" << granted.get_time_in_seconds() << THLA_ENDL;
+         infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__ << '\n'
+                 << "  Invalid freeze scenario time:" << freeze_time << '\n'
+                 << "  Current scenario time:" << curr_scenario_time << '\n'
+                 << "  Updated Freeze scenario time:" << freeze_scenario_time << '\n'
+                 << "  Freeze federation at HLA time:" << freeze_hla_time << '\n'
+                 << "  Freeze Interaction sent for HLA time:" << interaction_hla_time.get_time_in_seconds() << '\n'
+                 << "  Current granted HLA time:" << granted.get_time_in_seconds() << '\n';
          send_hs( stdout, infomsg.str().c_str() );
       }
    }
@@ -250,16 +250,16 @@ new freeze HLA time:%lf %c",
    if ( this->InteractionHandler::send_interaction( interaction_hla_time.get_time_in_seconds() ) ) {
       ostringstream infomsg;
       infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
-              << __LINE__ << endl
+              << __LINE__ << '\n'
               << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.get_time_in_seconds() << " ("
               << interaction_hla_time.get_base_time() << " " << Int64BaseTime::get_units()
-              << ")" << endl
+              << ")" << '\n'
               << "  Federation Freeze scenario time:" << time << " ("
               << Int64BaseTime::to_base_time( time ) << " " << Int64BaseTime::get_units()
-              << ")" << endl
+              << ")" << '\n'
               << "  Federation Freeze HLA time:" << freeze_hla_time << " ("
               << freeze_hla_time << " " << Int64BaseTime::get_units()
-              << ")" << THLA_ENDL;
+              << ")" << '\n';
       send_hs( stdout, infomsg.str().c_str() );
 
       // Inform the Federate the scenario time to freeze the simulation on.
@@ -273,14 +273,14 @@ new freeze HLA time:%lf %c",
       // The interaction was Not sent.
       ostringstream infomsg;
       infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
-              << __LINE__ << " ERROR: Freeze Interaction Not Sent" << endl
+              << __LINE__ << " ERROR: Freeze Interaction Not Sent" << '\n'
               << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.get_time_in_seconds() << " ("
-              << interaction_hla_time.get_base_time() << " " << Int64BaseTime::get_units() << ")" << endl
+              << interaction_hla_time.get_base_time() << " " << Int64BaseTime::get_units() << ")" << '\n'
               << "  Federation Freeze scenario time:" << time << " ("
-              << Int64BaseTime::to_base_time( time ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << Int64BaseTime::to_base_time( time ) << " " << Int64BaseTime::get_units() << ")" << '\n'
               << "  Federation Freeze HLA time:" << freeze_hla_time << " ("
               << freeze_hla_time << " " << Int64BaseTime::get_units()
-              << ")" << THLA_ENDL;
+              << ")" << '\n';
       send_hs( stdout, infomsg.str().c_str() );
    }
 }
@@ -290,10 +290,10 @@ void FreezeInteractionHandler::receive_interaction(
 {
    ostringstream msg;
    msg << "IMSim::FreezeInteractionHandler::receive_interaction():"
-       << __LINE__ << endl
+       << __LINE__ << '\n'
        << "  Freeze scenario-time:" << time << " ("
        << Int64BaseTime::to_base_time( time ) << " " << Int64BaseTime::get_units()
-       << ")" << THLA_ENDL;
+       << ")" << '\n';
    send_hs( stdout, msg.str().c_str() );
 
    // if the interaction was not initialized into the parent class, get out of here...
@@ -303,7 +303,7 @@ void FreezeInteractionHandler::receive_interaction(
              << __LINE__ << " ERROR:"
              << " 'interaction' was not initialized to callback an Interaction"
              << " class. Cannot send the time to the Interaction in order for it to"
-             << " participate in a federation freeze." << THLA_ENDL;
+             << " participate in a federation freeze." << '\n';
       send_hs( stdout, errmsg.str().c_str() );
    } else {
       // Inform the Federate the scenario time to freeze the simulation on.

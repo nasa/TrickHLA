@@ -255,7 +255,7 @@ Trick simulation time as the default scenario-timeline.%c",
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -366,7 +366,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          errmsg << "ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
                 << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
-                << "'! This conflicts with this being the designated Master federate!" << THLA_ENDL;
+                << "'! This conflicts with this being the designated Master federate!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -439,7 +439,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::add_multiphase_init_sync_points:" << __LINE__
                 << " ERROR: User specified multiphase init sync-point label '"
-                << user_sync_pt_labels.at( i ) << "' already added!" << THLA_ENDL;
+                << user_sync_pt_labels.at( i ) << "' already added!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
          add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
@@ -536,7 +536,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to send at least one object attribute. Make"
              << " sure at least one ExecutionConfiguration attribute has 'publish = true'"
              << " set. Please check your input or modified-data files to make"
-             << " sure the 'publish' value is correctly specified." << THLA_ENDL;
+             << " sure the 'publish' value is correctly specified." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -595,7 +595,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -624,7 +624,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " Make sure at least one ExecutionConfiguration attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -807,7 +807,7 @@ double ExecutionControlBase::get_sim_time()
       errmsg << "ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
-             << " file. Returning Trick simulation time instead!" << THLA_ENDL;
+             << " file. Returning Trick simulation time instead!" << '\n';
       send_hs( stdout, errmsg.str().c_str() );
    }
    return exec_get_sim_time();
@@ -824,7 +824,7 @@ double ExecutionControlBase::get_scenario_time()
       errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
-             << " file. Returning Trick simulation time instead!" << THLA_ENDL;
+             << " file. Returning Trick simulation time instead!" << '\n';
       send_hs( stdout, errmsg.str().c_str() );
    }
 
