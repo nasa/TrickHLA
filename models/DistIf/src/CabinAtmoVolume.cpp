@@ -191,20 +191,20 @@ void CabinAtmoVolume::convertNameForTmm(
 void CabinAtmoVolume::validateConfig() const
 {
    if ( mConfig->mVolume < DBL_EPSILON ) {
-      std::cout << "ERROR: " << mName << " volume < DBL_EPSILON!" << std::endl;
+      std::cout << "ERROR: " << mName << " volume < DBL_EPSILON!" << '\n';
    }
    if ( mConfig->mTemperature < DBL_EPSILON ) {
-      std::cout << "ERROR: " << mName << " initial temperature < DBL_EPSILON!" << std::endl;
+      std::cout << "ERROR: " << mName << " initial temperature < DBL_EPSILON!" << '\n';
    }
    if ( mConfig->mPressure < 0.0 ) {
-      std::cout << "ERROR: " << mName << " initial pressure < zero!" << std::endl;
+      std::cout << "ERROR: " << mName << " initial pressure < zero!" << '\n';
    }
    double sum = 0.0;
    for ( unsigned int i = 0; i < CabinAtmoMixture::NBULK; ++i ) {
       sum += mConfig->mMoleFractions[i];
    }
    if ( std::abs( 1.0 - sum ) > DBL_EPSILON ) {
-      std::cout << "ERROR: " << mName << " initial mixture doesn't sum to 1!" << std::endl;
+      std::cout << "ERROR: " << mName << " initial mixture doesn't sum to 1!" << '\n';
    }
 }
 
@@ -537,7 +537,7 @@ void CabinAtmoVolume::updateIfPost()
    do {
       numNotifs = mIf.popNotification( notification );
       if ( Distributed2WayBusNotification::NONE != notification.mLevel ) {
-         std::cout << mName << " from mIf: " << notification.mMessage << std::endl;
+         std::cout << mName << " from mIf: " << notification.mMessage << '\n';
       }
    } while ( numNotifs > 0 );
 }

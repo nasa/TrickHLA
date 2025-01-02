@@ -79,7 +79,7 @@ int LagCompensationInteg::integrate(
       ostringstream errmsg;
       errmsg << "**** LagCompensationInteg::integrate(): "
              << "Compensate: t_begin, t_end, dt_go: "
-             << t_begin << ", " << t_end << ", " << dt_go << endl;
+             << t_begin << ", " << t_end << ", " << dt_go << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -98,7 +98,7 @@ int LagCompensationInteg::integrate(
          errmsg << "****** LagCompensationInteg::integrate(): "
                 << "Integ dt, tol, t, dt_go: "
                 << this->integ_dt << ", " << this->integ_tol << ", "
-                << integ_t << ", " << dt_go << endl;
+                << integ_t << ", " << dt_go << '\n';
          send_hs( stderr, errmsg.str().c_str() );
       }
 

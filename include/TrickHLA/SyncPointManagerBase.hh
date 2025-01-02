@@ -115,7 +115,7 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
     *  @return True if the synchronization point is added, false otherwise. */
    bool const add_sync_point( std::wstring const &label, std::string const &list_name );
 
-   bool const add_sync_point( std::wstring const &label, std::string const &list_name, Int64Time time );
+   bool const add_sync_point( std::wstring const &label, std::string const &list_name, Int64Time const &time );
 
    bool const contains_sync_point( std::wstring const &label );
 

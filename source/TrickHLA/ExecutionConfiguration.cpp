@@ -156,7 +156,7 @@ void ExecutionConfiguration::configure_attributes()
    if ( S_define_name == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name." << THLA_ENDL;
+             << " ERROR: Unexpected NULL S_define_name." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -208,7 +208,7 @@ void ExecutionConfiguration::configure()
    if ( this->manager == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Null TrickHLA::Manager passed in!" << THLA_ENDL;
+             << " ERROR: Null TrickHLA::Manager passed in!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -228,7 +228,7 @@ void ExecutionConfiguration::configure()
    if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Null TrickHLA-Federate pointer!" << THLA_ENDL;
+             << " ERROR: Null TrickHLA-Federate pointer!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -257,7 +257,7 @@ void ExecutionConfiguration::configure()
 void ExecutionConfiguration::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "===================================================" << endl;
+      cout << "===================================================" << '\n';
    }
 
    double terminate_time = exec_get_terminate_time();
@@ -268,7 +268,7 @@ void ExecutionConfiguration::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
               << " Setting simulation termination time to "
-              << run_duration << " seconds." << endl;
+              << run_duration << " seconds." << '\n';
       }
       exec_set_terminate_time( this->run_duration );
    } else {
@@ -282,7 +282,7 @@ void ExecutionConfiguration::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
               << " Setting simulation duration to "
-              << run_duration << " seconds." << endl;
+              << run_duration << " seconds." << '\n';
       }
    }
 
@@ -290,14 +290,14 @@ void ExecutionConfiguration::pack()
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << endl
-           << "\tObject-Name:'" << this->object->get_name() << "'" << endl
-           << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
-           << "\trun_duration:" << run_duration << " seconds" << endl
-           << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
-           << "\tnum_federates:" << num_federates << endl
-           << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
-           << "===================================================" << endl;
+      cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << '\n'
+           << "\tObject-Name:'" << this->object->get_name() << "'" << '\n'
+           << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << '\n'
+           << "\trun_duration:" << run_duration << " seconds" << '\n'
+           << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
+           << "\tnum_federates:" << num_federates << '\n'
+           << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << '\n'
+           << "===================================================" << '\n';
    }
 }
 
@@ -307,7 +307,7 @@ void ExecutionConfiguration::pack()
 void ExecutionConfiguration::unpack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "===================================================" << endl;
+      cout << "===================================================" << '\n';
    }
 
    // Decode the run duration from a 64 bit integer in bae time to seconds.
@@ -319,20 +319,20 @@ void ExecutionConfiguration::unpack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__
               << " Setting simulation duration to "
-              << run_duration << " seconds." << endl;
+              << run_duration << " seconds." << '\n';
       }
       exec_set_terminate_time( this->run_duration );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << endl
-           << "\tObject-Name:'" << this->object->get_name() << "'" << endl
-           << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
-           << "\trun_duration:" << run_duration << " seconds" << endl
-           << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
-           << "\tnum_federates:" << num_federates << endl
-           << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
-           << "===================================================" << endl;
+      cout << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
+           << "\tObject-Name:'" << this->object->get_name() << "'" << '\n'
+           << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << '\n'
+           << "\trun_duration:" << run_duration << " seconds" << '\n'
+           << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
+           << "\tnum_federates:" << num_federates << '\n'
+           << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << '\n'
+           << "===================================================" << '\n';
    }
 
    // Mark that we have an ExCO update with pending changes.
@@ -352,16 +352,16 @@ void ExecutionConfiguration::print_execution_configuration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << endl
-          << "=============================================================" << endl
-          << "TrickHLA::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
-          << "\t Object-Name:           '" << this->get_name() << "'" << endl
-          << "\t run_duration:          " << setprecision( 18 ) << run_duration << " seconds" << endl
-          << "\t run_duration_base_time:" << setprecision( 18 ) << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
-          << "\t num_federates:         " << setprecision( 18 ) << num_federates << endl
-          << "\t required_federates:    '" << required_federates << "'" << endl
-          << "\t owner:                 '" << owner << "'" << endl
-          << "=============================================================" << THLA_ENDL;
+      msg << '\n'
+          << "=============================================================" << '\n'
+          << "TrickHLA::ExecutionConfiguration::print_exec_config():" << __LINE__ << '\n'
+          << "\t Object-Name:           '" << this->get_name() << "'" << '\n'
+          << "\t run_duration:          " << setprecision( 18 ) << run_duration << " seconds" << '\n'
+          << "\t run_duration_base_time:" << setprecision( 18 ) << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
+          << "\t num_federates:         " << setprecision( 18 ) << num_federates << '\n'
+          << "\t required_federates:    '" << required_federates << "'" << '\n'
+          << "\t owner:                 '" << owner << "'" << '\n'
+          << "=============================================================" << '\n';
       send_hs( stdout, msg.str().c_str() );
    }
 }

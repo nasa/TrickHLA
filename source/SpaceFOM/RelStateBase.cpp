@@ -108,7 +108,7 @@ bool RelStateBase::set_frame(
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!" << endl;
+             << wrt_frame << " not found!" << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -133,7 +133,7 @@ bool RelStateBase::set_frame(
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!" << endl;
+             << wrt_frame << " not found!" << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 

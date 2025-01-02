@@ -77,9 +77,9 @@ void DynamicalEntityLagCompInteg::initialize()
    if ( this->integ_dt < this->integ_tol ) {
       ostringstream errmsg;
 
-      errmsg << "SpaceFOM::DynamicalEntityLagCompInteg::initialize():" << __LINE__ << endl
+      errmsg << "SpaceFOM::DynamicalEntityLagCompInteg::initialize():" << __LINE__ << '\n'
              << " ERROR: Tolerance must be less that the dt!: dt = "
-             << this->integ_dt << "; tolerance = " << this->integ_tol << THLA_ENDL;
+             << this->integ_dt << "; tolerance = " << this->integ_tol << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

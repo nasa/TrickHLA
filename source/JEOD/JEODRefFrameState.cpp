@@ -92,6 +92,7 @@ JEODRefFrameState::JEODRefFrameState(
  */
 JEODRefFrameState::~JEODRefFrameState()
 {
+   return;
 }
 
 /*!
@@ -101,7 +102,6 @@ void JEODRefFrameState::configure(
    jeod::TimeTT        *time_tt_in,
    jeod::RefFrameState *ref_frame_state_ptr )
 {
-
    // First call the base class pre_initialize function.
    RefFrameBase::configure();
 
@@ -109,7 +109,7 @@ void JEODRefFrameState::configure(
    if ( ref_frame_state_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -119,14 +119,11 @@ void JEODRefFrameState::configure(
    if ( time_tt_in == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    time_tt = time_tt_in;
-
-   // Return to calling routine.
-   return;
 }
 
 /*!
@@ -134,12 +131,11 @@ void JEODRefFrameState::configure(
  */
 void JEODRefFrameState::initialize()
 {
-
    // Check for the reference frame data.
    if ( this->ref_frame_state == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -148,16 +144,13 @@ void JEODRefFrameState::initialize()
    if ( this->time_tt == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark this as initialized.
    RefFrameBase::initialize();
-
-   // Return to calling routine.
-   return;
 }
 
 /*!
@@ -197,19 +190,17 @@ void JEODRefFrameState::pack_from_working_data()
    packing_data.state.time = get_scenario_time();
 
    if ( debug ) {
-      cout << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << endl
-           << "\tSim Sec: " << exec_get_sim_time() << endl
-           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
+      cout << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << '\n'
+           << "\tSim Sec: " << exec_get_sim_time() << '\n'
+           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << '\n'
            << "\tDate: " << time_tt->calendar_year
            << "-" << time_tt->calendar_month
            << "-" << time_tt->calendar_day
            << "::" << time_tt->calendar_hour
            << ":" << time_tt->calendar_minute
-           << ":" << time_tt->calendar_second << endl
-           << endl;
+           << ":" << time_tt->calendar_second << '\n'
+           << '\n';
    }
-
-   return;
 }
 
 /*!
@@ -217,7 +208,6 @@ void JEODRefFrameState::pack_from_working_data()
  */
 void JEODRefFrameState::unpack_into_working_data()
 {
-
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
    // incoming value.  If we locally own the attribute then we do not want to
@@ -258,17 +248,15 @@ void JEODRefFrameState::unpack_into_working_data()
    }
 
    if ( debug ) {
-      cout << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << endl
-           << "\tSim Sec: " << exec_get_sim_time() << endl
-           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
+      cout << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << '\n'
+           << "\tSim Sec: " << exec_get_sim_time() << '\n'
+           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << '\n'
            << "\tDate: " << time_tt->calendar_year
            << "-" << time_tt->calendar_month
            << "-" << time_tt->calendar_day
            << "::" << time_tt->calendar_hour
            << ":" << time_tt->calendar_minute
-           << ":" << time_tt->calendar_second << endl
-           << endl;
+           << ":" << time_tt->calendar_second << '\n'
+           << '\n';
    }
-
-   return;
 }

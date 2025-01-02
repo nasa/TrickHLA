@@ -101,7 +101,7 @@ void PhysicalEntity::configure( PhysicalEntityData *physical_data_ptr )
    if ( physical_data_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -121,7 +121,7 @@ void PhysicalEntity::initialize()
    if ( physical_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -169,7 +169,7 @@ void PhysicalEntity::pack_from_working_data()
    else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
-             << " ERROR: Unexpected NULL name for PhysicalEntity!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL name for PhysicalEntity!" << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -245,7 +245,7 @@ void PhysicalEntity::pack_from_working_data()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL parent frame for PhysicalEntity: "
-             << physical_data->name << THLA_ENDL;
+             << physical_data->name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
