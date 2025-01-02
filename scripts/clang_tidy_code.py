@@ -269,11 +269,12 @@ def main():
       include_dirs.extend( ['-I', '/usr/local/include'] )
 
    # Configure the clang-tidy arguments.
-#   clang_tidy_args.append( '--checks=\'*\'' ) # Don't use '*', it modifies the code.
+   # Don't use '--checks=*', it modifies the code.
+   clang_tidy_args.append( '--checks=\'clang-diagnostic-*,clang-analyzer-*,performance-*\'' )
 #   clang_tidy_args.append( '--fix-notes' )
    clang_tidy_args.append( '--fix-errors' )
    clang_tidy_args.append( '--header-filter=\'.*TrickHLA/.*\'' )
-#   clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )  
+   clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )  
    clang_tidy_args.extend( source_dirs )
    clang_tidy_args.append( '--' )
    clang_tidy_args.extend( include_dirs )
