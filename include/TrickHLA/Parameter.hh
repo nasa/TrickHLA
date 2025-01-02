@@ -127,8 +127,8 @@ class Parameter
    {
       if ( this->FOM_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
-            send_hs( stderr, "Parameter::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stderr, "Parameter::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n",
+                     __LINE__ );
          }
       }
       this->FOM_name = trick_MM->mm_strdup( in_name );

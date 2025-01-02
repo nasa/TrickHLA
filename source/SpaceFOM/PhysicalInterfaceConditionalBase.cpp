@@ -135,7 +135,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.name ) ) ) {
                   send_hs( stderr,
                            "PhysicalInterfaceConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'%c",
-                           __LINE__, THLA_NEWLINE );
+                           __LINE__, '\n' );
                }
                // Update the previous value.
                prev_data.name = trick_MM->mm_strdup( interface.packing_data.name );
@@ -165,7 +165,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.parent_name ) ) ) {
                   send_hs( stderr,
                            "PhysicalInterfaceConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_name'%c",
-                           __LINE__, THLA_NEWLINE );
+                           __LINE__, '\n' );
                }
                // Update the previous value.
                prev_data.parent_name = trick_MM->mm_strdup( interface.packing_data.parent_name );

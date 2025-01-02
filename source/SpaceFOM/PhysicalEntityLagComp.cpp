@@ -90,7 +90,7 @@ PhysicalEntityLagComp::~PhysicalEntityLagComp() // RETURN: -- None.
    if ( this->integrator != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->integrator ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING failed to delete Trick Memory for 'this->integrator'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->integrator = NULL;
    }

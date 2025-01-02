@@ -168,28 +168,28 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
    if ( this->owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->owner ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->owner'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->owner = NULL;
    }
    if ( this->scenario != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->scenario ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->scenario'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->scenario = NULL;
    }
    if ( this->mode != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->mode ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->mode'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->mode = NULL;
    }
    if ( this->required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->required_federates ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->required_federates'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->owner = required_federates;
    }
@@ -216,7 +216,7 @@ void ExecutionConfiguration::configure_attributes(
    if ( this->S_define_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::configure_attributes():%d WARNING failed to delete Trick Memory for 'this->S_define_name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->S_define_name = trick_MM->mm_strdup( sim_config_name );
    }
@@ -424,7 +424,7 @@ void ExecutionConfiguration::set_owner(
    if ( this->owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->owner ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::set_owner():%d WARNING failed to delete Trick Memory for 'this->owner'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->owner = NULL;
    }
@@ -440,7 +440,7 @@ void ExecutionConfiguration::set_scenario(
    if ( this->scenario != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->scenario ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::set_scenario():%d WARNING failed to delete Trick Memory for 'this->scenario'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->scenario = NULL;
    }
@@ -456,7 +456,7 @@ void ExecutionConfiguration::set_mode(
    if ( this->mode != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->mode ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::set_mode():%d WARNING failed to delete Trick Memory for 'this->mode'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->mode = NULL;
    }
@@ -472,7 +472,7 @@ void ExecutionConfiguration::set_required_federates(
    if ( this->required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->required_federates ) ) ) {
          send_hs( stderr, "IMSim::ExecutionConfiguration::set_required_federates():%d WARNING failed to delete Trick Memory for 'this->required_federates'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->required_federates = NULL;
    }
@@ -531,7 +531,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
@@ -572,14 +572,14 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          send_hs( stdout, "IMSim::ExecutionConfiguration::wait_for_update():%d Received data.%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
 
       // Receive the exec-config data from the master federate.

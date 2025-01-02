@@ -305,7 +305,7 @@ void ExecutionControl::initialize()
              << " ERROR: Time padding value ("
              << setprecision( 18 ) << get_time_padding()
              << " seconds) must be greater than or equal to zero!"
-             << THLA_NEWLINE;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    int64_t padding_base_time = Int64BaseTime::to_base_time( get_time_padding() );
@@ -316,7 +316,7 @@ void ExecutionControl::initialize()
              << setprecision( 18 ) << get_time_padding()
              << " seconds) must be an integer multiple of the Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_NEWLINE;
+             << ")!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -354,13 +354,13 @@ void ExecutionControl::initialize()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       } else if ( is_designated_late_joiner() ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       } else {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
 }
@@ -470,7 +470,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       msg2 << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__ << '\n'
            << "--------------- Trick REF-Attributes ---------------" << '\n'
            << " FOM-Interaction:'" << mtr_interaction->get_FOM_name() << "'"
-           << THLA_NEWLINE;
+           << '\n';
       send_hs( stdout, msg2.str().c_str() );
    }
 
@@ -482,7 +482,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       msg2 << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << tParm[0].get_FOM_name() << "'"
            << " NOTE: This is an auto-generated parameter so there is no"
-           << " associated 'Trick-Name'." << THLA_NEWLINE;
+           << " associated 'Trick-Name'." << '\n';
       send_hs( stdout, msg2.str().c_str() );
    }
 
@@ -553,7 +553,7 @@ void ExecutionControl::sync_point_announced(
          string label_str;
          StringUtilities::to_string( label_str, label );
          send_hs( stdout, "=========================== SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.%c",
-                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+                  __LINE__, label_str.c_str(), '\n' );
       }
 
       // Achieve all Unrecognized sync-points but don't wait for the
@@ -562,7 +562,7 @@ void ExecutionControl::sync_point_announced(
          string label_str;
          StringUtilities::to_string( label_str, label );
          send_hs( stderr, "SpaceFOM::ExecutionControl::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.%c",
-                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+                  __LINE__, label_str.c_str(), '\n' );
       }
    } else {
       // Known sync-point that is already in one of the sync-point lists.
@@ -573,7 +573,7 @@ void ExecutionControl::sync_point_announced(
             string label_str;
             StringUtilities::to_string( label_str, label );
             send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d Marked sync-point announced:'%s'%c",
-                     __LINE__, label_str.c_str(), THLA_NEWLINE );
+                     __LINE__, label_str.c_str(), '\n' );
          }
       } else {
          string label_str;
@@ -601,7 +601,7 @@ void ExecutionControl::sync_point_announced(
                   string label_str;
                   StringUtilities::to_string( label_str, label );
                   send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d SpaceFOM designated late joiner, achieved sync-point:'%s'%c",
-                           __LINE__, label_str.c_str(), THLA_NEWLINE );
+                           __LINE__, label_str.c_str(), '\n' );
                }
             }
          }
@@ -686,12 +686,12 @@ void ExecutionControl::receive_interaction(
             StringUtilities::to_string( handle, theInteraction );
             send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s, HLA-time:%G%c",
                      __LINE__, handle.c_str(), _time.get_time_in_seconds(),
-                     THLA_NEWLINE );
+                     '\n' );
          } else {
             string handle;
             StringUtilities::to_string( handle, theInteraction );
             send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s%c",
-                     __LINE__, handle.c_str(), THLA_NEWLINE );
+                     __LINE__, handle.c_str(), '\n' );
          }
       }
 
@@ -779,7 +779,7 @@ void ExecutionControl::role_determination_process()
       if ( !this->late_joiner_determined ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d Waiting...%c",
-                     __LINE__, THLA_NEWLINE );
+                     __LINE__, '\n' );
          }
       }
 
@@ -874,18 +874,18 @@ void ExecutionControl::role_determination_process()
          if ( this->late_joiner ) {
             if ( is_designated_late_joiner() ) {
                send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Designated Late Joining Federate.%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             } else {
                send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Late Joining Federate.%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             }
          } else {
             if ( is_designated_late_joiner() ) {
                send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate configured to be a Designated Late Joining Federate.%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             } else {
                send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate.%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             }
          }
       }
@@ -987,7 +987,7 @@ void ExecutionControl::designated_late_joiner_init_process()
    if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d Waiting...%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
 
@@ -1057,7 +1057,7 @@ void ExecutionControl::designated_late_joiner_init_process()
    // Print out diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d This is a Designated Late Joining Federate.%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 }
 
@@ -1187,7 +1187,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!%c",
-                     __LINE__, THLA_NEWLINE );
+                     __LINE__, '\n' );
          }
       }
    }
@@ -1365,7 +1365,7 @@ void ExecutionControl::post_multi_phase_init_processes()
 
             if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                send_hs( stdout, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d Commanding Trick Exec to stop.%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             }
 
             // Tell Trick to shutdown.
@@ -1511,7 +1511,7 @@ void ExecutionControl::shutdown()
          long sleep_pad_base_time = Int64BaseTime::to_base_time( get_time_padding() );
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d %s.%c",
-                     __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str(), THLA_NEWLINE );
+                     __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str(), '\n' );
          }
          Utilities::micro_sleep( sleep_pad_base_time );
       }
@@ -1833,7 +1833,7 @@ bool ExecutionControl::process_mode_transition_request()
 
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN %c",
-                     __LINE__, THLA_NEWLINE );
+                     __LINE__, '\n' );
          }
 
          // Tell Trick to shutdown sometime in the future.
@@ -1960,7 +1960,7 @@ bool ExecutionControl::process_execution_control_updates()
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
-                           __LINE__, THLA_NEWLINE );
+                           __LINE__, '\n' );
                }
 
                // Tell the TrickHLA::Federate to shutdown.
@@ -1997,7 +1997,7 @@ bool ExecutionControl::process_execution_control_updates()
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
-                           __LINE__, THLA_NEWLINE );
+                           __LINE__, '\n' );
                }
 
                // Tell the TrickHLA::Federate to shutdown.
@@ -2074,7 +2074,7 @@ bool ExecutionControl::process_execution_control_updates()
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
-                           __LINE__, THLA_NEWLINE );
+                           __LINE__, '\n' );
                }
 
                // Tell the TrickHLA::Federate to shutdown.
@@ -2144,7 +2144,7 @@ bool ExecutionControl::process_execution_control_updates()
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
-                           __LINE__, THLA_NEWLINE );
+                           __LINE__, '\n' );
                }
 
                // Shutdown the federate now.
@@ -2214,7 +2214,7 @@ void ExecutionControl::wait_for_root_frame_discovered_synchronization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::wait_for_root_frame_discovered_synchronization():%d%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    achieve_sync_point_and_wait_for_synchronization( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
@@ -2296,7 +2296,7 @@ bool ExecutionControl::run_mode_transition()
             if ( fmod( diff, 1.0 ) == 0.0 ) {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
-                           __LINE__, diff, THLA_NEWLINE );
+                           __LINE__, diff, '\n' );
                }
             }
          }
@@ -2307,7 +2307,7 @@ bool ExecutionControl::run_mode_transition()
 
             diff = curr_cte_time - go_to_run_time;
             send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
-                     __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
+                     __LINE__, go_to_run_time, curr_cte_time, diff, '\n' );
          }
       }
    }
@@ -2387,7 +2387,7 @@ void ExecutionControl::shutdown_mode_transition()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown_mode_transition():%d Registered 'mtr_shutdown' synchronization point.%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
    // Register the 'mtr_shutdown' sync-point.
    register_sync_point( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
@@ -2404,7 +2404,7 @@ bool ExecutionControl::check_for_shutdown()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown %c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Check to see if the mtr_shutdown sync-point has been announced or if the
@@ -2422,7 +2422,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown.%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Check to see if the mtr_shutdown sync-point has been announced.
@@ -2503,18 +2503,18 @@ void ExecutionControl::enter_freeze()
             break;
       }
       ostringstream msg;
-      msg << "SpaceFOM::ExecutionControl::enter_freeze():" << __LINE__ << THLA_NEWLINE
+      msg << "SpaceFOM::ExecutionControl::enter_freeze():" << __LINE__ << '\n'
           << "   Master-federate:" << ( is_master() ? "Yes" : "No" )
-          << THLA_NEWLINE
+          << '\n'
           << "   Requested-ExCO-mode:" << execution_mode_enum_to_string( from_execution_control_enum( get_requested_execution_control_mode() ) )
-          << THLA_NEWLINE
+          << '\n'
           << "   Trick-sim-time:" << exec_get_sim_time()
           << "   Trick-exec-command:" << exec_cmd_str
-          << THLA_NEWLINE
+          << '\n'
           << "   Sim-freeze-time:" << get_simulation_freeze_time()
           << "   Freeze-announced:" << ( is_freeze_announced() ? "Yes" : "No" )
           << "   Freeze-pending:" << ( is_freeze_pending() ? "Yes" : "No" )
-          << THLA_NEWLINE;
+          << '\n';
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -2533,7 +2533,7 @@ void ExecutionControl::enter_freeze()
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Detected duplicate Freeze command, ignoring.%c",
-                     __LINE__, THLA_NEWLINE );
+                     __LINE__, '\n' );
          }
       }
 
@@ -2584,7 +2584,7 @@ void ExecutionControl::enter_freeze()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
                __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
-               ( is_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
+               ( is_freeze_pending() ? "Yes" : "No" ), '\n' );
    }
 }
 
@@ -2611,7 +2611,7 @@ bool ExecutionControl::check_freeze_exit()
 
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Trick shutdown commanded.%c",
-                     __LINE__, THLA_NEWLINE );
+                     __LINE__, '\n' );
          }
 
          // Tell the TrickHLA::Federate to shutdown.
@@ -2632,7 +2632,7 @@ bool ExecutionControl::check_freeze_exit()
       if ( this->current_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Execution Control Shutdown commanded.%c",
-                     __LINE__, THLA_NEWLINE );
+                     __LINE__, '\n' );
          }
 
          // Tell the TrickHLA::Federate to shutdown.
@@ -2766,7 +2766,7 @@ void ExecutionControl::send_init_root_ref_frame()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::send_init_root_ref_frame():%d Late joining \
 federate so the data will not be sent for '%s'.%c",
-                  __LINE__, execution_configuration->get_name(), THLA_NEWLINE );
+                  __LINE__, execution_configuration->get_name(), '\n' );
       }
       return;
    }
@@ -2797,7 +2797,7 @@ void ExecutionControl::send_root_ref_frame()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::send_root_ref_frame():%d%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Make sure we have at least one piece of ExCO data we can send.
@@ -2827,7 +2827,7 @@ void ExecutionControl::receive_init_root_ref_frame()
    if ( this->manager->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::receive_init_root_ref_frame():%d Late joining federate so skipping data for '%s'%c",
-                  __LINE__, root_ref_frame->get_name(), THLA_NEWLINE );
+                  __LINE__, root_ref_frame->get_name(), '\n' );
       }
       return;
    }
@@ -2855,7 +2855,7 @@ void ExecutionControl::receive_root_ref_frame()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::receive_root_ref_frame():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Make sure we have at least one piece of root reference frame data we can receive.
@@ -2896,14 +2896,14 @@ void ExecutionControl::receive_root_ref_frame()
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Received data.%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
 
       // Receive the root reference frame data from the RRFP federate.
@@ -2982,7 +2982,7 @@ void ExecutionControl::set_time_padding(
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value (" << setprecision( 18 ) << t
              << " seconds) must be greater than or equal to zero!"
-             << THLA_NEWLINE;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2995,7 +2995,7 @@ void ExecutionControl::set_time_padding(
              << " ERROR: Time padding value (" << setprecision( 18 ) << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_NEWLINE;
+             << ")!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

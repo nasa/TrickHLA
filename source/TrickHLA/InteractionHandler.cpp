@@ -119,7 +119,7 @@ void InteractionHandler::receive_interaction(
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
    send_hs( stdout, "InteractionHandler::receive_interaction():%d %c",
-            __LINE__, THLA_NEWLINE );
+            __LINE__, '\n' );
 }
 
 Int64Interval InteractionHandler::get_lookahead() const

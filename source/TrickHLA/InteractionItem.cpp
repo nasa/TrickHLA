@@ -149,7 +149,7 @@ InteractionItem::~InteractionItem()
       if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
            && trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
          send_hs( stderr, "InteractionItem::~InteractionItem():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       user_supplied_tag      = NULL;
       user_supplied_tag_size = 0;
@@ -190,7 +190,7 @@ void InteractionItem::initialize(
       if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
            && trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
          send_hs( stderr, "InteractionItem::initialize():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       user_supplied_tag = NULL;
    }
@@ -253,7 +253,7 @@ void InteractionItem::clear_parm_items()
       if ( trick_MM->is_alloced( static_cast< void * >( parm_items ) )
            && trick_MM->delete_var( static_cast< void * >( parm_items ) ) ) {
          send_hs( stderr, "InteractionItem::clear_parm_items():%d WARNING failed to delete Trick Memory for 'parm_items'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       parm_items       = NULL;
       parm_items_count = 0;

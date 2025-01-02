@@ -129,7 +129,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
          send_hs( stderr, "ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'required_federates'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       required_federates = NULL;
    }
@@ -137,7 +137,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
    if ( owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
          send_hs( stderr, "ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'owner'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       owner = NULL;
    }
@@ -216,7 +216,7 @@ void ExecutionConfiguration::configure()
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
          send_hs( stderr, "ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'required_federates'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       required_federates = NULL;
    }
