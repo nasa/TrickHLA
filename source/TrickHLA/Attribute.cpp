@@ -147,7 +147,7 @@ void Attribute::initialize(
       if ( FOM_name != NULL ) {
          errmsg << " For FOM Attribute Named '" << FOM_name << "'.";
       }
-      errmsg << THLA_ENDL;
+      errmsg << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -159,7 +159,7 @@ void Attribute::initialize(
              << " FOM name for the attribute. Make sure THLA.manager.objects["
              << object_index << "].attributes[" << attribute_index
              << "].FOM_name' in either your input.py file or modified-data files"
-             << " is correctly specified." << THLA_ENDL;
+             << " is correctly specified." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -172,7 +172,7 @@ void Attribute::initialize(
              << " for the attribute. Make sure THLA.manager.objects["
              << object_index << "].attributes[" << attribute_index
              << "].trick_name' in either your input.py file or modified-data files"
-             << " is correctly specified." << THLA_ENDL;
+             << " is correctly specified." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -186,7 +186,7 @@ void Attribute::initialize(
              << " which is out of the valid range of " << ENCODING_FIRST_VALUE
              << " to " << ENCODING_LAST_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for the 'rti_encoding'"
-             << " is correctly specified." << THLA_ENDL;
+             << " is correctly specified." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -200,7 +200,7 @@ void Attribute::initialize(
              << " one of TRANSPORT_TYPE_SPECIFIED_IN_FOM, THLA_TIMESTAMP_ORDER or"
              << " THLA_RECEIVE_ORDER. Please check your input or modified-data"
              << " files to make sure the 'preferred_order' is correctly specified."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -214,7 +214,7 @@ void Attribute::initialize(
              << " which is out of the valid range of " << CONFIG_NONE
              << " to " << CONFIG_MAX_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for 'config'"
-             << " is correctly specified." << THLA_ENDL;
+             << " is correctly specified." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -226,7 +226,7 @@ void Attribute::initialize(
                 << " WARNING: FOM Object Attribute '"
                 << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                 << trick_name << "' has a 'config' value of CONFIG_TYPE_NONE."
-                << THLA_ENDL;
+                << '\n';
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
@@ -241,7 +241,7 @@ void Attribute::initialize(
              << " of " << this->cycle_time << " seconds, which is not valid. The"
              << " 'cycle_time' must be > 0. Please check your input or"
              << " modified-data files to make sure the value for the 'cycle_time'"
-             << " is correctly specified." << THLA_ENDL;
+             << " is correctly specified." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -261,7 +261,7 @@ void Attribute::initialize(
              << " attribute Trick name is correctly specified. If '"
              << trick_name << "' is an inherited variable then make"
              << " sure the base class uses either the 'public' or 'protected'"
-             << " access level for the variable." << THLA_ENDL;
+             << " access level for the variable." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -282,7 +282,7 @@ void Attribute::initialize(
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "attribute represents a 'bool' type. Please check your input "
                    << "or modified-data files to make sure the value for the 'rti_"
-                   << "encoding' is correctly specified." << THLA_ENDL;
+                   << "encoding' is correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -306,7 +306,7 @@ void Attribute::initialize(
                    << " 'rti_encoding' when the attribute represents a 'char' or"
                    << " 'unsigned char' type. Please check  your input or"
                    << " modified-data files to make sure the value for the"
-                   << " 'rti_encoding' is correctly specified." << THLA_ENDL;
+                   << " 'rti_encoding' is correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -322,7 +322,7 @@ void Attribute::initialize(
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
-                   << " 'rti_encoding' is correctly specified." << THLA_ENDL;
+                   << " 'rti_encoding' is correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -338,7 +338,7 @@ void Attribute::initialize(
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
-                   << " 'rti_encoding' is correctly specified." << THLA_ENDL;
+                   << " 'rti_encoding' is correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -368,7 +368,7 @@ void Attribute::initialize(
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "attribute represents a primitive type. Please check your "
                    << "input or modified-data files to make sure the value for the "
-                   << "'rti_encoding' is correctly specified." << THLA_ENDL;
+                   << "'rti_encoding' is correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -391,7 +391,7 @@ void Attribute::initialize(
                    << "'rti_encoding' when the attribute represents a String type "
                    << "(i.e. char *). Please check your input or modified-data "
                    << "files to make sure the value for the 'rti_encoding' is "
-                   << "correctly specified." << THLA_ENDL;
+                   << "correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -405,7 +405,7 @@ void Attribute::initialize(
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *'). Please check your input or modified-data"
                    << " files to make sure the value for the 'rti_encoding' is"
-                   << " correctly specified." << THLA_ENDL;
+                   << " correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -429,7 +429,7 @@ void Attribute::initialize(
                 << trick_name << "' and type '" << ref2->attr->type_name
                 << "' is a " << ref2->attr->num_index << "-dimensional dynamic array."
                 << " Only one-dimensional dynamic arrays are supported for now."
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    } else {
@@ -450,7 +450,7 @@ void Attribute::initialize(
                       << trick_name << "' is a " << ( ref2->attr->num_index + 1 )
                       << "-dimensional dynamic array of strings. Only"
                       << " one-dimensional dynamic arrays are supported for now."
-                      << THLA_ENDL;
+                      << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -464,7 +464,7 @@ void Attribute::initialize(
              << " ERROR: Unsupported Type and/or"
              << " rti_encoding for FOM Object Attribute '" << obj_FOM_name
              << "'->'" << FOM_name << "' with Trick name '" << trick_name
-             << "' and rti_encoding = " << rti_encoding << "." << THLA_ENDL;
+             << "' and rti_encoding = " << rti_encoding << "." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -478,7 +478,7 @@ void Attribute::initialize(
              << trick_name << "' can not be an array when using ENCODING_LOGICAL_TIME"
              << " for the 'rti_encoding'. Please check your input or modified-data"
              << " files to make sure the value for the 'rti_encoding' is"
-             << " correctly specified." << THLA_ENDL;
+             << " correctly specified." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -491,7 +491,7 @@ void Attribute::initialize(
              << trick_name << "' must have the units of 'seconds' when the"
              << " 'rti_encoding' is set to ENCODING_LOGICAL_TIME. Please check your"
              << " input or modified-data files to make sure the value for the"
-             << " 'rti_encoding' is correctly specified." << THLA_ENDL;
+             << " 'rti_encoding' is correctly specified." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -525,7 +525,7 @@ void Attribute::initialize(
              << FOM_name << "' with Trick name '" << trick_name
              << "' has an unexpected size of zero bytes! Make sure your simulation"
              << " variable is properly initialized before the initialize()"
-             << " function is called." << THLA_ENDL;
+             << " function is called." << '\n';
          send_hs( stdout, msg.str().c_str() );
       }
    }
@@ -534,35 +534,35 @@ void Attribute::initialize(
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
-      msg << "Attribute::initialize():" << __LINE__ << endl
-          << "========================================================" << endl
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
-          << "  AttributeHandle:" << attr_handle_string << endl
-          << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
-          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
-          << "  ref2->attr->type:" << ref2->attr->type << endl
-          << "  ref2->attr->units:" << ref2->attr->units << endl
-          << "  size:" << size << endl
-          << "  num_items:" << num_items << endl;
+      msg << "Attribute::initialize():" << __LINE__ << '\n'
+          << "========================================================" << '\n'
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "  AttributeHandle:" << attr_handle_string << '\n'
+          << "  ref2->attr->name:'" << ref2->attr->name << "'" << '\n'
+          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << '\n'
+          << "  ref2->attr->type:" << ref2->attr->type << '\n'
+          << "  ref2->attr->units:" << ref2->attr->units << '\n'
+          << "  size:" << size << '\n'
+          << "  num_items:" << num_items << '\n';
       // TODO: Figure out get_size_from_attributes() API in Trick 10.
       //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
-      msg << "  ref2->attr->size:" << ref2->attr->size << endl
-          << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
-          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
-          << "  publish:" << publish << endl
-          << "  subscribe:" << subscribe << endl
-          << "  locally_owned:" << locally_owned << endl
-          << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
-          << "  buffer_capacity:" << buffer_capacity << endl
-          << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl
-          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
+      msg << "  ref2->attr->size:" << ref2->attr->size << '\n'
+          << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
+          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
+          << "  publish:" << publish << '\n'
+          << "  subscribe:" << subscribe << '\n'
+          << "  locally_owned:" << locally_owned << '\n'
+          << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
+          << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
+          << "  rti_encoding:" << rti_encoding << '\n'
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
+         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << '\n';
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -587,7 +587,7 @@ void Attribute::determine_cycle_ratio(
                 << " seconds) for the send_cyclic_and_requested_data() job"
                 << " must be > 0. Please make sure your S_define and/or THLA.sm"
                 << " simulation module specifies a valid cycle time for the"
-                << " send_cyclic_and_requested_data() job." << THLA_ENDL;
+                << " send_cyclic_and_requested_data() job." << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -604,7 +604,7 @@ void Attribute::determine_cycle_ratio(
                 << " send_cyclic_and_requested_data() job). Please check your"
                 << " input or modified-data files to make sure the value for"
                 << " the attribute 'cycle_time' is specified correctly."
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -627,18 +627,18 @@ void Attribute::determine_cycle_ratio(
                 << this->cycle_ratio << " + " << fmod( this->cycle_time, core_job_cycle_time )
                 << "), which is not an integer. Please check your input or"
                 << " modified-data files to make sure the value for the attribute"
-                << " 'cycle_time' is specified correctly." << THLA_ENDL;
+                << " 'cycle_time' is specified correctly." << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
-         msg << "Attribute::determine_cycle_ratio():" << __LINE__ << endl
-             << "  FOM_name:'" << ( ( this->FOM_name != NULL ) ? this->FOM_name : "NULL" ) << "'" << endl
-             << "  trick_name:'" << ( ( this->trick_name != NULL ) ? this->trick_name : "NULL" ) << "'" << endl
-             << "  core_job_cycle_time:" << core_job_cycle_time << " seconds" << endl
-             << "  cyle_time:" << this->cycle_time << " seconds" << endl
-             << "  cycle_ratio:" << this->cycle_ratio << THLA_ENDL;
+         msg << "Attribute::determine_cycle_ratio():" << __LINE__ << '\n'
+             << "  FOM_name:'" << ( ( this->FOM_name != NULL ) ? this->FOM_name : "NULL" ) << "'" << '\n'
+             << "  trick_name:'" << ( ( this->trick_name != NULL ) ? this->trick_name : "NULL" ) << "'" << '\n'
+             << "  core_job_cycle_time:" << core_job_cycle_time << " seconds" << '\n'
+             << "  cyle_time:" << this->cycle_time << " seconds" << '\n'
+             << "  cycle_ratio:" << this->cycle_ratio << '\n';
          send_hs( stdout, msg.str().c_str() );
       }
    }
@@ -681,7 +681,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " size and type as what is defined in the FOM. If you are"
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
-                   << " size or type." << THLA_ENDL;
+                   << " size or type." << '\n';
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
@@ -714,7 +714,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " variable is the same size and type as what is defined in the"
                    << " FOM. If you are using Lag Compensation one possible cause of"
                    << " this problem is that your lag compensation variables are not"
-                   << " the correct size or type." << THLA_ENDL;
+                   << " the correct size or type." << '\n';
             send_hs( stderr, errmsg.str().c_str() );
 
             // Just return if we have a data size mismatch. This will allow us
@@ -750,7 +750,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " simulation variable is the same size and type as what is"
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
-                   << " variables are not the correct size or type." << THLA_ENDL;
+                   << " variables are not the correct size or type." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          // Ensure enough buffer capacity.
@@ -776,7 +776,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " simulation variable is the same size and type as what is"
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
-                   << " variables are not the correct size or type." << THLA_ENDL;
+                   << " variables are not the correct size or type." << '\n';
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
@@ -807,7 +807,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " is the same size and type as what is defined in the FOM. If"
                    << " you are using Lag Compensation one possible cause of this"
                    << " problem is that your lag compensation variables are not the"
-                   << " correct size or type." << THLA_ENDL;
+                   << " correct size or type." << '\n';
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
@@ -865,7 +865,7 @@ void Attribute::ensure_buffer_capacity(
       errmsg << "Attribute::ensure_buffer_capacity():" << __LINE__
              << " ERROR: Could not allocate memory for buffer for requested"
              << " capacity " << capacity << " for Attribute '" << FOM_name
-             << "' with Trick name '" << trick_name << "'!" << THLA_ENDL;
+             << "' with Trick name '" << trick_name << "'!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -955,35 +955,35 @@ void Attribute::calculate_size_and_number_of_items()
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
-      msg << "Attribute::calculate_size_and_number_of_items():" << __LINE__ << endl
-          << "========================================================" << endl
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
-          << "  AttributeHandle:" << attr_handle_string << endl
-          << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
-          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
-          << "  ref2->attr->type:" << ref2->attr->type << endl
-          << "  ref2->attr->units:" << ref2->attr->units << endl
-          << "  size:" << size << endl
-          << "  num_items:" << num_items << endl
+      msg << "Attribute::calculate_size_and_number_of_items():" << __LINE__ << '\n'
+          << "========================================================" << '\n'
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "  AttributeHandle:" << attr_handle_string << '\n'
+          << "  ref2->attr->name:'" << ref2->attr->name << "'" << '\n'
+          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << '\n'
+          << "  ref2->attr->type:" << ref2->attr->type << '\n'
+          << "  ref2->attr->units:" << ref2->attr->units << '\n'
+          << "  size:" << size << '\n'
+          << "  num_items:" << num_items << '\n'
           // TODO: Figure out get_size_from_attributes() API in Trick 10.
           //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
-          << "  ref2->attr->size:" << ref2->attr->size << endl
-          << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
-          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
-          << "  publish:" << publish << endl
-          << "  subscribe:" << subscribe << endl
-          << "  locally_owned:" << locally_owned << endl
-          << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
-          << "  buffer_capacity:" << buffer_capacity << endl
-          << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl
-          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
+          << "  ref2->attr->size:" << ref2->attr->size << '\n'
+          << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
+          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
+          << "  publish:" << publish << '\n'
+          << "  subscribe:" << subscribe << '\n'
+          << "  locally_owned:" << locally_owned << '\n'
+          << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
+          << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
+          << "  rti_encoding:" << rti_encoding << '\n'
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
+         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << '\n';
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -1048,35 +1048,35 @@ void Attribute::pack_attribute_buffer()
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
-      msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
-          << "================== BEFORE PACK ==================================" << endl
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
-          << "  AttributeHandle:" << attr_handle_string << endl
-          << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
-          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
-          << "  ref2->attr->type:" << ref2->attr->type << endl
-          << "  ref2->attr->units:" << ref2->attr->units << endl
-          << "  size:" << size << endl
-          << "  num_items:" << num_items << endl
+      msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
+          << "================== BEFORE PACK ==================================" << '\n'
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "  AttributeHandle:" << attr_handle_string << '\n'
+          << "  ref2->attr->name:'" << ref2->attr->name << "'" << '\n'
+          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << '\n'
+          << "  ref2->attr->type:" << ref2->attr->type << '\n'
+          << "  ref2->attr->units:" << ref2->attr->units << '\n'
+          << "  size:" << size << '\n'
+          << "  num_items:" << num_items << '\n'
           // TODO: Figure out get_size_from_attributes() API in Trick 10.
           //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
-          << "  ref2->attr->size:" << ref2->attr->size << endl
-          << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
-          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
-          << "  publish:" << publish << endl
-          << "  subscribe:" << subscribe << endl
-          << "  locally_owned:" << locally_owned << endl
-          << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
-          << "  buffer_capacity:" << buffer_capacity << endl
-          << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl
-          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
+          << "  ref2->attr->size:" << ref2->attr->size << '\n'
+          << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
+          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
+          << "  publish:" << publish << '\n'
+          << "  subscribe:" << subscribe << '\n'
+          << "  locally_owned:" << locally_owned << '\n'
+          << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
+          << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
+          << "  rti_encoding:" << rti_encoding << '\n'
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
+         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << '\n';
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -1086,10 +1086,10 @@ void Attribute::pack_attribute_buffer()
    if ( !is_locally_owned() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
-         msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
-             << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
-             << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
-             << " Skipping pack because attribute is not locally owned!" << endl;
+         msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
+             << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
+             << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+             << " Skipping pack because attribute is not locally owned!" << '\n';
          send_hs( stdout, msg.str().c_str() );
       }
       return;
@@ -1121,10 +1121,10 @@ void Attribute::pack_attribute_buffer()
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
-            msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
-                << "================== ATTRIBUTE ENCODE ==================================" << endl
+            msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
+                << "================== ATTRIBUTE ENCODE ==================================" << '\n'
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                << "')" << endl;
+                << "')" << '\n';
             send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
@@ -1142,10 +1142,10 @@ void Attribute::pack_attribute_buffer()
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
-            msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
-                << "================== ATTRIBUTE ENCODE ==================================" << endl
+            msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
+                << "================== ATTRIBUTE ENCODE ==================================" << '\n'
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                << "')" << endl;
+                << "')" << '\n';
             send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
@@ -1168,10 +1168,10 @@ void Attribute::pack_attribute_buffer()
 
             if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                ostringstream msg;
-               msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
-                   << "================== ATTRIBUTE ENCODE ==================================" << endl
+               msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
+                   << "================== ATTRIBUTE ENCODE ==================================" << '\n'
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                   << "')" << endl;
+                   << "')" << '\n';
                send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
@@ -1209,10 +1209,10 @@ void Attribute::pack_attribute_buffer()
 
             if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                ostringstream msg;
-               msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
-                   << "================== ATTRIBUTE ENCODE ==================================" << endl
+               msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
+                   << "================== ATTRIBUTE ENCODE ==================================" << '\n'
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                   << "')" << endl;
+                   << "')" << '\n';
                send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
@@ -1225,35 +1225,35 @@ void Attribute::pack_attribute_buffer()
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg2;
-      msg2 << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
-           << "================== AFTER PACK ==================================" << endl
-           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
-           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
-           << "  AttributeHandle:" << attr_handle_string << endl
-           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
-           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
-           << "  ref2->attr->type:" << ref2->attr->type << endl
-           << "  ref2->attr->units:" << ref2->attr->units << endl
-           << "  size:" << size << endl
-           << "  num_items:" << num_items << endl
+      msg2 << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
+           << "================== AFTER PACK ==================================" << '\n'
+           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
+           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+           << "  AttributeHandle:" << attr_handle_string << '\n'
+           << "  ref2->attr->name:'" << ref2->attr->name << "'" << '\n'
+           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << '\n'
+           << "  ref2->attr->type:" << ref2->attr->type << '\n'
+           << "  ref2->attr->units:" << ref2->attr->units << '\n'
+           << "  size:" << size << '\n'
+           << "  num_items:" << num_items << '\n'
            // TODO: Figure out get_size_from_attributes() API in Trick 10.
            //    << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
-           << "  ref2->attr->size:" << ref2->attr->size << endl
-           << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
-           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
-           << "  publish:" << publish << endl
-           << "  subscribe:" << subscribe << endl
-           << "  locally_owned:" << locally_owned << endl
-           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
-           << "  buffer_capacity:" << buffer_capacity << endl
-           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-           << "  rti_encoding:" << rti_encoding << endl
-           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
+           << "  ref2->attr->size:" << ref2->attr->size << '\n'
+           << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
+           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
+           << "  publish:" << publish << '\n'
+           << "  subscribe:" << subscribe << '\n'
+           << "  locally_owned:" << locally_owned << '\n'
+           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
+           << "  buffer_capacity:" << buffer_capacity << '\n'
+           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
+           << "  rti_encoding:" << rti_encoding << '\n'
+           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg2 << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
+         msg2 << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << '\n';
       }
       send_hs( stdout, msg2.str().c_str() );
    }
@@ -1266,10 +1266,10 @@ void Attribute::unpack_attribute_buffer()
    if ( is_locally_owned() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
-         msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
-             << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
-             << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
-             << " Skipping unpack of attribute buffer because the attribute is locally owned." << endl;
+         msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+             << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
+             << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+             << " Skipping unpack of attribute buffer because the attribute is locally owned." << '\n';
          send_hs( stdout, msg.str().c_str() );
       }
       return;
@@ -1297,10 +1297,10 @@ void Attribute::unpack_attribute_buffer()
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
-            msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
-                << "================== ATTRIBUTE DECODE ==================================" << endl
+            msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+                << "================== ATTRIBUTE DECODE ==================================" << '\n'
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                << "')" << endl;
+                << "')" << '\n';
             send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
@@ -1316,10 +1316,10 @@ void Attribute::unpack_attribute_buffer()
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
-            msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
-                << "================== ATTRIBUTE DECODE =============================" << endl
+            msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+                << "================== ATTRIBUTE DECODE =============================" << '\n'
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                << "')" << endl;
+                << "')" << '\n';
             send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
@@ -1344,10 +1344,10 @@ void Attribute::unpack_attribute_buffer()
 
             if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                ostringstream msg;
-               msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
-                   << "================== ATTRIBUTE DECODE ==================================" << endl
+               msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+                   << "================== ATTRIBUTE DECODE ==================================" << '\n'
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name << "')"
-                   << " value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
+                   << " value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << '\n';
                send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
@@ -1381,10 +1381,10 @@ void Attribute::unpack_attribute_buffer()
 
                if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                   ostringstream msg;
-                  msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
-                      << "================== ATTRIBUTE DECODE ==================================" << endl
+                  msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+                      << "================== ATTRIBUTE DECODE ==================================" << '\n'
                       << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                      << "')" << endl;
+                      << "')" << '\n';
                   send_hs( stdout, msg.str().c_str() );
                   print_buffer();
                }
@@ -1398,35 +1398,35 @@ void Attribute::unpack_attribute_buffer()
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
-      msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
-          << "========================================================" << endl
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
-          << "  AttributeHandle:" << attr_handle_string << endl
-          << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
-          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
-          << "  ref2->attr->type:" << ref2->attr->type << endl
-          << "  ref2->attr->units:" << ref2->attr->units << endl
-          << "  size:" << size << endl
-          << "  num_items:" << num_items << endl
+      msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+          << "========================================================" << '\n'
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "  AttributeHandle:" << attr_handle_string << '\n'
+          << "  ref2->attr->name:'" << ref2->attr->name << "'" << '\n'
+          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << '\n'
+          << "  ref2->attr->type:" << ref2->attr->type << '\n'
+          << "  ref2->attr->units:" << ref2->attr->units << '\n'
+          << "  size:" << size << '\n'
+          << "  num_items:" << num_items << '\n'
           // TODO: Figure out get_size_from_attributes() API in Trick 10.
           //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
-          << "  ref2->attr->size:" << ref2->attr->size << endl
-          << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
-          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
-          << "  publish:" << publish << endl
-          << "  subscribe:" << subscribe << endl
-          << "  locally_owned:" << locally_owned << endl
-          << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
-          << "  buffer_capacity:" << buffer_capacity << endl
-          << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl
-          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
+          << "  ref2->attr->size:" << ref2->attr->size << '\n'
+          << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
+          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
+          << "  publish:" << publish << '\n'
+          << "  subscribe:" << subscribe << '\n'
+          << "  locally_owned:" << locally_owned << '\n'
+          << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
+          << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
+          << "  rti_encoding:" << rti_encoding << '\n'
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
+         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << '\n';
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -1545,7 +1545,7 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
          errmsg << "Attribute::encode_logical_time():" << __LINE__
                 << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
-                << " ENCODING_LOGICAL_TIME encoding." << THLA_ENDL;
+                << " ENCODING_LOGICAL_TIME encoding." << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -1648,7 +1648,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          errmsg << "Attribute::decode_logical_time():" << __LINE__
                 << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
-                << " ENCODING_LOGICAL_TIME encoding." << THLA_ENDL;
+                << " ENCODING_LOGICAL_TIME encoding." << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -1829,7 +1829,7 @@ size %d, will use the data buffer size instead.%c",
          errmsg << "Attribute::decode_opaque_data_from_buffer():" << __LINE__
                 << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA Attribute '"
                 << FOM_name << "' with Trick name '" << trick_name << "' and length "
-                << decoded_length << "!" << THLA_ENDL;
+                << decoded_length << "!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -2336,7 +2336,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                    << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', actual data size"
                    << " (" << byte_count << ") != expected Trick simulation variable"
-                   << " size (" << size << ")!" << THLA_ENDL;
+                   << " size (" << size << ")!" << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -2495,7 +2495,7 @@ size %d, will use the data buffer size instead.%c",
                       << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << Utilities::next_positive_multiple_of_8( length )
-                      << "!" << THLA_ENDL;
+                      << "!" << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -2646,7 +2646,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                          << " Attribute '" << FOM_name << "' with Trick name '"
                          << trick_name << "' and length "
                          << Utilities::next_positive_multiple_of_8( length )
-                         << "!" << THLA_ENDL;
+                         << "!" << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
@@ -2766,7 +2766,7 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buff
                       << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << Utilities::next_positive_multiple_of_8( length )
-                      << "!" << THLA_ENDL;
+                      << "!" << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -2907,7 +2907,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                          << " Attribute '" << FOM_name << "' with Trick name '"
                          << trick_name << "' and length "
                          << Utilities::next_positive_multiple_of_8( length )
-                         << "!" << THLA_ENDL;
+                         << "!" << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
@@ -3019,7 +3019,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
-                      << "' and length " << length << "!" << THLA_ENDL;
+                      << "' and length " << length << "!" << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             }
 
@@ -3151,7 +3151,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                          << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA"
                          << " Attribute '" << FOM_name << "' with Trick name '"
-                         << trick_name << "' and length " << length << "!" << THLA_ENDL;
+                         << trick_name << "' and length " << length << "!" << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
 
@@ -3189,7 +3189,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                    << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
-                   << "' with Trick name '" << trick_name << "' is NULL!" << THLA_ENDL;
+                   << "' with Trick name '" << trick_name << "' is NULL!" << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -3201,7 +3201,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                    << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
-                   << get_size( output ) << ")!" << THLA_ENDL;
+                   << get_size( output ) << ")!" << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -3258,7 +3258,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                       << " ERROR: Could not allocate memory for ENCODING_C_STRING attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << Utilities::next_positive_multiple_of_8( length )
-                      << "!" << THLA_ENDL;
+                      << "!" << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -3293,7 +3293,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
              << " WARNING: FOM Attribute '" << FOM_name << "' with Trick name '"
              << trick_name << "' has an unexpected size of zero bytes! Make"
              << " sure your simulation variable is properly initialized before"
-             << " this initialize() function is called." << endl;
+             << " this initialize() function is called." << '\n';
          send_hs( stdout, msg.str().c_str() );
       }
       return;
@@ -3544,13 +3544,13 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
 void Attribute::print_buffer() const
 {
    ostringstream msg;
-   msg << "Attribute::print_buffer():" << __LINE__ << endl
+   msg << "Attribute::print_buffer():" << __LINE__ << '\n'
        << " FOM-name:'" << get_FOM_name() << "'"
        << " type:" << ref2->attr->type
        << " byteswap:" << ( is_byteswap() ? "Yes" : "No" )
        << " num_items:" << num_items
        << " size:" << size
-       << endl;
+       << '\n';
 
    // For now we only support an attribute of type double for printing. DDexter
    if ( ref2->attr->type == TRICK_DOUBLE ) {
@@ -3563,11 +3563,11 @@ void Attribute::print_buffer() const
             double b_value = Utilities::byteswap_double( dbl_array[i] );
             msg << "\ti:" << i
                 << " value:" << b_value
-                << " byteswap-value:" << dbl_array[i] << endl;
+                << " byteswap-value:" << dbl_array[i] << '\n';
          }
       } else {
          for ( size_t i = 0; i < num_items; ++i ) {
-            msg << " i:" << i << " " << dbl_array[i] << endl;
+            msg << " i:" << i << " " << dbl_array[i] << '\n';
          }
       }
    } else {
@@ -3575,8 +3575,8 @@ void Attribute::print_buffer() const
       // Else just treat the buffer as an array of characters.
       char const *char_array = reinterpret_cast< char * >( buffer );
 
-      msg << "\tAttribute size:" << size << endl
-          << "\tIndex\tValue\tCharacter" << endl;
+      msg << "\tAttribute size:" << size << '\n'
+          << "\tIndex\tValue\tCharacter" << '\n';
 
       for ( size_t i = 0; i < size; ++i ) {
          int char_value = char_array[i];
@@ -3584,7 +3584,7 @@ void Attribute::print_buffer() const
          if ( isgraph( char_array[i] ) ) {
             msg << "\t" << char_array[i];
          }
-         msg << endl;
+         msg << '\n';
       }
    }
    send_hs( stdout, msg.str().c_str() );

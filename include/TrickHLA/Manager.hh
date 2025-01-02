@@ -217,9 +217,9 @@ class Manager : public CheckpointConversionBase
     *  @param theObject             Instance handle to a Federate or Object instance.
     *  @param theObjectClass        Class of the object.
     *  @param theObjectInstanceName Name of the instance. */
-   bool discover_object_instance( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                                  RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
-                                  std::wstring const                     &theObjectInstanceName );
+   bool discover_object_instance( RTI1516_NAMESPACE::ObjectInstanceHandle const &theObject,
+                                  RTI1516_NAMESPACE::ObjectClassHandle const    &theObjectClass,
+                                  std::wstring const                            &theObjectInstanceName );
 
    /*! @brief Gets the TrickHLA Object for the specified RTI Object Instance Handle.
     *  @return TrickHLA Object.

@@ -208,7 +208,7 @@ void ExecutionConfiguration::configure_attributes(
    if ( sim_config_name == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name." << THLA_ENDL;
+             << " ERROR: Unexpected NULL S_define_name." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -238,7 +238,7 @@ void ExecutionConfiguration::configure_attributes()
    if ( S_define_name == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name." << THLA_ENDL;
+             << " ERROR: Unexpected NULL S_define_name." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -323,7 +323,7 @@ void ExecutionConfiguration::configure()
    if ( manager == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -331,7 +331,7 @@ void ExecutionConfiguration::configure()
    if ( name == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Simulation configuration must have a name!" << THLA_ENDL;
+             << " ERROR: Simulation configuration must have a name!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -368,7 +368,7 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
    if ( imsim_exec_cntrl == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::get_imsim_control():" << __LINE__
-             << " ERROR: Dynamic cast error from base class reference to IMSim reference!" << THLA_ENDL;
+             << " ERROR: Dynamic cast error from base class reference to IMSim reference!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -381,15 +381,15 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
 void ExecutionConfiguration::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "=============================================================" << endl
-           << "IMSim::ExecutionConfiguration::pack():" << __LINE__ << endl
-           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
-           << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
-           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
-           << "............................................................." << endl;
+      cout << "=============================================================" << '\n'
+           << "IMSim::ExecutionConfiguration::pack():" << __LINE__ << '\n'
+           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << '\n'
+           << "\t Current Simulation Time: " << the_exec->get_sim_time() << '\n'
+           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
+           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
+           << "............................................................." << '\n';
       this->print_simconfig( cout );
-      cout << "=============================================================" << endl;
+      cout << "=============================================================" << '\n';
    }
 
    return;
@@ -402,15 +402,15 @@ void ExecutionConfiguration::unpack()
 {
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "=============================================================" << endl
-           << "IMSim::ExecutionConfiguration::unpack():" << __LINE__ << endl
-           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
-           << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
-           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
-           << "............................................................." << endl;
+      cout << "=============================================================" << '\n'
+           << "IMSim::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
+           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << '\n'
+           << "\t Current Simulation Time: " << the_exec->get_sim_time() << '\n'
+           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
+           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
+           << "............................................................." << '\n';
       this->print_simconfig( cout );
-      cout << "=============================================================" << endl;
+      cout << "=============================================================" << '\n';
    }
 
    // Mark that we have a Simulation Configuration update with pending changes.
@@ -490,33 +490,33 @@ void ExecutionConfiguration::setup_ref_attributes(
    ostringstream errormsg;
    errormsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
             << " ERROR: This routine does NOT work and should not be called!"
-            << THLA_ENDL;
+            << '\n';
    DebugHandler::terminate_with_message( errormsg.str() );
    return;
 }
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   cout << "=============================================================" << endl
-        << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << endl;
+   cout << "=============================================================" << '\n'
+        << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << '\n';
    this->print_simconfig( cout );
-   cout << "=============================================================" << endl;
+   cout << "=============================================================" << '\n';
    return;
 }
 
 void ExecutionConfiguration::print_simconfig( std::ostream &stream )
 {
-   stream << "\t Object-Name:         '" << this->get_name() << "'" << endl
-          << "\t owner:               '" << owner << endl
-          << "\t scenario:            " << scenario << endl
-          << "\t mode:                " << mode << endl
-          << "\t run duration:        " << run_duration << endl
-          << "\t number of federates: " << number_of_federates << endl
-          << "\t required federates:  " << required_federates << endl
-          << "\t start year:          '" << start_year << endl
-          << "\t start seconds:       " << start_seconds << " (s)" << endl
-          << "\t DUT1:                " << DUT1 << " (s)" << endl
-          << "\t delta AT:            " << deltaAT << " (s)" << endl;
+   stream << "\t Object-Name:         '" << this->get_name() << "'" << '\n'
+          << "\t owner:               '" << owner << '\n'
+          << "\t scenario:            " << scenario << '\n'
+          << "\t mode:                " << mode << '\n'
+          << "\t run duration:        " << run_duration << '\n'
+          << "\t number of federates: " << number_of_federates << '\n'
+          << "\t required federates:  " << required_federates << '\n'
+          << "\t start year:          '" << start_year << '\n'
+          << "\t start seconds:       " << start_seconds << " (s)" << '\n'
+          << "\t DUT1:                " << DUT1 << " (s)" << '\n'
+          << "\t delta AT:            " << deltaAT << " (s)" << '\n';
    return;
 }
 
@@ -564,7 +564,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -593,7 +593,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

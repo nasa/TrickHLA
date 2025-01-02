@@ -104,7 +104,7 @@ void OpaqueBuffer::set_byte_alignment( unsigned int const size )
          ostringstream errmsg;
          errmsg << "OpaqueBuffer::set_byte_alignment():" << __LINE__
                 << " ERROR: Unsupported byte alignment: " << size << "!"
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
    }
@@ -146,7 +146,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
       ostringstream errmsg;
       errmsg << "OpaqueBuffer::ensure_buffer_capacity():" << __LINE__
              << " ERROR: Could not allocate memory for buffer for requested"
-             << " capacity " << capacity << "!" << THLA_ENDL;
+             << " capacity " << capacity << "!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -178,7 +178,7 @@ void OpaqueBuffer::push_to_buffer(
              << " WARNING: Trying to push " << size << " bytes into the buffer at"
              << " position " << push_pos << ", which exceeds the buffer capacity"
              << " by " << ( ( push_pos + size ) - capacity ) << " bytes! Resizing the"
-             << " buffer to accommodate the data." << THLA_ENDL;
+             << " buffer to accommodate the data." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + size );
    }
@@ -190,7 +190,7 @@ void OpaqueBuffer::push_to_buffer(
              << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
-             << ", or ENCODING_NONE:" << ENCODING_NONE << THLA_ENDL;
+             << ", or ENCODING_NONE:" << ENCODING_NONE << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -231,7 +231,7 @@ void OpaqueBuffer::pull_from_buffer(
       errmsg << "OpaqueBuffer::pull_from_buffer():" << __LINE__
              << " ERROR: Trying to pull " << size << " bytes from the buffer at"
              << " position " << pull_pos << ", which exceeds the end of the buffer"
-             << " by " << ( ( pull_pos + size ) - capacity ) << " bytes!" << THLA_ENDL;
+             << " by " << ( ( pull_pos + size ) - capacity ) << " bytes!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -242,7 +242,7 @@ void OpaqueBuffer::pull_from_buffer(
              << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
-             << ", or ENCODING_NONE:" << ENCODING_NONE << THLA_ENDL;
+             << ", or ENCODING_NONE:" << ENCODING_NONE << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -268,7 +268,7 @@ void OpaqueBuffer::push_pad_to_buffer(
              << " WARNING: Trying to push " << pad_size << " pad bytes into the"
              << " buffer at position " << push_pos << ", which exceeds the buffer"
              << " capacity by " << ( ( push_pos + pad_size ) - capacity ) << " bytes!"
-             << " Resizing the buffer to accommodate the data." << THLA_ENDL;
+             << " Resizing the buffer to accommodate the data." << '\n';
       send_hs( stderr, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + pad_size );
    }
@@ -294,7 +294,7 @@ void OpaqueBuffer::pull_pad_from_buffer(
              << " ERROR: Trying to pull " << pad_size << " pad bytes from the"
              << " buffer at position " << pull_pos << ", which exceeds the end of"
              << " the buffer by " << ( ( pull_pos + pad_size ) - capacity )
-             << " bytes!" << THLA_ENDL;
+             << " bytes!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -358,7 +358,7 @@ void OpaqueBuffer::byteswap_buffer_copy(
                ostringstream errmsg;
                errmsg << "OpaqueBuffer::byteswap_buffer_copy():"
                       << __LINE__ << " ERROR: Don't know how to byteswap "
-                      << size << " bytes!" << THLA_ENDL;
+                      << size << " bytes!" << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             }
             break;

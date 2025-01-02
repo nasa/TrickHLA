@@ -76,7 +76,7 @@ void LagCompensation::send_lag_compensation()
    errmsg << "LagCompensation::send_lag_compensation():" << __LINE__
           << " ERROR: Your class that extends LagCompensation must implement"
           << " the 'virtual void send_lag_compensation()' function!"
-          << THLA_ENDL;
+          << '\n';
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -89,7 +89,7 @@ void LagCompensation::receive_lag_compensation()
    errmsg << "LagCompensation::receive_lag_compensation():" << __LINE__
           << " ERROR: Your class that extends LagCompensation must implement"
           << " the 'virtual void receive_lag_compensation()' function!"
-          << THLA_ENDL;
+          << '\n';
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -115,7 +115,7 @@ Attribute *LagCompensation::get_attribute_and_validate(
       ostringstream errmsg;
       errmsg << "LagCompensation::get_attribute_and_validate():" << __LINE__
              << " ERROR: Unexpected NULL attribute FOM name specified."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -131,7 +131,7 @@ Attribute *LagCompensation::get_attribute_and_validate(
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input.py file is properly"
-             << " configured for this attribute." << THLA_ENDL;
+             << " configured for this attribute." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return attr;

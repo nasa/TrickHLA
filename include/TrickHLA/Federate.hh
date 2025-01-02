@@ -290,11 +290,11 @@ class Federate
 
    /*! @brief Add the specified Federate instance ID to the list of discovered federates.
     * @param instance_hndl Federate instance to add. */
-   void add_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle instance_hndl );
+   void add_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    /*! @brief Remove the specified Federate instance ID from the list of discovered federates.
     * @param instance_hndl Federate instance to remove. */
-   void remove_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle instance_hndl );
+   void remove_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    //
    // BEGIN: checkpoint / restore code
@@ -323,13 +323,13 @@ class Federate
     * discovered federates.
     *  @param instance_hndl Object instance handle.
     *  @param instance_name Object instance Name. */
-   void add_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle instance_hndl,
-                                         std::wstring const                     &instance_name );
+   void add_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl,
+                                         std::wstring const                            &instance_name );
 
    /*! @brief Remove the specified Federate instance ID to the list of
     * discovered federates.
     *  @param instance_hndl Object instance handle. */
-   void remove_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle instance_hndl );
+   void remove_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    /*! @brief Perform setup for federate save. */
    void setup_checkpoint();
@@ -648,7 +648,7 @@ class Federate
    /*! @brief Reloads the federate handle set from the MOM after a checkpoint reload.
     *  @param instance_hndl Object instance handle.
     *  @param values        Attribute values. */
-   void rebuild_federate_handles( RTI1516_NAMESPACE::ObjectInstanceHandle           instance_hndl,
+   void rebuild_federate_handles( RTI1516_NAMESPACE::ObjectInstanceHandle const    &instance_hndl,
                                   RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
    // END: checkpoint / restore code
 
@@ -793,7 +793,7 @@ class Federate
    /*! @brief Determine if the specified instance ID is for one of the discovered federates.
     *  @return True if ID is for a federate.
     *  @param id MOM HLAfederate instance ID. */
-   bool is_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle id );
+   bool is_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &id );
 
    //
    // MOM HLAfederate class and attributes.
@@ -817,7 +817,7 @@ class Federate
     * FederateHandle ID associated with the Federate instance.
     * @param id     Object instance handle.
     * @param values Attribute values. */
-   void set_MOM_HLAfederate_instance_attributes( RTI1516_NAMESPACE::ObjectInstanceHandle           id,
+   void set_MOM_HLAfederate_instance_attributes( RTI1516_NAMESPACE::ObjectInstanceHandle const    &id,
                                                  RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
 
    /*! @brief Set all the federate MOM instance handles by using the previously
@@ -833,17 +833,17 @@ class Federate
     *  HLAfederation instance.
     *  @return True if ID is for a federate; False otherwise.
     *  @param instance_hndl Federate instance handle. */
-   bool is_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle instance_hndl );
+   bool is_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    /*! @brief Add the specified MOM HLAfederation instance handle to the list
     *  of running federates.
     *  @param instance_hndl Object instance handle. */
-   void add_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle instance_hndl );
+   void add_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    /*! @brief Remove the specified MOM HLAfederation instance handle from the
     *  list of running federates.
     *  @param instance_hndl Object instance handle. */
-   void remove_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle instance_hndl );
+   void remove_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    /*! @brief Query if the an object class handle is a federation class.
     *  @return True if class handle is a federation class; False otherwise.
@@ -857,7 +857,7 @@ class Federate
     * FederateHandle ID associated with the Federation instance.
     * @param instance_hndl Object instance handle.
     * @param values        Attribute values. */
-   void set_MOM_HLAfederation_instance_attributes( RTI1516_NAMESPACE::ObjectInstanceHandle           instance_hndl,
+   void set_MOM_HLAfederation_instance_attributes( RTI1516_NAMESPACE::ObjectInstanceHandle const    &instance_hndl,
                                                    RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
 
    //
@@ -1285,19 +1285,19 @@ class Federate
    /*! @brief Subscribe to the specified attributes for the given class handle.
     *  @param class_handle   Class handle.
     *  @param attribute_list Attributes handles. */
-   void subscribe_attributes( RTI1516_NAMESPACE::ObjectClassHandle         class_handle,
+   void subscribe_attributes( RTI1516_NAMESPACE::ObjectClassHandle const  &class_handle,
                               RTI1516_NAMESPACE::AttributeHandleSet const &attribute_list );
 
    /*! @brief Unsubscribe from the specified attributes for the given class handle.
     *  @param class_handle   Class handle.
     *  @param attribute_list Attributes handles. */
-   void unsubscribe_attributes( RTI1516_NAMESPACE::ObjectClassHandle         class_handle,
+   void unsubscribe_attributes( RTI1516_NAMESPACE::ObjectClassHandle const  &class_handle,
                                 RTI1516_NAMESPACE::AttributeHandleSet const &attribute_list );
 
    /*! @brief Request an update to the specified attributes for the given object class handle.
     *  @param class_handle   Class handle.
     *  @param attribute_list Attributes handles. */
-   void request_attribute_update( RTI1516_NAMESPACE::ObjectClassHandle         class_handle,
+   void request_attribute_update( RTI1516_NAMESPACE::ObjectClassHandle const  &class_handle,
                                   RTI1516_NAMESPACE::AttributeHandleSet const &attribute_list );
 
    /*! @brief Publish Interaction class.

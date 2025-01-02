@@ -196,7 +196,7 @@ void Manager::initialize()
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -205,7 +205,7 @@ void Manager::initialize()
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
              << " ERROR: Unexpected NULL 'execution_control' pointer!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -229,7 +229,7 @@ void Manager::restart_initialization()
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -252,7 +252,7 @@ void Manager::restart_initialization()
    if ( execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'execution_control' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'execution_control' pointer!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -321,7 +321,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " ERROR: Unexpected NULL 'objects' array for a non zero"
              << " obj_count:" << obj_count << ". Please check your input or"
              << " modified-data files to make sure the 'Manager::objects'"
-             << " array is correctly configured." << THLA_ENDL;
+             << " array is correctly configured." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -334,7 +334,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
              << " Please check your input or modified-data files to make sure"
              << " the 'Manager::objects' array is correctly configured."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -362,7 +362,7 @@ void Manager::verify_object_and_interaction_arrays()
                          << "' at array index " << k << ". Please check your"
                          << " input or modified-data files to make sure the"
                          << " object instance names are unique with no duplicates."
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -378,7 +378,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " ERROR: Unexpected NULL 'interactions' array for a non zero"
              << " inter_count:" << inter_count << ". Please check your input or"
              << " modified-data files to make sure the 'Manager::interactions'"
-             << " array is correctly configured." << THLA_ENDL;
+             << " array is correctly configured." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -391,7 +391,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
              << " array. Please check your input or modified-data files to make"
              << " sure the 'Manager::interactions' array is correctly configured."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -440,7 +440,7 @@ federate so this call will be ignored.%c",
                    << " This call will be ignored because the Simulation"
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
-                   << "') does not support it." << THLA_ENDL;
+                   << "') does not support it." << '\n';
                send_hs( stdout, msg.str().c_str() );
             }
          }
@@ -474,7 +474,7 @@ federate so the data will not be sent for '%s'.%c",
    if ( instance_name == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::send_init_data():" << __LINE__
-             << " ERROR: Null Object Instance Name" << THLA_ENDL;
+             << " ERROR: Null Object Instance Name" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -489,7 +489,7 @@ federate so the data will not be sent for '%s'.%c",
              << " ERROR: The specified Object Instance"
              << " Name '" << instance_name << "' does not correspond to any"
              << " known object. Please check your S_define file or simulation"
-             << " module to verify the settings." << THLA_ENDL;
+             << " module to verify the settings." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -513,7 +513,7 @@ federate so the data will not be sent for '%s'.%c",
                    << " This call will be ignored because the Simulation"
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
-                   << "') does not support it." << THLA_ENDL;
+                   << "') does not support it." << '\n';
                send_hs( stdout, msg.str().c_str() );
             }
          }
@@ -586,7 +586,7 @@ federate so this call will be ignored.%c",
                                << " RTI or we are no longer joined to the federation"
                                << " execution because someone forced our resignation at"
                                << " the Central RTI Component (CRC) level!"
-                               << THLA_ENDL;
+                               << '\n';
                         DebugHandler::terminate_with_message( errmsg.str() );
                      }
                   }
@@ -660,7 +660,7 @@ void Manager::receive_init_data(
              << " ERROR: The specified Object Instance Name '" << instance_name
              << "' does not correspond to any known object. Please check your"
              << " S_define file or simulation module to verify the settings."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -705,7 +705,7 @@ void Manager::receive_init_data(
                                << " RTI or we are no longer joined to the federation"
                                << " execution because someone forced our resignation at"
                                << " the Central RTI Component (CRC) level!"
-                               << THLA_ENDL;
+                               << '\n';
                         DebugHandler::terminate_with_message( errmsg.str() );
                      }
                   }
@@ -769,7 +769,7 @@ void Manager::wait_for_init_sync_point(
                 << " This call will be ignored because the Simulation"
                 << " Initialization Scheme (Type:'"
                 << this->execution_control->get_type()
-                << "') does not support it." << THLA_ENDL;
+                << "') does not support it." << '\n';
          send_hs( stdout, errmsg.str().c_str() );
       }
       return;
@@ -789,7 +789,7 @@ joining federate so this call will be ignored.%c",
    if ( sync_point_label == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
-             << " ERROR: Null Sync-Point Label" << THLA_ENDL;
+             << " ERROR: Null Sync-Point Label" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -811,7 +811,7 @@ joining federate so this call will be ignored.%c",
              << "' is not known. Please check your input or modified data files"
              << " to make sure the 'THLA.federate.multiphase_init_sync_points'"
              << " correctly specifies all the synchronization-point labels that"
-             << " will be used for multi-phase initialization." << THLA_ENDL;
+             << " will be used for multi-phase initialization." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -952,7 +952,7 @@ which keeps the instance attribute's object from becoming a Federation orphan. *
    // Bail from the execution just in case the above command fails
    ostringstream errmsg;
    errmsg << "Manager::object_instance_name_reservation_failed():" << __LINE__
-          << " Exiting..." << THLA_ENDL;
+          << " Exiting..." << '\n';
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -1042,13 +1042,13 @@ void Manager::setup_object_ref_attributes(
       Attribute *attrs      = data_objects[n].get_attributes();
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         msg << "Manager::setup_object_ref_attributes()" << __LINE__ << endl
-             << "--------------- Trick REF-Attributes ---------------" << endl
+         msg << "Manager::setup_object_ref_attributes()" << __LINE__ << '\n'
+             << "--------------- Trick REF-Attributes ---------------" << '\n'
              << " Object:'" << data_objects[n].get_name() << "'"
              << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
              << " Create HLA Instance:"
              << ( data_objects[n].is_create_HLA_instance() ? "Yes" : "No" )
-             << " Attribute count:" << attr_count << endl;
+             << " Attribute count:" << attr_count << '\n';
       }
 
       // Process the attributes for this object.
@@ -1061,7 +1061,7 @@ void Manager::setup_object_ref_attributes(
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attrs[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attrs[i].get_trick_name() << "'"
-                << endl;
+                << '\n';
          }
       }
 
@@ -1093,10 +1093,10 @@ void Manager::setup_interaction_ref_attributes()
       ostringstream msg;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         msg << "Manager::setup_interaction_ref_attributes():" << __LINE__ << endl
-             << "--------------- Trick REF-Attributes ---------------" << endl
+         msg << "Manager::setup_interaction_ref_attributes():" << __LINE__ << '\n'
+             << "--------------- Trick REF-Attributes ---------------" << '\n'
              << " FOM-Interaction:'" << interactions[n].get_FOM_name() << "'"
-             << endl;
+             << '\n';
       }
 
       // Initialize the TrickHLA Interaction before we use it.
@@ -1112,7 +1112,7 @@ void Manager::setup_interaction_ref_attributes()
             msg << "   " << ( i + 1 ) << "/" << param_count
                 << " FOM-Parameter:'" << params[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << params[i].get_trick_name() << "'"
-                << endl;
+                << '\n';
          }
 
          // Initialize the TrickHLA Parameter.
@@ -1169,7 +1169,7 @@ void Manager::setup_object_RTI_handles(
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1180,7 +1180,7 @@ void Manager::setup_object_RTI_handles(
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL RTIambassador!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1202,13 +1202,13 @@ void Manager::setup_object_RTI_handles(
          ostringstream msg;
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            msg << "Manager::setup_object_RTI_handles()" << __LINE__ << endl
+            msg << "Manager::setup_object_RTI_handles()" << __LINE__ << '\n'
                 << "----------------- RTI Handles (Objects & Attributes) ---------------"
-                << endl
+                << '\n'
                 << "Getting RTI Object-Class-Handle for"
                 << " Object:'" << data_objects[n].get_name() << "'"
                 << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
-                << endl;
+                << '\n';
          }
 
          // Create the wide-string object FOM name.
@@ -1225,7 +1225,7 @@ void Manager::setup_object_RTI_handles(
             msg << "  Result for"
                 << " Object:'" << data_objects[n].get_name() << "'"
                 << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
-                << " Class-ID:" << handle_str << endl;
+                << " Class-ID:" << handle_str << '\n';
          }
 
          int const  attr_count = data_objects[n].get_attribute_count();
@@ -1237,7 +1237,7 @@ void Manager::setup_object_RTI_handles(
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Attribute-Handle for '"
                    << data_objects[n].get_FOM_name() << "'->'"
-                   << attrs[i].get_FOM_name() << "'" << endl;
+                   << attrs[i].get_FOM_name() << "'" << '\n';
             }
 
             // Create the wide-string Attribute FOM name.
@@ -1255,7 +1255,7 @@ void Manager::setup_object_RTI_handles(
                msg << "\t  Result for Attribute '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'"
-                   << " Attribute-ID:" << id_str << endl;
+                   << " Attribute-ID:" << id_str << '\n';
             }
          }
 
@@ -1278,7 +1278,7 @@ void Manager::setup_object_RTI_handles(
             errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
                    << " ERROR: Object FOM Name '" << obj_FOM_name << "' Not Found. Please check"
                    << " your input or modified-data files to make sure the"
-                   << " Object FOM Name is correctly specified." << THLA_ENDL;
+                   << " Object FOM Name is correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1288,7 +1288,7 @@ void Manager::setup_object_RTI_handles(
                    << " ERROR: For Object FOM Name '" << obj_FOM_name << "', Attribute FOM Name '"
                    << attr_FOM_name << "' Not Found. Please check your input or"
                    << " modified-data files to make sure the Object Attribute"
-                   << " FOM Name is correctly specified." << THLA_ENDL;
+                   << " FOM Name is correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1297,7 +1297,7 @@ void Manager::setup_object_RTI_handles(
             errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
                    << " ERROR: Object or Attribute FOM Name Not Found. Please check your input or"
                    << " modified-data files to make sure the FOM Name is"
-                   << " correctly specified." << THLA_ENDL;
+                   << " correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1309,7 +1309,7 @@ void Manager::setup_object_RTI_handles(
 
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Federate Not Execution Member" << THLA_ENDL;
+             << " ERROR: Federate Not Execution Member" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1318,7 +1318,7 @@ void Manager::setup_object_RTI_handles(
 
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Not Connected" << THLA_ENDL;
+             << " ERROR: Not Connected" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1330,7 +1330,7 @@ void Manager::setup_object_RTI_handles(
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " ERROR: RTIinternalError: '"
-             << rti_err_msg << "'" << THLA_ENDL;
+             << rti_err_msg << "'" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1341,7 +1341,7 @@ void Manager::setup_object_RTI_handles(
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " ERROR: RTI1516_EXCEPTION for '"
-             << rti_err_msg << "'" << THLA_ENDL;
+             << rti_err_msg << "'" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1366,7 +1366,7 @@ void Manager::setup_interaction_RTI_handles(
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1377,7 +1377,7 @@ void Manager::setup_interaction_RTI_handles(
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL RTIambassador!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1404,11 +1404,11 @@ void Manager::setup_interaction_RTI_handles(
          StringUtilities::to_wstring( ws_FOM_name, inter_FOM_name );
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            msg << "Manager::setup_interaction_RTI_handles()" << __LINE__ << endl
-                << "----------------- RTI Handles (Interactions & Parameters) ---------------" << endl
+            msg << "Manager::setup_interaction_RTI_handles()" << __LINE__ << '\n'
+                << "----------------- RTI Handles (Interactions & Parameters) ---------------" << '\n'
                 << "Getting RTI Interaction-Class-Handle for"
                 << " FOM-Name:'" << inter_FOM_name << "'"
-                << endl;
+                << '\n';
          }
 
          // Get the Interaction class handle.
@@ -1419,7 +1419,7 @@ void Manager::setup_interaction_RTI_handles(
             StringUtilities::to_string( handle_str, in_interactions[n].get_class_handle() );
             msg << "  Result for Interaction"
                 << " FOM-Name:'" << inter_FOM_name << "'"
-                << " Interaction-ID:" << handle_str << endl;
+                << " Interaction-ID:" << handle_str << '\n';
          }
 
          // The parameters.
@@ -1436,7 +1436,7 @@ void Manager::setup_interaction_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Parameter-Handle for '"
-                   << inter_FOM_name << "'->'" << param_FOM_name << "'" << endl;
+                   << inter_FOM_name << "'->'" << param_FOM_name << "'" << '\n';
             }
 
             // Get the Parameter Handle.
@@ -1450,7 +1450,7 @@ void Manager::setup_interaction_RTI_handles(
                StringUtilities::to_string( handle_str, params[i].get_parameter_handle() );
                msg << "\t  Result for Parameter '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'"
-                   << " Parameter-ID:" << handle_str << endl;
+                   << " Parameter-ID:" << handle_str << '\n';
             }
          }
 
@@ -1469,7 +1469,7 @@ void Manager::setup_interaction_RTI_handles(
             errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
                    << " ERROR: Interaction FOM Name '" << inter_FOM_name << "' Not Found. Please"
                    << " check your input or modified-data files to make sure the"
-                   << " Interaction FOM Name is correctly specified." << THLA_ENDL;
+                   << " Interaction FOM Name is correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1480,7 +1480,7 @@ void Manager::setup_interaction_RTI_handles(
                    << "', Parameter FOM Name '" << param_FOM_name
                    << "' Not Found. Please check your input or modified-data files"
                    << " to make sure the Interaction Parameter FOM Name is"
-                   << " correctly specified." << THLA_ENDL;
+                   << " correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1489,7 +1489,7 @@ void Manager::setup_interaction_RTI_handles(
             errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
                    << " ERROR: Interaction or Parameter FOM Name Not Found. Please check your input"
                    << " or modified-data files to make sure the FOM Name is"
-                   << " correctly specified." << THLA_ENDL;
+                   << " correctly specified." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1501,7 +1501,7 @@ void Manager::setup_interaction_RTI_handles(
 
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: FederateNotExecutionMember!" << THLA_ENDL;
+             << " ERROR: FederateNotExecutionMember!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1510,7 +1510,7 @@ void Manager::setup_interaction_RTI_handles(
 
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: NotConnected!" << THLA_ENDL;
+             << " ERROR: NotConnected!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1521,7 +1521,7 @@ void Manager::setup_interaction_RTI_handles(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: RTIinternalError: '" << rti_err_msg << "'" << THLA_ENDL;
+             << " ERROR: RTIinternalError: '" << rti_err_msg << "'" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1532,7 +1532,7 @@ void Manager::setup_interaction_RTI_handles(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Exception for '" << rti_err_msg << "'" << THLA_ENDL;
+             << " ERROR: Exception for '" << rti_err_msg << "'" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1984,7 +1984,7 @@ void Manager::wait_for_registration_of_required_objects()
                }
             }
          }
-         summary << THLA_ENDL;
+         summary << '\n';
 
          // Display the summary.
          send_hs( stdout, summary.str().c_str() );
@@ -2021,7 +2021,7 @@ void Manager::wait_for_registration_of_required_objects()
                          << " the RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation"
                          << " at the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -2108,7 +2108,7 @@ void Manager::set_object_instance_handles_by_name(
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2119,7 +2119,7 @@ void Manager::set_object_instance_handles_by_name(
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL RTIambassador!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2172,7 +2172,7 @@ void Manager::set_object_instance_handles_by_name(
                errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
                       << " ERROR: Object Instance Not Known for '"
                       << ( instance_name != NULL ? instance_name : "" ) << "'"
-                      << THLA_ENDL;
+                      << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2189,7 +2189,7 @@ void Manager::set_object_instance_handles_by_name(
 
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Federation Not Execution Member" << THLA_ENDL;
+             << " ERROR: Federation Not Execution Member" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -2198,7 +2198,7 @@ void Manager::set_object_instance_handles_by_name(
 
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Not Connected" << THLA_ENDL;
+             << " ERROR: Not Connected" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -2209,7 +2209,7 @@ void Manager::set_object_instance_handles_by_name(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: RTIinternalError: '" << rti_err_msg << "'" << THLA_ENDL;
+             << " ERROR: RTIinternalError: '" << rti_err_msg << "'" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -2221,7 +2221,7 @@ void Manager::set_object_instance_handles_by_name(
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: RTI1516_EXCEPTION for '"
-             << rti_err_msg << "'" << THLA_ENDL;
+             << rti_err_msg << "'" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -2229,7 +2229,7 @@ void Manager::set_object_instance_handles_by_name(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      summary << THLA_ENDL;
+      summary << '\n';
       send_hs( stdout, summary.str().c_str() );
    }
 }
@@ -2412,7 +2412,7 @@ void Manager::process_interactions()
                    << interaction_item->interaction_type
                    << ". Verify that you are specifying the correct interaction "
                    << "type defined in 'ManagerTypeOfInteractionEnum' enum "
-                   << "found in 'Manager.hh' and re-run." << THLA_ENDL;
+                   << "found in 'Manager.hh' and re-run." << '\n';
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -2540,9 +2540,9 @@ Object *Manager::get_trickhla_object(
  * @job_class{scheduled}
  */
 bool Manager::discover_object_instance(
-   ObjectInstanceHandle theObject,
-   ObjectClassHandle    theObjectClass,
-   wstring const       &theObjectInstanceName )
+   ObjectInstanceHandle const &theObject,
+   ObjectClassHandle const    &theObjectClass,
+   wstring const              &theObjectInstanceName )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -2773,7 +2773,7 @@ void Manager::pull_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::pull_ownership_at_init():" << __LINE__
              << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2783,7 +2783,7 @@ void Manager::pull_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::pull_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
-             << obj_instance_name << "'!" << THLA_ENDL;
+             << obj_instance_name << "'!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2804,7 +2804,7 @@ void Manager::handle_pulled_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
              << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2814,7 +2814,7 @@ void Manager::handle_pulled_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
-             << obj_instance_name << "'!" << THLA_ENDL;
+             << obj_instance_name << "'!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2871,7 +2871,7 @@ void Manager::push_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::push_ownership_at_init():" << __LINE__
              << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2881,7 +2881,7 @@ void Manager::push_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::push_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
-             << obj_instance_name << "'!" << THLA_ENDL;
+             << obj_instance_name << "'!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2902,7 +2902,7 @@ void Manager::handle_pushed_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
              << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2912,7 +2912,7 @@ void Manager::handle_pushed_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
-             << obj_instance_name << "'!" << THLA_ENDL;
+             << obj_instance_name << "'!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -3106,7 +3106,7 @@ void Manager::encode_checkpoint_interactions()
          errmsg << "Manager::encode_checkpoint_interactions():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
                 << " linear array of " << check_interactions_count << " elements."
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -3207,29 +3207,29 @@ void Manager::print_checkpoint_interactions()
       ostringstream msg;
       msg << "Manager::print_checkpoint_interactions():" << __LINE__
           << "check_interactions contains these "
-          << check_interactions_count << " elements:" << endl;
+          << check_interactions_count << " elements:" << '\n';
       for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
-             << check_interactions[i].index << endl
+             << check_interactions[i].index << '\n'
              << "check_interactions[" << i << "].interaction_type       = '"
-             << check_interactions[i].interaction_type << "'" << endl
+             << check_interactions[i].interaction_type << "'" << '\n'
              << "check_interactions[" << i << "].parm_items_count       = "
              << check_interactions[i].parm_items_count
-             << endl;
+             << '\n';
          for ( unsigned int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
             msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
-                << check_interactions[i].parm_items[k].index << endl
+                << check_interactions[i].parm_items[k].index << '\n'
                 << "check_interactions[" << i << "].parm_items[" << k << "].size     = "
                 << check_interactions[i].parm_items[k].size
-                << endl;
+                << '\n';
          }
          msg << "check_interactions[" << i << "].user_supplied_tag_size = "
-             << check_interactions[i].user_supplied_tag_size << endl
+             << check_interactions[i].user_supplied_tag_size << '\n'
              << "check_interactions[" << i << "].order_is_TSO           = "
-             << check_interactions[i].order_is_TSO << endl
+             << check_interactions[i].order_is_TSO << '\n'
              << "check_interactions[" << i << "].time                   = "
              << check_interactions[i].time.get_base_time()
-             << endl;
+             << '\n';
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -3310,7 +3310,7 @@ void Manager::wait_for_discovery_of_objects()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
