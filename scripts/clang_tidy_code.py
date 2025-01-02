@@ -1,20 +1,9 @@
 #!/usr/bin/env python3
-# @file tidy_code.py
+# @file clang_tidy_code.py
 # @brief This program applies a clang-tidy program to TrickHLA source code.
 #
 # This is a Python program used to scan the TrickHLA source code using the
 # clang-tidy utility.
-#
-# Example command:
-# /usr/local/opt/llvm/bin/clang-tidy 
-#   -fix ./source/TrickHLA/* ./source/SpaceFOM/* --
-#   -I ./include
-#   -I ${RTI_HOME}/api/cpp/HLA_1516-2010
-#   -I ${TRICK_HOME}/include
-#   -I ${TRICK_HOME}/include/trick/compat
-#   -I ${TRICK_HOME}/trick_source
-#   -I /usr/local/include
-#   -std=c++11 -DTRICK_VER=19
 #
 # @revs_title
 # @revs_begin
@@ -22,6 +11,7 @@
 # @revs_end
 #
 import argparse
+import asyncio
 import os
 import subprocess
 import shutil
@@ -52,7 +42,7 @@ def main():
    #
    # Setup command line argument parsing.
    #
-   parser = argparse.ArgumentParser( prog = 'tidy_code', \
+   parser = argparse.ArgumentParser( prog = 'clang_tidy_code', \
                                      formatter_class = argparse.RawDescriptionHelpFormatter, \
                                      description = 'Scan the TrickHLA source code using clang-tidy.' )
 
@@ -60,7 +50,7 @@ def main():
                         help = 'Process all the source code.', \
                         action = 'store_true', dest = 'process_all' )
    parser.add_argument( '--TrickHLA', \
-                        help = 'Process the TrickHLA source code.', \
+                        help = 'Process the core TrickHLA source code.', \
                         action = 'store_true', dest = 'process_TrickHLA' )
    parser.add_argument( '--SpaceFOM', \
                         help = 'Process the SpaceFOM source code.', \
@@ -102,10 +92,10 @@ def main():
    args = parser.parse_args()
    arg_error = False
 
-   # User must specify one of -a, --TrickHLA, --SpaceFOM, --IMSim, --JEOD --models
+   # User must specify one of --all, --TrickHLA, --SpaceFOM, --IMSim, --JEOD, or --models
    required_arg_cnt = 0
    if args.process_all:
-      # -a
+      # -a, --all
       required_arg_cnt += 1
    if args.process_TrickHLA:
       # --TrickHLA
@@ -146,7 +136,7 @@ def main():
       if trickhla_home is None:
          trickhla_home = os.environ.get( 'TRICK_HLA_HOME' )
          if trickhla_home is None:
-            TrickHLAMessage.failure( 'TRICKHLA_HOME not set!' )
+            TrickHLAMessage.failure( 'TRICKHLA_HOME environment variable not set!' )
 
    # Move into the TrickHLA home directory.
    # But first make sure that the directory actually exists before moving there.
@@ -279,8 +269,11 @@ def main():
       include_dirs.extend( ['-I', '/usr/local/include'] )
 
    # Configure the clang-tidy arguments.
+#   clang_tidy_args.append( '--checks=\'*\'' )
+#   clang_tidy_args.append( '--fix-notes' )
    clang_tidy_args.append( '--fix-errors' )
-   clang_tidy_args.append( '--fix-notes' )
+   clang_tidy_args.append( '--header-filter=\'.*TrickHLA/.*\'' )
+#   clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )  
    clang_tidy_args.extend( source_dirs )
    clang_tidy_args.append( '--' )
    clang_tidy_args.extend( include_dirs )
@@ -303,6 +296,23 @@ def main():
    # Form the clang-tidy command with command line options.
    shell_command = [ clang_tidy_cmd ]
    shell_command.extend( clang_tidy_args )
+   
+   # Example command:
+# /usr/local/opt/llvm/bin/clang-tidy 
+#   -fix ./source/TrickHLA/* ./source/SpaceFOM/* --
+#   -I ./include
+#   -I ${RTI_HOME}/api/cpp/HLA_1516-2010
+#   -I ${TRICK_HOME}/include
+#   -I ${TRICK_HOME}/include/trick/compat
+#   -I ${TRICK_HOME}/trick_source
+#   -I /usr/local/include
+#   -std=c++11 -DTRICK_VER=19
+#
+# /usr/local/opt/llvm/bin/clang-check 
+#    -analyze ./source/TrickHLA/* ./source/SpaceFOM/* -- 
+#    -I ./include -I $TRICK_HOME/include 
+#    -I $RTI_HOME/api/cpp/HLA_1516-2010
+#    -std=c++11 -DTRICK_VER=19
 
    #
    # Execute the clang-tidy command
@@ -313,6 +323,16 @@ def main():
       if args.very_verbose:
          TrickHLAMessage.status( 'Executing: ' + ' '.join( shell_command ) )
 
+      # try:
+      #    process = await asyncio.create_subprocess_exec(
+      #        shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+      #    )
+      #    stdout, stderr = await process.communicate()
+      # except asyncio.CancelledError:
+      #    process.terminate()
+      #    await process.wait()
+      #    raise
+     
       # Execute the clang-tidy command.
       try:
 
