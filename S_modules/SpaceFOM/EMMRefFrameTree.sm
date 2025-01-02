@@ -105,7 +105,7 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
       // Check for objects allocation.
       if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ){
          errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
-                << " ERROR: The TrickHLAManager Object array has not been allocated!" << THLA_ENDL;
+                << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }

@@ -225,18 +225,18 @@ void ExecutionControl::initialize()
                 << " WARNING: Only a preset master is supported. Make sure to set"
                 << " 'THLA.federate.use_preset_master = true' in your input.py file."
                 << " Setting use_preset_master to true!"
-                << THLA_ENDL;
+                << '\n';
          send_hs( stdout, errmsg.str().c_str() );
          this->use_preset_master = true;
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( is_master() ) {
-            send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER\n",
+                     __LINE__ );
          } else {
-            send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER\n",
+                     __LINE__ );
          }
       }
    */
@@ -264,8 +264,8 @@ void ExecutionControl::join_federation_process()
 void ExecutionControl::pre_multi_phase_init_processes()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n",
+               __LINE__ );
    }
 
    // Reset the sim-config required flag to make it required.
@@ -1937,7 +1937,7 @@ bool ExecutionControl::run_mode_transition()
      if ( sync_pnt == NULL ) {
         ostringstream errmsg;
         errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
-               << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
+               << " ERROR: The 'mtr_run' sync-point was not found!\n";
         DebugHandler::terminate_with_message( errmsg.str() );
      } else {
 
@@ -2026,7 +2026,7 @@ bool ExecutionControl::freeze_mode_transition()
    if ( !contains_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
-             << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_freeze' sync-point was not found!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 

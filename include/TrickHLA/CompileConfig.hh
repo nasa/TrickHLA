@@ -67,7 +67,6 @@ NASA, Johnson Space Center\n
 
 // Define newlines, this was meant to abstract out the difference between how
 // new-lines were handled in send_hs between Trick 07 and newer Trick versions.
-#define THLA_ENDL std::endl
 #define THLA_NEWLINE '\n'
 
 // The Pitch Runtime Infrastructure (RTI) API calls will cause the

@@ -315,8 +315,7 @@ void FreezeInteractionHandler::receive_interaction(
               << __LINE__
               << " ===> debug <===" << endl
               << " granted-time:" << interaction->get_granted_time().get_time_in_seconds() << endl
-              << " lookahead-time:" << interaction->get_lookahead().get_time_in_seconds()
-              << THLA_ENDL;
+              << " lookahead-time:" << interaction->get_lookahead().get_time_in_seconds() << '\n';
       send_hs( stdout, infomsg.str().c_str() );
 #endif
    }
