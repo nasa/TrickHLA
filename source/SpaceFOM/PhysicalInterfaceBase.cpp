@@ -151,7 +151,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
    trick_name_str                      = interface_name_str + string( ".packing_data.name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[0].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
@@ -160,7 +160,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[1].FOM_name      = allocate_input_string( "parent_name" );
    trick_name_str                      = interface_name_str + string( ".packing_data.parent_name" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[1].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
@@ -169,7 +169,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[2].FOM_name      = allocate_input_string( "position" );
    trick_name_str                      = interface_name_str + string( ".packing_data.position" );
    object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[2].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
@@ -178,7 +178,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[3].FOM_name      = allocate_input_string( "attitude" );
    trick_name_str                      = interface_name_str + string( ".quat_encoder.buffer" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[3].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
    object->attributes[3].subscribe     = !publishes;
    object->attributes[3].locally_owned = publishes;
