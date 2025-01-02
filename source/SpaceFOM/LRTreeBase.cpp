@@ -184,7 +184,7 @@ bool LRTreeBase::build_tree()
 
                // Clean up the path vector.
                path->clear();
-               free( path );
+               delete path;
                path = NULL;
             }
          }
@@ -755,7 +755,7 @@ LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
                send_hs( stdout, "LRTreeBase::find_path():%d Error: Failed to find common node in down path search.\n",
                         __LINE__, THLA_NEWLINE );
                return_path->clear();
-               free( return_path );
+               delete return_path;
                return_path = NULL;
             } else { // Everything looks to be okay.
 
@@ -771,12 +771,12 @@ LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
       // Clear and free the path sets.
       if ( up_path != NULL ) {
          up_path->clear();
-         free( up_path );
+         delete up_path;
          up_path = NULL;
       }
       if ( down_path != NULL ) {
          down_path->clear();
-         free( down_path );
+         delete down_path;
          down_path = NULL;
       }
    }
