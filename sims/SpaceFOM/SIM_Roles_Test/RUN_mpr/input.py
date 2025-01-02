@@ -143,7 +143,7 @@ def parse_command_line( ):
 print_usage = False
 
 # Set the default run duration.
-run_duration = 60.0
+run_duration = 10.0
 
 # Default is to NOT show verbose messages.
 verbose = False

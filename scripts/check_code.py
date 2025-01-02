@@ -700,7 +700,7 @@ def find_trick( trick_path = None, verbose = True ):
          # Check to see if TRICK_HOME exists.
          if os.path.isdir( trick_home ):
             if verbose:
-               # Let the user know that we have CPPCHECK_HOME and where it is.
+               # Let the user know that we have TRICK_HOME and where it is.
                TrickHLAMessage.status( 'TRICK_HOME: ' + trick_home )
 
          else:
