@@ -117,28 +117,28 @@ PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
    if ( this->pe_packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->pe_packing_data.name = NULL;
    }
    if ( this->pe_packing_data.type != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.type ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->type'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->pe_packing_data.type = NULL;
    }
    if ( this->pe_packing_data.status != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.status ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->status'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->pe_packing_data.status = NULL;
    }
    if ( this->pe_packing_data.parent_frame != (char *)NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.parent_frame ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->parent_frame'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->pe_packing_data.parent_frame = NULL;
    }
@@ -428,7 +428,7 @@ void PhysicalEntityBase::set_name( char const *new_name )
    if ( this->pe_packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_name():%d WARNING deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
    pe_packing_data.name = trick_MM->mm_strdup( new_name );
@@ -443,7 +443,7 @@ void PhysicalEntityBase::set_type( char const *new_type )
    if ( this->pe_packing_data.type != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.type ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_type():%d WARNING deleting Trick Memory for 'this->type'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
    pe_packing_data.type = trick_MM->mm_strdup( new_type );
@@ -458,7 +458,7 @@ void PhysicalEntityBase::set_status( char const *new_status )
    if ( this->pe_packing_data.status != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.status ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_status():%d WARNING deleting Trick Memory for 'this->status'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
    this->pe_packing_data.status = trick_MM->mm_strdup( new_status );
@@ -473,7 +473,7 @@ void PhysicalEntityBase::set_parent_frame( char const *new_frame )
    if ( this->pe_packing_data.parent_frame != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.parent_frame ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_parent_frame():%d WARNING deleting Trick Memory for 'this->parent_frame'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
    pe_packing_data.parent_frame = trick_MM->mm_strdup( new_frame );
@@ -489,7 +489,7 @@ void PhysicalEntityBase::pack()
    // Check for initialization.
    if ( !initialized ) {
       send_hs( stderr, "PhysicalEntityBase::pack():%d WARNING: The initialize() function has not been called!%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Check for latency/lag compensation.
@@ -499,7 +499,7 @@ void PhysicalEntityBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      send_hs( stdout, "PhysicalEntityBase::pack():%d%c", __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "PhysicalEntityBase::pack():%d%c", __LINE__, '\n' );
       this->debug_print( cout );
    }
 
@@ -519,7 +519,7 @@ void PhysicalEntityBase::unpack()
 
    if ( !initialized ) {
       send_hs( stderr, "PhysicalEntityBase::unpack():%d WARNING: The initialize() function has not been called!%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
@@ -531,7 +531,7 @@ void PhysicalEntityBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      send_hs( stdout, "PhysicalEntityBase::unpack():%d%c", __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "PhysicalEntityBase::unpack():%d%c", __LINE__, '\n' );
       this->debug_print( cout );
    }
 

@@ -189,10 +189,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( this->is_master() ) {
          send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       } else {
          send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM NOT THE MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
 
@@ -508,7 +508,7 @@ void ExecutionControl::set_time_padding( double t )
              << " ERROR: Time padding value (" << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " "
-             << Int64BaseTime::get_units() << ")!" << THLA_NEWLINE;
+             << Int64BaseTime::get_units() << ")!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

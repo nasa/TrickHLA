@@ -65,10 +65,6 @@ NASA, Johnson Space Center\n
 #undef MIN_TRICK_MINOR
 #undef MIN_TRICK_VER
 
-// Define newlines, this was meant to abstract out the difference between how
-// new-lines were handled in send_hs between Trick 07 and newer Trick versions.
-#define THLA_NEWLINE '\n'
-
 // The Pitch Runtime Infrastructure (RTI) API calls will cause the
 // floating-point control word register to change the Mantissa Precision Control
 // Bits from 64-bit (extended double precision) to 53-bit (double precision)

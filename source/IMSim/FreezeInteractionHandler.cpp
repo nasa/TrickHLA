@@ -161,7 +161,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    if ( !interaction->get_federate()->is_time_advance_granted() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       interaction->get_federate()->wait_for_time_advance_grant();
    }
@@ -187,7 +187,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
-                  __LINE__, interaction_hla_time.get_time_in_seconds(), THLA_NEWLINE );
+                  __LINE__, interaction_hla_time.get_time_in_seconds(), '\n' );
       }
    }
 
@@ -230,7 +230,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
 Freeze HLA time is not an integer multiple of the lookahead time:%lf, using \
 new freeze HLA time:%lf %c",
                      __LINE__, lookahead.get_time_in_seconds(),
-                     freeze_hla_time, THLA_NEWLINE );
+                     freeze_hla_time, '\n' );
          }
       }
    }
@@ -267,7 +267,7 @@ new freeze HLA time:%lf %c",
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
-                  __LINE__, time, THLA_NEWLINE );
+                  __LINE__, time, '\n' );
       }
    } else {
       // The interaction was Not sent.

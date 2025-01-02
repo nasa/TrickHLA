@@ -102,10 +102,10 @@ Floating-Point Unit (FPU) Control-Word Precision-Control value (%#x: %s) does no
 match the Precision-Control value at program startup (%#x: %s). The change in FPU \
 Control-Word Precision-Control could cause the numerical values in your simulation \
 to be slightly different in the 7th or 8th decimal place. Please contact the \
-TrickHLA team for support.%c",                                                      \
+TrickHLA team for support.\n",                                                      \
                         __FILE__, __LINE__, ( _fpu_cw & _FPU_PC_MASK ),             \
                         _FPU_PC_PRINT( _fpu_cw ), ( __fpu_control & _FPU_PC_MASK ), \
-                        _FPU_PC_PRINT( __fpu_control ), THLA_NEWLINE );             \
+                        _FPU_PC_PRINT( __fpu_control ) );                           \
             }                                                                       \
          }
 #   else

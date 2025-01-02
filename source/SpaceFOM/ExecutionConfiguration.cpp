@@ -146,7 +146,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
    if ( this->root_frame_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
          send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->root_frame_name = NULL;
    }
@@ -248,7 +248,7 @@ void ExecutionConfiguration::configure()
    if ( name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
          send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       name = NULL;
    }
@@ -481,7 +481,7 @@ void ExecutionConfiguration::set_root_frame_name(
    if ( this->root_frame_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
          send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->root_frame_name = NULL;
    }
@@ -731,7 +731,7 @@ void ExecutionConfiguration::setup_ref_attributes(
       msg << "SpaceFOM::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
           << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
           << " NOTE: This is an auto-generated parameter so there is no"
-          << " associated 'Trick-Name'." << THLA_NEWLINE;
+          << " associated 'Trick-Name'." << '\n';
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -741,7 +741,7 @@ void ExecutionConfiguration::setup_ref_attributes(
           << '\n'
           << "--------------- Trick REF-Attributes ---------------"
           << '\n'
-          << " Object FOM name:'" << this->FOM_name << "'" << THLA_NEWLINE;
+          << " Object FOM name:'" << this->FOM_name << "'" << '\n';
       send_hs( stdout, msg.str().c_str() );
    }
 }
@@ -777,7 +777,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
@@ -818,14 +818,14 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Received data.%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
 
       // Receive the exec-config data from the master federate.

@@ -257,7 +257,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {
          send_hs( stderr,
                   "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
          M_INIT( this->inertia_inv );
       }
    }

@@ -77,7 +77,7 @@ OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
          send_hs( stderr, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       buffer   = NULL;
       capacity = 0;
@@ -158,7 +158,7 @@ void OpaqueBuffer::push_to_buffer(
 {
    if ( size == 0 ) {
       send_hs( stderr, "OpaqueBuffer::push_to_buffer():%d WARNING: Unexpected zero number of bytes to push into buffer!%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
       return;
    }
 
@@ -212,7 +212,7 @@ void OpaqueBuffer::pull_from_buffer(
 {
    if ( size == 0 ) {
       send_hs( stderr, "OpaqueBuffer::pull_from_buffer():%d WARNING: Unexpected zero number of bytes to pull from buffer!%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
       return;
    }
 

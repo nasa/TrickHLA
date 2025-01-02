@@ -87,14 +87,14 @@ RefFrameBase::~RefFrameBase()
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->packing_data.name = NULL;
    }
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
          send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.parent_name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->packing_data.parent_name = NULL;
    }
@@ -386,7 +386,7 @@ void RefFrameBase::set_name( char const *new_name )
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
    this->packing_data.name = trick_MM->mm_strdup( new_name );
@@ -394,7 +394,7 @@ void RefFrameBase::set_name( char const *new_name )
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
          send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
    this->name = trick_MM->mm_strdup( new_name );
@@ -419,7 +419,7 @@ void RefFrameBase::set_parent_name( char const *name )
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
          send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d WARNING failed to delete Trick Memory for 'this->parent_name'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
    if ( name != NULL ) {
