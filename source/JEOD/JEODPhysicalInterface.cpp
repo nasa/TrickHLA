@@ -65,6 +65,7 @@ JEODPhysicalInterface::JEODPhysicalInterface()
      vehicle_point_id( NULL ),
      vehicle_point_data( NULL )
 {
+   return;
 }
 
 /*!
@@ -76,6 +77,7 @@ JEODPhysicalInterface::JEODPhysicalInterface(
      vehicle_point_id( NULL ),
      vehicle_point_data( NULL )
 {
+   return;
 }
 
 /*!
@@ -88,6 +90,7 @@ JEODPhysicalInterface::JEODPhysicalInterface(
      vehicle_point_id( NULL ),
      vehicle_point_data( &vehicle_point_ref )
 {
+   return;
 }
 
 /*!
@@ -112,7 +115,6 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
  */
 void JEODPhysicalInterface::configure() // cppcheck-suppress [duplInheritedMember]
 {
-
    // First call the base class pre_initialize function.
    PhysicalInterfaceBase::configure();
 
@@ -135,16 +137,14 @@ void JEODPhysicalInterface::configure() // cppcheck-suppress [duplInheritedMembe
    }
 
    // Postpone looking up the actual VehiclePoint until initialization.
-
-   return;
 }
 
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalInterface::configure( jeod::DynBody *dyn_body_ptr ) // cppcheck-suppress [constParameterPointer]
+void JEODPhysicalInterface::configure(
+   jeod::DynBody *dyn_body_ptr ) // cppcheck-suppress [constParameterPointer]
 {
-
    // Make sure that we have a vehicle point ID to work with.
    if ( this->vehicle_point_id == NULL ) {
       ostringstream errmsg;
@@ -176,17 +176,14 @@ void JEODPhysicalInterface::configure( jeod::DynBody *dyn_body_ptr ) // cppcheck
 
    // Call the final configuration check.
    this->configure();
-
-   // Return to calling routine.
-   return;
 }
 
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalInterface::configure( jeod::BodyRefFrame *vehicle_point_ptr )
+void JEODPhysicalInterface::configure(
+   jeod::BodyRefFrame *vehicle_point_ptr )
 {
-
    // Set the reference to the JEODPhysicalInterface data.
    if ( vehicle_point_ptr == NULL ) {
       ostringstream errmsg;
@@ -199,9 +196,6 @@ void JEODPhysicalInterface::configure( jeod::BodyRefFrame *vehicle_point_ptr )
 
    // Call the final configuration check.
    this->configure();
-
-   // Return to calling routine.
-   return;
 }
 
 /*!
@@ -211,7 +205,6 @@ void JEODPhysicalInterface::configure(
    jeod::DynBody      *dyn_body_ptr,
    jeod::BodyRefFrame *vehicle_point_ptr )
 {
-
    // Make sure that we have a dyn_body pointer to assign.
    if ( dyn_body_ptr == NULL ) {
       ostringstream errmsg;
@@ -236,8 +229,6 @@ void JEODPhysicalInterface::configure(
 
    // Call the final configuration check.
    this->configure();
-
-   return;
 }
 
 /*!
@@ -245,7 +236,6 @@ void JEODPhysicalInterface::configure(
  */
 void JEODPhysicalInterface::initialize()
 {
-
    // Check if the DynBody is set.
    if ( dyn_body == NULL ) {
       ostringstream errmsg;
@@ -281,9 +271,6 @@ void JEODPhysicalInterface::initialize()
 
    // Mark this as initialized.
    PhysicalInterfaceBase::initialize();
-
-   // Return to calling routine.
-   return;
 }
 
 void JEODPhysicalInterface::pack_from_working_data()
@@ -329,8 +316,6 @@ void JEODPhysicalInterface::pack_from_working_data()
    for ( iinc = 0; iinc < 3; ++iinc ) {
       this->packing_data.attitude.vector[iinc] = mass_point_ptr->Q_parent_this.vector[iinc];
    }
-
-   return;
 }
 
 void JEODPhysicalInterface::unpack_into_working_data()
@@ -391,8 +376,6 @@ void JEODPhysicalInterface::unpack_into_working_data()
    }
 
    // FIXME: We probably need to update the vehicle point state based on these updates!!
-
-   return;
 }
 
 /*!
@@ -407,5 +390,4 @@ void JEODPhysicalInterface::set_vehicle_point_id( char const *new_id )
       }
    }
    vehicle_point_id = trick_MM->mm_strdup( new_id );
-   return;
 }

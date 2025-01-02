@@ -92,6 +92,7 @@ JEODRefFrameState::JEODRefFrameState(
  */
 JEODRefFrameState::~JEODRefFrameState()
 {
+   return;
 }
 
 /*!
@@ -101,7 +102,6 @@ void JEODRefFrameState::configure(
    jeod::TimeTT        *time_tt_in,
    jeod::RefFrameState *ref_frame_state_ptr )
 {
-
    // First call the base class pre_initialize function.
    RefFrameBase::configure();
 
@@ -124,9 +124,6 @@ void JEODRefFrameState::configure(
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    time_tt = time_tt_in;
-
-   // Return to calling routine.
-   return;
 }
 
 /*!
@@ -134,7 +131,6 @@ void JEODRefFrameState::configure(
  */
 void JEODRefFrameState::initialize()
 {
-
    // Check for the reference frame data.
    if ( this->ref_frame_state == NULL ) {
       ostringstream errmsg;
@@ -155,9 +151,6 @@ void JEODRefFrameState::initialize()
 
    // Mark this as initialized.
    RefFrameBase::initialize();
-
-   // Return to calling routine.
-   return;
 }
 
 /*!
@@ -208,8 +201,6 @@ void JEODRefFrameState::pack_from_working_data()
            << ":" << time_tt->calendar_second << endl
            << endl;
    }
-
-   return;
 }
 
 /*!
@@ -217,7 +208,6 @@ void JEODRefFrameState::pack_from_working_data()
  */
 void JEODRefFrameState::unpack_into_working_data()
 {
-
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
    // incoming value.  If we locally own the attribute then we do not want to
@@ -269,6 +259,4 @@ void JEODRefFrameState::unpack_into_working_data()
            << ":" << time_tt->calendar_second << endl
            << endl;
    }
-
-   return;
 }
