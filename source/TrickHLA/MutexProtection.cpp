@@ -46,7 +46,7 @@ MutexProtection::MutexProtection(
 {
    if ( this->mutex->lock() != 0 ) {
       send_hs( stderr, "MutexProtection::MutexProtection():%d ERROR Locking the MutexLock!%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 }
 

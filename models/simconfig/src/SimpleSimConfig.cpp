@@ -78,16 +78,16 @@ SimpleSimConfig::~SimpleSimConfig()
 {
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'required_federates'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
+                  __LINE__ );
       }
       required_federates = NULL;
    }
 
    if ( owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'owner'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'owner'\n",
+                  __LINE__ );
       }
       owner = NULL;
    }
@@ -103,8 +103,8 @@ void SimpleSimConfig::configure(
    // Release the memory used by the required_federates c-string.
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::initialize():%d WARNING failed to delete Trick Memory for 'required_federates'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::initialize():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
+                  __LINE__ );
       }
       required_federates = NULL;
    }

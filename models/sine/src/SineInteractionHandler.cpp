@@ -97,8 +97,8 @@ void SineInteractionHandler::send_sine_interaction(
 
    if ( message != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'\n",
+                  __LINE__ );
       }
    }
    message = trick_MM->mm_strdup( msg.str().c_str() );

@@ -98,7 +98,7 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
    if ( this->disable_thread_ids != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {
          send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->disable_thread_ids'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->disable_thread_ids = NULL;
    }
@@ -108,21 +108,21 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
       this->thread_cnt = 0;
       if ( trick_MM->delete_var( static_cast< void * >( this->thread_state ) ) ) {
          send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->thread_state'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->thread_state = NULL;
    }
    if ( this->data_cycle_base_time_per_thread != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_thread ) ) ) {
          send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_thread'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->data_cycle_base_time_per_thread = NULL;
    }
    if ( this->data_cycle_base_time_per_obj != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_obj ) ) ) {
          send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_obj'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       this->data_cycle_base_time_per_obj = NULL;
    }
@@ -273,7 +273,7 @@ void TrickThreadCoordinator::initialize(
 
             if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
                send_hs( stdout, "TrickThreadCoordinator::initialize():%d Disabled Trick child thread association (thread-id:%d).%c",
-                        __LINE__, thread_id, THLA_NEWLINE );
+                        __LINE__, thread_id, '\n' );
             }
          } else if ( thread_id == 0 ) {
             ostringstream errmsg;
@@ -329,7 +329,7 @@ void TrickThreadCoordinator::initialize(
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::initialize():%d Trick main thread (id:0, data_cycle:%.9f).%c",
-               __LINE__, main_thread_data_cycle_time, THLA_NEWLINE );
+               __LINE__, main_thread_data_cycle_time, '\n' );
    }
 
    // Associate the Trick main thread. TrickHLA will maintain data coherency
@@ -356,7 +356,7 @@ void TrickThreadCoordinator::disable_trick_thread_associations(
    if ( this->disable_thread_ids != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {
          send_hs( stderr, "TrickThreadCoordinator::disable_trick_thread_associations():%d WARNING failed to delete Trick Memory for 'this->disable_thread_ids'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
    }
    this->disable_thread_ids = ( thread_ids != NULL ) ? trick_MM->mm_strdup( thread_ids ) : NULL;
@@ -411,7 +411,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    if ( this->thread_state[thread_id] == THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          send_hs( stdout, "TrickThreadCoordinator::associate_to_trick_child_thread():%d Disabled thread_id:%d.%c",
-                  __LINE__, thread_id, THLA_NEWLINE );
+                  __LINE__, thread_id, '\n' );
       }
       return;
    }
@@ -763,7 +763,7 @@ void TrickThreadCoordinator::announce_data_available()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::announce_data_available():%d%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Process Trick child thread states associated to TrickHLA.
@@ -798,7 +798,7 @@ void TrickThreadCoordinator::announce_data_sent()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::announce_data_sent():%d%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Process Trick child thread states associated to TrickHLA.
@@ -823,7 +823,7 @@ void TrickThreadCoordinator::wait_to_send_data()
 
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data():%d%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Only wait to send data for child threads if any are associated.
@@ -852,7 +852,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_main_thread():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // The main thread will wait for all the child threads to be ready to send
@@ -973,7 +973,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_main_thread():%d Trick main thread, waiting on child thread %d...%c",
-                        __LINE__, thread_id, THLA_NEWLINE );
+                        __LINE__, thread_id, '\n' );
             }
          }
       } while ( !all_ready_to_send );
@@ -981,7 +981,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_main_thread():%d Done%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 }
 
@@ -995,14 +995,14 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
    if ( this->thread_state[thread_id] == THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Disabled, Done%c",
-                  __LINE__, thread_id, THLA_NEWLINE );
+                  __LINE__, thread_id, '\n' );
       }
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, waiting...%c",
-               __LINE__, thread_id, THLA_NEWLINE );
+               __LINE__, thread_id, '\n' );
    }
 
    // Trick Child Threads associated to TrickHLA need to wait for the Trick
@@ -1070,7 +1070,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, waiting...%c",
-                        __LINE__, thread_id, THLA_NEWLINE );
+                        __LINE__, thread_id, '\n' );
             }
          }
       } while ( !sent_data );
@@ -1078,7 +1078,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Done%c",
-               __LINE__, thread_id, THLA_NEWLINE );
+               __LINE__, thread_id, '\n' );
    }
 }
 
@@ -1089,7 +1089,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
    if ( !this->any_child_thread_associated ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d Done%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       return;
    }
@@ -1102,7 +1102,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Disabled, Done%c",
                   __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
-                  thread_id, THLA_NEWLINE );
+                  thread_id, '\n' );
       }
       return;
    }
@@ -1110,7 +1110,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, waiting...%c",
                __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
-               thread_id, THLA_NEWLINE );
+               thread_id, '\n' );
    }
 
    bool ready_to_receive;
@@ -1168,7 +1168,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
                print_timer.reset();
                send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, waiting...%c",
                         __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
-                        thread_id, THLA_NEWLINE );
+                        thread_id, '\n' );
             }
          }
       } while ( !ready_to_receive );
@@ -1177,7 +1177,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Done%c",
                __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
-               thread_id, THLA_NEWLINE );
+               thread_id, '\n' );
    }
 }
 

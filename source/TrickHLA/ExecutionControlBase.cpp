@@ -161,7 +161,7 @@ ExecutionControlBase::~ExecutionControlBase()
    if ( multiphase_init_sync_points != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( multiphase_init_sync_points ) ) ) {
          send_hs( stderr, "ExecutionControlBase::~ExecutionControlBase():%d WARNING failed to delete Trick Memory for 'multiphase_init_sync_points'%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       multiphase_init_sync_points = NULL;
    }
@@ -246,7 +246,7 @@ void ExecutionControlBase::initialize()
          send_hs( stdout, "ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
 Trick simulation time as the default scenario-timeline.%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
 
       // Use the simulation timeline as the default scenario timeline.
@@ -294,7 +294,7 @@ void ExecutionControlBase::join_federation_process()
    // unlikely but possible race condition.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "ExecutionControl::join_federation_process():%d Checking for shutdown %c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
    fed->check_for_shutdown_with_termination();
 }
@@ -329,7 +329,7 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
             string name_str;
             StringUtilities::to_string( name_str, obj_instance_name );
             send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%s'%c",
-                     __LINE__, name_str.c_str(), THLA_NEWLINE );
+                     __LINE__, name_str.c_str(), '\n' );
          }
 
          return true;
@@ -378,7 +378,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          string name_str;
          StringUtilities::to_string( name_str, obj_instance_name );
          send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%s'%c",
-                  __LINE__, name_str.c_str(), THLA_NEWLINE );
+                  __LINE__, name_str.c_str(), '\n' );
       }
 
       // We found a match to return 'true'.
@@ -395,7 +395,7 @@ void ExecutionControlBase::register_objects_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "ExecutionControlBase::register_objects_with_RTI():%d%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Register any ExecutionConfiguration objects.
@@ -458,14 +458,14 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
 joining federate so this call will be ignored.%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d %c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Achieve all the multiphase initialization synchronization points except.
@@ -509,7 +509,7 @@ void ExecutionControlBase::send_execution_configuration()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "ExecutionControlBase::send_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       return;
    }
@@ -520,7 +520,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "ExecutionControlBase::send_ssend_execution_configurationim_config():%d%c", __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "ExecutionControlBase::send_ssend_execution_configurationim_config():%d%c", __LINE__, '\n' );
    }
 
    // Make sure we have at least one piece of ExecutionConfiguration data we can send.
@@ -550,7 +550,7 @@ void ExecutionControlBase::receive_execution_configuration()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
       return;
    }
@@ -562,7 +562,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+               __LINE__, '\n' );
    }
 
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
@@ -603,14 +603,14 @@ will be ignored because the Simulation Initialization Scheme does not support it
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__, '\n' );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Received data.%c",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__, '\n' );
       }
 
       // Receive the ExecutionConfiguration data from the master federate.
@@ -775,7 +775,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
          StringUtilities::to_string( id_str, instance_id );
          send_hs( stdout, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
                   __LINE__, execution_configuration->get_name(), id_str.c_str(),
-                  ( instance_id.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
+                  ( instance_id.isValid() ? "Yes" : "No" ), '\n' );
       }
       execution_configuration->remove_object_instance();
       return true;
@@ -876,7 +876,7 @@ void ExecutionControlBase::enter_freeze()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
                __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
-               ( is_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
+               ( is_freeze_pending() ? "Yes" : "No" ), '\n' );
    }
 }
 

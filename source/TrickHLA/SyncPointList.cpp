@@ -1128,7 +1128,7 @@ std::string SyncPointList::to_string()
    for ( int i = 0; i < list_count; ++i ) {
 #else
    msg << "SyncPointList::to_string():" << __LINE__
-       << " List:'" << get_list_name() << "' List-size:" << list.size() << THLA_ENDL;
+       << " List:'" << get_list_name() << "' List-size:" << list.size() << '\n';
    for ( int i = 0; i < list.size(); ++i ) {
 #endif
       msg << i << ":'" << get_list_name() << "' Sync-point:"
