@@ -145,8 +145,8 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
    // Free the allocated root reference frame name.
    if ( this->root_frame_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'%c",
-                  __LINE__, '\n' );
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'\n",
+                  __LINE__ );
       }
       this->root_frame_name = NULL;
    }
@@ -247,8 +247,8 @@ void ExecutionConfiguration::configure()
    // make sure it is ExCO regardless of what the user set it to be.
    if ( name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'name'%c",
-                  __LINE__, '\n' );
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'name'\n",
+                  __LINE__ );
       }
       name = NULL;
    }
@@ -480,8 +480,8 @@ void ExecutionConfiguration::set_root_frame_name(
    // Free the Trick memory if it's already allocated.
    if ( this->root_frame_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'%c",
-                  __LINE__, '\n' );
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'\n",
+                  __LINE__ );
       }
       this->root_frame_name = NULL;
    }
@@ -776,8 +776,8 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
-               __LINE__, '\n' );
+      send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
+               __LINE__ );
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
@@ -817,15 +817,15 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
-                        __LINE__, '\n' );
+               send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
+                        __LINE__ );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Received data.%c",
-                  __LINE__, '\n' );
+         send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Received data.\n",
+                  __LINE__ );
       }
 
       // Receive the exec-config data from the master federate.

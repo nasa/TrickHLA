@@ -94,7 +94,7 @@ LRTreeNodeBase::LRTreeNodeBase(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout,
                   "mm_strdup called before MemoryManager instantiation. Setting to name to NULL.\n",
-                  __LINE__, '\n' );
+                  __LINE__ );
       }
    }
 
@@ -119,8 +119,8 @@ LRTreeNodeBase::~LRTreeNodeBase()
    // Free the allocated node name.
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::LRTreeNodeBase::~LRTreeNodeBase:%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                  __LINE__, '\n' );
+         send_hs( stderr, "SpaceFOM::LRTreeNodeBase::~LRTreeNodeBase:%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                  __LINE__ );
       }
 
       // Set the node name to NULL.
@@ -154,8 +154,8 @@ void LRTreeNodeBase::set_name( char const *node_name )
 
          // Free the existing name.
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            send_hs( stderr, "SpaceFOM::LRTreeNodeBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                     __LINE__, '\n' );
+            send_hs( stderr, "SpaceFOM::LRTreeNodeBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                     __LINE__ );
          }
 
          // Copy the new node name.
@@ -167,8 +167,8 @@ void LRTreeNodeBase::set_name( char const *node_name )
 
       // Free the existing name.
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::LRTreeNodeBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                  __LINE__, '\n' );
+         send_hs( stderr, "SpaceFOM::LRTreeNodeBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                  __LINE__ );
       }
 
       // Set the node name to NULL.

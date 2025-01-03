@@ -256,8 +256,8 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // torque affects in the lag compensation dynamics.
       if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {
          send_hs( stderr,
-                  "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!%c",
-                  __LINE__, '\n' );
+                  "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!\n",
+                  __LINE__ );
          M_INIT( this->inertia_inv );
       }
    }

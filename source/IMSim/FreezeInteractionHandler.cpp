@@ -160,8 +160,8 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    /// The wait for Time Advance Grant will be at the top of the next frame.
    if ( !interaction->get_federate()->is_time_advance_granted() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).%c",
-                  __LINE__, '\n' );
+         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).\n",
+                  __LINE__ );
       }
       interaction->get_federate()->wait_for_time_advance_grant();
    }
@@ -186,8 +186,8 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
 
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
-Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
-                  __LINE__, interaction_hla_time.get_time_in_seconds(), '\n' );
+Late joining federate, Freeze Interaction will now be sent for HLA time:%lf \n",
+                  __LINE__, interaction_hla_time.get_time_in_seconds() );
       }
    }
 
@@ -228,9 +228,9 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
          if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Freeze HLA time is not an integer multiple of the lookahead time:%lf, using \
-new freeze HLA time:%lf %c",
+new freeze HLA time:%lf \n",
                      __LINE__, lookahead.get_time_in_seconds(),
-                     freeze_hla_time, '\n' );
+                     freeze_hla_time );
          }
       }
    }
@@ -266,8 +266,8 @@ new freeze HLA time:%lf %c",
       execution_control->add_freeze_scenario_time( time );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
-                  __LINE__, time, '\n' );
+         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf \n",
+                  __LINE__, time );
       }
    } else {
       // The interaction was Not sent.

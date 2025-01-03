@@ -99,8 +99,8 @@ MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                  __LINE__, '\n' );
+         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                  __LINE__ );
       }
       this->name = NULL;
    }
@@ -116,8 +116,8 @@ void MTRInteractionHandler::set_name(
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                     __LINE__, '\n' );
+            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                     __LINE__ );
          }
       }
       this->name = NULL;
