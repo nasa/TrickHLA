@@ -1563,7 +1563,7 @@ string Federate::wait_for_required_federates_to_join()
 
             // Build the federate summary as an output string stream.
             ostringstream summary;
-            int  cnt = 0;
+            int           cnt = 0;
 
             summary << "Federate::wait_for_required_federates_to_join():"
                     << __LINE__ << "\nWAITING FOR " << required_feds_count

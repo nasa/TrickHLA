@@ -105,13 +105,13 @@ class TrickThreadCoordinator
    void wait_to_receive_data();
 
    /*! @brief On receive boundary if sim-time is an integer multiple of a valid cycle-time. */
-   bool const on_receive_data_cycle_boundary_for_obj( unsigned int const obj_index,
-                                                      int64_t const      sim_time_in_base_time ) const;
+   bool const on_receive_data_cycle_boundary_for_obj( int const     obj_index,
+                                                      int64_t const sim_time_in_base_time ) const;
 
    /*! @brief Get the data cycle time for the configured object index or return
     * the default data cycle time. */
-   int64_t const get_data_cycle_base_time_for_obj( unsigned int const obj_index,
-                                                   int64_t const      default_data_cycle_base_time ) const;
+   int64_t const get_data_cycle_base_time_for_obj( int const     obj_index,
+                                                   int64_t const default_data_cycle_base_time ) const;
 
    /*! @brief Get the main thread data cycle in the base time. */
    int64_t const get_main_thread_data_cycle_base_time() const
