@@ -1052,7 +1052,7 @@ void Manager::setup_object_ref_attributes(
       }
 
       // Process the attributes for this object.
-      for ( unsigned int i = 0; i < attr_count; ++i ) {
+      for ( int i = 0; i < attr_count; ++i ) {
 
          // Initialize the TrickHLA-Attribute before we use it.
          attrs[i].initialize( data_objects[n].get_FOM_name(), n, i );
@@ -1106,7 +1106,7 @@ void Manager::setup_interaction_ref_attributes()
       Parameter *params      = interactions[n].get_parameters();
 
       // Process the attributes for this object.
-      for ( unsigned int i = 0; i < param_count; ++i ) {
+      for ( int i = 0; i < param_count; ++i ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << param_count
@@ -1232,7 +1232,7 @@ void Manager::setup_object_RTI_handles(
          Attribute *attrs      = data_objects[n].get_attributes();
 
          // Resolve the handles/ID's for the attributes.
-         for ( unsigned int i = 0; i < attr_count; ++i ) {
+         for ( int i = 0; i < attr_count; ++i ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Attribute-Handle for '"
@@ -1427,7 +1427,7 @@ void Manager::setup_interaction_RTI_handles(
          Parameter *params      = in_interactions[n].get_parameters();
 
          // Process the parameters for the interaction.
-         for ( unsigned int i = 0; i < param_count; ++i ) {
+         for ( int i = 0; i < param_count; ++i ) {
 
             // The Parameter FOM name.
             FOM_name_type  = 2; // Parameter
@@ -3108,7 +3108,7 @@ void Manager::encode_checkpoint_interactions()
 
       // interactions_queue.dump_head_pointers("interactions_queue.dump");
 
-      for ( unsigned int i = 0; i < interactions_queue.size(); ++i ) {
+      for ( int i = 0; i < interactions_queue.size(); ++i ) {
 
          InteractionItem *item = static_cast< InteractionItem * >( interactions_queue.front() );
 
@@ -3152,7 +3152,7 @@ void Manager::decode_checkpoint_interactions()
                   __LINE__, check_interactions_count );
       }
 
-      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
+      for ( int i = 0; i < check_interactions_count; ++i ) {
 
          InteractionItem *item = new InteractionItem();
 
@@ -3185,7 +3185,7 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
 void Manager::free_checkpoint_interactions()
 {
    if ( check_interactions_count > 0 ) {
-      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
+      for ( int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
       if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
@@ -3204,7 +3204,7 @@ void Manager::print_checkpoint_interactions()
       msg << "Manager::print_checkpoint_interactions():" << __LINE__
           << "check_interactions contains these "
           << check_interactions_count << " elements:" << '\n';
-      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
+      for ( int i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
              << check_interactions[i].index << '\n'
              << "check_interactions[" << i << "].interaction_type       = '"
@@ -3212,7 +3212,7 @@ void Manager::print_checkpoint_interactions()
              << "check_interactions[" << i << "].parm_items_count       = "
              << check_interactions[i].parm_items_count
              << '\n';
-         for ( unsigned int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
+         for ( int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
             msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
                 << check_interactions[i].parm_items[k].index << '\n'
                 << "check_interactions[" << i << "].parm_items[" << k << "].size     = "

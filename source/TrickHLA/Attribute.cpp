@@ -2391,7 +2391,7 @@ void Attribute::decode_string_from_buffer() // RETURN: -- None.
 {
    unsigned char *input;
    unsigned char *output;
-   size_t         num_elements;
+   int            num_elements;
 
    switch ( rti_encoding ) {
       case ENCODING_UNICODE_STRING: {
@@ -2500,7 +2500,7 @@ size %d, will use the data buffer size instead.\n",
             } else {
 
                // Decode the UTF-16 characters.
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   input++; // skip the high-character of the UTF-16 encoding
                   output[k] = *( input++ );
                }
@@ -2547,7 +2547,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             // Calculate the number of UTF-16 characters which is the number of
             // bytes in the buffer minus the encoded length fields divided by 2.
             // data_buff_size = (size - 4 - 4 * num_elements)/2
-            size_t data_buff_size;
+            int data_buff_size;
             if ( ref2->attr->type == TRICK_STRING ) {
                if ( size > ( 4 * ( num_elements + 1 ) ) ) {
                   data_buff_size = ( size - ( 4 * ( num_elements + 1 ) ) ) / 2;
@@ -3163,7 +3163,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
 
                // Skip the padding which was added to keep the data on a 4 byte
                // boundary. The last element gets no padding.
-               if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
+               if ( ( i < ( (int)num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
                   input += ( 4 - ( ( 4 + length ) % 4 ) );
 
                   // Adjust the amount of data left in the buffer.
@@ -3195,7 +3195,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
 
          // The existing output "char *" variable size must exactly match the
          // incoming data size for no-encoding of the data.
-         if ( size != get_size( output ) ) {
+         if ( (int)size != get_size( output ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                    << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
@@ -3219,7 +3219,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
          input = buffer;
 
          // Decode the box-car encoded strings.
-         for ( int i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < (int)num_items; ++i ) {
 
             // Find the end of the encoded string which is the null character.
             while ( *( input + end_index ) != '\0' ) {

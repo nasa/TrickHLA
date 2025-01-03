@@ -2618,7 +2618,7 @@ void Federate::perform_checkpoint()
          string save_name_str;
          StringUtilities::to_string( save_name_str, this->save_name );
          string str_save_label = string( get_federation_name() ) + "_" + save_name_str;
-         for ( int i = 0; i < str_save_label.length(); ++i ) {
+         for ( int i = 0; i < (int)str_save_label.length(); ++i ) {
             if ( str_save_label[i] == '/' ) {
                str_save_label[i] = '_';
             }
@@ -2884,7 +2884,7 @@ void Federate::perform_restore()
          string restore_name_str;
          StringUtilities::to_string( restore_name_str, restore_name );
          string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
-         for ( int i = 0; i < str_restore_label.length(); ++i ) {
+         for ( int i = 0; i < (int)str_restore_label.length(); ++i ) {
             if ( str_restore_label[i] == '/' ) {
                str_restore_label[i] = '_';
             }
@@ -7997,7 +7997,7 @@ void Federate::restore_federate_handles_from_MOM()
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
          // Determine if all the federate handles have been found.
-         all_found = ( this->joined_federate_handles.size() >= running_feds_count );
+         all_found = ( (int)this->joined_federate_handles.size() >= running_feds_count );
       }
 
       if ( !all_found ) {

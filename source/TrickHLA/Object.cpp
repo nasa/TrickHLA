@@ -3959,7 +3959,7 @@ void Object::pull_ownership_at_init(
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &ownership_mutex );
 
-      for ( int i = 0; i < attr_name_vector.size(); ++i ) {
+      for ( int i = 0; i < (int)attr_name_vector.size(); ++i ) {
          Attribute const *attr = get_attribute( attr_name_vector[i] );
 
          if ( attr == NULL ) {
