@@ -199,7 +199,7 @@ void Interaction::initialize(
    }
 
    // Verify parameter FOM names and also check for duplicate parameter FOM names.
-   for ( unsigned int i = 0; i < param_count; ++i ) {
+   for ( int i = 0; i < param_count; ++i ) {
       // Validate the FOM-name to make sure we don't have a problem with the
       // list of names as well as get a difficult to debug runtime error for
       // the string constructor if we had a null FOM-name.
@@ -216,7 +216,7 @@ void Interaction::initialize(
 
       // Since Interaction updates are sent as a ParameterHandleValueMap there can be
       // no duplicate Parameters because the map only allows unique ParameterHandles.
-      for ( unsigned int k = i + 1; k < param_count; ++k ) {
+      for ( int k = i + 1; k < param_count; ++k ) {
          if ( ( parameters[k].get_FOM_name() != NULL ) && ( *( parameters[k].get_FOM_name() ) != '\0' ) ) {
 
             if ( fom_name_str == string( parameters[k].get_FOM_name() ) ) {
@@ -255,7 +255,7 @@ void Interaction::initialize(
 
 void Interaction::set_user_supplied_tag(
    unsigned char const *tag,
-   size_t               tag_size )
+   int                  tag_size )
 {
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
@@ -902,7 +902,7 @@ bool Interaction::send(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
-      for ( unsigned int i = 0; i < param_count; ++i ) {
+      for ( int i = 0; i < param_count; ++i ) {
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
       }
 
@@ -974,7 +974,7 @@ bool Interaction::send(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
-      for ( unsigned int i = 0; i < param_count; ++i ) {
+      for ( int i = 0; i < param_count; ++i ) {
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::send():%d Adding '%s' to parameter map.\n",
                      __LINE__, parameters[i].get_FOM_name() );
@@ -1106,7 +1106,7 @@ void Interaction::process_interaction()
       }
 
       // Unpack all the parameter data.
-      for ( unsigned int i = 0; i < param_count; ++i ) {
+      for ( int i = 0; i < param_count; ++i ) {
          parameters[i].unpack_parameter_buffer();
       }
 
@@ -1205,7 +1205,7 @@ void Interaction::mark_unchanged()
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
-   for ( unsigned int i = 0; i < param_count; ++i ) {
+   for ( int i = 0; i < param_count; ++i ) {
       parameters[i].mark_unchanged();
    }
 }

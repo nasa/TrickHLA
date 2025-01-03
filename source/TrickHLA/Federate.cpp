@@ -273,7 +273,7 @@ Federate::~Federate()
 
    // Free the memory used by the array of known Federates for the Federation.
    if ( known_feds != NULL ) {
-      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_feds_count; ++i ) {
          if ( known_feds[i].MOM_instance_name != NULL ) {
             if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].MOM_instance_name ) ) ) {
                send_hs( stderr, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'known_feds[i].MOM_instance_name'\n",
@@ -639,7 +639,7 @@ void Federate::restart_initialization()
       }
 
       // Validate the name of each Federate known to be in the Federation.
-      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_feds_count; ++i ) {
 
          // A NULL or zero length Federate name is not allowed.
          if ( ( known_feds[i].name == NULL ) || ( *known_feds[i].name == '\0' ) ) {
@@ -973,7 +973,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
       // Make sure that the federate name does not exist before adding.
       bool found = false;
-      for ( size_t i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
+      for ( int i = 0; !found && ( i < (int)joined_federate_names.size() ); ++i ) {
          if ( joined_federate_names[i] == federate_name_ws ) {
             found = true;
          }
@@ -1021,9 +1021,9 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // Decode size from Big Endian encoded integer.
       unsigned char const *data = static_cast< unsigned char const * >( attr_iter->second.data() );
 
-      size_t size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                       ? Utilities::byteswap_int( *reinterpret_cast< int const * >( data ) )
-                       : *reinterpret_cast< int const * >( data );
+      int size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                    ? Utilities::byteswap_int( *reinterpret_cast< int const * >( data ) )
+                    : *reinterpret_cast< int const * >( data );
       if ( size != 4 ) {
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
@@ -1196,7 +1196,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
    // Resolve all the federate instance handles given the federate names.
    try {
-      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_feds_count; ++i ) {
          if ( known_feds[i].MOM_instance_name != NULL ) {
 
             // Create the wide-string version of the MOM instance name.
@@ -1333,7 +1333,7 @@ void Federate::determine_federate_MOM_object_instance_names()
       for ( fed_iter = joined_federate_name_map.begin();
             fed_iter != joined_federate_name_map.end(); ++fed_iter ) {
 
-         for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+         for ( int i = 0; i < known_feds_count; ++i ) {
             StringUtilities::to_wstring( fed_name_ws, known_feds[i].name );
 
             if ( fed_iter->second.compare( fed_name_ws ) == 0 ) {
@@ -1398,7 +1398,7 @@ void Federate::determine_federate_MOM_object_instance_names()
 bool Federate::is_required_federate(
    wstring const &federate_name )
 {
-   for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+   for ( int i = 0; i < known_feds_count; ++i ) {
       if ( known_feds[i].required ) {
          wstring required_fed_name;
          StringUtilities::to_wstring( required_fed_name, known_feds[i].name );
@@ -1421,7 +1421,7 @@ bool Federate::is_joined_federate(
 bool Federate::is_joined_federate(
    wstring const &federate_name )
 {
-   for ( unsigned int i = 0; i < joined_federate_names.size(); ++i ) {
+   for ( int i = 0; i < (int)joined_federate_names.size(); ++i ) {
       if ( federate_name == joined_federate_names[i] ) {
          return true;
       }
@@ -1446,8 +1446,8 @@ string Federate::wait_for_required_federates_to_join()
    }
 
    // Determine how many required federates we have.
-   unsigned int required_feds_count = 0;
-   for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+   int required_feds_count = 0;
+   for ( int i = 0; i < known_feds_count; ++i ) {
       if ( known_feds[i].required ) {
          ++required_feds_count;
       }
@@ -1471,7 +1471,7 @@ string Federate::wait_for_required_federates_to_join()
 
       // Display the initial summary of the required federates we are waiting for.
       int cnt = 0;
-      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_feds_count; ++i ) {
          // Create a summary of the required federates by name.
          if ( known_feds[i].required ) {
             ++cnt;
@@ -1494,8 +1494,8 @@ string Federate::wait_for_required_federates_to_join()
    // Subscribe to Federate names using MOM interface and request an update.
    ask_MOM_for_federate_names();
 
-   size_t i, req_fed_cnt;
-   size_t joined_fed_cnt = 0;
+   int i, req_fed_cnt;
+   int joined_fed_cnt = 0;
 
    bool          print_summary                = false;
    bool          found_an_unrequired_federate = false;
@@ -1526,12 +1526,12 @@ string Federate::wait_for_required_federates_to_join()
 
          // Determine what federates have joined only if the joined federate
          // count has changed.
-         if ( joined_fed_cnt != joined_federate_names.size() ) {
+         if ( joined_fed_cnt != (int)joined_federate_names.size() ) {
             joined_fed_cnt = joined_federate_names.size();
 
             // Count the number of joined Required federates.
             req_fed_cnt = 0;
-            for ( i = 0; i < joined_federate_names.size(); ++i ) {
+            for ( i = 0; i < (int)joined_federate_names.size(); ++i ) {
                if ( is_required_federate( joined_federate_names[i] ) ) {
                   ++req_fed_cnt;
                } else {
@@ -1563,14 +1563,14 @@ string Federate::wait_for_required_federates_to_join()
 
             // Build the federate summary as an output string stream.
             ostringstream summary;
-            unsigned int  cnt = 0;
+            int           cnt = 0;
 
             summary << "Federate::wait_for_required_federates_to_join():"
                     << __LINE__ << "\nWAITING FOR " << required_feds_count
                     << " REQUIRED FEDERATES:";
 
             // Summarize the required federates first.
-            for ( i = 0; i < (unsigned int)known_feds_count; ++i ) {
+            for ( i = 0; i < known_feds_count; ++i ) {
                ++cnt;
                if ( known_feds[i].required ) {
                   if ( is_joined_federate( known_feds[i].name ) ) {
@@ -1586,7 +1586,7 @@ string Federate::wait_for_required_federates_to_join()
             }
 
             // Summarize all the remaining non-required joined federates.
-            for ( i = 0; i < joined_federate_names.size(); ++i ) {
+            for ( i = 0; i < (int)joined_federate_names.size(); ++i ) {
                if ( !is_required_federate( joined_federate_names[i] ) ) {
                   ++cnt;
 
@@ -1666,7 +1666,7 @@ string Federate::wait_for_required_federates_to_join()
       names.resize( names.length() - 2 ); // remove trailing comma and space
       errmsg << names << "\n\tThe required federates are: ";
       names = "";
-      for ( i = 0; i < (unsigned int)known_feds_count; ++i ) {
+      for ( i = 0; i < known_feds_count; ++i ) {
          if ( known_feds[i].required ) {
             names += known_feds[i].name;
             names += ", ";
@@ -2326,7 +2326,7 @@ void Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM()
 }
 
 void Federate::publish_interaction_class(
-   RTI1516_NAMESPACE::InteractionClassHandle class_handle )
+   RTI1516_NAMESPACE::InteractionClassHandle const &class_handle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::publish_interaction_class():%d\n",
@@ -2364,7 +2364,7 @@ void Federate::publish_interaction_class(
 }
 
 void Federate::unpublish_interaction_class(
-   RTI1516_NAMESPACE::InteractionClassHandle class_handle )
+   RTI1516_NAMESPACE::InteractionClassHandle const &class_handle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::unpublish_interaction_class():%d\n",
@@ -2402,7 +2402,7 @@ void Federate::unpublish_interaction_class(
 }
 
 void Federate::send_interaction(
-   RTI1516_NAMESPACE::InteractionClassHandle         class_handle,
+   RTI1516_NAMESPACE::InteractionClassHandle const  &class_handle,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &parameter_list )
 {
    // Macro to save the FPU Control Word register value.
@@ -2618,7 +2618,7 @@ void Federate::perform_checkpoint()
          string save_name_str;
          StringUtilities::to_string( save_name_str, this->save_name );
          string str_save_label = string( get_federation_name() ) + "_" + save_name_str;
-         for ( unsigned int i = 0; i < str_save_label.length(); ++i ) {
+         for ( int i = 0; i < (int)str_save_label.length(); ++i ) {
             if ( str_save_label[i] == '/' ) {
                str_save_label[i] = '_';
             }
@@ -2673,7 +2673,7 @@ void Federate::setup_checkpoint()
          // When user clicks Dump Chkpnt, we need to set the save_name here
          string trick_filename;
          string slash( "/" );
-         size_t found;
+         int    found;
          string save_name_str;
 
          // get checkpoint file name specified in control panel
@@ -2682,7 +2682,7 @@ void Federate::setup_checkpoint()
          // Trick filename contains dir/filename,
          // need to prepend federation name to filename entered in sim control panel popup
          found = trick_filename.rfind( slash );
-         if ( found != string::npos ) {
+         if ( found != (int)string::npos ) {
             save_name_str              = trick_filename.substr( found + 1 );
             string federation_name_str = string( get_federation_name() );
             if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
@@ -2884,7 +2884,7 @@ void Federate::perform_restore()
          string restore_name_str;
          StringUtilities::to_string( restore_name_str, restore_name );
          string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
-         for ( unsigned int i = 0; i < str_restore_label.length(); ++i ) {
+         for ( int i = 0; i < (int)str_restore_label.length(); ++i ) {
             if ( str_restore_label[i] == '/' ) {
                str_restore_label[i] = '_';
             }
@@ -2942,7 +2942,7 @@ void Federate::setup_restore()
    if ( this->announce_restore ) {
       string trick_filename;
       string slash_fedname( "/" + string( get_federation_name() ) + "_" );
-      size_t found;
+      int    found;
 
       // Otherwise set restore_name_str using trick's file name
       trick_filename = checkpoint_get_load_file();
@@ -2951,7 +2951,7 @@ void Federate::setup_restore()
       // (chosen in sim control panel popup) we need just the filename minus the federation name to initiate restore
       found = trick_filename.rfind( slash_fedname );
       string restore_name_str;
-      if ( found != string::npos ) {
+      if ( found != (int)string::npos ) {
          restore_name_str = trick_filename.substr( found + slash_fedname.length() ); // filename
       } else {
          restore_name_str = trick_filename;
@@ -3086,7 +3086,7 @@ void Federate::post_restore()
       // Restore ownership transfer data for all objects
       Object *objects   = manager->get_objects();
       int     obj_count = manager->get_object_count();
-      for ( unsigned int i = 0; i < obj_count; ++i ) {
+      for ( int i = 0; i < obj_count; ++i ) {
          objects[i].decode_checkpoint();
       }
 
@@ -5215,7 +5215,7 @@ void Federate::shutdown()
       }
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
-      for ( unsigned int i = 0; i < this->manager->obj_count; ++i ) {
+      for ( int i = 0; i < this->manager->obj_count; ++i ) {
          ostringstream msg;
          msg << "Federate::shutdown():" << __LINE__
              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "'"
@@ -5227,7 +5227,7 @@ void Federate::shutdown()
 #endif
 
 #ifdef THLA_CYCLIC_READ_TIME_STATS
-      for ( unsigned int i = 0; i < this->manager->obj_count; ++i ) {
+      for ( int i = 0; i < this->manager->obj_count; ++i ) {
          ostringstream msg;
          msg << "Federate::shutdown():" << __LINE__
              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "' "
@@ -6167,7 +6167,7 @@ MOM just informed us that there are %d federates currently running in the federa
 
    ask_MOM_for_federate_names();
 
-   size_t joinedFedCount = 0;
+   int joinedFedCount = 0;
 
    // Wait for all the required federates to join.
    this->all_federates_joined = false;
@@ -6185,10 +6185,10 @@ MOM just informed us that there are %d federates currently running in the federa
 
       // Determine what federates have joined only if the joined federate
       // count has changed.
-      if ( joinedFedCount != joined_federate_names.size() ) {
+      if ( joinedFedCount != (int)joined_federate_names.size() ) {
          joinedFedCount = joined_federate_names.size();
 
-         if ( joinedFedCount >= (unsigned int)running_feds_count ) {
+         if ( joinedFedCount >= running_feds_count ) {
             this->all_federates_joined = true;
          }
       }
@@ -6276,7 +6276,7 @@ MOM just informed us that there are %d federates currently running in the federa
               << running_feds_count << " federates:";
 
       // Summarize the required federates first.
-      for ( unsigned int i = 0; i < (unsigned int)running_feds_count; ++i ) {
+      for ( int i = 0; i < running_feds_count; ++i ) {
          ++cnt;
          summary << "\n    " << cnt
                  << ": Found running federate '"
@@ -6306,7 +6306,7 @@ MOM just informed us that there are %d federates currently running in the federa
 void Federate::clear_running_feds()
 {
    if ( this->running_feds != NULL ) {
-      for ( unsigned int i = 0; i < running_feds_count; ++i ) {
+      for ( int i = 0; i < running_feds_count; ++i ) {
          if ( this->running_feds[i].MOM_instance_name != NULL ) {
             if ( trick_MM->delete_var( static_cast< void * >( this->running_feds[i].MOM_instance_name ) ) ) {
                send_hs( stderr, "Federate::clear_running_feds():%d WARNING failed to delete Trick Memory for 'this->running_feds[i].MOM_instance_name'\n",
@@ -6357,7 +6357,7 @@ void Federate::update_running_feds()
                   __LINE__, fed_name_str.c_str(), obj_name_str.c_str() );
       }
 
-      for ( unsigned int i = 0; i < running_feds_count; ++i ) {
+      for ( int i = 0; i < running_feds_count; ++i ) {
          send_hs( stdout, "Federate::update_running_feds():%d running_feds[%d]=%s \n",
                   __LINE__, i, running_feds[i].name );
       }
@@ -6410,7 +6410,7 @@ void Federate::add_a_single_entry_into_running_feds()
    } else {
 
       // copy current running_feds entries into temporary structure...
-      for ( unsigned int i = 0; i < running_feds_count; ++i ) {
+      for ( int i = 0; i < running_feds_count; ++i ) {
          temp_feds[i].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
          temp_feds[i].name              = trick_MM->mm_strdup( running_feds[i].name );
          temp_feds[i].required          = running_feds[i].required;
@@ -6502,7 +6502,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // Search for the federate information from running_feds...
    foundName = false;
-   for ( unsigned int i = 0; i < running_feds_count; ++i ) {
+   for ( int i = 0; i < running_feds_count; ++i ) {
       if ( !strcmp( running_feds[i].MOM_instance_name, tMOMName ) ) {
          foundName = true;
          tFedName  = trick_MM->mm_strdup( running_feds[i].name );
@@ -6530,7 +6530,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    }
    // now, copy everything minus the requested name from the original list...
    int tmp_feds_cnt = 0;
-   for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
+   for ( int i = 0; i < this->running_feds_count; ++i ) {
       // if the name is not the one we are looking for...
       if ( strcmp( this->running_feds[i].name, tFedName ) ) {
          if ( this->running_feds[i].MOM_instance_name != NULL ) {
@@ -6611,7 +6611,7 @@ void Federate::write_running_feds_file(
       file << this->running_feds_count << '\n';
 
       // echo the contents of running_feds into file...
-      for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
+      for ( int i = 0; i < this->running_feds_count; ++i ) {
          file << trick_MM->mm_strdup( this->running_feds[i].MOM_instance_name ) << '\n';
          file << trick_MM->mm_strdup( this->running_feds[i].name ) << '\n';
          file << this->running_feds[i].required << '\n';
@@ -6813,7 +6813,7 @@ void Federate::read_running_feds_file(
    if ( file.is_open() ) {
 
       // Clear out the known_feds from memory...
-      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_feds_count; ++i ) {
          if ( this->known_feds[i].MOM_instance_name != NULL ) {
             if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].MOM_instance_name ) ) ) {
                send_hs( stderr, "Federate::read_running_feds_file():%d WARNING failed to delete Trick Memory for 'this->known_feds[i].MOM_instance_name'\n",
@@ -6848,7 +6848,7 @@ void Federate::read_running_feds_file(
       }
 
       string current_line;
-      for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
+      for ( int i = 0; i < this->known_feds_count; ++i ) {
          file >> current_line;
          this->known_feds[i].MOM_instance_name = trick_MM->mm_strdup( const_cast< char * >( current_line.c_str() ) );
 
@@ -6871,7 +6871,7 @@ void Federate::read_running_feds_file(
 void Federate::copy_running_feds_into_known_feds()
 {
    // Clear out the known_feds from memory...
-   for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
+   for ( int i = 0; i < this->known_feds_count; ++i ) {
       if ( this->known_feds[i].MOM_instance_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].MOM_instance_name ) ) ) {
             send_hs( stderr, "Federate::copy_running_feds_into_known_feds():%d WARNING failed to delete Trick Memory for 'this->known_feds[i].MOM_instance_name_name'\n",
@@ -6904,7 +6904,7 @@ void Federate::copy_running_feds_into_known_feds()
 
    // Copy everything from running_feds into known_feds...
    this->known_feds_count = 0;
-   for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
+   for ( int i = 0; i < this->running_feds_count; ++i ) {
       this->known_feds[this->known_feds_count].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
       this->known_feds[this->known_feds_count].name              = trick_MM->mm_strdup( running_feds[i].name );
       this->known_feds[this->known_feds_count].required          = running_feds[i].required;
@@ -7997,7 +7997,7 @@ void Federate::restore_federate_handles_from_MOM()
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
          // Determine if all the federate handles have been found.
-         all_found = ( this->joined_federate_handles.size() >= (unsigned int)running_feds_count );
+         all_found = ( (int)this->joined_federate_handles.size() >= running_feds_count );
       }
 
       if ( !all_found ) {
@@ -8074,9 +8074,9 @@ void Federate::rebuild_federate_handles(
       // Decode size from Big Endian encoded integer.
       unsigned char const *dataPtr = reinterpret_cast< unsigned char const * >( attr_iter->second.data() );
 
-      size_t size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                       ? Utilities::byteswap_int( *reinterpret_cast< int const * >( dataPtr ) )
-                       : *reinterpret_cast< int const * >( dataPtr );
+      int size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                    ? Utilities::byteswap_int( *reinterpret_cast< int const * >( dataPtr ) )
+                    : *reinterpret_cast< int const * >( dataPtr );
 
       if ( size != 4 ) {
          ostringstream errmsg;
@@ -8177,7 +8177,7 @@ bool Federate::is_a_required_startup_federate(
    wstring const &fed_name )
 {
    wstring required_fed_name;
-   for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
+   for ( int i = 0; i < this->known_feds_count; ++i ) {
       if ( this->known_feds[i].required ) {
          StringUtilities::to_wstring( required_fed_name, this->known_feds[i].name );
          if ( fed_name == required_fed_name ) { // found an exact match
@@ -8186,8 +8186,8 @@ bool Federate::is_a_required_startup_federate(
             // look for instance attributes of a required object. to do this,
             // check if the "required federate name" is found inside the supplied
             // federate name.
-            size_t found = fed_name.find( required_fed_name );
-            if ( found != wstring::npos ) {
+            int found = fed_name.find( required_fed_name );
+            if ( found != (int)wstring::npos ) {
                // found the "required federate name" inside the supplied federate name
                return true;
             }

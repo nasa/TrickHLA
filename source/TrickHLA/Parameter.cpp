@@ -209,17 +209,17 @@ void Parameter::initialize(
    void       *in_addr,
    ATTRIBUTES *in_attr )
 {
-   address = in_addr;
-   attr    = in_attr;
+   this->address = in_addr;
+   this->attr    = in_attr;
 
-   if ( address == NULL ) {
+   if ( this->address == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected NULL trick variable address." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   if ( attr == NULL ) {
+   if ( this->attr == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
@@ -549,7 +549,7 @@ VariableLengthData Parameter::get_encoded_parameter_value()
 }
 
 bool Parameter::extract_data(
-   size_t const         param_size,
+   int const            param_size,
    unsigned char const *param_data )
 {
    // Make sure we actually have parameter data to process.
@@ -559,7 +559,7 @@ bool Parameter::extract_data(
 
    // Determine the number of bytes we expect to receive based on how much
    // memory the Trick simulation variable is using.
-   size_t expected_byte_count = get_parameter_size();
+   int expected_byte_count = get_parameter_size();
 
    switch ( rti_encoding ) {
       case ENCODING_BOOLEAN: {
@@ -738,7 +738,7 @@ from parameter map, buffer-size:%d, expected-byte-count:%d.\n",
 }
 
 void Parameter::ensure_buffer_capacity(
-   size_t capacity )
+   int capacity )
 {
    if ( capacity > buffer_capacity ) {
       buffer_capacity = capacity;
@@ -769,7 +769,7 @@ void Parameter::ensure_buffer_capacity(
 
 void Parameter::calculate_size_and_number_of_items()
 {
-   size_t num_bytes = 0;
+   int num_bytes = 0;
 
    // Handle Strings differently since we need to know the length of each string.
    if ( ( attr->type == TRICK_STRING )
@@ -785,7 +785,7 @@ void Parameter::calculate_size_and_number_of_items()
             // Determine total number of bytes used by the Trick simulation
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
                char *s = *( static_cast< char ** >( address ) + i );
                if ( s != NULL ) {
                   int length = get_size( s );
@@ -800,7 +800,7 @@ void Parameter::calculate_size_and_number_of_items()
             // For the ENCODING_C_STRING, ENCODING_UNICODE_STRING, and ENCODING_ASCII_STRING
             // encodings assume the string is NULL terminated and determine the
             // number of characters using strlen().
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
                char const *s = *( static_cast< char ** >( address ) + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
@@ -884,7 +884,7 @@ void Parameter::calculate_size_and_number_of_items()
  * @details If the parameter is static in size it uses a cached size value
  * otherwise the size is calculated.
  */
-size_t Parameter::get_parameter_size()
+int Parameter::get_parameter_size()
 {
    if ( !size_is_static ) {
       calculate_size_and_number_of_items();
@@ -898,7 +898,7 @@ bool Parameter::is_static_in_size() const
       // If this is not an array (i.e. num_index == 0) or has static arrays then
       // this parameter is static in size.
       if ( attr->num_index > 0 ) {
-         for ( unsigned int i = 0; i < attr->num_index; ++i ) {
+         for ( int i = 0; i < attr->num_index; ++i ) {
             // Make sure each dimension is statically defined (i.e. not zero).
             if ( attr->index[i].size <= 0 ) {
                return false;
@@ -919,11 +919,11 @@ bool Parameter::is_static_in_size() const
  */
 void Parameter::calculate_static_number_of_items()
 {
-   size_t length = 1;
+   int length = 1;
 
    // Determine the number of items this parameter has (i.e. items in array).
    if ( attr->num_index > 0 ) {
-      for ( unsigned int i = 0; i < attr->num_index; ++i ) {
+      for ( int i = 0; i < attr->num_index; ++i ) {
          if ( attr->index[i].size > 0 ) {
             length *= attr->index[i].size;
          }
@@ -1308,7 +1308,7 @@ void Parameter::encode_boolean_to_buffer()
    if ( num_items == 1 ) {
       int_dest[0] = ( bool_src[0] ? HLAtrue : 0 );
    } else {
-      for ( size_t k = 0; k < num_items; ++k ) {
+      for ( int k = 0; k < num_items; ++k ) {
          int_dest[k] = ( bool_src[k] ? HLAtrue : 0 );
       }
    }
@@ -1332,7 +1332,7 @@ void Parameter::decode_boolean_from_buffer() const
    if ( num_items == 1 ) {
       bool_dest[0] = ( int_src[0] != 0 );
    } else {
-      for ( size_t k = 0; k < num_items; ++k ) {
+      for ( int k = 0; k < num_items; ++k ) {
          bool_dest[k] = ( int_src[k] != 0 );
       }
    }
@@ -1563,7 +1563,7 @@ void Parameter::encode_opaque_data_to_buffer()
          *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 1 );
          *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 0 );
       }
-      size_t byte_count = 4;
+      int byte_count = 4;
 
       // Copy the data to the output buffer.
       if ( ( s != NULL ) && ( num_elements > 0 ) ) {
@@ -1606,7 +1606,7 @@ void Parameter::decode_opaque_data_from_buffer()
       }
 
       // Do a sanity check on the decoded length, it should not be negative.
-      size_t length;
+      int length;
       if ( decoded_count < 0 ) {
          send_hs( stderr, "Parameter::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.\n",
@@ -1618,7 +1618,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
 
       // Do a sanity check on the decoded length as compared to how much
       // data is in the buffer, i.e. data_buff_size = size - 4.
-      size_t data_buff_size;
+      int data_buff_size;
       if ( size > 4 ) {
          data_buff_size = size - 4;
       } else {
@@ -1718,7 +1718,7 @@ void Parameter::encode_string_to_buffer()
             s = *( static_cast< char ** >( address ) );
 
             // Number of elements to be encoded (number of characters).
-            size_t num_elements = ( ( size > 0 ) && ( s != NULL ) ) ? size : 0;
+            int num_elements = ( ( size > 0 ) && ( s != NULL ) ) ? size : 0;
 
             // Encoded size is the number of elements (32 bit Big Endian)
             // followed by a UTF-16 (16 bit) encoding of the string characters.
@@ -1746,14 +1746,14 @@ void Parameter::encode_string_to_buffer()
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             if ( s != NULL ) {
                // Get the length of the string.
-               size_t length = strlen( s );
+               int length = strlen( s );
 
                // Encode as UTF-16 characters in Big Endian
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   *( output++ ) = '\0';
                   *( output++ ) = (unsigned char)*( s++ );
                }
@@ -1802,16 +1802,16 @@ void Parameter::encode_string_to_buffer()
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             // UTF-16 character encoding of the string separated by possible
             // Null character '\0' padding between strings to stay on a 4 byte
             // boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
 
                s = *( static_cast< char ** >( address ) + i );
 
-               size_t length = ( s != NULL ) ? strlen( s ) : 0;
+               int length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
                int encoded_size = ( length <= std::numeric_limits< int >::max() )
@@ -1834,7 +1834,7 @@ void Parameter::encode_string_to_buffer()
 
                if ( s != NULL ) {
                   // Encode as UTF-16 characters in Big Endian
-                  for ( size_t k = 0; k < length; ++k ) {
+                  for ( int k = 0; k < length; ++k ) {
                      *( output++ ) = '\0';
                      *( output++ ) = (unsigned char)*( s++ );
                   }
@@ -1866,7 +1866,7 @@ void Parameter::encode_string_to_buffer()
             s = *( static_cast< char ** >( address ) );
 
             // Number of elements to be encoded (number of characters).
-            size_t num_elements = ( ( size > 0 ) && ( s != NULL ) ) ? size : 0;
+            int num_elements = ( ( size > 0 ) && ( s != NULL ) ) ? size : 0;
 
             // Encoded size is the number of elements (32 bit Big Endian)
             // followed by the ASCII characters.
@@ -1894,11 +1894,11 @@ void Parameter::encode_string_to_buffer()
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             if ( s != NULL ) {
                // Get the length of the string.
-               size_t length = strlen( s );
+               int length = strlen( s );
 
                // Encode as ASCII characters.
                if ( length > 0 ) {
@@ -1949,16 +1949,16 @@ void Parameter::encode_string_to_buffer()
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             // ASCII characters in the string separated by possible Null
             // character '\0' padding between strings to stay on a 4 byte
             // boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
 
                s = *( static_cast< char ** >( address ) + i );
 
-               size_t length = ( s != NULL ) ? strlen( s ) : 0;
+               int length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
                int encoded_size = ( length <= std::numeric_limits< int >::max() )
@@ -1990,8 +1990,8 @@ void Parameter::encode_string_to_buffer()
                // Pad to stay on a 4 byte boundary. The last element
                // gets no padding.
                if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
-                  size_t pad_cnt = 4 - ( ( 4 + length ) % 4 );
-                  for ( size_t k = 0; k < pad_cnt; ++k ) {
+                  int pad_cnt = 4 - ( ( 4 + length ) % 4 );
+                  for ( int k = 0; k < pad_cnt; ++k ) {
                      *( output++ ) = '\0';
                   }
                   byte_count += pad_cnt;
@@ -2012,7 +2012,7 @@ void Parameter::encode_string_to_buffer()
 
             s = *( static_cast< char ** >( address ) );
 
-            size_t num_elements;
+            int num_elements;
             if ( s != NULL ) {
                // Get the number of bytes allocated to this variable by Trick.
                int trick_size = get_size( s );
@@ -2047,7 +2047,7 @@ void Parameter::encode_string_to_buffer()
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             // Copy the data to the output buffer.
             if ( ( s != NULL ) && ( num_elements > 0 ) ) {
@@ -2068,8 +2068,8 @@ void Parameter::encode_string_to_buffer()
                                         : std::numeric_limits< int >::max();
 
             // We need to determine the total number of bytes of data.
-            size_t num_elements = 0;
-            for ( size_t i = 0; i < num_items; ++i ) {
+            int num_elements = 0;
+            for ( int i = 0; i < num_items; ++i ) {
                s = *( static_cast< char ** >( address ) + i );
                if ( s != NULL ) {
                   int length = get_size( s );
@@ -2109,18 +2109,18 @@ void Parameter::encode_string_to_buffer()
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             // Buffer contains the characters in the string separated by
             // possible Null character '\0' padding between strings to stay
             // on a 4 byte boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
 
                // Determine the length of the "char *" for the given array index.
                s = *( static_cast< char ** >( address ) + i );
 
-               int    trick_size = ( s != NULL ) ? get_size( s ) : 0;
-               size_t length     = ( trick_size >= 0 ) ? trick_size : 0;
+               int trick_size = ( s != NULL ) ? get_size( s ) : 0;
+               int length     = ( trick_size >= 0 ) ? trick_size : 0;
 
                // The encoded size is an HLAinteger32BE.
                int encoded_size = ( length <= std::numeric_limits< int >::max() )
@@ -2152,8 +2152,8 @@ void Parameter::encode_string_to_buffer()
                // Pad to stay on a 4 byte boundary. The last element
                // gets no padding.
                if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
-                  size_t pad_cnt = 4 - ( ( 4 + length ) % 4 );
-                  for ( size_t k = 0; k < pad_cnt; ++k ) {
+                  int pad_cnt = 4 - ( ( 4 + length ) % 4 );
+                  for ( int k = 0; k < pad_cnt; ++k ) {
                      *( output++ ) = '\0';
                   }
                   byte_count += pad_cnt;
@@ -2177,10 +2177,10 @@ void Parameter::encode_string_to_buffer()
          output = buffer;
 
          // Offset from the start of the output buffer.
-         size_t byte_count = 0;
+         int byte_count = 0;
 
          // Send the data bytes as is.
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
 
             s = *( static_cast< char ** >( address ) + i );
 
@@ -2222,16 +2222,16 @@ void Parameter::encode_string_to_buffer()
          output = buffer;
 
          // Offset from the start of the output buffer.
-         size_t byte_count = 0;
+         int byte_count = 0;
 
          // Box-car encode the strings.
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
 
             s = *( static_cast< char ** >( address ) + i );
 
             if ( s != NULL ) {
                // Include the null character as well.
-               size_t length = strlen( s ) + 1;
+               int length = strlen( s ) + 1;
                memcpy( output + byte_count, s, length );
                byte_count += length;
             } else {
@@ -2279,7 +2279,7 @@ void Parameter::decode_string_from_buffer()
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d < 0, will use 0 instead.\n",
@@ -2292,7 +2292,7 @@ WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d < 0, will
             // If the users Trick simulation is static in size then we need to
             // do a bounds check so that we don't overflow the users variable.
             if ( size_is_static ) {
-               size_t data_buff_size;
+               int data_buff_size;
                if ( size > 4 ) {
                   data_buff_size = ( size - 4 ) / 2;
                } else {
@@ -2355,7 +2355,7 @@ size %d, will use the data buffer size instead.\n",
             } else {
 
                // Decode the UTF-16 characters.
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   input++; // skip the high-character of the UTF-16 encoding
                   output[k] = *( input++ );
                }
@@ -2381,7 +2381,7 @@ size %d, will use the data buffer size instead.\n",
             }
 
             // Sanity check, we should not get a negative element count.
-            size_t num_elements;
+            int num_elements;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parmeter '%s', decoded element count %d < 0, will use 0 instead.\n",
@@ -2408,7 +2408,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             //            if ( attr->type == TRICK_STRING ) {
             //               data_buff_size = (size - (4 * (num_elements + 1))) / 2;
             //            }
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
                data_buff_size = ( size - ( 4 * ( num_elements + 1 ) ) ) / 2;
             } else {
@@ -2416,7 +2416,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             }
 
             // Decode each of the HLAunicodeString elements.
-            for ( size_t i = 0; i < num_elements; ++i ) {
+            for ( int i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                int decoded_inner_count = 0;
@@ -2433,7 +2433,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_inner_count < 0 ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d of %d, parameter '%s', the decoded \
@@ -2506,7 +2506,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                } else {
 
                   // Decode the UTF-16 characters.
-                  for ( size_t k = 0; k < length; ++k ) {
+                  for ( int k = 0; k < length; ++k ) {
                      input++; // skip the high-character of the UTF-16 encoding
                      output[k] = *( input++ );
                   }
@@ -2554,7 +2554,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING parmeter '%s', decoded length %d < 0, will use 0 instead.\n",
@@ -2566,7 +2566,7 @@ WARNING: For ENCODING_ASCII_STRING parmeter '%s', decoded length %d < 0, will us
 
             // Do a sanity check on the decoded length as compared to how much
             // data is in the buffer, i.e. data_buff_size = size - 4.
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > 4 ) {
                data_buff_size = size - 4;
             } else {
@@ -2651,7 +2651,7 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buff
             }
 
             // Sanity check, we should not get a negative element count.
-            size_t num_elements;
+            int num_elements;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded element count %d < 0, will use 0 instead.\n",
@@ -2672,7 +2672,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for pa
 
             // Calculate the size of the data minus the encoded length fields.
             // data_buff_size = size - 4 - 4 * num_elements
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
                data_buff_size = size - ( 4 * ( num_elements + 1 ) );
             } else {
@@ -2680,7 +2680,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for pa
             }
 
             // Decode each of the HLAASCIIstring elements.
-            for ( size_t i = 0; i < num_elements; ++i ) {
+            for ( int i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                int decoded_inner_count = 0;
@@ -2697,7 +2697,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for pa
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_inner_count < 0 ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, parameter '%s', the decoded \
@@ -2818,7 +2818,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d < 0, will use 0 instead.\n",
@@ -2830,7 +2830,7 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d < 0, will us
 
             // Do a sanity check on the decoded length as compared to how much
             // data is in the buffer, i.e. data_buff_size = size - 4.
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > 4 ) {
                data_buff_size = size - 4;
             } else {
@@ -2904,7 +2904,7 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d > data buffe
             }
 
             // Sanity check, we should not get a negative element count.
-            size_t num_elements;
+            int num_elements;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded element count %d < 0, will use 0 instead.\n",
@@ -2925,7 +2925,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for par
 
             // Calculate the size of the data minus the encoded length fields.
             // data_buff_size = size - 4 - 4 * num_elements
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > ( 4 * ( 1 + num_elements ) ) ) {
                data_buff_size = size - ( 4 * ( 1 + num_elements ) );
             } else {
@@ -2933,7 +2933,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for par
             }
 
             // Decode each of the HLAASCIIstring elements.
-            for ( size_t i = 0; i < num_elements; ++i ) {
+            for ( int i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                int decoded_inner_count = 0;
@@ -2950,7 +2950,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for par
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_inner_count < 0 ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, parameter '%s', the decoded \
@@ -3023,7 +3023,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
 
                // Skip the padding which was added to keep the data on a 4 byte
                // boundary. The last element gets no padding.
-               size_t pad = ( 4 + length ) % 4;
+               int pad = ( 4 + length ) % 4;
                if ( ( i < ( num_items - 1 ) ) && ( pad != 0 ) ) {
                   input += ( 4 - pad );
 
@@ -3076,20 +3076,20 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
       }
       case ENCODING_C_STRING:
       default: {
-         size_t start_index = 0;
-         size_t end_index   = 0;
+         int start_index = 0;
+         int end_index   = 0;
 
          input = buffer;
 
          // Decode the box-car encoded strings.
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
 
             // Find the end of the encoded string which is the null character.
             while ( *( input + end_index ) != '\0' ) {
                ++end_index;
             }
 
-            size_t length = ( end_index - start_index ) + 1;
+            int length = ( end_index - start_index ) + 1;
 
             if ( *( static_cast< char ** >( address ) + i ) != NULL ) {
 
@@ -3115,6 +3115,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                       << Utilities::next_positive_multiple_of_8( length )
                       << "!" << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
+               return;
             }
 
             memcpy( *( static_cast< char ** >( address ) + i ),
@@ -3137,11 +3138,11 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
  * for now.
  */
 void Parameter::byteswap_buffer_copy(
-   void        *dest,
-   void const  *src,
-   int const    type,
-   size_t const length,
-   size_t const num_bytes ) const
+   void       *dest,
+   void const *src,
+   int const   type,
+   int const   length,
+   int const   num_bytes ) const
 {
    if ( num_bytes == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
@@ -3175,7 +3176,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   d_dest[k] = Utilities::byteswap_double( d_src[k] );
                }
             }
@@ -3188,7 +3189,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   f_dest[k] = Utilities::byteswap_float( f_src[k] );
                }
             }
@@ -3207,7 +3208,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   s_dest[k] = Utilities::byteswap_short( s_src[k] );
                }
             }
@@ -3219,7 +3220,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   us_dest[k] = Utilities::byteswap_unsigned_short( us_src[k] );
                }
             }
@@ -3231,7 +3232,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   i_dest[k] = Utilities::byteswap_int( i_src[k] );
                }
             }
@@ -3243,7 +3244,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ui_dest[k] = Utilities::byteswap_unsigned_int( ui_src[k] );
                }
             }
@@ -3255,7 +3256,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   l_dest[k] = Utilities::byteswap_long( l_src[k] );
                }
             }
@@ -3267,7 +3268,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ul_dest[k] = Utilities::byteswap_unsigned_long( ul_src[k] );
                }
             }
@@ -3279,7 +3280,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ll_dest[k] = Utilities::byteswap_long_long( ll_src[k] );
                }
             }
@@ -3291,7 +3292,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ull_dest[k] = Utilities::byteswap_unsigned_long_long( ull_src[k] );
                }
             }
@@ -3416,7 +3417,7 @@ void Parameter::print_buffer() const
       double const *dbl_array = reinterpret_cast< double const * >( buffer ); // cppcheck-suppress [invalidPointerCast]
 
       if ( is_byteswap() ) {
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
             // undo the byteswap for display
             double b_value = Utilities::byteswap_double( dbl_array[i] );
             msg << "\ti:" << i
@@ -3424,7 +3425,7 @@ void Parameter::print_buffer() const
                 << " byteswap-value:" << dbl_array[i] << '\n';
          }
       } else {
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
             msg << " i:" << i << " " << dbl_array[i] << '\n';
          }
       }
@@ -3436,7 +3437,7 @@ void Parameter::print_buffer() const
       msg << "\tAttribute size:" << size << '\n'
           << "\tIndex\tValue\tCharacter" << '\n';
 
-      for ( size_t i = 0; i < size; ++i ) {
+      for ( int i = 0; i < size; ++i ) {
          int char_value = char_array[i];
          msg << "\t" << i << "\t" << char_value;
          if ( isgraph( char_array[i] ) ) {

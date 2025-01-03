@@ -322,7 +322,7 @@ void TrickThreadCoordinator::initialize(
                 << "'!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+      for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
          this->data_cycle_base_time_per_obj[obj_index] = 0LL;
       }
    }
@@ -491,7 +491,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
    // Search all the objects for a thread ID match and configure data arrays.
    bool any_valid_thread_id_found = false;
-   for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+   for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
 
       // Is this thread associated to this object.
       if ( this->manager->objects[obj_index].is_thread_associated( thread_id ) ) {
@@ -705,7 +705,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
                   summary << setprecision( 18 )
                           << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
                           << "\t ";
-                  for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+                  for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
                      if ( this->manager->objects[obj_index].is_thread_associated( thread_id ) ) {
                         summary << "'" << this->manager->objects[obj_index].get_name() << "' ";
                      }
@@ -717,7 +717,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
          // Summary of the thread-ID's per object instance.
          summary << "Object-Instance   ThreadIDs" << '\n';
-         for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+         for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
             summary << "'" << this->manager->objects[obj_index].get_name() << "'\t  ";
             bool printed_thread_id = false;
             for ( unsigned int thread_id = 0; thread_id < this->manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
@@ -737,7 +737,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
    // Verify every thread ID specified in the input file for each object has a
    // Trick child thread association made in the S_define file.
-   for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+   for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
       for ( unsigned int thread_id = 0; thread_id < this->manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
 
          if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
@@ -1183,8 +1183,8 @@ void TrickThreadCoordinator::wait_to_receive_data()
 
 /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
 bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
-   unsigned int const obj_index,
-   int64_t const      sim_time_in_base_time ) const
+   int const     obj_index,
+   int64_t const sim_time_in_base_time ) const
 {
    // On boundary if sim-time is an integer multiple of a valid cycle-time.
    return ( ( this->any_child_thread_associated
@@ -1197,8 +1197,8 @@ bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
 /*! @brief Get the data cycle time for the specified object index, otherwise
  * return the default data cycle time. */
 int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
-   unsigned int const obj_index,
-   int64_t const      default_data_cycle_base_time ) const
+   int const     obj_index,
+   int64_t const default_data_cycle_base_time ) const
 {
    return ( this->any_child_thread_associated
             && ( obj_index < this->manager->obj_count )

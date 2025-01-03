@@ -663,10 +663,10 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
    }
 
    // Keep track of the attribute FOM size and ensure enough buffer capacity.
-   size_t attr_size = attr_value->size();
+   int attr_size = attr_value->size();
 
    // Determine the number of bytes we expect to receive.
-   size_t expected_byte_count = get_attribute_size();
+   int expected_byte_count = get_attribute_size();
 
    switch ( rti_encoding ) {
       case ENCODING_BOOLEAN: {
@@ -841,7 +841,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
 }
 
 void Attribute::ensure_buffer_capacity(
-   size_t capacity )
+   int capacity )
 {
    if ( capacity > buffer_capacity ) {
       buffer_capacity = capacity;
@@ -872,7 +872,7 @@ void Attribute::ensure_buffer_capacity(
 
 void Attribute::calculate_size_and_number_of_items()
 {
-   size_t num_bytes = 0;
+   int num_bytes = 0;
 
    // Handle Strings differently since we need to know the length of each string.
    if ( ( ref2->attr->type == TRICK_STRING )
@@ -888,7 +888,7 @@ void Attribute::calculate_size_and_number_of_items()
             // Determine total number of bytes used by the Trick simulation
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
                char *s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
                   int length = get_size( s );
@@ -904,7 +904,7 @@ void Attribute::calculate_size_and_number_of_items()
             // and ENCODING_ASCII_STRING encodings assume the string is
             // terminated with a null character and determine the number of
             // characters using strlen().
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
                char const *s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
@@ -993,7 +993,7 @@ void Attribute::calculate_size_and_number_of_items()
 
 /*! @details If the attribute is static in size it uses a cached size value
  * otherwise the size is calculated. */
-size_t Attribute::get_attribute_size()
+int Attribute::get_attribute_size()
 {
    if ( !size_is_static ) {
       calculate_size_and_number_of_items();
@@ -1007,7 +1007,7 @@ bool Attribute::is_static_in_size() const
       // If this is not an array (i.e. num_index == 0) or has static arrays then
       // this attribute is static in size.
       if ( ref2->attr->num_index > 0 ) {
-         for ( unsigned int i = 0; i < ref2->attr->num_index; ++i ) {
+         for ( int i = 0; i < ref2->attr->num_index; ++i ) {
             // Make sure each dimension is statically defined (i.e. not zero).
             if ( ref2->attr->index[i].size <= 0 ) {
                return false;
@@ -1028,11 +1028,11 @@ bool Attribute::is_static_in_size() const
  */
 void Attribute::calculate_static_number_of_items()
 {
-   size_t length = 1;
+   int length = 1;
 
    // Determine the number of items this attribute has (i.e. items in array).
    if ( ref2->attr->num_index > 0 ) {
-      for ( unsigned int i = 0; i < ref2->attr->num_index; ++i ) {
+      for ( int i = 0; i < ref2->attr->num_index; ++i ) {
          if ( ref2->attr->index[i].size > 0 ) {
             length *= ref2->attr->index[i].size;
          }
@@ -1454,7 +1454,7 @@ void Attribute::encode_boolean_to_buffer() // RETURN: -- None.
    if ( num_items == 1 ) {
       int_dest[0] = ( bool_src[0] ? HLAtrue : 0 );
    } else {
-      for ( size_t k = 0; k < num_items; ++k ) {
+      for ( int k = 0; k < num_items; ++k ) {
          int_dest[k] = ( bool_src[k] ? HLAtrue : 0 );
       }
    }
@@ -1478,7 +1478,7 @@ void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
    if ( num_items == 1 ) {
       bool_dest[0] = ( int_src[0] != 0 );
    } else {
-      for ( size_t k = 0; k < num_items; ++k ) {
+      for ( int k = 0; k < num_items; ++k ) {
          bool_dest[k] = ( int_src[k] != 0 );
       }
    }
@@ -1710,7 +1710,7 @@ void Attribute::encode_opaque_data_to_buffer() // RETURN: -- None.
          *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 1 );
          *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 0 );
       }
-      size_t byte_count = 4;
+      int byte_count = 4;
 
       // Copy the data to the output buffer.
       if ( ( s != NULL ) && ( num_elements > 0 ) ) {
@@ -1761,7 +1761,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
 
       // Do a sanity check on the decoded length as compared to how much
       // data is in the buffer, i.e. data_buff_size = size - 4.
-      size_t data_buff_size;
+      int data_buff_size;
       if ( size > 4 ) {
          data_buff_size = size - 4;
       } else {
@@ -1843,7 +1843,7 @@ size %d, will use the data buffer size instead.\n",
 void Attribute::encode_string_to_buffer() // RETURN: -- None.
 {
    unsigned char *output;       // Cast the buffer to be a character array.
-   size_t         num_elements; // Number of elements in the encoded string.
+   int            num_elements; // Number of elements in the encoded string.
    char          *s;            // pointer to a string
 
    switch ( rti_encoding ) {
@@ -1884,14 +1884,14 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             if ( s != NULL ) {
                // Get the length of the string.
-               size_t length = strlen( s );
+               int length = strlen( s );
 
                // Encode as UTF-16 characters in Big Endian
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   *( output++ ) = '\0';
                   *( output++ ) = (unsigned char)*( s++ );
                }
@@ -1940,16 +1940,16 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             // UTF-16 character encoding of the string separated by possible
             // Null character '\0' padding between strings to stay on a 4 byte
             // boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
 
                s = *( static_cast< char ** >( ref2->address ) + i );
 
-               size_t length = ( s != NULL ) ? strlen( s ) : 0;
+               int length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
                int encoded_size = ( length <= std::numeric_limits< int >::max() )
@@ -1972,7 +1972,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
                if ( s != NULL ) {
                   // Encode as UTF-16 characters in Big Endian
-                  for ( size_t k = 0; k < length; ++k ) {
+                  for ( int k = 0; k < length; ++k ) {
                      *( output++ ) = '\0';
                      *( output++ ) = (unsigned char)*( s++ );
                   }
@@ -2032,11 +2032,11 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             if ( s != NULL ) {
                // Get the length of the string.
-               size_t length = strlen( s );
+               int length = strlen( s );
 
                // Encode as ASCII characters.
                if ( length > 0 ) {
@@ -2087,16 +2087,16 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             // ASCII characters in the string separated by possible Null
             // character '\0' padding between strings to stay on a 4 byte
             // boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
 
                s = *( static_cast< char ** >( ref2->address ) + i );
 
-               size_t length = ( s != NULL ) ? strlen( s ) : 0;
+               int length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
                int encoded_size = ( length <= std::numeric_limits< int >::max() )
@@ -2128,8 +2128,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                // Pad to stay on a 4 byte boundary. The last element
                // gets no padding.
                if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
-                  size_t pad_cnt = 4 - ( ( 4 + length ) % 4 );
-                  for ( size_t k = 0; k < pad_cnt; ++k ) {
+                  int pad_cnt = 4 - ( ( 4 + length ) % 4 );
+                  for ( int k = 0; k < pad_cnt; ++k ) {
                      *( output++ ) = '\0';
                   }
                   byte_count += pad_cnt;
@@ -2184,7 +2184,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             // Copy the data to the output buffer.
             if ( ( s != NULL ) && ( num_elements > 0 ) ) {
@@ -2206,7 +2206,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // We need to determine the total number of bytes of data.
             num_elements = 0;
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
                s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
                   int trick_size = get_size( s );
@@ -2246,17 +2246,17 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
                *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
-            size_t byte_count = 4;
+            int byte_count = 4;
 
             // Buffer contains the characters in the string separated by
             // possible Null character '\0' padding between strings to stay
             // on a 4 byte boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
 
                // Determine the length of the "char *" for the given array index.
-               s                 = *( static_cast< char ** >( ref2->address ) + i );
-               int    trick_size = ( s != NULL ) ? get_size( s ) : 0;
-               size_t length     = ( trick_size >= 0 ) ? trick_size : 0;
+               s              = *( static_cast< char ** >( ref2->address ) + i );
+               int trick_size = ( s != NULL ) ? get_size( s ) : 0;
+               int length     = ( trick_size >= 0 ) ? trick_size : 0;
 
                // The encoded size is an HLAinteger32BE.
                int encoded_size = ( length <= std::numeric_limits< int >::max() )
@@ -2288,8 +2288,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                // Pad to stay on a 4 byte boundary. The last element
                // gets no padding.
                if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
-                  size_t pad_cnt = 4 - ( ( 4 + length ) % 4 );
-                  for ( size_t k = 0; k < pad_cnt; ++k ) {
+                  int pad_cnt = 4 - ( ( 4 + length ) % 4 );
+                  for ( int k = 0; k < pad_cnt; ++k ) {
                      *( output++ ) = '\0';
                   }
                   byte_count += pad_cnt;
@@ -2313,10 +2313,10 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          output = buffer;
 
          // Offset from the start of the output buffer.
-         size_t byte_count = 0;
+         int byte_count = 0;
 
          // Send the data bytes as is.
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
 
             s = *( static_cast< char ** >( ref2->address ) + i );
 
@@ -2358,16 +2358,16 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          output = buffer;
 
          // Offset from the start of the output buffer.
-         size_t byte_count = 0;
+         int byte_count = 0;
 
          // Box-car encode the strings.
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
 
             s = *( static_cast< char ** >( ref2->address ) + i );
 
             if ( s != NULL ) {
                // Include the null character as well.
-               size_t length = strlen( s ) + 1;
+               int length = strlen( s ) + 1;
 
                memcpy( output + byte_count, s, length );
 
@@ -2391,7 +2391,7 @@ void Attribute::decode_string_from_buffer() // RETURN: -- None.
 {
    unsigned char *input;
    unsigned char *output;
-   size_t         num_elements;
+   int            num_elements;
 
    switch ( rti_encoding ) {
       case ENCODING_UNICODE_STRING: {
@@ -2417,7 +2417,7 @@ void Attribute::decode_string_from_buffer() // RETURN: -- None.
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded length %d < 0, will use 0 instead.\n",
@@ -2432,7 +2432,7 @@ WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded 
             // need to do a bounds check so that we don't overflow the users
             // variable.
             if ( size_is_static ) {
-               size_t data_buff_size;
+               int data_buff_size;
                if ( ref2->attr->type == TRICK_STRING ) {
                   if ( size > 4 ) {
                      data_buff_size = ( size - 4 ) / 2;
@@ -2500,7 +2500,7 @@ size %d, will use the data buffer size instead.\n",
             } else {
 
                // Decode the UTF-16 characters.
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   input++; // skip the high-character of the UTF-16 encoding
                   output[k] = *( input++ );
                }
@@ -2547,7 +2547,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             // Calculate the number of UTF-16 characters which is the number of
             // bytes in the buffer minus the encoded length fields divided by 2.
             // data_buff_size = (size - 4 - 4 * num_elements)/2
-            size_t data_buff_size;
+            int data_buff_size;
             if ( ref2->attr->type == TRICK_STRING ) {
                if ( size > ( 4 * ( num_elements + 1 ) ) ) {
                   data_buff_size = ( size - ( 4 * ( num_elements + 1 ) ) ) / 2;
@@ -2561,7 +2561,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             }
 
             // Decode each of the HLAunicodeString elements.
-            for ( size_t i = 0; i < num_elements; ++i ) {
+            for ( int i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -2577,7 +2577,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
@@ -2651,7 +2651,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                } else {
 
                   // Decode the UTF-16 characters.
-                  for ( size_t k = 0; k < length; ++k ) {
+                  for ( int k = 0; k < length; ++k ) {
                      input++; // skip the high-character of the UTF-16 encoding
                      output[k] = *( input++ );
                   }
@@ -2700,7 +2700,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will use 0 instead.\n",
@@ -2712,7 +2712,7 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will u
 
             // Do a sanity check on the decoded length as compared to how much
             // data is in the buffer, i.e. data_buff_size = size - 4.
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > 4 ) {
                data_buff_size = size - 4;
             } else {
@@ -2816,7 +2816,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
 
             // Calculate the size of the data minus the encoded length fields.
             // data_buff_size = size - 4 - 4 * num_elements
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
                data_buff_size = size - ( 4 * ( num_elements + 1 ) );
             } else {
@@ -2824,7 +2824,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
             }
 
             // Decode each of the HLAASCIIstring elements.
-            for ( size_t i = 0; i < num_elements; ++i ) {
+            for ( int i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -2840,7 +2840,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
@@ -2961,7 +2961,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.\n",
@@ -2973,7 +2973,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
 
             // Do a sanity check on the decoded length as compared to how much
             // data is in the buffer, i.e. data_buff_size = size - 4.
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > 4 ) {
                data_buff_size = size - 4;
             } else {
@@ -3066,7 +3066,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
 
             // Calculate the size of the data minus the encoded length fields.
             // data_buff_size = size - 4 - 4 * num_elements
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
                data_buff_size = size - ( 4 * ( num_elements + 1 ) );
             } else {
@@ -3074,7 +3074,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
             }
 
             // Decode each of the HLAASCIIstring elements.
-            for ( size_t i = 0; i < num_elements; ++i ) {
+            for ( int i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -3090,7 +3090,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, attribute '%s', the decoded \
@@ -3163,7 +3163,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
 
                // Skip the padding which was added to keep the data on a 4 byte
                // boundary. The last element gets no padding.
-               if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
+               if ( ( i < ( (int)num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
                   input += ( 4 - ( ( 4 + length ) % 4 ) );
 
                   // Adjust the amount of data left in the buffer.
@@ -3195,7 +3195,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
 
          // The existing output "char *" variable size must exactly match the
          // incoming data size for no-encoding of the data.
-         if ( size != get_size( output ) ) {
+         if ( (int)size != get_size( output ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                    << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
@@ -3219,7 +3219,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
          input = buffer;
 
          // Decode the box-car encoded strings.
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < (int)num_items; ++i ) {
 
             // Find the end of the encoded string which is the null character.
             while ( *( input + end_index ) != '\0' ) {
@@ -3280,11 +3280,11 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
  * - Only primitive types and static arrays of primitive type are supported for now.
  */
 void Attribute::byteswap_buffer_copy( // RETURN: -- None.
-   void        *dest,                 // IN: -- Destination to copy data to.
-   void const  *src,                  // IN: -- Source of the data to byteswap and copy from.
-   int const    type,                 // IN: -- The type of the data.
-   size_t const length,               // IN: -- The length/number of entries in the source array.
-   size_t const num_bytes ) const     // IN: -- The number of bytes in the source array.
+   void       *dest,                  // IN: -- Destination to copy data to.
+   void const *src,                   // IN: -- Source of the data to byteswap and copy from.
+   int const   type,                  // IN: -- The type of the data.
+   int const   length,                // IN: -- The length/number of entries in the source array.
+   int const   num_bytes ) const        // IN: -- The number of bytes in the source array.
 {
    if ( num_bytes == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
@@ -3318,7 +3318,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   d_dest[k] = Utilities::byteswap_double( d_src[k] );
                }
             }
@@ -3331,7 +3331,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   f_dest[k] = Utilities::byteswap_float( f_src[k] );
                }
             }
@@ -3350,7 +3350,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   s_dest[k] = Utilities::byteswap_short( s_src[k] );
                }
             }
@@ -3362,7 +3362,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   us_dest[k] = Utilities::byteswap_unsigned_short( us_src[k] );
                }
             }
@@ -3374,7 +3374,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   i_dest[k] = Utilities::byteswap_int( i_src[k] );
                }
             }
@@ -3386,7 +3386,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ui_dest[k] = Utilities::byteswap_unsigned_int( ui_src[k] );
                }
             }
@@ -3398,7 +3398,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   l_dest[k] = Utilities::byteswap_long( l_src[k] );
                }
             }
@@ -3410,7 +3410,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ul_dest[k] = Utilities::byteswap_unsigned_long( ul_src[k] );
                }
             }
@@ -3422,7 +3422,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ll_dest[k] = Utilities::byteswap_long_long( ll_src[k] );
                }
             }
@@ -3434,7 +3434,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ull_dest[k] = Utilities::byteswap_unsigned_long_long( ull_src[k] );
                }
             }
@@ -3558,7 +3558,7 @@ void Attribute::print_buffer() const
       double const *dbl_array = reinterpret_cast< double const * >( buffer ); // cppcheck-suppress [invalidPointerCast]
 
       if ( is_byteswap() ) {
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
             // Undo the byteswap for display
             double b_value = Utilities::byteswap_double( dbl_array[i] );
             msg << "\ti:" << i
@@ -3566,7 +3566,7 @@ void Attribute::print_buffer() const
                 << " byteswap-value:" << dbl_array[i] << '\n';
          }
       } else {
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
             msg << " i:" << i << " " << dbl_array[i] << '\n';
          }
       }
@@ -3578,7 +3578,7 @@ void Attribute::print_buffer() const
       msg << "\tAttribute size:" << size << '\n'
           << "\tIndex\tValue\tCharacter" << '\n';
 
-      for ( size_t i = 0; i < size; ++i ) {
+      for ( int i = 0; i < size; ++i ) {
          int char_value = char_array[i];
          msg << "\t" << i << "\t" << char_value;
          if ( isgraph( char_array[i] ) ) {
