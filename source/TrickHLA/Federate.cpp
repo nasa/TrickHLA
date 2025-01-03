@@ -973,7 +973,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
       // Make sure that the federate name does not exist before adding.
       bool found = false;
-      for ( int i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
+      for ( int i = 0; !found && ( i < (int)joined_federate_names.size() ); ++i ) {
          if ( joined_federate_names[i] == federate_name_ws ) {
             found = true;
          }
@@ -2682,7 +2682,7 @@ void Federate::setup_checkpoint()
          // Trick filename contains dir/filename,
          // need to prepend federation name to filename entered in sim control panel popup
          found = trick_filename.rfind( slash );
-         if ( found != string::npos ) {
+         if ( found != (int)string::npos ) {
             save_name_str              = trick_filename.substr( found + 1 );
             string federation_name_str = string( get_federation_name() );
             if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
@@ -2951,7 +2951,7 @@ void Federate::setup_restore()
       // (chosen in sim control panel popup) we need just the filename minus the federation name to initiate restore
       found = trick_filename.rfind( slash_fedname );
       string restore_name_str;
-      if ( found != string::npos ) {
+      if ( found != (int)string::npos ) {
          restore_name_str = trick_filename.substr( found + slash_fedname.length() ); // filename
       } else {
          restore_name_str = trick_filename;
@@ -6185,10 +6185,10 @@ MOM just informed us that there are %d federates currently running in the federa
 
       // Determine what federates have joined only if the joined federate
       // count has changed.
-      if ( joinedFedCount != joined_federate_names.size() ) {
+      if ( joinedFedCount != (int)joined_federate_names.size() ) {
          joinedFedCount = joined_federate_names.size();
 
-         if ( joinedFedCount >= (unsigned int)running_feds_count ) {
+         if ( joinedFedCount >= running_feds_count ) {
             this->all_federates_joined = true;
          }
       }
@@ -8187,7 +8187,7 @@ bool Federate::is_a_required_startup_federate(
             // check if the "required federate name" is found inside the supplied
             // federate name.
             int found = fed_name.find( required_fed_name );
-            if ( found != wstring::npos ) {
+            if ( found != (int)wstring::npos ) {
                // found the "required federate name" inside the supplied federate name
                return true;
             }
