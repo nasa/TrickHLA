@@ -188,11 +188,11 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( this->is_master() ) {
-         send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER%c",
-                  __LINE__, '\n' );
+         send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER\n",
+                  __LINE__ );
       } else {
-         send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM NOT THE MASTER%c",
-                  __LINE__, '\n' );
+         send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM NOT THE MASTER\n",
+                  __LINE__ );
       }
    }
 

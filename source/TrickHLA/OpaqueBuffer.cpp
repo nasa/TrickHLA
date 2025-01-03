@@ -76,8 +76,8 @@ OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'%c",
-                  __LINE__, '\n' );
+         send_hs( stderr, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'\n",
+                  __LINE__ );
       }
       buffer   = NULL;
       capacity = 0;
@@ -157,8 +157,8 @@ void OpaqueBuffer::push_to_buffer(
    EncodingEnum const encoding )
 {
    if ( size == 0 ) {
-      send_hs( stderr, "OpaqueBuffer::push_to_buffer():%d WARNING: Unexpected zero number of bytes to push into buffer!%c",
-               __LINE__, '\n' );
+      send_hs( stderr, "OpaqueBuffer::push_to_buffer():%d WARNING: Unexpected zero number of bytes to push into buffer!\n",
+               __LINE__ );
       return;
    }
 
@@ -211,8 +211,8 @@ void OpaqueBuffer::pull_from_buffer(
    EncodingEnum const encoding )
 {
    if ( size == 0 ) {
-      send_hs( stderr, "OpaqueBuffer::pull_from_buffer():%d WARNING: Unexpected zero number of bytes to pull from buffer!%c",
-               __LINE__, '\n' );
+      send_hs( stderr, "OpaqueBuffer::pull_from_buffer():%d WARNING: Unexpected zero number of bytes to pull from buffer!\n",
+               __LINE__ );
       return;
    }
 
