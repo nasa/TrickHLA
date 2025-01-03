@@ -2700,7 +2700,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will use 0 instead.\n",
@@ -2712,7 +2712,7 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will u
 
             // Do a sanity check on the decoded length as compared to how much
             // data is in the buffer, i.e. data_buff_size = size - 4.
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > 4 ) {
                data_buff_size = size - 4;
             } else {
@@ -2840,7 +2840,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
@@ -2961,7 +2961,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.\n",
@@ -2973,7 +2973,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
 
             // Do a sanity check on the decoded length as compared to how much
             // data is in the buffer, i.e. data_buff_size = size - 4.
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > 4 ) {
                data_buff_size = size - 4;
             } else {
@@ -3066,7 +3066,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
 
             // Calculate the size of the data minus the encoded length fields.
             // data_buff_size = size - 4 - 4 * num_elements
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
                data_buff_size = size - ( 4 * ( num_elements + 1 ) );
             } else {
@@ -3090,7 +3090,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, attribute '%s', the decoded \
