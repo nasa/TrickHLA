@@ -93,9 +93,7 @@ bool RefFrameTree::check_tree()
 void RefFrameTree::print_tree( std::ostream &stream )
 {
    if ( debug || DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-      send_hs( stdout,
-               "RefFrameTree::print_tree():%d\n",
-               __LINE__, '\n' );
+      send_hs( stdout, "RefFrameTree::print_tree():%d\n", __LINE__ );
       print_nodes( stream );
    }
    if ( debug || DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {

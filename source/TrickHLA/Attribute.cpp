@@ -118,8 +118,8 @@ Attribute::~Attribute()
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "Attribute::~Attribute():%d WARNING failed to delete Trick Memory for 'buffer'%c",
-                  __LINE__, '\n' );
+         send_hs( stderr, "Attribute::~Attribute():%d WARNING failed to delete Trick Memory for 'buffer'\n",
+                  __LINE__ );
       }
       buffer          = NULL;
       buffer_capacity = 0;
@@ -827,8 +827,8 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-      send_hs( stdout, "Attribute::extract_data():%d Decoded '%s' (trick_name '%s') from attribute map.%c",
-               __LINE__, get_FOM_name(), get_trick_name(), '\n' );
+      send_hs( stdout, "Attribute::extract_data():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
+               __LINE__, get_FOM_name(), get_trick_name() );
    }
    if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       print_buffer();
@@ -1754,8 +1754,8 @@ void Attribute::decode_opaque_data_from_buffer() // RETURN: -- None.
       // Do a sanity check on the decoded length, it should not be negative.
       if ( decoded_length < 0 ) {
          send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
-WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.%c",
-                  __LINE__, FOM_name, decoded_length, '\n' );
+WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.\n",
+                  __LINE__, FOM_name, decoded_length );
          decoded_length = 0;
       }
 
@@ -1770,8 +1770,8 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
       if ( decoded_length > data_buff_size ) {
          send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer \
-size %d, will use the data buffer size instead.%c",
-                  __LINE__, FOM_name, decoded_length, data_buff_size, '\n' );
+size %d, will use the data buffer size instead.\n",
+                  __LINE__, FOM_name, decoded_length, data_buff_size );
          decoded_length = data_buff_size;
       }
 
@@ -2420,9 +2420,9 @@ void Attribute::decode_string_from_buffer() // RETURN: -- None.
             size_t length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded length %d < 0, will use 0 instead.%c",
+WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded length %d < 0, will use 0 instead.\n",
                         __LINE__, FOM_name, ( ( trick_name != NULL ) ? trick_name : "NULL" ),
-                        decoded_count, '\n' );
+                        decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2447,8 +2447,8 @@ WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded 
                if ( length > data_buff_size ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d > data buffer \
-size %d, will use the data buffer size instead.%c",
-                           __LINE__, FOM_name, length, data_buff_size, '\n' );
+size %d, will use the data buffer size instead.\n",
+                           __LINE__, FOM_name, length, data_buff_size );
                   length = data_buff_size;
                }
             }
@@ -2528,8 +2528,8 @@ size %d, will use the data buffer size instead.%c",
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_UNICODE_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
-                        __LINE__, FOM_name, decoded_count, '\n' );
+WARNING: For ENCODING_UNICODE_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.\n",
+                        __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -2539,8 +2539,8 @@ WARNING: For ENCODING_UNICODE_STRING attribute '%s', decoded element count %d < 
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for attribute '%s'!%c",
-                        __LINE__, num_elements, num_items, FOM_name, '\n' );
+WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for attribute '%s'!\n",
+                        __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -2581,8 +2581,8 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
-length %d < 0, will use 0 instead.%c",
-                           __LINE__, i, FOM_name, decoded_count, '\n' );
+length %d < 0, will use 0 instead.\n",
+                           __LINE__, i, FOM_name, decoded_count );
                   length = 0;
                } else {
                   length = decoded_count;
@@ -2593,7 +2593,7 @@ length %d < 0, will use 0 instead.%c",
                if ( length > data_buff_size ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
-length %d > data buffer size %d, will use the data buffer size instead.%c",
+length %d > data buffer size %d, will use the data buffer size instead.\n",
                            __LINE__, i, FOM_name, length, data_buff_size,
                            '\n' );
                   length = data_buff_size;
@@ -2703,8 +2703,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             size_t length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will use 0 instead.%c",
-                        __LINE__, FOM_name, decoded_count, '\n' );
+WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will use 0 instead.\n",
+                        __LINE__, FOM_name, decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2722,8 +2722,8 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will u
             if ( length > data_buff_size ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buffer size \
-%d, will use the data buffer size instead.%c",
-                        __LINE__, FOM_name, length, data_buff_size, '\n' );
+%d, will use the data buffer size instead.\n",
+                        __LINE__, FOM_name, length, data_buff_size );
                length = data_buff_size;
             }
 
@@ -2798,8 +2798,8 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buff
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
-                        __LINE__, FOM_name, decoded_count, '\n' );
+WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.\n",
+                        __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -2809,8 +2809,8 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded element count %d < 0,
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for attribute '%s'!%c",
-                        __LINE__, num_elements, num_items, FOM_name, '\n' );
+WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for attribute '%s'!\n",
+                        __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -2844,8 +2844,8 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
-length %d < 0, will use 0 instead.%c",
-                           __LINE__, i, FOM_name, decoded_count, '\n' );
+length %d < 0, will use 0 instead.\n",
+                           __LINE__, i, FOM_name, decoded_count );
                   length = 0;
                } else {
                   length = decoded_count;
@@ -2856,7 +2856,7 @@ length %d < 0, will use 0 instead.%c",
                if ( length > data_buff_size ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
-length %d > data buffer size %d, will use the data buffer size instead.%c",
+length %d > data buffer size %d, will use the data buffer size instead.\n",
                            __LINE__, i, FOM_name, length, data_buff_size,
                            '\n' );
                   length = data_buff_size;
@@ -2964,8 +2964,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             size_t length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.%c",
-                        __LINE__, FOM_name, decoded_count, '\n' );
+WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.\n",
+                        __LINE__, FOM_name, decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2982,8 +2982,8 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
             if ( length > data_buff_size ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer size \
-%d, will use the data buffer size instead.%c",
-                        __LINE__, FOM_name, length, data_buff_size, '\n' );
+%d, will use the data buffer size instead.\n",
+                        __LINE__, FOM_name, length, data_buff_size );
                length = data_buff_size;
             }
 
@@ -3048,8 +3048,8 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
-                        __LINE__, FOM_name, decoded_count, '\n' );
+WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded element count %d < 0, will use 0 instead.\n",
+                        __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -3059,8 +3059,8 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded element count %d < 0, 
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for attribute '%s'!%c",
-                        __LINE__, num_elements, num_items, FOM_name, '\n' );
+WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for attribute '%s'!\n",
+                        __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -3094,8 +3094,8 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, attribute '%s', the decoded \
-length %d < 0, will use 0 instead.%c",
-                           __LINE__, i, FOM_name, decoded_count, '\n' );
+length %d < 0, will use 0 instead.\n",
+                           __LINE__, i, FOM_name, decoded_count );
                   length = 0;
                } else {
                   length = decoded_count;
@@ -3106,8 +3106,8 @@ length %d < 0, will use 0 instead.%c",
                if ( length > data_buff_size ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, attribute '%s', the decoded \
-length %d > data buffer size %d, will use the data buffer size instead.%c",
-                           __LINE__, i, FOM_name, length, data_buff_size, '\n' );
+length %d > data buffer size %d, will use the data buffer size instead.\n",
+                           __LINE__, i, FOM_name, length, data_buff_size );
                   length = data_buff_size;
                }
 

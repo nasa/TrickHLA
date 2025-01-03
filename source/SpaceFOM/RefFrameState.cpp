@@ -153,8 +153,8 @@ void RefFrameState::pack_from_working_data()
          if ( strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
             // Frames are different, so reassign the new frame string.
             if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
-               send_hs( stderr, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'%c",
-                        __LINE__, '\n' );
+               send_hs( stderr, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
+                        __LINE__ );
             }
             packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
          }
@@ -164,8 +164,8 @@ void RefFrameState::pack_from_working_data()
    } else {
       if ( packing_data.parent_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
-            send_hs( stderr, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'%c",
-                     __LINE__, '\n' );
+            send_hs( stderr, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
+                     __LINE__ );
          }
          packing_data.parent_name = NULL;
       }
@@ -209,8 +209,8 @@ void RefFrameState::unpack_into_working_data()
       if ( ref_frame_data->name != NULL ) {
          if ( !strcmp( ref_frame_data->name, packing_data.name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( ref_frame_data->name ) ) ) {
-               send_hs( stderr, "RefFrameState::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ref_frame_data->name'%c",
-                        __LINE__, '\n' );
+               send_hs( stderr, "RefFrameState::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ref_frame_data->name'\n",
+                        __LINE__ );
             }
             ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
          }
@@ -223,8 +223,8 @@ void RefFrameState::unpack_into_working_data()
       if ( ref_frame_data->parent_name != NULL ) {
          if ( !strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( ref_frame_data->parent_name ) ) ) {
-               send_hs( stderr, "RefFrameState::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ref_frame_data->parent_name'%c",
-                        __LINE__, '\n' );
+               send_hs( stderr, "RefFrameState::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ref_frame_data->parent_name'\n",
+                        __LINE__ );
             }
 
             if ( packing_data.parent_name[0] != '\0' ) {
