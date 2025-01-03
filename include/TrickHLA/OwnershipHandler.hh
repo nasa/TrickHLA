@@ -203,9 +203,9 @@ class OwnershipHandler : public CheckpointConversionBase
    AttributeOwnershipMap pull_requests; ///< @trick_io{**} Map of pull ownership user requests.
    AttributeOwnershipMap push_requests; ///< @trick_io{**} Map of push ownership user requests.
 
-   size_t         pull_items_cnt; ///< @trick_units{count} Number of pull items
+   int            pull_items_cnt; ///< @trick_units{count} Number of pull items
    OwnershipItem *pull_items;     ///< @trick_units{--}    Array of pulled attributes
-   size_t         push_items_cnt; ///< @trick_units{count} Number of push items
+   int            push_items_cnt; ///< @trick_units{count} Number of push items
    OwnershipItem *push_items;     ///< @trick_units{--}    Array of pushed attributes
 
   private:

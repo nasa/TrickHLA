@@ -4752,7 +4752,7 @@ void Object::push_ownership_at_init(
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &ownership_mutex );
 
-      for ( int i = 0; i < attr_name_vector.size(); ++i ) {
+      for ( int i = 0; i < (int)attr_name_vector.size(); ++i ) {
          Attribute const *attr = get_attribute( attr_name_vector[i] );
 
          if ( attr == NULL ) {
@@ -5439,7 +5439,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
       // Perform a blocking loop until ownership of all locally owned published
       // attributes is restored...
       int ownership_counter = 0;
-      while ( ownership_counter < attr_hdl_set.size() ) {
+      while ( ownership_counter < (int)attr_hdl_set.size() ) {
 
          // Reset ownership count for this loop through all the attributes
          ownership_counter = 0;
@@ -5487,7 +5487,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
 
          sleep_timer.sleep();
 
-         if ( ownership_counter < attr_hdl_set.size() ) {
+         if ( ownership_counter < (int)attr_hdl_set.size() ) {
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();

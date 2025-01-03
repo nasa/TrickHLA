@@ -87,7 +87,7 @@ class ParameterItem : public Item
   public:
    int index; ///< @trick_units{--} Index to the applicable parameter.
 
-   size_t         size; ///< @trick_units{--} Number of bytes in the parameter data.
+   int            size; ///< @trick_units{--} Number of bytes in the parameter data.
    unsigned char *data; ///< @trick_units{--} Parameter data.
 
   private:

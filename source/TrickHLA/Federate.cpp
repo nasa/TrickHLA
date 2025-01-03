@@ -973,7 +973,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
       // Make sure that the federate name does not exist before adding.
       bool found = false;
-      for ( size_t i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
+      for ( int i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
          if ( joined_federate_names[i] == federate_name_ws ) {
             found = true;
          }
@@ -1021,9 +1021,9 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // Decode size from Big Endian encoded integer.
       unsigned char const *data = static_cast< unsigned char const * >( attr_iter->second.data() );
 
-      size_t size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                       ? Utilities::byteswap_int( *reinterpret_cast< int const * >( data ) )
-                       : *reinterpret_cast< int const * >( data );
+      int size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                    ? Utilities::byteswap_int( *reinterpret_cast< int const * >( data ) )
+                    : *reinterpret_cast< int const * >( data );
       if ( size != 4 ) {
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
@@ -2673,7 +2673,7 @@ void Federate::setup_checkpoint()
          // When user clicks Dump Chkpnt, we need to set the save_name here
          string trick_filename;
          string slash( "/" );
-         size_t found;
+         int    found;
          string save_name_str;
 
          // get checkpoint file name specified in control panel
@@ -2942,7 +2942,7 @@ void Federate::setup_restore()
    if ( this->announce_restore ) {
       string trick_filename;
       string slash_fedname( "/" + string( get_federation_name() ) + "_" );
-      size_t found;
+      int    found;
 
       // Otherwise set restore_name_str using trick's file name
       trick_filename = checkpoint_get_load_file();
@@ -6167,7 +6167,7 @@ MOM just informed us that there are %d federates currently running in the federa
 
    ask_MOM_for_federate_names();
 
-   size_t joinedFedCount = 0;
+   int joinedFedCount = 0;
 
    // Wait for all the required federates to join.
    this->all_federates_joined = false;
@@ -8074,9 +8074,9 @@ void Federate::rebuild_federate_handles(
       // Decode size from Big Endian encoded integer.
       unsigned char const *dataPtr = reinterpret_cast< unsigned char const * >( attr_iter->second.data() );
 
-      size_t size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                       ? Utilities::byteswap_int( *reinterpret_cast< int const * >( dataPtr ) )
-                       : *reinterpret_cast< int const * >( dataPtr );
+      int size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                    ? Utilities::byteswap_int( *reinterpret_cast< int const * >( dataPtr ) )
+                    : *reinterpret_cast< int const * >( dataPtr );
 
       if ( size != 4 ) {
          ostringstream errmsg;
@@ -8186,7 +8186,7 @@ bool Federate::is_a_required_startup_federate(
             // look for instance attributes of a required object. to do this,
             // check if the "required federate name" is found inside the supplied
             // federate name.
-            size_t found = fed_name.find( required_fed_name );
+            int found = fed_name.find( required_fed_name );
             if ( found != wstring::npos ) {
                // found the "required federate name" inside the supplied federate name
                return true;

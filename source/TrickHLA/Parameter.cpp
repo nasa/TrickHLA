@@ -549,7 +549,7 @@ VariableLengthData Parameter::get_encoded_parameter_value()
 }
 
 bool Parameter::extract_data(
-   size_t const         param_size,
+   int const            param_size,
    unsigned char const *param_data )
 {
    // Make sure we actually have parameter data to process.
@@ -559,7 +559,7 @@ bool Parameter::extract_data(
 
    // Determine the number of bytes we expect to receive based on how much
    // memory the Trick simulation variable is using.
-   size_t expected_byte_count = get_parameter_size();
+   int expected_byte_count = get_parameter_size();
 
    switch ( rti_encoding ) {
       case ENCODING_BOOLEAN: {
@@ -738,7 +738,7 @@ from parameter map, buffer-size:%d, expected-byte-count:%d.\n",
 }
 
 void Parameter::ensure_buffer_capacity(
-   size_t capacity )
+   int capacity )
 {
    if ( capacity > buffer_capacity ) {
       buffer_capacity = capacity;
@@ -769,7 +769,7 @@ void Parameter::ensure_buffer_capacity(
 
 void Parameter::calculate_size_and_number_of_items()
 {
-   size_t num_bytes = 0;
+   int num_bytes = 0;
 
    // Handle Strings differently since we need to know the length of each string.
    if ( ( attr->type == TRICK_STRING )
@@ -785,7 +785,7 @@ void Parameter::calculate_size_and_number_of_items()
             // Determine total number of bytes used by the Trick simulation
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
                char *s = *( static_cast< char ** >( address ) + i );
                if ( s != NULL ) {
                   int length = get_size( s );
@@ -800,7 +800,7 @@ void Parameter::calculate_size_and_number_of_items()
             // For the ENCODING_C_STRING, ENCODING_UNICODE_STRING, and ENCODING_ASCII_STRING
             // encodings assume the string is NULL terminated and determine the
             // number of characters using strlen().
-            for ( size_t i = 0; i < num_items; ++i ) {
+            for ( int i = 0; i < num_items; ++i ) {
                char const *s = *( static_cast< char ** >( address ) + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
@@ -884,7 +884,7 @@ void Parameter::calculate_size_and_number_of_items()
  * @details If the parameter is static in size it uses a cached size value
  * otherwise the size is calculated.
  */
-size_t Parameter::get_parameter_size()
+int Parameter::get_parameter_size()
 {
    if ( !size_is_static ) {
       calculate_size_and_number_of_items();
@@ -919,7 +919,7 @@ bool Parameter::is_static_in_size() const
  */
 void Parameter::calculate_static_number_of_items()
 {
-   size_t length = 1;
+   int length = 1;
 
    // Determine the number of items this parameter has (i.e. items in array).
    if ( attr->num_index > 0 ) {
@@ -1308,7 +1308,7 @@ void Parameter::encode_boolean_to_buffer()
    if ( num_items == 1 ) {
       int_dest[0] = ( bool_src[0] ? HLAtrue : 0 );
    } else {
-      for ( size_t k = 0; k < num_items; ++k ) {
+      for ( int k = 0; k < num_items; ++k ) {
          int_dest[k] = ( bool_src[k] ? HLAtrue : 0 );
       }
    }
@@ -1332,7 +1332,7 @@ void Parameter::decode_boolean_from_buffer() const
    if ( num_items == 1 ) {
       bool_dest[0] = ( int_src[0] != 0 );
    } else {
-      for ( size_t k = 0; k < num_items; ++k ) {
+      for ( int k = 0; k < num_items; ++k ) {
          bool_dest[k] = ( int_src[k] != 0 );
       }
    }
@@ -1563,7 +1563,7 @@ void Parameter::encode_opaque_data_to_buffer()
          *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 1 );
          *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 0 );
       }
-      size_t byte_count = 4;
+      int byte_count = 4;
 
       // Copy the data to the output buffer.
       if ( ( s != NULL ) && ( num_elements > 0 ) ) {
@@ -3137,11 +3137,11 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
  * for now.
  */
 void Parameter::byteswap_buffer_copy(
-   void        *dest,
-   void const  *src,
-   int const    type,
-   size_t const length,
-   size_t const num_bytes ) const
+   void       *dest,
+   void const *src,
+   int const   type,
+   int const   length,
+   int const   num_bytes ) const
 {
    if ( num_bytes == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
@@ -3175,7 +3175,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   d_dest[k] = Utilities::byteswap_double( d_src[k] );
                }
             }
@@ -3188,7 +3188,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   f_dest[k] = Utilities::byteswap_float( f_src[k] );
                }
             }
@@ -3207,7 +3207,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   s_dest[k] = Utilities::byteswap_short( s_src[k] );
                }
             }
@@ -3219,7 +3219,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   us_dest[k] = Utilities::byteswap_unsigned_short( us_src[k] );
                }
             }
@@ -3231,7 +3231,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   i_dest[k] = Utilities::byteswap_int( i_src[k] );
                }
             }
@@ -3243,7 +3243,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ui_dest[k] = Utilities::byteswap_unsigned_int( ui_src[k] );
                }
             }
@@ -3255,7 +3255,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   l_dest[k] = Utilities::byteswap_long( l_src[k] );
                }
             }
@@ -3267,7 +3267,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ul_dest[k] = Utilities::byteswap_unsigned_long( ul_src[k] );
                }
             }
@@ -3279,7 +3279,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ll_dest[k] = Utilities::byteswap_long_long( ll_src[k] );
                }
             }
@@ -3291,7 +3291,7 @@ void Parameter::byteswap_buffer_copy(
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
-               for ( size_t k = 0; k < length; ++k ) {
+               for ( int k = 0; k < length; ++k ) {
                   ull_dest[k] = Utilities::byteswap_unsigned_long_long( ull_src[k] );
                }
             }

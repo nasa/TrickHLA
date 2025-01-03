@@ -198,7 +198,7 @@ void OwnershipHandler::decode_checkpoint()
    // Decode all the ownership-items in the pull_items.
    if ( pull_items_cnt > 0 ) {
 
-      for ( size_t count = 0; count < pull_items_cnt; ++count ) {
+      for ( int count = 0; count < pull_items_cnt; ++count ) {
 
          double time    = pull_items[count].time;
          ownership_iter = pull_requests.find( time );
@@ -227,7 +227,7 @@ void OwnershipHandler::decode_checkpoint()
    // Decode all the ownership-items in the push_items.
    if ( push_items_cnt > 0 ) {
 
-      for ( size_t count = 0; count < push_items_cnt; ++count ) {
+      for ( int count = 0; count < push_items_cnt; ++count ) {
 
          double time    = push_items[count].time;
          ownership_iter = push_requests.find( time );
@@ -258,7 +258,7 @@ void OwnershipHandler::free_checkpoint()
 {
    // If there are any pull_request entries, delete them
    if ( pull_items_cnt > 0 ) {
-      for ( size_t i = 0; i < pull_items_cnt; ++i ) {
+      for ( int i = 0; i < pull_items_cnt; ++i ) {
          pull_items[i].clear();
       }
       if ( trick_MM->delete_var( static_cast< void * >( pull_items ) ) ) {
@@ -271,7 +271,7 @@ void OwnershipHandler::free_checkpoint()
 
    // if there are any push_request entries, delete them
    if ( push_items_cnt > 0 ) {
-      for ( size_t i = 0; i < push_items_cnt; ++i ) {
+      for ( int i = 0; i < push_items_cnt; ++i ) {
          push_items[i].clear();
       }
       if ( trick_MM->delete_var( static_cast< void * >( push_items ) ) ) {

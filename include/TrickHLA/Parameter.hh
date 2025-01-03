@@ -154,7 +154,7 @@ class Parameter
 
    /*! @brief Calculate the number of attribute items associated with this parameter.
     *  @return The number of attribute items associated with this parameter. */
-   size_t calculate_number_of_items()
+   int calculate_number_of_items()
    {
       calculate_size_and_number_of_items();
       return num_items;
@@ -193,7 +193,7 @@ class Parameter
     *  @param param_size Parameter data size.
     *  @param param_data Parameter data.
     *  @return True if successfully extracted data, false otherwise. */
-   bool extract_data( size_t const         param_size,
+   bool extract_data( int const            param_size,
                       unsigned char const *param_data );
 
    /*! @brief Check if a parameter value has changed.
@@ -239,12 +239,12 @@ class Parameter
 
   private:
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
-   size_t         buffer_capacity; ///< @trick_units{--} The capacity of the buffer.
+   int            buffer_capacity; ///< @trick_units{--} The capacity of the buffer.
 
    bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
 
-   size_t size;      ///< @trick_units{--} The size of the attribute in bytes.
-   size_t num_items; ///< @trick_units{--} Number of attribute items, length of the array.
+   int size;      ///< @trick_units{--} The size of the attribute in bytes.
+   int num_items; ///< @trick_units{--} Number of attribute items, length of the array.
 
    bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
 
@@ -260,14 +260,14 @@ class Parameter
 
    /*! @brief Ensure the parameter buffer has at least the specified capacity.
     *  @param capacity Desired capacity of the buffer in bytes. */
-   void ensure_buffer_capacity( size_t capacity );
+   void ensure_buffer_capacity( int capacity );
 
    /*! @brief Pack the parameter into the buffer using the appropriate encoding. */
    void pack_parameter_buffer();
 
    /*! @brief Gets the parameter size in bytes.
     *  @return The size in bytes of the parameter. */
-   size_t get_parameter_size();
+   int get_parameter_size();
 
    /*! @brief Calculates the parameter size in bytes and the number of items
     * it contains. */
@@ -315,11 +315,11 @@ class Parameter
     *  @param type      The type of the data.
     *  @param length    The length/number of entries in the source array.
     *  @param num_bytes The number of bytes in the source array. */
-   void byteswap_buffer_copy( void        *dest,
-                              void const  *src,
-                              int const    type,
-                              size_t const length,
-                              size_t const num_bytes ) const;
+   void byteswap_buffer_copy( void       *dest,
+                              void const *src,
+                              int const   type,
+                              int const   length,
+                              int const   num_bytes ) const;
 
   private:
    // Do not allow the copy constructor or assignment operator.

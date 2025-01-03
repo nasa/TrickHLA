@@ -255,7 +255,7 @@ void Interaction::initialize(
 
 void Interaction::set_user_supplied_tag(
    unsigned char const *tag,
-   size_t               tag_size )
+   int                  tag_size )
 {
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;

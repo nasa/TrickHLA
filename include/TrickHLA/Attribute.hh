@@ -416,7 +416,7 @@ class Attribute
 
    /*! @brief Calculate the number of items in the attribute.
     *  @return Number of items in the attribute. */
-   size_t const calculate_number_of_items()
+   int const calculate_number_of_items()
    {
       calculate_size_and_number_of_items();
       return num_items;
@@ -424,7 +424,7 @@ class Attribute
 
    /*! @brief Gets the attribute size in bytes.
     *  @return The size in bytes of the attribute. */
-   size_t get_attribute_size();
+   int get_attribute_size();
 
   private:
    /*! @brief Calculates the attribute size in bytes and the number of items it contains. */
@@ -435,7 +435,7 @@ class Attribute
 
    /*! @brief Ensure the attribute buffer has at least the specified capacity.
     *  @param capacity Desired capacity of the buffer in bytes. */
-   void ensure_buffer_capacity( size_t capacity );
+   void ensure_buffer_capacity( int capacity );
 
    /*! @brief Determines if the HLA object attribute type is supported given
     *         the RTI encoding.
@@ -480,19 +480,19 @@ class Attribute
     *  @param length    The length/number of entries in the source array.
     *  @param num_bytes The number of bytes in the source array.
     *  */
-   void byteswap_buffer_copy( void        *dest,
-                              void const  *src,
-                              int const    type,
-                              size_t const length,
-                              size_t const num_bytes ) const;
+   void byteswap_buffer_copy( void       *dest,
+                              void const *src,
+                              int const   type,
+                              int const   length,
+                              int const   num_bytes ) const;
 
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
-   size_t         buffer_capacity; ///< @trick_units{count} The capacity of the buffer.
+   int            buffer_capacity; ///< @trick_units{count} The capacity of the buffer.
 
    bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
 
-   size_t size;      ///< @trick_units{count} The size of the attribute in bytes.
-   size_t num_items; ///< @trick_units{count} Number of attribute items, length of the array.
+   int size;      ///< @trick_units{count} The size of the attribute in bytes.
+   int num_items; ///< @trick_units{count} Number of attribute items, length of the array.
 
    bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
 
