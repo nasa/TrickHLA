@@ -1007,7 +1007,7 @@ bool Attribute::is_static_in_size() const
       // If this is not an array (i.e. num_index == 0) or has static arrays then
       // this attribute is static in size.
       if ( ref2->attr->num_index > 0 ) {
-         for ( unsigned int i = 0; i < ref2->attr->num_index; ++i ) {
+         for ( int i = 0; i < ref2->attr->num_index; ++i ) {
             // Make sure each dimension is statically defined (i.e. not zero).
             if ( ref2->attr->index[i].size <= 0 ) {
                return false;
@@ -1032,7 +1032,7 @@ void Attribute::calculate_static_number_of_items()
 
    // Determine the number of items this attribute has (i.e. items in array).
    if ( ref2->attr->num_index > 0 ) {
-      for ( unsigned int i = 0; i < ref2->attr->num_index; ++i ) {
+      for ( int i = 0; i < ref2->attr->num_index; ++i ) {
          if ( ref2->attr->index[i].size > 0 ) {
             length *= ref2->attr->index[i].size;
          }
