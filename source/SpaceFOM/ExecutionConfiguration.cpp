@@ -696,6 +696,7 @@ void ExecutionConfiguration::setup_ref_attributes(
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"
              << " 'root_frame_name' value of the ExCO!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Find the 'root_frame_name' value in the ExCO ATTRIBUTES.

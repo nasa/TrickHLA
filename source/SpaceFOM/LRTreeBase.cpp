@@ -392,7 +392,7 @@ LRTreeNodeBase *LRTreeBase::find_node( string const &name )
  */
 void LRTreeBase::print_nodes( std::ostream &stream )
 {
-   for ( int iinc = 0; iinc < nodes.size(); ++iinc ) {
+   for ( unsigned int iinc = 0; iinc < nodes.size(); ++iinc ) {
       nodes[iinc]->print_node( stream );
    }
    return;
@@ -407,19 +407,19 @@ void LRTreeBase::print_paths( std::ostream &stream )
    if ( paths != NULL ) {
 
       // Get the size of the path matrix.
-      int num_nodes = this->nodes.size();
+      unsigned int num_nodes = this->nodes.size();
 
       // Print out header tag.
       stream << "LRTreeBase::print_paths: " << '\n';
 
       // Iterate through the rows.
-      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have be allocated.
          if ( paths[iinc] != NULL ) {
 
             // Iterate through the columns.
-            for ( int jinc = 0; jinc < num_nodes; ++jinc ) {
+            for ( unsigned int jinc = 0; jinc < num_nodes; ++jinc ) {
 
                unsigned int path_size = paths[iinc][jinc].size();
 
@@ -427,7 +427,7 @@ void LRTreeBase::print_paths( std::ostream &stream )
 
                if ( path_size > 0 ) {
                   // Loop through the node path vector.
-                  for ( int kinc = 0; kinc < path_size; ++kinc ) {
+                  for ( unsigned int kinc = 0; kinc < path_size; ++kinc ) {
                      stream << paths[iinc][jinc][kinc]->node_id;
                      if ( kinc < path_size - 1 ) {
                         // stream << ", ";
@@ -464,13 +464,11 @@ void LRTreeBase::print_paths( std::ostream &stream )
  */
 bool LRTreeBase::allocate_paths()
 {
-   int num_nodes;
-
    // Free any old paths before allocating new paths.
    this->free_paths();
 
    // Size the path matrix.
-   num_nodes = this->nodes.size();
+   unsigned int num_nodes = this->nodes.size();
 
    // Allocate the rows of the matrix.
    this->paths = new LRTreeNodeVector *[num_nodes];
@@ -487,7 +485,7 @@ bool LRTreeBase::allocate_paths()
 
       // Allocate the columns of the path matrix.
       // Note that this is always a square matrix.
-      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Allocate the columns of the matrix.
          this->paths[iinc] = new LRTreeNodeVector[num_nodes];
@@ -513,16 +511,16 @@ void LRTreeBase::free_paths()
    if ( paths != NULL ) {
 
       // Size the path matrix.
-      int num_nodes = this->nodes.size();
+      unsigned int num_nodes = this->nodes.size();
 
       // Iterate through and free the path matrix.
       // Iterate through the rows.
-      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have been allocated.
          if ( paths[iinc] != NULL ) {
 
-            for ( int jinc = 0; jinc < num_nodes; ++jinc ) {
+            for ( unsigned int jinc = 0; jinc < num_nodes; ++jinc ) {
 
                // Clear the path vector.
                paths[iinc][jinc].clear();

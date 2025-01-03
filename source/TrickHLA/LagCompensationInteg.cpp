@@ -105,10 +105,6 @@ int LagCompensationInteg::integrate(
       // Integration inner loop.
       // Step through the integrator's integration steps.
       do {
-
-         // Initialize the integration pass.
-         ipass = 0;
-
          // Compute the derivatives of the lag compensation state vector.
          this->derivative_first();
 

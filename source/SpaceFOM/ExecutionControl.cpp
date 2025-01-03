@@ -442,6 +442,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
              << " FAILED to aallocate enough memory for the ATTRIBUTES for the"
              << " 'execution_mode' value of the MTR interaction!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Find the 'execution_mode' value in the MTR Interaction Handler's ATTRIBUTES.

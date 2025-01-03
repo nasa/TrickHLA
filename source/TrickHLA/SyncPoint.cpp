@@ -80,7 +80,7 @@ SyncPoint::SyncPoint(
  */
 SyncPoint::~SyncPoint()
 {
-   this->free_checkpoint();
+   return;
 }
 
 bool const SyncPoint::is_valid() const

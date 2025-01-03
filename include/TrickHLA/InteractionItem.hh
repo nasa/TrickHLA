@@ -92,7 +92,7 @@ class InteractionItem : public Item
    int            parm_items_count; ///< @trick_units{--} Number of array elements
    ParameterItem *parm_items;       ///< @trick_units{--} checkpoint-able parameter items array
 
-   size_t         user_supplied_tag_size; ///< @trick_units{--} Number of bytes in the user supplied tag.
+   int            user_supplied_tag_size; ///< @trick_units{--} Number of bytes in the user supplied tag.
    unsigned char *user_supplied_tag;      ///< @trick_units{--} User supplied tag data.
 
    bool      order_is_TSO; ///< @trick_units{--} True if Timestamp Order, false for Receive Order.

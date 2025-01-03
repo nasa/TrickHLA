@@ -124,7 +124,6 @@ SyncPointList::SyncPointList(
 SyncPointList::~SyncPointList()
 {
    clear();
-   this->free_checkpoint();
 }
 
 void SyncPointList::setup(
