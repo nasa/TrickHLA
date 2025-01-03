@@ -1761,7 +1761,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
 
       // Do a sanity check on the decoded length as compared to how much
       // data is in the buffer, i.e. data_buff_size = size - 4.
-      size_t data_buff_size;
+      int data_buff_size;
       if ( size > 4 ) {
          data_buff_size = size - 4;
       } else {
@@ -2417,7 +2417,7 @@ void Attribute::decode_string_from_buffer() // RETURN: -- None.
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
-            size_t length;
+            int length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded length %d < 0, will use 0 instead.\n",
@@ -2432,7 +2432,7 @@ WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded 
             // need to do a bounds check so that we don't overflow the users
             // variable.
             if ( size_is_static ) {
-               size_t data_buff_size;
+               int data_buff_size;
                if ( ref2->attr->type == TRICK_STRING ) {
                   if ( size > 4 ) {
                      data_buff_size = ( size - 4 ) / 2;
@@ -2577,7 +2577,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
-               size_t length;
+               int length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
@@ -2651,7 +2651,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                } else {
 
                   // Decode the UTF-16 characters.
-                  for ( size_t k = 0; k < length; ++k ) {
+                  for ( int k = 0; k < length; ++k ) {
                      input++; // skip the high-character of the UTF-16 encoding
                      output[k] = *( input++ );
                   }
@@ -2816,7 +2816,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
 
             // Calculate the size of the data minus the encoded length fields.
             // data_buff_size = size - 4 - 4 * num_elements
-            size_t data_buff_size;
+            int data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
                data_buff_size = size - ( 4 * ( num_elements + 1 ) );
             } else {
@@ -2824,7 +2824,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
             }
 
             // Decode each of the HLAASCIIstring elements.
-            for ( size_t i = 0; i < num_elements; ++i ) {
+            for ( int i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -3074,7 +3074,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
             }
 
             // Decode each of the HLAASCIIstring elements.
-            for ( size_t i = 0; i < num_elements; ++i ) {
+            for ( int i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -3219,7 +3219,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
          input = buffer;
 
          // Decode the box-car encoded strings.
-         for ( size_t i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < num_items; ++i ) {
 
             // Find the end of the encoded string which is the null character.
             while ( *( input + end_index ) != '\0' ) {
