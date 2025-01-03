@@ -2326,7 +2326,7 @@ void Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM()
 }
 
 void Federate::publish_interaction_class(
-   RTI1516_NAMESPACE::InteractionClassHandle class_handle )
+   RTI1516_NAMESPACE::InteractionClassHandle const &class_handle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::publish_interaction_class():%d\n",
@@ -2364,7 +2364,7 @@ void Federate::publish_interaction_class(
 }
 
 void Federate::unpublish_interaction_class(
-   RTI1516_NAMESPACE::InteractionClassHandle class_handle )
+   RTI1516_NAMESPACE::InteractionClassHandle const &class_handle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::unpublish_interaction_class():%d\n",
@@ -2402,7 +2402,7 @@ void Federate::unpublish_interaction_class(
 }
 
 void Federate::send_interaction(
-   RTI1516_NAMESPACE::InteractionClassHandle         class_handle,
+   RTI1516_NAMESPACE::InteractionClassHandle const  &class_handle,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &parameter_list )
 {
    // Macro to save the FPU Control Word register value.

@@ -209,17 +209,17 @@ void Parameter::initialize(
    void       *in_addr,
    ATTRIBUTES *in_attr )
 {
-   address = in_addr;
-   attr    = in_attr;
+   this->address = in_addr;
+   this->attr    = in_attr;
 
-   if ( address == NULL ) {
+   if ( this->address == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected NULL trick variable address." << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   if ( attr == NULL ) {
+   if ( this->attr == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
@@ -3115,6 +3115,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                       << Utilities::next_positive_multiple_of_8( length )
                       << "!" << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
+               return;
             }
 
             memcpy( *( static_cast< char ** >( address ) + i ),

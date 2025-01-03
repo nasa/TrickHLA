@@ -406,7 +406,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Set the HLA Object class handle for this object.
     *  @param id The HLA ObjectClassHandle for this object. */
-   void set_class_handle( RTI1516_NAMESPACE::ObjectClassHandle id )
+   void set_class_handle( RTI1516_NAMESPACE::ObjectClassHandle const &id )
    {
       this->class_handle = id;
    }
@@ -427,7 +427,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Set the HLA Object instance handle for this object instance.
     *  @param id The HLA ObjectInstanceHandle for this object instance. */
-   void set_instance_handle( RTI1516_NAMESPACE::ObjectInstanceHandle id )
+   void set_instance_handle( RTI1516_NAMESPACE::ObjectInstanceHandle const &id )
    {
       this->instance_handle = id;
    }
@@ -435,8 +435,8 @@ class Object : public CheckpointConversionBase
    /*! @brief Set the HLA Object instance handle and name for this object instance.
     *  @param id The HLA ObjectInstanceHandle for this object instance.
     *  @param instance_name The associated object instance name. */
-   void set_instance_handle_and_name( RTI1516_NAMESPACE::ObjectInstanceHandle id,
-                                      std::wstring const                     &instance_name )
+   void set_instance_handle_and_name( RTI1516_NAMESPACE::ObjectInstanceHandle const &id,
+                                      std::wstring const                            &instance_name )
    {
       set_instance_handle( id );
       std::string instance_name_str;
@@ -669,7 +669,7 @@ class Object : public CheckpointConversionBase
    /*! @brief Gets the attribute for the given HLA Attribute-Handle.
     *  @return Associated TrickHLA::Attribute.
     *  @param attr_handle Attribute ID. */
-   Attribute *get_attribute( RTI1516_NAMESPACE::AttributeHandle attr_handle );
+   Attribute *get_attribute( RTI1516_NAMESPACE::AttributeHandle const &attr_handle );
 
    /*! @brief Gets the attribute for the given FOM name.
     *  @return Associated TrickHLA::Attribute.

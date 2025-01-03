@@ -155,7 +155,8 @@ ExecutionControlBase::ExecutionControlBase(
  */
 ExecutionControlBase::~ExecutionControlBase()
 {
-   this->clear_mode_values();
+   // TODO: Should not call a virtual function from within virtual destructor.
+   // this->clear_mode_values();
 
    // Free the memory used for the multiphase initialization synchronization points.
    if ( multiphase_init_sync_points != NULL ) {

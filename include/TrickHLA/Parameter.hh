@@ -180,7 +180,7 @@ class Parameter
 
    /*! @brief Set the associated HLA Parameter handle.
     *  @param hdl The associated HLA Parameter handle. */
-   void set_parameter_handle( RTI1516_NAMESPACE::ParameterHandle hdl )
+   void set_parameter_handle( RTI1516_NAMESPACE::ParameterHandle const hdl )
    {
       this->param_handle = hdl;
    }

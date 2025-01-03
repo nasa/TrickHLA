@@ -801,7 +801,7 @@ class Federate
    /*! @brief Check with the MOM if the is an HLAfederate class.
     *  @return True if a MOM HLAfederate class.
     *  @param federate_class Object class handle to check. */
-   bool is_MOM_HLAfederate_class( RTI1516_NAMESPACE::ObjectClassHandle federate_class ) const
+   bool is_MOM_HLAfederate_class( RTI1516_NAMESPACE::ObjectClassHandle const &federate_class ) const
    {
       return ( federate_class == this->MOM_HLAfederate_class_handle );
    }
@@ -848,7 +848,7 @@ class Federate
    /*! @brief Query if the an object class handle is a federation class.
     *  @return True if class handle is a federation class; False otherwise.
     *  @param class_hndl HLA object class handle to test. */
-   bool is_MOM_HLAfederation_class( RTI1516_NAMESPACE::ObjectClassHandle class_hndl ) const
+   bool is_MOM_HLAfederation_class( RTI1516_NAMESPACE::ObjectClassHandle const &class_hndl ) const
    {
       return ( class_hndl == this->MOM_HLAfederation_class_handle );
    }
@@ -1302,16 +1302,16 @@ class Federate
 
    /*! @brief Publish Interaction class.
     *  @param class_handle Interaction class handle. */
-   void publish_interaction_class( RTI1516_NAMESPACE::InteractionClassHandle class_handle );
+   void publish_interaction_class( RTI1516_NAMESPACE::InteractionClassHandle const &class_handle );
 
    /*! @brief Unpublish Interaction class.
     *  @param class_handle Interaction class handle. */
-   void unpublish_interaction_class( RTI1516_NAMESPACE::InteractionClassHandle class_handle );
+   void unpublish_interaction_class( RTI1516_NAMESPACE::InteractionClassHandle const &class_handle );
 
    /*! @brief Send the Interaction for the specified interaction class and parameter list.
     *  @param class_handle   Interaction class handle.
     *  @param parameter_list Parameter values in a map. */
-   void send_interaction( RTI1516_NAMESPACE::InteractionClassHandle         class_handle,
+   void send_interaction( RTI1516_NAMESPACE::InteractionClassHandle const  &class_handle,
                           RTI1516_NAMESPACE::ParameterHandleValueMap const &parameter_list );
 
    //

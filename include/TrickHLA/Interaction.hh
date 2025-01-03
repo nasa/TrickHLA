@@ -211,7 +211,7 @@ class Interaction
 
    /*! @brief Set the interaction InteractionClassHandle.
     *  @param id The interaction InteractionClassHandle. */
-   void set_class_handle( RTI1516_NAMESPACE::InteractionClassHandle id )
+   void set_class_handle( RTI1516_NAMESPACE::InteractionClassHandle const &id )
    {
       this->class_handle = id;
    }

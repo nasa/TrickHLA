@@ -4756,6 +4756,8 @@ void Object::push_ownership_at_init(
          Attribute const *attr = get_attribute( attr_name_vector[i] );
 
          if ( attr == NULL ) {
+            delete attr_hdl_set;
+
             ostringstream errmsg;
             errmsg << "Object::push_ownership_at_init():" << __LINE__
                    << " ERROR: For object '" << get_name_string()
@@ -5048,7 +5050,7 @@ Int64Time Object::get_granted_time() const
 }
 
 Attribute *Object::get_attribute(
-   RTI1516_NAMESPACE::AttributeHandle attr_handle )
+   RTI1516_NAMESPACE::AttributeHandle const &attr_handle )
 {
    // We use a map with the key being the AttributeHandle for fast lookups.
    AttributeMap::const_iterator iter = thla_attribute_map.find( attr_handle );

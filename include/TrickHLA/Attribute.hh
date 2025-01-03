@@ -363,7 +363,7 @@ class Attribute
 
    /*! @brief Set the RTI attribute handle.
     *  @param id The RTI attribute handle associated with this attribute. */
-   void set_attribute_handle( RTI1516_NAMESPACE::AttributeHandle id )
+   void set_attribute_handle( RTI1516_NAMESPACE::AttributeHandle const &id )
    {
       this->attr_handle = id;
    }
