@@ -639,7 +639,7 @@ void Federate::restart_initialization()
       }
 
       // Validate the name of each Federate known to be in the Federation.
-      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_feds_count; ++i ) {
 
          // A NULL or zero length Federate name is not allowed.
          if ( ( known_feds[i].name == NULL ) || ( *known_feds[i].name == '\0' ) ) {
@@ -1421,7 +1421,7 @@ bool Federate::is_joined_federate(
 bool Federate::is_joined_federate(
    wstring const &federate_name )
 {
-   for ( unsigned int i = 0; i < joined_federate_names.size(); ++i ) {
+   for ( int i = 0; i < (int)joined_federate_names.size(); ++i ) {
       if ( federate_name == joined_federate_names[i] ) {
          return true;
       }
@@ -1526,12 +1526,12 @@ string Federate::wait_for_required_federates_to_join()
 
          // Determine what federates have joined only if the joined federate
          // count has changed.
-         if ( joined_fed_cnt != joined_federate_names.size() ) {
+         if ( joined_fed_cnt != (int)joined_federate_names.size() ) {
             joined_fed_cnt = joined_federate_names.size();
 
             // Count the number of joined Required federates.
             req_fed_cnt = 0;
-            for ( i = 0; i < joined_federate_names.size(); ++i ) {
+            for ( i = 0; i < (int)joined_federate_names.size(); ++i ) {
                if ( is_required_federate( joined_federate_names[i] ) ) {
                   ++req_fed_cnt;
                } else {
@@ -1563,7 +1563,7 @@ string Federate::wait_for_required_federates_to_join()
 
             // Build the federate summary as an output string stream.
             ostringstream summary;
-            unsigned int  cnt = 0;
+            int  cnt = 0;
 
             summary << "Federate::wait_for_required_federates_to_join():"
                     << __LINE__ << "\nWAITING FOR " << required_feds_count
@@ -1586,7 +1586,7 @@ string Federate::wait_for_required_federates_to_join()
             }
 
             // Summarize all the remaining non-required joined federates.
-            for ( i = 0; i < joined_federate_names.size(); ++i ) {
+            for ( i = 0; i < (int)joined_federate_names.size(); ++i ) {
                if ( !is_required_federate( joined_federate_names[i] ) ) {
                   ++cnt;
 
@@ -2618,7 +2618,7 @@ void Federate::perform_checkpoint()
          string save_name_str;
          StringUtilities::to_string( save_name_str, this->save_name );
          string str_save_label = string( get_federation_name() ) + "_" + save_name_str;
-         for ( unsigned int i = 0; i < str_save_label.length(); ++i ) {
+         for ( int i = 0; i < str_save_label.length(); ++i ) {
             if ( str_save_label[i] == '/' ) {
                str_save_label[i] = '_';
             }
@@ -2884,7 +2884,7 @@ void Federate::perform_restore()
          string restore_name_str;
          StringUtilities::to_string( restore_name_str, restore_name );
          string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
-         for ( unsigned int i = 0; i < str_restore_label.length(); ++i ) {
+         for ( int i = 0; i < str_restore_label.length(); ++i ) {
             if ( str_restore_label[i] == '/' ) {
                str_restore_label[i] = '_';
             }
@@ -6611,7 +6611,7 @@ void Federate::write_running_feds_file(
       file << this->running_feds_count << '\n';
 
       // echo the contents of running_feds into file...
-      for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
+      for ( int i = 0; i < this->running_feds_count; ++i ) {
          file << trick_MM->mm_strdup( this->running_feds[i].MOM_instance_name ) << '\n';
          file << trick_MM->mm_strdup( this->running_feds[i].name ) << '\n';
          file << this->running_feds[i].required << '\n';
