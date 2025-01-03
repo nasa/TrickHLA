@@ -160,8 +160,8 @@ bool RefFrameTree::build_transform(
 
    // Check for a NULL allocation.
    if ( transform_data == NULL ) {
-      send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR NULL transform data!",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR NULL transform data!\n",
+               __LINE__ );
       return ( false );
    }
 
@@ -231,8 +231,8 @@ bool RefFrameTree::build_transform(
          if ( !in_frame_data.transform_to_parent( current_frame->packing_data, &out_frame_data ) ) {
 
             // Print Error message
-            send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_parent'!",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_parent'!\n",
+                     __LINE__ );
 
             // Error return.
             return ( false );
@@ -246,8 +246,8 @@ bool RefFrameTree::build_transform(
          if ( !in_frame_data.transform_to_child( next_frame->packing_data, &out_frame_data ) ) {
 
             // Print Error message
-            send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_child'!",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_child'!\n",
+                     __LINE__ );
 
             // Error return.
             return ( false );

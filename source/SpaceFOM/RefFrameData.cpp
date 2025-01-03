@@ -72,15 +72,15 @@ RefFrameData::~RefFrameData()
 {
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameData::~RefFrameData():%d ERROR deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameData::~RefFrameData():%d ERROR deleting Trick Memory for 'this->name'\N",
+                  __LINE__ );
       }
       this->name = NULL;
    }
    if ( this->parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameData::~RefFrameData():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameData::~RefFrameData():%d ERROR deleting Trick Memory for 'this->parent_name'\N",
+                  __LINE__ );
       }
       this->parent_name = NULL;
    }
@@ -152,8 +152,8 @@ void RefFrameData::set_name( char const *new_name )
 
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameData::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameData::set_name():%d ERROR deleting Trick Memory for 'this->name'\N",
+                  __LINE__ );
       }
    }
    this->name = trick_MM->mm_strdup( new_name );
@@ -169,8 +169,8 @@ void RefFrameData::set_parent_name( char const *name )
    // Set the parent frame name appropriately.
    if ( this->parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameData::set_parent_name():%d ERROR deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameData::set_parent_name():%d ERROR deleting Trick Memory for 'this->name'\N",
+                  __LINE__ );
       }
    }
    if ( name != NULL ) {

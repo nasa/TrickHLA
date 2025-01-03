@@ -79,29 +79,29 @@ PhysicalEntityData::~PhysicalEntityData()
 {
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityData::~PhysicalEntityData():%d ERROR deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::PhysicalEntityData::~PhysicalEntityData():%d ERROR deleting Trick Memory for 'this->name'\n",
+                  __LINE__ );
       }
       this->name = NULL;
    }
    if ( this->type != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->type ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityData::~PhysicalEntityData():%d ERROR deleting Trick Memory for 'this->type'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::PhysicalEntityData::~PhysicalEntityData():%d ERROR deleting Trick Memory for 'this->type'\n",
+                  __LINE__ );
       }
       this->type = NULL;
    }
    if ( this->status != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->status ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityData::~PhysicalEntityData():%d ERROR deleting Trick Memory for 'this->status'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::PhysicalEntityData::~PhysicalEntityData():%d ERROR deleting Trick Memory for 'this->status'\n",
+                  __LINE__ );
       }
       this->status = NULL;
    }
    if ( this->parent_frame != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->parent_frame ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityData::~PhysicalEntityData():%d ERROR deleting Trick Memory for 'this->parent_frame'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::PhysicalEntityData::~PhysicalEntityData():%d ERROR deleting Trick Memory for 'this->parent_frame'\n",
+                  __LINE__ );
       }
       this->parent_frame = NULL;
    }
