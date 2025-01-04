@@ -38,6 +38,7 @@ def main():
    source_dirs = []
    trickhla_ignore = []
    clang_tidy_args = []
+   clang_tidy_extra_args = []
 
    #
    # Setup command line argument parsing.
@@ -191,82 +192,90 @@ def main():
    trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2010', '-DFPU_CW_PROTECTION' ]
 
    # Form relative paths to all the include directories used by TrickHLA.
-   include_dirs.extend( ['-I', './include'] )
-   include_dirs.extend( ['-I', trick_home + '/include'] )
-   include_dirs.extend( ['-I', trick_home + '/include/trick/compat'] )
-   include_dirs.extend( ['-I', trick_home + '/trick_source'] )
-   include_dirs.extend( ['-I', rti_include] )
+   include_dirs.extend( ['-I./include'] )
+   include_dirs.extend( ['-I' + trick_home + '/include'] )
+   include_dirs.extend( ['-I' + trick_home + '/include/trick/compat'] )
+   include_dirs.extend( ['-I' + trick_home + '/trick_source'] )
+   include_dirs.extend( ['-I' + rti_include] )
 
-   # Add source code and include paths to process.
-   if args.process_all or args.process_TrickHLA:
-      source_dirs.extend ( ['./source/TrickHLA/*'] )
-   if args.process_all or args.process_SpaceFOM:
-      source_dirs.extend ( ['./source/SpaceFOM/*'] )
-   if args.process_all or args.process_IMSim:
-      source_dirs.extend ( ['./source/IMSim/*'] )
-   if args.process_all or args.process_JEOD:
-      source_dirs.extend ( ['./source/JEOD/*'] )
-      if jeod_home:
-         include_dirs.extend( ['-I', jeod_home + '/models'] )
+   # Add models source code and include paths to process.
    if args.process_all or args.process_models:
       if os.path.isdir( './models/DistIf/src' ):
-         source_dirs.extend( ['./models/DistIf/src/*'] )
+         source_dirs.extend( ['./models/DistIf/src/'] )
       if os.path.isdir( './models/DistIf/include' ):
-         include_dirs.extend( ['-I', './models/DistIf/include'] )
+         include_dirs.extend( ['-I./models/DistIf/include'] )
       
       if os.path.isdir( './models/EntityDynamics/src' ):
-         source_dirs.extend( ['./models/EntityDynamics/src/*'] )
+         source_dirs.extend( ['./models/EntityDynamics/src/'] )
       if os.path.isdir( './models/EntityDynamics/include' ):
-         include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
+         include_dirs.extend( ['-I./models/EntityDynamics/include'] )
       
       if os.path.isdir( './models/SAIntegrator/src' ):
-         source_dirs.extend( ['./models/SAIntegrator/src/*'] )
+         source_dirs.extend( ['./models/SAIntegrator/src/'] )
       if os.path.isdir( './models/SAIntegrator/include' ):
-         include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
+         include_dirs.extend( ['-I./models/SAIntegrator/include'] )
       
       if os.path.isdir( './models/simconfig/src' ):
-         source_dirs.extend ( ['./models/simconfig/src/*'] )
+         source_dirs.extend ( ['./models/simconfig/src/'] )
       if os.path.isdir( './models/simconfig/include' ):
-         include_dirs.extend( ['-I', './models/simconfig/include'] )
+         include_dirs.extend( ['-I./models/simconfig/include'] )
       
       if os.path.isdir( './models/sine/src' ):
-         source_dirs.extend ( ['./models/sine/src/*'] )
+         source_dirs.extend ( ['./models/sine/src/'] )
       if os.path.isdir( './models/sine/include' ):
-         include_dirs.extend( ['-I', './models/sine/include'] )
+         include_dirs.extend( ['-I./models/sine/include'] )
       
       if os.path.isdir( './models/Wheelbot/Battery/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Battery/src/*'] )
+         source_dirs.extend( ['./models/Wheelbot/Battery/src/'] )
       if os.path.isdir( './models/Wheelbot/Battery/include' ):
-         include_dirs.extend( ['-I', './models/Wheelbot/Battery/include'] )
+         include_dirs.extend( ['-I./models/Wheelbot/Battery/include'] )
       
       if os.path.isdir( './models/Wheelbot/Control/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Control/src/*'] )
+         source_dirs.extend( ['./models/Wheelbot/Control/src/'] )
       if os.path.isdir( './models/Wheelbot/Control/include' ):
-         include_dirs.extend( ['-I', './models/Wheelbot/Control/include'] )
+         include_dirs.extend( ['-I./models/Wheelbot/Control/include'] )
       
       if os.path.isdir( './models/Wheelbot/Electrical/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Electrical/src/*'] )
+         source_dirs.extend( ['./models/Wheelbot/Electrical/src/'] )
       if os.path.isdir( './models/Wheelbot/Electrical/include' ):
-         include_dirs.extend( ['-I', './models/Wheelbot/Electrical/include'] )
+         include_dirs.extend( ['-I./models/Wheelbot/Electrical/include'] )
       
       if os.path.isdir( './models/Wheelbot/Guidance/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Guidance/src/*'] )
+         source_dirs.extend( ['./models/Wheelbot/Guidance/src/'] )
       if os.path.isdir( './models/Wheelbot/Guidance/include' ):
-         include_dirs.extend( ['-I', './models/Wheelbot/Guidance/include'] )
+         include_dirs.extend( ['-I./models/Wheelbot/Guidance/include'] )
       
       if os.path.isdir( './models/Wheelbot/Motor/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Motor/src/*'] )
+         source_dirs.extend( ['./models/Wheelbot/Motor/src/'] )
       if os.path.isdir( './models/Wheelbot/Motor/include' ):
-         include_dirs.extend( ['-I', './models/Wheelbot/Motor/include'] )
+         include_dirs.extend( ['-I./models/Wheelbot/Motor/include'] )
       
       if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Vehicle/src/*'] )
+         source_dirs.extend( ['./models/Wheelbot/Vehicle/src/'] )
       if os.path.isdir( './models/Wheelbot/Vehicle/include' ):
-         include_dirs.extend( ['-I', './models/Wheelbot/Vehicle/include'] )
+         include_dirs.extend( ['-I./models/Wheelbot/Vehicle/include'] )
+
+   # JEOD
+   if args.process_all or args.process_JEOD:
+      source_dirs.extend ( ['./source/JEOD/'] )
+      if jeod_home:
+         include_dirs.extend( ['-I' + jeod_home + '/models'] )
+
+   # IMSim
+   if args.process_all or args.process_IMSim:
+      source_dirs.extend ( ['./source/IMSim/'] )
+
+   # SpaceFOM
+   if args.process_all or args.process_SpaceFOM:
+      source_dirs.extend ( ['./source/SpaceFOM/'] )
+
+   # TrickHLA
+   if args.process_all or args.process_TrickHLA:
+      source_dirs.extend ( ['./source/TrickHLA/'] )
 
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
-      include_dirs.extend( ['-I', '/usr/local/include'] )
+      include_dirs.extend( ['-I/usr/local/include'] )
 
    # Configure the clang-tidy arguments.
    # Don't use '--checks=*', it makes to many modifications to the code.
@@ -276,11 +285,11 @@ def main():
    clang_tidy_args.append( '--fix-errors' )
    clang_tidy_args.append( '--header-filter=\'.*TrickHLA/.*\'' )
    clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )
-   clang_tidy_args.extend( source_dirs )
-   clang_tidy_args.append( '--' )
-   clang_tidy_args.extend( include_dirs )
-   clang_tidy_args.append( '-std=c++11' )
-   clang_tidy_args.extend( trickhla_defines )
+#   clang_tidy_args.extend( source_dirs )
+   clang_tidy_extra_args.append( '--' )
+   clang_tidy_extra_args.extend( include_dirs )
+   clang_tidy_extra_args.append( '-std=c++11' )
+   clang_tidy_extra_args.extend( trickhla_defines )
 
    # Echo check the data if verbose is selected.
    if args.verbose:
@@ -293,11 +302,8 @@ def main():
       TrickHLAMessage.status( 'clang_tidy_cmd   = ' + clang_tidy_cmd )
       TrickHLAMessage.status( 'clang_tidy_ver   = ' + clang_tidy_ver )
       TrickHLAMessage.status( 'clang_tidy_args  = ' + ' '.join( clang_tidy_args ) )
+      TrickHLAMessage.status( 'clang_tidy_extra_args = ' + ' '.join( clang_tidy_extra_args ) )
       TrickHLAMessage.status( '---------------------------------------------------------------------' )
-
-   # Form the clang-tidy command with command line options.
-   shell_command = [ clang_tidy_cmd ]
-   shell_command.extend( clang_tidy_args )
    
    # Example command:
 # /usr/local/opt/llvm/bin/clang-tidy 
@@ -316,6 +322,21 @@ def main():
 #    -I $RTI_HOME/api/cpp/HLA_1516-2010
 #    -std=c++11 -DTRICK_VER=19
 
+   # Build the list if source filenames given the source directories.
+   source_files = []
+   for directory_str in source_dirs:
+      for dirpath, dirnames, filenames in os.walk( directory_str ):
+         for filename in filenames:
+            if filename.endswith(".cpp") or filename.endswith(".cxx") or filename.endswith(".c"):
+               file_path = os.path.join( dirpath, filename )
+               source_files.append( file_path )
+
+   # Form the clang-tidy command with command line options.
+   shell_command = [ clang_tidy_cmd ]
+   shell_command.extend( clang_tidy_args )
+   shell_command.extend( source_files )
+   shell_command.extend( clang_tidy_extra_args )
+
    #
    # Execute the clang-tidy command
    #
@@ -324,51 +345,17 @@ def main():
    else:
       if args.very_verbose:
          TrickHLAMessage.status( 'Executing: ' + ' '.join( shell_command ) )
-
-      # try:
-      #    process = await asyncio.create_subprocess_exec(
-      #        shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-      #    )
-      #    stdout, stderr = await process.communicate()
-      # except asyncio.CancelledError:
-      #    process.terminate()
-      #    await process.wait()
-      #    raise
-     
+      
       # Execute the clang-tidy command.
       try:
 
          # Spawn off the clang-tidy process using Popen.
+         #clang_tidy_proc = subprocess.Popen( shell_command )
          clang_tidy_proc = subprocess.Popen( shell_command )
 
-         # Use spinner to indicate activity.
-         count = 0
          while clang_tidy_proc.poll() is None:
-
-            # Spinner.
-            if count % 4 == 0:
-               sys.stdout.write( '\b' )
-               sys.stdout.write( '|' )
-               sys.stdout.flush()
-            if count % 4 == 1:
-               sys.stdout.write( '\b' )
-               sys.stdout.write( '/' )
-               sys.stdout.flush()
-            if count % 4 == 2:
-               sys.stdout.write( '\b' )
-               sys.stdout.write( '-' )
-               sys.stdout.flush()
-            if count % 4 == 3:
-               sys.stdout.write( '\b' )
-               sys.stdout.write( '\\' )
-               sys.stdout.flush()
-            count += 1
-
             # Check process activity 10 times a second.
             time.sleep( 0.1 )
-
-         # Clear the spinner line.
-         sys.stdout.write( '\b' )
 
       except subprocess.CalledProcessError:
          TrickHLAMessage.failure( '\'clang-tidy\' command failed! '
