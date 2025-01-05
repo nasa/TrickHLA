@@ -340,9 +340,6 @@ def main():
                   break
                if line:
                   print( line.strip() )
-            
-            output, errors = clang_tidy_proc.communicate()
-            print( output )
 
          else:
             # Use spinner to indicate activity.
@@ -377,9 +374,9 @@ def main():
             sys.stdout.write( '\b' )
             sys.stdout.flush()
 
-            output, errors = clang_tidy_proc.communicate()
-            print( errors )
-            print( output )
+         output, errors = clang_tidy_proc.communicate()
+         print( errors )
+         print( output )
 
       except subprocess.CalledProcessError:
          TrickHLAMessage.failure( '\'clang-tidy\' command failed! '
