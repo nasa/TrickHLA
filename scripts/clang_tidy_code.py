@@ -121,7 +121,6 @@ def main():
    if arg_error:
       TrickHLAMessage.failure( 'Error detected in parsing command arguments!' )
 
-
    # If we selected very verbose, then we also need to set verbose in the clang-tidy output.
    if args.very_verbose:
       args.verbose = True
@@ -285,7 +284,6 @@ def main():
    clang_tidy_args.append( '--fix-errors' )
    clang_tidy_args.append( '--header-filter=\'.*TrickHLA/.*\'' )
    clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )
-#   clang_tidy_args.extend( source_dirs )
    clang_tidy_extra_args.append( '--' )
    clang_tidy_extra_args.extend( include_dirs )
    clang_tidy_extra_args.append( '-std=c++11' )
@@ -304,58 +302,84 @@ def main():
       TrickHLAMessage.status( 'clang_tidy_args  = ' + ' '.join( clang_tidy_args ) )
       TrickHLAMessage.status( 'clang_tidy_extra_args = ' + ' '.join( clang_tidy_extra_args ) )
       TrickHLAMessage.status( '---------------------------------------------------------------------' )
-   
-   # Example command:
-# /usr/local/opt/llvm/bin/clang-tidy 
-#   -fix ./source/TrickHLA/* ./source/SpaceFOM/* --
-#   -I ./include
-#   -I ${RTI_HOME}/api/cpp/HLA_1516-2010
-#   -I ${TRICK_HOME}/include
-#   -I ${TRICK_HOME}/include/trick/compat
-#   -I ${TRICK_HOME}/trick_source
-#   -I /usr/local/include
-#   -std=c++11 -DTRICK_VER=19
-#
-# /usr/local/opt/llvm/bin/clang-check 
-#    -analyze ./source/TrickHLA/* ./source/SpaceFOM/* -- 
-#    -I ./include -I $TRICK_HOME/include 
-#    -I $RTI_HOME/api/cpp/HLA_1516-2010
-#    -std=c++11 -DTRICK_VER=19
 
    # Build the list if source filenames given the source directories.
    source_files = []
-   for directory_str in source_dirs:
-      for dirpath, dirnames, filenames in os.walk( directory_str ):
+   for src_dir in source_dirs:
+      for dir_path, dir_names, filenames in os.walk( src_dir ):
          for filename in filenames:
-            if filename.endswith(".cpp") or filename.endswith(".cxx") or filename.endswith(".c"):
-               file_path = os.path.join( dirpath, filename )
+            if filename.endswith(".cpp") or filename.endswith(".cxx") or filename.endswith(".cc") or filename.endswith(".c"):
+               file_path = os.path.join( dir_path, filename )
                source_files.append( file_path )
 
    # Form the clang-tidy command with command line options.
-   shell_command = [ clang_tidy_cmd ]
-   shell_command.extend( clang_tidy_args )
-   shell_command.extend( source_files )
-   shell_command.extend( clang_tidy_extra_args )
+   clang_tidy_command = [ clang_tidy_cmd ]
+   clang_tidy_command.extend( clang_tidy_args )
+   clang_tidy_command.extend( source_files )
+   clang_tidy_command.extend( clang_tidy_extra_args )
 
    #
    # Execute the clang-tidy command
    #
    if args.test_only:
-      TrickHLAMessage.status( 'Would execute: ' + ' '.join( shell_command ) )
+      TrickHLAMessage.status( 'Would execute: ' + ' '.join( clang_tidy_command ) )
    else:
       if args.very_verbose:
-         TrickHLAMessage.status( 'Executing: ' + ' '.join( shell_command ) )
-      
+         TrickHLAMessage.status( 'Executing: ' + ' '.join( clang_tidy_command ) )
+
       # Execute the clang-tidy command.
       try:
 
-         # Spawn off the clang-tidy process using Popen.
-         #clang_tidy_proc = subprocess.Popen( shell_command )
-         clang_tidy_proc = subprocess.Popen( shell_command )
+         clang_tidy_proc = subprocess.Popen( clang_tidy_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True )
 
-         while clang_tidy_proc.poll() is None:
-            # Check process activity 10 times a second.
-            time.sleep( 0.1 )
+         if ( True ):
+            # Print files summary as they are processed.
+            while True:
+               line = clang_tidy_proc.stderr.readline()
+               if line == '' and clang_tidy_proc.poll() is not None:
+                  break
+               if line:
+                  print( line.strip() )
+            
+            output, errors = clang_tidy_proc.communicate()
+            print( output )
+
+         else:
+            # Use spinner to indicate activity.
+            count = 0
+            while clang_tidy_proc.poll() is None:
+   
+               # Spinner.
+               if count % 4 == 0:
+                  sys.stdout.write( '\b' )
+                  sys.stdout.write( '|' )
+                  sys.stdout.flush()
+               if count % 4 == 1:
+                  sys.stdout.write( '\b' )
+                  sys.stdout.write( '/' )
+                  sys.stdout.flush()
+               if count % 4 == 2:
+                  sys.stdout.write( '\b' )
+                  sys.stdout.write( '-' )
+                  sys.stdout.flush()
+               if count % 4 == 3:
+                  sys.stdout.write( '\b' )
+                  sys.stdout.write( '\\' )
+                  sys.stdout.flush()
+               count += 1
+   
+               # Check process activity 10 times a second.
+               time.sleep( 0.1 )
+   
+            # Clear the spinner line.
+            sys.stdout.write( '\b' )
+            sys.stdout.write( ' ' )
+            sys.stdout.write( '\b' )
+            sys.stdout.flush()
+
+            output, errors = clang_tidy_proc.communicate()
+            print( errors )
+            print( output )
 
       except subprocess.CalledProcessError:
          TrickHLAMessage.failure( '\'clang-tidy\' command failed! '
