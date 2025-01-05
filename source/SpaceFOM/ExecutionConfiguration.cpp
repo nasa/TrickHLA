@@ -676,8 +676,9 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Attribute class to link itself into Execution Configuration
    // instance variables.
 
+   // TODO: Determine if exco_ref2 is needed and used.
    // Allocate the Trick REF2 data structure.
-   REF2 const *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
+   REF2 *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
    if ( exco_ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
@@ -691,6 +692,9 @@ void ExecutionConfiguration::setup_ref_attributes(
    // marking the end of the structure.
    ATTRIBUTES *exco_attr = reinterpret_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
    if ( exco_attr == NULL ) {
+      free( static_cast< void * >( exco_ref2 ) );
+      exco_ref2 = NULL;
+
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"
@@ -744,6 +748,10 @@ void ExecutionConfiguration::setup_ref_attributes(
           << '\n'
           << " Object FOM name:'" << this->FOM_name << "'" << '\n';
       send_hs( stdout, msg.str().c_str() );
+   }
+
+   if ( exco_ref2 != NULL ) {
+      free( static_cast< void * >( exco_ref2 ) );
    }
 }
 

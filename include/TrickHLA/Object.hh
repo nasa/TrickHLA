@@ -432,6 +432,14 @@ class Object : public CheckpointConversionBase
       this->instance_handle = id;
    }
 
+   /*! @brief Check if the HLA Object instance handle is valid for this object.
+    *  @param id The HLA ObjectClassHandle to test.
+    *  @return True if the HLA ObjectIntanceHandle matches the one for this object instance. */
+   bool is_instance_handle( RTI1516_NAMESPACE::ObjectInstanceHandle const &id ) const
+   {
+      return ( id == instance_handle );
+   }
+
    /*! @brief Set the HLA Object instance handle and name for this object instance.
     *  @param id The HLA ObjectInstanceHandle for this object instance.
     *  @param instance_name The associated object instance name. */

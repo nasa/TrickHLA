@@ -582,6 +582,9 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
 
          # Clear the spinner line.
          sys.stdout.write( '\b' )
+         sys.stdout.write( ' ' )
+         sys.stdout.write( '\b' )
+         sys.stdout.flush()
 
       except subprocess.CalledProcessError:
          TrickHLAMessage.failure( '\'cppcheck\' command failed! '
