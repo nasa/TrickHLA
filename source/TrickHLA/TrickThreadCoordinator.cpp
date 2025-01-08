@@ -267,8 +267,8 @@ void TrickThreadCoordinator::initialize(
          sstream >> thread_id;
 
          if ( ( thread_id >= 1 ) && ( thread_id < this->thread_cnt ) ) {
-            // Disable any Trick child thread associations for this ID include
-            // any API's for this child thread.
+            // Disable any Trick child thread associations for this ID
+            // and including any API's for this child thread.
             this->thread_state[thread_id] = THREAD_STATE_DISABLED;
 
             if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
@@ -1285,34 +1285,39 @@ bool const TrickThreadCoordinator::verify_time_constraints(
              << " ERROR: Lookahead time must be greater than or equal zero (lookahead:"
              << setprecision( 18 ) << lookahead_sec << ")!" << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Time constraint: (dt[i] > 0)
-   if ( data_cycle_base_time <= 0 ) {
-      double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-             << " ERROR: The data cycle time for the Trick "
-             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
-             << ") cannot be less than or equal zero (0)!" << '\n';
-      DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
 
-   // Time constraint: (dt[i] ≥ L[i])
-   if ( data_cycle_base_time < lookahead_base_time ) {
-      double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-             << " ERROR: The data cycle time for the Trick "
-             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
-             << ") cannot be less than the lookahead time (" << setprecision( 18 )
-             << Int64BaseTime::to_seconds( lookahead_base_time )
-             << ")!" << '\n';
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return false;
+   // Skip if this child thread associated to TrickHLA is disabled.
+   if ( this->thread_state[thread_id] != THREAD_STATE_DISABLED ) {
+
+      // Time constraint: (dt[i] > 0)
+      if ( data_cycle_base_time <= 0 ) {
+         double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                << " ERROR: The data cycle time for the Trick "
+                << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+                << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+                << ") cannot be less than or equal zero (0)!" << '\n';
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
+      }
+
+      // Time constraint: (dt[i] ≥ L[i])
+      if ( data_cycle_base_time < lookahead_base_time ) {
+         double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                << " ERROR: The data cycle time for the Trick "
+                << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+                << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+                << ") cannot be less than the lookahead time (" << setprecision( 18 )
+                << Int64BaseTime::to_seconds( lookahead_base_time )
+                << ")!" << '\n';
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
+      }
    }
 
    // The LCTS in the base time.
@@ -1360,6 +1365,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                 << lcts_base_time << " " << Int64BaseTime::get_units()
                 << ")!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
       }
 
       // The Master federate padding time must be at least 3 or more
@@ -1376,6 +1382,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                 << lcts_base_time << " " << Int64BaseTime::get_units()
                 << ")!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
       }
    }
 
@@ -1445,74 +1452,82 @@ bool const TrickThreadCoordinator::verify_time_constraints(
          }
       }
 
-      // Thread data cycle time must be less than the LCTS to be valid.
-      // Time constraint: (LCTS ≥ dt[i])
-      if ( lcts_base_time < data_cycle_base_time ) {
+      // Skip if this child thread associated to TrickHLA is disabled.
+      if ( this->thread_state[thread_id] != THREAD_STATE_DISABLED ) {
+
+         // Thread data cycle time must be less than the LCTS to be valid.
+         // Time constraint: (LCTS ≥ dt[i])
+         if ( lcts_base_time < data_cycle_base_time ) {
+            double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: The Least Common Time Step (LCTS:"
+                   << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
+                   << ") must be greater or equal to the data cycle time for the Trick "
+                   << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+                   << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+                   << ")! Please adjust the LCTS set in your input file as appropriate."
+                   << '\n';
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
+
+         // Child thread data cycle time must be an integer multiple of the LCTS.
+         // Time constraint: (LCTS % dt[i] = 0)
+         if ( lcts_base_time % data_cycle_base_time != 0 ) {
+            double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: The Least Common Time Step (LCTS:"
+                   << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
+                   << ") must be an integer multiple of the data cycle time for"
+                   << " the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
+                   << " thread (thread-id:" << thread_id << ", data_cycle:"
+                   << setprecision( 18 ) << data_cycle
+                   << ")! Please adjust the LCTS set in your input file as appropriate."
+                   << '\n';
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
+      }
+   }
+
+   // Skip if this child thread associated to TrickHLA is disabled.
+   if ( this->thread_state[thread_id] != THREAD_STATE_DISABLED ) {
+
+      // The child thread data cycle time cannot be less than (i.e. faster)
+      // than the main thread cycle time.
+      if ( data_cycle_base_time < this->main_thread_data_cycle_base_time ) {
          double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: The Least Common Time Step (LCTS:"
-                << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
-                << ") must be greater or equal to the data cycle time for the Trick "
+                << " ERROR: The data cycle time for the Trick "
                 << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
                 << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
-                << ")! Please adjust the LCTS set in your input file as appropriate."
-                << '\n';
+                << ") cannot be less than the Trick main thread data cycle"
+                << " time (data_cycle:" << setprecision( 18 )
+                << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
+                << ")!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
 
-      // Child thread data cycle time must be an integer multiple of the LCTS.
-      // Time constraint: (LCTS % dt[i] = 0)
-      if ( lcts_base_time % data_cycle_base_time != 0 ) {
+      // Only allow child threads with a data cycle time that is an integer
+      // multiple of the Trick main thread cycle time.
+      if ( data_cycle_base_time % this->main_thread_data_cycle_base_time != 0 ) {
          double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: The Least Common Time Step (LCTS:"
-                << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
-                << ") must be an integer multiple of the data cycle time for"
-                << " the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
-                << " thread (thread-id:" << thread_id << ", data_cycle:"
-                << setprecision( 18 ) << data_cycle
-                << ")! Please adjust the LCTS set in your input file as appropriate."
-                << '\n';
+                << " ERROR: The data cycle time for the Trick "
+                << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
+                << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
+                << ") must be an integer multiple of the Trick main thread data"
+                << " cycle time (data_cycle:" << setprecision( 18 )
+                << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
+                << ")!" << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
-   }
-
-   // The child thread data cycle time cannot be less than (i.e. faster)
-   // than the main thread cycle time.
-   if ( data_cycle_base_time < this->main_thread_data_cycle_base_time ) {
-      double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-             << " ERROR: The data cycle time for the Trick "
-             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
-             << ") cannot be less than the Trick main thread data cycle"
-             << " time (data_cycle:" << setprecision( 18 )
-             << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
-             << ")!" << '\n';
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return false;
-   }
-
-   // Only allow child threads with a data cycle time that is an integer
-   // multiple of the Trick main thread cycle time.
-   if ( data_cycle_base_time % this->main_thread_data_cycle_base_time != 0 ) {
-      double        data_cycle = Int64BaseTime::to_seconds( data_cycle_base_time );
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-             << " ERROR: The data cycle time for the Trick "
-             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
-             << ") must be an integer multiple of the Trick main thread data"
-             << " cycle time (data_cycle:" << setprecision( 18 )
-             << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
-             << ")!" << '\n';
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return false;
    }
 
    return true;
