@@ -168,7 +168,7 @@ void PhysicalInterface::pack_from_working_data()
    else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::pack():" << __LINE__
-             << " ERROR: Unexpected NULL name for PhysicalInterface!" << '\n';
+             << " ERROR: Unexpected NULL name for PhysicalInterface!\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -309,7 +309,7 @@ void PhysicalInterface::set_name( char const *new_name )
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::set_name():" << __LINE__
-             << " ERROR: Unexpected NULL interface_data for PhysicalInterface!" << '\n';
+             << " ERROR: Unexpected NULL interface_data for PhysicalInterface!\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -338,7 +338,7 @@ void PhysicalInterface::set_parent( char const *new_parent_name )
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::set_parent():" << __LINE__
-             << " ERROR: Unexpected NULL interface_data for PhysicalInterface!" << '\n';
+             << " ERROR: Unexpected NULL interface_data for PhysicalInterface!\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

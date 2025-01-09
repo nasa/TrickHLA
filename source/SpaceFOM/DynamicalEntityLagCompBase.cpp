@@ -176,7 +176,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data before compensation: " << '\n';
+      cout << "Send data before compensation: \n";
       this->print_lag_comp_data();
    }
 
@@ -185,7 +185,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data after compensation: " << '\n';
+      cout << "Send data after compensation: \n";
       this->print_lag_comp_data();
    }
 
@@ -228,7 +228,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data before compensation: " << '\n';
+         cout << "Receive data before compensation: \n";
          this->print_lag_comp_data();
       }
 
@@ -237,14 +237,14 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data after compensation: " << '\n';
+         cout << "Receive data after compensation: \n";
          this->print_lag_comp_data();
       }
 
    } else {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << '\n'
+         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received.\n"
                 << "\tvalue_changed: " << this->state_attr->is_changed()
                 << "; locally owned: " << this->state_attr->locally_owned << '\n';
          send_hs( stderr, errmsg.str().c_str() );
@@ -393,7 +393,7 @@ void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream )
    // Print out the DynamicalEntity data.
    stream << "\tmass: " << this->mass << '\n';
    stream << "\tmass_rate: " << this->mass_rate << '\n';
-   stream << "\tinertia: " << '\n'
+   stream << "\tinertia: \n"
           << "\t\t" << this->inertia[0][0] << ", "
           << this->inertia[0][1] << ", "
           << this->inertia[0][2] << '\n'
@@ -403,7 +403,7 @@ void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream )
           << "\t\t" << this->inertia[2][0] << ", "
           << this->inertia[2][1] << ", "
           << this->inertia[2][2] << '\n';
-   stream << "\tinertia rate: " << '\n'
+   stream << "\tinertia rate: \n"
           << "\t\t" << this->inertia_rate[0][0] << ", "
           << this->inertia_rate[0][1] << ", "
           << this->inertia_rate[0][2] << '\n'

@@ -150,7 +150,7 @@ void SinePacking::pack()
 {
    if ( !initialized ) {
       cout << "SinePacking::pack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << '\n';
+           << " ERROR: The initialize() function has not been called!\n";
    }
 
    // Just count the number of times the pack() function gets called.
@@ -182,7 +182,7 @@ void SinePacking::pack()
       string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
 
       cout << "SinePacking::pack():" << __LINE__ << '\n'
-           << "\t Object-Name:'" << obj_name << "'" << '\n'
+           << "\t Object-Name:'" << obj_name << "'\n"
 
            << "\t sim_data->name:'" << sim_data->get_name()
            << "', Send-HLA-Data:"
@@ -230,7 +230,7 @@ void SinePacking::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       if ( buff != NULL ) {
-         cout << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:" << '\n'
+         cout << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
               << " buff_size: " << buff_size << '\n';
          unsigned char c = pack_count % 10;
          for ( int i = 0; i < buff_size; ++i ) {
@@ -242,15 +242,15 @@ void SinePacking::pack()
 
       string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
 
-      cout << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:" << '\n'
-           << "\t Object-Name:'" << obj_name << "'" << '\n';
+      cout << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+           << "\t Object-Name:'" << obj_name << "'\n";
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's, where most users may never go.
       string     name_attr_str = "Name";
       Attribute *attr          = get_attribute( name_attr_str.c_str() );
 
-      cout << "\t FOM-Attribute '" << name_attr_str << "'" << '\n';
+      cout << "\t FOM-Attribute '" << name_attr_str << "'\n";
 
       if ( attr != NULL ) {
 
@@ -270,9 +270,9 @@ void SinePacking::pack()
                name_sim_var[name_len - 1] = (char)( '0' + ( pack_count % 10 ) );
             }
 
-            cout << "\t Value:'" << string( name_sim_var ) << "'" << '\n';
+            cout << "\t Value:'" << string( name_sim_var ) << "'\n";
          } else {
-            cout << "\t Value:NULL" << '\n';
+            cout << "\t Value:NULL\n";
          }
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PACKING ) ) {
@@ -280,7 +280,7 @@ void SinePacking::pack()
             attr->print_buffer();
          }
       } else {
-         cout << "\t NULL Attribute for FOM-Attribute '" << name_attr_str << "'" << '\n';
+         cout << "\t NULL Attribute for FOM-Attribute '" << name_attr_str << "'\n";
       }
    }
 }
@@ -289,7 +289,7 @@ void SinePacking::unpack()
 {
    if ( !initialized ) {
       cout << "SinePacking::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << '\n';
+           << " ERROR: The initialize() function has not been called!\n";
    }
 
    // If the HLA phase attribute has changed and is remotely owned (i.e. is
@@ -339,7 +339,7 @@ void SinePacking::unpack()
       string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
 
       cout << "SinePacking::unpack():" << __LINE__ << '\n'
-           << "\t Object-Name:'" << obj_name << "'" << '\n'
+           << "\t Object-Name:'" << obj_name << "'\n"
 
            << "\t sim_data->name:'" << sim_data->get_name()
            << "', Received-HLA-Data:"
@@ -378,7 +378,7 @@ void SinePacking::unpack()
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       if ( buff != NULL ) {
-         cout << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:" << '\n'
+         cout << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
               << " buff_size: " << buff_size << '\n';
          for ( int i = 0; i < buff_size; ++i ) {
             cout << " SinePacking::unpack():" << __LINE__
@@ -388,15 +388,15 @@ void SinePacking::unpack()
 
       string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
 
-      cout << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:" << '\n'
-           << "\t Object-Name:'" << obj_name << "'" << '\n';
+      cout << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+           << "\t Object-Name:'" << obj_name << "'\n";
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's where most users may never go.
       string     name_attr_str = "Name";
       Attribute *attr          = get_attribute( name_attr_str.c_str() );
 
-      cout << "\t FOM-Attribute '" << name_attr_str << "'" << '\n';
+      cout << "\t FOM-Attribute '" << name_attr_str << "'\n";
 
       if ( attr != NULL ) {
 
@@ -405,9 +405,9 @@ void SinePacking::unpack()
 
          // Display the name.
          if ( name_sim_var != NULL ) {
-            cout << "\t Value:'" << string( name_sim_var ) << "'" << '\n';
+            cout << "\t Value:'" << string( name_sim_var ) << "'\n";
          } else {
-            cout << "\t Value:NULL" << '\n';
+            cout << "\t Value:NULL\n";
          }
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PACKING ) ) {
@@ -416,7 +416,7 @@ void SinePacking::unpack()
          }
       } else {
          cout << "\t NULL Attribute for FOM-Attribute '" << name_attr_str
-              << "'" << '\n';
+              << "'\n";
       }
    }
 }

@@ -164,7 +164,7 @@ bool PhysicalEntityConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Name for PhysicalEntity!" << '\n';
+                << " ERROR: Unexpected NULL Name for PhysicalEntity!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -194,7 +194,7 @@ bool PhysicalEntityConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Type for PhysicalEntity!" << '\n';
+                << " ERROR: Unexpected NULL Type for PhysicalEntity!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -224,7 +224,7 @@ bool PhysicalEntityConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Status for PhysicalEntity!" << '\n';
+                << " ERROR: Unexpected NULL Status for PhysicalEntity!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -254,7 +254,7 @@ bool PhysicalEntityConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Parent Frame for PhysicalEntity!" << '\n';
+                << " ERROR: Unexpected NULL Parent Frame for PhysicalEntity!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }

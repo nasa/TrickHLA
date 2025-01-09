@@ -129,7 +129,7 @@ void PhysicalInterfaceBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance PhysicalInterface name!" << '\n';
+             << " WARNING: Unexpected NULL federation instance PhysicalInterface name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -198,7 +198,7 @@ void PhysicalInterfaceBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
-             << "  Setting frame name to empty string." << '\n';
+             << "  Setting frame name to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -208,7 +208,7 @@ void PhysicalInterfaceBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
-             << "  Setting parent_ref_frame to empty string." << '\n';
+             << "  Setting parent_ref_frame to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
@@ -227,7 +227,7 @@ void PhysicalInterfaceBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
-             << "  Setting frame name to empty string." << '\n';
+             << "  Setting frame name to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -238,7 +238,7 @@ void PhysicalInterfaceBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
-             << "  Setting parent_ref_frame to empty string." << '\n';
+             << "  Setting parent_ref_frame to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
@@ -317,7 +317,7 @@ void PhysicalInterfaceBase::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
-             << " been called!" << '\n';
+             << " been called!\n";
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -345,7 +345,7 @@ void PhysicalInterfaceBase::unpack()
 
    if ( !initialized ) {
       cout << "PhysicalInterfaceBase::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << '\n';
+           << " ERROR: The initialize() function has not been called!\n";
    }
 
    // Use the HLA encoder helpers to decode the PhysicalInterface fixed record.
@@ -376,9 +376,9 @@ void PhysicalInterfaceBase::print_data( std::ostream &stream )
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << '\n'
-          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << '\n'
-          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << '\n';
+   stream << "\tObject-Name: '" << object->get_name() << "'\n"
+          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'\n"
+          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'\n";
    stream << "\tposition: "
           << "\t\t" << packing_data.position[0] << ", "
           << "\t\t" << packing_data.position[1] << ", "

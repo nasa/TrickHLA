@@ -169,7 +169,7 @@ void PhysicalEntity::pack_from_working_data()
    else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
-             << " ERROR: Unexpected NULL name for PhysicalEntity!" << '\n';
+             << " ERROR: Unexpected NULL name for PhysicalEntity!\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
