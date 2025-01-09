@@ -1288,8 +1288,9 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       return false;
    }
 
-   // Skip if this child thread associated to TrickHLA is disabled.
-   if ( this->thread_state[thread_id] != THREAD_STATE_DISABLED ) {
+   // Skip the child thread if disabled or not associated.
+   if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
+        && ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) ) {
 
       // Time constraint: (dt[i] > 0)
       if ( data_cycle_base_time <= 0 ) {
@@ -1452,8 +1453,9 @@ bool const TrickThreadCoordinator::verify_time_constraints(
          }
       }
 
-      // Skip if this child thread associated to TrickHLA is disabled.
-      if ( this->thread_state[thread_id] != THREAD_STATE_DISABLED ) {
+      // Skip the child thread if disabled or not associated.
+      if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
+           && ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) ) {
 
          // Thread data cycle time must be less than the LCTS to be valid.
          // Time constraint: (LCTS ≥ dt[i])
@@ -1492,8 +1494,9 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       }
    }
 
-   // Skip if this child thread associated to TrickHLA is disabled.
-   if ( this->thread_state[thread_id] != THREAD_STATE_DISABLED ) {
+   // Skip the child thread if disabled or not associated.
+   if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
+        && ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) ) {
 
       // The child thread data cycle time cannot be less than (i.e. faster)
       // than the main thread cycle time.
