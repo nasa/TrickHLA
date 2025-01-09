@@ -228,7 +228,7 @@ void Object::initialize(
    if ( trickhla_mgr == NULL ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA-Manager!" << '\n';
+             << " ERROR: Unexpected NULL TrickHLA-Manager!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->manager = trickhla_mgr;
@@ -253,7 +253,7 @@ void Object::initialize(
              << " A valid object instance name is required if you are creating"
              << " an HLA instance of this object (i.e. 'create_HLA_instance'"
              << " field is set to true) or if the 'name_required' field is set"
-             << " to true, which is the default." << '\n';
+             << " to true, which is the default.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else if ( name == NULL ) {
       // Make sure the name is at least not NULL.
@@ -266,7 +266,7 @@ void Object::initialize(
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: Object '" << name << "' is missing the Object FOM Name."
              << " Please check your input or modified-data files to make sure"
-             << " the object FOM name is correctly specified." << '\n';
+             << " the object FOM name is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -279,7 +279,7 @@ void Object::initialize(
              << " range of " << LAG_COMPENSATION_FIRST_VALUE << " to "
              << LAG_COMPENSATION_LAST_VALUE << ". Please check your input"
              << " or modified-data files to make sure the 'lag_comp_type' value"
-             << " is correctly specified." << '\n';
+             << " is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -290,7 +290,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', Lag-Compensation 'lag_comp_type'"
              << " is specified, but 'lag_comp' is NULL! Please check your input"
              << " or modified-data files to make sure the Lag-Compensation type"
-             << " and object are correctly specified." << '\n';
+             << " and object are correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -328,7 +328,7 @@ void Object::initialize(
              << " the 'packing' setting does not point to a class that"
              << " extends the Packing class. Please check your input"
              << " or modified-data files to make sure the attributes are"
-             << " correctly specified." << '\n';
+             << " correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -341,7 +341,7 @@ void Object::initialize(
              << " the 'ownership' setting does not point to a class that"
              << " extends the OwnershipHandler class. Please check"
              << " your input or modified-data files to make sure the"
-             << " attributes are correctly specified." << '\n';
+             << " attributes are correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -353,7 +353,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', the 'deleted' setting does not"
              << " point to a class that extends the ObjectDeleted"
              << " class. Please check your input or modified-data files to make"
-             << " sure the attributes are correctly specified." << '\n';
+             << " sure the attributes are correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -386,7 +386,7 @@ void Object::initialize(
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
-                << " for the Attribute 'config' setting." << '\n';
+                << " for the Attribute 'config' setting.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       if ( any_cyclic_attr && any_blocking_io_attr ) {
@@ -397,7 +397,7 @@ void Object::initialize(
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
-                << " for the Attribute 'config' setting." << '\n';
+                << " for the Attribute 'config' setting.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       if ( any_zero_lookahead_attr && any_blocking_io_attr ) {
@@ -408,7 +408,7 @@ void Object::initialize(
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
-                << " for the Attribute 'config' setting." << '\n';
+                << " for the Attribute 'config' setting.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -426,7 +426,7 @@ void Object::initialize(
              << " Please check your input or modified-data files to make sure"
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
-             << " zero-lookahead configured object attributes." << '\n';
+             << " zero-lookahead configured object attributes.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -443,7 +443,7 @@ void Object::initialize(
              << " Please check your input or modified-data files to make sure"
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
-             << " blocking I/O configured object attributes." << '\n';
+             << " blocking I/O configured object attributes.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -459,7 +459,7 @@ void Object::initialize(
              << get_lookahead().get_base_time() << " "
              << Int64BaseTime::get_units() << "). The lookahead time must be"
              << " set to zero to support zero-lookahead data exchanges, which"
-             << " is what this object is configured for." << '\n';
+             << " is what this object is configured for.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -495,7 +495,7 @@ void Object::initialize(
                 << " ERROR: Object '" << name << "' has a missing Attribute"
                 << " FOM Name at array index " << i << ". Please check your input"
                 << " or modified-data files to make sure the object attribute"
-                << " FOM name is correctly specified." << '\n';
+                << " FOM name is correctly specified.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       string fom_name_str( attributes[i].get_FOM_name() );
@@ -513,7 +513,7 @@ void Object::initialize(
                       << " that have the same FOM Name '" << fom_name_str
                       << "'. Please check your input or modified-data files to"
                       << " make sure the object attributes do not use duplicate"
-                      << " FOM names." << '\n';
+                      << " FOM names.\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -531,7 +531,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', the 'lag_comp' setting does not"
              << " point to a class that extends the LagCompensation"
              << " class. Please check your input or modified-data files to make"
-             << " sure the attributes are correctly specified." << '\n';
+             << " sure the attributes are correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1361,7 +1361,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " ERROR: Exception registering '" << get_name() << "': '"
-                << rti_err_msg << "'." << '\n';
+                << rti_err_msg << "'.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -1405,7 +1405,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             ostringstream errmsg;
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " ERROR: Exception getting instance name for '" << get_name()
-                   << "' ID:" << id_str << "  '" << rti_err_msg << "'." << '\n';
+                   << "' ID:" << id_str << "  '" << rti_err_msg << "'.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          // Macro to restore the saved FPU Control Word register value.
@@ -1495,7 +1495,7 @@ void Object::setup_preferred_order_with_RTI()
    ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       msg << "Object::setup_preferred_order_with_RTI():" << __LINE__ << '\n'
-          << "--------- Setup Preferred-Order of Locally-Owned Attributes ---------" << '\n'
+          << "--------- Setup Preferred-Order of Locally-Owned Attributes ---------\n"
           << " Object:'" << get_name() << "'"
           << " FOM-Name:'" << get_FOM_name() << "'"
           << " Create HLA Instance:" << ( is_create_HLA_instance() ? "Yes" : "No" )
@@ -1874,17 +1874,17 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name(), rti_err_msg.c_str() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception: InvalidLogicalTime" << '\n'
+             << " Exception: InvalidLogicalTime\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
              << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
-             << ")" << '\n'
+             << ")\n"
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
              << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
-             << ")" << '\n'
+             << ")\n"
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
              << update_time.get_base_time() << " " << Int64BaseTime::get_units()
-             << ")" << '\n';
+             << ")\n";
       send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -1894,7 +1894,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception: AttributeNotOwned" << '\n'
+             << " Exception: AttributeNotOwned\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -1908,7 +1908,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception: ObjectInstanceNotKnown" << '\n'
+             << " Exception: ObjectInstanceNotKnown\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -1921,7 +1921,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception: AttributeNotDefined" << '\n'
+             << " Exception: AttributeNotDefined\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -1934,7 +1934,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception:FederateNotExecutionMember" << '\n'
+             << " Exception:FederateNotExecutionMember\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -1947,7 +1947,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception: SaveInProgress" << '\n'
+             << " Exception: SaveInProgress\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -1960,7 +1960,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception: RestoreInProgress" << '\n'
+             << " Exception: RestoreInProgress\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -1973,7 +1973,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception: NotConnected" << '\n'
+             << " Exception: NotConnected\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -1986,7 +1986,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " Exception: RTIinternalError" << '\n'
+             << " Exception: RTIinternalError\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2001,7 +2001,7 @@ exception for '%s' with error message '%s'.\n",
                __LINE__, rti_err_msg.c_str() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " RTI1516_EXCEPTION" << '\n'
+             << " RTI1516_EXCEPTION\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2135,17 +2135,17 @@ exception for '%s' with error message '%s'.\n",
 
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: InvalidLogicalTime" << '\n'
+                << " Exception: InvalidLogicalTime\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
                 << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
-                << ")" << '\n'
+                << ")\n"
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
                 << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
-                << ")" << '\n'
+                << ")\n"
                 << "  update_time=" << update_time.get_time_in_seconds() << " ("
                 << update_time.get_base_time() << " " << Int64BaseTime::get_units()
-                << ")" << '\n';
+                << ")\n";
          send_hs( stderr, errmsg.str().c_str() );
       } catch ( AttributeNotOwned const &e ) {
          string id_str;
@@ -2154,7 +2154,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: AttributeNotOwned" << '\n'
+                << " Exception: AttributeNotOwned\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2167,7 +2167,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: ObjectInstanceNotKnown" << '\n'
+                << " Exception: ObjectInstanceNotKnown\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2180,7 +2180,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: AttributeNotDefined" << '\n'
+                << " Exception: AttributeNotDefined\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2193,7 +2193,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: FederateNotExecutionMember" << '\n'
+                << " Exception: FederateNotExecutionMember\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2206,7 +2206,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: SaveInProgress" << '\n'
+                << " Exception: SaveInProgress\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2219,7 +2219,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: RestoreInProgress" << '\n'
+                << " Exception: RestoreInProgress\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2232,7 +2232,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: NotConnected" << '\n'
+                << " Exception: NotConnected\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2245,7 +2245,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " Exception: RTIinternalError" << '\n'
+                << " Exception: RTIinternalError\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2260,7 +2260,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, rti_err_msg.c_str() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " RTI1516_EXCEPTION" << '\n'
+                << " RTI1516_EXCEPTION\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2315,7 +2315,7 @@ void Object::send_zero_lookahead_and_requested_data(
                    << " modified-data files to make sure the Lag-Compensation"
                    << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                    << " to disable Lag-Compensation when sending zero-lookahead"
-                   << " configured object attributes." << '\n';
+                   << " configured object attributes.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
       }
@@ -2351,7 +2351,7 @@ void Object::send_zero_lookahead_and_requested_data(
                 << " data. Please check your input or modified-data files to make"
                 << " sure at least attribute is configured for zero-lookahead and"
                 << " if you are using the TrickHLA::Conditional API make sure you"
-                << " enable at least one attribute to be sent." << '\n';
+                << " enable at least one attribute to be sent.\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    } else {
@@ -2414,18 +2414,18 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
 
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: InvalidLogicalTime" << '\n'
+                << " Exception: InvalidLogicalTime\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  send-with-timestamp=" << ( send_with_timestamp ? "True" : "False" ) << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
                 << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
-                << ")" << '\n'
+                << ")\n"
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
                 << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
-                << ")" << '\n'
+                << ")\n"
                 << "  update_time=" << update_time.get_time_in_seconds() << " ("
                 << update_time.get_base_time() << " " << Int64BaseTime::get_units()
-                << ")" << '\n';
+                << ")\n";
          send_hs( stderr, errmsg.str().c_str() );
       } catch ( AttributeNotOwned const &e ) {
          string id_str;
@@ -2434,7 +2434,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: AttributeNotOwned" << '\n'
+                << " Exception: AttributeNotOwned\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2447,7 +2447,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: ObjectInstanceNotKnown" << '\n'
+                << " Exception: ObjectInstanceNotKnown\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2460,7 +2460,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: AttributeNotDefined" << '\n'
+                << " Exception: AttributeNotDefined\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2473,7 +2473,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: FederateNotExecutionMember" << '\n'
+                << " Exception: FederateNotExecutionMember\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2486,7 +2486,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: SaveInProgress" << '\n'
+                << " Exception: SaveInProgress\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2499,7 +2499,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: RestoreInProgress" << '\n'
+                << " Exception: RestoreInProgress\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2512,7 +2512,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: NotConnected" << '\n'
+                << " Exception: NotConnected\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2525,7 +2525,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " Exception: RTIinternalError" << '\n'
+                << " Exception: RTIinternalError\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2540,7 +2540,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                   __LINE__, rti_err_msg.c_str() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " RTI1516_EXCEPTION" << '\n'
+                << " RTI1516_EXCEPTION\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2594,7 +2594,7 @@ void Object::send_blocking_io_data()
                    << " modified-data files to make sure the Lag-Compensation"
                    << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                    << " to disable Lag-Compensation when sending blocking I/O"
-                   << " configured object attributes." << '\n';
+                   << " configured object attributes.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
       }
@@ -2629,7 +2629,7 @@ void Object::send_blocking_io_data()
                 << " data. Please check your input or modified-data files to make"
                 << " sure at least attribute is configured for blocking I/O and"
                 << " if you are using the TrickHLA::Conditional API make sure you"
-                << " enable at least one attribute to be sent." << '\n';
+                << " enable at least one attribute to be sent.\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    } else {
@@ -2669,14 +2669,14 @@ exception for '%s' with error message '%s'.\n",
 
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: InvalidLogicalTime" << '\n'
+                << " Exception: InvalidLogicalTime\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
                 << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
-                << ")" << '\n'
+                << ")\n"
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
                 << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
-                << ")" << '\n';
+                << ")\n";
          ;
          send_hs( stderr, errmsg.str().c_str() );
       } catch ( AttributeNotOwned const &e ) {
@@ -2686,7 +2686,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: AttributeNotOwned" << '\n'
+                << " Exception: AttributeNotOwned\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2698,7 +2698,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: ObjectInstanceNotKnown" << '\n'
+                << " Exception: ObjectInstanceNotKnown\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2710,7 +2710,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: AttributeNotDefined" << '\n'
+                << " Exception: AttributeNotDefined\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2722,7 +2722,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: FederateNotExecutionMember" << '\n'
+                << " Exception: FederateNotExecutionMember\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2734,7 +2734,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: SaveInProgress" << '\n'
+                << " Exception: SaveInProgress\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2746,7 +2746,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: RestoreInProgress" << '\n'
+                << " Exception: RestoreInProgress\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2758,7 +2758,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: NotConnected" << '\n'
+                << " Exception: NotConnected\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2770,7 +2770,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, get_name() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " Exception: RTIinternalError" << '\n'
+                << " Exception: RTIinternalError\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2784,7 +2784,7 @@ exception for '%s' with error message '%s'.\n",
                   __LINE__, rti_err_msg.c_str() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " RTI1516_EXCEPTION" << '\n'
+                << " RTI1516_EXCEPTION\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -2990,7 +2990,7 @@ void Object::receive_zero_lookahead_data()
                       << " modified-data files to make sure the Lag-Compensation"
                       << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                       << " to disable Lag-Compensation when sending zero-lookahead"
-                      << " configured object attributes." << '\n';
+                      << " configured object attributes.\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                break;
          }
@@ -3069,7 +3069,7 @@ void Object::receive_blocking_io_data()
                       << " modified-data files to make sure the Lag-Compensation"
                       << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                       << " to disable Lag-Compensation when receiving blocking I/O"
-                      << " configured object attributes." << '\n';
+                      << " configured object attributes.\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                break;
          }
@@ -3169,14 +3169,14 @@ void Object::send_init_data()
 
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: InvalidLogicalTime" << '\n'
+             << " Exception: InvalidLogicalTime\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
              << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
-             << ")" << '\n'
+             << ")\n"
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
              << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
-             << ")" << '\n';
+             << ")\n";
       send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -3185,7 +3185,7 @@ void Object::send_init_data()
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: AttributeNotOwned" << '\n'
+             << " Exception: AttributeNotOwned\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3197,7 +3197,7 @@ void Object::send_init_data()
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: ObjectInstanceNotKnown" << '\n'
+             << " Exception: ObjectInstanceNotKnown\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3209,7 +3209,7 @@ void Object::send_init_data()
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: AttributeNotDefined" << '\n'
+             << " Exception: AttributeNotDefined\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3221,7 +3221,7 @@ void Object::send_init_data()
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: FederateNotExecutionMember" << '\n'
+             << " Exception: FederateNotExecutionMember\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3233,7 +3233,7 @@ void Object::send_init_data()
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: SaveInProgress" << '\n'
+             << " Exception: SaveInProgress\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3245,7 +3245,7 @@ void Object::send_init_data()
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: RestoreInProgress" << '\n'
+             << " Exception: RestoreInProgress\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3257,7 +3257,7 @@ void Object::send_init_data()
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: NotConnected" << '\n'
+             << " Exception: NotConnected\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3269,7 +3269,7 @@ void Object::send_init_data()
                __LINE__, get_name() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: RTIinternalError" << '\n'
+             << " Exception: RTIinternalError\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3283,7 +3283,7 @@ void Object::send_init_data()
                __LINE__, rti_err_msg.c_str() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception: " << '\n'
+             << " Exception: \n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3943,7 +3943,7 @@ void Object::pull_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Object::pull_ownership_at_init():" << __LINE__
              << " ERROR: No attributes found to push ownership for object '"
-             << get_name_string() << "'!" << '\n';
+             << get_name_string() << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -3967,7 +3967,7 @@ void Object::pull_ownership_at_init(
             errmsg << "Object::pull_ownership_at_init():" << __LINE__
                    << " ERROR: For object '" << get_name_string()
                    << "', no TrickHLA-Attribute found for attribute FOM name '"
-                   << attr_name_vector[i] << "'!" << '\n';
+                   << attr_name_vector[i] << "'!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             return;
          }
@@ -4735,7 +4735,7 @@ void Object::push_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Object::push_ownership_at_init():" << __LINE__
              << " ERROR: No attributes found to push ownership for object '"
-             << get_name_string() << "'!" << '\n';
+             << get_name_string() << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -4762,7 +4762,7 @@ void Object::push_ownership_at_init(
             errmsg << "Object::push_ownership_at_init():" << __LINE__
                    << " ERROR: For object '" << get_name_string()
                    << "', no TrickHLA-Attribute found for attribute FOM name '"
-                   << attr_name_vector[i] << "'!" << '\n';
+                   << attr_name_vector[i] << "'!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             return;
          }
@@ -5562,7 +5562,7 @@ void Object::initialize_thread_ID_array()
       errmsg << "Object::initialize_thread_ID_array():" << __LINE__
              << " ERROR: Could not allocate memory for 'thread_ids_array'"
              << " for requested size " << this->thread_ids_array_count
-             << "!" << '\n';
+             << "!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    for ( unsigned int id = 0; id < this->thread_ids_array_count; ++id ) {
@@ -5603,7 +5603,7 @@ void Object::initialize_thread_ID_array()
                    << " Trick child thread does not exist in the S_define file!"
                    << " Valid Trick thread-ID range is 0 to "
                    << ( this->thread_ids_array_count - 1 )
-                   << "!" << '\n';
+                   << "!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
       }

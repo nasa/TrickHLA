@@ -122,7 +122,7 @@ void RefFrameBase::base_config(
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
                 << " WARNING: Unexpected NULL THLAManager object for ReferenceFrame \""
-                << ref_frame_name << "\"!" << '\n';
+                << ref_frame_name << "\"!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // If the mngr_object is not set but the object is, use that.
@@ -134,7 +134,7 @@ void RefFrameBase::base_config(
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
                 << " WARNING: THLAManager object for ReferenceFrame \""
-                << ref_frame_name << "\" is already set!" << '\n';
+                << ref_frame_name << "\" is already set!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -145,7 +145,7 @@ void RefFrameBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance frame name!" << '\n';
+             << " WARNING: Unexpected NULL federation instance frame name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -219,7 +219,7 @@ void RefFrameBase::configure()
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
-                << "  Setting frame name to empty string." << '\n';
+                << "  Setting frame name to empty string.\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
       this->packing_data.name = trick_MM->mm_strdup( "" );
@@ -231,7 +231,7 @@ void RefFrameBase::configure()
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
-                << "  Setting parent frame name to empty string." << '\n';
+                << "  Setting parent frame name to empty string.\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
@@ -378,7 +378,7 @@ void RefFrameBase::set_name( char const *new_name )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << '\n';
+             << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -410,7 +410,7 @@ void RefFrameBase::set_parent_name( char const *name )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << '\n';
+             << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -446,7 +446,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << '\n';
+             << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -539,7 +539,7 @@ void RefFrameBase::publish()
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!" << '\n';
+             << " WARNING: Ignoring, reference frame already initialized!\n";
       send_hs( stderr, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = true;
@@ -565,7 +565,7 @@ void RefFrameBase::subscribe()
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!" << '\n';
+             << " WARNING: Ignoring, reference frame already initialized!\n";
       send_hs( stderr, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = false;
@@ -594,7 +594,7 @@ void RefFrameBase::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::pack() Warning: The initialize() function has not"
-                << " been called!" << '\n';
+                << " been called!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
@@ -626,7 +626,7 @@ void RefFrameBase::unpack()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::unpack():" << __LINE__
-                << " Warning: The initialize() function has not been called!" << '\n';
+                << " Warning: The initialize() function has not been called!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
@@ -659,9 +659,9 @@ void RefFrameBase::print_data( std::ostream &stream )
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << '\n'
-          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << '\n'
-          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << '\n'
+   stream << "\tObject-Name: '" << object->get_name() << "'\n"
+          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'\n"
+          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'\n"
           << "\ttime:   " << packing_data.state.time << '\n';
    stream << "\tposition: "
           << "\t\t" << packing_data.state.pos[0] << ", "

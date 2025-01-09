@@ -122,7 +122,7 @@ void DynamicalEntityBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance DynamicalEntity name!" << '\n';
+             << " WARNING: Unexpected NULL federation instance DynamicalEntity name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -342,7 +342,7 @@ void DynamicalEntityBase::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
-             << " been called!" << '\n';
+             << " been called!\n";
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -366,7 +366,7 @@ void DynamicalEntityBase::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << '\n';
+             << " ERROR: The initialize() function has not been called!\n";
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -393,10 +393,10 @@ void DynamicalEntityBase::debug_print(
    PhysicalEntityBase::debug_print( stream );
 
    stream.precision( 15 );
-   stream << "\tObject-Name: '" << object->get_name() << "'" << '\n'
+   stream << "\tObject-Name: '" << object->get_name() << "'\n"
           << "\tmass: " << de_packing_data.mass << '\n'
           << "\tmass_rate: " << de_packing_data.mass_rate << '\n';
-   stream << "\tinertia: " << '\n'
+   stream << "\tinertia: \n"
           << "\t\t" << de_packing_data.inertia[0][0] << ", "
           << de_packing_data.inertia[0][1] << ", "
           << de_packing_data.inertia[0][2] << '\n'
@@ -406,7 +406,7 @@ void DynamicalEntityBase::debug_print(
           << "\t\t" << de_packing_data.inertia[2][0] << ", "
           << de_packing_data.inertia[2][1] << ", "
           << de_packing_data.inertia[2][2] << '\n';
-   stream << "\tinertia rate: " << '\n'
+   stream << "\tinertia rate: \n"
           << "\t\t" << de_packing_data.inertia_rate[0][0] << ", "
           << de_packing_data.inertia_rate[0][1] << ", "
           << de_packing_data.inertia_rate[0][2] << '\n'

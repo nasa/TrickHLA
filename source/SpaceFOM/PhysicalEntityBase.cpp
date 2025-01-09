@@ -177,7 +177,7 @@ void PhysicalEntityBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::default_data():" << __LINE__
-             << " ERROR: Unexpected NULL federation instance PhysicalEntity name!" << '\n';
+             << " ERROR: Unexpected NULL federation instance PhysicalEntity name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -291,7 +291,7 @@ void PhysicalEntityBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
-             << " Setting frame name to empty string." << '\n';
+             << " Setting frame name to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -301,7 +301,7 @@ void PhysicalEntityBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
-             << " Setting type to empty string." << '\n';
+             << " Setting type to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.type = trick_MM->mm_strdup( "" );
    }
@@ -311,7 +311,7 @@ void PhysicalEntityBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
-             << " Setting status to empty string." << '\n';
+             << " Setting status to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.status = trick_MM->mm_strdup( "" );
    }
@@ -321,7 +321,7 @@ void PhysicalEntityBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
-             << " Setting parent_ref_frame to empty string." << '\n';
+             << " Setting parent_ref_frame to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }
@@ -341,7 +341,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
-             << " Setting frame name to empty string." << '\n';
+             << " Setting frame name to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -351,7 +351,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
-             << " Setting type to empty string." << '\n';
+             << " Setting type to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.type = trick_MM->mm_strdup( "" );
    }
@@ -361,7 +361,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
-             << " Setting status to empty string." << '\n';
+             << " Setting status to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.status = trick_MM->mm_strdup( "" );
    }
@@ -371,7 +371,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
-             << " Setting parent_ref_frame to empty string." << '\n';
+             << " Setting parent_ref_frame to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }
@@ -549,11 +549,11 @@ void PhysicalEntityBase::debug_print( std::ostream &stream )
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << '\n'
-          << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << '\n'
-          << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << '\n'
-          << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << '\n'
-          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << '\n'
+   stream << "\tObject-Name: '" << object->get_name() << "'\n"
+          << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'\n"
+          << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'\n"
+          << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'\n"
+          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'\n"
           << "\ttime: " << pe_packing_data.state.time << '\n';
    stream << "\tposition: "
           << "\t\t" << pe_packing_data.state.pos[0] << ", "

@@ -90,7 +90,7 @@ void Packing::set_object( TrickHLA::Object *mngr_obj )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::Packing::set_object():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << '\n';
+             << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -141,7 +141,7 @@ Attribute *Packing::get_attribute_and_validate(
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input.py file is properly"
-             << " configured for this attribute." << '\n';
+             << " configured for this attribute.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return attr;

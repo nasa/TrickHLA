@@ -293,7 +293,7 @@ void JEODPhysicalInterface::pack_from_working_data()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "JEODPhysicalInterface::pack() ERROR: The initialize() function has not"
-             << " been called!" << '\n';
+             << " been called!\n";
       send_hs( stderr, errmsg.str().c_str() );
    }
 

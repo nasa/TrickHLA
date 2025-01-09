@@ -121,7 +121,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data before compensation: " << '\n';
+      cout << "Send data before compensation: \n";
       this->print_lag_comp_data();
    }
 
@@ -130,7 +130,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data after compensation: " << '\n';
+      cout << "Send data after compensation: \n";
       this->print_lag_comp_data();
    }
 
@@ -173,7 +173,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data before compensation: " << '\n';
+         cout << "Receive data before compensation: \n";
          this->print_lag_comp_data();
       }
 
@@ -182,7 +182,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data after compensation: " << '\n';
+         cout << "Receive data after compensation: \n";
          this->print_lag_comp_data();
       }
    }

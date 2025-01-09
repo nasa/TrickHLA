@@ -150,7 +150,7 @@ void SimpleSimConfig::initialize()
 void SimpleSimConfig::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      cout << "===================================================" << '\n';
+      cout << "===================================================\n";
    }
 
    double terminate_time = exec_get_terminate_time();
@@ -161,7 +161,7 @@ void SimpleSimConfig::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::pack():" << __LINE__
               << " Setting simulation termination time to "
-              << run_duration << " seconds." << '\n';
+              << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    } else {
@@ -175,7 +175,7 @@ void SimpleSimConfig::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::pack(:" << __LINE__
               << " Setting simulation duration to "
-              << run_duration << " seconds." << '\n';
+              << run_duration << " seconds.\n";
       }
    }
 
@@ -184,21 +184,21 @@ void SimpleSimConfig::pack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::pack():" << __LINE__ << '\n'
-           << "\t Object-Name:'" << this->object->get_name() << "'" << '\n'
-           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << '\n'
-           << "\t run_duration:" << run_duration << " seconds" << '\n'
+           << "\t Object-Name:'" << this->object->get_name() << "'\n"
+           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+           << "\t run_duration:" << run_duration << " seconds\n"
            << "\t run_duration_base_time:" << run_duration_base_time << " "
            << Int64BaseTime::get_units() << '\n'
            << "\t num_federates:" << num_federates << '\n'
-           << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << '\n'
-           << "===================================================" << '\n';
+           << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+           << "===================================================\n";
    }
 }
 
 void SimpleSimConfig::unpack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      cout << "===================================================" << '\n';
+      cout << "===================================================\n";
    }
 
    // Decode the run duration from a 64 bit integer in the base time.
@@ -210,20 +210,20 @@ void SimpleSimConfig::unpack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::unpack():" << __LINE__
               << " Setting simulation duration to "
-              << run_duration << " seconds." << '\n';
+              << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::unpack():" << __LINE__ << '\n'
-           << "\t Object-Name:'" << this->object->get_name() << "'" << '\n'
-           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << '\n'
-           << "\t run_duration:" << run_duration << " seconds" << '\n'
+           << "\t Object-Name:'" << this->object->get_name() << "'\n"
+           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+           << "\t run_duration:" << run_duration << " seconds\n"
            << "\t run_duration_base_time:" << run_duration_base_time << " "
            << Int64BaseTime::get_units() << '\n'
            << "\t num_federates:" << num_federates << '\n'
-           << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << '\n'
-           << "===================================================" << '\n';
+           << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+           << "===================================================\n";
    }
 }

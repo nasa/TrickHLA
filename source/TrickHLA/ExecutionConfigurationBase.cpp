@@ -331,8 +331,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -389,8 +388,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -418,8 +416,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified."
-             << '\n';
+             << " files to make sure the 'subscribe' value is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
