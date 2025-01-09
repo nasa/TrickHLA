@@ -1249,12 +1249,8 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       return false;
    }
 
-   // Determine if a valid thread ID is for an enabled thread association.
-   bool const thread_enabled = ( thread_id < this->thread_cnt )
-                               && is_enabled_child_thread_association( thread_id );
-
    // Skip the child thread if disabled or not associated.
-   if ( thread_enabled ) {
+   if ( is_enabled_child_thread_association( thread_id ) ) {
 
       // Time constraint: (dt[i] > 0)
       if ( data_cycle_base_time <= 0 ) {
@@ -1418,7 +1414,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       }
 
       // Skip the child thread if disabled or not associated.
-      if ( thread_enabled ) {
+      if ( is_enabled_child_thread_association( thread_id ) ) {
 
          // Thread data cycle time must be less than the LCTS to be valid.
          // Time constraint: (LCTS ≥ dt[i])
@@ -1456,7 +1452,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
    }
 
    // Skip the child thread if disabled or not associated.
-   if ( thread_enabled ) {
+   if ( is_enabled_child_thread_association( thread_id ) ) {
 
       // The child thread data cycle time cannot be less than (i.e. faster)
       // than the main thread cycle time.
