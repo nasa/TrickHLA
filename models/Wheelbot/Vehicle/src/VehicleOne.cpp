@@ -293,18 +293,18 @@ int VehicleOne::state_integ()
 // Prints out waypoint queue - useful for debugging.
 void VehicleOne::print_waypoints()
 {
-   std::cout << "Waypoints:" << '\n';
+   std::cout << "Waypoints:\n";
    std::vector< Point >::iterator iter;
    for ( iter = waypoint_queue.begin(); iter != waypoint_queue.end(); ++iter ) {
       Point const &waypoint = *iter;
-      std::cout << "(" << waypoint.getX() << ", " << waypoint.getY() << ")" << '\n';
+      std::cout << "(" << waypoint.getX() << ", " << waypoint.getY() << ")\n";
    }
 }
 
 // Prints out STCS array - useful for debugging.
 void VehicleOne::print_stcs()
 {
-   std::cout << "STCS Array:" << '\n';
+   std::cout << "STCS Array:\n";
    for ( int i = 0; i < 7; ++i ) {
       std::cout << "STCS[" << i << "]: " << stcs[i] << '\n';
    }

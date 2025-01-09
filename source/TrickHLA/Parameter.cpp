@@ -139,7 +139,7 @@ void Parameter::initialize(
              << " parameter. Make sure 'THLA.manager.interactions["
              << interaction_index << "].parameters[" << parameter_index
              << "].FOM_name' in either your input.py file or modified-data files"
-             << " is correctly specified." << '\n';
+             << " is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -152,7 +152,7 @@ void Parameter::initialize(
              << " Trick name for the parameter. Make sure 'THLA.manager.interactions["
              << interaction_index << "].parameters[" << parameter_index
              << "].trick_name' in either your input.py file or modified-data files"
-             << " is correctly specified." << '\n';
+             << " is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -185,7 +185,7 @@ void Parameter::initialize(
              << " the interaction parameter Trick name is correctly specified."
              << " If '" << trick_name << "' is an inherited variable then make"
              << " sure the base class uses either the 'public' or 'protected'"
-             << " access level for the variable." << '\n';
+             << " access level for the variable.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -216,14 +216,14 @@ void Parameter::initialize(
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
-             << "'. Unexpected NULL trick variable address." << '\n';
+             << "'. Unexpected NULL trick variable address.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    if ( this->attr == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
-             << "'. Unexpected NULL ATTRIBUTES pointer." << '\n';
+             << "'. Unexpected NULL ATTRIBUTES pointer.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -256,7 +256,7 @@ void Parameter::complete_initialization()
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "parameter represents a 'bool' type. Please check your input "
                    << "or modified-data files to make sure the value for the 'rti_"
-                   << "encoding' is correctly specified." << '\n';
+                   << "encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -279,7 +279,7 @@ void Parameter::complete_initialization()
                    << " 'rti_encoding' when the parameter  represents a 'char' or"
                    << " 'unsigned char' type. Please check your input or"
                    << " modified-data files to make sure the value for the"
-                   << " 'rti_encoding' is correctly specified." << '\n';
+                   << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -295,7 +295,7 @@ void Parameter::complete_initialization()
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
-                   << " 'rti_encoding' is correctly specified." << '\n';
+                   << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -312,7 +312,7 @@ void Parameter::complete_initialization()
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
-                   << " 'rti_encoding' is correctly specified." << '\n';
+                   << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -341,7 +341,7 @@ void Parameter::complete_initialization()
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "parameter represents a primitive type. Please check your "
                    << "input or modified-data files to make sure the value for the "
-                   << "'rti_encoding' is correctly specified." << '\n';
+                   << "'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -379,7 +379,7 @@ void Parameter::complete_initialization()
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *'). Please check your input or modified-data"
                    << " files to make sure the value for the 'rti_encoding' is"
-                   << " correctly specified." << '\n';
+                   << " correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -424,7 +424,7 @@ void Parameter::complete_initialization()
                       << "' with Trick name '" << trick_name << "' is a "
                       << ( attr->num_index + 1 ) << "-dimensional dynamic array"
                       << " of strings. Only one-dimensional dynamic arrays are"
-                      << " supported for now." << '\n';
+                      << " supported for now.\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -439,7 +439,7 @@ void Parameter::complete_initialization()
              << " rti_encoding for FOM Interaction Parameter '"
              << interaction_FOM_name << "'->'" << FOM_name
              << "' with Trick name '" << trick_name
-             << "' and rti_encoding = " << rti_encoding << "." << '\n';
+             << "' and rti_encoding = " << rti_encoding << ".\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -453,7 +453,7 @@ void Parameter::complete_initialization()
              << trick_name << "' can not be an array when using ENCODING_LOGICAL_TIME"
              << " for the 'rti_encoding'. Please check your input or modified-data"
              << " files to make sure the value for the 'rti_encoding' is"
-             << " correctly specified." << '\n';
+             << " correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -466,7 +466,7 @@ void Parameter::complete_initialization()
              << trick_name << "' must have the units of 'seconds' when the"
              << " 'rti_encoding' is set to ENCODING_LOGICAL_TIME. Please check your"
              << " input or modified-data files to make sure the value for the"
-             << " 'rti_encoding' is correctly specified." << '\n';
+             << " 'rti_encoding' is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -494,7 +494,7 @@ void Parameter::complete_initialization()
           << "'->'" << FOM_name << "' with Trick name '" << trick_name
           << "' has an unexpected size of zero bytes! Make sure your simulation"
           << " variable is properly initialized before the initialize()"
-          << " function is called." << '\n';
+          << " function is called.\n";
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -503,13 +503,13 @@ void Parameter::complete_initialization()
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::complete_initialization():" << __LINE__ << '\n'
-          << "========================================================" << '\n'
-          << "  interaction_FOM_name:'" << interaction_FOM_name << "'" << '\n'
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "========================================================\n"
+          << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
-          << "  attr->name:'" << attr->name << "'" << '\n'
-          << "  attr->type_name:'" << attr->type_name << "'" << '\n'
+          << "  attr->name:'" << attr->name << "'\n"
+          << "  attr->type_name:'" << attr->type_name << "'\n"
           << "  attr->type:" << attr->type << '\n'
           << "  attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
@@ -528,7 +528,7 @@ void Parameter::complete_initialization()
            || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( attr->num_index > 0 )
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"" << '\n';
+         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -574,7 +574,7 @@ bool Parameter::extract_data(
                    << " simulation variable is the same size and type as what is"
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
-                   << " variables are not the correct size or type." << '\n';
+                   << " variables are not the correct size or type.\n";
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
@@ -608,7 +608,7 @@ bool Parameter::extract_data(
                    << " size and type as what is defined in the FOM. If you are"
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
-                   << " size or type." << '\n';
+                   << " size or type.\n";
             send_hs( stderr, errmsg.str().c_str() );
 
             // Just return if we have a data size mismatch. This will allow us
@@ -645,7 +645,7 @@ bool Parameter::extract_data(
                    << " variable is the same size and type as what is defined in the"
                    << " FOM. If you are using Lag Compensation one possible cause of"
                    << " this problem is that your lag compensation variables are not"
-                   << " the correct size or type." << '\n';
+                   << " the correct size or type.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          // Ensure enough buffer capacity.
@@ -762,7 +762,7 @@ void Parameter::ensure_buffer_capacity(
       errmsg << "Parameter::ensure_buffer_capacity():" << __LINE__
              << " ERROR: Could not allocate memory for buffer for requested"
              << " capacity " << capacity << " for parameter '" << FOM_name
-             << "'!" << '\n';
+             << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -851,12 +851,12 @@ void Parameter::calculate_size_and_number_of_items()
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::calculate_size_and_number_of_items():" << __LINE__ << '\n'
-          << "========================================================" << '\n'
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "========================================================\n"
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
-          << "  ref2->attr->name:'" << attr->name << "'" << '\n'
-          << "  ref2->attr->type_name:'" << attr->type_name << "'" << '\n'
+          << "  ref2->attr->name:'" << attr->name << "'\n"
+          << "  ref2->attr->type_name:'" << attr->type_name << "'\n"
           << "  ref2->attr->type:" << attr->type << '\n'
           << "  ref2->attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
@@ -874,7 +874,7 @@ void Parameter::calculate_size_and_number_of_items()
            || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( attr->num_index > 0 )
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"" << '\n';
+         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -940,12 +940,12 @@ void Parameter::pack_parameter_buffer()
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
-          << "======================== BEFORE PACK ================================" << '\n'
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "======================== BEFORE PACK ================================\n"
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
-          << "  ref2->attr->name:'" << attr->name << "'" << '\n'
-          << "  ref2->attr->type_name:'" << attr->type_name << "'" << '\n'
+          << "  ref2->attr->name:'" << attr->name << "'\n"
+          << "  ref2->attr->type_name:'" << attr->type_name << "'\n"
           << "  ref2->attr->type:" << attr->type << '\n'
           << "  ref2->attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
@@ -964,7 +964,7 @@ void Parameter::pack_parameter_buffer()
            || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( attr->num_index > 0 )
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"" << '\n';
+         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -996,9 +996,9 @@ void Parameter::pack_parameter_buffer()
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
             ostringstream msg;
             msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
-                << "================== PARAMETER ENCODE ==================================" << '\n'
+                << "================== PARAMETER ENCODE ==================================\n"
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                << "')" << '\n';
+                << "')\n";
             send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
@@ -1017,9 +1017,9 @@ void Parameter::pack_parameter_buffer()
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
             ostringstream msg;
             msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
-                << "================== PARAMETER ENCODE ==================================" << '\n'
+                << "================== PARAMETER ENCODE ==================================\n"
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                << "')" << '\n';
+                << "')\n";
             send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
@@ -1044,9 +1044,9 @@ void Parameter::pack_parameter_buffer()
             if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
                ostringstream msg;
                msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
-                   << "================== PARAMETER ENCODE ==================================" << '\n'
+                   << "================== PARAMETER ENCODE ==================================\n"
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                   << "')" << '\n';
+                   << "')\n";
                send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
@@ -1084,9 +1084,9 @@ void Parameter::pack_parameter_buffer()
             if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
                ostringstream msg;
                msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
-                   << "================== PARAMETER ENCODE ==================================" << '\n'
+                   << "================== PARAMETER ENCODE ==================================\n"
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                   << "')" << '\n';
+                   << "')\n";
                send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
@@ -1100,12 +1100,12 @@ void Parameter::pack_parameter_buffer()
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
-          << "======================== AFTER PACK ================================" << '\n'
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "======================== AFTER PACK ================================\n"
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
-          << "  ref2->attr->name:'" << attr->name << "'" << '\n'
-          << "  ref2->attr->type_name:'" << attr->type_name << "'" << '\n'
+          << "  ref2->attr->name:'" << attr->name << "'\n"
+          << "  ref2->attr->type_name:'" << attr->type_name << "'\n"
           << "  ref2->attr->type:" << attr->type << '\n'
           << "  ref2->attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
@@ -1124,7 +1124,7 @@ void Parameter::pack_parameter_buffer()
            || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( attr->num_index > 0 )
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"" << '\n';
+         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -1155,9 +1155,9 @@ void Parameter::unpack_parameter_buffer()
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
             ostringstream msg;
             msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
-                << "================== PARAMETER DECODE ==================================" << '\n'
+                << "================== PARAMETER DECODE ==================================\n"
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                << "')" << '\n';
+                << "')\n";
             send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
@@ -1174,9 +1174,9 @@ void Parameter::unpack_parameter_buffer()
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
             ostringstream msg;
             msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
-                << "================== PARAMETER DECODE ==================================" << '\n'
+                << "================== PARAMETER DECODE ==================================\n"
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                << "')" << '\n';
+                << "')\n";
             send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
@@ -1203,9 +1203,9 @@ void Parameter::unpack_parameter_buffer()
             if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
                ostringstream msg;
                msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
-                   << "================ PARAMETER DECODE ================================" << '\n'
+                   << "================ PARAMETER DECODE ================================\n"
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name << "')"
-                   << " value:\"" << ( *static_cast< char ** >( address ) ) << "\"" << '\n';
+                   << " value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
                send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
@@ -1239,9 +1239,9 @@ void Parameter::unpack_parameter_buffer()
                if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
                   ostringstream msg;
                   msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
-                      << "================== PARAMETER DECODE ================================" << '\n'
+                      << "================== PARAMETER DECODE ================================\n"
                       << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                      << "')" << '\n';
+                      << "')\n";
                   send_hs( stdout, msg.str().c_str() );
                   print_buffer();
                }
@@ -1256,12 +1256,12 @@ void Parameter::unpack_parameter_buffer()
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
-          << "========================================================" << '\n'
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << '\n'
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << '\n'
+          << "========================================================\n"
+          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
+          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
-          << "  ref2->attr->name:'" << attr->name << "'" << '\n'
-          << "  ref2->attr->type_name:'" << attr->type_name << "'" << '\n'
+          << "  ref2->attr->name:'" << attr->name << "'\n"
+          << "  ref2->attr->type_name:'" << attr->type_name << "'\n"
           << "  ref2->attr->type:" << attr->type << '\n'
           << "  ref2->attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
@@ -1280,7 +1280,7 @@ void Parameter::unpack_parameter_buffer()
            || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( attr->num_index > 0 )
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"" << '\n';
+         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -1399,7 +1399,7 @@ void Parameter::encode_logical_time() const
          errmsg << "Parameter::encode_logical_time():" << __LINE__
                 << " ERROR: For Parameter '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
-                << " ENCODING_LOGICAL_TIME encoding." << '\n';
+                << " ENCODING_LOGICAL_TIME encoding.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -1501,7 +1501,7 @@ void Parameter::decode_logical_time()
          errmsg << "Parameter::decode_logical_time():" << __LINE__
                 << " ERROR: For Parameter '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
-                << " ENCODING_LOGICAL_TIME encoding." << '\n';
+                << " ENCODING_LOGICAL_TIME encoding.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -1692,7 +1692,7 @@ size %d, will use the data buffer size instead.\n",
          errmsg << "Parameter::decode_opaque_data_from_buffer():" << __LINE__
                 << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA Parameter '"
                 << FOM_name << "' with Trick name '" << trick_name
-                << "' and length " << length << "!" << '\n';
+                << "' and length " << length << "!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -2200,7 +2200,7 @@ void Parameter::encode_string_to_buffer()
                    << " ERROR: For ENCODING_NONE, Parameter '" << FOM_name
                    << "' with Trick name '" << trick_name << "', actual data size"
                    << " (" << byte_count << ") != expected Trick simulation variable"
-                   << " size (" << size << ")!" << '\n';
+                   << " size (" << size << ")!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -2350,7 +2350,7 @@ size %d, will use the data buffer size instead.\n",
                       << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING"
                       << " parameter '" << FOM_name << "' and length "
                       << Utilities::next_positive_multiple_of_8( length )
-                      << "!" << '\n';
+                      << "!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -2501,7 +2501,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                          << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING"
                          << " parameter '" << FOM_name << "' and length "
                          << Utilities::next_positive_multiple_of_8( length )
-                         << "!" << '\n';
+                         << "!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
@@ -2620,7 +2620,7 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buff
                       << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING"
                       << " parameter '" << FOM_name << "' and length "
                       << Utilities::next_positive_multiple_of_8( length )
-                      << "!" << '\n';
+                      << "!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -2765,7 +2765,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                          << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING"
                          << " parameter '" << FOM_name << "' and length "
                          << Utilities::next_positive_multiple_of_8( length )
-                         << "!" << '\n';
+                         << "!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
@@ -2877,7 +2877,7 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d > data buffe
                errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA"
                       << " parameter '" << FOM_name << "' and length "
-                      << length << "!" << '\n';
+                      << length << "!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
 
@@ -3011,7 +3011,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                   errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                          << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA"
                          << " parameter '" << FOM_name << "' and length "
-                         << length << "!" << '\n';
+                         << length << "!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
 
@@ -3113,7 +3113,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                       << " ERROR: Could not allocate memory for ENCODING_C_STRING"
                       << " parameter '" << FOM_name << "' and length "
                       << Utilities::next_positive_multiple_of_8( length )
-                      << "!" << '\n';
+                      << "!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                return;
             }
@@ -3151,7 +3151,7 @@ void Parameter::byteswap_buffer_copy(
              << " WARNING: FOM Parameter '" << FOM_name << "' with Trick name '"
              << trick_name << "' has an unexpected size of zero bytes! Make"
              << " sure your simulation variable is properly initialized before"
-             << " this initialize() function is called." << '\n';
+             << " this initialize() function is called.\n";
          send_hs( stdout, msg.str().c_str() );
       }
       return;
@@ -3435,7 +3435,7 @@ void Parameter::print_buffer() const
       char const *char_array = reinterpret_cast< char * >( buffer );
 
       msg << "\tAttribute size:" << size << '\n'
-          << "\tIndex\tValue\tCharacter" << '\n';
+          << "\tIndex\tValue\tCharacter\n";
 
       for ( int i = 0; i < size; ++i ) {
          int char_value = char_array[i];

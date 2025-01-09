@@ -103,8 +103,7 @@ void OpaqueBuffer::set_byte_alignment( unsigned int const size )
       default:
          ostringstream errmsg;
          errmsg << "OpaqueBuffer::set_byte_alignment():" << __LINE__
-                << " ERROR: Unsupported byte alignment: " << size << "!"
-                << '\n';
+                << " ERROR: Unsupported byte alignment: " << size << "!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
    }
@@ -146,7 +145,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
       ostringstream errmsg;
       errmsg << "OpaqueBuffer::ensure_buffer_capacity():" << __LINE__
              << " ERROR: Could not allocate memory for buffer for requested"
-             << " capacity " << capacity << "!" << '\n';
+             << " capacity " << capacity << "!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -178,7 +177,7 @@ void OpaqueBuffer::push_to_buffer(
              << " WARNING: Trying to push " << size << " bytes into the buffer at"
              << " position " << push_pos << ", which exceeds the buffer capacity"
              << " by " << ( ( push_pos + size ) - capacity ) << " bytes! Resizing the"
-             << " buffer to accommodate the data." << '\n';
+             << " buffer to accommodate the data.\n";
       send_hs( stderr, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + size );
    }
@@ -231,7 +230,7 @@ void OpaqueBuffer::pull_from_buffer(
       errmsg << "OpaqueBuffer::pull_from_buffer():" << __LINE__
              << " ERROR: Trying to pull " << size << " bytes from the buffer at"
              << " position " << pull_pos << ", which exceeds the end of the buffer"
-             << " by " << ( ( pull_pos + size ) - capacity ) << " bytes!" << '\n';
+             << " by " << ( ( pull_pos + size ) - capacity ) << " bytes!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -268,7 +267,7 @@ void OpaqueBuffer::push_pad_to_buffer(
              << " WARNING: Trying to push " << pad_size << " pad bytes into the"
              << " buffer at position " << push_pos << ", which exceeds the buffer"
              << " capacity by " << ( ( push_pos + pad_size ) - capacity ) << " bytes!"
-             << " Resizing the buffer to accommodate the data." << '\n';
+             << " Resizing the buffer to accommodate the data.\n";
       send_hs( stderr, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + pad_size );
    }
@@ -294,7 +293,7 @@ void OpaqueBuffer::pull_pad_from_buffer(
              << " ERROR: Trying to pull " << pad_size << " pad bytes from the"
              << " buffer at position " << pull_pos << ", which exceeds the end of"
              << " the buffer by " << ( ( pull_pos + pad_size ) - capacity )
-             << " bytes!" << '\n';
+             << " bytes!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -358,7 +357,7 @@ void OpaqueBuffer::byteswap_buffer_copy(
                ostringstream errmsg;
                errmsg << "OpaqueBuffer::byteswap_buffer_copy():"
                       << __LINE__ << " ERROR: Don't know how to byteswap "
-                      << size << " bytes!" << '\n';
+                      << size << " bytes!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
             break;

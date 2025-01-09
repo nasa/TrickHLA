@@ -163,7 +163,7 @@ void SineLagCompensation::send_lag_compensation()
       string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
 
       cout << "******* SineLagCompensation::send_lag_compensation():" << __LINE__ << '\n'
-           << "    object-name:'" << obj_name << "'" << '\n'
+           << "    object-name:'" << obj_name << "'\n"
            << " lag-comp-type:" << lag_comp_type_str << '\n'
            << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << '\n'
            << "     data-time:" << setprecision( 18 ) << sim_data->get_time() << '\n'
@@ -199,7 +199,7 @@ void SineLagCompensation::bypass_send_lag_compensation()
       string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
 
       cout << "******* SineLagCompensation::bypass_send_lag_compensation():" << __LINE__ << '\n'
-           << "   object-name:'" << obj_name << "'" << '\n'
+           << "   object-name:'" << obj_name << "'\n"
            << " lag-comp-type:" << lag_comp_type_str << '\n'
            << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << '\n'
            << "     data-time:" << setprecision( 18 ) << sim_data->get_time() << '\n';
@@ -232,19 +232,19 @@ void SineLagCompensation::receive_lag_compensation()
       string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
 
       cout << "******* SineLagCompensation::receive_lag_compensation():" << __LINE__ << '\n'
-           << "   object-name:'" << obj_name << "'" << '\n'
+           << "   object-name:'" << obj_name << "'\n"
            << " lag-comp-type:" << lag_comp_type_str << '\n'
            << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << '\n';
       if ( time_attr->is_received() ) {
          double const dt = time - this->get_time();
-         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Received Update" << '\n'
+         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Received Update\n"
               << "            dt:" << setprecision( 18 ) << dt << '\n';
       } else {
-         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Stale: No Update Received!" << '\n'
-              << "            dt: Invalid - No Time Received!" << '\n';
+         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Stale: No Update Received!\n"
+              << "            dt: Invalid - No Time Received!\n";
       }
       cout << " adjusted-time:" << setprecision( 18 ) << time << '\n'
-           << " BEFORE Lag Compensation:" << '\n'
+           << " BEFORE Lag Compensation:\n"
            << "\t Name  lag-comp: '" << this->get_name()
            << "', received update:" << ( name_attr->is_received() ? "Yes" : "No" ) << '\n'
 
@@ -314,8 +314,8 @@ void SineLagCompensation::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "SineLagCompensation::receive_lag_compensation():" << __LINE__ << '\n'
-           << " AFTER LAG COMPENSATION:" << '\n'
-           << "\t Name  sim_data: '" << sim_data->get_name() << "'" << '\n'
+           << " AFTER LAG COMPENSATION:\n"
+           << "\t Name  sim_data: '" << sim_data->get_name() << "'\n"
            << "\t Time  sim_data: " << setprecision( 18 ) << sim_data->get_time() << '\n'
            << "\t Value sim_data: " << sim_data->get_value() << '\n'
            << "\t dvdt  sim_data: " << sim_data->get_derivative() << '\n'
@@ -343,18 +343,18 @@ void SineLagCompensation::bypass_receive_lag_compensation()
       string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
 
       cout << "******* SineLagCompensation::bypass_receive_lag_compensation():" << __LINE__ << '\n'
-           << "   object-name:'" << obj_name << "'" << '\n'
+           << "   object-name:'" << obj_name << "'\n"
            << " lag-comp-type:" << lag_comp_type_str << '\n'
            << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << '\n';
       if ( time_attr->is_received() ) {
          double const dt = time - this->get_time();
-         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Received Update" << '\n'
+         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Received Update\n"
               << "            dt:" << setprecision( 18 ) << dt << '\n';
       } else {
-         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Stale: No Update Received!" << '\n'
-              << "            dt: Invalid - No Time Received!" << '\n';
+         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Stale: No Update Received!\n"
+              << "            dt: Invalid - No Time Received!\n";
       }
-      cout << " BEFORE Bypassing Lag Compensation:" << '\n'
+      cout << " BEFORE Bypassing Lag Compensation:\n"
            << "\t Name  lag-comp: '" << this->get_name()
            << "', received update:" << ( name_attr->is_received() ? "Yes" : "No" ) << '\n'
 
@@ -421,8 +421,8 @@ void SineLagCompensation::bypass_receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "SineLagCompensation::bypass_receive_lag_compensation():" << __LINE__ << '\n'
-           << " AFTER BYPASSING LAG COMPENSATION:" << '\n'
-           << "\t Name  sim_data: '" << sim_data->get_name() << "'" << '\n'
+           << " AFTER BYPASSING LAG COMPENSATION:\n"
+           << "\t Name  sim_data: '" << sim_data->get_name() << "'\n"
            << "\t Time  sim_data: " << setprecision( 18 ) << sim_data->get_time() << '\n'
            << "\t Value sim_data: " << sim_data->get_value() << '\n'
            << "\t dvdt  sim_data: " << sim_data->get_derivative() << '\n'

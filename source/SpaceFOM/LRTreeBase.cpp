@@ -142,7 +142,7 @@ bool LRTreeBase::build_tree()
    if ( !allocate_paths() ) {
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
-             << " ERROR: Failed to allocate the tree paths matrix!\"" << '\n';
+             << " ERROR: Failed to allocate the tree paths matrix!\"\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -151,7 +151,7 @@ bool LRTreeBase::build_tree()
    if ( root_node == NULL ) {
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
-             << " ERROR: Root node not found!\"" << '\n';
+             << " ERROR: Root node not found!\"\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -410,7 +410,7 @@ void LRTreeBase::print_paths( std::ostream &stream )
       unsigned int num_nodes = this->nodes.size();
 
       // Print out header tag.
-      stream << "LRTreeBase::print_paths: " << '\n';
+      stream << "LRTreeBase::print_paths: \n";
 
       // Iterate through the rows.
       for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {

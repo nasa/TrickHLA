@@ -71,7 +71,7 @@ int Arena::distance_between(
       distance = 10 * sqrt( ( dest_pt.getX() - orig_pt.getX() ) * ( dest_pt.getX() - orig_pt.getX() ) + ( dest_pt.getY() - orig_pt.getY() ) * ( dest_pt.getY() - orig_pt.getY() ) );
       return 0;
    }
-   std::cerr << "Arena::distanceBetween: bad pointer parameter(s)." << '\n';
+   std::cerr << "Arena::distanceBetween: bad pointer parameter(s).\n";
    return 1;
 }
 
@@ -87,7 +87,7 @@ int Arena::movement_cost_estimate(
       cost_estimate = 10 * ( abs( dest_pt.getX() - orig_pt.getX() ) + abs( dest_pt.getY() - orig_pt.getY() ) );
       return 0;
    }
-   std::cerr << "Arena::movementCostEstimate: bad pointer parameter(s)." << '\n';
+   std::cerr << "Arena::movementCostEstimate: bad pointer parameter(s).\n";
    return 1;
 }
 
@@ -169,7 +169,7 @@ int Arena::get_grid_square_coordinates(
       coords.setY( offset / width );
       return 0;
    } else {
-      std::cerr << "Arena::getGridSquareCoordinates: problem." << '\n';
+      std::cerr << "Arena::getGridSquareCoordinates: problem.\n";
       return 1;
    }
 }

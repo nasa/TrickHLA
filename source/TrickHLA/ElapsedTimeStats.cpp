@@ -185,13 +185,13 @@ std::string const ElapsedTimeStats::to_string()
       // We have to double escape the % sign so that send_hs() will print the
       // percent character '%' correctly and not as a c-string formating code.
       msg << "    sample-count: " << count << '\n'
-          << "             min: " << min << " milliseconds" << '\n'
-          << "             max: " << max << " milliseconds" << '\n'
-          << "            mean: " << mean << " milliseconds" << '\n'
-          << "  sample-std-dev: " << std_dev << " milliseconds" << '\n'
+          << "             min: " << min << " milliseconds\n"
+          << "             max: " << max << " milliseconds\n"
+          << "            mean: " << mean << " milliseconds\n"
+          << "  sample-std-dev: " << std_dev << " milliseconds\n"
           << " margin-of-error: " << ( moe_percent * 100.0 )
           << "%%%% (" << moe << " milliseconds) with "
-          << ( confidence * 100.0 ) << "%%%% confidence" << '\n'
+          << ( confidence * 100.0 ) << "%%%% confidence\n"
           << " min-sample-size: " << min_sample_size << '\n'
           << "        guidance: To estimate the average elapsed time between reads to within a "
           << ( M_percent * 100.0 ) << "%%%% ("
@@ -200,9 +200,9 @@ std::string const ElapsedTimeStats::to_string()
           << min_sample_size << " samples based on the statistics.";
    } else {
       msg << "    sample-count: " << count << '\n'
-          << "             min: N/A" << '\n'
-          << "             max: N/A" << '\n'
-          << "            mean: N/A" << '\n'
+          << "             min: N/A\n"
+          << "             max: N/A\n"
+          << "            mean: N/A\n"
           << "  sample-std-dev: N/A";
    }
    return msg.str();

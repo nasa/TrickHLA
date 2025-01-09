@@ -151,7 +151,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalInterfaceConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Name for PhysicalInterface!" << '\n';
+                << " ERROR: Unexpected NULL Name for PhysicalInterface!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -181,7 +181,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
       } else {
          ostringstream errmsg;
          errmsg << "PhysicalInterfaceConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Parent Frame for PhysicalInterface!" << '\n';
+                << " ERROR: Unexpected NULL Parent Frame for PhysicalInterface!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }

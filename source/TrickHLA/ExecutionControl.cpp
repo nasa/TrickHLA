@@ -126,7 +126,7 @@ void ExecutionControl::initialize()
       ostringstream msg;
       msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type()
-          << "'" << '\n';
+          << "'\n";
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -287,7 +287,7 @@ void ExecutionControl::setup_object_RTI_handles()
    } else {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL ExCO!" << '\n';
+             << " ERROR: Unexpected NULL ExCO!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -322,7 +322,7 @@ void ExecutionControl::add_multiphase_init_sync_points()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::add_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
-             << " support multiphase initialization synchronization points." << '\n';
+             << " support multiphase initialization synchronization points.\n";
       send_hs( stdout, errmsg.str().c_str() );
    }
 }
@@ -336,7 +336,7 @@ void ExecutionControl::clear_multiphase_init_sync_points()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::clear_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
-             << " support multiphase initialization synchronization points." << '\n';
+             << " support multiphase initialization synchronization points.\n";
       send_hs( stdout, errmsg.str().c_str() );
    }
 }
@@ -447,7 +447,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::get_execution_configuration():" << __LINE__
-             << " ERROR: Execution Configuration is not an TrickHLA ExCO." << '\n';
+             << " ERROR: Execution Configuration is not an TrickHLA ExCO.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return ( ExCO );
@@ -465,7 +465,7 @@ void ExecutionControl::set_least_common_time_step(
       if ( ExCO == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__
-                << " ERROR: Execution Configuration is not an TrickHLA ExCO." << '\n';
+                << " ERROR: Execution Configuration is not an TrickHLA ExCO.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -497,7 +497,7 @@ void ExecutionControl::set_time_padding( double t )
              << " " << Int64BaseTime::get_units()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << this->least_common_time_step
-             << " " << Int64BaseTime::get_units() << ")!" << '\n';
+             << " " << Int64BaseTime::get_units() << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -508,7 +508,7 @@ void ExecutionControl::set_time_padding( double t )
              << " ERROR: Time padding value (" << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " "
-             << Int64BaseTime::get_units() << ")!" << '\n';
+             << Int64BaseTime::get_units() << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -521,6 +521,6 @@ void ExecutionControl::start_federation_save_at_scenario_time(
 {
    ostringstream errmsg;
    errmsg << "TrickHLA::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__
-          << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << '\n';
+          << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 }

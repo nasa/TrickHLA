@@ -208,7 +208,7 @@ void ExecutionConfiguration::configure_attributes(
    if ( sim_config_name == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name." << '\n';
+             << " ERROR: Unexpected NULL S_define_name.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -238,7 +238,7 @@ void ExecutionConfiguration::configure_attributes()
    if ( S_define_name == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name." << '\n';
+             << " ERROR: Unexpected NULL S_define_name.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -323,7 +323,7 @@ void ExecutionConfiguration::configure()
    if ( manager == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager." << '\n';
+             << " ERROR: Unexpected NULL TrickHLA::Manager.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -331,7 +331,7 @@ void ExecutionConfiguration::configure()
    if ( name == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Simulation configuration must have a name!" << '\n';
+             << " ERROR: Simulation configuration must have a name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -368,7 +368,7 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
    if ( imsim_exec_cntrl == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::get_imsim_control():" << __LINE__
-             << " ERROR: Dynamic cast error from base class reference to IMSim reference!" << '\n';
+             << " ERROR: Dynamic cast error from base class reference to IMSim reference!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -381,15 +381,15 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
 void ExecutionConfiguration::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "=============================================================" << '\n'
+      cout << "=============================================================\n"
            << "IMSim::ExecutionConfiguration::pack():" << __LINE__ << '\n'
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << '\n'
            << "\t Current Simulation Time: " << the_exec->get_sim_time() << '\n'
            << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
            << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
-           << "............................................................." << '\n';
+           << ".............................................................\n";
       this->print_simconfig( cout );
-      cout << "=============================================================" << '\n';
+      cout << "=============================================================\n";
    }
 
    return;
@@ -402,15 +402,15 @@ void ExecutionConfiguration::unpack()
 {
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "=============================================================" << '\n'
+      cout << "=============================================================\n"
            << "IMSim::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << '\n'
            << "\t Current Simulation Time: " << the_exec->get_sim_time() << '\n'
            << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
            << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
-           << "............................................................." << '\n';
+           << ".............................................................\n";
       this->print_simconfig( cout );
-      cout << "=============================================================" << '\n';
+      cout << "=============================================================\n";
    }
 
    // Mark that we have a Simulation Configuration update with pending changes.
@@ -497,16 +497,16 @@ void ExecutionConfiguration::setup_ref_attributes(
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   cout << "=============================================================" << '\n'
+   cout << "=============================================================\n"
         << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << '\n';
    this->print_simconfig( cout );
-   cout << "=============================================================" << '\n';
+   cout << "=============================================================\n";
    return;
 }
 
 void ExecutionConfiguration::print_simconfig( std::ostream &stream )
 {
-   stream << "\t Object-Name:         '" << this->get_name() << "'" << '\n'
+   stream << "\t Object-Name:         '" << this->get_name() << "'\n"
           << "\t owner:               '" << owner << '\n'
           << "\t scenario:            " << scenario << '\n'
           << "\t mode:                " << mode << '\n'
@@ -514,9 +514,9 @@ void ExecutionConfiguration::print_simconfig( std::ostream &stream )
           << "\t number of federates: " << number_of_federates << '\n'
           << "\t required federates:  " << required_federates << '\n'
           << "\t start year:          '" << start_year << '\n'
-          << "\t start seconds:       " << start_seconds << " (s)" << '\n'
-          << "\t DUT1:                " << DUT1 << " (s)" << '\n'
-          << "\t delta AT:            " << deltaAT << " (s)" << '\n';
+          << "\t start seconds:       " << start_seconds << " (s)\n"
+          << "\t DUT1:                " << DUT1 << " (s)\n"
+          << "\t delta AT:            " << deltaAT << " (s)\n";
    return;
 }
 
