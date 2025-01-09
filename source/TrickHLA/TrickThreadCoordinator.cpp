@@ -245,7 +245,7 @@ void TrickThreadCoordinator::initialize(
    // We don't know if the Child threads are running TrickHLA jobs yet so
    // mark them all as not associated.
    for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
-      this->thread_state[thread_id] = THREAD_STATE_NOT_ASSOCIATED;
+      this->thread_state[thread_id] = TrickHLA::THREAD_STATE_NOT_ASSOCIATED;
    }
 
    // Disable Trick thread ID associations as configured in the input file.
@@ -269,7 +269,7 @@ void TrickThreadCoordinator::initialize(
          if ( ( thread_id >= 1 ) && ( thread_id < this->thread_cnt ) ) {
             // Disable any Trick child thread associations for this ID
             // and including any API's for this child thread.
-            this->thread_state[thread_id] = THREAD_STATE_DISABLED;
+            this->thread_state[thread_id] = TrickHLA::THREAD_STATE_DISABLED;
 
             if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
                send_hs( stdout, "TrickThreadCoordinator::initialize():%d Disabled Trick child thread association (thread-id:%d).\n",
@@ -408,7 +408,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    }
 
    // Just return if this trick child thread association has been disabled.
-   if ( this->thread_state[thread_id] == THREAD_STATE_DISABLED ) {
+   if ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          send_hs( stdout, "TrickThreadCoordinator::associate_to_trick_child_thread():%d Disabled thread_id:%d.\n",
                   __LINE__, thread_id );
@@ -417,7 +417,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    }
 
    // We do not support more than one thread association to the same thread-id.
-   if ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) {
+   if ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_NOT_ASSOCIATED ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: You can not associate the same Trick "
@@ -576,7 +576,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    }
 
    // Make sure we mark the thread state as reset now that we associated to it.
-   this->thread_state[thread_id] = THREAD_STATE_RESET;
+   this->thread_state[thread_id] = TrickHLA::THREAD_STATE_RESET;
 
    if ( thread_id == 0 ) {
       // Ensure we set the data cycle time for the main thread even if no
@@ -693,11 +693,11 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
             summary << thread_id << "\t  ";
 
             switch ( this->thread_state[thread_id] ) {
-               case THREAD_STATE_DISABLED:
+               case TrickHLA::THREAD_STATE_DISABLED:
                   summary << "(Disabled thread associated to TrickHLA)";
                   break;
 
-               case THREAD_STATE_NOT_ASSOCIATED:
+               case TrickHLA::THREAD_STATE_NOT_ASSOCIATED:
                   summary << "(Thread not associated to TrickHLA)";
                   break;
 
@@ -740,7 +740,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
    for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
       for ( unsigned int thread_id = 0; thread_id < this->manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
 
-         if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
+         if ( ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
               && this->manager->objects[obj_index].thread_ids_array[thread_id]
               && ( this->data_cycle_base_time_per_thread[thread_id] == 0LL ) ) {
             ostringstream errmsg;
@@ -778,16 +778,15 @@ void TrickThreadCoordinator::announce_data_available()
       // Process all the Trick child threads associated to TrickHLA first
       // and only for threads on the data cycle time boundary.
       for ( unsigned int thread_id = 1; thread_id < this->thread_cnt; ++thread_id ) {
-         if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
-              && ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED )
+         if ( is_enabled_child_thread_association( thread_id )
               && on_receive_data_cycle_boundary_for_thread( thread_id, sim_time_base_time ) ) {
 
-            this->thread_state[thread_id] = THREAD_STATE_READY_TO_RECEIVE;
+            this->thread_state[thread_id] = TrickHLA::THREAD_STATE_READY_TO_RECEIVE;
          }
       }
 
       // Set the state of the Trick main thread last.
-      this->thread_state[0] = THREAD_STATE_READY_TO_RECEIVE;
+      this->thread_state[0] = TrickHLA::THREAD_STATE_READY_TO_RECEIVE;
    }
 }
 
@@ -809,7 +808,7 @@ void TrickThreadCoordinator::announce_data_sent()
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Set the state of the main thread as ready to send.
-      this->thread_state[0] = THREAD_STATE_READY_TO_SEND;
+      this->thread_state[0] = TrickHLA::THREAD_STATE_READY_TO_SEND;
    }
 }
 
@@ -886,10 +885,11 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
          // from the current thread-id. Skip this child thread if it is not
          // scheduled to run at the same time as the main thread for this job.
          // Also skip if this thread is not on a data cycle boundary.
-         if ( ( this->thread_state[thread_id] == THREAD_STATE_READY_TO_SEND )
-              || ( this->thread_state[thread_id] == THREAD_STATE_DISABLED )
-              || ( this->thread_state[thread_id] == THREAD_STATE_NOT_ASSOCIATED )
+         if ( ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_READY_TO_SEND )
+              || ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED )
+              || ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_NOT_ASSOCIATED )
               || !on_send_data_cycle_boundary_for_thread( thread_id, sim_time_in_base_time ) ) {
+
             // Move to the next thread-id because the current ID is
             // ready. This results in checking all the ID's just once.
             ++thread_id;
@@ -936,10 +936,11 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
                // thread if it is not scheduled to run at the same time as the
                // main thread for this job.
                // Also skip if this thread is not on a data cycle boundary.
-               if ( ( this->thread_state[thread_id] == THREAD_STATE_READY_TO_SEND )
-                    || ( this->thread_state[thread_id] == THREAD_STATE_DISABLED )
-                    || ( this->thread_state[thread_id] == THREAD_STATE_NOT_ASSOCIATED )
+               if ( ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_READY_TO_SEND )
+                    || ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED )
+                    || ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_NOT_ASSOCIATED )
                     || !on_send_data_cycle_boundary_for_thread( thread_id, sim_time_in_base_time ) ) {
+
                   // Move to the next thread-id because the current ID is
                   // ready. This results in checking all the ID's just once.
                   ++thread_id;
@@ -992,7 +993,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
    unsigned int const thread_id )
 {
    // Just return if this thread association is disabled.
-   if ( this->thread_state[thread_id] == THREAD_STATE_DISABLED ) {
+   if ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Disabled, Done\n",
                   __LINE__, thread_id );
@@ -1017,10 +1018,10 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Mark this child thread as ready to send.
-      this->thread_state[thread_id] = THREAD_STATE_READY_TO_SEND;
+      this->thread_state[thread_id] = TrickHLA::THREAD_STATE_READY_TO_SEND;
 
       // Determine if all the data has been sent by the main thread.
-      sent_data = ( this->thread_state[0] == THREAD_STATE_READY_TO_SEND );
+      sent_data = ( this->thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_SEND );
    }
 
    // If the quick look to see if the main thread has announced it has sent
@@ -1044,7 +1045,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
             // unlocks the mutex even if there is an exception.
             MutexProtection auto_unlock_mutex( &mutex );
 
-            sent_data = ( this->thread_state[0] == THREAD_STATE_READY_TO_SEND );
+            sent_data = ( this->thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_SEND );
          }
 
          if ( !sent_data ) {
@@ -1098,7 +1099,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
    unsigned int const thread_id = exec_get_process_id();
 
    // Just return if this thread association is disabled.
-   if ( this->thread_state[thread_id] == THREAD_STATE_DISABLED ) {
+   if ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Disabled, Done\n",
                   __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
@@ -1119,7 +1120,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
       // the mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
-      ready_to_receive = ( this->thread_state[0] == THREAD_STATE_READY_TO_RECEIVE );
+      ready_to_receive = ( this->thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_RECEIVE );
    }
 
    // See if the main thread has announced it has received data.
@@ -1141,7 +1142,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
             // unlocks the mutex even if there is an exception.
             MutexProtection auto_unlock_mutex( &mutex );
 
-            ready_to_receive = ( this->thread_state[0] == THREAD_STATE_READY_TO_RECEIVE );
+            ready_to_receive = ( this->thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_RECEIVE );
          }
 
          if ( !ready_to_receive ) {
@@ -1207,49 +1208,6 @@ int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
              : default_data_cycle_base_time;
 }
 
-/*!
- * @brief On receive boundary if the main thread simulation-time is an integer
- * multiple of a valid thread cycle-time.
- * Note: This is thread safe because this function is only local to this class
- * and it is called from a locked mutex critical section. */
-bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_thread(
-   unsigned int const thread_id,
-   int64_t const      sim_time_in_base_time ) const
-{
-   // On boundary if main thread sim-time is an integer multiple of a valid cycle-time.
-   return ( ( this->any_child_thread_associated
-              && ( thread_id < this->thread_cnt )
-              && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
-               ? ( ( sim_time_in_base_time % this->data_cycle_base_time_per_thread[thread_id] ) == 0LL )
-               : true );
-}
-
-/*!
- * @brief On send boundary if the main thread simulation-time is an integer
- * multiple of a valid thread cycle-time for the send frame.
- * Note: This is thread safe because this function is only local to this class
- * and it is called from a locked mutex critical section. */
-bool const TrickThreadCoordinator::on_send_data_cycle_boundary_for_thread(
-   unsigned int const thread_id,
-   int64_t const      sim_time_in_base_time ) const
-{
-   // Data from the child thread should be sent on the main thread frame that
-   // corresponds to the end of the child thread frame.
-   // Child |              |   child thread data cycle: 3
-   //  Main |    |    |    |   main thread data cycle:  1
-   //  Time 0    1    2    3
-   //                   ^-- Check for child thread sending in main thread frame here.
-   //                 ^-- (child_cycle - main_cycle) = ( 3 - 1 )
-   //
-   return ( ( this->any_child_thread_associated
-              && ( thread_id < this->thread_cnt )
-              && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
-               ? ( ( ( sim_time_in_base_time - ( this->data_cycle_base_time_per_thread[thread_id] - this->main_thread_data_cycle_base_time ) )
-                     % this->data_cycle_base_time_per_thread[thread_id] )
-                   == 0LL )
-               : true );
-}
-
 bool const TrickThreadCoordinator::verify_time_constraints()
 {
    bool verified = true;
@@ -1288,9 +1246,24 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       return false;
    }
 
+   // Verify the child thread-id specified is in range.
+   if ( thread_id >= this->thread_cnt ) {
+      ostringstream errmsg;
+      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+             << " ERROR: Total Trick thread count " << this->thread_cnt
+             << " (main + child threads), Invalid specified "
+             << ( ( thread_id == 0 ) ? "main" : "child" )
+             << " thread-id:" << thread_id << '\n';
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+
+   // Determine if a valid thread ID is for an enabled thread association.
+   bool const thread_enabled = ( thread_id < this->thread_cnt )
+                               && is_enabled_child_thread_association( thread_id );
+
    // Skip the child thread if disabled or not associated.
-   if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
-        && ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) ) {
+   if ( thread_enabled ) {
 
       // Time constraint: (dt[i] > 0)
       if ( data_cycle_base_time <= 0 ) {
@@ -1454,8 +1427,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       }
 
       // Skip the child thread if disabled or not associated.
-      if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
-           && ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) ) {
+      if ( thread_enabled ) {
 
          // Thread data cycle time must be less than the LCTS to be valid.
          // Time constraint: (LCTS ≥ dt[i])
@@ -1495,8 +1467,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
    }
 
    // Skip the child thread if disabled or not associated.
-   if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
-        && ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) ) {
+   if ( thread_enabled ) {
 
       // The child thread data cycle time cannot be less than (i.e. faster)
       // than the main thread cycle time.
