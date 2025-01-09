@@ -42,6 +42,7 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 // TrickHLA include files.
 #include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/Types.hh"
 
 namespace TrickHLA
 {
@@ -127,19 +128,59 @@ class TrickThreadCoordinator
                                                int64_t const      data_cycle_base_time );
 
   protected:
-   /*! @brief On receive boundary if sim-time is an integer multiple of a valid cycle-time. */
-   bool const on_receive_data_cycle_boundary_for_thread( unsigned int const thread_id,
-                                                         int64_t const      sim_time_in_base_time ) const;
+   /*! @brief On receive boundary if the main thread simulation-time is an integer
+    * multiple of a valid thread cycle-time.
+    * Note: This is thread safe because this function is only local to this class
+    * and it is called from a locked mutex critical section. */
+   bool const on_receive_data_cycle_boundary_for_thread(
+      unsigned int const thread_id,
+      int64_t const      sim_time_in_base_time ) const
+   {
+      // On boundary if main thread sim-time is an integer multiple of a valid cycle-time.
+      return ( ( this->any_child_thread_associated
+                 && ( thread_id < this->thread_cnt )
+                 && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
+                  ? ( ( sim_time_in_base_time % this->data_cycle_base_time_per_thread[thread_id] ) == 0LL )
+                  : true );
+   }
 
-   /*! @brief On send boundary if sim-time is an integer multiple of a valid cycle-time. */
-   bool const on_send_data_cycle_boundary_for_thread( unsigned int const thread_id,
-                                                      int64_t const      sim_time_in_base_time ) const;
+   /*! @brief On send boundary if the main thread simulation-time is an integer
+    * multiple of a valid thread cycle-time for the send frame.
+    * Note: This is thread safe because this function is only local to this class
+    * and it is called from a locked mutex critical section. */
+   bool const on_send_data_cycle_boundary_for_thread(
+      unsigned int const thread_id,
+      int64_t const      sim_time_in_base_time ) const
+   {
+      // Data from the child thread should be sent on the main thread frame that
+      // corresponds to the end of the child thread frame.
+      // Child |              |   child thread data cycle: 3
+      //  Main |    |    |    |   main thread data cycle:  1
+      //  Time 0    1    2    3
+      //                   ^-- Check for child thread sending in main thread frame here.
+      //                 ^-- (child_cycle - main_cycle) = ( 3 - 1 )
+      //
+      return ( ( this->any_child_thread_associated
+                 && ( thread_id < this->thread_cnt )
+                 && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
+                  ? ( ( ( sim_time_in_base_time - ( this->data_cycle_base_time_per_thread[thread_id] - this->main_thread_data_cycle_base_time ) )
+                        % this->data_cycle_base_time_per_thread[thread_id] )
+                      == 0LL )
+                  : true );
+   }
 
    /*! @brief Wait to send data for Trick main thread. */
    void wait_to_send_data_for_main_thread();
 
    /*! @brief Wait to send data for Trick child thread. */
    void wait_to_send_data_for_child_thread( unsigned int const thread_id );
+
+   /*! @brief True if the specified thread ID is for an enabled Trick child thread association. */
+   bool const is_enabled_child_thread_association( unsigned int const thread_id ) const
+   {
+      return ( ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
+               && ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_NOT_ASSOCIATED ) );
+   }
 
   protected:
    Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
