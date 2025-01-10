@@ -582,6 +582,9 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
 
          # Clear the spinner line.
          sys.stdout.write( '\b' )
+         sys.stdout.write( ' ' )
+         sys.stdout.write( '\b' )
+         sys.stdout.flush()
 
       except subprocess.CalledProcessError:
          TrickHLAMessage.failure( '\'cppcheck\' command failed! '
@@ -700,7 +703,7 @@ def find_trick( trick_path = None, verbose = True ):
          # Check to see if TRICK_HOME exists.
          if os.path.isdir( trick_home ):
             if verbose:
-               # Let the user know that we have CPPCHECK_HOME and where it is.
+               # Let the user know that we have TRICK_HOME and where it is.
                TrickHLAMessage.status( 'TRICK_HOME: ' + trick_home )
 
          else:

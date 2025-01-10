@@ -148,8 +148,8 @@ InteractionItem::~InteractionItem()
    if ( user_supplied_tag != NULL ) {
       if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
            && trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
-         send_hs( stderr, "InteractionItem::~InteractionItem():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "InteractionItem::~InteractionItem():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
+                  __LINE__ );
       }
       user_supplied_tag      = NULL;
       user_supplied_tag_size = 0;
@@ -189,8 +189,8 @@ void InteractionItem::initialize(
    if ( user_supplied_tag != NULL ) {
       if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
            && trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
-         send_hs( stderr, "InteractionItem::initialize():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "InteractionItem::initialize():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
+                  __LINE__ );
       }
       user_supplied_tag = NULL;
    }
@@ -214,7 +214,7 @@ void InteractionItem::checkpoint_queue()
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for a parm_items linear"
-                << " array of " << parm_items_count << " elements" << THLA_ENDL;
+                << " array of " << parm_items_count << " elements\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -252,8 +252,8 @@ void InteractionItem::clear_parm_items()
       }
       if ( trick_MM->is_alloced( static_cast< void * >( parm_items ) )
            && trick_MM->delete_var( static_cast< void * >( parm_items ) ) ) {
-         send_hs( stderr, "InteractionItem::clear_parm_items():%d WARNING failed to delete Trick Memory for 'parm_items'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "InteractionItem::clear_parm_items():%d WARNING failed to delete Trick Memory for 'parm_items'\n",
+                  __LINE__ );
       }
       parm_items       = NULL;
       parm_items_count = 0;

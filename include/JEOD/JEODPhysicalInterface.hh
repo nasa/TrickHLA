@@ -116,7 +116,7 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
    /*! @brief Set the reference to the JEOD vehicle point data.
     *  @param vehicle_point_ptr Pointer to the vehicle point data instance. */
-   virtual void set_data( const jeod::BodyRefFrame *vehicle_point_ptr )
+   virtual void set_data( jeod::BodyRefFrame const *vehicle_point_ptr )
    {
       vehicle_point_data = vehicle_point_ptr;
       return;
@@ -124,7 +124,7 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
    /*! @brief Get the reference to the JEOD vehicle point data.
     *  @return Pointer to the vehicle point data. */
-   virtual const jeod::BodyRefFrame *get_data()
+   virtual jeod::BodyRefFrame const *get_data()
    {
       return ( vehicle_point_data );
    }
@@ -132,7 +132,7 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
   protected:
    jeod::DynBody            *dyn_body;           ///< @trick_units{--} JEOD DynBody..
    char                     *vehicle_point_id;   ///< @trick_units{--} JEOD vehicle point ID.
-   const jeod::BodyRefFrame *vehicle_point_data; ///< @trick_units{--} JEOD vehicle point data.
+   jeod::BodyRefFrame const *vehicle_point_data; ///< @trick_units{--} JEOD vehicle point data.
 
   private:
    // This object is not copyable

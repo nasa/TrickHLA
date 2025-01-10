@@ -115,8 +115,8 @@ Interaction::~Interaction()
 
    if ( user_supplied_tag != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
-         send_hs( stderr, "Interaction::~Interaction():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "Interaction::~Interaction():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
+                  __LINE__ );
       }
       user_supplied_tag      = NULL;
       user_supplied_tag_size = 0;
@@ -137,7 +137,7 @@ void Interaction::initialize(
    if ( trickhla_mgr == NULL ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA-Manager!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA-Manager!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->manager = trickhla_mgr;
@@ -148,7 +148,7 @@ void Interaction::initialize(
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: Missing Interaction FOM Name."
              << " Please check your input or modified-data files to make sure the"
-             << " Interaction FOM name is correctly specified." << THLA_ENDL;
+             << " Interaction FOM name is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -163,7 +163,7 @@ void Interaction::initialize(
              << " of TRANSPORT_SPECIFIED_IN_FOM, TRANSPORT_TIMESTAMP_ORDER or"
              << " TRANSPORT_RECEIVE_ORDER. Please check your input or modified-data"
              << " files to make sure the 'preferred_order' is correctly specified."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -175,7 +175,7 @@ void Interaction::initialize(
              << FOM_name << "', the 'param_count' is " << param_count
              << " but no 'parameters' are specified. Please check your input or"
              << " modified-data files to make sure the Interaction Parameters are"
-             << " correctly specified." << THLA_ENDL;
+             << " correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -188,7 +188,7 @@ void Interaction::initialize(
              << FOM_name << "', the 'param_count' is " << param_count
              << " but 'parameters' have been specified. Please check your input"
              << " or modified-data files to make sure the Interaction Parameters"
-             << " are correctly specified." << THLA_ENDL;
+             << " are correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -199,7 +199,7 @@ void Interaction::initialize(
    }
 
    // Verify parameter FOM names and also check for duplicate parameter FOM names.
-   for ( unsigned int i = 0; i < param_count; ++i ) {
+   for ( int i = 0; i < param_count; ++i ) {
       // Validate the FOM-name to make sure we don't have a problem with the
       // list of names as well as get a difficult to debug runtime error for
       // the string constructor if we had a null FOM-name.
@@ -209,14 +209,14 @@ void Interaction::initialize(
                 << " ERROR: Interaction '" << FOM_name << "' has a missing Parameter"
                 << " FOM Name at array index " << i << ". Please check your input"
                 << " or modified-data files to make sure the interaction parameter"
-                << " FOM name is correctly specified." << THLA_ENDL;
+                << " FOM name is correctly specified.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       string fom_name_str( parameters[i].get_FOM_name() );
 
       // Since Interaction updates are sent as a ParameterHandleValueMap there can be
       // no duplicate Parameters because the map only allows unique ParameterHandles.
-      for ( unsigned int k = i + 1; k < param_count; ++k ) {
+      for ( int k = i + 1; k < param_count; ++k ) {
          if ( ( parameters[k].get_FOM_name() != NULL ) && ( *( parameters[k].get_FOM_name() ) != '\0' ) ) {
 
             if ( fom_name_str == string( parameters[k].get_FOM_name() ) ) {
@@ -227,7 +227,7 @@ void Interaction::initialize(
                       << " that have the same FOM Name '" << fom_name_str
                       << "'. Please check your input or modified-data files to"
                       << " make sure the interaction parameters do not use"
-                      << " duplicate FOM names." << THLA_ENDL;
+                      << " duplicate FOM names.\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -243,7 +243,7 @@ void Interaction::initialize(
              << " 'handler' was not specified for the '" << FOM_name << "'"
              << " interaction. Please check your input or modified-data files to"
              << " make sure an Interaction-Handler is correctly specified."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -255,7 +255,7 @@ void Interaction::initialize(
 
 void Interaction::set_user_supplied_tag(
    unsigned char const *tag,
-   size_t               tag_size )
+   int                  tag_size )
 {
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
@@ -293,16 +293,16 @@ void Interaction::remove() // RETURN: -- None.
             // Un-publish the Interaction.
             try {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-                  send_hs( stdout, "Interaction::remove():%d Unpublish Interaction '%s'.%c",
-                           __LINE__, get_FOM_name(), THLA_NEWLINE );
+                  send_hs( stdout, "Interaction::remove():%d Unpublish Interaction '%s'.\n",
+                           __LINE__, get_FOM_name() );
                }
 
                rti_amb->unpublishInteractionClass( get_class_handle() );
             } catch ( RTI1516_EXCEPTION const &e ) {
                string rti_err_msg;
                StringUtilities::to_string( rti_err_msg, e.what() );
-               send_hs( stderr, "Interaction::remove():%d Unpublish Interaction '%s' exception '%s'%c",
-                        __LINE__, get_FOM_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+               send_hs( stderr, "Interaction::remove():%d Unpublish Interaction '%s' exception '%s'\n",
+                        __LINE__, get_FOM_name(), rti_err_msg.c_str() );
             }
 
             // Macro to restore the saved FPU Control Word register value.
@@ -327,17 +327,17 @@ void Interaction::setup_preferred_order_with_RTI()
 
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Interaction::setup_preferred_order_with_RTI():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Interaction::setup_preferred_order_with_RTI():%d Unexpected NULL RTIambassador.\n",
+               __LINE__ );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       send_hs( stdout, "Interaction::setup_preferred_order_with_RTI():%d \
-Published Interaction '%s' Preferred-Order:%s%c",
+Published Interaction '%s' Preferred-Order:%s\n",
                __LINE__, get_FOM_name(),
                ( preferred_order == TRANSPORT_TIMESTAMP_ORDER ? "TIMESTAMP" : "RECEIVE" ),
-               THLA_NEWLINE );
+               '\n' );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -366,7 +366,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: InteractionClassNotPublished for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -376,7 +376,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: FederateNotExecutionMember for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -386,7 +386,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: InteractionClassNotDefined for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -396,7 +396,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: RestoreInProgress for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -406,7 +406,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: RTIinternalError for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -416,7 +416,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: SaveInProgress for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -426,7 +426,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: NotConnected for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -439,7 +439,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " RTI1516_EXCEPTION for Interaction '" << get_FOM_name()
-             << "' with error '" << rti_err_msg << "'" << THLA_ENDL;
+             << "' with error '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -456,14 +456,14 @@ void Interaction::publish_interaction()
 
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Interaction::publish_interaction():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Interaction::publish_interaction():%d Unexpected NULL RTIambassador.\n",
+               __LINE__ );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      send_hs( stdout, "Interaction::publish_interaction():%d Interaction '%s'.%c",
-               __LINE__, get_FOM_name(), THLA_NEWLINE );
+      send_hs( stdout, "Interaction::publish_interaction():%d Interaction '%s'.\n",
+               __LINE__, get_FOM_name() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -480,7 +480,7 @@ void Interaction::publish_interaction()
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: FederateNotExecutionMember for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -490,7 +490,7 @@ void Interaction::publish_interaction()
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: InteractionClassNotDefined for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -500,7 +500,7 @@ void Interaction::publish_interaction()
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: RestoreInProgress for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -510,7 +510,7 @@ void Interaction::publish_interaction()
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: RTIinternalError for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -520,7 +520,7 @@ void Interaction::publish_interaction()
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: SaveInProgress for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -530,7 +530,7 @@ void Interaction::publish_interaction()
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: NotConnected for Interaction '"
-             << get_FOM_name() << "'" << THLA_ENDL;
+             << get_FOM_name() << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -543,7 +543,7 @@ void Interaction::publish_interaction()
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " RTI1516_EXCEPTION for Interaction '" << get_FOM_name()
-             << "' with error '" << rti_err_msg << "'" << THLA_ENDL;
+             << "' with error '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -555,8 +555,8 @@ void Interaction::unpublish_interaction()
 {
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Interaction::unpublish_interaction():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Interaction::unpublish_interaction():%d Unexpected NULL RTIambassador.\n",
+               __LINE__ );
       return;
    }
 
@@ -564,8 +564,8 @@ void Interaction::unpublish_interaction()
    if ( is_publish() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "Interaction::unpublish_interaction():%d Interaction '%s'%c",
-                  __LINE__, get_FOM_name(), THLA_NEWLINE );
+         send_hs( stdout, "Interaction::unpublish_interaction():%d Interaction '%s'\n",
+                  __LINE__, get_FOM_name() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -581,7 +581,7 @@ void Interaction::unpublish_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " EXCEPTION: InteractionClassNotDefined for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -591,7 +591,7 @@ void Interaction::unpublish_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " EXCEPTION: FederateNotExecutionMember for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -601,7 +601,7 @@ void Interaction::unpublish_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " EXCEPTION: SaveInProgress for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -611,7 +611,7 @@ void Interaction::unpublish_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " EXCEPTION: RestoreInProgress for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -621,7 +621,7 @@ void Interaction::unpublish_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -631,7 +631,7 @@ void Interaction::unpublish_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " EXCEPTION: RTIinternalError for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_EXCEPTION const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -644,7 +644,7 @@ void Interaction::unpublish_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " RTI1516_EXCEPTION for Interaction '" << get_FOM_name()
-                << "' with error '" << rti_err_msg << "'" << THLA_ENDL;
+                << "' with error '" << rti_err_msg << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
@@ -658,8 +658,8 @@ void Interaction::subscribe_to_interaction()
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Interaction::subscribe_to_interaction():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Interaction::subscribe_to_interaction():%d Unexpected NULL RTIambassador.\n",
+               __LINE__ );
       return;
    }
 
@@ -667,8 +667,8 @@ void Interaction::subscribe_to_interaction()
    if ( is_subscribe() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "Interaction::subscribe_to_interaction():%d Interaction '%s'%c",
-                  __LINE__, get_FOM_name(), THLA_NEWLINE );
+         send_hs( stdout, "Interaction::subscribe_to_interaction():%d Interaction '%s'\n",
+                  __LINE__, get_FOM_name() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -684,7 +684,7 @@ void Interaction::subscribe_to_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: FederateNotExecutionMember for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::FederateServiceInvocationsAreBeingReportedViaMOM const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -694,7 +694,7 @@ void Interaction::subscribe_to_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: FederateServiceInvocationsAreBeingReportedViaMOM for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -704,7 +704,7 @@ void Interaction::subscribe_to_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: InteractionClassNotDefined for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -714,7 +714,7 @@ void Interaction::subscribe_to_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: RestoreInProgress for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -724,7 +724,7 @@ void Interaction::subscribe_to_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: RTIinternalError for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -734,7 +734,7 @@ void Interaction::subscribe_to_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION:  SaveInProgress for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -744,7 +744,7 @@ void Interaction::subscribe_to_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_EXCEPTION const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -757,7 +757,7 @@ void Interaction::subscribe_to_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " RTI1516_EXCEPTION for Interaction '" << get_FOM_name()
-                << "' with error '" << rti_err_msg << "'" << THLA_ENDL;
+                << "' with error '" << rti_err_msg << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
@@ -772,8 +772,8 @@ void Interaction::unsubscribe_from_interaction()
    RTIambassador *rti_amb = get_RTI_ambassador();
 
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Interaction::unsubscribe_from_interaction():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Interaction::unsubscribe_from_interaction():%d Unexpected NULL RTIambassador.\n",
+               __LINE__ );
       return;
    }
 
@@ -781,8 +781,8 @@ void Interaction::unsubscribe_from_interaction()
    if ( is_subscribe() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "Interaction::unsubscribe_from_interaction():%d Interaction '%s'%c",
-                  __LINE__, get_FOM_name(), THLA_NEWLINE );
+         send_hs( stdout, "Interaction::unsubscribe_from_interaction():%d Interaction '%s'\n",
+                  __LINE__, get_FOM_name() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -798,7 +798,7 @@ void Interaction::unsubscribe_from_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " EXCEPTION: InteractionClassNotDefined for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -808,7 +808,7 @@ void Interaction::unsubscribe_from_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " EXCEPTION: FederateNotExecutionMember for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -818,7 +818,7 @@ void Interaction::unsubscribe_from_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " EXCEPTION: SaveInProgress for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -828,7 +828,7 @@ void Interaction::unsubscribe_from_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " EXCEPTION: RestoreInProgress for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -838,7 +838,7 @@ void Interaction::unsubscribe_from_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -848,7 +848,7 @@ void Interaction::unsubscribe_from_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " EXCEPTION: RTIinternalError for Interaction '"
-                << get_FOM_name() << "'" << THLA_ENDL;
+                << get_FOM_name() << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_EXCEPTION const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -861,7 +861,7 @@ void Interaction::unsubscribe_from_interaction()
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " RTI1516_EXCEPTION for Interaction '" << get_FOM_name()
-                << "' with error '" << rti_err_msg << "'" << THLA_ENDL;
+                << "' with error '" << rti_err_msg << "'\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
@@ -887,8 +887,8 @@ bool Interaction::send(
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Interaction::send():%d As Receive-Order: Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Interaction::send():%d As Receive-Order: Unexpected NULL RTIambassador.\n",
+               __LINE__ );
       return ( false );
    }
 
@@ -902,7 +902,7 @@ bool Interaction::send(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
-      for ( unsigned int i = 0; i < param_count; ++i ) {
+      for ( int i = 0; i < param_count; ++i ) {
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
       }
 
@@ -910,8 +910,8 @@ bool Interaction::send(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      send_hs( stdout, "Interaction::send():%d As Receive-Order: Interaction '%s'%c",
-               __LINE__, get_FOM_name(), THLA_NEWLINE );
+      send_hs( stdout, "Interaction::send():%d As Receive-Order: Interaction '%s'\n",
+               __LINE__, get_FOM_name() );
    }
 
    bool successfuly_sent = false;
@@ -931,8 +931,8 @@ bool Interaction::send(
    } catch ( RTI1516_EXCEPTION const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Interaction::send():%d As Receive-Order: Interaction '%s' with exception '%s'%c",
-               __LINE__, get_FOM_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+      send_hs( stderr, "Interaction::send():%d As Receive-Order: Interaction '%s' with exception '%s'\n",
+               __LINE__, get_FOM_name(), rti_err_msg.c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -959,8 +959,8 @@ bool Interaction::send(
 
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Interaction::send():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Interaction::send():%d Unexpected NULL RTIambassador.\n",
+               __LINE__ );
       return ( false );
    }
 
@@ -974,10 +974,10 @@ bool Interaction::send(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
-      for ( unsigned int i = 0; i < param_count; ++i ) {
+      for ( int i = 0; i < param_count; ++i ) {
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            send_hs( stdout, "Interaction::send():%d Adding '%s' to parameter map.%c",
-                     __LINE__, parameters[i].get_FOM_name(), THLA_NEWLINE );
+            send_hs( stdout, "Interaction::send():%d Adding '%s' to parameter map.\n",
+                     __LINE__, parameters[i].get_FOM_name() );
          }
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
       }
@@ -1008,8 +1008,8 @@ bool Interaction::send(
          if ( send_with_timestamp ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-               send_hs( stdout, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.%c",
-                        __LINE__, get_FOM_name(), time.get_time_in_seconds(), THLA_NEWLINE );
+               send_hs( stdout, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.\n",
+                        __LINE__, get_FOM_name(), time.get_time_in_seconds() );
             }
 
             // This call returns an event retraction handle but we
@@ -1024,11 +1024,11 @@ bool Interaction::send(
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
                send_hs( stdout, "Interaction::send():%d As Receive-Order: \
-Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
+Interaction '%s' is time-regulating:%s, preferred-order:%s.\n",
                         __LINE__, get_FOM_name(),
                         ( federate->in_time_regulating_state() ? "Yes" : "No" ),
                         ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ),
-                        THLA_NEWLINE );
+                        '\n' );
             }
 
             // Send in Receive Order (i.e. with no timestamp).
@@ -1050,7 +1050,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
              << ", InvalidLogicalTime exception for " << get_FOM_name()
              << "  time=" << time.get_time_in_seconds() << " ("
              << time.get_base_time() << " " << Int64BaseTime::get_units()
-             << " error message:'" << rti_err_msg << "'" << THLA_ENDL;
+             << " error message:'" << rti_err_msg << "'\n";
       send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string rti_err_msg;
@@ -1059,7 +1059,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
       errmsg << "Interaction::send():" << __LINE__ << " As "
              << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", Interaction '" << get_FOM_name() << "' with exception '"
-             << rti_err_msg << "'" << THLA_ENDL;
+             << rti_err_msg << "'\n";
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -1096,17 +1096,17 @@ void Interaction::process_interaction()
          string handle_str;
          StringUtilities::to_string( handle_str, class_handle );
          if ( received_as_TSO ) {
-            send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', HLA time:%G, Timestamp-Order%c",
+            send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', HLA time:%G, Timestamp-Order\n",
                      __LINE__, handle_str.c_str(), get_FOM_name(),
-                     time.get_time_in_seconds(), THLA_NEWLINE );
+                     time.get_time_in_seconds() );
          } else {
-            send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', Receive-Order%c",
-                     __LINE__, handle_str.c_str(), get_FOM_name(), THLA_NEWLINE );
+            send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', Receive-Order\n",
+                     __LINE__, handle_str.c_str(), get_FOM_name() );
          }
       }
 
       // Unpack all the parameter data.
-      for ( unsigned int i = 0; i < param_count; ++i ) {
+      for ( int i = 0; i < param_count; ++i ) {
          parameters[i].unpack_parameter_buffer();
       }
 
@@ -1138,8 +1138,8 @@ bool Interaction::extract_data(
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       string handle_str;
       StringUtilities::to_string( handle_str, class_handle );
-      send_hs( stdout, "Interaction::extract_data():%d ID:%s, FOM_name:'%s'%c",
-               __LINE__, handle_str.c_str(), get_FOM_name(), THLA_NEWLINE );
+      send_hs( stdout, "Interaction::extract_data():%d ID:%s, FOM_name:'%s'\n",
+               __LINE__, handle_str.c_str(), get_FOM_name() );
    }
 
    // For thread safety, lock here to avoid corrupting the parameters.
@@ -1178,9 +1178,9 @@ bool Interaction::extract_data(
       if ( ( param_item != NULL ) && ( param_item->index >= 0 ) && ( param_item->index < param_count ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            send_hs( stdout, "Interaction::extract_data():%d Decoding '%s' from parameter map.%c",
+            send_hs( stdout, "Interaction::extract_data():%d Decoding '%s' from parameter map.\n",
                      __LINE__, parameters[param_item->index].get_FOM_name(),
-                     THLA_NEWLINE );
+                     '\n' );
          }
          // Extract the parameter data for the given parameter-item.
          if ( parameters[param_item->index].extract_data( param_item->size, param_item->data ) ) {
@@ -1205,7 +1205,7 @@ void Interaction::mark_unchanged()
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
-   for ( unsigned int i = 0; i < param_count; ++i ) {
+   for ( int i = 0; i < param_count; ++i ) {
       parameters[i].mark_unchanged();
    }
 }

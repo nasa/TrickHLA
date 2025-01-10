@@ -97,8 +97,8 @@ void SineInteractionHandler::send_sine_interaction(
 
    if ( message != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'\n",
+                  __LINE__ );
       }
    }
    message = trick_MM->mm_strdup( msg.str().c_str() );
@@ -142,23 +142,23 @@ void SineInteractionHandler::send_sine_interaction(
 #else
               << "Receive Order):"
 #endif
-              << __LINE__ << endl
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
-              << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl
-              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << endl
-              << "  user-supplied-tag:'" << user_supplied_tag_string << "'" << endl
-              << "  user-supplied-tag-size:" << user_supplied_tag.size() << endl
+              << __LINE__ << '\n'
+              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+              << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
+              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n'
+              << "  user-supplied-tag:'" << user_supplied_tag_string << "'\n"
+              << "  user-supplied-tag-size:" << user_supplied_tag.size() << '\n'
               << "  hla_granted_time:" << send_time << " ("
-              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_units() << ")\n"
               << "  send_time:" << send_time << " ("
-              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_units() << ")\n"
               << "  lookahead_time:" << lookahead_time << " ("
-              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_units() << ")\n"
               << "  timestamp:" << timestamp << " ("
-              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_units() << ")" << endl
-              << "  time:" << time << endl
-              << "  year:" << year << endl
-              << "  send_cnt:" << ( send_cnt + 1 ) << endl;
+              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_units() << ")\n"
+              << "  time:" << time << '\n'
+              << "  year:" << year << '\n'
+              << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
       }
 
       // Update the send count, which is just used for the message in this example.
@@ -169,8 +169,8 @@ void SineInteractionHandler::send_sine_interaction(
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // The interaction was Not sent.
          cout << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
-              << __LINE__ << endl
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl;
+              << __LINE__ << '\n'
+              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n";
       }
    }
 }
@@ -188,15 +188,15 @@ void SineInteractionHandler::receive_interaction(
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       cout << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
-           << __LINE__ << endl
-           << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
-           << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl
-           << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << endl
-           << "  user-supplied-tag:'" << user_tag_string << "'" << endl
-           << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << endl
-           << "  scenario_time:" << get_scenario_time() << endl
-           << "  time:" << time << endl
-           << "  year:" << year << endl
-           << "  receive_cnt:" << receive_cnt << endl;
+           << __LINE__ << '\n'
+           << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+           << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
+           << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n'
+           << "  user-supplied-tag:'" << user_tag_string << "'\n"
+           << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << '\n'
+           << "  scenario_time:" << get_scenario_time() << '\n'
+           << "  time:" << time << '\n'
+           << "  year:" << year << '\n'
+           << "  receive_cnt:" << receive_cnt << '\n';
    }
 }

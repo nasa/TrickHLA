@@ -122,7 +122,7 @@ void DynamicalEntityBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance DynamicalEntity name!" << THLA_ENDL;
+             << " WARNING: Unexpected NULL federation instance DynamicalEntity name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -144,7 +144,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
    trick_name_str                      = entity_name_str + string( ".pe_packing_data.name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[0].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
@@ -153,7 +153,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[1].FOM_name      = allocate_input_string( "type" );
    trick_name_str                      = entity_name_str + string( ".pe_packing_data.type" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[1].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
@@ -162,7 +162,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[2].FOM_name      = allocate_input_string( "status" );
    trick_name_str                      = entity_name_str + string( ".pe_packing_data.status" );
    object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[2].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
@@ -171,7 +171,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[3].FOM_name      = allocate_input_string( "parent_reference_frame" );
    trick_name_str                      = entity_name_str + string( ".pe_packing_data.parent_ref_frame" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[3].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
    object->attributes[3].subscribe     = !publishes;
    object->attributes[3].locally_owned = publishes;
@@ -180,7 +180,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[4].FOM_name      = allocate_input_string( "state" );
    trick_name_str                      = entity_name_str + string( "stc_encoder.buffer" );
    object->attributes[4].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[4].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[4].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[4].publish       = publishes;
    object->attributes[4].subscribe     = !publishes;
    object->attributes[4].locally_owned = publishes;
@@ -189,7 +189,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[5].FOM_name      = allocate_input_string( "acceleration" );
    trick_name_str                      = entity_name_str + string( ".pe_packing_data.accel" );
    object->attributes[5].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[5].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[5].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[5].publish       = publishes;
    object->attributes[5].subscribe     = !publishes;
    object->attributes[5].locally_owned = publishes;
@@ -198,7 +198,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[6].FOM_name      = allocate_input_string( "rotational_acceleration" );
    trick_name_str                      = entity_name_str + string( ".pe_packing_data.ang_accel" );
    object->attributes[6].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[6].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[6].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[6].publish       = publishes;
    object->attributes[6].subscribe     = !publishes;
    object->attributes[6].locally_owned = publishes;
@@ -207,7 +207,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[7].FOM_name      = allocate_input_string( "center_of_mass" );
    trick_name_str                      = entity_name_str + string( ".pe_packing_data.cm" );
    object->attributes[7].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[7].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[7].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[7].publish       = publishes;
    object->attributes[7].subscribe     = !publishes;
    object->attributes[7].locally_owned = publishes;
@@ -216,7 +216,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[8].FOM_name      = allocate_input_string( "body_wrt_structural" );
    trick_name_str                      = entity_name_str + string( ".quat_encoder.buffer" );
    object->attributes[8].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[8].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[8].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[8].publish       = publishes;
    object->attributes[8].subscribe     = !publishes;
    object->attributes[8].locally_owned = publishes;
@@ -225,7 +225,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[9].FOM_name      = allocate_input_string( "force" );
    trick_name_str                      = entity_name_str + string( ".de_packing_data.force" );
    object->attributes[9].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[9].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[9].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[9].publish       = publishes;
    object->attributes[9].subscribe     = !publishes;
    object->attributes[9].locally_owned = publishes;
@@ -234,7 +234,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[10].FOM_name      = allocate_input_string( "torque" );
    trick_name_str                       = entity_name_str + string( ".de_packing_data.torque" );
    object->attributes[10].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[10].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[10].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[10].publish       = publishes;
    object->attributes[10].subscribe     = !publishes;
    object->attributes[10].locally_owned = publishes;
@@ -243,7 +243,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[11].FOM_name      = allocate_input_string( "mass" );
    trick_name_str                       = entity_name_str + string( ".de_packing_data.mass" );
    object->attributes[11].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[11].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[11].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[11].publish       = publishes;
    object->attributes[11].subscribe     = !publishes;
    object->attributes[11].locally_owned = publishes;
@@ -252,7 +252,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[12].FOM_name      = allocate_input_string( "mass_rate" );
    trick_name_str                       = entity_name_str + string( ".de_packing_data.mass_rate" );
    object->attributes[12].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[12].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[12].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[12].publish       = publishes;
    object->attributes[12].subscribe     = !publishes;
    object->attributes[12].locally_owned = publishes;
@@ -261,7 +261,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[13].FOM_name      = allocate_input_string( "inertia" );
    trick_name_str                       = entity_name_str + string( ".de_packing_data.inertia" );
    object->attributes[13].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[13].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[13].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[13].publish       = publishes;
    object->attributes[13].subscribe     = !publishes;
    object->attributes[13].locally_owned = publishes;
@@ -270,7 +270,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[14].FOM_name      = allocate_input_string( "inertia_rate" );
    trick_name_str                       = entity_name_str + string( ".de_packing_data.inertia_rate" );
    object->attributes[14].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[14].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[14].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[14].publish       = publishes;
    object->attributes[14].subscribe     = !publishes;
    object->attributes[14].locally_owned = publishes;
@@ -342,13 +342,13 @@ void DynamicalEntityBase::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
-             << " been called!" << endl;
+             << " been called!\n";
       send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "DynamicalEntityBase::pack():" << __LINE__ << endl;
+      cout << "DynamicalEntityBase::pack():" << __LINE__ << '\n';
    }
 
    // Call the PhysicalEntityBase pack routine.
@@ -366,14 +366,14 @@ void DynamicalEntityBase::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << endl;
-      cout << "DynamicalEntityBase::unpack():" << __LINE__ << endl;
+      cout << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << '\n';
+      cout << "DynamicalEntityBase::unpack():" << __LINE__ << '\n';
    }
 
    // Call the PhysicalEntityBase unpack routine.
@@ -393,37 +393,37 @@ void DynamicalEntityBase::debug_print(
    PhysicalEntityBase::debug_print( stream );
 
    stream.precision( 15 );
-   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
-          << "\tmass: " << de_packing_data.mass << endl
-          << "\tmass_rate: " << de_packing_data.mass_rate << endl;
-   stream << "\tinertia: " << endl
+   stream << "\tObject-Name: '" << object->get_name() << "'\n"
+          << "\tmass: " << de_packing_data.mass << '\n'
+          << "\tmass_rate: " << de_packing_data.mass_rate << '\n';
+   stream << "\tinertia: \n"
           << "\t\t" << de_packing_data.inertia[0][0] << ", "
           << de_packing_data.inertia[0][1] << ", "
-          << de_packing_data.inertia[0][2] << endl
+          << de_packing_data.inertia[0][2] << '\n'
           << "\t\t" << de_packing_data.inertia[1][0] << ", "
           << de_packing_data.inertia[1][1] << ", "
-          << de_packing_data.inertia[1][2] << endl
+          << de_packing_data.inertia[1][2] << '\n'
           << "\t\t" << de_packing_data.inertia[2][0] << ", "
           << de_packing_data.inertia[2][1] << ", "
-          << de_packing_data.inertia[2][2] << endl;
-   stream << "\tinertia rate: " << endl
+          << de_packing_data.inertia[2][2] << '\n';
+   stream << "\tinertia rate: \n"
           << "\t\t" << de_packing_data.inertia_rate[0][0] << ", "
           << de_packing_data.inertia_rate[0][1] << ", "
-          << de_packing_data.inertia_rate[0][2] << endl
+          << de_packing_data.inertia_rate[0][2] << '\n'
           << "\t\t" << de_packing_data.inertia_rate[1][0] << ", "
           << de_packing_data.inertia_rate[1][1] << ", "
-          << de_packing_data.inertia_rate[1][2] << endl
+          << de_packing_data.inertia_rate[1][2] << '\n'
           << "\t\t" << de_packing_data.inertia_rate[2][0] << ", "
           << de_packing_data.inertia_rate[2][1] << ", "
-          << de_packing_data.inertia_rate[2][2] << endl;
+          << de_packing_data.inertia_rate[2][2] << '\n';
    stream << "\tforce: "
           << de_packing_data.force[0] << ", "
           << de_packing_data.force[1] << ", "
-          << de_packing_data.force[2] << endl;
+          << de_packing_data.force[2] << '\n';
    stream << "\ttorque: "
           << de_packing_data.torque[0] << ", "
           << de_packing_data.torque[1] << ", "
-          << de_packing_data.torque[2] << endl;
+          << de_packing_data.torque[2] << '\n';
 
    return;
 }

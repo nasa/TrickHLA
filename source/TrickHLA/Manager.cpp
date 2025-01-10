@@ -182,21 +182,21 @@ void Manager::initialize()
    // Just return if the TrickHLA Manager is already initialized.
    if ( this->mgr_initialized ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::initialize():%d Already initialized.%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "Manager::initialize():%d Already initialized.\n",
+                  __LINE__ );
       }
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::initialize():%d%c", __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::initialize():%d\n", __LINE__ );
    }
 
    // Check to make sure we have a reference to the TrickHLA::Federate.
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -205,7 +205,7 @@ void Manager::initialize()
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
              << " ERROR: Unexpected NULL 'execution_control' pointer!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -220,8 +220,8 @@ void Manager::restart_initialization()
    // Just return if the TrickHLA Manager is not initialized.
    if ( !mgr_initialized ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::restart_initialization():%d Manager Not initialized, returning.%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "Manager::restart_initialization():%d Manager Not initialized, returning.\n",
+                  __LINE__ );
       }
       return;
    }
@@ -229,13 +229,13 @@ void Manager::restart_initialization()
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::restart_initialization():%d%c", __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::restart_initialization():%d\n", __LINE__ );
    }
 
    // Make sure the Federate is initialized after the restart.
@@ -252,7 +252,7 @@ void Manager::restart_initialization()
    if ( execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'execution_control' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'execution_control' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -289,7 +289,7 @@ void Manager::restart_initialization()
    }
 
    // Restore ownership_transfer data for all objects.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].decode_checkpoint();
    }
 
@@ -305,7 +305,7 @@ void Manager::initialize_HLA_cycle_time()
    // Set the core job cycle time now that we know what it is so that the
    // attribute cyclic ratios can now be calculated for any multi-rate
    // attributes.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].set_core_job_cycle_time( federate->get_HLA_cycle_time() );
    }
 }
@@ -321,7 +321,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " ERROR: Unexpected NULL 'objects' array for a non zero"
              << " obj_count:" << obj_count << ". Please check your input or"
              << " modified-data files to make sure the 'Manager::objects'"
-             << " array is correctly configured." << THLA_ENDL;
+             << " array is correctly configured.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -334,7 +334,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
              << " Please check your input or modified-data files to make sure"
              << " the 'Manager::objects' array is correctly configured."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -362,7 +362,7 @@ void Manager::verify_object_and_interaction_arrays()
                          << "' at array index " << k << ". Please check your"
                          << " input or modified-data files to make sure the"
                          << " object instance names are unique with no duplicates."
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -378,7 +378,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " ERROR: Unexpected NULL 'interactions' array for a non zero"
              << " inter_count:" << inter_count << ". Please check your input or"
              << " modified-data files to make sure the 'Manager::interactions'"
-             << " array is correctly configured." << THLA_ENDL;
+             << " array is correctly configured.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -391,7 +391,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
              << " array. Please check your input or modified-data files to make"
              << " sure the 'Manager::interactions' array is correctly configured."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -411,22 +411,22 @@ void Manager::send_init_data()
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::send_init_data():%d Late joining \
-federate so this call will be ignored.%c",
-                  __LINE__, THLA_NEWLINE );
+federate so this call will be ignored.\n",
+                  __LINE__ );
       }
       return;
    }
 
    // Go through the list of objects.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       // Make sure we have at least one piece of object init data we can send.
       if ( objects[n].any_locally_owned_published_init_attribute() ) {
 
          if ( this->execution_control->wait_for_init_data() ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
-                        __LINE__, objects[n].get_name(), THLA_NEWLINE );
+               send_hs( stdout, "Manager::send_init_data():%d '%s'\n",
+                        __LINE__, objects[n].get_name() );
             }
 
             // Send the object init data to the other federates.
@@ -440,14 +440,14 @@ federate so this call will be ignored.%c",
                    << " This call will be ignored because the Simulation"
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
-                   << "') does not support it." << THLA_ENDL;
+                   << "') does not support it.\n";
                send_hs( stdout, msg.str().c_str() );
             }
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'%c",
-                     __LINE__, objects[n].get_name(), THLA_NEWLINE );
+            send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'\n",
+                     __LINE__, objects[n].get_name() );
          }
       }
    }
@@ -464,9 +464,9 @@ void Manager::send_init_data(
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::send_init_data():%d Late joining \
-federate so the data will not be sent for '%s'.%c",
+federate so the data will not be sent for '%s'.\n",
                   __LINE__, instance_name,
-                  THLA_NEWLINE );
+                  '\n' );
       }
       return;
    }
@@ -474,7 +474,7 @@ federate so the data will not be sent for '%s'.%c",
    if ( instance_name == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::send_init_data():" << __LINE__
-             << " ERROR: Null Object Instance Name" << THLA_ENDL;
+             << " ERROR: Null Object Instance Name\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -489,7 +489,7 @@ federate so the data will not be sent for '%s'.%c",
              << " ERROR: The specified Object Instance"
              << " Name '" << instance_name << "' does not correspond to any"
              << " known object. Please check your S_define file or simulation"
-             << " module to verify the settings." << THLA_ENDL;
+             << " module to verify the settings.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -498,8 +498,8 @@ federate so the data will not be sent for '%s'.%c",
 
          if ( this->execution_control->wait_for_init_data() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
-                        __LINE__, instance_name, THLA_NEWLINE );
+               send_hs( stdout, "Manager::send_init_data():%d '%s'\n",
+                        __LINE__, instance_name );
             }
 
             // Send the object init data to the other federates.
@@ -513,14 +513,14 @@ federate so the data will not be sent for '%s'.%c",
                    << " This call will be ignored because the Simulation"
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
-                   << "') does not support it." << THLA_ENDL;
+                   << "') does not support it.\n";
                send_hs( stdout, msg.str().c_str() );
             }
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'%c",
-                     __LINE__, instance_name, THLA_NEWLINE );
+            send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'\n",
+                     __LINE__, instance_name );
          }
       }
    }
@@ -536,14 +536,14 @@ void Manager::receive_init_data()
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::receive_init_data():%d Late joining \
-federate so this call will be ignored.%c",
-                  __LINE__, THLA_NEWLINE );
+federate so this call will be ignored.\n",
+                  __LINE__ );
       }
       return;
    }
 
    // Go through the list of objects.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
 
       // Make sure we have at least one piece of data we can receive.
       if ( objects[n].any_remotely_owned_subscribed_init_attribute() ) {
@@ -554,9 +554,9 @@ federate so this call will be ignored.%c",
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
+               send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
                         __LINE__, objects[n].get_name(),
-                        ( objects[n].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+                        ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
             }
 
             int64_t      wallclock_time;
@@ -586,16 +586,16 @@ federate so this call will be ignored.%c",
                                << " RTI or we are no longer joined to the federation"
                                << " execution because someone forced our resignation at"
                                << " the Central RTI Component (CRC) level!"
-                               << THLA_ENDL;
+                               << '\n';
                         DebugHandler::terminate_with_message( errmsg.str() );
                      }
                   }
 
                   if ( print_timer.timeout( wallclock_time ) ) {
                      print_timer.reset();
-                     send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
+                     send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
                               __LINE__, objects[n].get_name(),
-                              ( objects[n].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+                              ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
                   }
                }
             }
@@ -604,23 +604,23 @@ federate so this call will be ignored.%c",
          // Check for changed data which means we received something.
          if ( objects[n].is_changed() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::receive_init_data():%d Received '%s'%c",
-                        __LINE__, objects[n].get_name(), THLA_NEWLINE );
+               send_hs( stdout, "Manager::receive_init_data():%d Received '%s'\n",
+                        __LINE__, objects[n].get_name() );
             }
 
             // Receive the data from the publishing federate.
             objects[n].receive_init_data();
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.%c",
+               send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
                         __LINE__, objects[n].get_name(),
-                        ( obj_required ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+                        ( obj_required ? "REQUIRED" : "not required" ) );
             }
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'%c",
-                     __LINE__, objects[n].get_name(), THLA_NEWLINE );
+            send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'\n",
+                     __LINE__, objects[n].get_name() );
          }
       }
    }
@@ -636,8 +636,8 @@ void Manager::receive_init_data(
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::receive_init_data():%d Late joining federate so skipping data for '%s'%c",
-                  __LINE__, instance_name, THLA_NEWLINE );
+         send_hs( stdout, "Manager::receive_init_data():%d Late joining federate so skipping data for '%s'\n",
+                  __LINE__, instance_name );
       }
       return;
    }
@@ -660,7 +660,7 @@ void Manager::receive_init_data(
              << " ERROR: The specified Object Instance Name '" << instance_name
              << "' does not correspond to any known object. Please check your"
              << " S_define file or simulation module to verify the settings."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -673,9 +673,9 @@ void Manager::receive_init_data(
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
+               send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
                         __LINE__, instance_name,
-                        ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+                        ( obj->is_required() ? "REQUIRED" : "not required" ) );
             }
 
             int64_t      wallclock_time;
@@ -705,16 +705,16 @@ void Manager::receive_init_data(
                                << " RTI or we are no longer joined to the federation"
                                << " execution because someone forced our resignation at"
                                << " the Central RTI Component (CRC) level!"
-                               << THLA_ENDL;
+                               << '\n';
                         DebugHandler::terminate_with_message( errmsg.str() );
                      }
                   }
 
                   if ( print_timer.timeout( wallclock_time ) ) {
                      print_timer.reset();
-                     send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
+                     send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
                               __LINE__, instance_name,
-                              ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+                              ( obj->is_required() ? "REQUIRED" : "not required" ) );
                   }
                }
             }
@@ -724,23 +724,23 @@ void Manager::receive_init_data(
          if ( obj->is_changed() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout,
-                        "Manager::receive_init_data():%d Received '%s'%c",
-                        __LINE__, instance_name, THLA_NEWLINE );
+                        "Manager::receive_init_data():%d Received '%s'\n",
+                        __LINE__, instance_name );
             }
 
             // Receive the data from the publishing federate.
             obj->receive_init_data();
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.%c",
+               send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
                         __LINE__, instance_name,
-                        ( obj_required ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+                        ( obj_required ? "REQUIRED" : "not required" ) );
             }
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'%c",
-                     __LINE__, instance_name, THLA_NEWLINE );
+            send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'\n",
+                     __LINE__, instance_name );
          }
       }
    }
@@ -769,7 +769,7 @@ void Manager::wait_for_init_sync_point(
                 << " This call will be ignored because the Simulation"
                 << " Initialization Scheme (Type:'"
                 << this->execution_control->get_type()
-                << "') does not support it." << THLA_ENDL;
+                << "') does not support it.\n";
          send_hs( stdout, errmsg.str().c_str() );
       }
       return;
@@ -780,8 +780,8 @@ void Manager::wait_for_init_sync_point(
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::wait_for_init_sync_point():%d Late \
-joining federate so this call will be ignored.%c",
-                  __LINE__, THLA_NEWLINE );
+joining federate so this call will be ignored.\n",
+                  __LINE__ );
       }
       return;
    }
@@ -789,7 +789,7 @@ joining federate so this call will be ignored.%c",
    if ( sync_point_label == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
-             << " ERROR: Null Sync-Point Label" << THLA_ENDL;
+             << " ERROR: Null Sync-Point Label\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -811,7 +811,7 @@ joining federate so this call will be ignored.%c",
              << "' is not known. Please check your input or modified data files"
              << " to make sure the 'THLA.federate.multiphase_init_sync_points'"
              << " correctly specifies all the synchronization-point labels that"
-             << " will be used for multi-phase initialization." << THLA_ENDL;
+             << " will be used for multi-phase initialization.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -825,8 +825,8 @@ void Manager::request_data_update(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       string name_str;
       StringUtilities::to_string( name_str, instance_name );
-      send_hs( stdout, "Manager::request_data_update():%d Object:'%s'%c",
-               __LINE__, name_str.c_str(), THLA_NEWLINE );
+      send_hs( stdout, "Manager::request_data_update():%d Object:'%s'\n",
+               __LINE__, name_str.c_str() );
    }
 
    bool found = false;
@@ -884,9 +884,9 @@ void Manager::object_instance_name_reservation_succeeded(
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::object_instance_name_reservation_succeeded():%d \
-RESERVED Object Instance Name '%s'%c",
+RESERVED Object Instance Name '%s'\n",
                      __LINE__, trickhla_obj->get_name(),
-                     THLA_NEWLINE );
+                     '\n' );
          }
       }
    }
@@ -918,11 +918,11 @@ object instance name is unique, no duplicates, within the Federation. For \
 example, try using fed_name.object_FOM_name for the object instance name. \
 Also, an object should be owned by only one Federate so one common mistake is \
 to have the 'create_HLA_instance' flag for the same object being set to true \
-for more than one Federate.%c",
-            __LINE__, name_str.c_str(), THLA_NEWLINE );
+for more than one Federate.\n",
+            __LINE__, name_str.c_str() );
 
    wstring obj_name;
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       StringUtilities::to_wstring( obj_name, objects[n].get_name() );
       if ( obj_name == obj_instance_name ) {
          if ( objects[n].is_create_HLA_instance() ) {
@@ -938,8 +938,8 @@ resigned this Federate. **\n   ** Note: In order for the Federation rejoin to \
 be successful, make sure that there is at least one other Federate set up to \
 publish at least one of the attributes (by setting the 'publish' flag to true in \
 another Federate). This is necessary for the successful transfer of ownership \
-which keeps the instance attribute's object from becoming a Federation orphan. **%c",
-                     __LINE__, THLA_NEWLINE );
+which keeps the instance attribute's object from becoming a Federation orphan. **\n",
+                     __LINE__ );
          }
       }
    }
@@ -952,7 +952,7 @@ which keeps the instance attribute's object from becoming a Federation orphan. *
    // Bail from the execution just in case the above command fails
    ostringstream errmsg;
    errmsg << "Manager::object_instance_name_reservation_failed():" << __LINE__
-          << " Exiting..." << THLA_ENDL;
+          << " Exiting...\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -976,13 +976,13 @@ void Manager::add_object_to_map(
 void Manager::setup_all_ref_attributes()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_all_ref_attributes():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_all_ref_attributes():%d\n",
+               __LINE__ );
    }
 
    // Create the map of object instance names to object array indexes.
    obj_name_index_map.clear();
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       obj_name_index_map[objects[n].get_name_string()] = n;
    }
 
@@ -991,21 +991,21 @@ void Manager::setup_all_ref_attributes()
 
    if ( is_execution_configuration_used() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::setup_all_ref_attributes():%d Execution-Configuration %c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "Manager::setup_all_ref_attributes():%d Execution-Configuration \n",
+                  __LINE__ );
       }
       setup_object_ref_attributes( 1, get_execution_configuration() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_all_ref_attributes():%d Objects: %d %c",
-               __LINE__, obj_count, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_all_ref_attributes():%d Objects: %d \n",
+               __LINE__, obj_count );
    }
    setup_object_ref_attributes( obj_count, objects );
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_all_ref_attributes():%d Interactions %c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_all_ref_attributes():%d Interactions \n",
+               __LINE__ );
    }
    setup_interaction_ref_attributes();
 }
@@ -1019,19 +1019,19 @@ void Manager::setup_object_ref_attributes(
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
-      send_hs( stdout, "Manager::setup_object_ref_attributes():%d Already initialized.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_object_ref_attributes():%d Already initialized.\n",
+               __LINE__ );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_object_ref_attributes():%d %c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_object_ref_attributes():%d \n",
+               __LINE__ );
    }
 
    // Resolve all the Ref-Attributes for all the simulation initialization
    // objects and attributes.
-   for ( unsigned int n = 0; n < data_obj_count; ++n ) {
+   for ( int n = 0; n < data_obj_count; ++n ) {
 
       // Initialize the TrickHLA-Object before we use it.
       data_objects[n].initialize( this );
@@ -1042,17 +1042,17 @@ void Manager::setup_object_ref_attributes(
       Attribute *attrs      = data_objects[n].get_attributes();
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         msg << "Manager::setup_object_ref_attributes()" << __LINE__ << endl
-             << "--------------- Trick REF-Attributes ---------------" << endl
+         msg << "Manager::setup_object_ref_attributes()" << __LINE__ << '\n'
+             << "--------------- Trick REF-Attributes ---------------\n"
              << " Object:'" << data_objects[n].get_name() << "'"
              << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
              << " Create HLA Instance:"
              << ( data_objects[n].is_create_HLA_instance() ? "Yes" : "No" )
-             << " Attribute count:" << attr_count << endl;
+             << " Attribute count:" << attr_count << '\n';
       }
 
       // Process the attributes for this object.
-      for ( unsigned int i = 0; i < attr_count; ++i ) {
+      for ( int i = 0; i < attr_count; ++i ) {
 
          // Initialize the TrickHLA-Attribute before we use it.
          attrs[i].initialize( data_objects[n].get_FOM_name(), n, i );
@@ -1061,7 +1061,7 @@ void Manager::setup_object_ref_attributes(
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attrs[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attrs[i].get_trick_name() << "'"
-                << endl;
+                << '\n';
          }
       }
 
@@ -1078,14 +1078,14 @@ void Manager::setup_interaction_ref_attributes()
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
-      send_hs( stdout, "Manager::setup_interaction_ref_attributes():%d Already initialized.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_interaction_ref_attributes():%d Already initialized.\n",
+               __LINE__ );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_interaction_ref_attributes():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_interaction_ref_attributes():%d\n",
+               __LINE__ );
    }
 
    // Interactions.
@@ -1093,10 +1093,10 @@ void Manager::setup_interaction_ref_attributes()
       ostringstream msg;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         msg << "Manager::setup_interaction_ref_attributes():" << __LINE__ << endl
-             << "--------------- Trick REF-Attributes ---------------" << endl
+         msg << "Manager::setup_interaction_ref_attributes():" << __LINE__ << '\n'
+             << "--------------- Trick REF-Attributes ---------------\n"
              << " FOM-Interaction:'" << interactions[n].get_FOM_name() << "'"
-             << endl;
+             << '\n';
       }
 
       // Initialize the TrickHLA Interaction before we use it.
@@ -1106,13 +1106,13 @@ void Manager::setup_interaction_ref_attributes()
       Parameter *params      = interactions[n].get_parameters();
 
       // Process the attributes for this object.
-      for ( unsigned int i = 0; i < param_count; ++i ) {
+      for ( int i = 0; i < param_count; ++i ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << param_count
                 << " FOM-Parameter:'" << params[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << params[i].get_trick_name() << "'"
-                << endl;
+                << '\n';
          }
 
          // Initialize the TrickHLA Parameter.
@@ -1135,8 +1135,8 @@ void Manager::setup_interaction_ref_attributes()
 void Manager::setup_all_RTI_handles()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_all_RTI_handles():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_all_RTI_handles():%d\n",
+               __LINE__ );
    }
 
    // Set up the object RTI handles for the ExecutionControl mechanisms.
@@ -1161,15 +1161,15 @@ void Manager::setup_object_RTI_handles(
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
-      send_hs( stdout, "Manager::setup_object_RTI_handles():%d Already initialized.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_object_RTI_handles():%d Already initialized.\n",
+               __LINE__ );
       return;
    }
 
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1180,13 +1180,13 @@ void Manager::setup_object_RTI_handles(
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL RTIambassador!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_object_RTI_handles():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_object_RTI_handles():%d\n",
+               __LINE__ );
    }
 
    char const *obj_FOM_name  = "";
@@ -1198,17 +1198,17 @@ void Manager::setup_object_RTI_handles(
       wstring ws_FOM_name = L"";
 
       // Resolve all the handles/ID's for the objects and attributes.
-      for ( unsigned int n = 0; n < data_obj_count; ++n ) {
+      for ( int n = 0; n < data_obj_count; ++n ) {
          ostringstream msg;
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            msg << "Manager::setup_object_RTI_handles()" << __LINE__ << endl
+            msg << "Manager::setup_object_RTI_handles()" << __LINE__ << '\n'
                 << "----------------- RTI Handles (Objects & Attributes) ---------------"
-                << endl
+                << '\n'
                 << "Getting RTI Object-Class-Handle for"
                 << " Object:'" << data_objects[n].get_name() << "'"
                 << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
-                << endl;
+                << '\n';
          }
 
          // Create the wide-string object FOM name.
@@ -1225,19 +1225,19 @@ void Manager::setup_object_RTI_handles(
             msg << "  Result for"
                 << " Object:'" << data_objects[n].get_name() << "'"
                 << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
-                << " Class-ID:" << handle_str << endl;
+                << " Class-ID:" << handle_str << '\n';
          }
 
          int const  attr_count = data_objects[n].get_attribute_count();
          Attribute *attrs      = data_objects[n].get_attributes();
 
          // Resolve the handles/ID's for the attributes.
-         for ( unsigned int i = 0; i < attr_count; ++i ) {
+         for ( int i = 0; i < attr_count; ++i ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Attribute-Handle for '"
                    << data_objects[n].get_FOM_name() << "'->'"
-                   << attrs[i].get_FOM_name() << "'" << endl;
+                   << attrs[i].get_FOM_name() << "'\n";
             }
 
             // Create the wide-string Attribute FOM name.
@@ -1255,7 +1255,7 @@ void Manager::setup_object_RTI_handles(
                msg << "\t  Result for Attribute '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'"
-                   << " Attribute-ID:" << id_str << endl;
+                   << " Attribute-ID:" << id_str << '\n';
             }
          }
 
@@ -1278,7 +1278,7 @@ void Manager::setup_object_RTI_handles(
             errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
                    << " ERROR: Object FOM Name '" << obj_FOM_name << "' Not Found. Please check"
                    << " your input or modified-data files to make sure the"
-                   << " Object FOM Name is correctly specified." << THLA_ENDL;
+                   << " Object FOM Name is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1288,7 +1288,7 @@ void Manager::setup_object_RTI_handles(
                    << " ERROR: For Object FOM Name '" << obj_FOM_name << "', Attribute FOM Name '"
                    << attr_FOM_name << "' Not Found. Please check your input or"
                    << " modified-data files to make sure the Object Attribute"
-                   << " FOM Name is correctly specified." << THLA_ENDL;
+                   << " FOM Name is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1297,7 +1297,7 @@ void Manager::setup_object_RTI_handles(
             errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
                    << " ERROR: Object or Attribute FOM Name Not Found. Please check your input or"
                    << " modified-data files to make sure the FOM Name is"
-                   << " correctly specified." << THLA_ENDL;
+                   << " correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1309,7 +1309,7 @@ void Manager::setup_object_RTI_handles(
 
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Federate Not Execution Member" << THLA_ENDL;
+             << " ERROR: Federate Not Execution Member\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1318,7 +1318,7 @@ void Manager::setup_object_RTI_handles(
 
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Not Connected" << THLA_ENDL;
+             << " ERROR: Not Connected\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1330,7 +1330,7 @@ void Manager::setup_object_RTI_handles(
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " ERROR: RTIinternalError: '"
-             << rti_err_msg << "'" << THLA_ENDL;
+             << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1341,7 +1341,7 @@ void Manager::setup_object_RTI_handles(
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " ERROR: RTI1516_EXCEPTION for '"
-             << rti_err_msg << "'" << THLA_ENDL;
+             << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1358,15 +1358,15 @@ void Manager::setup_interaction_RTI_handles(
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
-      send_hs( stdout, "Manager::setup_interaction_RTI_handles():%d Already initialized.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_interaction_RTI_handles():%d Already initialized.\n",
+               __LINE__ );
       return;
    }
 
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1377,13 +1377,13 @@ void Manager::setup_interaction_RTI_handles(
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL RTIambassador!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_interaction_RTI_handles():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_interaction_RTI_handles():%d\n",
+               __LINE__ );
    }
 
    char const *inter_FOM_name = "";
@@ -1404,11 +1404,11 @@ void Manager::setup_interaction_RTI_handles(
          StringUtilities::to_wstring( ws_FOM_name, inter_FOM_name );
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            msg << "Manager::setup_interaction_RTI_handles()" << __LINE__ << endl
-                << "----------------- RTI Handles (Interactions & Parameters) ---------------" << endl
+            msg << "Manager::setup_interaction_RTI_handles()" << __LINE__ << '\n'
+                << "----------------- RTI Handles (Interactions & Parameters) ---------------\n"
                 << "Getting RTI Interaction-Class-Handle for"
                 << " FOM-Name:'" << inter_FOM_name << "'"
-                << endl;
+                << '\n';
          }
 
          // Get the Interaction class handle.
@@ -1419,7 +1419,7 @@ void Manager::setup_interaction_RTI_handles(
             StringUtilities::to_string( handle_str, in_interactions[n].get_class_handle() );
             msg << "  Result for Interaction"
                 << " FOM-Name:'" << inter_FOM_name << "'"
-                << " Interaction-ID:" << handle_str << endl;
+                << " Interaction-ID:" << handle_str << '\n';
          }
 
          // The parameters.
@@ -1427,7 +1427,7 @@ void Manager::setup_interaction_RTI_handles(
          Parameter *params      = in_interactions[n].get_parameters();
 
          // Process the parameters for the interaction.
-         for ( unsigned int i = 0; i < param_count; ++i ) {
+         for ( int i = 0; i < param_count; ++i ) {
 
             // The Parameter FOM name.
             FOM_name_type  = 2; // Parameter
@@ -1436,7 +1436,7 @@ void Manager::setup_interaction_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Parameter-Handle for '"
-                   << inter_FOM_name << "'->'" << param_FOM_name << "'" << endl;
+                   << inter_FOM_name << "'->'" << param_FOM_name << "'\n";
             }
 
             // Get the Parameter Handle.
@@ -1450,7 +1450,7 @@ void Manager::setup_interaction_RTI_handles(
                StringUtilities::to_string( handle_str, params[i].get_parameter_handle() );
                msg << "\t  Result for Parameter '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'"
-                   << " Parameter-ID:" << handle_str << endl;
+                   << " Parameter-ID:" << handle_str << '\n';
             }
          }
 
@@ -1469,7 +1469,7 @@ void Manager::setup_interaction_RTI_handles(
             errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
                    << " ERROR: Interaction FOM Name '" << inter_FOM_name << "' Not Found. Please"
                    << " check your input or modified-data files to make sure the"
-                   << " Interaction FOM Name is correctly specified." << THLA_ENDL;
+                   << " Interaction FOM Name is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1480,7 +1480,7 @@ void Manager::setup_interaction_RTI_handles(
                    << "', Parameter FOM Name '" << param_FOM_name
                    << "' Not Found. Please check your input or modified-data files"
                    << " to make sure the Interaction Parameter FOM Name is"
-                   << " correctly specified." << THLA_ENDL;
+                   << " correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1489,7 +1489,7 @@ void Manager::setup_interaction_RTI_handles(
             errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
                    << " ERROR: Interaction or Parameter FOM Name Not Found. Please check your input"
                    << " or modified-data files to make sure the FOM Name is"
-                   << " correctly specified." << THLA_ENDL;
+                   << " correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -1501,7 +1501,7 @@ void Manager::setup_interaction_RTI_handles(
 
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: FederateNotExecutionMember!" << THLA_ENDL;
+             << " ERROR: FederateNotExecutionMember!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1510,7 +1510,7 @@ void Manager::setup_interaction_RTI_handles(
 
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: NotConnected!" << THLA_ENDL;
+             << " ERROR: NotConnected!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1521,7 +1521,7 @@ void Manager::setup_interaction_RTI_handles(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: RTIinternalError: '" << rti_err_msg << "'" << THLA_ENDL;
+             << " ERROR: RTIinternalError: '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1532,7 +1532,7 @@ void Manager::setup_interaction_RTI_handles(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Exception for '" << rti_err_msg << "'" << THLA_ENDL;
+             << " ERROR: Exception for '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1545,19 +1545,17 @@ void Manager::setup_interaction_RTI_handles(
  */
 void Manager::publish()
 {
-   unsigned int n;
-
    if ( !is_RTI_ready( "publish" ) ) {
       return;
    }
 
    // Publish attributes for all the Trick-HLA-Objects we know about.
-   for ( n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].publish_object_attributes();
    }
 
    // Publish the interactions.
-   for ( n = 0; n < inter_count; ++n ) {
+   for ( int n = 0; n < inter_count; ++n ) {
       interactions[n].publish_interaction();
    }
 
@@ -1570,8 +1568,8 @@ void Manager::publish()
  */
 void Manager::unpublish()
 {
-   unsigned int i, k;
-   bool         do_unpublish;
+   int  i, k;
+   bool do_unpublish;
 
    if ( !is_RTI_ready( "unpublish" ) ) {
       return;
@@ -1625,19 +1623,17 @@ void Manager::unpublish()
  */
 void Manager::subscribe()
 {
-   unsigned int n;
-
    if ( !is_RTI_ready( "subscribe" ) ) {
       return;
    }
 
    // Subscribe to attributes for all the Trick-HLA-Objects we know about.
-   for ( n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].subscribe_to_object_attributes();
    }
 
    // Subscribe to the interactions.
-   for ( n = 0; n < inter_count; ++n ) {
+   for ( int n = 0; n < inter_count; ++n ) {
       interactions[n].subscribe_to_interaction();
    }
 
@@ -1650,8 +1646,8 @@ void Manager::subscribe()
  */
 void Manager::unsubscribe()
 {
-   unsigned int i, k;
-   bool         do_unsubscribe;
+   int  i, k;
+   bool do_unsubscribe;
 
    if ( !is_RTI_ready( "unsubscribe" ) ) {
       return;
@@ -1708,8 +1704,8 @@ void Manager::unsubscribe()
 void Manager::publish_and_subscribe()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::publish_and_subscribe():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::publish_and_subscribe():%d\n",
+               __LINE__ );
    }
    subscribe();
    publish();
@@ -1721,13 +1717,13 @@ void Manager::publish_and_subscribe()
 void Manager::reserve_object_names_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::reserve_object_names_with_RTI():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::reserve_object_names_with_RTI():%d\n",
+               __LINE__ );
    }
 
    // For the locally owned objects, reserve the object instance name with
    // the RTI.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].reserve_object_name_with_RTI();
    }
 }
@@ -1740,26 +1736,26 @@ void Manager::reserve_object_names_with_RTI()
 void Manager::wait_for_reservation_of_object_names()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d\n",
+               __LINE__ );
    }
 
    // Simulation object names.
    if ( obj_count > 0 ) {
       // Wait for each RTI object instance name to be registered with the RTI,
       // but for only the names we requested registration for.
-      for ( unsigned int n = 0; n < obj_count; ++n ) {
+      for ( int n = 0; n < obj_count; ++n ) {
          objects[n].wait_for_object_name_reservation();
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d All Object instance names reserved.%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d All Object instance names reserved.\n",
+                  __LINE__ );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d No Object instance names to reserve.%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d No Object instance names to reserve.\n",
+                  __LINE__ );
       }
    }
 }
@@ -1770,8 +1766,8 @@ void Manager::wait_for_reservation_of_object_names()
 void Manager::register_objects_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::register_objects_with_RTI():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::register_objects_with_RTI():%d\n",
+               __LINE__ );
    }
 
    // Have the ExecutionControl register objects it needs with the RTI.
@@ -1779,7 +1775,7 @@ void Manager::register_objects_with_RTI()
 
    // For the locally owned objects register it with the RTI to get its
    // RTI object instance ID.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].register_object_with_RTI();
 
       // Add the registered object instance to the map and only if it is
@@ -1797,8 +1793,8 @@ void Manager::register_objects_with_RTI()
 void Manager::setup_preferred_order_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::setup_preferred_order_with_RTI():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::setup_preferred_order_with_RTI():%d\n",
+               __LINE__ );
    }
 
    if ( is_execution_configuration_used() ) {
@@ -1807,12 +1803,12 @@ void Manager::setup_preferred_order_with_RTI()
    }
 
    // Setup the preferred order for all the object attributes.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].setup_preferred_order_with_RTI();
    }
 
    // Setup the preferred order for all the interactions.
-   for ( unsigned int i = 0; i < inter_count; ++i ) {
+   for ( int i = 0; i < inter_count; ++i ) {
       interactions[i].setup_preferred_order_with_RTI();
    }
 }
@@ -1825,8 +1821,8 @@ void Manager::setup_preferred_order_with_RTI()
 void Manager::wait_for_registration_of_required_objects()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::wait_for_registration_of_required_objects():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::wait_for_registration_of_required_objects():%d\n",
+               __LINE__ );
    }
 
    int  required_obj_cnt;
@@ -1851,7 +1847,7 @@ void Manager::wait_for_registration_of_required_objects()
 
    // Loop through all of the objects to count the # of required objects; do not
    // assume that all of them are required!
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       if ( objects[n].is_required() ) {
          ++total_required_obj_cnt;
       }
@@ -1891,7 +1887,7 @@ void Manager::wait_for_registration_of_required_objects()
 
             // Determine how many data objects have been registered and only if
             // they are required.
-            for ( unsigned int n = 0; n < obj_count; ++n ) {
+            for ( int n = 0; n < obj_count; ++n ) {
                if ( objects[n].is_instance_handle_valid() ) {
                   ++registered_obj_cnt;
                   if ( objects[n].is_required() ) {
@@ -1964,7 +1960,7 @@ void Manager::wait_for_registration_of_required_objects()
                ++cnt; // Count the execution configuration.
             }
 
-            for ( unsigned int n = 0; n < obj_count; ++n ) {
+            for ( int n = 0; n < obj_count; ++n ) {
                if ( !print_only_unregistered_obj
                     || !objects[n].is_instance_handle_valid() ) {
 
@@ -1984,7 +1980,7 @@ void Manager::wait_for_registration_of_required_objects()
                }
             }
          }
-         summary << THLA_ENDL;
+         summary << '\n';
 
          // Display the summary.
          send_hs( stdout, summary.str().c_str() );
@@ -2021,7 +2017,7 @@ void Manager::wait_for_registration_of_required_objects()
                          << " the RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation"
                          << " at the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -2057,7 +2053,7 @@ void Manager::wait_for_registration_of_required_objects()
 
       // Add all valid, registered object instances to the map and only if they are
       // not already in it.
-      for ( unsigned int n = 0; n < obj_count; ++n ) {
+      for ( int n = 0; n < obj_count; ++n ) {
          if ( ( objects[n].is_instance_handle_valid() )
               && ( object_map.find( objects[n].get_instance_handle() ) == object_map.end() ) ) {
             object_map[objects[n].get_instance_handle()] = &objects[n];
@@ -2073,8 +2069,8 @@ void Manager::set_all_object_instance_handles_by_name()
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
-      send_hs( stdout, "Manager::set_all_object_instance_handles_by_name():%d Already initialized.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::set_all_object_instance_handles_by_name():%d Already initialized.\n",
+               __LINE__ );
       return;
    }
 
@@ -2100,15 +2096,15 @@ void Manager::set_object_instance_handles_by_name(
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
-      send_hs( stdout, "Manager::set_object_instance_handles_by_name():%d Already initialized.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::set_object_instance_handles_by_name():%d Already initialized.\n",
+               __LINE__ );
       return;
    }
 
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2119,7 +2115,7 @@ void Manager::set_object_instance_handles_by_name(
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL RTIambassador!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2133,7 +2129,7 @@ void Manager::set_object_instance_handles_by_name(
       wstring ws_instance_name = L"";
 
       // Resolve all the handles/ID's for the objects and attributes.
-      for ( unsigned int n = 0; n < data_obj_count; ++n ) {
+      for ( int n = 0; n < data_obj_count; ++n ) {
 
          // Create the wide-string version of the instance name.
          char const *instance_name = data_objects[n].get_name();
@@ -2172,7 +2168,7 @@ void Manager::set_object_instance_handles_by_name(
                errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
                       << " ERROR: Object Instance Not Known for '"
                       << ( instance_name != NULL ? instance_name : "" ) << "'"
-                      << THLA_ENDL;
+                      << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2189,7 +2185,7 @@ void Manager::set_object_instance_handles_by_name(
 
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Federation Not Execution Member" << THLA_ENDL;
+             << " ERROR: Federation Not Execution Member\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -2198,7 +2194,7 @@ void Manager::set_object_instance_handles_by_name(
 
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Not Connected" << THLA_ENDL;
+             << " ERROR: Not Connected\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -2209,7 +2205,7 @@ void Manager::set_object_instance_handles_by_name(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: RTIinternalError: '" << rti_err_msg << "'" << THLA_ENDL;
+             << " ERROR: RTIinternalError: '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -2221,7 +2217,7 @@ void Manager::set_object_instance_handles_by_name(
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: RTI1516_EXCEPTION for '"
-             << rti_err_msg << "'" << THLA_ENDL;
+             << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -2229,7 +2225,7 @@ void Manager::set_object_instance_handles_by_name(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      summary << THLA_ENDL;
+      summary << '\n';
       send_hs( stdout, summary.str().c_str() );
    }
 }
@@ -2256,8 +2252,8 @@ void Manager::provide_attribute_update(
 void Manager::send_cyclic_and_requested_data()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d\n",
+               __LINE__ );
    }
 
    // Current time values.
@@ -2299,15 +2295,15 @@ void Manager::send_cyclic_and_requested_data()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d HLA-time:%.12G seconds.%c",
-               __LINE__, update_time.get_time_in_seconds(), THLA_NEWLINE );
+      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d HLA-time:%.12G seconds.\n",
+               __LINE__, update_time.get_time_in_seconds() );
    }
 
    // Send any ExecutionControl data requested.
    this->execution_control->send_requested_data( update_time );
 
    // Send data to remote RTI federates for each of the objects.
-   for ( unsigned int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
+   for ( int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
 
       // Only send data if we are on the data cycle time boundary for this object.
       if ( federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
@@ -2346,8 +2342,8 @@ void Manager::send_cyclic_and_requested_data()
 void Manager::receive_cyclic_data()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::receive_cyclic_data():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::receive_cyclic_data():%d\n",
+               __LINE__ );
    }
 
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
@@ -2356,7 +2352,7 @@ void Manager::receive_cyclic_data()
    this->execution_control->receive_cyclic_data();
 
    // Receive data from remote RTI federates for each of the objects.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
 
       // Only receive data if we are on the data cycle time boundary for this object.
       if ( federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
@@ -2379,8 +2375,8 @@ void Manager::process_interactions()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::process_interactions():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::process_interactions():%d\n",
+               __LINE__ );
    }
 
    // Process all the interactions in the queue.
@@ -2412,7 +2408,7 @@ void Manager::process_interactions()
                    << interaction_item->interaction_type
                    << ". Verify that you are specifying the correct interaction "
                    << "type defined in 'ManagerTypeOfInteractionEnum' enum "
-                   << "found in 'Manager.hh' and re-run." << THLA_ENDL;
+                   << "found in 'Manager.hh' and re-run.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
@@ -2437,7 +2433,7 @@ void Manager::receive_interaction(
    bool const                     received_as_TSO )
 {
    // Find the Interaction we have data for.
-   for ( unsigned int i = 0; i < inter_count; ++i ) {
+   for ( int i = 0; i < inter_count; ++i ) {
 
       // Process the interaction if we subscribed to it and we have the same class handle.
       if ( interactions[i].is_subscribe()
@@ -2471,14 +2467,14 @@ void Manager::receive_interaction(
 
                string handle;
                StringUtilities::to_string( handle, theInteraction );
-               send_hs( stdout, "Manager::receive_interaction():%d ID:%s, HLA-time:%G%c",
+               send_hs( stdout, "Manager::receive_interaction():%d ID:%s, HLA-time:%G\n",
                         __LINE__, handle.c_str(), _time.get_time_in_seconds(),
-                        THLA_NEWLINE );
+                        '\n' );
             } else {
                string handle;
                StringUtilities::to_string( handle, theInteraction );
-               send_hs( stdout, "Manager::receive_interaction():%d ID:%s%c",
-                        __LINE__, handle.c_str(), THLA_NEWLINE );
+               send_hs( stdout, "Manager::receive_interaction():%d ID:%s\n",
+                        __LINE__, handle.c_str() );
             }
          }
 
@@ -2540,9 +2536,9 @@ Object *Manager::get_trickhla_object(
  * @job_class{scheduled}
  */
 bool Manager::discover_object_instance(
-   ObjectInstanceHandle theObject,
-   ObjectClassHandle    theObjectClass,
-   wstring const       &theObjectInstanceName )
+   ObjectInstanceHandle const &theObject,
+   ObjectClassHandle const    &theObjectClass,
+   wstring const              &theObjectInstanceName )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -2580,8 +2576,8 @@ bool Manager::discover_object_instance(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          string id_str;
          StringUtilities::to_string( id_str, theObject );
-         send_hs( stdout, "Manager::discover_object_instance():%d Data-Object '%s' Instance-ID:%s%c",
-                  __LINE__, trickhla_obj->get_name(), id_str.c_str(), THLA_NEWLINE );
+         send_hs( stdout, "Manager::discover_object_instance():%d Data-Object '%s' Instance-ID:%s\n",
+                  __LINE__, trickhla_obj->get_name(), id_str.c_str() );
       }
    } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederate_class( theObjectClass ) ) {
 
@@ -2595,8 +2591,8 @@ bool Manager::discover_object_instance(
          string id_str, name_str;
          StringUtilities::to_string( id_str, theObject );
          StringUtilities::to_string( name_str, theObjectInstanceName );
-         send_hs( stdout, "Manager::discover_object_instance():%d Discovered MOM HLA-Federate Object-Instance-ID:%s Name:'%s'%c",
-                  __LINE__, id_str.c_str(), name_str.c_str(), THLA_NEWLINE );
+         send_hs( stdout, "Manager::discover_object_instance():%d Discovered MOM HLA-Federate Object-Instance-ID:%s Name:'%s'\n",
+                  __LINE__, id_str.c_str(), name_str.c_str() );
       }
    } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_class( theObjectClass ) ) {
 
@@ -2607,8 +2603,8 @@ bool Manager::discover_object_instance(
          string id_str, name_str;
          StringUtilities::to_string( id_str, theObject );
          StringUtilities::to_string( name_str, theObjectInstanceName );
-         send_hs( stdout, "Manager::discover_object_instance():%d MOM HLA-Federation '%s' Instance-ID:%s%c",
-                  __LINE__, name_str.c_str(), id_str.c_str(), THLA_NEWLINE );
+         send_hs( stdout, "Manager::discover_object_instance():%d MOM HLA-Federation '%s' Instance-ID:%s\n",
+                  __LINE__, name_str.c_str(), id_str.c_str() );
       }
    }
 
@@ -2625,7 +2621,7 @@ Object *Manager::get_unregistered_object(
    wstring ws_obj_name;
 
    // Search the simulation data objects first.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
 
       // Find the object that is not registered (i.e. the instance ID == 0),
       // has the same class handle as the one specified, and has the same name
@@ -2654,7 +2650,7 @@ Object *Manager::get_unregistered_remote_object(
    ObjectClassHandle const &theObjectClass )
 {
    // Search the simulation data objects first.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
 
       // Return the first TrickHLA object that we did not create an HLA
       // instance for, has the same class handle as the one specified, is not
@@ -2710,9 +2706,9 @@ void Manager::mark_object_as_deleted_from_federation(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string id_str;
             StringUtilities::to_string( id_str, instance_id );
-            send_hs( stdout, "Manager::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
+            send_hs( stdout, "Manager::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
                      __LINE__, obj->get_name(), id_str.c_str(),
-                     ( instance_id.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
+                     ( instance_id.isValid() ? "Yes" : "No" ) );
          }
          obj->remove_object_instance();
       }
@@ -2728,7 +2724,7 @@ void Manager::process_deleted_objects()
    this->execution_control->process_deleted_objects();
 
    // Search the simulation data objects, looking for deleted objects.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       if ( objects[n].process_object_deleted_from_RTI ) {
          objects[n].process_deleted_object();
       }
@@ -2740,7 +2736,7 @@ void Manager::process_deleted_objects()
  */
 void Manager::pull_ownership()
 {
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].pull_ownership();
    }
 }
@@ -2773,7 +2769,7 @@ void Manager::pull_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::pull_ownership_at_init():" << __LINE__
              << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2783,7 +2779,7 @@ void Manager::pull_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::pull_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
-             << obj_instance_name << "'!" << THLA_ENDL;
+             << obj_instance_name << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2804,7 +2800,7 @@ void Manager::handle_pulled_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
              << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2814,7 +2810,7 @@ void Manager::handle_pulled_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
-             << obj_instance_name << "'!" << THLA_ENDL;
+             << obj_instance_name << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2827,7 +2823,7 @@ void Manager::handle_pulled_ownership_at_init(
  */
 void Manager::pull_ownership_upon_rejoin()
 {
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       if ( objects[n].is_create_HLA_instance() ) {
          objects[n].pull_ownership_upon_rejoin();
       }
@@ -2839,7 +2835,7 @@ void Manager::pull_ownership_upon_rejoin()
  */
 void Manager::push_ownership()
 {
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].push_ownership();
    }
 }
@@ -2871,7 +2867,7 @@ void Manager::push_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::push_ownership_at_init():" << __LINE__
              << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2881,7 +2877,7 @@ void Manager::push_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::push_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
-             << obj_instance_name << "'!" << THLA_ENDL;
+             << obj_instance_name << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2902,7 +2898,7 @@ void Manager::handle_pushed_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
              << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2912,7 +2908,7 @@ void Manager::handle_pushed_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
-             << obj_instance_name << "'!" << THLA_ENDL;
+             << obj_instance_name << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2925,7 +2921,7 @@ void Manager::handle_pushed_ownership_at_init(
  */
 void Manager::grant_pull_request()
 {
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].grant_pull_request();
    }
 }
@@ -2935,7 +2931,7 @@ void Manager::grant_pull_request()
  */
 void Manager::release_ownership()
 {
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].release_ownership();
    }
 }
@@ -2970,8 +2966,8 @@ bool Manager::is_RTI_ready(
    char const *method_name )
 {
    if ( this->federate == NULL ) {
-      send_hs( stderr, "Manager::%s:%d Unexpected NULL 'federate' pointer!%c",
-               method_name, __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Manager::%s:%d Unexpected NULL 'federate' pointer!\n",
+               method_name, __LINE__ );
       return false;
    }
 
@@ -2980,8 +2976,8 @@ bool Manager::is_RTI_ready(
 
    bool rti_valid = true;
    if ( get_RTI_ambassador() == NULL ) {
-      send_hs( stderr, "Manager::%s:%d Unexpected NULL RTIambassador!%c",
-               method_name, __LINE__, THLA_NEWLINE );
+      send_hs( stderr, "Manager::%s:%d Unexpected NULL RTIambassador!\n",
+               method_name, __LINE__ );
       rti_valid = false;
    }
 
@@ -3038,7 +3034,7 @@ void Manager::encode_checkpoint()
    // Call the ExecutionControl method.
    execution_control->encode_checkpoint();
 
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       // Any object with a valid instance handle must be marked as required
       // to ensure the restore process will wait for this object instance
       // to exist.
@@ -3059,7 +3055,7 @@ void Manager::decode_checkpoint()
    // Call the ExecutionControl method.
    execution_control->decode_checkpoint();
 
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].decode_checkpoint();
    }
 
@@ -3073,7 +3069,7 @@ void Manager::free_checkpoint()
    // Call the ExecutionControl method.
    execution_control->free_checkpoint();
 
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].free_checkpoint();
    }
 
@@ -3091,8 +3087,8 @@ void Manager::encode_checkpoint_interactions()
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::encode_checkpoint_interactions():%d interactions_queue.size()=%d%c",
-                  __LINE__, interactions_queue.size(), THLA_NEWLINE );
+         send_hs( stdout, "Manager::encode_checkpoint_interactions():%d interactions_queue.size()=%d\n",
+                  __LINE__, interactions_queue.size() );
       }
 
       // Get the count to use for the check.
@@ -3106,20 +3102,20 @@ void Manager::encode_checkpoint_interactions()
          errmsg << "Manager::encode_checkpoint_interactions():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
                 << " linear array of " << check_interactions_count << " elements."
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // interactions_queue.dump_head_pointers("interactions_queue.dump");
 
-      for ( unsigned int i = 0; i < interactions_queue.size(); ++i ) {
+      for ( int i = 0; i < interactions_queue.size(); ++i ) {
 
          InteractionItem *item = static_cast< InteractionItem * >( interactions_queue.front() );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::encode_checkpoint_interactions():%d \
-Checkpointing into check_interactions[%d] from interaction index %d.%c",
-                     __LINE__, i, item->index, THLA_NEWLINE );
+Checkpointing into check_interactions[%d] from interaction index %d.\n",
+                     __LINE__, i, item->index );
          }
          check_interactions[i].index            = item->index;
          check_interactions[i].interaction_type = item->interaction_type;
@@ -3152,19 +3148,19 @@ void Manager::decode_checkpoint_interactions()
 {
    if ( check_interactions_count > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::decode_checkpoint_interactions():%d check_interactions_count=%d%c",
-                  __LINE__, check_interactions_count, THLA_NEWLINE );
+         send_hs( stdout, "Manager::decode_checkpoint_interactions():%d check_interactions_count=%d\n",
+                  __LINE__, check_interactions_count );
       }
 
-      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
+      for ( int i = 0; i < check_interactions_count; ++i ) {
 
          InteractionItem *item = new InteractionItem();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::decode_checkpoint_interactions():%d \
-restoring check_interactions[%d] into interaction index %d, parm_count=%d%c",
+restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
                      __LINE__, i, check_interactions[i].index,
-                     check_interactions[i].parm_items_count, THLA_NEWLINE );
+                     check_interactions[i].parm_items_count );
          }
          item->index            = check_interactions[i].index;
          item->interaction_type = check_interactions[i].interaction_type;
@@ -3189,12 +3185,12 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d%c",
 void Manager::free_checkpoint_interactions()
 {
    if ( check_interactions_count > 0 ) {
-      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
+      for ( int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
       if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
-         send_hs( stderr, "Manager::free_checkpoint_interactions():%d WARNING failed to delete Trick Memory for 'check_interactions'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "Manager::free_checkpoint_interactions():%d WARNING failed to delete Trick Memory for 'check_interactions'\n",
+                  __LINE__ );
       }
       check_interactions       = NULL;
       check_interactions_count = 0;
@@ -3207,29 +3203,29 @@ void Manager::print_checkpoint_interactions()
       ostringstream msg;
       msg << "Manager::print_checkpoint_interactions():" << __LINE__
           << "check_interactions contains these "
-          << check_interactions_count << " elements:" << endl;
-      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
+          << check_interactions_count << " elements:\n";
+      for ( int i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
-             << check_interactions[i].index << endl
+             << check_interactions[i].index << '\n'
              << "check_interactions[" << i << "].interaction_type       = '"
-             << check_interactions[i].interaction_type << "'" << endl
+             << check_interactions[i].interaction_type << "'\n"
              << "check_interactions[" << i << "].parm_items_count       = "
              << check_interactions[i].parm_items_count
-             << endl;
-         for ( unsigned int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
+             << '\n';
+         for ( int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
             msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
-                << check_interactions[i].parm_items[k].index << endl
+                << check_interactions[i].parm_items[k].index << '\n'
                 << "check_interactions[" << i << "].parm_items[" << k << "].size     = "
                 << check_interactions[i].parm_items[k].size
-                << endl;
+                << '\n';
          }
          msg << "check_interactions[" << i << "].user_supplied_tag_size = "
-             << check_interactions[i].user_supplied_tag_size << endl
+             << check_interactions[i].user_supplied_tag_size << '\n'
              << "check_interactions[" << i << "].order_is_TSO           = "
-             << check_interactions[i].order_is_TSO << endl
+             << check_interactions[i].order_is_TSO << '\n'
              << "check_interactions[" << i << "].time                   = "
              << check_interactions[i].time.get_base_time()
-             << endl;
+             << '\n';
       }
       send_hs( stdout, msg.str().c_str() );
    }
@@ -3243,8 +3239,8 @@ void Manager::print_checkpoint_interactions()
 void Manager::wait_for_discovery_of_objects()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d\n",
+               __LINE__ );
    }
 
    // Do we have Simulation object(s) to interrogate?
@@ -3254,7 +3250,7 @@ void Manager::wait_for_discovery_of_objects()
       int  required_count                   = 0;
       int  discovery_count                  = 0;
       bool create_HLA_instance_object_found = false;
-      for ( unsigned int n = 0; n < obj_count; ++n ) {
+      for ( int n = 0; n < obj_count; ++n ) {
          if ( objects[n].is_required() ) {
             ++required_count;
          }
@@ -3279,8 +3275,8 @@ void Manager::wait_for_discovery_of_objects()
              ( discovery_count < required_count ) ) ) { // found the rejoining federate
 
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d Waiting for object discovery callbacks to arrive.%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d Waiting for object discovery callbacks to arrive.\n",
+                     __LINE__ );
          }
 
          int64_t      wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
@@ -3310,21 +3306,21 @@ void Manager::wait_for_discovery_of_objects()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
+               send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d Waiting...\n",
+                        __LINE__ );
             }
 
             // Check if any objects were discovered while we were sleeping.
             discovery_count                  = 0;
             create_HLA_instance_object_found = false;
-            for ( unsigned int n = 0; n < obj_count; ++n ) {
+            for ( int n = 0; n < obj_count; ++n ) {
                if ( objects[n].is_required() && objects[n].is_instance_handle_valid() ) {
                   ++discovery_count;
                   if ( objects[n].is_create_HLA_instance() ) {
@@ -3341,8 +3337,8 @@ void Manager::wait_for_discovery_of_objects()
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d - No Objects to discover.%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d - No Objects to discover.\n",
+                  __LINE__ );
       }
    }
 }
@@ -3355,7 +3351,7 @@ void Manager::wait_for_discovery_of_objects()
  */
 bool Manager::is_this_a_rejoining_federate()
 {
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       // Was the required 'create_HLA_instance' object found?
       if ( objects[n].is_required()
            && objects[n].is_create_HLA_instance()

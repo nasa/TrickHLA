@@ -124,7 +124,6 @@ SyncPointList::SyncPointList(
 SyncPointList::~SyncPointList()
 {
    clear();
-   this->free_checkpoint();
 }
 
 void SyncPointList::setup(
@@ -135,7 +134,7 @@ void SyncPointList::setup(
       errmsg << "SyncPointList::setup():" << __LINE__
              << " ERROR: Unexpected NULL mutex for sync-point list named '"
              << this->list_name << "'! Make sure to call the set_mutex()"
-             << " function for this SyncPointList instance." << THLA_ENDL;
+             << " function for this SyncPointList instance.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -170,7 +169,7 @@ void SyncPointList::set_federate(
       ostringstream errmsg;
       errmsg << "SyncPointList::set_federate():" << __LINE__
              << " ERROR: Unexpected NULL federate pointer for sync-point list named '"
-             << this->list_name << "'!" << THLA_ENDL;
+             << this->list_name << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -239,7 +238,7 @@ bool const SyncPointList::add(
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
-             << "' has already been added!" << THLA_ENDL;
+             << "' has already been added!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -259,7 +258,7 @@ bool const SyncPointList::add(
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Could not allocate memory for the sync-point list!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -273,7 +272,7 @@ bool const SyncPointList::add(
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Could not allocate memory for the sync-point list entry at array index:"
              << list_count << " for sync-point label '"
-             << label_str << "'!" << THLA_ENDL;
+             << label_str << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -301,7 +300,7 @@ bool const SyncPointList::add(
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
-             << "' has already been added!" << THLA_ENDL;
+             << "' has already been added!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -321,7 +320,7 @@ bool const SyncPointList::add(
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Could not allocate memory for the sync-point list!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -336,7 +335,7 @@ bool const SyncPointList::add(
              << " ERROR: Could not allocate memory for the sync-point list entry at array index:"
              << list_count << " for sync-point-timed label '"
              << label_str << "' with time " << time.get_time_in_seconds()
-             << " seconds!" << THLA_ENDL;
+             << " seconds!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -411,7 +410,7 @@ bool const SyncPointList::register_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
              << " ERROR: Did not find sync-point '" << label_str
-             << "' in the '" << get_list_name() << "' list!" << THLA_ENDL;
+             << "' in the '" << get_list_name() << "' list!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -433,7 +432,7 @@ bool const SyncPointList::register_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
              << " ERROR: Did not find sync-point '" << label_str
-             << "' in the '" << get_list_name() << "' list!" << THLA_ENDL;
+             << "' in the '" << get_list_name() << "' list!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -482,14 +481,14 @@ bool const SyncPointList::register_sync_point(
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -524,7 +523,7 @@ bool const SyncPointList::register_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointListBase::register_sync_point():" << __LINE__
              << " ERROR: Failed to register '" << label_str
-             << "' synchronization point with RTI!" << THLA_ENDL;
+             << "' synchronization point with RTI!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -543,14 +542,14 @@ bool const SyncPointList::register_sync_point(
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -586,7 +585,7 @@ bool const SyncPointList::register_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointListBase::register_sync_point():" << __LINE__
              << " ERROR: Failed to register '" << label_str
-             << "' synchronization point with RTI!" << THLA_ENDL;
+             << "' synchronization point with RTI!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -645,7 +644,7 @@ bool const SyncPointList::wait_for_announced(
          ostringstream errmsg;
          errmsg << "SyncPointList::wait_for_announced():" << __LINE__
                 << " ERROR: Could not find sync-point '" << label_str
-                << "' in the '" << get_list_name() << "' list!" << THLA_ENDL;
+                << "' in the '" << get_list_name() << "' list!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -677,14 +676,14 @@ bool const SyncPointList::wait_for_announced(
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_announced():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_announced():" << __LINE__
-             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -702,7 +701,7 @@ bool const SyncPointList::wait_for_announced(
          ostringstream errmsg;
          errmsg << "SyncPointList::wait_for_announced():" << __LINE__
                 << " ERROR: Bad sync-point state for sync-point!"
-                << " Sync-point: " << sp->to_string() << THLA_ENDL;
+                << " Sync-point: " << sp->to_string() << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -722,7 +721,7 @@ bool const SyncPointList::wait_for_announced(
          // Get the current sync-point status.
          ostringstream message;
          message << "SyncPointList::wait_for_announced():" << __LINE__
-                 << " Sync-point: " << sp->to_string() << THLA_ENDL;
+                 << " Sync-point: " << sp->to_string() << '\n';
          send_hs( stdout, message.str().c_str() );
       }
 
@@ -754,7 +753,7 @@ bool const SyncPointList::wait_for_announced(
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << THLA_ENDL;
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                return false;
             }
@@ -772,7 +771,7 @@ bool const SyncPointList::wait_for_announced(
       // Get the current sync-point status.
       ostringstream message;
       message << "SyncPointList::wait_for_announced():" << __LINE__
-              << " Sync-point announced: " << sp->to_string() << THLA_ENDL;
+              << " Sync-point announced: " << sp->to_string() << '\n';
       send_hs( stdout, message.str().c_str() );
    }
 
@@ -802,7 +801,7 @@ bool const SyncPointList::achieve(
       ostringstream errmsg;
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
              << " ERROR: Could not find sync-point '" << label_str
-             << "' in the '" << get_list_name() << "' list!" << THLA_ENDL;
+             << "' in the '" << get_list_name() << "' list!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -833,14 +832,14 @@ bool const SyncPointList::achieve_sync_point(
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -848,7 +847,7 @@ bool const SyncPointList::achieve_sync_point(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "SyncPointList::achieve_sync_point():" << __LINE__
-          << " Known Sync-point " << sp->to_string() << THLA_ENDL;
+          << " Known Sync-point " << sp->to_string() << '\n';
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -901,7 +900,7 @@ bool const SyncPointList::achieve_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " Sync-point '" << label_str
-                << "' has already been achieved with the RTI!" << THLA_ENDL;
+                << "' has already been achieved with the RTI!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
 
@@ -916,7 +915,7 @@ bool const SyncPointList::achieve_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " Sync-point '" << label_str
-                << "' has already been synchronized with the RTI!" << THLA_ENDL;
+                << "' has already been synchronized with the RTI!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
 
@@ -929,7 +928,7 @@ bool const SyncPointList::achieve_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " WARNING: Sync-point '" << label_str
-                << "' is registered but has not been announced by the RTI!" << THLA_ENDL;
+                << "' is registered but has not been announced by the RTI!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    } else if ( sp->is_known() ) {
@@ -940,7 +939,7 @@ bool const SyncPointList::achieve_sync_point(
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " WARNING: Sync-point '" << label_str
                 << "' is known but has not been registered or announced!"
-                << THLA_ENDL;
+                << '\n';
          send_hs( stderr, errmsg.str().c_str() );
       }
    } else {
@@ -951,7 +950,7 @@ bool const SyncPointList::achieve_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " WARNING: Sync-point '" << label_str
-                << "' is unknown!" << THLA_ENDL;
+                << "' is unknown!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
@@ -1007,7 +1006,7 @@ bool const SyncPointList::wait_for_synchronized(
          ostringstream errmsg;
          errmsg << "SyncPointList::wait_for_synchronized():" << __LINE__
                 << " ERROR: Could not find sync-point '" << label_str
-                << "' in the '" << get_list_name() << "' list!" << THLA_ENDL;
+                << "' in the '" << get_list_name() << "' list!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -1039,14 +1038,14 @@ bool const SyncPointList::wait_for_synchronized(
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_synchronized():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_synchronized():" << __LINE__
-             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -1065,7 +1064,7 @@ bool const SyncPointList::wait_for_synchronized(
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream msg;
          msg << "SyncPointList::wait_for_synchronized():" << __LINE__
-             << " Sync-point '" << label_str << "'" << THLA_ENDL;
+             << " Sync-point '" << label_str << "'\n";
          send_hs( stdout, msg.str().c_str() );
       }
 
@@ -1097,7 +1096,7 @@ bool const SyncPointList::wait_for_synchronized(
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << THLA_ENDL;
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                return false;
             }
@@ -1124,15 +1123,15 @@ std::string SyncPointList::to_string()
 
 #if SYNC_POINT_TMM_ARRAY
    msg << "SyncPointList::to_string():" << __LINE__
-       << " List:'" << get_list_name() << "' List-size:" << list_count << THLA_ENDL;
+       << " List:'" << get_list_name() << "' List-size:" << list_count << '\n';
    for ( int i = 0; i < list_count; ++i ) {
 #else
    msg << "SyncPointList::to_string():" << __LINE__
-       << " List:'" << get_list_name() << "' List-size:" << list.size() << THLA_ENDL;
+       << " List:'" << get_list_name() << "' List-size:" << list.size() << '\n';
    for ( int i = 0; i < list.size(); ++i ) {
 #endif
       msg << i << ":'" << get_list_name() << "' Sync-point:"
-          << list[i]->to_string() << THLA_ENDL;
+          << list[i]->to_string() << '\n';
    }
    return msg.str();
 }
@@ -1153,7 +1152,7 @@ std::string SyncPointList::to_string(
    StringUtilities::to_string( label_str, label );
    ostringstream msg;
    msg << "SyncPointList::to_string():" << __LINE__
-       << " Unknown sync-point label: '" << label_str << "'" << THLA_ENDL;
+       << " Unknown sync-point label: '" << label_str << "'\n";
    return msg.str();
 }
 

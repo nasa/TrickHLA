@@ -91,7 +91,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
       if ( ssbary_ptr == NULL ) {
          std::ostringstream errmsg;
          errmsg << "JEODRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
-                << " ERROR: Unexpected NULL reference frame: SSBary.inertial" << THLA_ENDL;
+                << " ERROR: Unexpected NULL reference frame: SSBary.inertial\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -99,7 +99,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
       if ( embary_ptr == NULL ) {
          std::ostringstream errmsg;
          errmsg << "JEODRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
-                << " ERROR: Unexpected NULL reference frame: EMBary.inertial" << THLA_ENDL;
+                << " ERROR: Unexpected NULL reference frame: EMBary.inertial\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -136,7 +136,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
       // Check for objects allocation.
       if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
          errmsg << "JEODRefFrameTreeSimObject::configure_tree():" << __LINE__
-                << " ERROR: The TrickHLAManager Object array has not been allocated!" << THLA_ENDL;
+                << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }

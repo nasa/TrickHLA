@@ -84,13 +84,13 @@ void ItemQueue::dump_head_pointers(
 
    Item *temp = head->next;
 
-   send_hs( stdout, "ItemQueue::dump_head_pointers(%s):%d Current element is %p %c",
-            name, __LINE__, head, THLA_NEWLINE );
+   send_hs( stdout, "ItemQueue::dump_head_pointers(%s):%d Current element is %p \n",
+            name, __LINE__, head );
 
    // Adjust to the next item off the stack in a thread-safe way.
    while ( temp != NULL ) { // while there are any more elements
-      send_hs( stdout, "ItemQueue::dump_head_pointers(%s):%d Current element points to %p %c",
-               name, __LINE__, temp, THLA_NEWLINE );
+      send_hs( stdout, "ItemQueue::dump_head_pointers(%s):%d Current element points to %p \n",
+               name, __LINE__, temp );
 
       // Adjust the "head" to point to the next item in the linked-list.
       temp = temp->next;

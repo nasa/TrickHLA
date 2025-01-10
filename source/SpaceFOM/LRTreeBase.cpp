@@ -100,7 +100,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
    if ( this->has_node( node_ptr ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout, "LRTreeBase::add_node():%d ERROR: Node \'%s\' is already in the tree.\n",
-                  __LINE__, node_ptr->name, THLA_NEWLINE );
+                  __LINE__, node_ptr->name );
       }
       return ( false );
    }
@@ -108,7 +108,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
    // Check for NULL node name.  The node must have a name.
    if ( node_ptr->name == NULL ) {
       send_hs( stdout, "LRTreeBase::add_node():%d ERROR: NULL node name.\n",
-               __LINE__, THLA_NEWLINE );
+               __LINE__ );
       return ( false );
    }
 
@@ -116,7 +116,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
    if ( this->has_node( node_ptr->name ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout, "LRTreeBase::add_node():%d ERROR: Node \'%s\' duplicate name is already in the tree.\n",
-                  __LINE__, node_ptr->name, THLA_NEWLINE );
+                  __LINE__, node_ptr->name );
       }
       return ( false );
    }
@@ -142,7 +142,7 @@ bool LRTreeBase::build_tree()
    if ( !allocate_paths() ) {
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
-             << " ERROR: Failed to allocate the tree paths matrix!\"" << THLA_ENDL;
+             << " ERROR: Failed to allocate the tree paths matrix!\"\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -151,7 +151,7 @@ bool LRTreeBase::build_tree()
    if ( root_node == NULL ) {
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
-             << " ERROR: Root node not found!\"" << THLA_ENDL;
+             << " ERROR: Root node not found!\"\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -184,7 +184,7 @@ bool LRTreeBase::build_tree()
 
                // Clean up the path vector.
                path->clear();
-               free( path );
+               delete path;
                path = NULL;
             }
          }
@@ -212,7 +212,7 @@ bool LRTreeBase::check_tree()
       if ( node_ptr->node_id != iinc ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
             send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Node ID (%d) mismatch with index [%d]: \'%s\'!\n",
-                     __LINE__, iinc, node_ptr->node_id, node_ptr->name, THLA_NEWLINE );
+                     __LINE__, iinc, node_ptr->node_id, node_ptr->name );
          }
          // Mark check state false since node ID does not match index.
          check_state = false;
@@ -225,7 +225,7 @@ bool LRTreeBase::check_tree()
          if ( !( node_ptr->is_root_node ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Root node not marked as root node: \'%s\'!\n",
-                        __LINE__, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->name );
             }
             // Mark check state false since this root node is not marked as a root node.
             check_state = false;
@@ -235,14 +235,14 @@ bool LRTreeBase::check_tree()
          if ( found_root ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: More than one root node found: \'%s\'!\n",
-                        __LINE__, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->name );
             }
             // Mark check state false since we already found a root node.
             check_state = false;
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d INFO: Root node found: \'%s\'!\n",
-                        __LINE__, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->name );
             }
             found_root = true;
          }
@@ -253,12 +253,12 @@ bool LRTreeBase::check_tree()
          if ( this->has_node( node_ptr->parent ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d INFO: Parent \'%s\' found for node \'%s\'!\n",
-                        __LINE__, node_ptr->parent->name, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->parent->name, node_ptr->name );
             }
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Parent \'%s\' not found for node \'%s\'!\n",
-                        __LINE__, node_ptr->parent->name, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->parent->name, node_ptr->name );
             }
             // Mark check state false since parent node is not in tree.
             check_state = false;
@@ -268,7 +268,7 @@ bool LRTreeBase::check_tree()
          if ( node_ptr->is_root_node ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Branch node marked as root node: \'%s\'!\n",
-                        __LINE__, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->name );
             }
             // Mark check state false since branch node marked as root node.
             check_state = false;
@@ -278,7 +278,7 @@ bool LRTreeBase::check_tree()
          if ( this->is_cyclic( node_ptr ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Branch node is part of a cyclic segment: \'%s\'!\n",
-                        __LINE__, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->name );
             }
             // Mark check state false since branch node marked as root node.
             check_state = false;
@@ -290,7 +290,7 @@ bool LRTreeBase::check_tree()
    if ( !found_root ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: No root node found!\n",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__ );
       }
       // Mark check state false since no root node was found.
       check_state = false;
@@ -315,7 +315,7 @@ bool LRTreeBase::has_node( char const *name )
    if ( name == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout, "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__ );
       }
       return ( false );
    }
@@ -363,7 +363,7 @@ LRTreeNodeBase *LRTreeBase::find_node( char const *name )
 {
    if ( name == NULL ) {
       send_hs( stdout, "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
-               __LINE__, THLA_NEWLINE );
+               __LINE__ );
       return ( NULL );
    }
    return ( find_node( string( name ) ) );
@@ -392,7 +392,7 @@ LRTreeNodeBase *LRTreeBase::find_node( string const &name )
  */
 void LRTreeBase::print_nodes( std::ostream &stream )
 {
-   for ( int iinc = 0; iinc < nodes.size(); ++iinc ) {
+   for ( unsigned int iinc = 0; iinc < nodes.size(); ++iinc ) {
       nodes[iinc]->print_node( stream );
    }
    return;
@@ -407,19 +407,19 @@ void LRTreeBase::print_paths( std::ostream &stream )
    if ( paths != NULL ) {
 
       // Get the size of the path matrix.
-      int num_nodes = this->nodes.size();
+      unsigned int num_nodes = this->nodes.size();
 
       // Print out header tag.
-      stream << "LRTreeBase::print_paths: " << THLA_NEWLINE;
+      stream << "LRTreeBase::print_paths: \n";
 
       // Iterate through the rows.
-      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have be allocated.
          if ( paths[iinc] != NULL ) {
 
             // Iterate through the columns.
-            for ( int jinc = 0; jinc < num_nodes; ++jinc ) {
+            for ( unsigned int jinc = 0; jinc < num_nodes; ++jinc ) {
 
                unsigned int path_size = paths[iinc][jinc].size();
 
@@ -427,7 +427,7 @@ void LRTreeBase::print_paths( std::ostream &stream )
 
                if ( path_size > 0 ) {
                   // Loop through the node path vector.
-                  for ( int kinc = 0; kinc < path_size; ++kinc ) {
+                  for ( unsigned int kinc = 0; kinc < path_size; ++kinc ) {
                      stream << paths[iinc][jinc][kinc]->node_id;
                      if ( kinc < path_size - 1 ) {
                         stream << ", ";
@@ -436,7 +436,7 @@ void LRTreeBase::print_paths( std::ostream &stream )
                } else {
                   stream << "None";
                }
-               stream << THLA_NEWLINE;
+               stream << '\n';
 
             } // End column iteration.
          }
@@ -444,7 +444,7 @@ void LRTreeBase::print_paths( std::ostream &stream )
       } // End row iteration.
    } else {
       send_hs( stdout, "LRTreeBase::print_paths():%d Warning: No path matrix allocated.\n",
-               __LINE__, THLA_NEWLINE );
+               __LINE__ );
    }
 
    return;
@@ -455,13 +455,11 @@ void LRTreeBase::print_paths( std::ostream &stream )
  */
 bool LRTreeBase::allocate_paths()
 {
-   int num_nodes;
-
    // Free any old paths before allocating new paths.
    this->free_paths();
 
    // Size the path matrix.
-   num_nodes = this->nodes.size();
+   unsigned int num_nodes = this->nodes.size();
 
    // Allocate the rows of the matrix.
    this->paths = new LRTreeNodeVector *[num_nodes];
@@ -471,14 +469,14 @@ bool LRTreeBase::allocate_paths()
 
       // Allocation failed.
       send_hs( stdout, "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix rows.\n",
-               __LINE__, THLA_NEWLINE );
+               __LINE__ );
       return ( false );
 
    } else { // Row allocation succeeded.
 
       // Allocate the columns of the path matrix.
       // Note that this is always a square matrix.
-      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Allocate the columns of the matrix.
          this->paths[iinc] = new LRTreeNodeVector[num_nodes];
@@ -486,7 +484,7 @@ bool LRTreeBase::allocate_paths()
          // Check for column allocation failure.
          if ( this->paths[iinc] == NULL ) {
             send_hs( stdout, "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix columns for row %d.\n",
-                     __LINE__, iinc, THLA_NEWLINE );
+                     __LINE__, iinc );
             return ( false );
          }
       }
@@ -504,16 +502,16 @@ void LRTreeBase::free_paths()
    if ( paths != NULL ) {
 
       // Size the path matrix.
-      int num_nodes = this->nodes.size();
+      unsigned int num_nodes = this->nodes.size();
 
       // Iterate through and free the path matrix.
       // Iterate through the rows.
-      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have been allocated.
          if ( paths[iinc] != NULL ) {
 
-            for ( int jinc = 0; jinc < num_nodes; ++jinc ) {
+            for ( unsigned int jinc = 0; jinc < num_nodes; ++jinc ) {
 
                // Clear the path vector.
                paths[iinc][jinc].clear();
@@ -565,14 +563,14 @@ LRTreeNodeBase *LRTreeBase::find_root()
          if ( found_root ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::find_root():%d ERROR: More than one root node found: \'%s\'!\n",
-                        __LINE__, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->name );
             }
             // Return NULL since we already found a root node.
             return ( NULL );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::find_root():%d INFO: Root node found: \'%s\'!\n",
-                        __LINE__, node_ptr->name, THLA_NEWLINE );
+                        __LINE__, node_ptr->name );
             }
             found_root = true;
             root_node  = node_ptr;
@@ -585,7 +583,7 @@ LRTreeNodeBase *LRTreeBase::find_root()
    if ( !found_root ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout, "LRTreeBase::find_root():%d ERROR: No root node found!\n",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__ );
       }
       return ( NULL );
    }
@@ -609,7 +607,7 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
    bool                    not_acyclic = false;
    LRTreeNodeSet           path_set;
    LRTreeNodeSet::iterator path_pos;
-   const LRTreeNodeBase   *current_node = node;
+   LRTreeNodeBase const   *current_node = node;
 
    // Get the number of nodes in the tree.
    num_nodes = this->nodes.size();
@@ -688,7 +686,7 @@ LRTreeNodeVector *LRTreeBase::get_path_to_root( LRTreeNodeBase const *node )
    // Protect against NULL pointers.
    if ( node == NULL ) {
       send_hs( stdout, "LRTreeBase::get_path_to_root():%d Error: NULL node pointer.\n",
-               __LINE__, THLA_NEWLINE );
+               __LINE__ );
       return ( NULL );
    }
 
@@ -753,9 +751,9 @@ LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
             // This should NEVER happen!
             if ( down_itr == down_path->end() ) {
                send_hs( stdout, "LRTreeBase::find_path():%d Error: Failed to find common node in down path search.\n",
-                        __LINE__, THLA_NEWLINE );
+                        __LINE__ );
                return_path->clear();
-               free( return_path );
+               delete return_path;
                return_path = NULL;
             } else { // Everything looks to be okay.
 
@@ -771,12 +769,12 @@ LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
       // Clear and free the path sets.
       if ( up_path != NULL ) {
          up_path->clear();
-         free( up_path );
+         delete up_path;
          up_path = NULL;
       }
       if ( down_path != NULL ) {
          down_path->clear();
-         free( down_path );
+         delete down_path;
          down_path = NULL;
       }
    }
@@ -796,11 +794,11 @@ LRTreeNodeVector *LRTreeBase::find_path( LRTreeNodeBase const *local,
    if ( ( local == NULL ) || ( wrt == NULL ) ) {
       if ( local == NULL ) {
          send_hs( stdout, "LRTreeBase::find_path():%d Error: NULL \'local\' pointer.\n",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__ );
       }
       if ( wrt == NULL ) {
          send_hs( stdout, "LRTreeBase::find_path():%d Error: NULL \'wrt\' pointer.\n",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__ );
       }
       return ( NULL );
    }
@@ -849,11 +847,11 @@ LRTreeNodeBase *LRTreeBase::find_common_node( LRTreeNodeVector *up_path,
    if ( ( up_path == NULL ) || ( down_path == NULL ) ) {
       if ( up_path == NULL ) {
          send_hs( stdout, "LRTreeBase::find_common_node():%d Error: NULL \'up_path\' pointer.\n",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__ );
       }
       if ( down_path == NULL ) {
          send_hs( stdout, "LRTreeBase::find_common_node():%d Error: NULL \'down_path\' pointer.\n",
-                  __LINE__, THLA_NEWLINE );
+                  __LINE__ );
       }
       return ( NULL );
    }

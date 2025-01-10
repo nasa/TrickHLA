@@ -99,8 +99,8 @@ MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                  __LINE__ );
       }
       this->name = NULL;
    }
@@ -116,8 +116,8 @@ void MTRInteractionHandler::set_name(
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                     __LINE__ );
          }
       }
       this->name = NULL;
@@ -136,7 +136,7 @@ void MTRInteractionHandler::send_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
-             << " ERROR: Unexpected NULL Interaction!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Interaction!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -174,20 +174,20 @@ void MTRInteractionHandler::send_interaction(
          StringUtilities::to_string( rti_user_supplied_tag_string, rti_user_supplied_tag );
 
          cout << "++++SENDING++++ MTRInteractionHandler::send_interaction("
-              << "Receive Order):" << __LINE__ << endl
-              << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
-              << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'" << endl
-              << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << endl
-              << "  mode request: " << mtr_enum_to_string( mtr_mode ) << endl
-              << "  Scenario time: " << scenario_time << endl
-              << "  Simulation time: " << sim_time << endl;
+              << "Receive Order):" << __LINE__ << '\n'
+              << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+              << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
+              << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << '\n'
+              << "  mode request: " << mtr_enum_to_string( mtr_mode ) << '\n'
+              << "  Scenario time: " << scenario_time << '\n'
+              << "  Simulation time: " << sim_time << '\n';
          if ( exco_base->does_cte_timeline_exist() ) {
-            cout << "  CTE time: " << cte_time << endl;
+            cout << "  CTE time: " << cte_time << '\n';
          }
          cout << "  HLA grant time: " << granted_time << " ("
               << Int64BaseTime::to_base_time( granted_time ) << " "
-              << Int64BaseTime::get_units() << ")" << endl
-              << "  send_cnt:" << ( send_cnt + 1 ) << endl;
+              << Int64BaseTime::get_units() << ")\n"
+              << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
       }
 
       // Update the send count, which is just used for the message in this example.
@@ -207,16 +207,16 @@ void MTRInteractionHandler::send_interaction(
 
          // The interaction was Not sent.
          cout << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
-              << __LINE__ << endl
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
-              << "  Scenario time: " << scenario_time << endl
-              << "  Simulation time: " << sim_time << endl;
+              << __LINE__ << '\n'
+              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+              << "  Scenario time: " << scenario_time << '\n'
+              << "  Simulation time: " << sim_time << '\n';
          if ( exco_base->does_cte_timeline_exist() ) {
-            cout << "  CTE time: " << cte_time << endl;
+            cout << "  CTE time: " << cte_time << '\n';
          }
          cout << "  HLA grant time: " << granted_time << " ("
               << Int64BaseTime::to_base_time( granted_time ) << " "
-              << Int64BaseTime::get_units() << ")" << endl;
+              << Int64BaseTime::get_units() << ")\n";
       }
    }
 }
@@ -228,7 +228,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << " ERROR: Unexpected NULL Interaction!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Interaction!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -237,7 +237,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( exco == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << THLA_ENDL;
+             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       exit( 1 );
    }
@@ -272,20 +272,20 @@ void MTRInteractionHandler::receive_interaction(
       string user_supplied_tag_string;
       StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );
       cout << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
-           << __LINE__ << endl
-           << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
-           << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
-           << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << endl
-           << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << endl
-           << "  Scenario time: " << this->scenario_time << endl
-           << "  Simulation time: " << this->sim_time << endl;
+           << __LINE__ << '\n'
+           << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+           << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
+           << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << '\n'
+           << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << '\n'
+           << "  Scenario time: " << this->scenario_time << '\n'
+           << "  Simulation time: " << this->sim_time << '\n';
       if ( exco->does_cte_timeline_exist() ) {
-         cout << "  CTE time: " << this->cte_time << endl;
+         cout << "  CTE time: " << this->cte_time << '\n';
       }
       cout << "  HLA grant time: " << this->granted_time << " ("
            << Int64BaseTime::to_base_time( this->granted_time ) << " "
-           << Int64BaseTime::get_units() << ")" << endl
-           << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
+           << Int64BaseTime::get_units() << ")\n"
+           << "  receive_cnt:" << ( receive_cnt + 1 ) << '\n';
    }
 
    ++receive_cnt;

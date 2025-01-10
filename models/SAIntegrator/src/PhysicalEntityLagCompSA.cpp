@@ -183,8 +183,8 @@ void PhysicalEntityLagCompSA::unload()
  * @job_class{derivative}
  */
 int PhysicalEntityLagCompSA::integrate(
-   const double t_begin,
-   const double t_end )
+   double const t_begin,
+   double const t_end )
 {
    double compensate_dt = t_end - t_begin;
    double dt_go         = compensate_dt;
@@ -194,7 +194,7 @@ int PhysicalEntityLagCompSA::integrate(
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "**** PhysicalEntityLagCompSA::integrate(): "
            << "Compensate: t_begin, t_end, dt_go: "
-           << t_begin << ", " << t_end << ", " << dt_go << endl;
+           << t_begin << ", " << t_end << ", " << dt_go << '\n';
    }
 
    // Propagate the current PhysicalEntity state to the desired time.
@@ -211,7 +211,7 @@ int PhysicalEntityLagCompSA::integrate(
          cout << "****** PhysicalEntityLagCompSA::integrate(): "
               << "Integ dt, tol, t, dt_go: "
               << this->integ_dt << ", " << this->integ_tol << ", "
-              << integ_t << ", " << dt_go << endl;
+              << integ_t << ", " << dt_go << '\n';
       }
 
       // Load the integration states and derivatives.

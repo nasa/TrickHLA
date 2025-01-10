@@ -166,7 +166,7 @@ void ExecutionControl::initialize()
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type()
-          << "'" << THLA_ENDL;
+          << "'\n";
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -196,8 +196,8 @@ void ExecutionControl::initialize()
              << setprecision( 18 ) << RT_sec << " seconds)! The"
              << " Trick software frame time must be greater than zero. You can"
              << " set the LTrick software frame in the input.py file by using"
-             << " this directive with an appropriate time:" << THLA_ENDL
-             << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+             << " this directive with an appropriate time:\n"
+             << "   trick.exec_set_software_frame( t )\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -224,9 +224,9 @@ void ExecutionControl::initialize()
              << " software frame and the LCTS must be an integer multiple of"
              << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
              << " You can set the LCTS and Trick software frame in the input.py"
-             << " file by using these directives with appropriate times:" << THLA_ENDL
-             << "   federate.set_least_common_time_step( t )" << THLA_ENDL
-             << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+             << " file by using these directives with appropriate times:\n"
+             << "   federate.set_least_common_time_step( t )\n"
+             << "   trick.exec_set_software_frame( t )\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Time constraint: (LCTS % RT = 0)
@@ -242,9 +242,9 @@ void ExecutionControl::initialize()
              << " software frame and the LCTS must be an integer multiple of"
              << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
              << " You can set the LCTS and Trick software frame in the input.py"
-             << " file by using these directives with appropriate times:" << THLA_ENDL
-             << "   federate.set_least_common_time_step( t )" << THLA_ENDL
-             << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+             << " file by using these directives with appropriate times:\n"
+             << "   federate.set_least_common_time_step( t )\n"
+             << "   trick.exec_set_software_frame( t )\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -257,7 +257,7 @@ void ExecutionControl::initialize()
       errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
              << " ERROR: The main thread data cycle time (dt:"
              << dt << " " << Int64BaseTime::get_units()
-             << ") must be greator than zero!" << THLA_ENDL;
+             << ") must be greator than zero!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -270,7 +270,7 @@ void ExecutionControl::initialize()
              << least_common_time_step << " " << Int64BaseTime::get_units()
              << ") is not greater than or equal to this federates main thread"
              << " data cycle time (dt:" << dt << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
+             << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -282,7 +282,7 @@ void ExecutionControl::initialize()
              << least_common_time_step << " " << Int64BaseTime::get_units()
              << ") must be greater than or equal to this federates main thread"
              << " data cycle time (dt:" << dt << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
+             << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -294,7 +294,7 @@ void ExecutionControl::initialize()
              << least_common_time_step << " " << Int64BaseTime::get_units()
              << ") is not an integer multiple of the federate main thread"
              << " data cycle time (dt:" << lookahead_base_time << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
+             << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -305,7 +305,7 @@ void ExecutionControl::initialize()
              << " ERROR: Time padding value ("
              << setprecision( 18 ) << get_time_padding()
              << " seconds) must be greater than or equal to zero!"
-             << THLA_NEWLINE;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    int64_t padding_base_time = Int64BaseTime::to_base_time( get_time_padding() );
@@ -316,7 +316,7 @@ void ExecutionControl::initialize()
              << setprecision( 18 ) << get_time_padding()
              << " seconds) must be an integer multiple of the Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_NEWLINE;
+             << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -334,7 +334,7 @@ void ExecutionControl::initialize()
       errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
              << " WARNING: Only a preset master is supported. Make sure to set"
              << " 'THLA.federate.use_preset_master = true' in your input.py file."
-             << " Setting use_preset_master to true!" << THLA_ENDL;
+             << " Setting use_preset_master to true!\n";
       send_hs( stdout, errmsg.str().c_str() );
       this->use_preset_master = true;
    }
@@ -347,20 +347,20 @@ void ExecutionControl::initialize()
              << " joiner and as the preset Master, which is not allowed. Check"
              << " your input.py file or Modified data files to make sure this"
              << " federate is not configured as both the preset master and a"
-             << " designated late joiner." << THLA_ENDL;
+             << " designated late joiner.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER\n",
+                  __LINE__ );
       } else if ( is_designated_late_joiner() ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER\n",
+                  __LINE__ );
       } else {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER\n",
+                  __LINE__ );
       }
    }
 }
@@ -392,7 +392,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for Interaction specialized"
-             << " to MTR the sim!" << THLA_ENDL;
+             << " to MTR the sim!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -415,7 +415,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the parameters of the"
-             << " MTR interaction!" << THLA_ENDL;
+             << " MTR interaction!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -440,8 +440,9 @@ void ExecutionControl::setup_interaction_ref_attributes()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to aallocate enough memory for the ATTRIBUTES for the"
-             << " 'execution_mode' value of the MTR interaction!" << THLA_ENDL;
+             << " 'execution_mode' value of the MTR interaction!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Find the 'execution_mode' value in the MTR Interaction Handler's ATTRIBUTES.
@@ -467,10 +468,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg2;
-      msg2 << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__ << endl
-           << "--------------- Trick REF-Attributes ---------------" << endl
+      msg2 << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__ << '\n'
+           << "--------------- Trick REF-Attributes ---------------\n"
            << " FOM-Interaction:'" << mtr_interaction->get_FOM_name() << "'"
-           << THLA_NEWLINE;
+           << '\n';
       send_hs( stdout, msg2.str().c_str() );
    }
 
@@ -482,7 +483,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       msg2 << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << tParm[0].get_FOM_name() << "'"
            << " NOTE: This is an auto-generated parameter so there is no"
-           << " associated 'Trick-Name'." << THLA_NEWLINE;
+           << " associated 'Trick-Name'.\n";
       send_hs( stdout, msg2.str().c_str() );
    }
 
@@ -508,7 +509,7 @@ void ExecutionControl::setup_object_RTI_handles()
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL ExCO!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL ExCO!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -552,8 +553,8 @@ void ExecutionControl::sync_point_announced(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         send_hs( stdout, "=========================== SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.%c",
-                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+         send_hs( stdout, "=========================== SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.\n",
+                  __LINE__, label_str.c_str() );
       }
 
       // Achieve all Unrecognized sync-points but don't wait for the
@@ -561,8 +562,8 @@ void ExecutionControl::sync_point_announced(
       if ( !achieve_sync_point( label, user_supplied_tag ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         send_hs( stderr, "SpaceFOM::ExecutionControl::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.%c",
-                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::ExecutionControl::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.\n",
+                  __LINE__, label_str.c_str() );
       }
    } else {
       // Known sync-point that is already in one of the sync-point lists.
@@ -572,8 +573,8 @@ void ExecutionControl::sync_point_announced(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             string label_str;
             StringUtilities::to_string( label_str, label );
-            send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d Marked sync-point announced:'%s'%c",
-                     __LINE__, label_str.c_str(), THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d Marked sync-point announced:'%s'\n",
+                     __LINE__, label_str.c_str() );
          }
       } else {
          string label_str;
@@ -581,7 +582,7 @@ void ExecutionControl::sync_point_announced(
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
                 << " ERROR: Failed to mark sync-point '" << label_str
-                << "' as announced." << THLA_ENDL;
+                << "' as announced.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -600,8 +601,8 @@ void ExecutionControl::sync_point_announced(
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   string label_str;
                   StringUtilities::to_string( label_str, label );
-                  send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d SpaceFOM designated late joiner, achieved sync-point:'%s'%c",
-                           __LINE__, label_str.c_str(), THLA_NEWLINE );
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d SpaceFOM designated late joiner, achieved sync-point:'%s'\n",
+                           __LINE__, label_str.c_str() );
                }
             }
          }
@@ -684,14 +685,14 @@ void ExecutionControl::receive_interaction(
 
             string handle;
             StringUtilities::to_string( handle, theInteraction );
-            send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s, HLA-time:%G%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s, HLA-time:%G\n",
                      __LINE__, handle.c_str(), _time.get_time_in_seconds(),
-                     THLA_NEWLINE );
+                     '\n' );
          } else {
             string handle;
             StringUtilities::to_string( handle, theInteraction );
-            send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s%c",
-                     __LINE__, handle.c_str(), THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s\n",
+                     __LINE__, handle.c_str() );
          }
       }
 
@@ -778,8 +779,8 @@ void ExecutionControl::role_determination_process()
       // Print out diagnostic message if appropriate.
       if ( !this->late_joiner_determined ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d Waiting...%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d Waiting...\n",
+                     __LINE__ );
          }
       }
 
@@ -841,7 +842,7 @@ void ExecutionControl::role_determination_process()
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!"
-                            << THLA_ENDL;
+                            << '\n';
                      DebugHandler::terminate_with_message( errmsg.str() );
                   }
                }
@@ -864,7 +865,7 @@ void ExecutionControl::role_determination_process()
                     << to_string( SpaceFOM::INIT_STARTED_SYNC_POINT )
                     << ", '" << init_completed_label << "' sync-point announced: "
                     << ( is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ? "Yes" : "No" )
-                    << ", Still waiting..." << THLA_ENDL;
+                    << ", Still waiting...\n";
             send_hs( stdout, message.str().c_str() );
          }
       }
@@ -873,19 +874,19 @@ void ExecutionControl::role_determination_process()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( this->late_joiner ) {
             if ( is_designated_late_joiner() ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Designated Late Joining Federate.%c",
-                        __LINE__, THLA_NEWLINE );
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Designated Late Joining Federate.\n",
+                        __LINE__ );
             } else {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Late Joining Federate.%c",
-                        __LINE__, THLA_NEWLINE );
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Late Joining Federate.\n",
+                        __LINE__ );
             }
          } else {
             if ( is_designated_late_joiner() ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate configured to be a Designated Late Joining Federate.%c",
-                        __LINE__, THLA_NEWLINE );
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate configured to be a Designated Late Joining Federate.\n",
+                        __LINE__ );
             } else {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate.%c",
-                        __LINE__, THLA_NEWLINE );
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate.\n",
+                        __LINE__ );
             }
          }
       }
@@ -986,8 +987,8 @@ void ExecutionControl::designated_late_joiner_init_process()
    // Print out diagnostic message if appropriate.
    if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d Waiting...%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d Waiting...\n",
+                  __LINE__ );
       }
    }
 
@@ -1028,7 +1029,7 @@ void ExecutionControl::designated_late_joiner_init_process()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
+                      << '\n';
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -1049,15 +1050,15 @@ void ExecutionControl::designated_late_joiner_init_process()
                  << __LINE__
                  << " Sync-point '" << sp_label << "' announced:"
                  << ( is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ? "Yes" : "No, Still waiting..." )
-                 << THLA_ENDL;
+                 << '\n';
          send_hs( stdout, message.str().c_str() );
       }
    }
 
    // Print out diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d This is a Designated Late Joining Federate.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d This is a Designated Late Joining Federate.\n",
+               __LINE__ );
    }
 }
 
@@ -1098,18 +1099,18 @@ void ExecutionControl::late_joiner_hla_init_process()
 
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      cout << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()" << endl
-           << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
-           << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
-           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-           << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
-           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
-           << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
-           << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
+      cout << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
+           << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << '\n'
+           << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << '\n'
+           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
+           << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << '\n'
+           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
+           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
+           << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
+           << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
       if ( does_cte_timeline_exist() ) {
-         cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
-              << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
+         cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
+              << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
       }
    }
 
@@ -1162,7 +1163,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Unexpected NULL THLA.manager.exec_config object." << THLA_ENDL;
+             << " ERROR: Unexpected NULL THLA.manager.exec_config object.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -1170,7 +1171,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       if ( ExCO->get_FOM_name() == NULL ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object." << THLA_ENDL;
+                << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -1182,12 +1183,12 @@ void ExecutionControl::pre_multi_phase_init_processes()
       if ( is_master() || is_root_frame_publisher() ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Unexpected NULL THLA.manager.root_ref_frame object." << THLA_ENDL;
+                << " ERROR: Unexpected NULL THLA.manager.root_ref_frame object.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!\n",
+                     __LINE__ );
          }
       }
    }
@@ -1208,7 +1209,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
                 << this->least_common_time_step << " " << Int64BaseTime::get_units()
                 << ") is not equal to ExCO LCTS ("
                 << ExCO->get_least_common_time_step()
-                << "!" << THLA_ENDL;
+                << "!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -1317,18 +1318,18 @@ void ExecutionControl::post_multi_phase_init_processes()
 
       // Print diagnostic message if appropriate.
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         cout << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()" << endl
-              << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
-              << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
-              << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-              << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-              << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
-              << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
-              << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
-              << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
+         cout << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
+              << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << '\n'
+              << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << '\n'
+              << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
+              << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << '\n'
+              << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
+              << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
+              << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
+              << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
          if ( does_cte_timeline_exist() ) {
-            cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
-                 << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
+            cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
+                 << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
          }
       }
 
@@ -1364,8 +1365,8 @@ void ExecutionControl::post_multi_phase_init_processes()
          case EXECUTION_CONTROL_SHUTDOWN:
 
             if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d Commanding Trick Exec to stop.%c",
-                        __LINE__, THLA_NEWLINE );
+               send_hs( stdout, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d Commanding Trick Exec to stop.\n",
+                        __LINE__ );
             }
 
             // Tell Trick to shutdown.
@@ -1380,7 +1381,7 @@ void ExecutionControl::post_multi_phase_init_processes()
             errmsg << "SpaceFOM::ExecutionControl::post_multi_phase_init_process():" << __LINE__
                    << " ERROR: SpaceFOM ExecutionControl invalid execution mode"
                    << " (" << execution_control_enum_to_string( this->requested_execution_control_mode )
-                   << "), exiting..." << THLA_ENDL;
+                   << "), exiting...\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
       }
@@ -1440,7 +1441,7 @@ void ExecutionControl::post_multi_phase_init_processes()
                   errmsg << "SpaceFOM::ExecutionControl::post_multi_phase_init_process():" << __LINE__
                          << " ERROR: SpaceFOM ExecutionControl invalid execution mode"
                          << " (" << execution_control_enum_to_string( this->requested_execution_control_mode )
-                         << "), exiting..." << THLA_ENDL;
+                         << "), exiting...\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                   break;
             }
@@ -1510,8 +1511,8 @@ void ExecutionControl::shutdown()
          // federate before tearing things down.
          long sleep_pad_base_time = Int64BaseTime::to_base_time( get_time_padding() );
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d %s.%c",
-                     __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str(), THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d %s.\n",
+                     __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str() );
          }
          Utilities::micro_sleep( sleep_pad_base_time );
       }
@@ -1601,7 +1602,7 @@ void ExecutionControl::set_next_execution_control_mode(
    if ( !is_master() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__
-             << " ERROR: This should only be called by the Master federate!" << THLA_ENDL;
+             << " ERROR: This should only be called by the Master federate!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1699,7 +1700,7 @@ void ExecutionControl::set_next_execution_control_mode(
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__
                    << " WARNING: Unknown execution mode value: " << exec_control
-                   << THLA_ENDL;
+                   << '\n';
             send_hs( stdout, errmsg.str().c_str() );
          }
          break;
@@ -1720,7 +1721,7 @@ bool ExecutionControl::check_mode_transition_request()
       errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():" << __LINE__
              << " WARNING: Received Mode Transition Request and not Master: "
              << mtr_enum_to_string( this->pending_mtr )
-             << THLA_ENDL;
+             << '\n';
       send_hs( stdout, errmsg.str().c_str() );
       return false;
    }
@@ -1730,7 +1731,7 @@ bool ExecutionControl::check_mode_transition_request()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():" << __LINE__
              << " WARNING: Invalid Mode Transition Request: "
-             << mtr_enum_to_string( this->pending_mtr ) << THLA_ENDL;
+             << mtr_enum_to_string( this->pending_mtr ) << '\n';
       send_hs( stdout, errmsg.str().c_str() );
       return false;
    }
@@ -1758,25 +1759,25 @@ bool ExecutionControl::process_mode_transition_request()
 
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      cout << "=============================================================" << endl
-           << "SpaceFOM::ExecutionControl::process_mode_transition_request()" << endl
-           << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
-           << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
-           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-           << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
-           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
-           << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
-           << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
+      cout << "=============================================================\n"
+           << "SpaceFOM::ExecutionControl::process_mode_transition_request()\n"
+           << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << '\n'
+           << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << '\n'
+           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
+           << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << '\n'
+           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
+           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
+           << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
+           << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
       if ( does_cte_timeline_exist() ) {
-         cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
-              << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
+         cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
+              << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
       }
-      cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-           << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
-           << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << endl
-           << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << endl
-           << "=============================================================" << endl;
+      cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << '\n'
+           << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << '\n'
+           << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << '\n'
+           << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << '\n'
+           << "=============================================================\n";
    }
 
    // Check Mode Transition Request.
@@ -1832,8 +1833,8 @@ bool ExecutionControl::process_mode_transition_request()
          shutdown_mode_announce();
 
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN %c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN \n",
+                     __LINE__ );
          }
 
          // Tell Trick to shutdown sometime in the future.
@@ -1880,7 +1881,7 @@ bool ExecutionControl::process_execution_control_updates()
       errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
              << " WARNING: Master Federate received an unexpected ExCO update: "
              << execution_control_enum_to_string( this->requested_execution_control_mode )
-             << THLA_ENDL;
+             << '\n';
       send_hs( stdout, errmsg.str().c_str() );
 
       // Return that no mode changes occurred.
@@ -1902,7 +1903,7 @@ bool ExecutionControl::process_execution_control_updates()
              << execution_mode_enum_to_string( exco_cem )
              << ") with ExCO next execution mode being ("
              << execution_mode_enum_to_string( exco_nem )
-             << ")!" << THLA_ENDL;
+             << ")!\n";
       send_hs( stdout, errmsg.str().c_str() );
    }
 
@@ -1929,7 +1930,7 @@ bool ExecutionControl::process_execution_control_updates()
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                    << " WARNING: Invalid ExCO next execution mode: "
-                   << execution_mode_enum_to_string( exco_nem ) << "!" << THLA_ENDL;
+                   << execution_mode_enum_to_string( exco_nem ) << "!\n";
             send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
@@ -1959,8 +1960,8 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
-                           __LINE__, THLA_NEWLINE );
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                           __LINE__ );
                }
 
                // Tell the TrickHLA::Federate to shutdown.
@@ -1976,7 +1977,7 @@ bool ExecutionControl::process_execution_control_updates()
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
-                      << ")!" << THLA_ENDL;
+                      << ")!\n";
                send_hs( stdout, errmsg.str().c_str() );
 
                // Return that no mode changes occurred.
@@ -1996,8 +1997,8 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
-                           __LINE__, THLA_NEWLINE );
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                           __LINE__ );
                }
 
                // Tell the TrickHLA::Federate to shutdown.
@@ -2041,7 +2042,7 @@ bool ExecutionControl::process_execution_control_updates()
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
-                      << ")!" << THLA_ENDL;
+                      << ")!\n";
                send_hs( stdout, errmsg.str().c_str() );
 
                // Return that no mode changes occurred.
@@ -2064,7 +2065,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << execution_control_enum_to_string( this->current_execution_control_mode )
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
-                         << ")!" << THLA_ENDL;
+                         << ")!\n";
                   send_hs( stdout, errmsg.str().c_str() );
                }
 
@@ -2073,8 +2074,8 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
-                           __LINE__, THLA_NEWLINE );
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                           __LINE__ );
                }
 
                // Tell the TrickHLA::Federate to shutdown.
@@ -2086,22 +2087,22 @@ bool ExecutionControl::process_execution_control_updates()
             case EXECUTION_CONTROL_FREEZE:
                // Print diagnostic message if appropriate.
                if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  cout << "SpaceFOM::ExecutionControl::process_execution_control_updates()" << endl
-                       << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
-                       << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
-                       << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-                       << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-                       << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
-                       << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
+                  cout << "SpaceFOM::ExecutionControl::process_execution_control_updates()\n"
+                       << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << '\n'
+                       << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << '\n'
+                       << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
+                       << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << '\n'
+                       << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
+                       << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
                   if ( does_cte_timeline_exist() ) {
-                     cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
-                          << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
+                     cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
+                          << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
                   }
-                  cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-                       << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
-                       << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << endl
-                       << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << endl
-                       << "=============================================================" << endl;
+                  cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << '\n'
+                       << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << '\n'
+                       << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << '\n'
+                       << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << '\n'
+                       << "=============================================================\n";
                }
 
                // Announce the pending freeze.
@@ -2123,7 +2124,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << execution_control_enum_to_string( this->current_execution_control_mode )
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
-                         << ")!" << THLA_ENDL;
+                         << ")!\n";
                   send_hs( stdout, errmsg.str().c_str() );
                }
                // Return that no mode changes occurred.
@@ -2143,8 +2144,8 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
-                           __LINE__, THLA_NEWLINE );
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                           __LINE__ );
                }
 
                // Shutdown the federate now.
@@ -2169,7 +2170,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << execution_control_enum_to_string( this->current_execution_control_mode )
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
-                         << ")!" << THLA_ENDL;
+                         << ")!\n";
                   send_hs( stdout, errmsg.str().c_str() );
                }
                // Return that no mode changes occurred.
@@ -2188,7 +2189,7 @@ bool ExecutionControl::process_execution_control_updates()
             errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                    << " WARNING: Shutting down but received mode transition: "
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
-                   << THLA_ENDL;
+                   << '\n';
             send_hs( stdout, errmsg.str().c_str() );
          }
          // Return that no mode changes occurred.
@@ -2213,8 +2214,8 @@ bool ExecutionControl::process_execution_control_updates()
 void ExecutionControl::wait_for_root_frame_discovered_synchronization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::wait_for_root_frame_discovered_synchronization():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "SpaceFOM::ExecutionControl::wait_for_root_frame_discovered_synchronization():%d\n",
+               __LINE__ );
    }
 
    achieve_sync_point_and_wait_for_synchronization( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
@@ -2246,7 +2247,7 @@ bool ExecutionControl::run_mode_transition()
    if ( !contains_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
-             << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_run' sync-point was not found!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -2295,8 +2296,8 @@ bool ExecutionControl::run_mode_transition()
             diff = go_to_run_time - get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
-                           __LINE__, diff, THLA_NEWLINE );
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.\n",
+                           __LINE__, diff );
                }
             }
          }
@@ -2306,8 +2307,8 @@ bool ExecutionControl::run_mode_transition()
             double curr_cte_time = get_cte_time();
 
             diff = curr_cte_time - go_to_run_time;
-            send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
-                     __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.\n",
+                     __LINE__, go_to_run_time, curr_cte_time, diff );
          }
       }
    }
@@ -2328,7 +2329,7 @@ bool ExecutionControl::freeze_mode_transition()
    if ( !contains_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
-             << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_freeze' sync-point was not found!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -2386,8 +2387,8 @@ void ExecutionControl::shutdown_mode_transition()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown_mode_transition():%d Registered 'mtr_shutdown' synchronization point.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown_mode_transition():%d Registered 'mtr_shutdown' synchronization point.\n",
+               __LINE__ );
    }
    // Register the 'mtr_shutdown' sync-point.
    register_sync_point( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
@@ -2403,8 +2404,8 @@ void ExecutionControl::shutdown_mode_transition()
 bool ExecutionControl::check_for_shutdown()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown %c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown \n",
+               __LINE__ );
    }
 
    // Check to see if the mtr_shutdown sync-point has been announced or if the
@@ -2421,8 +2422,8 @@ bool ExecutionControl::check_for_shutdown()
 bool ExecutionControl::check_for_shutdown_with_termination()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown.%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown.\n",
+               __LINE__ );
    }
 
    // Check to see if the mtr_shutdown sync-point has been announced.
@@ -2439,7 +2440,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
          errmsg << " Execution Configuration Object (ExCO) deleted from the RTI";
       }
       errmsg << " for the '" << federate->get_federation_name()
-             << "' Federation." << THLA_ENDL;
+             << "' Federation.\n";
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stderr, errmsg.str().c_str() );
@@ -2503,18 +2504,18 @@ void ExecutionControl::enter_freeze()
             break;
       }
       ostringstream msg;
-      msg << "SpaceFOM::ExecutionControl::enter_freeze():" << __LINE__ << THLA_NEWLINE
+      msg << "SpaceFOM::ExecutionControl::enter_freeze():" << __LINE__ << '\n'
           << "   Master-federate:" << ( is_master() ? "Yes" : "No" )
-          << THLA_NEWLINE
+          << '\n'
           << "   Requested-ExCO-mode:" << execution_mode_enum_to_string( from_execution_control_enum( get_requested_execution_control_mode() ) )
-          << THLA_NEWLINE
+          << '\n'
           << "   Trick-sim-time:" << exec_get_sim_time()
           << "   Trick-exec-command:" << exec_cmd_str
-          << THLA_NEWLINE
+          << '\n'
           << "   Sim-freeze-time:" << get_simulation_freeze_time()
           << "   Freeze-announced:" << ( is_freeze_announced() ? "Yes" : "No" )
           << "   Freeze-pending:" << ( is_freeze_pending() ? "Yes" : "No" )
-          << THLA_NEWLINE;
+          << '\n';
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -2532,8 +2533,8 @@ void ExecutionControl::enter_freeze()
          exec_run();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Detected duplicate Freeze command, ignoring.%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Detected duplicate Freeze command, ignoring.\n",
+                     __LINE__ );
          }
       }
 
@@ -2582,9 +2583,9 @@ void ExecutionControl::enter_freeze()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s\n",
                __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
-               ( is_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
+               ( is_freeze_pending() ? "Yes" : "No" ) );
    }
 }
 
@@ -2610,8 +2611,8 @@ bool ExecutionControl::check_freeze_exit()
       if ( the_exec->get_exec_command() == ExitCmd ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Trick shutdown commanded.%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Trick shutdown commanded.\n",
+                     __LINE__ );
          }
 
          // Tell the TrickHLA::Federate to shutdown.
@@ -2631,8 +2632,8 @@ bool ExecutionControl::check_freeze_exit()
       // Check for shutdown.
       if ( this->current_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Execution Control Shutdown commanded.%c",
-                     __LINE__, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Execution Control Shutdown commanded.\n",
+                     __LINE__ );
          }
 
          // Tell the TrickHLA::Federate to shutdown.
@@ -2674,7 +2675,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::get_execution_configuration():" << __LINE__
-             << " ERROR: Execution Configuration is not an SpaceFOM ExCO." << THLA_ENDL;
+             << " ERROR: Execution Configuration is not an SpaceFOM ExCO.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return ( ExCO );
@@ -2765,8 +2766,8 @@ void ExecutionControl::send_init_root_ref_frame()
    if ( this->manager->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::send_init_root_ref_frame():%d Late joining \
-federate so the data will not be sent for '%s'.%c",
-                  __LINE__, execution_configuration->get_name(), THLA_NEWLINE );
+federate so the data will not be sent for '%s'.\n",
+                  __LINE__, execution_configuration->get_name() );
       }
       return;
    }
@@ -2790,14 +2791,14 @@ void ExecutionControl::send_root_ref_frame()
    if ( root_ref_frame == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
-             << " ERROR: Root Reference Frame is not set!" << THLA_ENDL;
+             << " ERROR: Root Reference Frame is not set!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    rrf_obj = root_ref_frame->get_object(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::send_root_ref_frame():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "SpaceFOM::ExecutionControl::send_root_ref_frame():%d\n",
+               __LINE__ );
    }
 
    // Make sure we have at least one piece of ExCO data we can send.
@@ -2813,7 +2814,7 @@ void ExecutionControl::send_root_ref_frame()
              << " least one object attribute. Make sure at least one"
              << " 'root_ref_frame' attribute has 'publish = true' set. Please"
              << " check your input or modified-data files to make sure the"
-             << " 'publish' value is correctly specified." << THLA_ENDL;
+             << " 'publish' value is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -2826,8 +2827,8 @@ void ExecutionControl::receive_init_root_ref_frame()
    // Late joining federates will get root reference frame from ExCO update.
    if ( this->manager->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::receive_init_root_ref_frame():%d Late joining federate so skipping data for '%s'%c",
-                  __LINE__, root_ref_frame->get_name(), THLA_NEWLINE );
+         send_hs( stdout, "SpaceFOM::ExecutionControl::receive_init_root_ref_frame():%d Late joining federate so skipping data for '%s'\n",
+                  __LINE__, root_ref_frame->get_name() );
       }
       return;
    }
@@ -2854,8 +2855,8 @@ void ExecutionControl::receive_root_ref_frame()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::receive_root_ref_frame():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "SpaceFOM::ExecutionControl::receive_root_ref_frame():%d Waiting...\n",
+               __LINE__ );
    }
 
    // Make sure we have at least one piece of root reference frame data we can receive.
@@ -2888,22 +2889,22 @@ void ExecutionControl::receive_root_ref_frame()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << '\n';
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
+               send_hs( stdout, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Waiting...\n",
+                        __LINE__ );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Received data.%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Received data.\n",
+                  __LINE__ );
       }
 
       // Receive the root reference frame data from the RRFP federate.
@@ -2916,7 +2917,7 @@ void ExecutionControl::receive_root_ref_frame()
              << " at least one object attribute. Make sure at least one"
              << " 'root_ref_frame' attribute has 'subscribe = true' set. Please"
              << " check your input or modified-data files to make sure the"
-             << " 'subscribe' value is correctly specified." << THLA_ENDL;
+             << " 'subscribe' value is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -2928,7 +2929,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
    ostringstream errmsg;
    errmsg << "SpaceFOM::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!"
-          << THLA_ENDL;
+          << '\n';
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -2943,7 +2944,7 @@ void ExecutionControl::set_least_common_time_step(
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
              << " ERROR: Least Common Time Step (LCTS) is not enabled!"
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2955,7 +2956,7 @@ void ExecutionControl::set_least_common_time_step(
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an SpaceFOM ExCO."
-                << THLA_ENDL;
+                << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
 
@@ -2982,7 +2983,7 @@ void ExecutionControl::set_time_padding(
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value (" << setprecision( 18 ) << t
              << " seconds) must be greater than or equal to zero!"
-             << THLA_NEWLINE;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2995,7 +2996,7 @@ void ExecutionControl::set_time_padding(
              << " ERROR: Time padding value (" << setprecision( 18 ) << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_NEWLINE;
+             << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -3010,7 +3011,7 @@ void ExecutionControl::set_time_padding(
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step ("
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
+             << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

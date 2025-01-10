@@ -59,9 +59,9 @@ void VehicleController::print_destination()
 {
    if ( destination != waypoint_queue->end() ) {
       Point const &dest = *destination; // Get a reference to the destination Point
-      std::cout << "Destination = (" << dest.getX() << "," << dest.getY() << ")." << std::endl;
+      std::cout << "Destination = (" << dest.getX() << "," << dest.getY() << ").\n";
    } else {
-      std::cout << "No Destination." << std::endl;
+      std::cout << "No Destination.\n";
    }
 }
 
@@ -81,12 +81,12 @@ void VehicleController::update()
             double heading_err = navigator.bearing_to( *destination );
             drive_controller.update( navigator.distance_to( *destination ), heading_err );
          } else {
-            std::cout << "Vehicle reached home. End of simulation." << std::endl;
+            std::cout << "Vehicle reached home. End of simulation.\n";
             end_of_waypoints = true;
             drive_controller.update( 0.0, 0.0 );
          }
       } else {
-         std::cout << "Vehicle reached the last waypoint. End of simulation." << std::endl;
+         std::cout << "Vehicle reached the last waypoint. End of simulation.\n";
          end_of_waypoints = true;
       }
    } else {
@@ -96,10 +96,10 @@ void VehicleController::update()
          drive_controller.update( distance_err, heading_err );
       } else {
          if ( end_of_waypoints != true ) {
-            std::cout << "Arrived at Destination." << std::endl;
+            std::cout << "Arrived at Destination.\n";
             ++destination;
             if ( destination == waypoint_queue->end() ) {
-               std::cout << "Vehicle reached the last waypoint. End of simulation." << std::endl;
+               std::cout << "Vehicle reached the last waypoint. End of simulation.\n";
                end_of_waypoints = true;
                drive_controller.update( 0.0, 0.0 );
             } else {
@@ -113,7 +113,7 @@ void VehicleController::update()
 // received from the publishing vehicle.
 void VehicleController::follow()
 {
-   std::cout << "VehicleController:following publishing wheelbot..." << std::endl;
+   std::cout << "VehicleController:following publishing wheelbot...\n";
 
    if ( !waypoint_queue->empty() ) {
       if ( home_commanded ) {
@@ -121,7 +121,7 @@ void VehicleController::follow()
             double heading_err = navigator.bearing_to( *destination );
             drive_controller.update( navigator.distance_to( *destination ), heading_err );
          } else {
-            std::cout << "Vehicle reached home. End of simulation.1" << std::endl;
+            std::cout << "Vehicle reached home. End of simulation.1\n";
             end_of_waypoints = true;
             drive_controller.update( 0.0, 0.0 );
          }
@@ -134,11 +134,11 @@ void VehicleController::follow()
             double heading_err = navigator.bearing_to( *destination );
             drive_controller.update( distance_err, heading_err );
          } else {
-            std::cout << "Arrived at Destination." << std::endl;
+            std::cout << "Arrived at Destination.\n";
          }
       }
 
    } else {
-      std::cout << "No waypoints in the queue." << std::endl;
+      std::cout << "No waypoints in the queue.\n";
    }
 }

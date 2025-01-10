@@ -161,7 +161,7 @@ void Int64BaseTime::set(
       default:
          ostringstream errmsg;
          errmsg << "Int64BaseTime::set():" << __LINE__
-                << " ERROR: Unknown units:" << units << THLA_ENDL;
+                << " ERROR: Unknown units:" << units << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
    }

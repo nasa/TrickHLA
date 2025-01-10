@@ -161,10 +161,10 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
-             << " scenario-time:" << get_scenario_time() << endl
-             << "     lookahead:" << this->compensate_dt << endl
-             << " adjusted-time:" << end_t << endl;
+      errmsg << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << '\n'
+             << " scenario-time:" << get_scenario_time() << '\n'
+             << "     lookahead:" << this->compensate_dt << '\n'
+             << " adjusted-time:" << end_t << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -176,7 +176,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data before compensation: " << endl;
+      cout << "Send data before compensation: \n";
       this->print_lag_comp_data();
    }
 
@@ -185,7 +185,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data after compensation: " << endl;
+      cout << "Send data after compensation: \n";
       this->print_lag_comp_data();
    }
 
@@ -210,10 +210,10 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-             << "  scenario-time:" << end_t << endl
-             << "      data-time:" << data_t << endl
-             << " comp-time-step:" << this->compensate_dt << endl;
+      errmsg << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << '\n'
+             << "  scenario-time:" << end_t << '\n'
+             << "      data-time:" << data_t << '\n'
+             << " comp-time-step:" << this->compensate_dt << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -228,7 +228,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data before compensation: " << endl;
+         cout << "Receive data before compensation: \n";
          this->print_lag_comp_data();
       }
 
@@ -237,16 +237,16 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data after compensation: " << endl;
+         cout << "Receive data after compensation: \n";
          this->print_lag_comp_data();
       }
 
    } else {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl
+         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received.\n"
                 << "\tvalue_changed: " << this->state_attr->is_changed()
-                << "; locally owned: " << this->state_attr->locally_owned << endl;
+                << "; locally owned: " << this->state_attr->locally_owned << '\n';
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
@@ -256,8 +256,8 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // torque affects in the lag compensation dynamics.
       if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {
          send_hs( stderr,
-                  "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!%c",
-                  __LINE__, THLA_NEWLINE );
+                  "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!\n",
+                  __LINE__ );
          M_INIT( this->inertia_inv );
       }
    }
@@ -391,36 +391,36 @@ void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream )
    stream.precision( 15 );
 
    // Print out the DynamicalEntity data.
-   stream << "\tmass: " << this->mass << endl;
-   stream << "\tmass_rate: " << this->mass_rate << endl;
-   stream << "\tinertia: " << endl
+   stream << "\tmass: " << this->mass << '\n';
+   stream << "\tmass_rate: " << this->mass_rate << '\n';
+   stream << "\tinertia: \n"
           << "\t\t" << this->inertia[0][0] << ", "
           << this->inertia[0][1] << ", "
-          << this->inertia[0][2] << endl
+          << this->inertia[0][2] << '\n'
           << "\t\t" << this->inertia[1][0] << ", "
           << this->inertia[1][1] << ", "
-          << this->inertia[1][2] << endl
+          << this->inertia[1][2] << '\n'
           << "\t\t" << this->inertia[2][0] << ", "
           << this->inertia[2][1] << ", "
-          << this->inertia[2][2] << endl;
-   stream << "\tinertia rate: " << endl
+          << this->inertia[2][2] << '\n';
+   stream << "\tinertia rate: \n"
           << "\t\t" << this->inertia_rate[0][0] << ", "
           << this->inertia_rate[0][1] << ", "
-          << this->inertia_rate[0][2] << endl
+          << this->inertia_rate[0][2] << '\n'
           << "\t\t" << this->inertia_rate[1][0] << ", "
           << this->inertia_rate[1][1] << ", "
-          << this->inertia_rate[1][2] << endl
+          << this->inertia_rate[1][2] << '\n'
           << "\t\t" << this->inertia_rate[2][0] << ", "
           << this->inertia_rate[2][1] << ", "
-          << this->inertia_rate[2][2] << endl;
+          << this->inertia_rate[2][2] << '\n';
    stream << "\tforce: "
           << this->force[0] << ", "
           << this->force[1] << ", "
-          << this->force[2] << endl;
+          << this->force[2] << '\n';
    stream << "\ttorque: "
           << this->torque[0] << ", "
           << this->torque[1] << ", "
-          << this->torque[2] << endl;
+          << this->torque[2] << '\n';
 
    // Return to the calling routine.
    return;

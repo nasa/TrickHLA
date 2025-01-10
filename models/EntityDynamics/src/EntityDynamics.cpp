@@ -91,7 +91,7 @@ void EntityDynamics::initialize()
    // Compute the inverse of the inertia matrix.
    if ( dm_invert_symm( I_inv, de_data.inertia ) != TM_SUCCESS ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+             << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

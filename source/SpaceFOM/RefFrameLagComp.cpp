@@ -88,8 +88,8 @@ RefFrameLagComp::~RefFrameLagComp() // RETURN: -- None.
    // Free up any allocated intergrator.
    if ( this->integrator != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->integrator ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->integrator'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->integrator'\n",
+                  __LINE__ );
       }
       this->integrator = NULL;
    }
@@ -107,7 +107,7 @@ void RefFrameLagComp::initialize()
    if ( this->integrator == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Trick integrator!\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

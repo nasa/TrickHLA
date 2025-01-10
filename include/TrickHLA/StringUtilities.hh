@@ -181,8 +181,8 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Federate handle. */
    static void to_string(
-      std::string                      &output,
-      RTI1516_NAMESPACE::FederateHandle handle )
+      std::string                             &output,
+      RTI1516_NAMESPACE::FederateHandle const &handle )
    {
       to_string( output, handle.toString() );
    }
@@ -191,8 +191,8 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Class handle. */
    static void to_string(
-      std::string                              &output,
-      RTI1516_NAMESPACE::InteractionClassHandle handle )
+      std::string                                     &output,
+      RTI1516_NAMESPACE::InteractionClassHandle const &handle )
    {
       to_string( output, handle.toString() );
    }
@@ -201,8 +201,8 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Parameter Handle. */
    static void to_string(
-      std::string                       &output,
-      RTI1516_NAMESPACE::ParameterHandle handle )
+      std::string                              &output,
+      RTI1516_NAMESPACE::ParameterHandle const &handle )
    {
       to_string( output, handle.toString() );
    }
@@ -211,8 +211,8 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Instance handle. */
    static void to_string(
-      std::string                            &output,
-      RTI1516_NAMESPACE::ObjectInstanceHandle handle )
+      std::string                                   &output,
+      RTI1516_NAMESPACE::ObjectInstanceHandle const &handle )
    {
       to_string( output, handle.toString() );
    }
@@ -221,8 +221,8 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Class handle. */
    static void to_string(
-      std::string                         &output,
-      RTI1516_NAMESPACE::ObjectClassHandle handle )
+      std::string                                &output,
+      RTI1516_NAMESPACE::ObjectClassHandle const &handle )
    {
       to_string( output, handle.toString() );
    }
@@ -231,8 +231,8 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Attribute handle. */
    static void to_string(
-      std::string                       &output,
-      RTI1516_NAMESPACE::AttributeHandle handle )
+      std::string                              &output,
+      RTI1516_NAMESPACE::AttributeHandle const &handle )
    {
       to_string( output, handle.toString() );
    }

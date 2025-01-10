@@ -86,15 +86,15 @@ RefFrameBase::~RefFrameBase()
 {
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
+                  __LINE__ );
       }
       this->packing_data.name = NULL;
    }
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.parent_name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.parent_name'\n",
+                  __LINE__ );
       }
       this->packing_data.parent_name = NULL;
    }
@@ -122,7 +122,7 @@ void RefFrameBase::base_config(
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
                 << " WARNING: Unexpected NULL THLAManager object for ReferenceFrame \""
-                << ref_frame_name << "\"!" << THLA_ENDL;
+                << ref_frame_name << "\"!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // If the mngr_object is not set but the object is, use that.
@@ -134,7 +134,7 @@ void RefFrameBase::base_config(
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
                 << " WARNING: THLAManager object for ReferenceFrame \""
-                << ref_frame_name << "\" is already set!" << THLA_ENDL;
+                << ref_frame_name << "\" is already set!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -145,7 +145,7 @@ void RefFrameBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance frame name!" << THLA_ENDL;
+             << " WARNING: Unexpected NULL federation instance frame name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -181,7 +181,7 @@ void RefFrameBase::base_config(
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
    trick_name_str                      = ref_frame_name_str + string( ".packing_data.name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[0].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
@@ -190,7 +190,7 @@ void RefFrameBase::base_config(
    object->attributes[1].FOM_name      = allocate_input_string( "parent_name" );
    trick_name_str                      = ref_frame_name_str + string( ".packing_data.parent_name" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[1].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
@@ -199,7 +199,7 @@ void RefFrameBase::base_config(
    object->attributes[2].FOM_name      = allocate_input_string( "state" );
    trick_name_str                      = ref_frame_name_str + string( ".stc_encoder.buffer" );
    object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[2].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
@@ -219,7 +219,7 @@ void RefFrameBase::configure()
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
-                << "  Setting frame name to empty string." << THLA_ENDL;
+                << "  Setting frame name to empty string.\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
       this->packing_data.name = trick_MM->mm_strdup( "" );
@@ -231,7 +231,7 @@ void RefFrameBase::configure()
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
-                << "  Setting parent frame name to empty string." << THLA_ENDL;
+                << "  Setting parent frame name to empty string.\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
@@ -262,7 +262,7 @@ void RefFrameBase::initialize()
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
              << "', detected unexpected NULL federation instance name!"
-             << THLA_ENDL;
+             << '\n';
 
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -290,7 +290,7 @@ void RefFrameBase::initialize()
                 << "' and FOM name '" << fom_name
                 << "', detected unexpected NULL federation instance parent frame name!"
                 << " Setting parent frame name to empty string."
-                << THLA_ENDL;
+                << '\n';
 
          send_hs( stderr, errmsg.str().c_str() );
       }
@@ -328,7 +328,7 @@ void RefFrameBase::initialize()
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
              << "', detected unexpected NULL parent frame reference!"
-             << THLA_ENDL;
+             << '\n';
 
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -378,23 +378,23 @@ void RefFrameBase::set_name( char const *new_name )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+             << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
+                  __LINE__ );
       }
    }
    this->packing_data.name = trick_MM->mm_strdup( new_name );
 
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                  __LINE__ );
       }
    }
    this->name = trick_MM->mm_strdup( new_name );
@@ -410,7 +410,7 @@ void RefFrameBase::set_parent_name( char const *name )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+             << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -418,8 +418,8 @@ void RefFrameBase::set_parent_name( char const *name )
    // Set the parent frame name appropriately.
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d WARNING failed to delete Trick Memory for 'this->parent_name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d WARNING failed to delete Trick Memory for 'this->parent_name'\n",
+                  __LINE__ );
       }
    }
    if ( name != NULL ) {
@@ -446,7 +446,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+             << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -539,7 +539,7 @@ void RefFrameBase::publish()
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
+             << " WARNING: Ignoring, reference frame already initialized!\n";
       send_hs( stderr, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = true;
@@ -565,7 +565,7 @@ void RefFrameBase::subscribe()
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
+             << " WARNING: Ignoring, reference frame already initialized!\n";
       send_hs( stderr, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = false;
@@ -594,7 +594,7 @@ void RefFrameBase::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::pack() Warning: The initialize() function has not"
-                << " been called!" << endl;
+                << " been called!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
@@ -606,7 +606,7 @@ void RefFrameBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "RefFrameBase::pack():" << __LINE__ << endl;
+      cout << "RefFrameBase::pack():" << __LINE__ << '\n';
       this->print_data();
    }
 
@@ -626,7 +626,7 @@ void RefFrameBase::unpack()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::unpack():" << __LINE__
-                << " Warning: The initialize() function has not been called!" << endl;
+                << " Warning: The initialize() function has not been called!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
@@ -639,7 +639,7 @@ void RefFrameBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "RefFrameBase::unpack():" << __LINE__ << endl;
+      cout << "RefFrameBase::unpack():" << __LINE__ << '\n';
       this->print_data();
    }
 
@@ -659,32 +659,32 @@ void RefFrameBase::print_data( std::ostream &stream )
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
-          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
-          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
-          << "\ttime:   " << packing_data.state.time << endl;
+   stream << "\tObject-Name: '" << object->get_name() << "'\n"
+          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'\n"
+          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'\n"
+          << "\ttime:   " << packing_data.state.time << '\n';
    stream << "\tposition: "
           << "\t\t" << packing_data.state.pos[0] << ", "
           << "\t\t" << packing_data.state.pos[1] << ", "
-          << "\t\t" << packing_data.state.pos[2] << endl;
+          << "\t\t" << packing_data.state.pos[2] << '\n';
    stream << "\tvelocity: "
           << "\t\t" << packing_data.state.vel[0] << ", "
           << "\t\t" << packing_data.state.vel[1] << ", "
-          << "\t\t" << packing_data.state.vel[2] << endl;
+          << "\t\t" << packing_data.state.vel[2] << '\n';
    stream << "\tattitude (s,v): "
           << "\t\t" << packing_data.state.att.scalar << "; "
           << "\t\t" << packing_data.state.att.vector[0] << ", "
           << "\t\t" << packing_data.state.att.vector[1] << ", "
-          << "\t\t" << packing_data.state.att.vector[2] << endl;
+          << "\t\t" << packing_data.state.att.vector[2] << '\n';
    stream << "\tattitude (RPY){deg}: "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << endl;
+          << "\t\t" << euler_angles[2] << '\n';
    stream << "\tangular velocity: "
           << "\t\t" << packing_data.state.ang_vel[0] << ", "
           << "\t\t" << packing_data.state.ang_vel[1] << ", "
-          << "\t\t" << packing_data.state.ang_vel[2] << endl;
-   stream << endl;
+          << "\t\t" << packing_data.state.ang_vel[2] << '\n';
+   stream << '\n';
 
    return;
 }

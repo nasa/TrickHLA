@@ -51,7 +51,7 @@ QuaternionData::QuaternionData()
 /*!
  * @job_class{initialization}
  */
-QuaternionData::QuaternionData( const QuaternionData &source )
+QuaternionData::QuaternionData( QuaternionData const &source )
 {
    this->copy( source );
 }
@@ -83,7 +83,7 @@ QuaternionData::QuaternionData(
  * @job_class{scheduled}
  */
 QuaternionData &QuaternionData::operator=(
-   const QuaternionData &rhs )
+   QuaternionData const &rhs )
 {
    this->scalar    = rhs.scalar;
    this->vector[0] = rhs.vector[0];
@@ -96,7 +96,7 @@ QuaternionData &QuaternionData::operator=(
  * @job_class{scheduled}
  */
 bool QuaternionData::operator==(
-   const QuaternionData &rhs )
+   QuaternionData const &rhs )
 {
    return ( this->is_equal( rhs ) );
 }
@@ -105,7 +105,7 @@ bool QuaternionData::operator==(
  * @job_class{scheduled}
  */
 bool QuaternionData::operator!=(
-   const QuaternionData &rhs )
+   QuaternionData const &rhs )
 {
    return ( !( this->is_equal( rhs ) ) );
 }
@@ -209,7 +209,7 @@ void QuaternionData::scale( double factor )
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::copy( const QuaternionData &source )
+void QuaternionData::copy( QuaternionData const &source )
 {
    this->scalar    = source.scalar;
    this->vector[0] = source.vector[0];
@@ -233,7 +233,7 @@ void QuaternionData::conjugate()
  * @job_class{scheduled}
  */
 void QuaternionData::conjugate(
-   const QuaternionData &source )
+   QuaternionData const &source )
 {
    this->scalar    = source.scalar;
    this->vector[0] = -source.vector[0];
@@ -255,7 +255,7 @@ void QuaternionData::normalize()
  * @job_class{scheduled}
  */
 bool QuaternionData::is_equal(
-   const QuaternionData &source )
+   QuaternionData const &source )
 {
    return ( is_equal( *this, source ) );
 }

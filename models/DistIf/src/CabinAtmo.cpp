@@ -160,28 +160,28 @@ void CabinAtmo::initialize()
 void CabinAtmo::validateConfig() const
 {
    if ( mConfig->mCabin.mVolume < mConfig->mVestibule.mVolume ) {
-      std::cout << "ERROR: " << mName << " cabin volume < vestibule volume!" << std::endl;
+      std::cout << "ERROR: " << mName << " cabin volume < vestibule volume!\n";
    }
    if ( mConfig->mVestibule.mVolume < mConfig->mImvDuct.mVolume ) {
-      std::cout << "ERROR: " << mName << " vestibule volume < IMV duct volume!" << std::endl;
+      std::cout << "ERROR: " << mName << " vestibule volume < IMV duct volume!\n";
    }
    if ( mConfig->mImvFanMaxQ < DBL_EPSILON ) {
-      std::cout << "ERROR: " << mName << " IMV fan max Q < DBL_EPSILON!" << std::endl;
+      std::cout << "ERROR: " << mName << " IMV fan max Q < DBL_EPSILON!\n";
    }
    if ( mConfig->mImvFanMaxDp < DBL_EPSILON ) {
-      std::cout << "ERROR: " << mName << " IMV fan max dP < DBL_EPSILON!" << std::endl;
+      std::cout << "ERROR: " << mName << " IMV fan max dP < DBL_EPSILON!\n";
    }
    if ( mConfig->mHatchG < 0.0 ) {
-      std::cout << "ERROR: " << mName << " Hatch conductance < zero!" << std::endl;
+      std::cout << "ERROR: " << mName << " Hatch conductance < zero!\n";
    }
    if ( mConfig->mMpevG < 0.0 ) {
-      std::cout << "ERROR: " << mName << " MPEV conductance < zero!" << std::endl;
+      std::cout << "ERROR: " << mName << " MPEV conductance < zero!\n";
    }
    if ( mConfig->mGrillValveG < 0.0 ) {
-      std::cout << "ERROR: " << mName << " Grill valve conductance < zero!" << std::endl;
+      std::cout << "ERROR: " << mName << " Grill valve conductance < zero!\n";
    }
    if ( mConfig->mImvValveG < 0.0 ) {
-      std::cout << "ERROR: " << mName << " IMV valve conductance < zero!" << std::endl;
+      std::cout << "ERROR: " << mName << " IMV valve conductance < zero!\n";
    }
 }
 
@@ -194,7 +194,7 @@ void CabinAtmo::step(
    double const dt )
 {
    if ( not mInitFlag ) {
-      std::cout << "ERROR: " << mName << " updated without being initialized." << std::endl;
+      std::cout << "ERROR: " << mName << " updated without being initialized.\n";
       mTimestep = 0.0;
       return;
    }

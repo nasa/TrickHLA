@@ -66,8 +66,8 @@ LagCompensationInteg::~LagCompensationInteg()
  * @job_class{integration}
  */
 int LagCompensationInteg::integrate(
-   const double t_begin,
-   const double t_end )
+   double const t_begin,
+   double const t_end )
 {
    int    ipass;
    double compensate_dt = t_end - t_begin;
@@ -79,7 +79,7 @@ int LagCompensationInteg::integrate(
       ostringstream errmsg;
       errmsg << "**** LagCompensationInteg::integrate(): "
              << "Compensate: t_begin, t_end, dt_go: "
-             << t_begin << ", " << t_end << ", " << dt_go << endl;
+             << t_begin << ", " << t_end << ", " << dt_go << '\n';
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -98,17 +98,13 @@ int LagCompensationInteg::integrate(
          errmsg << "****** LagCompensationInteg::integrate(): "
                 << "Integ dt, tol, t, dt_go: "
                 << this->integ_dt << ", " << this->integ_tol << ", "
-                << integ_t << ", " << dt_go << endl;
+                << integ_t << ", " << dt_go << '\n';
          send_hs( stderr, errmsg.str().c_str() );
       }
 
       // Integration inner loop.
       // Step through the integrator's integration steps.
       do {
-
-         // Initialize the integration pass.
-         ipass = 0;
-
          // Compute the derivatives of the lag compensation state vector.
          this->derivative_first();
 

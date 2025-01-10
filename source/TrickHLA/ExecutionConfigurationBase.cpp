@@ -124,8 +124,8 @@ ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
    if ( this->S_define_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         send_hs( stderr, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d WARNING failed to delete Trick Memory for 'this->S_define_name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
+                  __LINE__ );
       }
       this->S_define_name = NULL;
    }
@@ -157,8 +157,8 @@ void ExecutionConfigurationBase::set_S_define_name(
 {
    if ( this->S_define_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         send_hs( stderr, "ExecutionConfigurationBase::set_S_define_name():%d WARNING failed to delete Trick Memory for 'this->S_define_name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "ExecutionConfigurationBase::set_S_define_name():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
+                  __LINE__ );
       }
       this->S_define_name = NULL;
    }
@@ -242,8 +242,8 @@ void ExecutionConfigurationBase::set_master(
 void ExecutionConfigurationBase::wait_for_registration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "ExecutionConfigurationBase::wait_for_registration():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "ExecutionConfigurationBase::wait_for_registration():%d\n",
+               __LINE__ );
    }
 
    Federate *federate = get_federate();
@@ -302,7 +302,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( this->is_required() ? "REQUIRED" : "not required" )
                  << " and is "
                  << ( this->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
-                 << THLA_ENDL;
+                 << '\n';
          // Display the summary.
          send_hs( stdout, summary.str().c_str() );
       }
@@ -331,8 +331,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -356,8 +355,8 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
+               __LINE__ );
    }
 
    // Make sure we have at least one piece of Execution Configuration data we can receive.
@@ -389,23 +388,22 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
+               send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
+                        __LINE__ );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Received data.%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Received data.\n",
+                  __LINE__ );
       }
 
       // Receive the Execution Configuration data from the master federate.
@@ -418,8 +416,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified."
-             << THLA_ENDL;
+             << " files to make sure the 'subscribe' value is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

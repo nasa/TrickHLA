@@ -82,15 +82,15 @@ PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
+                  __LINE__ );
       }
       this->packing_data.name = NULL;
    }
    if ( this->packing_data.parent_name != (char *)NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->parent'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->parent'\n",
+                  __LINE__ );
       }
       this->packing_data.parent_name = NULL;
    }
@@ -129,7 +129,7 @@ void PhysicalInterfaceBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance PhysicalInterface name!" << THLA_ENDL;
+             << " WARNING: Unexpected NULL federation instance PhysicalInterface name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -151,7 +151,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
    trick_name_str                      = interface_name_str + string( ".packing_data.name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[0].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
@@ -160,7 +160,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[1].FOM_name      = allocate_input_string( "parent_name" );
    trick_name_str                      = interface_name_str + string( ".packing_data.parent_name" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[1].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
@@ -169,7 +169,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[2].FOM_name      = allocate_input_string( "position" );
    trick_name_str                      = interface_name_str + string( ".packing_data.position" );
    object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[2].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
@@ -178,7 +178,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[3].FOM_name      = allocate_input_string( "attitude" );
    trick_name_str                      = interface_name_str + string( ".quat_encoder.buffer" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[3].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
    object->attributes[3].subscribe     = !publishes;
    object->attributes[3].locally_owned = publishes;
@@ -198,7 +198,7 @@ void PhysicalInterfaceBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
-             << "  Setting frame name to empty string." << THLA_ENDL;
+             << "  Setting frame name to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -208,7 +208,7 @@ void PhysicalInterfaceBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
-             << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
+             << "  Setting parent_ref_frame to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
@@ -227,7 +227,7 @@ void PhysicalInterfaceBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
-             << "  Setting frame name to empty string." << THLA_ENDL;
+             << "  Setting frame name to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -238,7 +238,7 @@ void PhysicalInterfaceBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
-             << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
+             << "  Setting parent_ref_frame to empty string.\n";
       send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
@@ -286,8 +286,8 @@ void PhysicalInterfaceBase::set_name( char const *new_name )
 {
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
+                  __LINE__ );
       }
    }
    this->packing_data.name = trick_MM->mm_strdup( new_name );
@@ -301,8 +301,8 @@ void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
 {
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_parent():%d WARNING failed to delete Trick Memory for 'this->parent_frame'%c",
-                  __LINE__, THLA_NEWLINE );
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_parent():%d WARNING failed to delete Trick Memory for 'this->parent_frame'\n",
+                  __LINE__ );
       }
    }
    this->packing_data.parent_name = trick_MM->mm_strdup( new_parent_name );
@@ -317,7 +317,7 @@ void PhysicalInterfaceBase::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
-             << " been called!" << endl;
+             << " been called!\n";
       send_hs( stderr, errmsg.str().c_str() );
    }
 
@@ -328,7 +328,7 @@ void PhysicalInterfaceBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "PhysicalInterfaceBase::pack():" << __LINE__ << endl;
+      cout << "PhysicalInterfaceBase::pack():" << __LINE__ << '\n';
       this->print_data();
    }
 
@@ -345,7 +345,7 @@ void PhysicalInterfaceBase::unpack()
 
    if ( !initialized ) {
       cout << "PhysicalInterfaceBase::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
+           << " ERROR: The initialize() function has not been called!\n";
    }
 
    // Use the HLA encoder helpers to decode the PhysicalInterface fixed record.
@@ -356,7 +356,7 @@ void PhysicalInterfaceBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "PhysicalInterfaceBase::unpack():" << __LINE__ << endl;
+      cout << "PhysicalInterfaceBase::unpack():" << __LINE__ << '\n';
       this->print_data();
    }
 
@@ -376,23 +376,23 @@ void PhysicalInterfaceBase::print_data( std::ostream &stream )
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
-          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
-          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl;
+   stream << "\tObject-Name: '" << object->get_name() << "'\n"
+          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'\n"
+          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'\n";
    stream << "\tposition: "
           << "\t\t" << packing_data.position[0] << ", "
           << "\t\t" << packing_data.position[1] << ", "
-          << "\t\t" << packing_data.position[2] << endl;
+          << "\t\t" << packing_data.position[2] << '\n';
    stream << "\tattitude (s,v): "
           << "\t\t" << packing_data.attitude.scalar << "; "
           << "\t\t" << packing_data.attitude.vector[0] << ", "
           << "\t\t" << packing_data.attitude.vector[1] << ", "
-          << "\t\t" << packing_data.attitude.vector[2] << endl;
+          << "\t\t" << packing_data.attitude.vector[2] << '\n';
    stream << "\tattitude (RPY){deg}: "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << endl;
-   stream << endl;
+          << "\t\t" << euler_angles[2] << '\n';
+   stream << '\n';
 
    return;
 }

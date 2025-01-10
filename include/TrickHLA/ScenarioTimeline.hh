@@ -146,7 +146,7 @@ class ScenarioTimeline : public Timeline
    /*! @brief Set the offset of the HLA Logical Time (HLT) timeline from the
     * scenario timeline.
     *  @param hlt0 Desired offset in the base HLA Logical Time representation. */
-   virtual void set_HTL_offset( Int64Time const hlt0 )
+   virtual void set_HTL_offset( Int64Time const &hlt0 )
    {
       this->hlt_offset = hlt0;
    }

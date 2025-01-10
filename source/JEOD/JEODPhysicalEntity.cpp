@@ -63,6 +63,7 @@ using namespace SpaceFOM;
 JEODPhysicalEntity::JEODPhysicalEntity()
    : dyn_body_data( NULL )
 {
+   return;
 }
 
 /*!
@@ -72,6 +73,7 @@ JEODPhysicalEntity::JEODPhysicalEntity(
    jeod::DynBody &dyn_body_ref )
    : dyn_body_data( &dyn_body_ref )
 {
+   return;
 }
 
 /*!
@@ -85,9 +87,9 @@ JEODPhysicalEntity::~JEODPhysicalEntity()
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalEntity::configure( jeod::DynBody *dyn_body_ptr )
+void JEODPhysicalEntity::configure(
+   jeod::DynBody *dyn_body_ptr )
 {
-
    // First call the base class pre_initialize function.
    PhysicalEntityBase::configure();
 
@@ -96,14 +98,11 @@ void JEODPhysicalEntity::configure( jeod::DynBody *dyn_body_ptr )
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
-             << this->pe_packing_data.name << THLA_ENDL;
+             << this->pe_packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->dyn_body_data = dyn_body_ptr;
-
-   // Return to calling routine.
-   return;
 }
 
 /*!
@@ -116,16 +115,13 @@ void JEODPhysicalEntity::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_data: "
-             << this->pe_packing_data.name << THLA_ENDL;
+             << this->pe_packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark this as initialized.
    PhysicalEntityBase::initialize();
-
-   // Return to calling routine.
-   return;
 }
 
 void JEODPhysicalEntity::pack_from_working_data()
@@ -177,13 +173,10 @@ void JEODPhysicalEntity::pack_from_working_data()
    for ( iinc = 0; iinc < 3; ++iinc ) {
       this->pe_packing_data.body_wrt_struct.vector[iinc] = dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc];
    }
-
-   return;
 }
 
 void JEODPhysicalEntity::unpack_into_working_data()
 {
-
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
    // incoming value.  If we locally own the attribute then we do not want to
@@ -265,6 +258,4 @@ void JEODPhysicalEntity::unpack_into_working_data()
          dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc] = this->pe_packing_data.body_wrt_struct.vector[iinc];
       }
    }
-
-   return;
 }

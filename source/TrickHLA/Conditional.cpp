@@ -95,7 +95,7 @@ Attribute *Conditional::get_attribute_and_validate(
       ostringstream errmsg;
       errmsg << "Conditional::get_attribute_and_validate():" << __LINE__
              << " ERROR: Unexpected NULL attribute FOM name specified."
-             << THLA_ENDL;
+             << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -111,7 +111,7 @@ Attribute *Conditional::get_attribute_and_validate(
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input.py file is properly"
-             << " configured for this attribute." << THLA_ENDL;
+             << " configured for this attribute.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return attr;
