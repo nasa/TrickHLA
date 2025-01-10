@@ -178,7 +178,9 @@ class TrickThreadCoordinator
    /*! @brief True if the specified thread ID is for an enabled Trick child thread association. */
    bool const is_enabled_child_thread_association( unsigned int const thread_id ) const
    {
-      return ( ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
+      return ( this->any_child_thread_associated
+               && ( thread_id < this->thread_cnt )
+               && ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
                && ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_NOT_ASSOCIATED ) );
    }
 
