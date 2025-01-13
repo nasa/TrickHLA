@@ -1362,14 +1362,14 @@ bool const TrickThreadCoordinator::verify_time_constraints(
    if ( is_real_time() ) {
 
       // The Real-Time frame time is the Trick software frame time.
-      double RT = exec_get_software_frame();
+      double RT_frame = exec_get_software_frame();
 
       // The Trick software frame must be configured.
-      if ( RT <= 0.0 ) {
+      if ( RT_frame <= 0.0 ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                 << " ERROR: The Trick software frame ("
-                << setprecision( 18 ) << RT
+                << setprecision( 18 ) << RT_frame
                 << " seconds) cannot be less than or equal to zero when"
                 << " real-time is enabled!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -1377,11 +1377,11 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       }
 
       // Verify the RT frame can be represented in base time.
-      if ( Int64BaseTime::exceeds_base_time_resolution( RT ) ) {
+      if ( Int64BaseTime::exceeds_base_time_resolution( RT_frame ) ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                 << " ERROR: The Trick software frame ("
-                << setprecision( 18 ) << RT
+                << setprecision( 18 ) << RT_frame
                 << " seconds) cannot be represented in base-time because it"
                 << " exceeds the base-time resolution of "
                 << Int64BaseTime::get_units() << "!\n";
@@ -1393,7 +1393,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       // where the ExCO has not been received yet.
       if ( lcts_base_time > 0 ) {
 
-         int64_t RT_base_time = Int64BaseTime::to_base_time( RT );
+         int64_t RT_base_time = Int64BaseTime::to_base_time( RT_frame );
 
          // Time Constraint: (LCTS ≥ RT)
          if ( lcts_base_time < RT_base_time ) {
@@ -1402,7 +1402,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                    << " ERROR: The Least Common Time Step (LCTS:"
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
                    << " seconds) must be greater than or equal to the Trick"
-                   << " software frame time (" << setprecision( 18 ) << RT
+                   << " software frame time (" << setprecision( 18 ) << RT_frame
                    << " seconds)!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
@@ -1415,7 +1415,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                    << " ERROR: The Least Common Time Step (LCTS:"
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
                    << " seconds) must be an integer multiple of the Trick"
-                   << " software frame time (" << setprecision( 18 ) << RT
+                   << " software frame time (" << setprecision( 18 ) << RT_frame
                    << " seconds)!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
