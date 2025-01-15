@@ -2509,10 +2509,10 @@ void ExecutionControl::enter_freeze()
           << '\n'
           << "   Requested-ExCO-mode:" << execution_mode_enum_to_string( from_execution_control_enum( get_requested_execution_control_mode() ) )
           << '\n'
-          << "   Trick-sim-time:" << exec_get_sim_time()
+          << "   Trick-sim-time:" << setprecision( 18 ) << exec_get_sim_time()
           << "   Trick-exec-command:" << exec_cmd_str
           << '\n'
-          << "   Sim-freeze-time:" << get_simulation_freeze_time()
+          << "   Sim-freeze-time:" << setprecision( 18 ) << get_simulation_freeze_time()
           << "   Freeze-announced:" << ( is_freeze_announced() ? "Yes" : "No" )
           << "   Freeze-pending:" << ( is_freeze_pending() ? "Yes" : "No" )
           << '\n';
