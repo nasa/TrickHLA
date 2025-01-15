@@ -64,12 +64,12 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOMDynamicalEntitySimObject( PhysicalEntityData  & pe,
                                      DynamicalEntityData & de,
                                      unsigned short        _INIT = P_HLA_INIT  )
-   : TrickHLAPackingBaseSimObject( _INIT ),
-     pe_data(pe),
-     de_data(de),
-     entity_packing( pe, de ),
-     conditional(entity_packing),
-     lag_compensation( entity_packing )
+      : TrickHLAPackingBaseSimObject( _INIT ),
+        pe_data(pe),
+        de_data(de),
+        entity_packing( pe, de ),
+        conditional(entity_packing),
+        lag_compensation( entity_packing )
    {
       // Set the service references for the base class.
       packing_base_ptr     = &entity_packing;
@@ -81,7 +81,6 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
    }
 
   private:
-
    // This object is not copyable
    SpaceFOMDynamicalEntitySimObject( SpaceFOMDynamicalEntitySimObject const & );
    SpaceFOMDynamicalEntitySimObject & operator=( SpaceFOMDynamicalEntitySimObject const & );

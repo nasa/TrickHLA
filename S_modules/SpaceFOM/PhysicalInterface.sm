@@ -36,7 +36,6 @@
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
-
 class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
 
   public:
@@ -57,20 +56,18 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
 
    // SimObject constructor.
    SpaceFOMPhysicalInterfaceSimObject( unsigned short _INIT = P_HLA_INIT )
-   : TrickHLAPackingBaseSimObject( _INIT ),
-     interface_packing( interface_data ),
-     conditional( interface_packing )
+      : TrickHLAPackingBaseSimObject( _INIT ),
+        interface_packing( interface_data ),
+        conditional( interface_packing )
    {
       // Set the service references for the base class.
       packing_base_ptr     = &interface_packing;
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
-
    }
 
   private:
-
    // This object is not copyable
    SpaceFOMPhysicalInterfaceSimObject( SpaceFOMPhysicalInterfaceSimObject const & );
    SpaceFOMPhysicalInterfaceSimObject & operator=( SpaceFOMPhysicalInterfaceSimObject const & );

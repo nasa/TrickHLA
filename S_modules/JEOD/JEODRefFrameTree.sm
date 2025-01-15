@@ -45,13 +45,13 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
                               jeod::Planet               & mars_in,
                               unsigned short               _CONFIG = 35,
                               unsigned short               _BUILD  = (P_HLA_INIT+1) )
-   : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _BUILD ),
-     time_tt( time_tt_in ),
-     dyn_manager( dyn_manager_in ),
-     sun( sun_in ),
-     earth( earth_in ),
-     moon( moon_in ),
-     mars( mars_in )
+      : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _BUILD ),
+        time_tt( time_tt_in ),
+        dyn_manager( dyn_manager_in ),
+        sun( sun_in ),
+        earth( earth_in ),
+        moon( moon_in ),
+        mars( mars_in )
    {
       //
       // Default data jobs
@@ -230,7 +230,6 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
    jeod::RefFrame * embary_ptr; ///< @trick_units{--} Earth-Moon system barycenter.
    
   private:
-
    // This object is not copyable
    JEODRefFrameTreeSimObject( const JEODRefFrameTreeSimObject & );
    JEODRefFrameTreeSimObject & operator=( const JEODRefFrameTreeSimObject & );

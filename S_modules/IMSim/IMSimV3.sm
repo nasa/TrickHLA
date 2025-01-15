@@ -63,7 +63,6 @@ class IMSimSimObject : public THLABaseSimObject {
         imsim_config( "THLA.imsim_config" ),
         imsim_exec_control( imsim_config ),
         CHECK_PAUSE_DELTA( 0.000001 )
-        
    {
 
       // Calculate and validate the check-pause job offset time.
