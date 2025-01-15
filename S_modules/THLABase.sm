@@ -30,6 +30,7 @@
 // Trick include files.
 ##include "trick/exec_proto.h"
 
+// TrickHLA include files.
 ##include "TrickHLA/FedAmb.hh"
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
