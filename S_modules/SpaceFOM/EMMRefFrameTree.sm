@@ -28,6 +28,7 @@
 //==========================================================================
 ##include <iostream>
 ##include <map>
+
 ##include "SpaceFOM/RefFrameData.hh"
 ##include "SpaceFOM/RefFrameBase.hh"
 
@@ -65,17 +66,17 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
                                      double                     & time_tt_in,
                                      unsigned short               _ADD   = 50,
                                      unsigned short               _BUILD = 51 )
-   : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
-     ssbary_frame_ptr( NULL ),
-     sun_frame_ptr( NULL ),
-     embary_frame_ptr( NULL ),
-     earth_frame_ptr( NULL ),
-     moon_frame_ptr( NULL ),
-     mars_frame_ptr( NULL ),
-     earth_pfix_frame_ptr( NULL ),
-     moon_pfix_frame_ptr( NULL ),
-     mars_pfix_frame_ptr( NULL ),
-     time_tt( time_tt_in )
+      : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
+        ssbary_frame_ptr( NULL ),
+        sun_frame_ptr( NULL ),
+        embary_frame_ptr( NULL ),
+        earth_frame_ptr( NULL ),
+        moon_frame_ptr( NULL ),
+        mars_frame_ptr( NULL ),
+        earth_pfix_frame_ptr( NULL ),
+        moon_pfix_frame_ptr( NULL ),
+        mars_pfix_frame_ptr( NULL ),
+        time_tt( time_tt_in )
    {
       //
       // Default data jobs
@@ -186,7 +187,6 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
 
    // Reference to the Terrestrial Time value.
    double & time_tt;
-
 
    // This object is not copyable
    SpaceFOMEMMRefFrameTreeSimObject( const SpaceFOMEMMRefFrameTreeSimObject & );

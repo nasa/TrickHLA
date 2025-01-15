@@ -1237,8 +1237,8 @@ bool const TrickThreadCoordinator::verify_time_constraints(
    }
 
    // Lookahead and LCTS times in the integer base time.
-   int64_t lookahead_base_time = this->federate->get_lookahead_in_base_time();
-   int64_t lcts_base_time      = manager->get_execution_control()->get_least_common_time_step();
+   int64_t const lookahead_base_time = this->federate->get_lookahead_in_base_time();
+   int64_t const lcts_base_time      = manager->get_execution_control()->get_least_common_time_step();
 
    // Verify the lookahead time.
    if ( lookahead_base_time < 0 ) {
@@ -1362,7 +1362,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
    if ( is_real_time() ) {
 
       // The Real-Time frame time is the Trick software frame time.
-      double RT_frame = exec_get_software_frame();
+      double const RT_frame = exec_get_software_frame();
 
       // The Trick software frame must be configured.
       if ( RT_frame <= 0.0 ) {
@@ -1393,7 +1393,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       // where the ExCO has not been received yet.
       if ( lcts_base_time > 0 ) {
 
-         int64_t RT_base_time = Int64BaseTime::to_base_time( RT_frame );
+         int64_t const RT_base_time = Int64BaseTime::to_base_time( RT_frame );
 
          // Time Constraint: (LCTS ≥ RT)
          if ( lcts_base_time < RT_base_time ) {
@@ -1427,7 +1427,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
    if ( manager->get_execution_control()->is_master() ) {
 
       // The Master federate padding time must be an integer multiple of the LCTS.
-      double MPT_sec = manager->get_execution_control()->get_time_padding();
+      double const MPT_sec = manager->get_execution_control()->get_time_padding();
       if ( MPT_sec <= 0.0 ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
@@ -1455,7 +1455,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
          }
 
          // Padding time must be an integer multiple of the LCTS.
-         int64_t MPT_base_time = Int64BaseTime::to_base_time( MPT_sec );
+         int64_t const MPT_base_time = Int64BaseTime::to_base_time( MPT_sec );
          if ( MPT_base_time % lcts_base_time != 0 ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__

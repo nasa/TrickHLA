@@ -41,7 +41,6 @@ class THLAInitSimObject : public Trick::SimObject {
       : thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
-
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60 
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the

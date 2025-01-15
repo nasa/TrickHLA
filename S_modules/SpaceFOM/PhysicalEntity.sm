@@ -59,10 +59,10 @@ class SpaceFOMPhysicalEntitySimObject : public TrickHLAPackingBaseSimObject {
    // SimObject constructor.
    SpaceFOMPhysicalEntitySimObject( SpaceFOM::PhysicalEntityData & pe,
                                     unsigned short                 _INIT = P_HLA_INIT  )
-   : TrickHLAPackingBaseSimObject( _INIT ),
-     entity_packing( pe ),
-     lag_compensation( entity_packing ),
-     conditional( entity_packing )
+      : TrickHLAPackingBaseSimObject( _INIT ),
+        entity_packing( pe ),
+        lag_compensation( entity_packing ),
+        conditional( entity_packing )
    {
       // Set the service references for the base class.
       packing_base_ptr     = &entity_packing;
@@ -70,11 +70,9 @@ class SpaceFOMPhysicalEntitySimObject : public TrickHLAPackingBaseSimObject {
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
-
    }
 
   private:
-
    // This object is not copyable
    SpaceFOMPhysicalEntitySimObject( SpaceFOMPhysicalEntitySimObject const & );
    SpaceFOMPhysicalEntitySimObject & operator=( SpaceFOMPhysicalEntitySimObject const & );

@@ -31,20 +31,23 @@
 ##include "trick/exec_proto.h"
 
 // TrickHLA include files.
-##include "TrickHLA/Attribute.hh"
-##include "TrickHLA/Conditional.hh"
-##include "TrickHLA/Parameter.hh"
-##include "TrickHLA/ParameterItem.hh"
-##include "TrickHLA/Interaction.hh"
-##include "TrickHLA/InteractionItem.hh"
-##include "TrickHLA/LagCompensation.hh"
-##include "TrickHLA/OwnershipItem.hh"
-##include "TrickHLA/OwnershipHandler.hh"
-##include "TrickHLA/Object.hh"
-##include "TrickHLA/ObjectDeleted.hh"
-##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/FedAmb.hh"
 ##include "TrickHLA/Federate.hh"
+##include "TrickHLA/Manager.hh"
+
+// Include these TrickHLA header files here so that Trick can find and
+// process these forward declared classes, which don't have any header
+// file that includes the header file. Otherwiase the Trick ATTRIBUTES
+// for <namespace>__<classname> will not get generated because Trick
+// can't figure out the header file dependency for these classes.
+##include "TrickHLA/Interaction.hh"
+##include "TrickHLA/InteractionHandler.hh"
+##include "TrickHLA/InteractionItem.hh"
+##include "TrickHLA/LagCompensation.hh"
+##include "TrickHLA/ObjectDeleted.hh"
+##include "TrickHLA/OwnershipHandler.hh"
+##include "TrickHLA/Parameter.hh"
+##include "TrickHLA/ParameterItem.hh"
 
 //=========================================================================
 // SIM_OBJECT: THLABase - Generalized TrickHLA interface routines.
@@ -179,7 +182,7 @@ class THLABaseSimObject : public Trick::SimObject {
    virtual ~THLABaseSimObject() = 0;
 
  protected:
-   double      data_cycle_time;
+   double data_cycle_time;
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.

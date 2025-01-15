@@ -69,12 +69,12 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
                           SpaceFOM::RefFrameTree & frame_tree_ref,
                           unsigned short           _INIT   = P_HLA_INIT,
                           unsigned short           _UPDATE = 99 )
-   : TrickHLAPackingBaseSimObject( _INIT ),
-     frame_packing( time_in, ref_frame_state ),
-     lag_compensation( frame_packing ),
-     conditional( frame_packing ),
-     frame_tree( frame_tree_ref ),
-     time_tt(time_in)
+      : TrickHLAPackingBaseSimObject( _INIT ),
+        frame_packing( time_in, ref_frame_state ),
+        lag_compensation( frame_packing ),
+        conditional( frame_packing ),
+        frame_tree( frame_tree_ref ),
+        time_tt(time_in)
    {    
       // Set the service references for the base class.
       packing_base_ptr     = &frame_packing;
@@ -148,10 +148,8 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    }
 
   protected:
-   
    // Reference to the frame tree manager.
    SpaceFOM::RefFrameTree & frame_tree;
-
 
   private:
    jeod::TimeTT   & time_tt;

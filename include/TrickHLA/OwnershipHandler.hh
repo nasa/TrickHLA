@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/OwnershipItem.hh"
 #include "TrickHLA/Types.hh"
 
 namespace TrickHLA
@@ -56,7 +57,6 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Object;
 class Attribute;
-class OwnershipItem;
 
 // FIXME: We need to rename this. Unfortunately, AttributeMap is already
 // being used by Attribute.hh.

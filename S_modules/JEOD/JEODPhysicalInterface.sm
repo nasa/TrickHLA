@@ -55,10 +55,10 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
 
    JEODPhysicalInterfaceSimObject( jeod::DynBody  &dyn_body_ref,
                                    unsigned short _INIT = P_HLA_INIT )
-   : TrickHLAPackingBaseSimObject( _INIT ),
-     interface_packing( dyn_body_ref ),
-     conditional( interface_packing ),
-     dyn_body(dyn_body_ref)
+      : TrickHLAPackingBaseSimObject( _INIT ),
+        interface_packing( dyn_body_ref ),
+        conditional( interface_packing ),
+        dyn_body(dyn_body_ref)
    {
       // Set the service references for the base class.
       packing_base_ptr     = &interface_packing;
@@ -72,7 +72,6 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
    jeod::DynBody & dyn_body;
 
   private:
-
    // This object is not copyable
    JEODPhysicalInterfaceSimObject( JEODPhysicalInterfaceSimObject const & );
    JEODPhysicalInterfaceSimObject & operator=( JEODPhysicalInterfaceSimObject const & );

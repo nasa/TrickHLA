@@ -58,11 +58,11 @@ class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
 
    JEODPhysicalEntiySimObject( jeod::DynBody & dyn_body_ref,
                                unsigned short _INIT = 59 )
-   : TrickHLAPackingBaseSimObject( _INIT ),
-     entity_packing(dyn_body_ref),
-     lag_compensation( entity_packing ),
-     conditional( entity_packing ),
-     dyn_body(dyn_body_ref)
+      : TrickHLAPackingBaseSimObject( _INIT ),
+        entity_packing(dyn_body_ref),
+        lag_compensation( entity_packing ),
+        conditional( entity_packing ),
+        dyn_body(dyn_body_ref)
    {
       // Set the service references for the base class.
       packing_base_ptr     = &entity_packing;
@@ -81,7 +81,6 @@ class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
    jeod::DynBody & dyn_body;
 
   private:
-
    // This object is not copyable
    JEODPhysicalEntiySimObject( JEODPhysicalEntiySimObject const & );
    JEODPhysicalEntiySimObject & operator=( JEODPhysicalEntiySimObject const & );

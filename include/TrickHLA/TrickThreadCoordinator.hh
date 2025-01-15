@@ -176,7 +176,8 @@ class TrickThreadCoordinator
    void wait_to_send_data_for_child_thread( unsigned int const thread_id );
 
    /*! @brief True if the specified thread ID is for an enabled Trick child thread association. */
-   bool const is_enabled_child_thread_association( unsigned int const thread_id ) const
+   bool const is_enabled_child_thread_association(
+      unsigned int const thread_id ) const
    {
       return ( this->any_child_thread_associated
                && ( thread_id < this->thread_cnt )
