@@ -1682,6 +1682,7 @@ void ExecutionControl::set_next_execution_control_mode(
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::set_next_execution_control_mode():" << __LINE__ << '\n'
+                   << "      Requested-Mode:EXECUTION_CONTROL_FREEZE\n"
                    << "       Scenario-time:" << setprecision( 18 ) << get_scenario_time() << " seconds\n"
                    << "        Time-padding:" << setprecision( 18 ) << get_time_padding() << " seconds\n"
                    << "                LCTS:" << setprecision( 18 ) << Int64BaseTime::to_seconds( this->least_common_time_step ) << " seconds\n"
