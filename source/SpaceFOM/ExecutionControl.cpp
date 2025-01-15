@@ -1601,7 +1601,7 @@ void ExecutionControl::set_next_execution_control_mode(
    // This should only be called by the Master federate.
    if ( !is_master() ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__
+      errmsg << "SpaceFOM::ExecutionControl::set_next_execution_control_mode():" << __LINE__
              << " ERROR: This should only be called by the Master federate!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -1681,7 +1681,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
-            errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__ << '\n'
+            errmsg << "SpaceFOM::ExecutionControl::set_next_execution_control_mode():" << __LINE__ << '\n'
                    << "       Scenario-time:" << setprecision( 18 ) << get_scenario_time() << " seconds\n"
                    << "        Time-padding:" << setprecision( 18 ) << get_time_padding() << " seconds\n"
                    << "                LCTS:" << setprecision( 18 ) << Int64BaseTime::to_seconds( this->least_common_time_step ) << " seconds\n"
@@ -1709,7 +1709,7 @@ void ExecutionControl::set_next_execution_control_mode(
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
-            errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__
+            errmsg << "SpaceFOM::ExecutionControl::set_next_execution_control_mode():" << __LINE__
                    << " WARNING: Unknown execution mode value: " << exec_control
                    << '\n';
             send_hs( stdout, errmsg.str().c_str() );
