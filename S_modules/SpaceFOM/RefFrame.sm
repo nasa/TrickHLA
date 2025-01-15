@@ -38,7 +38,6 @@
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
-
 class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
 
   public:
@@ -62,11 +61,11 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOMRefFrameSimObject( SpaceFOM::RefFrameTree & frame_tree_ref,
                               SpaceFOM::RefFrameData & frame_data_ref,   
                               unsigned short           _INIT = P_HLA_INIT  )
-   : TrickHLAPackingBaseSimObject( _INIT ),
-     frame_packing( frame_data_ref ),
-     lag_compensation( frame_packing ),
-     conditional( frame_packing ),
-     frame_tree( frame_tree_ref )
+      : TrickHLAPackingBaseSimObject( _INIT ),
+        frame_packing( frame_data_ref ),
+        lag_compensation( frame_packing ),
+        conditional( frame_packing ),
+        frame_tree( frame_tree_ref )
    {
       // Set the service references for the base class.
       packing_base_ptr     = &frame_packing;
@@ -88,7 +87,6 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOM::RefFrameTree & frame_tree;
 
   private:
-
    // This object is not copyable
    SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
    SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );

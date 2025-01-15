@@ -41,8 +41,8 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
    SpaceFOMRefFrameTreeBaseSimObject( TrickHLA::Manager          & thla_manager_in,
                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
-   : thla_manager( thla_manager_in ),
-     exec_cntrl( exec_cntrl_in )
+      : thla_manager( thla_manager_in ),
+        exec_cntrl( exec_cntrl_in )
    {
       //
       // Default data jobs
@@ -70,7 +70,6 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
 
 
   private:
-
    // This object is not copyable
    SpaceFOMRefFrameTreeBaseSimObject( const SpaceFOMRefFrameTreeBaseSimObject & );
    SpaceFOMRefFrameTreeBaseSimObject & operator=( const SpaceFOMRefFrameTreeBaseSimObject & );

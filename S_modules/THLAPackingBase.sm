@@ -33,12 +33,14 @@
 ##include <sstream>
 
 // TrickHLA include files.
-##include "TrickHLA/DebugHandler.hh"
-##include "TrickHLA/Packing.hh"
-##include "TrickHLA/LagCompensation.hh"
 ##include "TrickHLA/Conditional.hh"
-##include "TrickHLA/OwnershipHandler.hh"
+##include "TrickHLA/DebugHandler.hh"
+##include "TrickHLA/LagCompensation.hh"
+##include "TrickHLA/Object.hh"
 ##include "TrickHLA/ObjectDeleted.hh"
+##include "TrickHLA/OwnershipHandler.hh"
+##include "TrickHLA/OwnershipItem.hh"
+##include "TrickHLA/Packing.hh"
 
 class TrickHLAPackingBaseSimObject : public Trick::SimObject {
 
