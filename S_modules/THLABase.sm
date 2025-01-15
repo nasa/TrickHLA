@@ -179,7 +179,7 @@ class THLABaseSimObject : public Trick::SimObject {
    virtual ~THLABaseSimObject() = 0;
 
  protected:
-   double      data_cycle_time;
+   double data_cycle_time;
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.

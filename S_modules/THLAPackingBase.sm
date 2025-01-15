@@ -61,11 +61,11 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    TrickHLAPackingBaseSimObject( unsigned short _INIT = P_HLA_INIT  )
-   : packing_base_ptr( NULL ),
-     lag_comp_base_ptr( NULL ),
-     conditional_base_ptr( NULL ),
-     ownership_base_ptr( NULL ),
-     deleted_base_ptr( NULL )
+      : packing_base_ptr( NULL ),
+        lag_comp_base_ptr( NULL ),
+        conditional_base_ptr( NULL ),
+        ownership_base_ptr( NULL ),
+        deleted_base_ptr( NULL )
    {
       //
       // Desfault data jobs
@@ -76,7 +76,6 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       // Initialization jobs
       //
       P_INIT ("initialization") initialize();
-
    }
    
   protected:
@@ -139,7 +138,6 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
    }
 
   private:
-
    // This object is not copyable
    TrickHLAPackingBaseSimObject( TrickHLAPackingBaseSimObject const & );
    TrickHLAPackingBaseSimObject & operator=( TrickHLAPackingBaseSimObject const & );
