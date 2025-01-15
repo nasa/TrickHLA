@@ -1678,6 +1678,17 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the ExecutionControl freeze times.
          this->scenario_freeze_time   = this->next_mode_scenario_time;
          this->simulation_freeze_time = this->scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
+
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            ostringstream errmsg;
+            errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__ << '\n'
+                   << "       Scenario-time:" << setprecision( 18 ) << get_scenario_time() << " seconds\n"
+                   << "        Time-padding:" << setprecision( 18 ) << get_time_padding() << " seconds\n"
+                   << "                LCTS:" << setprecision( 18 ) << Int64BaseTime::to_seconds( this->least_common_time_step ) << " seconds\n"
+                   << "Scenario-Freeze-Time:" << setprecision( 18 ) << this->scenario_freeze_time << " seconds\n"
+                   << "     Sim-Freeze-Time:" << setprecision( 18 ) << this->simulation_freeze_time << " seconds\n";
+            send_hs( stdout, errmsg.str().c_str() );
+         }
          break;
       }
 
