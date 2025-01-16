@@ -47,6 +47,7 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
+#include "trick/RealtimeSync.hh"
 #include "trick/Threads.hh"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
@@ -71,6 +72,15 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 using namespace std;
 using namespace TrickHLA;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+// Needed so we can determine if Trick realtime is enabled.
+extern Trick::RealtimeSync *the_rts;
+#ifdef __cplusplus
+}
+#endif
 
 /*!
  * @job_class{initialization}
@@ -1359,7 +1369,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
 
    // If realtime is enabled then verify the time constraints:
    // (LCTS ≥ RT) ∧ (LCTS % RT = 0)
-   if ( is_real_time() ) {
+   if ( ( ( the_rts != NULL ) && the_rts->enable_flag ) || is_real_time() ) {
 
       // The Real-Time frame time is the Trick software frame time.
       double const RT_frame = exec_get_software_frame();
