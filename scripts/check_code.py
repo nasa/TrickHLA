@@ -383,6 +383,7 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       trickhla_ignore.append( '--suppress=constParameterReference:' + trick_home + '/trick_source/er7_utils/integration/core/include/first_order_ode_integrator.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/DataRecordGroup.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/InstrumentBase.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/RealtimeSync.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/SysThread.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadBase.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/Threads.hh' )
