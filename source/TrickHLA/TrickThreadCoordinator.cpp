@@ -1380,8 +1380,9 @@ bool const TrickThreadCoordinator::verify_time_constraints(
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                 << " ERROR: The Trick software frame ("
                 << setprecision( 18 ) << RT_frame
-                << " seconds) cannot be less than or equal to zero when"
-                << " real-time is enabled!\n";
+                << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
+                << " cannot be less than or equal to zero when"
+                << " Trick Real Time is enabled!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -1392,7 +1393,8 @@ bool const TrickThreadCoordinator::verify_time_constraints(
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                 << " ERROR: The Trick software frame ("
                 << setprecision( 18 ) << RT_frame
-                << " seconds) cannot be represented in base-time because it"
+                << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
+                << " cannot be represented in base-time because it"
                 << " exceeds the base-time resolution of "
                 << Int64BaseTime::get_units() << "!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -1413,7 +1415,11 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
                    << " seconds) must be greater than or equal to the Trick"
                    << " software frame time (" << setprecision( 18 ) << RT_frame
-                   << " seconds)!\n";
+                   << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
+                   << " because Trick Real Time is enabled! One solution is to"
+                   << " set the Trick software frame to the same time as the"
+                   << " LCTS time of " << setprecision( 18 )
+                   << Int64BaseTime::to_seconds( lcts_base_time ) << " seconds.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
@@ -1426,7 +1432,11 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
                    << " seconds) must be an integer multiple of the Trick"
                    << " software frame time (" << setprecision( 18 ) << RT_frame
-                   << " seconds)!\n";
+                   << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
+                   << " because Trick Real Time is enabled! One solution is to"
+                   << " set the Trick software frame to the same time as the"
+                   << " LCTS time of " << setprecision( 18 )
+                   << Int64BaseTime::to_seconds( lcts_base_time ) << " seconds.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
