@@ -236,6 +236,11 @@ federate.scale_trick_tics_to_base_time_units()
 # Zero-lookhead requires a federate HLA lookahead value of zero.
 federate.set_lookahead_time( 0.0 )
 
+# Must specify a Trick software frame that meets the time constraints
+# for the Least Common Time Step (LCTS) value set in the ExCO by the
+# Master federate. (LCTS >= RT) && (LCTS % RT = 0)
+trick.exec_set_software_frame( 0.250 )
+
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )

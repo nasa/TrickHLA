@@ -672,9 +672,7 @@ void Federate::pre_multiphase_initialization()
    if ( !verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
-             << " ERROR: Invalid HLA cycle time ("
-             << setprecision( 18 ) << Int64BaseTime::to_seconds( get_HLA_cycle_time_in_base_time() )
-             << " seconds)!\n";
+             << " ERROR: Time Constraints verification failed!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

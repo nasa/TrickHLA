@@ -200,8 +200,13 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // the "Master" federate or not.
    execution_configuration->set_master( is_master() );
 
-   // Verify all the federate time constraints.
-   federate->verify_time_constraints();
+   // Verify the federate time constraints.
+   if ( !federate->verify_time_constraints() ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+             << " ERROR: Time constraints verification failed!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    if ( this->is_master() ) {
       // Initialize the MOM interface handles.
