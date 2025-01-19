@@ -2532,18 +2532,6 @@ void Federate::exit_freeze()
                ( execution_control->is_freeze_pending() ? "Yes" : "No" ) );
    }
 
-   // Verify the federate time constraints again when coming out of
-   // freeze because the user may have enabled realtime from the
-   // sim-console for a simulation that was not initially configured
-   // for realtime. We need to re-check the Trick software frame
-   // against the LCTS.
-   if ( !verify_time_constraints() ) {
-      ostringstream errmsg;
-      errmsg << "Federate::exit_freeze():" << __LINE__
-             << " ERROR: Time constraints verification failed!\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
    // Dispatch to the ExecutionControl method.
    execution_control->exit_freeze();
 

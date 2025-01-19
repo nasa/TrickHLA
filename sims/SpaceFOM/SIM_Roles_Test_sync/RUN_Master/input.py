@@ -215,6 +215,10 @@ if (realtime_clock == True):
    exec(open( "Modified_data/trick/realtime.py" ).read())
 else:
    print('Realtime Clock Disabled.')
+   # Must specify a Trick software frame that meets the time constraints
+   # for the Least Common Time Step (LCTS) value set in the ExCO by the
+   # Master federate. (LCTS >= RT) && (LCTS % RT = 0)
+   trick.exec_set_software_frame( 0.250 )
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)

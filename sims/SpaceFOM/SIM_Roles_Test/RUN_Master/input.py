@@ -241,6 +241,11 @@ federate.set_lookahead_time( 0.250 )
 # federation execution.
 federate.set_least_common_time_step( 0.250 )
 
+# Must specify a Trick software frame that meets the time constraints
+# for the Least Common Time Step (LCTS) value set in the ExCO by the
+# Master federate. (LCTS >= RT) && (LCTS % RT = 0)
+trick.exec_set_software_frame( 0.250 )
+
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 1.0 )
 

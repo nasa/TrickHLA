@@ -1072,8 +1072,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
                 << " ERROR: Least-Common-Time-Step (LCTS) time ("
                 << this->least_common_time_step << " " << Int64BaseTime::get_units()
                 << ") is not equal to ExCO LCTS ("
-                << ExCO->get_least_common_time_step()
-                << "!\n";
+                << ExCO->get_least_common_time_step() << " " << Int64BaseTime::get_units()
+                << ")!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -1210,7 +1210,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       // if we need to go to run, freeze, or shutdown.
       switch ( this->requested_execution_control_mode ) {
 
-         case EXECUTION_CONTROL_RUNNING:
+         case EXECUTION_CONTROL_RUNNING: {
             // Since this is a late joining federate, do NOT call the SpaceFOM
             // ExecutionControl run_mode_transition() function here. Late joiners
             // do NOT use the 'mtr_run' sync-points at initialization. Late
@@ -1223,8 +1223,8 @@ void ExecutionControl::post_multi_phase_init_processes()
             // Check to make sure that Trick is not starting in freeze.
             the_exec->set_freeze_command( false );
             break;
-
-         case EXECUTION_CONTROL_FREEZE:
+         }
+         case EXECUTION_CONTROL_FREEZE: {
             // Since this is a late joining federate, do NOT call the
             // SpaceFOM ExecutionControl freeze_mode_transition() function here.
             // Late joiners do NOT use the 'mtr_freeze' sync-points at
@@ -1234,8 +1234,8 @@ void ExecutionControl::post_multi_phase_init_processes()
             // Tell the Trick executive to start up in freeze mode.
             the_exec->set_freeze_command( true );
             break;
-
-         case EXECUTION_CONTROL_SHUTDOWN:
+         }
+         case EXECUTION_CONTROL_SHUTDOWN: {
 
             if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                send_hs( stdout, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d Commanding Trick Exec to stop.\n",
@@ -1247,8 +1247,8 @@ void ExecutionControl::post_multi_phase_init_processes()
             // the TrickHLA::Federate::shutdown() job.
             the_exec->stop();
             break;
-
-         default:
+         }
+         default: {
             ExCO->print_execution_configuration();
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::post_multi_phase_init_process():" << __LINE__
@@ -1257,6 +1257,7 @@ void ExecutionControl::post_multi_phase_init_processes()
                    << "), exiting...\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
+         }
       }
 
    } else {
@@ -1286,17 +1287,17 @@ void ExecutionControl::post_multi_phase_init_processes()
 
             switch ( this->requested_execution_control_mode ) {
 
-               case EXECUTION_CONTROL_RUNNING:
+               case EXECUTION_CONTROL_RUNNING: {
                   // Tell Trick to startup in Run.
                   the_exec->set_freeze_command( false );
                   break;
-
-               case EXECUTION_CONTROL_FREEZE:
+               }
+               case EXECUTION_CONTROL_FREEZE: {
                   // Tell Trick to startup in Freeze.
                   the_exec->set_freeze_command( true );
                   break;
-
-               case EXECUTION_CONTROL_SHUTDOWN:
+               }
+               case EXECUTION_CONTROL_SHUTDOWN: {
 
                   // Announce the shutdown.
                   shutdown_mode_announce();
@@ -1306,8 +1307,8 @@ void ExecutionControl::post_multi_phase_init_processes()
                   // from the TrickHLA::Federate::shutdown() job.
                   the_exec->stop();
                   break;
-
-               default:
+               }
+               default: {
                   ExCO->print_execution_configuration();
 
                   ostringstream errmsg;
@@ -1317,6 +1318,7 @@ void ExecutionControl::post_multi_phase_init_processes()
                          << "), exiting...\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                   break;
+               }
             }
 
          } // End of MTR check.
@@ -1410,21 +1412,22 @@ bool ExecutionControl::is_mtr_valid(
    ExecutionConfiguration const *ExCO = get_execution_configuration();
    if ( ExCO != NULL ) {
       switch ( mtr_value ) {
-         case MTR_GOTO_RUN:
+         case MTR_GOTO_RUN: {
             return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_FREEZE ) );
             break;
-
-         case MTR_GOTO_FREEZE:
+         }
+         case MTR_GOTO_FREEZE: {
             return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_RUNNING ) );
             break;
-
-         case MTR_GOTO_SHUTDOWN:
+         }
+         case MTR_GOTO_SHUTDOWN: {
             return ( ExCO->current_execution_mode != EXECUTION_MODE_SHUTDOWN );
             break;
-
-         default:
+         }
+         default: {
             return false;
             break;
+         }
       }
    }
    return false;
@@ -1434,34 +1437,35 @@ void ExecutionControl::set_mode_request_from_mtr(
    MTREnum mtr_value )
 {
    switch ( mtr_value ) {
-      case MTR_UNINITIALIZED:
+      case MTR_UNINITIALIZED: {
          this->pending_mtr = MTR_UNINITIALIZED;
          set_next_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED );
          break;
-
-      case MTR_INITIALIZING:
+      }
+      case MTR_INITIALIZING: {
          this->pending_mtr = MTR_INITIALIZING;
          set_next_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
          break;
-
-      case MTR_GOTO_RUN:
+      }
+      case MTR_GOTO_RUN: {
          this->pending_mtr = MTR_GOTO_RUN;
          set_next_execution_control_mode( EXECUTION_CONTROL_RUNNING );
          break;
-
-      case MTR_GOTO_FREEZE:
+      }
+      case MTR_GOTO_FREEZE: {
          this->pending_mtr = MTR_GOTO_FREEZE;
          set_next_execution_control_mode( EXECUTION_CONTROL_FREEZE );
          break;
-
-      case MTR_GOTO_SHUTDOWN:
+      }
+      case MTR_GOTO_SHUTDOWN: {
          this->pending_mtr = MTR_GOTO_SHUTDOWN;
          set_next_execution_control_mode( EXECUTION_CONTROL_SHUTDOWN );
          break;
-
-      default:
+      }
+      default: {
          this->pending_mtr = MTR_UNINITIALIZED;
          break;
+      }
    }
 }
 
@@ -1685,7 +1689,7 @@ bool ExecutionControl::process_mode_transition_request()
    // Check Mode Transition Request.
    switch ( this->pending_mtr ) {
 
-      case MTR_GOTO_RUN:
+      case MTR_GOTO_RUN: {
 
          // Clear the mode change request flag.
          clear_mode_transition_requested();
@@ -1703,8 +1707,8 @@ bool ExecutionControl::process_mode_transition_request()
          }
          return true;
          break;
-
-      case MTR_GOTO_FREEZE:
+      }
+      case MTR_GOTO_FREEZE: {
 
          // Clear the mode change request flag.
          clear_mode_transition_requested();
@@ -1728,8 +1732,8 @@ bool ExecutionControl::process_mode_transition_request()
          }
          return true;
          break;
-
-      case MTR_GOTO_SHUTDOWN:
+      }
+      case MTR_GOTO_SHUTDOWN: {
 
          // Announce the shutdown.
          shutdown_mode_announce();
@@ -1745,10 +1749,11 @@ bool ExecutionControl::process_mode_transition_request()
          the_exec->stop( the_exec->get_sim_time() + get_time_padding() );
          return true;
          break;
-
-      default:
+      }
+      default: {
          // Nothing to do.
          break;
+      }
    }
 
    return false;
@@ -1790,6 +1795,37 @@ bool ExecutionControl::process_execution_control_updates()
       return false;
    }
 
+   // If the LCTS is enabled and we have a valid ExCO value then update
+   // the ExecutionControl value if it is not initialized. Otherwise
+   // ensure they match.
+   if ( is_enabled_least_common_time_step()
+        && ( ExCO->get_least_common_time_step() > 0 ) ) {
+
+      // Set the Least Common Time Step (LCTS) in ExecutionControl if it has
+      // not been initialized and the ExCO has a valid value. This allows a
+      // non-Master federate to initialize LCTS from the reflected ExCO value.
+      if ( this->least_common_time_step <= 0 ) {
+
+         // This will sync the LCTS value in the ExCO and ExecutionControl.
+         this->least_common_time_step_seconds = Int64BaseTime::to_seconds( ExCO->get_least_common_time_step() );
+         this->least_common_time_step         = ExCO->get_least_common_time_step();
+      } else {
+
+         // The LCTS must match in both this ExecutionControl and the
+         // associated ExCO.
+         if ( this->least_common_time_step != ExCO->get_least_common_time_step() ) {
+            ostringstream errmsg;
+            errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                   << " ERROR: Least-Common-Time-Step (LCTS) time ("
+                   << this->least_common_time_step << " " << Int64BaseTime::get_units()
+                   << ") is not equal to ExCO LCTS ("
+                   << ExCO->get_least_common_time_step() << " " << Int64BaseTime::get_units()
+                   << ")!\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+      }
+   }
+
    // Translate the native ExCO mode values into ExecutionModeEnum.
    ExecutionModeEnum exco_cem              = execution_mode_int16_to_enum( ExCO->current_execution_mode );
    ExecutionModeEnum exco_nem              = execution_mode_int16_to_enum( ExCO->next_execution_mode );
@@ -1814,21 +1850,21 @@ bool ExecutionControl::process_execution_control_updates()
       mode_change = true;
 
       switch ( exco_nem ) {
-         case EXECUTION_MODE_SHUTDOWN:
+         case EXECUTION_MODE_SHUTDOWN: {
             this->requested_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
             break;
-
-         case EXECUTION_MODE_RUNNING:
+         }
+         case EXECUTION_MODE_RUNNING: {
             this->requested_execution_control_mode = EXECUTION_CONTROL_RUNNING;
             break;
-
-         case EXECUTION_MODE_FREEZE:
+         }
+         case EXECUTION_MODE_FREEZE: {
             this->requested_execution_control_mode = EXECUTION_CONTROL_FREEZE;
             this->scenario_freeze_time             = ExCO->next_mode_scenario_time;
             this->simulation_freeze_time           = scenario_timeline->compute_simulation_time( this->scenario_freeze_time );
             break;
-
-         default:
+         }
+         default: {
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                    << " WARNING: Invalid ExCO next execution mode: "
@@ -1838,6 +1874,7 @@ bool ExecutionControl::process_execution_control_updates()
             // Return that no mode changes occurred.
             return false;
             break;
+         }
       }
    }
 
@@ -1853,10 +1890,10 @@ bool ExecutionControl::process_execution_control_updates()
    // Process the mode change.
    switch ( this->current_execution_control_mode ) {
 
-      case EXECUTION_CONTROL_UNINITIALIZED:
+      case EXECUTION_CONTROL_UNINITIALIZED: {
 
          switch ( this->requested_execution_control_mode ) {
-            case EXECUTION_CONTROL_SHUTDOWN: // Check for SHUTDOWN.
+            case EXECUTION_CONTROL_SHUTDOWN: { // Check for SHUTDOWN.
                // Mark the current execution mode as SHUTDOWN.
                this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
@@ -1871,8 +1908,8 @@ bool ExecutionControl::process_execution_control_updates()
                // the TrickHLA::Federate::shutdown() job.
                the_exec->stop();
                break;
-
-            default:
+            }
+            default: {
                ostringstream errmsg;
                errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                       << " WARNING: Execution mode mismatch between current mode ("
@@ -1885,15 +1922,16 @@ bool ExecutionControl::process_execution_control_updates()
                // Return that no mode changes occurred.
                return false;
                break;
+            }
          }
          // Return that a mode change occurred.
          return true;
          break;
-
-      case EXECUTION_CONTROL_INITIALIZING:
+      }
+      case EXECUTION_CONTROL_INITIALIZING: {
 
          switch ( this->requested_execution_control_mode ) {
-            case EXECUTION_CONTROL_SHUTDOWN: // Check for SHUTDOWN.
+            case EXECUTION_CONTROL_SHUTDOWN: { // Check for SHUTDOWN.
                // Mark the current execution mode as SHUTDOWN.
                this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
@@ -1908,8 +1946,8 @@ bool ExecutionControl::process_execution_control_updates()
                // the TrickHLA::Federate::shutdown() job.
                the_exec->stop();
                break;
-
-            case EXECUTION_CONTROL_RUNNING:
+            }
+            case EXECUTION_CONTROL_RUNNING: {
                // Tell Trick to go to in Run at startup.
                the_exec->set_freeze_command( false );
 
@@ -1917,8 +1955,8 @@ bool ExecutionControl::process_execution_control_updates()
                // So, proceed to the run mode transition.
                run_mode_transition();
                break;
-
-            case EXECUTION_CONTROL_FREEZE:
+            }
+            case EXECUTION_CONTROL_FREEZE: {
                // Announce the pending freeze.
                freeze_mode_announce();
 
@@ -1932,12 +1970,12 @@ bool ExecutionControl::process_execution_control_updates()
                // Freeze. This is done in the TrickHLA::Federate::freeze_init()
                // routine called when entering Freeze.
                break;
-
-            case EXECUTION_CONTROL_INITIALIZING:
+            }
+            case EXECUTION_CONTROL_INITIALIZING: {
                // There's really nothing to do here.
                break;
-
-            default:
+            }
+            default: {
                ostringstream errmsg;
                errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                       << " WARNING: Execution mode mismatch between current mode ("
@@ -1950,15 +1988,16 @@ bool ExecutionControl::process_execution_control_updates()
                // Return that no mode changes occurred.
                return false;
                break;
+            }
          }
          // Return that a mode change occurred.
          return true;
          break;
-
-      case EXECUTION_CONTROL_RUNNING:
+      }
+      case EXECUTION_CONTROL_RUNNING: {
 
          switch ( this->requested_execution_control_mode ) {
-            case EXECUTION_CONTROL_SHUTDOWN: // Check for SHUTDOWN.
+            case EXECUTION_CONTROL_SHUTDOWN: { // Check for SHUTDOWN.
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   // Print out a diagnostic warning message.
                   ostringstream errmsg;
@@ -1985,11 +2024,11 @@ bool ExecutionControl::process_execution_control_updates()
                // the TrickHLA::Federate::shutdown() job.
                the_exec->stop();
                break;
-
-            case EXECUTION_CONTROL_FREEZE:
+            }
+            case EXECUTION_CONTROL_FREEZE: {
                // Print diagnostic message if appropriate.
                if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  cout << "SpaceFOM::ExecutionControl::process_execution_control_updates()\n"
+                  cout << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__ << '\n'
                        << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
                        << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
                        << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
@@ -2017,8 +2056,8 @@ bool ExecutionControl::process_execution_control_updates()
                // Freeze. This is done in the TrickHLA::Federate::freeze_init()
                // routine called when entering Freeze.
                break;
-
-            default:
+            }
+            default: {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream errmsg;
                   errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
@@ -2032,15 +2071,16 @@ bool ExecutionControl::process_execution_control_updates()
                // Return that no mode changes occurred.
                return false;
                break;
+            }
          }
          // Return that a mode change occurred.
          return true;
          break;
-
-      case EXECUTION_CONTROL_FREEZE:
+      }
+      case EXECUTION_CONTROL_FREEZE: {
 
          switch ( this->requested_execution_control_mode ) {
-            case EXECUTION_CONTROL_SHUTDOWN: // Check for SHUTDOWN.
+            case EXECUTION_CONTROL_SHUTDOWN: { // Check for SHUTDOWN.
                // Mark the current execution mode as SHUTDOWN.
                this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
@@ -2053,8 +2093,8 @@ bool ExecutionControl::process_execution_control_updates()
                // Shutdown the federate now.
                exec_get_exec_cpp()->stop();
                break;
-
-            case EXECUTION_CONTROL_RUNNING:
+            }
+            case EXECUTION_CONTROL_RUNNING: {
                // Tell Trick to exit freeze and go to run.
                the_exec->run();
 
@@ -2063,8 +2103,8 @@ bool ExecutionControl::process_execution_control_updates()
                // routine called when entering Freeze.
                // run_mode_transition();
                break;
-
-            default:
+            }
+            default: {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream errmsg;
                   errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
@@ -2078,12 +2118,13 @@ bool ExecutionControl::process_execution_control_updates()
                // Return that no mode changes occurred.
                return false;
                break;
+            }
          }
          // Return that a mode change occurred.
          return true;
          break;
-
-      case EXECUTION_CONTROL_SHUTDOWN:
+      }
+      case EXECUTION_CONTROL_SHUTDOWN: {
 
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             // Once in SHUTDOWN, we cannot do anything else.
@@ -2097,10 +2138,11 @@ bool ExecutionControl::process_execution_control_updates()
          // Return that no mode changes occurred.
          return false;
          break;
-
-      default:
+      }
+      default: {
          // Nothing to do.
          break;
+      }
    }
 
    // Return that no mode changes occurred.
@@ -2389,21 +2431,26 @@ void ExecutionControl::enter_freeze()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       string exec_cmd_str;
       switch ( exec_get_exec_command() ) {
-         case NoCmd:
+         case NoCmd: {
             exec_cmd_str = "NoCmd";
             break;
-         case FreezeCmd:
+         }
+         case FreezeCmd: {
             exec_cmd_str = "FreezeCmd";
             break;
-         case RunCmd:
+         }
+         case RunCmd: {
             exec_cmd_str = "RunCmd";
             break;
-         case ExitCmd:
+         }
+         case ExitCmd: {
             exec_cmd_str = "ExitCmd";
             break;
-         default:
+         }
+         default: {
             exec_cmd_str = "Unknown";
             break;
+         }
       }
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::enter_freeze():" << __LINE__ << '\n'
@@ -2884,8 +2931,7 @@ void ExecutionControl::set_time_padding(
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value (" << setprecision( 18 ) << t
-             << " seconds) must be greater than or equal to zero!"
-             << '\n';
+             << " seconds) must be greater than or equal to zero!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

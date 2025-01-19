@@ -47,7 +47,6 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/RealtimeSync.hh"
 #include "trick/Threads.hh"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
@@ -72,15 +71,6 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 using namespace std;
 using namespace TrickHLA;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-// Needed so we can determine if Trick realtime is enabled.
-extern Trick::RealtimeSync *the_rts;
-#ifdef __cplusplus
-}
-#endif
 
 /*!
  * @job_class{initialization}
@@ -1247,7 +1237,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
    }
 
    // Lookahead and LCTS times in the integer base time.
-   int64_t const lookahead_base_time = this->federate->get_lookahead_in_base_time();
+   int64_t const lookahead_base_time = federate->get_lookahead_in_base_time();
    int64_t const lcts_base_time      = manager->get_execution_control()->get_least_common_time_step();
 
    // Verify the lookahead time.
@@ -1367,43 +1357,45 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       }
    }
 
-   // If realtime is enabled then verify the time constraints:
-   // (LCTS ≥ RT) ∧ (LCTS % RT = 0)
-   if ( ( ( the_rts != NULL ) && the_rts->enable_flag ) || is_real_time() ) {
+   // We only need to verify these time constraints once so only check for
+   // the main thread.
+   if ( thread_id == 0 ) {
 
-      // The Real-Time frame time is the Trick software frame time.
-      double const RT_frame = exec_get_software_frame();
-
-      // The Trick software frame must be configured.
-      if ( RT_frame <= 0.0 ) {
-         ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: The Trick software frame ("
-                << setprecision( 18 ) << RT_frame
-                << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
-                << " cannot be less than or equal to zero when"
-                << " Trick Real Time is enabled!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-         return false;
-      }
-
-      // Verify the RT frame can be represented in base time.
-      if ( Int64BaseTime::exceeds_base_time_resolution( RT_frame ) ) {
-         ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: The Trick software frame ("
-                << setprecision( 18 ) << RT_frame
-                << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
-                << " cannot be represented in base-time because it"
-                << " exceeds the base-time resolution of "
-                << Int64BaseTime::get_units() << "!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-         return false;
-      }
-
-      // Perform LCTS checks provided a value has been set. Handles the case
-      // where the ExCO has not been received yet.
+      // Freeze happens as an end_of_frame job where the frame is defined by
+      // the Trick software/realtime frame time so all federates need a Trick
+      // software frame time that meets constraints. This also handles the
+      // case where the ExCO has not been received yet.
+      // (LCTS ≥ RT) ∧ (LCTS % RT = 0)
       if ( lcts_base_time > 0 ) {
+
+         // The Real-Time frame time is the Trick software frame time.
+         double const RT_frame = exec_get_software_frame();
+
+         // The Trick software frame must be configured.
+         if ( RT_frame <= 0.0 ) {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: The Trick software frame ("
+                   << setprecision( 18 ) << RT_frame
+                   << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
+                   << " cannot be less than or equal to zero!\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
+
+         // Verify the RT frame can be represented in base time.
+         if ( Int64BaseTime::exceeds_base_time_resolution( RT_frame ) ) {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: The Trick software frame ("
+                   << setprecision( 18 ) << RT_frame
+                   << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
+                   << " cannot be represented in base-time because it"
+                   << " exceeds the base-time resolution of "
+                   << Int64BaseTime::get_units() << "!\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
 
          int64_t const RT_base_time = Int64BaseTime::to_base_time( RT_frame );
 
@@ -1441,69 +1433,69 @@ bool const TrickThreadCoordinator::verify_time_constraints(
             return false;
          }
       }
-   }
 
-   // For the master federate, verify additional time constraints.
-   if ( manager->get_execution_control()->is_master() ) {
+      // For the master federate, verify additional time constraints.
+      if ( manager->get_execution_control()->is_master() ) {
 
-      // The Master federate padding time must be an integer multiple of the LCTS.
-      double const MPT_sec = manager->get_execution_control()->get_time_padding();
-      if ( MPT_sec <= 0.0 ) {
-         ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: For this Master federate, the time padding ("
-                << setprecision( 18 ) << MPT_sec
-                << " seconds) is not greater than zero!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-         return false;
-      }
-
-      // Determine if the LCTS is enabled for the Master federate. SpaceFOM
-      // requires the use of the LCTS while the TrickHLA simple-init and IMSim
-      // schemes do not.
-      if ( manager->get_execution_control()->is_enabled_least_common_time_step() ) {
-
-         // Time Constraints: (LCTS > 0)
-         if ( lcts_base_time <= 0 ) {
+         // The Master federate padding time must be an integer multiple of the LCTS.
+         double const MPT_sec = manager->get_execution_control()->get_time_padding();
+         if ( MPT_sec <= 0.0 ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: For this Master federate, the ExCO Least Common"
-                   << " Time Step (LCTS:" << lcts_base_time << " "
-                   << Int64BaseTime::get_units() << ") is not greater than zero!\n";
+                   << " ERROR: For this Master federate, the time padding ("
+                   << setprecision( 18 ) << MPT_sec
+                   << " seconds) is not greater than zero!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
 
-         // Padding time must be an integer multiple of the LCTS.
-         int64_t const MPT_base_time = Int64BaseTime::to_base_time( MPT_sec );
-         if ( MPT_base_time % lcts_base_time != 0 ) {
-            ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: Mode transition padding time (" << MPT_base_time
-                   << " " << Int64BaseTime::get_units()
-                   << ") is not an integer multiple of the ExCO"
-                   << " Least Common Time Step (LCTS:"
-                   << lcts_base_time << " " << Int64BaseTime::get_units()
-                   << ")!\n";
-            DebugHandler::terminate_with_message( errmsg.str() );
-            return false;
-         }
+         // Determine if the LCTS is enabled for the Master federate. SpaceFOM
+         // requires the use of the LCTS while the TrickHLA simple-init and IMSim
+         // schemes do not.
+         if ( manager->get_execution_control()->is_enabled_least_common_time_step() ) {
 
-         // The Master federate padding time must be at least 3 or more
-         // times the Least Common Time Step (LCTS). This will give
-         // commands time to propagate through the system and still have
-         // time for mode transitions.
-         if ( MPT_base_time < ( 3 * lcts_base_time ) ) {
-            ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: Mode transition padding time (" << MPT_base_time
-                   << " " << Int64BaseTime::get_units()
-                   << ") is not a multiple of 3 or more of the ExCO"
-                   << " Least Common Time Step (LCTS:"
-                   << lcts_base_time << " " << Int64BaseTime::get_units()
-                   << ")!\n";
-            DebugHandler::terminate_with_message( errmsg.str() );
-            return false;
+            // Time Constraints: (LCTS > 0)
+            if ( lcts_base_time <= 0 ) {
+               ostringstream errmsg;
+               errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                      << " ERROR: For this Master federate, the ExCO Least Common"
+                      << " Time Step (LCTS:" << lcts_base_time << " "
+                      << Int64BaseTime::get_units() << ") is not greater than zero!\n";
+               DebugHandler::terminate_with_message( errmsg.str() );
+               return false;
+            }
+
+            // Padding time must be an integer multiple of the LCTS.
+            int64_t const MPT_base_time = Int64BaseTime::to_base_time( MPT_sec );
+            if ( MPT_base_time % lcts_base_time != 0 ) {
+               ostringstream errmsg;
+               errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                      << " ERROR: Mode transition padding time (" << MPT_base_time
+                      << " " << Int64BaseTime::get_units()
+                      << ") is not an integer multiple of the ExCO"
+                      << " Least Common Time Step (LCTS:"
+                      << lcts_base_time << " " << Int64BaseTime::get_units()
+                      << ")!\n";
+               DebugHandler::terminate_with_message( errmsg.str() );
+               return false;
+            }
+
+            // The Master federate padding time must be at least 3 or more
+            // times the Least Common Time Step (LCTS). This will give
+            // commands time to propagate through the system and still have
+            // time for mode transitions.
+            if ( MPT_base_time < ( 3 * lcts_base_time ) ) {
+               ostringstream errmsg;
+               errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                      << " ERROR: Mode transition padding time (" << MPT_base_time
+                      << " " << Int64BaseTime::get_units()
+                      << ") is not a multiple of 3 or more of the ExCO"
+                      << " Least Common Time Step (LCTS:"
+                      << lcts_base_time << " " << Int64BaseTime::get_units()
+                      << ")!\n";
+               DebugHandler::terminate_with_message( errmsg.str() );
+               return false;
+            }
          }
       }
    }
