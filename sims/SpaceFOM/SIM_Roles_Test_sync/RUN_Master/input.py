@@ -215,6 +215,10 @@ if (realtime_clock == True):
    exec(open( "Modified_data/trick/realtime.py" ).read())
 else:
    print('Realtime Clock Disabled.')
+   # Must specify a Trick software frame that meets the time constraints
+   # for the Least Common Time Step (LCTS) value set in the ExCO by the
+   # Master federate. (LCTS >= RT) && (LCTS % RT = 0)
+   trick.exec_set_software_frame( 0.250 )
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
@@ -287,9 +291,6 @@ federate.set_lookahead_time( 0.250 )
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
 federate.set_least_common_time_step( 0.250 )
-
-# For SpaceFOM, we also need to specify the Trick software frame time.
-trick.exec_set_software_frame( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 1.0 )

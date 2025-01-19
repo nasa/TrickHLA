@@ -306,6 +306,14 @@ void ExecutionControl::pre_multi_phase_init_processes()
       execution_configuration->set_master( is_master() );
    }
 
+   // Verify the federate time constraints.
+   if ( !federate->verify_time_constraints() ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+             << " ERROR: Time constraints verification failed!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // Don't forget to enable asynchronous delivery of messages.
    federate->enable_async_delivery();
 
@@ -328,9 +336,6 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Initialize the MOM interface handles.
    federate->initialize_MOM_handles();
-
-   // Verify all the federate time constraints.
-   federate->verify_time_constraints();
 
    if ( is_master() ) {
       //**** This federate is the Master for the multiphase ****
