@@ -367,13 +367,11 @@ void ExecutionConfiguration::unpack()
    // software-frame, Least Common Time Step (LCTS), lookahead and delta
    // time step times.
    Federate *federate = get_federate();
-   if ( federate != NULL ) {
-      if ( !federate->verify_time_constraints() ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-                << " ERROR: Invalid federate time constraints!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
+   if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+             << " ERROR: Time constraints verification failed!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark that we have an ExCO update with pending changes.

@@ -242,6 +242,14 @@ void ExecutionControlBase::initialize()
       set_master( false );
    }
 
+   // Verify the time constraints for the federate.
+   if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
+      ostringstream errmsg;
+      errmsg << "ExecutionControlBase::initialize():" << __LINE__
+             << " ERROR: Time constraints verification failed!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    if ( !does_scenario_timeline_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "ExecutionControlBase::initialize():%d WARNING: \
