@@ -158,6 +158,7 @@ void ExecutionConfiguration::configure_attributes()
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " ERROR: Unexpected NULL S_define_name.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Convert the S_define_name to a string.
@@ -210,6 +211,7 @@ void ExecutionConfiguration::configure()
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Null TrickHLA::Manager passed in!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Release the memory used by the required_federates c-string.
@@ -230,17 +232,17 @@ void ExecutionConfiguration::configure()
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Null TrickHLA-Federate pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
+      return;
+   }
 
-      // Build a comma separated list of required federate names.
-      for ( int i = 0; i < federate->known_feds_count; ++i ) {
-         if ( federate->known_feds[i].required ) {
-            if ( required_federate_count > 0 ) {
-               federate_list << ",";
-            }
-            federate_list << federate->known_feds[i].name;
-            ++required_federate_count;
+   // Build a comma separated list of required federate names.
+   for ( int i = 0; i < federate->known_feds_count; ++i ) {
+      if ( federate->known_feds[i].required ) {
+         if ( required_federate_count > 0 ) {
+            federate_list << ",";
          }
+         federate_list << federate->known_feds[i].name;
+         ++required_federate_count;
       }
    }
 

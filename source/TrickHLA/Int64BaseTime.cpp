@@ -82,88 +82,108 @@ void Int64BaseTime::set(
    HLABaseTimeEnum const units )
 {
    switch ( units ) {
-      case HLA_BASE_TIME_SECONDS: // range: +/-292471208677.536 years with 1 second resolution
+      case HLA_BASE_TIME_SECONDS: { // range: +/-292471208677.536 years with 1 second resolution
          base_time_multiplier = 1LL;
          units_string         = "seconds";
          break;
-      case HLA_BASE_TIME_100_MILLISECONDS: // range: +/-29247120867.753 years with 100 millisecond resolution
+      }
+      case HLA_BASE_TIME_100_MILLISECONDS: { // range: +/-29247120867.753 years with 100 millisecond resolution
          base_time_multiplier = 10LL;
          units_string         = "100-milliseconds";
          break;
-      case HLA_BASE_TIME_10_MILLISECONDS: // range: +/-2924712086.775 years with 10 millisecond resolution
+      }
+      case HLA_BASE_TIME_10_MILLISECONDS: { // range: +/-2924712086.775 years with 10 millisecond resolution
          base_time_multiplier = 100LL;
          units_string         = "10-milliseconds";
          break;
-      case HLA_BASE_TIME_MILLISECONDS: // range: +/-292471208.677 years with 1 millisecond resolution
+      }
+      case HLA_BASE_TIME_MILLISECONDS: { // range: +/-292471208.677 years with 1 millisecond resolution
          base_time_multiplier = 1000LL;
          units_string         = "milliseconds";
          break;
-      case HLA_BASE_TIME_100_MICROSECONDS: // range: +/-29247120.867 years with 100 microsecond resolution
+      }
+      case HLA_BASE_TIME_100_MICROSECONDS: { // range: +/-29247120.867 years with 100 microsecond resolution
          base_time_multiplier = 10000LL;
          units_string         = "100-microseconds";
          break;
-      case HLA_BASE_TIME_10_MICROSECONDS: // range: +/-2924712.086 years with 10 microsecond resolution
+      }
+      case HLA_BASE_TIME_10_MICROSECONDS: { // range: +/-2924712.086 years with 10 microsecond resolution
          base_time_multiplier = 100000LL;
          units_string         = "10-microseconds";
          break;
-      case HLA_BASE_TIME_MICROSECONDS: // range: +/-292471.208 years with 1 microsecond resolution
+      }
+      case HLA_BASE_TIME_MICROSECONDS: { // range: +/-292471.208 years with 1 microsecond resolution
          base_time_multiplier = 1000000LL;
          units_string         = "microseconds";
          break;
-      case HLA_BASE_TIME_100_NANOSECONDS: // range: +/-29247.120 years with 100 nanosecond resolution
+      }
+      case HLA_BASE_TIME_100_NANOSECONDS: { // range: +/-29247.120 years with 100 nanosecond resolution
          base_time_multiplier = 10000000LL;
          units_string         = "100-nanoseconds";
          break;
-      case HLA_BASE_TIME_10_NANOSECONDS: // range: +/-2924.712 years with 10 nanosecond resolution
+      }
+      case HLA_BASE_TIME_10_NANOSECONDS: { // range: +/-2924.712 years with 10 nanosecond resolution
          base_time_multiplier = 100000000LL;
          units_string         = "10-nanoseconds";
          break;
-      case HLA_BASE_TIME_NANOSECONDS: // range: +/-292.471 years with 1 nanosecond resolution
+      }
+      case HLA_BASE_TIME_NANOSECONDS: { // range: +/-292.471 years with 1 nanosecond resolution
          base_time_multiplier = 1000000000LL;
          units_string         = "nanoseconds";
          break;
-      case HLA_BASE_TIME_100_PICOSECONDS: // range: +/-29.247 years with 100 picosecond resolution
+      }
+      case HLA_BASE_TIME_100_PICOSECONDS: { // range: +/-29.247 years with 100 picosecond resolution
          base_time_multiplier = 10000000000LL;
          units_string         = "100-picoseconds";
          break;
-      case HLA_BASE_TIME_10_PICOSECONDS: // range: +/-2.924 years with 10 picosecond resolution
+      }
+      case HLA_BASE_TIME_10_PICOSECONDS: { // range: +/-2.924 years with 10 picosecond resolution
          base_time_multiplier = 100000000000LL;
          units_string         = "10-picoseconds";
          break;
-      case HLA_BASE_TIME_PICOSECONDS: // range: +/-2562.047 hours with 1 picosecond resolution
+      }
+      case HLA_BASE_TIME_PICOSECONDS: { // range: +/-2562.047 hours with 1 picosecond resolution
          base_time_multiplier = 1000000000000LL;
          units_string         = "picoseconds";
          break;
-      case HLA_BASE_TIME_100_FEMTOSECONDS: // range: +/-256.204 hours with 100 femosecond resolution
+      }
+      case HLA_BASE_TIME_100_FEMTOSECONDS: { // range: +/-256.204 hours with 100 femosecond resolution
          base_time_multiplier = 10000000000000LL;
          units_string         = "100-femtoseconds";
          break;
-      case HLA_BASE_TIME_10_FEMTOSECONDS: // range: +/-25.620 hours with 10 femosecond resolution
+      }
+      case HLA_BASE_TIME_10_FEMTOSECONDS: { // range: +/-25.620 hours with 10 femosecond resolution
          base_time_multiplier = 100000000000000LL;
          units_string         = "10-femtoseconds";
          break;
-      case HLA_BASE_TIME_FEMTOSECONDS: // range: +/-9223.372 seconds with 1 femosecond resolution
+      }
+      case HLA_BASE_TIME_FEMTOSECONDS: { // range: +/-9223.372 seconds with 1 femosecond resolution
          base_time_multiplier = 1000000000000000LL;
          units_string         = "femtoseconds";
          break;
-      case HLA_BASE_TIME_100_ATTOSECONDS: // range: +/-922.337 seconds with 100 attosecond resolution
+      }
+      case HLA_BASE_TIME_100_ATTOSECONDS: { // range: +/-922.337 seconds with 100 attosecond resolution
          base_time_multiplier = 10000000000000000LL;
          units_string         = "100-attoseconds";
          break;
-      case HLA_BASE_TIME_10_ATTOSECONDS: // range: +/-92.233 seconds with 10 attosecond resolution
+      }
+      case HLA_BASE_TIME_10_ATTOSECONDS: { // range: +/-92.233 seconds with 10 attosecond resolution
          base_time_multiplier = 100000000000000000LL;
          units_string         = "10-attoseconds";
          break;
-      case HLA_BASE_TIME_ATTOSECONDS: // range: +/-9.223 seconds with 1 attosecond resolution
+      }
+      case HLA_BASE_TIME_ATTOSECONDS: { // range: +/-9.223 seconds with 1 attosecond resolution
          base_time_multiplier = 1000000000000000000LL;
          units_string         = "attoseconds";
          break;
-      default:
+      }
+      default: {
          ostringstream errmsg;
          errmsg << "Int64BaseTime::set():" << __LINE__
                 << " ERROR: Unknown units:" << units << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
+      }
    }
    base_units               = units;
    max_logical_time_seconds = ( (double)INT64_MAX / (double)base_time_multiplier );
@@ -178,45 +198,64 @@ std::string const Int64BaseTime::get_units_string(
    HLABaseTimeEnum const units )
 {
    switch ( units ) {
-      case HLA_BASE_TIME_SECONDS:
+      case HLA_BASE_TIME_SECONDS: {
          return "HLA_BASE_TIME_SECONDS";
-      case HLA_BASE_TIME_100_MILLISECONDS:
+      }
+      case HLA_BASE_TIME_100_MILLISECONDS: {
          return "HLA_BASE_TIME_100_MILLISECONDS";
-      case HLA_BASE_TIME_10_MILLISECONDS:
+      }
+      case HLA_BASE_TIME_10_MILLISECONDS: {
          return "HLA_BASE_TIME_10_MILLISECONDS";
-      case HLA_BASE_TIME_MILLISECONDS:
+      }
+      case HLA_BASE_TIME_MILLISECONDS: {
          return "HLA_BASE_TIME_MILLISECONDS";
-      case HLA_BASE_TIME_100_MICROSECONDS:
+      }
+      case HLA_BASE_TIME_100_MICROSECONDS: {
          return "HLA_BASE_TIME_100_MICROSECONDS";
-      case HLA_BASE_TIME_10_MICROSECONDS:
+      }
+      case HLA_BASE_TIME_10_MICROSECONDS: {
          return "HLA_BASE_TIME_10_MICROSECONDS";
-      case HLA_BASE_TIME_MICROSECONDS:
+      }
+      case HLA_BASE_TIME_MICROSECONDS: {
          return "HLA_BASE_TIME_MICROSECONDS";
-      case HLA_BASE_TIME_100_NANOSECONDS:
+      }
+      case HLA_BASE_TIME_100_NANOSECONDS: {
          return "HLA_BASE_TIME_100_NANOSECONDS";
-      case HLA_BASE_TIME_10_NANOSECONDS:
+      }
+      case HLA_BASE_TIME_10_NANOSECONDS: {
          return "HLA_BASE_TIME_10_NANOSECONDS";
-      case HLA_BASE_TIME_NANOSECONDS:
+      }
+      case HLA_BASE_TIME_NANOSECONDS: {
          return "HLA_BASE_TIME_NANOSECONDS";
-      case HLA_BASE_TIME_100_PICOSECONDS:
+      }
+      case HLA_BASE_TIME_100_PICOSECONDS: {
          return "HLA_BASE_TIME_100_PICOSECONDS";
-      case HLA_BASE_TIME_10_PICOSECONDS:
+      }
+      case HLA_BASE_TIME_10_PICOSECONDS: {
          return "HLA_BASE_TIME_10_PICOSECONDS";
-      case HLA_BASE_TIME_PICOSECONDS:
+      }
+      case HLA_BASE_TIME_PICOSECONDS: {
          return "HLA_BASE_TIME_PICOSECONDS";
-      case HLA_BASE_TIME_100_FEMTOSECONDS:
+      }
+      case HLA_BASE_TIME_100_FEMTOSECONDS: {
          return "HLA_BASE_TIME_100_FEMTOSECONDS";
-      case HLA_BASE_TIME_10_FEMTOSECONDS:
+      }
+      case HLA_BASE_TIME_10_FEMTOSECONDS: {
          return "HLA_BASE_TIME_10_FEMTOSECONDS";
-      case HLA_BASE_TIME_FEMTOSECONDS:
+      }
+      case HLA_BASE_TIME_FEMTOSECONDS: {
          return "HLA_BASE_TIME_FEMTOSECONDS";
-      case HLA_BASE_TIME_100_ATTOSECONDS:
+      }
+      case HLA_BASE_TIME_100_ATTOSECONDS: {
          return "HLA_BASE_TIME_100_ATTOSECONDS";
-      case HLA_BASE_TIME_10_ATTOSECONDS:
+      }
+      case HLA_BASE_TIME_10_ATTOSECONDS: {
          return "HLA_BASE_TIME_10_ATTOSECONDS";
+      }
       case HLA_BASE_TIME_ATTOSECONDS:
-      default:
+      default: {
          return "HLA_BASE_TIME_ATTOSECONDS";
+      }
    }
 }
 

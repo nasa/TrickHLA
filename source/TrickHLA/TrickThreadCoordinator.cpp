@@ -688,15 +688,15 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
             summary << thread_id << "\t  ";
 
             switch ( this->thread_state[thread_id] ) {
-               case TrickHLA::THREAD_STATE_DISABLED:
+               case TrickHLA::THREAD_STATE_DISABLED: {
                   summary << "(Disabled thread associated to TrickHLA)";
                   break;
-
-               case TrickHLA::THREAD_STATE_NOT_ASSOCIATED:
+               }
+               case TrickHLA::THREAD_STATE_NOT_ASSOCIATED: {
                   summary << "(Thread not associated to TrickHLA)";
                   break;
-
-               default:
+               }
+               default: {
                   summary << setprecision( 18 )
                           << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
                           << "\t ";
@@ -706,6 +706,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
                      }
                   }
                   break;
+               }
             }
             summary << '\n';
          }

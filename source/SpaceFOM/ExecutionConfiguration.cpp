@@ -168,6 +168,7 @@ void ExecutionConfiguration::configure_attributes()
       errmsg << "SpaceFOM::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " ERROR: Unexpected NULL S_define_name.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Convert the S_define_name to a string.
@@ -242,6 +243,7 @@ void ExecutionConfiguration::configure()
       errmsg << "SpaceFOM::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA::Manager.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Clear out the existing object instance name, because we are going to
@@ -549,13 +551,14 @@ void ExecutionConfiguration::setup_ref_attributes(
              << " FAILED to allocate enough memory for the attributes of the ExCO!"
              << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    //
    // Specify the ExCO attributes.
    //
    // Setup the "root_frame_name" attribute.
-   this->attributes[0].FOM_name = trick_MM->mm_strdup( "root_frame_name" ); // cppcheck-suppress [nullPointerRedundantCheck]
+   this->attributes[0].FOM_name = trick_MM->mm_strdup( "root_frame_name" );
    if ( this->execution_control->is_master() ) {
       this->attributes[0].publish       = true;
       this->attributes[0].subscribe     = false;
@@ -589,6 +592,7 @@ void ExecutionConfiguration::setup_ref_attributes(
              << " FAILED to allocate enough memory for the REF2 structure for"
              << " the 'root_frame_name' value of the ExCO!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Allocate the Trick ATTRIBUTES data structure with room for two
@@ -625,7 +629,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    memcpy( &exco_attr[1], &attrSpaceFOM__ExecutionConfiguration[attr_index], sizeof( ATTRIBUTES ) );
 
    // Initialize the attribute.
-   this->attributes[0].initialize( this->FOM_name, 0, 0 );
+   attributes[0].initialize( this->FOM_name, 0, 0 );
 
    // Initialize the TrickHLA Attribute. Since we built the attributes
    // in-line, and not via the Trick input.py file, use the alternate version of
@@ -654,9 +658,8 @@ void ExecutionConfiguration::setup_ref_attributes(
       send_hs( stdout, msg.str().c_str() );
    }
 
-   if ( exco_ref2 != NULL ) {
-      free( static_cast< void * >( exco_ref2 ) );
-   }
+   free( static_cast< void * >( exco_ref2 ) );
+   exco_ref2 = NULL;
 }
 
 void ExecutionConfiguration::print_execution_configuration()
