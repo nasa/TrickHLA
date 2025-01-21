@@ -1095,15 +1095,14 @@ void ExecutionControl::setup_interaction_ref_attributes()
 void ExecutionControl::setup_object_RTI_handles()
 {
    ExecutionConfiguration *ExCO = get_execution_configuration();
-   if ( ExCO != NULL ) {
-      manager->setup_object_RTI_handles( 1, ExCO );
-   } else {
+   if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_object_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL SimConfig!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
-   return;
+   manager->setup_object_RTI_handles( 1, ExCO );
 }
 
 /*!
@@ -1333,34 +1332,35 @@ void ExecutionControl::set_mode_request_from_mtr(
    MTREnum mtr_value )
 {
    switch ( mtr_value ) {
-      case IMSim::MTR_UNINITIALIZED:
+      case IMSim::MTR_UNINITIALIZED: {
          this->pending_mtr = IMSim::MTR_UNINITIALIZED;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED );
          break;
-
-      case IMSim::MTR_INITIALIZING:
+      }
+      case IMSim::MTR_INITIALIZING: {
          this->pending_mtr = IMSim::MTR_INITIALIZING;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_INITIALIZING );
          break;
-
-      case IMSim::MTR_GOTO_RUN:
+      }
+      case IMSim::MTR_GOTO_RUN: {
          this->pending_mtr = IMSim::MTR_GOTO_RUN;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_RUNNING );
          break;
-
-      case IMSim::MTR_GOTO_FREEZE:
+      }
+      case IMSim::MTR_GOTO_FREEZE: {
          this->pending_mtr = IMSim::MTR_GOTO_FREEZE;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_FREEZE );
          break;
-
-      case IMSim::MTR_GOTO_SHUTDOWN:
+      }
+      case IMSim::MTR_GOTO_SHUTDOWN: {
          this->pending_mtr = IMSim::MTR_GOTO_SHUTDOWN;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_SHUTDOWN );
          break;
-
-      default:
+      }
+      default: {
          this->pending_mtr = IMSim::MTR_UNINITIALIZED;
          break;
+      }
    }
 }
 
@@ -1377,7 +1377,7 @@ void ExecutionControl::set_next_execution_control_mode(
    }
 
    switch ( exec_control ) {
-      case TrickHLA::EXECUTION_CONTROL_UNINITIALIZED:
+      case TrickHLA::EXECUTION_CONTROL_UNINITIALIZED: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_UNINITIALIZED;
@@ -1386,10 +1386,9 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time(); // Immediate
          this->next_mode_cte_time      = get_cte_time();      // Immediate
-
          break;
-
-      case TrickHLA::EXECUTION_CONTROL_INITIALIZING:
+      }
+      case TrickHLA::EXECUTION_CONTROL_INITIALIZING: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_INITIALIZING;
@@ -1399,10 +1398,9 @@ void ExecutionControl::set_next_execution_control_mode(
          this->scenario_time_epoch     = get_scenario_time(); // Now.
          this->next_mode_scenario_time = get_scenario_time(); // Immediate
          this->next_mode_cte_time      = get_cte_time();      // Immediate
-
          break;
-
-      case TrickHLA::EXECUTION_CONTROL_RUNNING:
+      }
+      case TrickHLA::EXECUTION_CONTROL_RUNNING: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_RUNNING;
@@ -1414,10 +1412,9 @@ void ExecutionControl::set_next_execution_control_mode(
          if ( this->next_mode_cte_time > -std::numeric_limits< double >::max() ) {
             this->next_mode_cte_time = this->next_mode_cte_time + get_time_padding(); // Some time in the future.
          }
-
          break;
-
-      case TrickHLA::EXECUTION_CONTROL_FREEZE:
+      }
+      case TrickHLA::EXECUTION_CONTROL_FREEZE: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_FREEZE;
@@ -1433,10 +1430,9 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the ExecutionControl freeze times.
          this->scenario_freeze_time   = this->next_mode_scenario_time;
          this->simulation_freeze_time = this->scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
-
          break;
-
-      case TrickHLA::EXECUTION_CONTROL_SHUTDOWN:
+      }
+      case TrickHLA::EXECUTION_CONTROL_SHUTDOWN: {
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
@@ -1445,10 +1441,9 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time(); // Immediate.
          this->next_mode_cte_time      = get_cte_time();      // Immediate
-
          break;
-
-      default:
+      }
+      default: {
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_UNINITIALIZED;
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
@@ -1458,6 +1453,7 @@ void ExecutionControl::set_next_execution_control_mode(
             send_hs( stdout, errmsg.str().c_str() );
          }
          break;
+      }
    }
 }
 
@@ -1537,7 +1533,7 @@ bool ExecutionControl::process_mode_transition_request()
    // Check Mode Transition Request.
    switch ( this->pending_mtr ) {
 
-      case IMSim::MTR_GOTO_RUN:
+      case IMSim::MTR_GOTO_RUN: {
 
          // Clear the mode change request flag.
          clear_mode_transition_requested();
@@ -1555,9 +1551,8 @@ bool ExecutionControl::process_mode_transition_request()
          }
 
          return true;
-         break;
-
-      case IMSim::MTR_GOTO_FREEZE:
+      }
+      case IMSim::MTR_GOTO_FREEZE: {
 
          // Clear the mode change request flag.
          clear_mode_transition_requested();
@@ -1581,9 +1576,8 @@ bool ExecutionControl::process_mode_transition_request()
          }
 
          return true;
-         break;
-
-      case IMSim::MTR_GOTO_SHUTDOWN:
+      }
+      case IMSim::MTR_GOTO_SHUTDOWN: {
 
          // Announce the shutdown.
          shutdown_mode_announce();
@@ -1594,10 +1588,10 @@ bool ExecutionControl::process_mode_transition_request()
          the_exec->stop( the_exec->get_sim_time() + get_time_padding() );
 
          return true;
+      }
+      default: {
          break;
-
-      default:
-         break;
+      }
    }
 
    return false;
@@ -1693,7 +1687,7 @@ bool ExecutionControl::process_execution_control_updates()
    // Process the mode change.
    switch ( this->current_execution_control_mode ) {
 
-      case TrickHLA::EXECUTION_CONTROL_UNINITIALIZED:
+      case TrickHLA::EXECUTION_CONTROL_UNINITIALIZED: {
 
          // Check for SHUTDOWN.
          if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_SHUTDOWN ) {
@@ -1724,9 +1718,8 @@ bool ExecutionControl::process_execution_control_updates()
 
          // Return that a mode change occurred.
          return true;
-         break;
-
-      case TrickHLA::EXECUTION_CONTROL_INITIALIZING:
+      }
+      case TrickHLA::EXECUTION_CONTROL_INITIALIZING: {
 
          // Check for SHUTDOWN.
          if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_SHUTDOWN ) {
@@ -1785,9 +1778,8 @@ bool ExecutionControl::process_execution_control_updates()
 
          // Return that a mode change occurred.
          return true;
-         break;
-
-      case TrickHLA::EXECUTION_CONTROL_RUNNING:
+      }
+      case TrickHLA::EXECUTION_CONTROL_RUNNING: {
 
          // Check for SHUTDOWN.
          if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
@@ -1859,9 +1851,8 @@ bool ExecutionControl::process_execution_control_updates()
 
          // Return that a mode change occurred.
          return true;
-         break;
-
-      case TrickHLA::EXECUTION_CONTROL_FREEZE:
+      }
+      case TrickHLA::EXECUTION_CONTROL_FREEZE: {
 
          // Check for SHUTDOWN.
          if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_SHUTDOWN ) {
@@ -1900,9 +1891,8 @@ bool ExecutionControl::process_execution_control_updates()
 
          // Return that a mode change occurred.
          return true;
-         break;
-
-      case TrickHLA::EXECUTION_CONTROL_SHUTDOWN:
+      }
+      case TrickHLA::EXECUTION_CONTROL_SHUTDOWN: {
 
          // Once in SHUTDOWN, we cannot do anything else.
          errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
@@ -1913,10 +1903,10 @@ bool ExecutionControl::process_execution_control_updates()
 
          // Return that no mode changes occurred.
          return false;
+      }
+      default: {
          break;
-
-      default:
-         break;
+      }
    }
 
    // Return that no mode changes occurred.

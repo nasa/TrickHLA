@@ -198,6 +198,7 @@ void Manager::initialize()
       errmsg << "Manager::initialize():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
@@ -207,6 +208,7 @@ void Manager::initialize()
              << " ERROR: Unexpected NULL 'execution_control' pointer!"
              << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // The manager is now initialized.
@@ -476,6 +478,7 @@ federate so the data will not be sent for '%s'.\n",
       errmsg << "Manager::send_init_data():" << __LINE__
              << " ERROR: Null Object Instance Name\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    wstring obj_instance_name;
@@ -491,37 +494,37 @@ federate so the data will not be sent for '%s'.\n",
              << " known object. Please check your S_define file or simulation"
              << " module to verify the settings.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
+      return;
+   }
 
-      // Make sure we have at least one piece of object init data we can send.
-      if ( obj->any_locally_owned_published_init_attribute() ) {
+   // Make sure we have at least one piece of object init data we can send.
+   if ( obj->any_locally_owned_published_init_attribute() ) {
 
-         if ( this->execution_control->wait_for_init_data() ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::send_init_data():%d '%s'\n",
-                        __LINE__, instance_name );
-            }
-
-            // Send the object init data to the other federates.
-            obj->send_init_data();
-
-         } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               ostringstream msg;
-               msg << "Manager::send_init_data():" << __LINE__
-                   << " '" << instance_name << "'"
-                   << " This call will be ignored because the Simulation"
-                   << " Initialization Scheme (Type:'"
-                   << this->execution_control->get_type()
-                   << "') does not support it.\n";
-               send_hs( stdout, msg.str().c_str() );
-            }
-         }
-      } else {
+      if ( this->execution_control->wait_for_init_data() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'\n",
+            send_hs( stdout, "Manager::send_init_data():%d '%s'\n",
                      __LINE__, instance_name );
          }
+
+         // Send the object init data to the other federates.
+         obj->send_init_data();
+
+      } else {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            ostringstream msg;
+            msg << "Manager::send_init_data():" << __LINE__
+                << " '" << instance_name << "'"
+                << " This call will be ignored because the Simulation"
+                << " Initialization Scheme (Type:'"
+                << this->execution_control->get_type()
+                << "') does not support it.\n";
+            send_hs( stdout, msg.str().c_str() );
+         }
+      }
+   } else {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'\n",
+                  __LINE__, instance_name );
       }
    }
 }
@@ -647,6 +650,7 @@ void Manager::receive_init_data(
       errmsg << "Manager::receive_init_data():" << __LINE__
              << " ERROR: Null Object Instance Name";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    wstring obj_instance_name;
@@ -662,86 +666,86 @@ void Manager::receive_init_data(
              << " S_define file or simulation module to verify the settings."
              << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
+      return;
+   }
 
-      // Make sure we have at least one piece of data we can receive.
-      if ( obj->any_remotely_owned_subscribed_init_attribute() ) {
+   // Make sure we have at least one piece of data we can receive.
+   if ( obj->any_remotely_owned_subscribed_init_attribute() ) {
 
-         // Only wait for REQUIRED received init data and do not block waiting
-         // to receive init data if we are using the simple init scheme.
-         bool obj_required = obj->is_required() && this->execution_control->wait_for_init_data();
+      // Only wait for REQUIRED received init data and do not block waiting
+      // to receive init data if we are using the simple init scheme.
+      bool obj_required = obj->is_required() && this->execution_control->wait_for_init_data();
 
-         if ( obj_required ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                        __LINE__, instance_name,
-                        ( obj->is_required() ? "REQUIRED" : "not required" ) );
-            }
+      if ( obj_required ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
+                     __LINE__, instance_name,
+                     ( obj->is_required() ? "REQUIRED" : "not required" ) );
+         }
 
-            int64_t      wallclock_time;
-            SleepTimeout print_timer( federate->wait_status_time );
-            SleepTimeout sleep_timer;
+         int64_t      wallclock_time;
+         SleepTimeout print_timer( federate->wait_status_time );
+         SleepTimeout sleep_timer;
 
-            // Wait for the data to arrive.
-            while ( !obj->is_changed() ) {
+         // Wait for the data to arrive.
+         while ( !obj->is_changed() ) {
 
-               // Check for shutdown.
-               federate->check_for_shutdown_with_termination();
+            // Check for shutdown.
+            federate->check_for_shutdown_with_termination();
 
-               sleep_timer.sleep();
+            sleep_timer.sleep();
 
-               if ( !obj->is_changed() ) {
+            if ( !obj->is_changed() ) {
 
-                  // To be more efficient, we get the time once and share it.
-                  wallclock_time = sleep_timer.time();
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
 
-                  if ( sleep_timer.timeout( wallclock_time ) ) {
-                     sleep_timer.reset();
-                     if ( !federate->is_execution_member() ) {
-                        ostringstream errmsg;
-                        errmsg << "Manager::receive_init_data():" << __LINE__
-                               << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                               << " This means we are either not connected to the"
-                               << " RTI or we are no longer joined to the federation"
-                               << " execution because someone forced our resignation at"
-                               << " the Central RTI Component (CRC) level!"
-                               << '\n';
-                        DebugHandler::terminate_with_message( errmsg.str() );
-                     }
+               if ( sleep_timer.timeout( wallclock_time ) ) {
+                  sleep_timer.reset();
+                  if ( !federate->is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "Manager::receive_init_data():" << __LINE__
+                            << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                            << " This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << '\n';
+                     DebugHandler::terminate_with_message( errmsg.str() );
                   }
+               }
 
-                  if ( print_timer.timeout( wallclock_time ) ) {
-                     print_timer.reset();
-                     send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                              __LINE__, instance_name,
-                              ( obj->is_required() ? "REQUIRED" : "not required" ) );
-                  }
+               if ( print_timer.timeout( wallclock_time ) ) {
+                  print_timer.reset();
+                  send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
+                           __LINE__, instance_name,
+                           ( obj->is_required() ? "REQUIRED" : "not required" ) );
                }
             }
          }
+      }
 
-         // Check for changed data which means we received something.
-         if ( obj->is_changed() ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout,
-                        "Manager::receive_init_data():%d Received '%s'\n",
-                        __LINE__, instance_name );
-            }
-
-            // Receive the data from the publishing federate.
-            obj->receive_init_data();
-         } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
-                        __LINE__, instance_name,
-                        ( obj_required ? "REQUIRED" : "not required" ) );
-            }
-         }
-      } else {
+      // Check for changed data which means we received something.
+      if ( obj->is_changed() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'\n",
+            send_hs( stdout,
+                     "Manager::receive_init_data():%d Received '%s'\n",
                      __LINE__, instance_name );
          }
+
+         // Receive the data from the publishing federate.
+         obj->receive_init_data();
+      } else {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
+                     __LINE__, instance_name,
+                     ( obj_required ? "REQUIRED" : "not required" ) );
+         }
+      }
+   } else {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'\n",
+                  __LINE__, instance_name );
       }
    }
 }
@@ -791,6 +795,7 @@ joining federate so this call will be ignored.\n",
       errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
              << " ERROR: Null Sync-Point Label\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    wstring ws_syc_point_label;
@@ -949,6 +954,7 @@ which keeps the instance attribute's object from becoming a Federation orphan. *
    // running in a child thread created by the RTI, we need to tell the Trick
    // Executive to exit the simulation.
    exec_set_exec_command( ExitCmd );
+
    // Bail from the execution just in case the above command fails
    ostringstream errmsg;
    errmsg << "Manager::object_instance_name_reservation_failed():" << __LINE__
@@ -1171,6 +1177,7 @@ void Manager::setup_object_RTI_handles(
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1182,6 +1189,7 @@ void Manager::setup_object_RTI_handles(
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL RTIambassador!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -1368,6 +1376,7 @@ void Manager::setup_interaction_RTI_handles(
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1379,6 +1388,7 @@ void Manager::setup_interaction_RTI_handles(
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL RTIambassador!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2106,6 +2116,7 @@ void Manager::set_object_instance_handles_by_name(
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2117,6 +2128,7 @@ void Manager::set_object_instance_handles_by_name(
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: Unexpected NULL RTIambassador!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    ostringstream summary;
@@ -3104,6 +3116,7 @@ void Manager::encode_checkpoint_interactions()
                 << " linear array of " << check_interactions_count << " elements."
                 << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
+         return;
       }
 
       // interactions_queue.dump_head_pointers("interactions_queue.dump");

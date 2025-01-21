@@ -266,6 +266,7 @@ Trick simulation time as the default scenario-timeline.\n",
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
                 << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
+         return;
       }
    }
 

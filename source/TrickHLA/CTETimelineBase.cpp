@@ -117,18 +117,22 @@ int CTETimelineBase::clock_stop()
 void CTETimelineBase::set_clock_ID( clockid_t const id )
 {
    switch ( id ) {
-      case CLOCK_REALTIME:
+      case CLOCK_REALTIME: {
          name = "GetTimeOfDay - CLOCK_REALTIME";
          break;
-      case CLOCK_MONOTONIC:
+      }
+      case CLOCK_MONOTONIC: {
          name = "GetTimeOfDay - CLOCK_MONOTONIC";
          break;
-      case CLOCK_MONOTONIC_RAW:
+      }
+      case CLOCK_MONOTONIC_RAW: {
          name = "GetTimeOfDay - CLOCK_MONOTONIC_RAW";
          break;
-      default:
+      }
+      default: {
          name = "GetTimeOfDay - other";
          break;
+      }
    }
 }
 
