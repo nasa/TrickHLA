@@ -9,7 +9,7 @@
 # 1) git clone https://github.com/terryyin/lizard.git
 # 2) cd lizard
 # 3) ./build.sh
-# 4) sudo python3 setup.py install
+# 4) sudo python3.9 setup.py install
 #
 # @revs_title
 # @revs_begin
@@ -91,9 +91,10 @@ Available here https://github.com/terryyin/lizard' )
       TrickHLAMessage.failure( 'No lizard command found! Try running: git clone https://github.com/terryyin/lizard.git && cd lizard && ./build.sh && sudo python setup.py install' )
 
    # Form relative paths to all the source directories used by TrickHLA.
-   trickhla_source_dirs.extend ( ['./include/'] )
    trickhla_source_dirs.extend ( ['./models/'] )
+   trickhla_source_dirs.extend ( ['./include/'] )
    trickhla_source_dirs.extend ( ['./source/'] )
+   trickhla_source_dirs.extend ( ['./Modified_data/'] )
 
    # Add the source code paths.
    lizard_args.extend( trickhla_source_dirs )
