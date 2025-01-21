@@ -115,29 +115,30 @@ std::string SyncPointTimed::to_string()
 
    string result = "[" + label_str + "/" + this->time.to_string() + "] -- ";
    switch ( this->state ) {
-
-      case TrickHLA::SYNC_PT_STATE_ERROR:
+      case TrickHLA::SYNC_PT_STATE_ERROR: {
          result += "SYNC_PT_STATE_ERROR";
          break;
-
-      case TrickHLA::SYNC_PT_STATE_KNOWN:
+      }
+      case TrickHLA::SYNC_PT_STATE_KNOWN: {
          result += "SYNC_PT_STATE_KNOWN";
          break;
-
-      case TrickHLA::SYNC_PT_STATE_REGISTERED:
+      }
+      case TrickHLA::SYNC_PT_STATE_REGISTERED: {
          result += "SYNC_PT_STATE_REGISTERED";
          break;
-
-      case TrickHLA::SYNC_PT_STATE_ANNOUNCED:
+      }
+      case TrickHLA::SYNC_PT_STATE_ANNOUNCED: {
          result += "SYNC_PT_STATE_ANNOUNCED";
          break;
-
-      case TrickHLA::SYNC_PT_STATE_ACHIEVED:
+      }
+      case TrickHLA::SYNC_PT_STATE_ACHIEVED: {
          result += "SYNC_PT_STATE_ACHIEVED";
          break;
-
-      default:
+      }
+      default: {
          result += "SYNC_PT_STATE_UNKNOWN";
+         break;
+      }
    }
 
    return result;

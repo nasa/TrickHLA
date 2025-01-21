@@ -287,14 +287,14 @@ void ExecutionControl::setup_interaction_ref_attributes()
 void ExecutionControl::setup_object_RTI_handles()
 {
    ExecutionConfiguration *ExCO = this->get_execution_configuration();
-   if ( ExCO != NULL ) {
-      this->manager->setup_object_RTI_handles( 1, ExCO );
-   } else {
+   if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::setup_object_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL ExCO!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
+   this->manager->setup_object_RTI_handles( 1, ExCO );
 }
 
 /*!
@@ -446,9 +446,7 @@ void ExecutionControl::shutdown_mode_transition()
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
-   ExecutionConfiguration *ExCO;
-
-   ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
+   ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::get_execution_configuration():" << __LINE__
@@ -472,6 +470,7 @@ void ExecutionControl::set_least_common_time_step(
          errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an TrickHLA ExCO.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
+         return;
       }
 
       // Set for the ExecutionControl.

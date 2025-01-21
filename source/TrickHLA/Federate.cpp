@@ -576,6 +576,7 @@ void Federate::restart_initialization()
       errmsg << "Federate::restart_initialization():" << __LINE__
              << " ERROR: NULL pointer to FederateAmbassador!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Verify the federate name.
