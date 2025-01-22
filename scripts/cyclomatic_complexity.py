@@ -4,12 +4,11 @@
 #
 # This is a Python program used to check the TrickHLA source code
 # cyclomatic complexity using the lizard utility.
-# 1) sudo pip3 install lizard
-# OR
-# 1) git clone https://github.com/terryyin/lizard.git
-# 2) cd lizard
-# 3) ./build.sh
-# 4) sudo python3.9 setup.py install
+# 1) For Mac: brew install python-setuptools
+# 2) git clone https://github.com/terryyin/lizard.git
+# 3) cd lizard
+# 4) ./build.sh
+# 5) sudo python3 setup.py install
 #
 # @revs_title
 # @revs_begin
