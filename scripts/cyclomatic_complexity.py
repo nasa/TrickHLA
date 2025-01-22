@@ -83,20 +83,22 @@ Available here https://github.com/terryyin/lizard' )
       TrickHLAMessage.failure( 'Could not find the \'source\' directory!' )
    if not os.path.isdir( 'models' ):
       TrickHLAMessage.failure( 'Could not find the \'models\' directory!' )
+   if not os.path.isdir( 'Modified_data' ):
+      TrickHLAMessage.failure( 'Could not find the \'Modified_data\' directory!' )
+
+   # Form relative paths to all the source directories used by TrickHLA.
+   trickhla_source_dirs.extend ( ['./include/'] )
+   trickhla_source_dirs.extend ( ['./source/'] )
+   trickhla_source_dirs.extend ( ['./models/'] )
+   trickhla_source_dirs.extend ( ['./Modified_data/'] )
+
+   # Add the source code paths.
+   lizard_args.extend( trickhla_source_dirs )
 
    # Find the lizard command and get the lizard version number.
    lizard_cmd, lizard_ver = find_lizard( None, False )
    if lizard_cmd is None:
       TrickHLAMessage.failure( 'No lizard command found! Try running: git clone https://github.com/terryyin/lizard.git && cd lizard && ./build.sh && sudo python setup.py install' )
-
-   # Form relative paths to all the source directories used by TrickHLA.
-   trickhla_source_dirs.extend ( ['./models/'] )
-   trickhla_source_dirs.extend ( ['./include/'] )
-   trickhla_source_dirs.extend ( ['./source/'] )
-   trickhla_source_dirs.extend ( ['./Modified_data/'] )
-
-   # Add the source code paths.
-   lizard_args.extend( trickhla_source_dirs )
 
    # Form the lizard command with command-line arguments.
    shell_command = [ lizard_cmd ]
