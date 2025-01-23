@@ -1382,7 +1382,7 @@ void ExecutionControl::shutdown()
          shutdown_mode_announce();
 
          // Let's pause for a moment (1 second) to let things propagate
-         // through the federate before tearing things down.
+         // through the federation before tearing things down.
          Utilities::micro_sleep( 1000000 );
       }
 
@@ -2903,39 +2903,53 @@ void ExecutionControl::refresh_least_common_time_step()
 void ExecutionControl::set_time_padding(
    double t )
 {
-   if ( t < 0.0 ) {
+   if ( t <= 0.0 ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value (" << setprecision( 18 ) << t
-             << " seconds) must be greater than or equal to zero!\n";
+             << " ERROR: Time padding value (" << t
+             << " seconds) must be greater than zero!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    int64_t padding_base_time = Int64BaseTime::to_base_time( t );
 
-   // Time padding needs to be an integer multipile of the LCTS.
+   // At a minimum the Padding time must be >= LCTS.
+   if ( padding_base_time < this->least_common_time_step ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Mode transition padding time ("
+             << padding_base_time << " " << Int64BaseTime::get_units()
+             << ") can not be less than the ExCO Least Common Time Step ("
+             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << ")!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Time padding needs to be an integer multiple of the LCTS.
    if ( padding_base_time % this->least_common_time_step != 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value (" << setprecision( 18 ) << t
-             << " seconds) must be an integer multiple of the Least Common Time Step ("
+             << " ERROR: Time padding value ("
+             << padding_base_time << " " << Int64BaseTime::get_units()
+             << ") must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
              << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // The Master federate padding time must be 3 or more times the Least
-   // Common Time Step (LCTS). This will give commands time to propagate
-   // through the system and still have time for mode transitions.
-   if ( padding_base_time < ( 3 * this->least_common_time_step ) ) {
+   // Common Time Step (LCTS) or two seconds. This will give commands time to
+   // propagate through the system and still have time for mode transitions.
+   if ( ( padding_base_time < Int64BaseTime::to_base_time( 2.0 ) )
+        && ( padding_base_time < ( 3 * this->least_common_time_step ) ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << padding_base_time
-             << " " << Int64BaseTime::get_units()
+             << " ERROR: Mode transition padding time ("
+             << padding_base_time << " " << Int64BaseTime::get_units()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step ("
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!\n";
+             << ") when the time padding is less than 2 seconds!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
