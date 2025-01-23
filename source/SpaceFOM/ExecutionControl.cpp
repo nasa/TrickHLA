@@ -2919,7 +2919,7 @@ void ExecutionControl::set_time_padding(
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Mode transition padding time ("
              << padding_base_time << " " << Int64BaseTime::get_units()
-             << ") can not be less than the ExCO Least Common Time Step ("
+             << ") can not be less than the ExCO Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
              << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -2931,7 +2931,7 @@ void ExecutionControl::set_time_padding(
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value ("
              << padding_base_time << " " << Int64BaseTime::get_units()
-             << ") must be an integer multiple of the Least Common Time Step ("
+             << ") must be an integer multiple of the Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
              << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -2947,7 +2947,7 @@ void ExecutionControl::set_time_padding(
              << " ERROR: Mode transition padding time ("
              << padding_base_time << " " << Int64BaseTime::get_units()
              << ") is not a multiple of 3 or more of the ExCO"
-             << " Least Common Time Step ("
+             << " Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
              << ") when the time padding is less than 2 seconds!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
