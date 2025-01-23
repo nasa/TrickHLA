@@ -261,6 +261,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
              << " FAILED to allocate enough memory for Interaction specialized"
              << " to MTR the sim!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Set up name, handler, publish and subscribe.
@@ -284,13 +285,13 @@ void ExecutionControl::setup_interaction_ref_attributes()
              << " FAILED to allocate enough memory for the parameters of the"
              << " MTR interaction!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
-
-      tParm[0].set_FOM_name( "execution_mode" );
-      tParm[0].set_encoding( ENCODING_LITTLE_ENDIAN );
-
-      mtr_interaction->set_parameters( tParm );
+      return;
    }
+
+   tParm[0].set_FOM_name( "execution_mode" );
+   tParm[0].set_encoding( ENCODING_LITTLE_ENDIAN );
+
+   mtr_interaction->set_parameters( tParm );
 
    // Since this is an interaction handler generated on the fly, there is no
    // Trick variable to resolve to at run time, which is supplied by the
@@ -301,8 +302,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // Allocate the trick ATTRIBUTES data structure with room for two
    // entries: 1) the 'execution_mode' parameter and 2) an empty entry
    // marking the end of the structure.
-   ATTRIBUTES *mode_attr;
-   mode_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
+   ATTRIBUTES *mode_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
    if ( mode_attr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
@@ -358,11 +358,9 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // in-line, and not via the Trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified Trick
    // name to access the ATTRIBUTES if the trick variable...
-   if ( tParm != NULL ) {
-      tParm[0].initialize( mtr_interaction->get_FOM_name(),
-                           mtr_interaction_handler.get_address_of_interaction_mode(),
-                           static_cast< ATTRIBUTES * >( mode_attr ) );
-   }
+   tParm[0].initialize( mtr_interaction->get_FOM_name(),
+                        mtr_interaction_handler.get_address_of_interaction_mode(),
+                        static_cast< ATTRIBUTES * >( mode_attr ) );
 }
 
 /*!
@@ -371,14 +369,14 @@ void ExecutionControl::setup_interaction_ref_attributes()
 void ExecutionControl::setup_object_RTI_handles()
 {
    ExecutionConfiguration *ExCO = get_execution_configuration();
-   if ( ExCO != NULL ) {
-      this->manager->setup_object_RTI_handles( 1, ExCO );
-   } else {
+   if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_object_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL ExCO!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
+   this->manager->setup_object_RTI_handles( 1, ExCO );
 }
 
 /*!
@@ -1032,19 +1030,20 @@ void ExecutionControl::pre_multi_phase_init_processes()
       errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
              << " ERROR: Unexpected NULL THLA.manager.exec_config object.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
+      return;
+   }
 
-      // Make sure the ExCO has at least a FOM-name to be valid.
-      if ( ExCO->get_FOM_name() == NULL ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object.\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
+   // Make sure the ExCO has at least a FOM-name to be valid.
+   if ( ExCO->get_FOM_name() == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+             << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // The User Must specify a root reference frame.
-   if ( root_ref_frame == NULL ) {
+   if ( this->root_ref_frame == NULL ) {
       // The Master federate and the Root Reference Frame Publisher federate
       // must have the root_ref_frame reference set.
       if ( is_master() || is_root_frame_publisher() ) {
@@ -1382,14 +1381,9 @@ void ExecutionControl::shutdown()
          // Tell the SpaceFOM execution control to announce the shutdown.
          shutdown_mode_announce();
 
-         // Let's pause for a moment to let things propagate through the
-         // federate before tearing things down.
-         long sleep_pad_base_time = Int64BaseTime::to_base_time( get_time_padding() );
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d %s.\n",
-                     __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str() );
-         }
-         Utilities::micro_sleep( sleep_pad_base_time );
+         // Let's pause for a moment (1 second) to let things propagate
+         // through the federation before tearing things down.
+         Utilities::micro_sleep( 1000000 );
       }
 
       // Tell the SpaceFOM execution control to transition to shutdown.
@@ -1414,19 +1408,15 @@ bool ExecutionControl::is_mtr_valid(
       switch ( mtr_value ) {
          case MTR_GOTO_RUN: {
             return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_FREEZE ) );
-            break;
          }
          case MTR_GOTO_FREEZE: {
             return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_RUNNING ) );
-            break;
          }
          case MTR_GOTO_SHUTDOWN: {
             return ( ExCO->current_execution_mode != EXECUTION_MODE_SHUTDOWN );
-            break;
          }
          default: {
             return false;
-            break;
          }
       }
    }
@@ -1706,7 +1696,6 @@ bool ExecutionControl::process_mode_transition_request()
             // called when exiting Freeze.
          }
          return true;
-         break;
       }
       case MTR_GOTO_FREEZE: {
 
@@ -1731,7 +1720,6 @@ bool ExecutionControl::process_mode_transition_request()
             // routine called when entering Freeze.
          }
          return true;
-         break;
       }
       case MTR_GOTO_SHUTDOWN: {
 
@@ -1748,7 +1736,6 @@ bool ExecutionControl::process_mode_transition_request()
          // the TrickHLA::Federate::shutdown() job.
          the_exec->stop( the_exec->get_sim_time() + get_time_padding() );
          return true;
-         break;
       }
       default: {
          // Nothing to do.
@@ -1873,7 +1860,6 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Return that no mode changes occurred.
             return false;
-            break;
          }
       }
    }
@@ -1921,12 +1907,10 @@ bool ExecutionControl::process_execution_control_updates()
 
                // Return that no mode changes occurred.
                return false;
-               break;
             }
          }
          // Return that a mode change occurred.
          return true;
-         break;
       }
       case EXECUTION_CONTROL_INITIALIZING: {
 
@@ -1987,12 +1971,10 @@ bool ExecutionControl::process_execution_control_updates()
 
                // Return that no mode changes occurred.
                return false;
-               break;
             }
          }
          // Return that a mode change occurred.
          return true;
-         break;
       }
       case EXECUTION_CONTROL_RUNNING: {
 
@@ -2070,12 +2052,10 @@ bool ExecutionControl::process_execution_control_updates()
                }
                // Return that no mode changes occurred.
                return false;
-               break;
             }
          }
          // Return that a mode change occurred.
          return true;
-         break;
       }
       case EXECUTION_CONTROL_FREEZE: {
 
@@ -2117,12 +2097,10 @@ bool ExecutionControl::process_execution_control_updates()
                }
                // Return that no mode changes occurred.
                return false;
-               break;
             }
          }
          // Return that a mode change occurred.
          return true;
-         break;
       }
       case EXECUTION_CONTROL_SHUTDOWN: {
 
@@ -2137,7 +2115,6 @@ bool ExecutionControl::process_execution_control_updates()
          }
          // Return that no mode changes occurred.
          return false;
-         break;
       }
       default: {
          // Nothing to do.
@@ -2618,9 +2595,7 @@ void ExecutionControl::exit_freeze()
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
-   ExecutionConfiguration *ExCO;
-
-   ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
+   ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::get_execution_configuration():" << __LINE__
@@ -2742,6 +2717,7 @@ void ExecutionControl::send_root_ref_frame()
       errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
              << " ERROR: Root Reference Frame is not set!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    rrf_obj = root_ref_frame->get_object(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
 
@@ -2907,13 +2883,13 @@ void ExecutionControl::set_least_common_time_step(
                 << " ERROR: Execution Configuration is not an SpaceFOM ExCO."
                 << '\n';
          DebugHandler::terminate_with_message( errmsg.str() );
-      } else {
-
-         // Make sure to set this for both the ExecutionControl and the ExCO.
-         this->least_common_time_step_seconds = lcts;
-         this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
-         ExCO->set_least_common_time_step( lcts );
+         return;
       }
+
+      // Make sure to set this for both the ExecutionControl and the ExCO.
+      this->least_common_time_step_seconds = lcts;
+      this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
+      ExCO->set_least_common_time_step( lcts );
    }
 }
 
@@ -2927,39 +2903,53 @@ void ExecutionControl::refresh_least_common_time_step()
 void ExecutionControl::set_time_padding(
    double t )
 {
-   if ( t < 0.0 ) {
+   if ( t <= 0.0 ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value (" << setprecision( 18 ) << t
-             << " seconds) must be greater than or equal to zero!\n";
+             << " ERROR: Time padding value (" << t
+             << " seconds) must be greater than zero!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    int64_t padding_base_time = Int64BaseTime::to_base_time( t );
 
-   // Time padding needs to be an integer multipile of the LCTS.
+   // At a minimum the Padding time must be >= LCTS.
+   if ( padding_base_time < this->least_common_time_step ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Mode transition padding time ("
+             << padding_base_time << " " << Int64BaseTime::get_units()
+             << ") can not be less than the ExCO Least Common Time Step (LCTS:"
+             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << ")!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Time padding needs to be an integer multiple of the LCTS.
    if ( padding_base_time % this->least_common_time_step != 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value (" << setprecision( 18 ) << t
-             << " seconds) must be an integer multiple of the Least Common Time Step ("
+             << " ERROR: Time padding value ("
+             << padding_base_time << " " << Int64BaseTime::get_units()
+             << ") must be an integer multiple of the Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
              << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // The Master federate padding time must be 3 or more times the Least
-   // Common Time Step (LCTS). This will give commands time to propagate
-   // through the system and still have time for mode transitions.
-   if ( padding_base_time < ( 3 * this->least_common_time_step ) ) {
+   // Common Time Step (LCTS) or two seconds. This will give commands time to
+   // propagate through the system and still have time for mode transitions.
+   if ( ( padding_base_time < Int64BaseTime::to_base_time( 2.0 ) )
+        && ( padding_base_time < ( 3 * this->least_common_time_step ) ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << padding_base_time
-             << " " << Int64BaseTime::get_units()
+             << " ERROR: Mode transition padding time ("
+             << padding_base_time << " " << Int64BaseTime::get_units()
              << ") is not a multiple of 3 or more of the ExCO"
-             << " Least Common Time Step ("
+             << " Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!\n";
+             << ") when the time padding is less than 2 seconds!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

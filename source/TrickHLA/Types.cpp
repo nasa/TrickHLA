@@ -39,38 +39,30 @@ string TrickHLA::execution_control_enum_to_string(
    ExecutionControlEnum const mode )
 {
    switch ( mode ) {
-
-      case EXECUTION_CONTROL_UNINITIALIZED:
+      case EXECUTION_CONTROL_UNINITIALIZED: {
          return "EXECUTION_CONTROL_UNINITIALIZED";
-         break;
-
-      case EXECUTION_CONTROL_INITIALIZING:
+      }
+      case EXECUTION_CONTROL_INITIALIZING: {
          return "EXECUTION_CONTROL_INITIALIZING";
-         break;
-
-      case EXECUTION_CONTROL_RUNNING:
+      }
+      case EXECUTION_CONTROL_RUNNING: {
          return "EXECUTION_CONTROL_RUNNING";
-         break;
-
-      case EXECUTION_CONTROL_FREEZE:
+      }
+      case EXECUTION_CONTROL_FREEZE: {
          return "EXECUTION_CONTROL_FREEZE";
-         break;
-
-      case EXECUTION_CONTROL_RESTART:
+      }
+      case EXECUTION_CONTROL_RESTART: {
          return "EXECUTION_CONTROL_RESTART";
-         break;
-
-      case EXECUTION_CONTROL_RECONFIG:
+      }
+      case EXECUTION_CONTROL_RECONFIG: {
          return "EXECUTION_CONTROL_RECONFIG";
-         break;
-
-      case EXECUTION_CONTROL_SHUTDOWN:
+      }
+      case EXECUTION_CONTROL_SHUTDOWN: {
          return "EXECUTION_CONTROL_SHUTDOWN";
-         break;
-
-      default:
+      }
+      default: {
          return "UNKNOWN TrickHLA Execution Mode";
-         break;
+      }
    }
    return "UNKNOWN TrickHLA Execution Mode";
 }
@@ -78,7 +70,6 @@ string TrickHLA::execution_control_enum_to_string(
 int16_t TrickHLA::execution_control_enum_to_int16(
    ExecutionControlEnum const mode )
 {
-
    return (int16_t)mode;
 }
 
@@ -86,38 +77,30 @@ ExecutionControlEnum TrickHLA::execution_control_int16_to_enum(
    int16_t const int_mode )
 {
    switch ( int_mode ) {
-
-      case 0:
+      case 0: {
          return EXECUTION_CONTROL_UNINITIALIZED;
-         break;
-
-      case 1:
+      }
+      case 1: {
          return EXECUTION_CONTROL_INITIALIZING;
-         break;
-
-      case 2:
+      }
+      case 2: {
          return EXECUTION_CONTROL_RUNNING;
-         break;
-
-      case 3:
+      }
+      case 3: {
          return EXECUTION_CONTROL_FREEZE;
-         break;
-
-      case 4:
+      }
+      case 4: {
          return EXECUTION_CONTROL_RESTART;
-         break;
-
-      case 5:
+      }
+      case 5: {
          return EXECUTION_CONTROL_RECONFIG;
-         break;
-
-      case 6:
+      }
+      case 6: {
          return EXECUTION_CONTROL_SHUTDOWN;
-         break;
-
-      default:
+      }
+      default: {
          return EXECUTION_CONTROL_UNINITIALIZED;
-         break;
+      }
    }
    return EXECUTION_CONTROL_UNINITIALIZED;
 }
@@ -126,38 +109,30 @@ string TrickHLA::mode_transition_enum_to_string(
    ModeTransitionEnum const mode )
 {
    switch ( mode ) {
-
-      case MODE_TRANSITION_UNINITIALIZED:
+      case MODE_TRANSITION_UNINITIALIZED: {
          return "MODE_TRANSITION_UNINITIALIZED";
-         break;
-
-      case MODE_TRANSITION_INITIALIZING:
+      }
+      case MODE_TRANSITION_INITIALIZING: {
          return "MODE_TRANSITION_INITIALIZING";
-         break;
-
-      case MODE_TRANSITION_GOTO_RUN:
+      }
+      case MODE_TRANSITION_GOTO_RUN: {
          return "MODE_TRANSITION_GOTO_RUN";
-         break;
-
-      case MODE_TRANSITION_GOTO_FREEZE:
+      }
+      case MODE_TRANSITION_GOTO_FREEZE: {
          return "MODE_TRANSITION_GOTO_FREEZE";
-         break;
-
-      case MODE_TRANSITION_GOTO_RESTART:
+      }
+      case MODE_TRANSITION_GOTO_RESTART: {
          return "MODE_TRANSITION_GOTO_RESTART";
-         break;
-
-      case MODE_TRANSITION_GOTO_RECONFIG:
+      }
+      case MODE_TRANSITION_GOTO_RECONFIG: {
          return "MODE_TRANSITION_GOTO_RECONFIG";
-         break;
-
-      case MODE_TRANSITION_GOTO_SHUTDOWN:
+      }
+      case MODE_TRANSITION_GOTO_SHUTDOWN: {
          return "MODE_TRANSITION_GOTO_SHUTDOWN";
-         break;
-
-      default:
+      }
+      default: {
          return "UNKNOWN TrickHLA Mode Transition";
-         break;
+      }
    }
    return "UNKNOWN TrickHLA Mode Transition";
 }
@@ -165,7 +140,6 @@ string TrickHLA::mode_transition_enum_to_string(
 int16_t TrickHLA::mode_transition_enum_to_int16(
    ModeTransitionEnum const mode )
 {
-
    return (int16_t)mode;
 }
 
@@ -173,40 +147,31 @@ ModeTransitionEnum TrickHLA::mode_transition_int16_to_enum(
    int16_t const int_mode )
 {
    switch ( int_mode ) {
-
-      case 0:
+      case 0: {
          return MODE_TRANSITION_UNINITIALIZED;
-         break;
-
-      case 1:
+      }
+      case 1: {
          return MODE_TRANSITION_INITIALIZING;
-         break;
-
-      case 2:
+      }
+      case 2: {
          return MODE_TRANSITION_GOTO_RUN;
-         break;
-
-      case 3:
+      }
+      case 3: {
          return MODE_TRANSITION_GOTO_FREEZE;
-         break;
-
-      case 4:
+      }
+      case 4: {
          return MODE_TRANSITION_GOTO_RESTART;
-         break;
-
-      case 5:
+      }
+      case 5: {
          return MODE_TRANSITION_GOTO_RECONFIG;
-         break;
-
-      case 6:
+      }
+      case 6: {
          return MODE_TRANSITION_GOTO_SHUTDOWN;
-         break;
-
-      default:
+      }
+      default: {
          return MODE_TRANSITION_UNINITIALIZED;
-         break;
+      }
    }
-
    return MODE_TRANSITION_UNINITIALIZED;
 }
 
@@ -214,34 +179,27 @@ string TrickHLA::sync_point_state_enum_to_string(
    SyncPtStateEnum const state )
 {
    switch ( state ) {
-
-      case SYNC_PT_STATE_ERROR:
+      case SYNC_PT_STATE_ERROR: {
          return "SYNC_PT_STATE_ERROR";
-         break;
-
-      case SYNC_PT_STATE_KNOWN:
+      }
+      case SYNC_PT_STATE_KNOWN: {
          return "SYNC_PT_STATE_KNOWN";
-         break;
-
-      case SYNC_PT_STATE_REGISTERED:
+      }
+      case SYNC_PT_STATE_REGISTERED: {
          return "SYNC_PT_STATE_REGISTERED";
-         break;
-
-      case SYNC_PT_STATE_ANNOUNCED:
+      }
+      case SYNC_PT_STATE_ANNOUNCED: {
          return "SYNC_PT_STATE_ANNOUNCED";
-         break;
-
-      case SYNC_PT_STATE_ACHIEVED:
+      }
+      case SYNC_PT_STATE_ACHIEVED: {
          return "SYNC_PT_STATE_ACHIEVED";
-         break;
-
-      case SYNC_PT_STATE_SYNCHRONIZED:
+      }
+      case SYNC_PT_STATE_SYNCHRONIZED: {
          return "SYNC_PT_STATE_SYNCHRONIZED";
-         break;
-
-      default:
+      }
+      default: {
          return "SYNC_PT_STATE_UNKNOWN";
-         break;
+      }
    }
    return "SYNC_PT_STATE_UNKNOWN";
 }
@@ -255,36 +213,28 @@ int16_t TrickHLA::sync_point_state_enum_to_int16(
 SyncPtStateEnum TrickHLA::sync_point_state_int16_to_enum(
    int16_t const int_state )
 {
-
    switch ( int_state ) {
-
-      case 0:
+      case 0: {
          return SYNC_PT_STATE_ERROR;
-         break;
-
-      case 1:
+      }
+      case 1: {
          return SYNC_PT_STATE_KNOWN;
-         break;
-
-      case 2:
+      }
+      case 2: {
          return SYNC_PT_STATE_REGISTERED;
-         break;
-
-      case 3:
+      }
+      case 3: {
          return SYNC_PT_STATE_ANNOUNCED;
-         break;
-
-      case 4:
+      }
+      case 4: {
          return SYNC_PT_STATE_ACHIEVED;
-         break;
-
-      case 5:
+      }
+      case 5: {
          return SYNC_PT_STATE_SYNCHRONIZED;
-         break;
-
-      default:
+      }
+      default: {
          return SYNC_PT_STATE_UNKNOWN;
-         break;
+      }
    }
    return SYNC_PT_STATE_UNKNOWN;
 }

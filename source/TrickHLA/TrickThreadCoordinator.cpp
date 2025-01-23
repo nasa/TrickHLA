@@ -688,15 +688,15 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
             summary << thread_id << "\t  ";
 
             switch ( this->thread_state[thread_id] ) {
-               case TrickHLA::THREAD_STATE_DISABLED:
+               case TrickHLA::THREAD_STATE_DISABLED: {
                   summary << "(Disabled thread associated to TrickHLA)";
                   break;
-
-               case TrickHLA::THREAD_STATE_NOT_ASSOCIATED:
+               }
+               case TrickHLA::THREAD_STATE_NOT_ASSOCIATED: {
                   summary << "(Thread not associated to TrickHLA)";
                   break;
-
-               default:
+               }
+               default: {
                   summary << setprecision( 18 )
                           << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
                           << "\t ";
@@ -706,6 +706,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
                      }
                   }
                   break;
+               }
             }
             summary << '\n';
          }
@@ -1443,8 +1444,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                    << " ERROR: For this Master federate, the time padding ("
-                   << setprecision( 18 ) << MPT_sec
-                   << " seconds) is not greater than zero!\n";
+                   << MPT_sec << " seconds) must be greater than zero!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
@@ -1459,19 +1459,34 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                       << " ERROR: For this Master federate, the ExCO Least Common"
-                      << " Time Step (LCTS:" << lcts_base_time << " "
-                      << Int64BaseTime::get_units() << ") is not greater than zero!\n";
+                      << " Time Step (LCTS:"
+                      << lcts_base_time << " " << Int64BaseTime::get_units()
+                      << ") must be greater than zero!\n";
+               DebugHandler::terminate_with_message( errmsg.str() );
+               return false;
+            }
+
+            int64_t const MPT_base_time = Int64BaseTime::to_base_time( MPT_sec );
+
+            // At a minimum the Padding time must be >= LCTS.
+            if ( MPT_base_time < lcts_base_time ) {
+               ostringstream errmsg;
+               errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                      << " ERROR: Mode transition padding time ("
+                      << MPT_base_time << " " << Int64BaseTime::get_units()
+                      << ") can not be less than the ExCO Least Common Time Step (LCTS:"
+                      << lcts_base_time << " " << Int64BaseTime::get_units()
+                      << ")!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                return false;
             }
 
             // Padding time must be an integer multiple of the LCTS.
-            int64_t const MPT_base_time = Int64BaseTime::to_base_time( MPT_sec );
             if ( MPT_base_time % lcts_base_time != 0 ) {
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                      << " ERROR: Mode transition padding time (" << MPT_base_time
-                      << " " << Int64BaseTime::get_units()
+                      << " ERROR: Mode transition padding time ("
+                      << MPT_base_time << " " << Int64BaseTime::get_units()
                       << ") is not an integer multiple of the ExCO"
                       << " Least Common Time Step (LCTS:"
                       << lcts_base_time << " " << Int64BaseTime::get_units()
@@ -1481,18 +1496,19 @@ bool const TrickThreadCoordinator::verify_time_constraints(
             }
 
             // The Master federate padding time must be at least 3 or more
-            // times the Least Common Time Step (LCTS). This will give
-            // commands time to propagate through the system and still have
-            // time for mode transitions.
-            if ( MPT_base_time < ( 3 * lcts_base_time ) ) {
+            // times the Least Common Time Step (LCTS) or two seconds. This
+            // will give commands time to propagate through the system and
+            // still have time for mode transitions.
+            if ( ( MPT_base_time < Int64BaseTime::to_base_time( 2.0 ) )
+                 && ( MPT_base_time < ( 3 * lcts_base_time ) ) ) {
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                      << " ERROR: Mode transition padding time (" << MPT_base_time
-                      << " " << Int64BaseTime::get_units()
+                      << " ERROR: Mode transition padding time ("
+                      << MPT_base_time << " " << Int64BaseTime::get_units()
                       << ") is not a multiple of 3 or more of the ExCO"
                       << " Least Common Time Step (LCTS:"
                       << lcts_base_time << " " << Int64BaseTime::get_units()
-                      << ")!\n";
+                      << ") when the time padding is less than 2 seconds!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                return false;
             }

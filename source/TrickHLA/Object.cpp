@@ -1780,20 +1780,23 @@ void Object::send_requested_data(
    // Do lag compensation.
    if ( lag_comp != NULL ) {
       switch ( lag_comp_type ) {
-         case LAG_COMPENSATION_SEND_SIDE:
+         case LAG_COMPENSATION_SEND_SIDE: {
             lag_comp->send_lag_compensation();
             break;
-         case LAG_COMPENSATION_RECEIVE_SIDE:
+         }
+         case LAG_COMPENSATION_RECEIVE_SIDE: {
             // There are locally owned attributes that are published by this
             // federate that we need to send even tough Received-side lag
             // compensation has been configured. Maybe a result of attribute
             // ownership transfer.
             lag_comp->bypass_send_lag_compensation();
             break;
+         }
          case LAG_COMPENSATION_NONE:
-         default:
+         default: {
             lag_comp->bypass_send_lag_compensation();
             break;
+         }
       }
    }
 
@@ -2040,20 +2043,23 @@ void Object::send_cyclic_and_requested_data(
    // Do lag compensation.
    if ( lag_comp != NULL ) {
       switch ( lag_comp_type ) {
-         case LAG_COMPENSATION_SEND_SIDE:
+         case LAG_COMPENSATION_SEND_SIDE: {
             lag_comp->send_lag_compensation();
             break;
-         case LAG_COMPENSATION_RECEIVE_SIDE:
+         }
+         case LAG_COMPENSATION_RECEIVE_SIDE: {
             // There are locally owned attributes that are published by this
             // federate that we need to send even tough Received-side lag
             // compensation has been configured. Maybe a result of attribute
             // ownership transfer.
             lag_comp->bypass_send_lag_compensation();
             break;
+         }
          case LAG_COMPENSATION_NONE:
-         default:
+         default: {
             lag_comp->bypass_send_lag_compensation();
             break;
+         }
       }
    }
 
@@ -2300,12 +2306,13 @@ void Object::send_zero_lookahead_and_requested_data(
    // we call the bypass function.
    if ( lag_comp != NULL ) {
       switch ( lag_comp_type ) {
-         case LAG_COMPENSATION_NONE:
+         case LAG_COMPENSATION_NONE: {
             lag_comp->bypass_send_lag_compensation();
             break;
+         }
          case LAG_COMPENSATION_SEND_SIDE:
          case LAG_COMPENSATION_RECEIVE_SIDE:
-         default:
+         default: {
             ostringstream errmsg;
             errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                    << " ERROR: For object '" << this->name << "', detected a"
@@ -2318,6 +2325,7 @@ void Object::send_zero_lookahead_and_requested_data(
                    << " configured object attributes.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
+         }
       }
    }
 
@@ -2579,12 +2587,13 @@ void Object::send_blocking_io_data()
    // specified we call the bypass function.
    if ( lag_comp != NULL ) {
       switch ( lag_comp_type ) {
-         case LAG_COMPENSATION_NONE:
+         case LAG_COMPENSATION_NONE: {
             lag_comp->bypass_send_lag_compensation();
             break;
+         }
          case LAG_COMPENSATION_SEND_SIDE:
          case LAG_COMPENSATION_RECEIVE_SIDE:
-         default:
+         default: {
             ostringstream errmsg;
             errmsg << "Object::send_blocking_io_data():" << __LINE__
                    << " ERROR: For object '" << name << "', detected a"
@@ -2597,6 +2606,7 @@ void Object::send_blocking_io_data()
                    << " configured object attributes.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
             break;
+         }
       }
    }
 
@@ -2896,20 +2906,23 @@ void Object::receive_cyclic_data()
          // Do lag compensation.
          if ( lag_comp != NULL ) {
             switch ( lag_comp_type ) {
-               case LAG_COMPENSATION_RECEIVE_SIDE:
+               case LAG_COMPENSATION_RECEIVE_SIDE: {
                   lag_comp->receive_lag_compensation();
                   break;
-               case LAG_COMPENSATION_SEND_SIDE:
+               }
+               case LAG_COMPENSATION_SEND_SIDE: {
                   // There are remotely owned attributes that are subscribed by
                   // this federate that we need to receive even tough Send-side
                   // lag compensation has been configured. Maybe a result of
                   // attribute ownership transfer.
                   lag_comp->bypass_receive_lag_compensation();
                   break;
+               }
                case LAG_COMPENSATION_NONE:
-               default:
+               default: {
                   lag_comp->bypass_receive_lag_compensation();
                   break;
+               }
             }
          }
 
@@ -2975,12 +2988,13 @@ void Object::receive_zero_lookahead_data()
       // specified we call the bypass function.
       if ( lag_comp != NULL ) {
          switch ( lag_comp_type ) {
-            case LAG_COMPENSATION_NONE:
+            case LAG_COMPENSATION_NONE: {
                lag_comp->bypass_receive_lag_compensation();
                break;
+            }
             case LAG_COMPENSATION_SEND_SIDE:
             case LAG_COMPENSATION_RECEIVE_SIDE:
-            default:
+            default: {
                ostringstream errmsg;
                errmsg << "Object::receive_zero_lookahead_data():" << __LINE__
                       << " ERROR: For object '" << name << "', detected a"
@@ -2993,6 +3007,7 @@ void Object::receive_zero_lookahead_data()
                       << " configured object attributes.\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                break;
+            }
          }
       }
 
@@ -3054,12 +3069,13 @@ void Object::receive_blocking_io_data()
       // specified we call the bypass function.
       if ( lag_comp != NULL ) {
          switch ( lag_comp_type ) {
-            case LAG_COMPENSATION_NONE:
+            case LAG_COMPENSATION_NONE: {
                lag_comp->bypass_receive_lag_compensation();
                break;
+            }
             case LAG_COMPENSATION_SEND_SIDE:
             case LAG_COMPENSATION_RECEIVE_SIDE:
-            default:
+            default: {
                ostringstream errmsg;
                errmsg << "Object::receive_blocking_io_data():" << __LINE__
                       << " ERROR: For object '" << name << "', detected a"
@@ -3072,6 +3088,7 @@ void Object::receive_blocking_io_data()
                       << " configured object attributes.\n";
                DebugHandler::terminate_with_message( errmsg.str() );
                break;
+            }
          }
       }
 
