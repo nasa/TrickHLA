@@ -90,9 +90,10 @@ void DebugHandler::set(
 }
 
 void DebugHandler::terminate_with_message(
-   string const &message )
+   string const &message,
+   int const     exit_code )
 {
    send_hs( stderr, message.c_str() );
    exec_terminate( __FILE__, message.c_str() );
-   exit( 1 );
+   exit( exit_code );
 }

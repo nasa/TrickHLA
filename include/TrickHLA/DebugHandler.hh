@@ -75,8 +75,10 @@ class DebugHandler
    static void set( DebugLevelEnum const level, DebugSourceEnum const code );
 
    /*! @brief Print the message then shutdown by calling exec_terminate().
-    *  @param message Error message to print to standard error. */
-   static void terminate_with_message( std::string const &message );
+    *  @param message Error message to print to standard error.
+    *  @param exit_code the exit code to use with a default of 1. */
+   static void terminate_with_message( std::string const &message,
+                                       int const          exit_code = 1 );
 
   public:
    static DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE

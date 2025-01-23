@@ -1381,14 +1381,9 @@ void ExecutionControl::shutdown()
          // Tell the SpaceFOM execution control to announce the shutdown.
          shutdown_mode_announce();
 
-         // Let's pause for a moment to let things propagate through the
-         // federate before tearing things down.
-         long sleep_pad_base_time = Int64BaseTime::to_base_time( get_time_padding() );
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d %s.\n",
-                     __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str() );
-         }
-         Utilities::micro_sleep( sleep_pad_base_time );
+         // Let's pause for a moment (1 second) to let things propagate
+         // through the federate before tearing things down.
+         Utilities::micro_sleep( 1000000 );
       }
 
       // Tell the SpaceFOM execution control to transition to shutdown.
