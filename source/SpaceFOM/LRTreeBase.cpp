@@ -99,15 +99,15 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
    // Make sure that the node is not already in the tree.
    if ( this->has_node( node_ptr ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         send_hs( stdout, "LRTreeBase::add_node():%d ERROR: Node \'%s\' is already in the tree.\n",
+         send_hs( stdout, "LRTreeBase::add_node():%d WARNING: Node \'%s\' is already in the tree.\n",
                   __LINE__, node_ptr->name );
       }
       return ( false );
    }
 
-   // Check for NULL node name.  The node must have a name.
+   // Check for NULL node name. The node must have a name.
    if ( node_ptr->name == NULL ) {
-      send_hs( stdout, "LRTreeBase::add_node():%d ERROR: NULL node name.\n",
+      send_hs( stdout, "LRTreeBase::add_node():%d WARNING: NULL node name.\n",
                __LINE__ );
       return ( false );
    }
@@ -115,7 +115,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
    // Make sure that the node name is unique.
    if ( this->has_node( node_ptr->name ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         send_hs( stdout, "LRTreeBase::add_node():%d ERROR: Node \'%s\' duplicate name is already in the tree.\n",
+         send_hs( stdout, "LRTreeBase::add_node():%d WARNING: Node \'%s\' duplicate name is already in the tree.\n",
                   __LINE__, node_ptr->name );
       }
       return ( false );
@@ -211,7 +211,7 @@ bool LRTreeBase::check_tree()
       // Check for node ID consistency.
       if ( node_ptr->node_id != iinc ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-            send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Node ID (%d) mismatch with index [%d]: \'%s\'!\n",
+            send_hs( stdout, "LRTreeBase::check_tree():%d WARNING: Node ID (%d) mismatch with index [%d]: \'%s\'!\n",
                      __LINE__, iinc, node_ptr->node_id, node_ptr->name );
          }
          // Mark check state false since node ID does not match index.
@@ -224,7 +224,7 @@ bool LRTreeBase::check_tree()
          // Check is this is marked as a root node.
          if ( !( node_ptr->is_root_node ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-               send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Root node not marked as root node: \'%s\'!\n",
+               send_hs( stdout, "LRTreeBase::check_tree():%d WARNING: Root node not marked as root node: \'%s\'!\n",
                         __LINE__, node_ptr->name );
             }
             // Mark check state false since this root node is not marked as a root node.
@@ -234,7 +234,7 @@ bool LRTreeBase::check_tree()
          // Check for a single unparented root node.
          if ( found_root ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-               send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: More than one root node found: \'%s\'!\n",
+               send_hs( stdout, "LRTreeBase::check_tree():%d WARNING: More than one root node found: \'%s\'!\n",
                         __LINE__, node_ptr->name );
             }
             // Mark check state false since we already found a root node.
@@ -257,7 +257,7 @@ bool LRTreeBase::check_tree()
             }
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-               send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Parent \'%s\' not found for node \'%s\'!\n",
+               send_hs( stdout, "LRTreeBase::check_tree():%d WARNING: Parent \'%s\' not found for node \'%s\'!\n",
                         __LINE__, node_ptr->parent->name, node_ptr->name );
             }
             // Mark check state false since parent node is not in tree.
@@ -267,7 +267,7 @@ bool LRTreeBase::check_tree()
          // Make sure this node is NOT marked as a root node.
          if ( node_ptr->is_root_node ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-               send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Branch node marked as root node: \'%s\'!\n",
+               send_hs( stdout, "LRTreeBase::check_tree():%d WARNING: Branch node marked as root node: \'%s\'!\n",
                         __LINE__, node_ptr->name );
             }
             // Mark check state false since branch node marked as root node.
@@ -277,7 +277,7 @@ bool LRTreeBase::check_tree()
          // Need to check to make sure that tree is acyclic.
          if ( this->is_cyclic( node_ptr ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-               send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: Branch node is part of a cyclic segment: \'%s\'!\n",
+               send_hs( stdout, "LRTreeBase::check_tree():%d WARNING: Branch node is part of a cyclic segment: \'%s\'!\n",
                         __LINE__, node_ptr->name );
             }
             // Mark check state false since branch node marked as root node.
@@ -289,7 +289,7 @@ bool LRTreeBase::check_tree()
    // Return false if no root node found.
    if ( !found_root ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         send_hs( stdout, "LRTreeBase::check_tree():%d ERROR: No root node found!\n",
+         send_hs( stdout, "LRTreeBase::check_tree():%d WARNING: No root node found!\n",
                   __LINE__ );
       }
       // Mark check state false since no root node was found.
@@ -314,7 +314,7 @@ bool LRTreeBase::has_node( char const *name )
 {
    if ( name == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         send_hs( stdout, "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
+         send_hs( stdout, "LRTreeBase::has_node():%d WARNING: NULL node name.\n",
                   __LINE__ );
       }
       return ( false );
@@ -362,7 +362,7 @@ LRTreeNodeBase *LRTreeBase::find_node( unsigned int const node_id )
 LRTreeNodeBase *LRTreeBase::find_node( char const *name )
 {
    if ( name == NULL ) {
-      send_hs( stdout, "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
+      send_hs( stdout, "LRTreeBase::has_node():%d WARNING: NULL node name.\n",
                __LINE__ );
       return ( NULL );
    }
@@ -477,7 +477,7 @@ bool LRTreeBase::allocate_paths()
    if ( this->paths == NULL ) {
 
       // Allocation failed.
-      send_hs( stdout, "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix rows.\n",
+      send_hs( stdout, "LRTreeBase::allocate_paths():%d WARNING: Failed allocation of paths matrix rows.\n",
                __LINE__ );
       return ( false );
 
@@ -492,7 +492,7 @@ bool LRTreeBase::allocate_paths()
 
          // Check for column allocation failure.
          if ( this->paths[iinc] == NULL ) {
-            send_hs( stdout, "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix columns for row %d.\n",
+            send_hs( stdout, "LRTreeBase::allocate_paths():%d WARNING: Failed allocation of paths matrix columns for row %d.\n",
                      __LINE__, iinc );
             return ( false );
          }
@@ -571,7 +571,7 @@ LRTreeNodeBase *LRTreeBase::find_root()
          // Check for a single unparented root node.
          if ( found_root ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-               send_hs( stdout, "LRTreeBase::find_root():%d ERROR: More than one root node found: \'%s\'!\n",
+               send_hs( stdout, "LRTreeBase::find_root():%d WARNING: More than one root node found: \'%s\'!\n",
                         __LINE__, node_ptr->name );
             }
             // Return NULL since we already found a root node.
@@ -591,7 +591,7 @@ LRTreeNodeBase *LRTreeBase::find_root()
    // Return NULL if no root node found.
    if ( !found_root ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         send_hs( stdout, "LRTreeBase::find_root():%d ERROR: No root node found!\n",
+         send_hs( stdout, "LRTreeBase::find_root():%d WARNING: No root node found!\n",
                   __LINE__ );
       }
       return ( NULL );
@@ -694,7 +694,7 @@ LRTreeNodeVector *LRTreeBase::get_path_to_root( LRTreeNodeBase const *node )
 
    // Protect against NULL pointers.
    if ( node == NULL ) {
-      send_hs( stdout, "LRTreeBase::get_path_to_root():%d Error: NULL node pointer.\n",
+      send_hs( stdout, "LRTreeBase::get_path_to_root():%d WARNING: NULL node pointer.\n",
                __LINE__ );
       return ( NULL );
    }
@@ -759,7 +759,7 @@ LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
             // Check for an aberrant condition where the common node isn't found.
             // This should NEVER happen!
             if ( down_itr == down_path->end() ) {
-               send_hs( stdout, "LRTreeBase::find_path():%d Error: Failed to find common node in down path search.\n",
+               send_hs( stdout, "LRTreeBase::find_path():%d WARNING: Failed to find common node in down path search.\n",
                         __LINE__ );
                return_path->clear();
                delete return_path;
@@ -802,11 +802,11 @@ LRTreeNodeVector *LRTreeBase::find_path( LRTreeNodeBase const *local,
    // Protect against NULL pointers.
    if ( ( local == NULL ) || ( wrt == NULL ) ) {
       if ( local == NULL ) {
-         send_hs( stdout, "LRTreeBase::find_path():%d Error: NULL \'local\' pointer.\n",
+         send_hs( stdout, "LRTreeBase::find_path():%d WARNING: NULL \'local\' pointer.\n",
                   __LINE__ );
       }
       if ( wrt == NULL ) {
-         send_hs( stdout, "LRTreeBase::find_path():%d Error: NULL \'wrt\' pointer.\n",
+         send_hs( stdout, "LRTreeBase::find_path():%d WARNING: NULL \'wrt\' pointer.\n",
                   __LINE__ );
       }
       return ( NULL );
@@ -855,11 +855,11 @@ LRTreeNodeBase *LRTreeBase::find_common_node( LRTreeNodeVector *up_path,
    // Protect against NULL pointers.
    if ( ( up_path == NULL ) || ( down_path == NULL ) ) {
       if ( up_path == NULL ) {
-         send_hs( stdout, "LRTreeBase::find_common_node():%d Error: NULL \'up_path\' pointer.\n",
+         send_hs( stdout, "LRTreeBase::find_common_node():%d WARNING: NULL \'up_path\' pointer.\n",
                   __LINE__ );
       }
       if ( down_path == NULL ) {
-         send_hs( stdout, "LRTreeBase::find_common_node():%d Error: NULL \'down_path\' pointer.\n",
+         send_hs( stdout, "LRTreeBase::find_common_node():%d WARNING: NULL \'down_path\' pointer.\n",
                   __LINE__ );
       }
       return ( NULL );

@@ -96,7 +96,7 @@ ExecutionControlBase::ExecutionControlBase()
      use_preset_master( false ),
      master( false ),
      multiphase_init_sync_points( NULL ),
-     time_padding( 2.0 ),
+     time_padding( 0.0 ),
      enable_least_commong_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
@@ -129,7 +129,7 @@ ExecutionControlBase::ExecutionControlBase(
      use_preset_master( false ),
      master( false ),
      multiphase_init_sync_points( NULL ),
-     time_padding( 2.0 ),
+     time_padding( 0.0 ),
      enable_least_commong_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
@@ -240,6 +240,22 @@ void ExecutionControlBase::initialize()
    // Reset the master flag if it is not preset by the user.
    if ( !is_master_preset() ) {
       set_master( false );
+   }
+
+   // If the padding time is not set then automatically adjust it
+   // to be an integer multiple of the LCTS.
+   if ( this->time_padding <= 0.0 ) {
+      if ( this->least_common_time_step > 0 ) {
+
+         int64_t const pad_base_time = Int64BaseTime::to_base_time( THLA_PADDING_DEFAULT );
+
+         // Set a padding time that is around 0.5 seconds that is also an
+         // integer multiple of the LCTS.
+         set_time_padding( Int64BaseTime::to_seconds(
+            this->least_common_time_step * ( ( pad_base_time / this->least_common_time_step ) + 1 ) ) );
+      } else {
+         set_time_padding( THLA_PADDING_DEFAULT );
+      }
    }
 
    // Verify the time constraints for the federate.

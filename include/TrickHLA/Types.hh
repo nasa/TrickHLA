@@ -52,6 +52,9 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
+// Default/desired padding time in seconds.
+#define THLA_PADDING_DEFAULT 0.5
+
 namespace TrickHLA
 {
 

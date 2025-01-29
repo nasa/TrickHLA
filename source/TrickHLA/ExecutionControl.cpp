@@ -125,8 +125,7 @@ void ExecutionControl::initialize()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type()
-          << "'\n";
+          << " Initialization-Scheme:'" << get_type() << "'\n";
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -200,6 +199,15 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // the "Master" federate or not.
    execution_configuration->set_master( is_master() );
 
+   // The Master federate must have a padding time set.
+   if ( is_master() && ( get_time_padding() <= 0.0 ) ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+             << " ERROR: For this Master federate, the time padding ("
+             << get_time_padding() << " seconds) must be greater than zero!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // Verify the federate time constraints.
    if ( !federate->verify_time_constraints() ) {
       ostringstream errmsg;
@@ -208,7 +216,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       // Initialize the MOM interface handles.
       federate->initialize_MOM_handles();
    }
@@ -513,6 +521,23 @@ void ExecutionControl::set_time_padding( double t )
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " "
              << Int64BaseTime::get_units() << ")!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // The Master federate padding time must be 3 or more times the Least
+   // Common Time Step (LCTS) or two seconds. This will give commands time to
+   // propagate through the system and still have time for mode transitions.
+   if ( ( padding_base_time < Int64BaseTime::to_base_time( THLA_PADDING_DEFAULT ) )
+        && ( padding_base_time < ( 3 * this->least_common_time_step ) ) ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Padding time ("
+             << padding_base_time << " " << Int64BaseTime::get_units()
+             << ") is not a multiple of 3 or more of the ExCO"
+             << " Least Common Time Step (LCTS:"
+             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << ") when the time padding is less than "
+             << THLA_PADDING_DEFAULT << " seconds!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
