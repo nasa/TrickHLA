@@ -229,7 +229,6 @@ federate.add_known_federate( True, "FED_2")
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_10_NANOSECONDS )
 federate.set_lookahead_time( 0.1 )
 federate.set_least_common_time_step( 0.1 )
-federate.set_time_padding( 3 * 0.1 )
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 

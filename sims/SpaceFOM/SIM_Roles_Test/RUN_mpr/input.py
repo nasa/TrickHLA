@@ -254,9 +254,6 @@ federate.set_lookahead_time( 0.250 )
 # federation execution.
 federate.set_least_common_time_step( 0.250 )
 
-# Set the amount of seconds used to 'pad' when mode transitions occur.
-federate.set_time_padding( 1.0 )
-
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
