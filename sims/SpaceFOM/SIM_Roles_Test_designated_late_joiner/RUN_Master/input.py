@@ -246,9 +246,6 @@ federate.set_least_common_time_step( 0.250 )
 # Master federate. (LCTS >= RT) && (LCTS % RT = 0)
 trick.exec_set_software_frame( 0.250 )
 
-# Set the amount of seconds used to 'pad' mode transitions.
-federate.set_time_padding( 1.0 )
-
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )

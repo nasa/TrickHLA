@@ -32,7 +32,7 @@ class TrickHLAFederateConfig( object ):
    lcts = 1.0
    
    # Time padding for mode transitions, in seconds.
-   time_padding = 3.0
+   time_padding = 0.0
    
    # S_define name for the ExecutionConfiguration object.
    config_S_define_name = None

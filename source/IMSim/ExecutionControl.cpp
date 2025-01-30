@@ -188,8 +188,7 @@ void ExecutionControl::initialize()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "IMSim::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type()
-          << "'\n";
+          << " Initialization-Scheme:'" << get_type() << "'\n";
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -304,6 +303,15 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( !is_master_preset() ) {
       set_master( federate->is_federation_created_by_federate() );
       execution_configuration->set_master( is_master() );
+   }
+
+   // The Master federate must have a padding time set.
+   if ( is_master() && ( get_time_padding() <= 0.0 ) ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+             << " ERROR: For this Master federate, the time padding ("
+             << get_time_padding() << " seconds) must be greater than zero!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Verify the federate time constraints.

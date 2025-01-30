@@ -165,8 +165,7 @@ void ExecutionControl::initialize()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type()
-          << "'\n";
+          << " Initialization-Scheme:'" << get_type() << "'\n";
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -1073,6 +1072,15 @@ void ExecutionControl::pre_multi_phase_init_processes()
                 << ") is not equal to ExCO LCTS ("
                 << ExCO->get_least_common_time_step() << " " << Int64BaseTime::get_units()
                 << ")!\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // The Master federate must have a padding time set.
+      if ( get_time_padding() <= 0.0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+                << " ERROR: For this Master federate, the time padding ("
+                << get_time_padding() << " seconds) must be greater than zero!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -2940,7 +2948,7 @@ void ExecutionControl::set_time_padding(
    // The Master federate padding time must be 3 or more times the Least
    // Common Time Step (LCTS) or two seconds. This will give commands time to
    // propagate through the system and still have time for mode transitions.
-   if ( ( padding_base_time < Int64BaseTime::to_base_time( 2.0 ) )
+   if ( ( padding_base_time < Int64BaseTime::to_base_time( THLA_PADDING_DEFAULT ) )
         && ( padding_base_time < ( 3 * this->least_common_time_step ) ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
@@ -2949,7 +2957,8 @@ void ExecutionControl::set_time_padding(
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ") when the time padding is less than 2 seconds!\n";
+             << ") when the time padding is less than "
+             << THLA_PADDING_DEFAULT << " seconds!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
