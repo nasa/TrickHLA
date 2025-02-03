@@ -9,11 +9,33 @@ expert. The TrickHLA software is data driven and provides a simple Application
 Programming Interface (API) making it relatively easy to take an existing Trick 
 simulation and make it an HLA distributed simulation.
 
+## Student Work
+
+This fork is just for fun to explore the code and find a way to keep moving
+forward until we have RTI licenses!
+
 ## Installing, Building, and Running:
 
 These instructions will walk you through the process of installing TrickHLA on 
 your computer. Instructions are also provided for building an example two 
 Federate simulation and then running it.
+
+### Apple Silicon
+
+Some exports to put in your .zshrc (exact values will depend on paths to repos on your machine, whether you've installed packages with Homebrew or something else, etc):
+
+```
+export PYTHON_VERSION=3
+export RTI_HOME="$HOME/Developer/openrti-0.11.0"
+export RTI_VENDOR="OpenRTI_HLA"
+export TRICK_CXXFLAGS="-fsanitize=address -g -I/opt/homebrew/include -L/opt/homebrew/lib -Wno-unused-command-line-argument"
+export TRICK_CFLAGS="-g -I/opt/homebrew/include -L/opt/homebrew/lib -Wno-unused-command-line-argument"
+export TRICK_LDFLAGS="-fsanitize=address -g -L/opt/homebrew/lib"
+export TRICK_EXCLUDE="/opt/homebrew"
+export TRICK_HOME="$HOME/Developer/trick"
+export TRICKHLA_HOME="$HOME/Developer/TrickHLA"
+export PATH="$TRICK_HOME/bin:$PATH"
+```
 
 ### Dependencies
 

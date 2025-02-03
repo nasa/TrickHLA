@@ -27,6 +27,9 @@ else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
    HLA_STANDARD = IEEE_1516_2010
 else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
    HLA_STANDARD = IEEE_1516_2010
+# ERAU: Adding support for OpenRTI
+else ifeq ($(RTI_VENDOR),OpenRTI_HLA)
+   HLA_STANDARD = IEEE_1516_2010
 else
    $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or MAK_HLA_Evolved.${RESET_TXT})
 endif
@@ -54,6 +57,11 @@ else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
    RTI_INCLUDE    =  ${RTI_HOME}/include/HLA1516E
    TRICK_CFLAGS   += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
+# ERAU: Adding support for OpenRTI
+else ifeq ($(RTI_VENDOR),OpenRTI_HLA)
+   RTI_INCLUDE    =  ${RTI_HOME}/include/rti1516e
+   TRICK_CFLAGS   += -DRTI_VENDOR=OpenRTI_HLA -I${RTI_INCLUDE}
+   TRICK_CXXFLAGS += -DRTI_VENDOR=OpenRTI_HLA -I${RTI_INCLUDE}
 else
    $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or MAK_HLA_Evolved.${RESET_TXT})
 endif
@@ -211,6 +219,11 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       # simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
+   # ERAU: Adding support for OpenRTI
+   else ifeq ($(RTI_VENDOR),OpenRTI_HLA)
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Using OpenRTI)
+      TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -lOpenRTI -lrti1516e -lfedtime1516e -Wl,-rpath,${RTI_HOME}/lib
+
    else
       $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify Pitch_HLA_4 or Pitch_HLA_Evolved.${RESET_TXT})
    endif
@@ -334,6 +347,9 @@ else
 
    else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
       TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -lrti1516e64 -lfedtime1516e64
+   # ERAU: Adding support for OpenRTI
+   else ifeq ($(RTI_VENDOR),OpenRTI_HLA)
+      TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -lOpenRTI -lrti1516e -lfedtime1516e -v -Wl,-rpath,${RTI_HOME}/lib
    else
       $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or MAK_HLA_Evolved.${RESET_TXT})
    endif
