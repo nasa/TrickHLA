@@ -110,6 +110,34 @@ bool QuaternionData::operator!=(
    return ( !( this->is_equal( rhs ) ) );
 }
 
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::print_data( std::ostream &stream )
+{
+   double euler_angles[3];
+
+   // Compute the attitude Euler angles.
+   get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
+
+   // Set the print precision.
+   stream.precision( 15 );
+
+   stream << "\tattitude (s,v): "
+          << "\t\t" << scalar << "; "
+          << "\t\t" << vector[0] << ", "
+          << "\t\t" << vector[1] << ", "
+          << "\t\t" << vector[2] << '\n';
+   stream << "\tattitude (RPY){deg}: "
+          << "\t\t" << euler_angles[0] << ", "
+          << "\t\t" << euler_angles[1] << ", "
+          << "\t\t" << euler_angles[2] << '\n';
+
+   return;
+
+}
+
 /*!
  * @job_class{scheduled}
  */

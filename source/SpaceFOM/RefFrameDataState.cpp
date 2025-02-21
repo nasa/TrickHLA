@@ -346,3 +346,35 @@ bool RefFrameDataState::transform_to_child(
 
    return ( false );
 }
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameDataState::print_data( std::ostream &stream )
+{
+   double euler_angles[3];
+
+   // Compute the attitude Euler angles.
+   state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
+
+   // Set the print precision.
+   stream.precision( 15 );
+
+   stream << "\tposition: "
+          << "\t\t" << state.pos[0] << ", "
+          << "\t\t" << state.pos[1] << ", "
+          << "\t\t" << state.pos[2] << '\n';
+   stream << "\tvelocity: "
+          << "\t\t" << state.vel[0] << ", "
+          << "\t\t" << state.vel[1] << ", "
+          << "\t\t" << state.vel[2] << '\n';
+   state.att.print_data( stream );
+   stream << "\tangular velocity: "
+          << "\t\t" << state.ang_vel[0] << ", "
+          << "\t\t" << state.ang_vel[1] << ", "
+          << "\t\t" << state.ang_vel[2] << '\n';
+
+   return;
+
+}
