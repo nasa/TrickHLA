@@ -19,6 +19,9 @@ NASA, Johnson Space Center\n
 
 @python_module{SpaceFOM}
 
+@tldh
+@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityData.cpp}
+
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, July 2023, --, Initial version }
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class.}
@@ -51,6 +54,26 @@ class PhysicalEntityData
    double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
    QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
+
+   // Default constructor.
+   PhysicalEntityData();
+
+   // Copy constructor.
+   /*! @brief Copy constructor for PhysicalEntityData class.
+    *  @param source Source data to copy from. */
+   PhysicalEntityData( PhysicalEntityData const &source );
+
+   // Destructor.
+   /*! @brief Destructor for the SpaceFOM PhysicalEntityData class. */
+   virtual ~PhysicalEntityData();
+
+   /*! @brief Assignment operator for PhysicalEntityData class.
+    *  @param rhs Right operand data to copy from. */
+   virtual PhysicalEntityData &operator=( PhysicalEntityData const &rhs );
+
+   /*! @brief Copy the PhysicalEntityData.
+    *  @param source Source PhysicalEntityData to copy from. */
+   virtual void copy( PhysicalEntityData const &source );
 };
 
 } // namespace SpaceFOM

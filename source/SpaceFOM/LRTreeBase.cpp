@@ -430,7 +430,16 @@ void LRTreeBase::print_paths( std::ostream &stream )
                   for ( unsigned int kinc = 0; kinc < path_size; ++kinc ) {
                      stream << paths[iinc][jinc][kinc]->node_id;
                      if ( kinc < path_size - 1 ) {
-                        stream << ", ";
+                        // stream << ", ";
+                        if ( paths[iinc][jinc][kinc + 1]->parent != NULL ) {
+                           if ( paths[iinc][jinc][kinc + 1]->parent->node_id == paths[iinc][jinc][kinc]->node_id ) {
+                              stream << " > ";
+                           } else {
+                              stream << " < ";
+                           }
+                        } else {
+                           stream << " < ";
+                        }
                      }
                   }
                } else {
@@ -602,50 +611,56 @@ LRTreeNodeBase *LRTreeBase::find_root()
  */
 bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
 {
-   unsigned int            level = 0;
-   unsigned int            num_nodes;
-   bool                    not_acyclic = false;
-   LRTreeNodeSet           path_set;
-   LRTreeNodeSet::iterator path_pos;
-   LRTreeNodeBase const   *current_node = node;
+   unsigned int node_id;
+   unsigned int level = 0;
+   unsigned int num_nodes;
+   bool         cyclic = false;
+
+   LRTreeNodeBase const *current_node = node;
+
+   // Check for degenerate case.
+   if ( node == NULL ) {
+      send_hs( stdout, "LRTreeBase::is_cyclic():%d ERROR: NULL node pointer!\n", __LINE__ );
+      return( true );
+   }
+
+   // Get the node ID for this node.
+   node_id = node->node_id;
+
 
    // Get the number of nodes in the tree.
    num_nodes = this->nodes.size();
 
+   // Crawl up the tree using parents looking for a repeat of this node ID.
+   // The crawl will end when one of these three conditions are meet:
+   // - Check for root node: cyclic = false
+   // - Find a repeat node: cyclic = true
+   // - Limit iterations to the total number of nodes: cyclic = false
    while ( level < num_nodes ) {
 
-      // Check if the current node is in the path set.
-      // If so, there is a cyclic relationship.
-      path_pos = path_set.find( current_node );
-      if ( path_pos == path_set.end() ) {
-         not_acyclic = true;
+      // Check for root node.
+      // If this is a root node, we're done.
+      if ( current_node->parent == NULL ) {
          break;
       }
 
-      // Add this node to the path set.
-      path_set.insert( current_node );
+      // Set the current node to parent.
+      // Move up the tree.
+      current_node = current_node->parent;
 
-      // Check to see if the parent is NULL.
-      // If so, this is a root node and we are done.
-      if ( node->parent != NULL ) {
-         path_set.insert( node->parent );
-      } else {
+      // Check for repeat node.
+      // If we find a repeated node, we're done.
+      if ( current_node->node_id == node_id ) {
+         cyclic = true;
          break;
       }
 
-      // Increment the path level.
+      // Increment the tree node level count.
       level++;
+
    }
 
-   // Check to see if we ran off the end of the node list.
-   if ( level >= num_nodes ) {
-      not_acyclic = true;
-   }
-
-   // Clear the path_set before leaving.
-   path_set.clear();
-
-   return ( not_acyclic );
+   return ( cyclic );
 }
 
 /*
@@ -747,7 +762,7 @@ LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
                }
             }
 
-            // Check for an aberant condition where the common node isn't found.
+            // Check for an aberrant condition where the common node isn't found.
             // This should NEVER happen!
             if ( down_itr == down_path->end() ) {
                send_hs( stdout, "LRTreeBase::find_path():%d WARNING: Failed to find common node in down path search.\n",

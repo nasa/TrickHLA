@@ -113,6 +113,10 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    jeod::TimeTT        *time_tt;         ///< trick_units{--}  JEOD TT time standard.
    jeod::RefFrameState *ref_frame_state; ///< @trick_units{--} JEOD reference frame state.
 
+   /*! @brief Print out the reference frame data values.
+    *  @param stream Output stream. */
+   virtual void print_data( std::ostream &stream = std::cout );
+
   private:
    // This object is not copyable
    /*! @brief Copy constructor for JEODRefFrameState class.
