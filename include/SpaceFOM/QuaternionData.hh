@@ -137,7 +137,7 @@ class QuaternionData
    /*! @brief Normalize the attitude quaternion. */
    void normalize();
 
-   /*! @brief Normalize the attitude quaternion.
+   /*! @brief Compare attitude quaternions.
     *  @return True if equal and false if not.
     *  @param source Quaternion to compare to. */
    bool is_equal( QuaternionData const &source );

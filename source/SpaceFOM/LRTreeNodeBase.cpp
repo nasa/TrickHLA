@@ -184,7 +184,7 @@ void LRTreeNodeBase::set_name( char const *node_name )
 bool LRTreeNodeBase::set_root( bool root_status )
 {
 
-   // If setting as root reference frame.
+   // If setting as root node.
    if ( root_status ) {
 
       // Check to make sure predicates are satisfied.
@@ -198,7 +198,7 @@ bool LRTreeNodeBase::set_root( bool root_status )
          return ( false );
       }
 
-   } // If setting is NOT a root reference frame.
+   } // If setting is NOT a root node.
    else {
 
       // Check to make sure predicates are satisfied.
