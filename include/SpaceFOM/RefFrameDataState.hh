@@ -31,6 +31,11 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_DATA_STATE_HH
 #define SPACEFOM_REF_FRAME_DATA_STATE_HH
 
+// System include files.
+#include <iostream>
+#include <string>
+
+// SpaceFOM include files.
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
@@ -92,6 +97,11 @@ class RefFrameDataState
    bool transform_to_child(
       RefFrameDataState const &transform_c_p,
       RefFrameDataState       *frame_c );
+
+   /*! @brief Print out the reference frame state values.
+    *  @param stream Output stream. */
+   virtual void print_data( std::ostream &stream = std::cout );
+
 };
 
 } // namespace SpaceFOM

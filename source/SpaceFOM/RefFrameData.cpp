@@ -277,3 +277,21 @@ bool RefFrameData::transform_to_child(
    // Call the reference frame data state version of this function.
    return ( RefFrameDataState::transform_to_child( transform_c_p, frame_c ) );
 }
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameData::print_data( std::ostream &stream )
+{
+
+   // Set the print precision.
+   stream.precision( 15 );
+
+   stream << "\tname:   '" << ( name != NULL ? name : "" ) << "'\n"
+          << "\tparent: '" << ( parent_name != NULL ? parent_name : "" ) << "'\n";
+   RefFrameDataState::print_data( stream );
+
+   return;
+
+}
