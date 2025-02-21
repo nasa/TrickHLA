@@ -111,6 +111,10 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
    bool transform_to_child(
       RefFrameData const &transform_c_p,
       RefFrameData       *frame_c );
+
+   /*! @brief Print out the reference frame data values.
+    *  @param stream Output stream. */
+   virtual void print_data( std::ostream &stream = std::cout );
 };
 
 } // namespace SpaceFOM
