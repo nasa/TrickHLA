@@ -90,7 +90,7 @@ class LRTreeNodeBase
 
    /*! @brief Get the node's path index/ID.
     *  @return LRTree node's path index/ID. */
-   inline virtual unsigned int get_id()
+   inline virtual unsigned int get_id() const
    {
       return ( node_id );
    }
