@@ -347,7 +347,6 @@ bool RefFrameDataState::transform_to_child(
    return ( false );
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -376,5 +375,4 @@ void RefFrameDataState::print_data( std::ostream &stream )
           << "\t\t" << state.ang_vel[2] << '\n';
 
    return;
-
 }

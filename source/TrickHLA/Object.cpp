@@ -301,8 +301,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', the 'attr_count' is "
              << attr_count << " but no 'attributes' are"
              << " specified. Please check your input or modified-data files to"
-             << " make sure the attributes are correctly specified."
-             << '\n';
+             << " make sure the attributes are correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -314,8 +313,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', the 'attr_count' is "
              << attr_count << " but 'attributes' have been"
              << " specified. Please check your input or modified-data files to"
-             << " make sure the attributes are correctly specified."
-             << '\n';
+             << " make sure the attributes are correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1254,8 +1252,7 @@ Waiting on reservation of Object Instance Name '%s'.\n",
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -1459,8 +1456,7 @@ void Object::wait_for_object_registration()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -1517,8 +1513,7 @@ void Object::setup_preferred_order_with_RTI()
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
-                << " Preferred-Order:TIMESTAMP"
-                << '\n';
+                << " Preferred-Order:TIMESTAMP\n";
          }
          TSO_attr_handle_set.insert( attributes[i].get_attribute_handle() );
       }
@@ -1532,8 +1527,7 @@ void Object::setup_preferred_order_with_RTI()
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
-                << " Preferred-Order:RECEIVE"
-                << '\n';
+                << " Preferred-Order:RECEIVE\n";
          }
          RO_attr_handle_set.insert( attributes[i].get_attribute_handle() );
       }
@@ -4096,8 +4090,7 @@ object '%s' because of error: '%s'\n",
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -4171,8 +4164,7 @@ void Object::handle_pulled_ownership_at_init()
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -4713,8 +4705,7 @@ for Attributes of object '%s'.\n",
       if ( ret ) {
          ostringstream errmsg;
          errmsg << "Object::push_ownership():" << __LINE__
-                << " ERROR: Failed to create ownership divestiture pthread!"
-                << '\n';
+                << " ERROR: Failed to create ownership divestiture pthread!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -4841,8 +4832,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
       if ( ret ) {
          ostringstream errmsg;
          errmsg << "Object::push_ownership_at_init():" << __LINE__
-                << " ERROR: Failed to create ownership divestiture pthread!"
-                << '\n';
+                << " ERROR: Failed to create ownership divestiture pthread!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -4888,8 +4878,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -4964,8 +4953,7 @@ void Object::handle_pushed_ownership_at_init()
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -5520,8 +5508,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -5601,11 +5588,9 @@ void Object::initialize_thread_ID_array()
       // from a string to an integer.
       for ( unsigned int k = 0; k < thread_id_vec.size(); ++k ) {
 
-         string const &thread_id_str = thread_id_vec.at( k );
-
          // Convert the string to an integer.
          stringstream sstream;
-         sstream << thread_id_str;
+         sstream << thread_id_vec[k];
          long long id;
          sstream >> id;
 
@@ -5615,7 +5600,7 @@ void Object::initialize_thread_ID_array()
             ostringstream errmsg;
             errmsg << "Object::initialize_thread_ID_array():" << __LINE__
                    << " ERROR: For object '" << get_name()
-                   << "', the Trick child thread-ID '" << thread_id_str
+                   << "', the Trick child thread-ID '" << thread_id_vec[k]
                    << "' specified in the input file is not valid because this"
                    << " Trick child thread does not exist in the S_define file!"
                    << " Valid Trick thread-ID range is 0 to "

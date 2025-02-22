@@ -166,8 +166,7 @@ void Parameter::initialize(
              << rti_encoding << " which is out of the valid range of "
              << ENCODING_FIRST_VALUE << " to " << ENCODING_LAST_VALUE
              << ". Please check your input or modified-data files to make sure"
-             << " the value for the 'rti_encoding' is correctly specified."
-             << '\n';
+             << " the value for the 'rti_encoding' is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -363,8 +362,7 @@ void Parameter::complete_initialization()
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "parameter represents a String type (i.e. char *). Please "
                    << "check your input or modified-data files to make sure the "
-                   << "value for the 'rti_encoding' is correctly specified."
-                   << '\n';
+                   << "value for the 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -402,8 +400,7 @@ void Parameter::complete_initialization()
                 << "' with Trick name '" << trick_name << "' and type '"
                 << attr->type_name << "' is a "
                 << attr->num_index << "-dimensional dynamic array."
-                << " Only one-dimensional dynamic arrays are supported for now."
-                << '\n';
+                << " Only one-dimensional dynamic arrays are supported for now.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    } else {
@@ -671,8 +668,7 @@ bool Parameter::extract_data(
                    << " data. Make sure your simulation variable is the same size"
                    << " and type as what is defined in the FOM. If you are using Lag"
                    << " Compensation one possible cause of this problem is that your"
-                   << " lag compensation variables are not the correct size or type."
-                   << '\n';
+                   << " lag compensation variables are not the correct size or type.\n";
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
@@ -702,8 +698,7 @@ bool Parameter::extract_data(
                    << " bytes). Make sure your simulation variable is the same size and"
                    << " type as what is defined in the FOM. If you are using Lag"
                    << " Compensation one possible cause of this problem is that your"
-                   << " lag compensation variables are not the correct size or type."
-                   << '\n';
+                   << " lag compensation variables are not the correct size or type.\n";
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
@@ -3050,8 +3045,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             ostringstream errmsg;
             errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                    << " ERROR: For ENCODING_NONE, Parameter '" << FOM_name
-                   << "' with Trick name '" << trick_name << "' is NULL!"
-                   << '\n';
+                   << "' with Trick name '" << trick_name << "' is NULL!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -3063,8 +3057,7 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                    << " ERROR: For ENCODING_NONE, Parameter '" << FOM_name
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
-                   << get_size( output ) << ")!"
-                   << '\n';
+                   << get_size( output ) << ")!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 

@@ -621,12 +621,11 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
    // Check for degenerate case.
    if ( node == NULL ) {
       send_hs( stdout, "LRTreeBase::is_cyclic():%d ERROR: NULL node pointer!\n", __LINE__ );
-      return( true );
+      return ( true );
    }
 
    // Get the node ID for this node.
    node_id = node->node_id;
-
 
    // Get the number of nodes in the tree.
    num_nodes = this->nodes.size();
@@ -657,7 +656,6 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
 
       // Increment the tree node level count.
       level++;
-
    }
 
    return ( cyclic );

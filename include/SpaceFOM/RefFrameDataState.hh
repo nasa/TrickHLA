@@ -101,7 +101,6 @@ class RefFrameDataState
    /*! @brief Print out the reference frame state values.
     *  @param stream Output stream. */
    virtual void print_data( std::ostream &stream = std::cout );
-
 };
 
 } // namespace SpaceFOM

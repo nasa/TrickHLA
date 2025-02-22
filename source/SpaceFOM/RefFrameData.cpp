@@ -278,7 +278,6 @@ bool RefFrameData::transform_to_child(
    return ( RefFrameDataState::transform_to_child( transform_c_p, frame_c ) );
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -293,5 +292,4 @@ void RefFrameData::print_data( std::ostream &stream )
    RefFrameDataState::print_data( stream );
 
    return;
-
 }

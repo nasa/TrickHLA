@@ -509,8 +509,7 @@ void Federate::initialize()
              << ") corresponding to THLA.federate.set_HLA_base_time_unit("
              << Int64BaseTime::get_base_units()
              << "). Please update the Trick time tic value in your input.py file"
-             << " (i.e. by calling 'trick.exec_set_time_tic_value()')."
-             << '\n';
+             << " (i.e. by calling 'trick.exec_set_time_tic_value()').\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -606,9 +605,8 @@ void Federate::restart_initialization()
       errmsg << "Federate::restart_initialization():" << __LINE__
              << " ERROR: Invalid FOM-modules."
              << " Please check your input.py or modified-data files to make sure"
-             << " 'FOM_modules' is correctly specified, where 'FOM_modules' is";
-      errmsg << " a comma separated list of FOM-module filenames.";
-      errmsg << '\n';
+             << " 'FOM_modules' is correctly specified, where 'FOM_modules' is"
+             << " a comma separated list of FOM-module filenames.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -634,8 +632,7 @@ void Federate::restart_initialization()
          // If we are enabling known federates, then there probably should be some.
          ostringstream errmsg;
          errmsg << "Federate::restart_initialization():" << __LINE__
-                << " ERROR: No Known Federates Specified for the Federation."
-                << '\n';
+                << " ERROR: No Known Federates Specified for the Federation.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -805,8 +802,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' with EXCEPTION: ConnectionFailed: '" << rti_err_msg << "'."
-             << '\n';
+             << "' with EXCEPTION: ConnectionFailed: '" << rti_err_msg << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( InvalidLocalSettingsDesignator const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1052,8 +1048,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: CouldNotDecode"
-                << '\n';
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: CouldNotDecode\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       } catch ( FederateNotExecutionMember const &e ) {
@@ -1063,8 +1058,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: FederateNotExecutionMember"
-                << '\n';
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: FederateNotExecutionMember\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       } catch ( NotConnected const &e ) {
@@ -1074,8 +1068,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: NotConnected"
-                << '\n';
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: NotConnected\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       } catch ( RTIinternalError const &e ) {
@@ -1618,8 +1611,7 @@ string Federate::wait_for_required_federates_to_join()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -2746,8 +2738,7 @@ void Federate::setup_checkpoint()
                             << " member. This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << '\n';
+                            << " the Central RTI Component (CRC) level!\n";
                      DebugHandler::terminate_with_message( errmsg.str() );
                   }
                }
@@ -3002,8 +2993,7 @@ void Federate::setup_restore()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -3320,8 +3310,7 @@ void Federate::set_lookahead(
              << ") does not have enough resolution to represent the HLA lookahead time ("
              << setprecision( 18 ) << value
              << " seconds). Please update the Trick time tic value in your"
-             << " input.py file (i.e. by calling 'trick.exec_set_time_tic_value()')."
-             << '\n';
+             << " input.py file (i.e. by calling 'trick.exec_set_time_tic_value()').\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -3949,8 +3938,7 @@ void Federate::enable_async_delivery()
 
       ostringstream errmsg;
       errmsg << "Federate::enable_async_delivery():" << __LINE__
-             << " EXCEPTION: RTIinternalError: '" << rti_err_msg << "'"
-             << '\n';
+             << " EXCEPTION: RTIinternalError: '" << rti_err_msg << "'\n";
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
@@ -4133,8 +4121,7 @@ void Federate::setup_time_constrained()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -4333,8 +4320,7 @@ void Federate::setup_time_regulation()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -4725,8 +4711,7 @@ void Federate::wait_for_zero_lookahead_TARA_TAG()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -4954,8 +4939,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -5062,8 +5046,7 @@ void Federate::wait_to_receive_blocking_io_data(
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -5153,8 +5136,7 @@ void Federate::wait_for_time_advance_grant()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -5728,8 +5710,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
    ostringstream errmsg;
    errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
           << " ERROR: Federate '" << get_federate_name()
-          << "' resigned from Federation '" << get_federation_name() << "'"
-          << '\n';
+          << "' resigned from Federation '" << get_federation_name() << "'\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -5997,8 +5978,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -6141,8 +6121,7 @@ void Federate::load_and_print_running_federate_names()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -6205,8 +6184,7 @@ MOM just informed us that there are %d federates currently running in the federa
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -6244,8 +6222,7 @@ MOM just informed us that there are %d federates currently running in the federa
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7040,8 +7017,7 @@ void Federate::wait_for_federation_restore_begun()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7091,8 +7067,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7177,8 +7152,7 @@ string Federate::wait_for_federation_restore_to_complete()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -7244,8 +7218,7 @@ void Federate::wait_for_restore_request_callback()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7295,8 +7268,7 @@ void Federate::wait_for_restore_status_to_complete()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7346,8 +7318,7 @@ void Federate::wait_for_save_status_to_complete()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7406,8 +7377,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -8018,8 +7988,7 @@ void Federate::restore_federate_handles_from_MOM()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }

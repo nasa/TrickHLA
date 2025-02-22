@@ -110,7 +110,6 @@ bool QuaternionData::operator!=(
    return ( !( this->is_equal( rhs ) ) );
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -135,7 +134,6 @@ void QuaternionData::print_data( std::ostream &stream )
           << "\t\t" << euler_angles[2] << '\n';
 
    return;
-
 }
 
 /*!

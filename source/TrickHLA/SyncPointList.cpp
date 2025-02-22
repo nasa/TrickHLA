@@ -257,8 +257,7 @@ bool const SyncPointList::add(
    if ( list == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: Could not allocate memory for the sync-point list!"
-             << '\n';
+             << " ERROR: Could not allocate memory for the sync-point list!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -319,8 +318,7 @@ bool const SyncPointList::add(
    if ( list == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: Could not allocate memory for the sync-point list!"
-             << '\n';
+             << " ERROR: Could not allocate memory for the sync-point list!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -938,8 +936,7 @@ bool const SyncPointList::achieve_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " WARNING: Sync-point '" << label_str
-                << "' is known but has not been registered or announced!"
-                << '\n';
+                << "' is known but has not been registered or announced!\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    } else {

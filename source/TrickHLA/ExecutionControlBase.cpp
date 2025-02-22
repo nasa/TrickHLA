@@ -279,8 +279,7 @@ Trick simulation time as the default scenario-timeline.\n",
       if ( scenario_timeline == NULL ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
-                << " FAILED to allocate enough memory for ScenarioTimeline class!"
-                << '\n';
+                << " FAILED to allocate enough memory for ScenarioTimeline class!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
@@ -460,12 +459,12 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    // Add the user specified multiphase initialization sync-points to the list.
    for ( unsigned int i = 0; i < user_sync_pt_labels.size(); ++i ) {
       wstring ws_label;
-      StringUtilities::to_wstring( ws_label, user_sync_pt_labels.at( i ) );
+      StringUtilities::to_wstring( ws_label, user_sync_pt_labels[i] );
       if ( contains_sync_point( ws_label ) ) {
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::add_multiphase_init_sync_points:" << __LINE__
                 << " ERROR: User specified multiphase init sync-point label '"
-                << user_sync_pt_labels.at( i ) << "' already added!\n";
+                << user_sync_pt_labels[i] << "' already added!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
          add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
@@ -620,8 +619,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -649,8 +647,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one ExecutionConfiguration attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified."
-             << '\n';
+             << " files to make sure the 'subscribe' value is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
