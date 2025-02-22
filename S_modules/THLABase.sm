@@ -1,8 +1,9 @@
 /*****************************************************************************
  * General TrickHLA Simulation Base Class Definition Object
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines a general
- * HLA interface using TrickHLA for Trick based simulations.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines a
+ *     general HLA interface using TrickHLA for Trick based simulations.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Dan E. Dexter
@@ -53,7 +54,6 @@
 //=========================================================================
 // SIM_OBJECT: THLABase - Generalized TrickHLA interface routines.
 //=========================================================================
-
 class THLABaseSimObject : public Trick::SimObject {
 
  public:

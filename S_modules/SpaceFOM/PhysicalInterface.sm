@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object for the standard Physical Interface.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM Physical Interface frame simulation object instance.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     standard SpaceFOM Physical Interface frame simulation object instance.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -20,22 +21,20 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
+
+// SpaceFOM include files.
+##include "SpaceFOM/PhysicalInterface.hh"
+##include "SpaceFOM/PhysicalInterfaceConditionalBase.hh"
+##include "SpaceFOM/PhysicalInterfaceDeleted.hh"
+##include "SpaceFOM/PhysicalInterfaceOwnershipHandler.hh"
+
+// Include TrickHLA Packing object base simulation definition module.
+#include "THLAPackingBase.sm"
 
 //==========================================================================
 // SIM_OBJECT: SpaceFOMPhysicalInterfaceSimObject - A SpaceFOM Physical
 // Interface instance simulation object definition.
 //==========================================================================
-
-// SpaceFOM include files.
-##include "SpaceFOM/PhysicalInterface.hh"
-##include "SpaceFOM/PhysicalInterfaceConditionalBase.hh"
-##include "SpaceFOM/PhysicalInterfaceOwnershipHandler.hh"
-##include "SpaceFOM/PhysicalInterfaceDeleted.hh"
-
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
-
 class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
 
   public:

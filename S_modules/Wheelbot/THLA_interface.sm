@@ -1,3 +1,14 @@
+/*****************************************************************************
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines
+ *     the TrickHLA and initialization related jobs.)
+ *
+ * LIBRARY DEPENDENCIES:
+ *    ((../source/SpaceFOM/RefFrameState.cpp)
+ *     (../source/TrickHLA/Federate.cpp)
+ *     (../source/TrickHLA/Manager.cpp))
+ ****************************************************************************/
+
 //==========================================================================
 // Define the Trick HLA job cycle times.
 //==========================================================================
@@ -11,15 +22,22 @@
 #define P_HLA_EARLY  1     // HLA early job phase.
 #define P_HLA_LATE   65534 // HLA late job phase.
 
-//==========================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
-//==========================================================================
-#include "SpaceFOM/SpaceFOM.sm"
-
 %header{
  using namespace TrickHLA;
  using namespace SpaceFOM;
 %}
+
+// TrickHLA include files.
+##include "TrickHLA/Federate.hh"
+##include "TrickHLA/Manager.hh"
+
+// SpaceFOM include files.
+##include "SpaceFOM/RefFrameState.hh"
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
 
 SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
                         THLA_INTERACTION_CYCLE_TIME,
@@ -73,6 +91,7 @@ class THLAInitSimObject : public Trick::SimObject {
    THLAInitSimObject();
 
 };
+
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate);
 
 
@@ -89,6 +108,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 
    SpaceFOMRefFrameTreeSimObject()
    {
+      return;
    }
 
   private:
@@ -103,7 +123,6 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
-##include "SpaceFOM/RefFrameState.hh"
 class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
   public:

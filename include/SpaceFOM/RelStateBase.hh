@@ -86,7 +86,7 @@ class RelStateBase : public SpaceFOM::PhysicalEntityData
     *  @param wrt_frame Frame in which to express a source state. */
    bool set_frame( RefFrameBase const &wrt_frame )
    {
-      express_frame = &wrt_frame;
+      this->express_frame = &wrt_frame;
       return ( true );
    }
 

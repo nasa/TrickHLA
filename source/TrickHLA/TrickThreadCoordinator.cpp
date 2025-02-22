@@ -257,11 +257,9 @@ void TrickThreadCoordinator::initialize(
       // Process each of the thread-ID's and convert from a string to an integer.
       for ( unsigned int k = 0; k < thread_id_vec.size(); ++k ) {
 
-         string const &thread_id_str = thread_id_vec.at( k );
-
          // Convert the string to an integer.
          stringstream sstream;
-         sstream << thread_id_str;
+         sstream << thread_id_vec[k];
          long long thread_id;
          sstream >> thread_id;
 
@@ -277,7 +275,7 @@ void TrickThreadCoordinator::initialize(
          } else if ( thread_id == 0 ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
-                   << " ERROR: The Trick thread-ID '" << thread_id_str
+                   << " ERROR: The Trick thread-ID '" << thread_id_vec[k]
                    << "' specified in the input file for 'federate.disable_associated_thread_ids'"
                    << " is not valid because the Trick main thread (id:0) cannot"
                    << " be disabled!\n";
@@ -285,7 +283,7 @@ void TrickThreadCoordinator::initialize(
          } else {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
-                   << " ERROR: The Trick child thread-ID '" << thread_id_str
+                   << " ERROR: The Trick child thread-ID '" << thread_id_vec[k]
                    << "' specified in the input file for 'federate.disable_associated_thread_ids'"
                    << " is not valid because this Trick child thread does not"
                    << " exist in the S_define file! Valid Trick child thread-ID"

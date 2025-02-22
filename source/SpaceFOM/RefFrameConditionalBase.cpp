@@ -184,8 +184,7 @@ bool RefFrameConditionalBase::should_send(
          if ( frame.packing_data.name != NULL ) {
             errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
                    << " ERROR: Unexpected NULL Parent Frame for RefFrame '" << frame.packing_data.name << "'!\n";
-         }
-         else {
+         } else {
             errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
                    << " ERROR: Unexpected NULL Parent Frame for RefFrame!\n";
          }

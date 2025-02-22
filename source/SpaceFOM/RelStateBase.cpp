@@ -15,10 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-<<<<<<< HEAD
 @trick_link_dependency{SpaceTimeCoordinateData.cpp}
-=======
->>>>>>> develop
 @trick_link_dependency{RefFrameBase.cpp}
 @trick_link_dependency{RefFrameTree.cpp}
 @trick_link_dependency{RelStateBase.cpp}
@@ -191,7 +188,7 @@ bool RelStateBase::compute_state(
    }
 
    // Find the entity parent frame in the tree.
-   RefFrameBase *entity_parent_frame = frame_tree->find_frame( entity->parent_frame );
+   RefFrameBase const *entity_parent_frame = frame_tree->find_frame( entity->parent_frame );
    if ( entity_parent_frame == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
@@ -355,7 +352,7 @@ bool RelStateBase::compute_state(
    }
 
    // Set the frame in which to express the state.
-   if ( this->set_frame( *wrt_frame ) ) {
+   if ( this->set_frame( *wrt_frame ) ) { // cppcheck-suppress [knownConditionTrueFalse]
       // Call the base function to compute the state.
       return ( this->compute_state( entity ) );
    }

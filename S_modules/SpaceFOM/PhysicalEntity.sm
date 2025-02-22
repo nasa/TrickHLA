@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object for the standard physical entity.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM PhysicalEntity base simulation object instance.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     standard SpaceFOM PhysicalEntity base simulation object instance.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -20,23 +21,22 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
+
+// SpaceFOM include files.
+##include "SpaceFOM/PhysicalEntity.hh"
+##include "SpaceFOM/PhysicalEntityConditionalBase.hh"
+##include "SpaceFOM/PhysicalEntityData.hh"
+##include "SpaceFOM/PhysicalEntityDeleted.hh"
+##include "SpaceFOM/PhysicalEntityLagComp.hh"
+##include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
+
+// Include TrickHLA Packing object base simulation definition module.
+#include "THLAPackingBase.sm"
 
 //==========================================================================
 // SIM_OBJECT: SpaceFOMPhysicalEntitySimObject - A SpaceFOM PhysicalEntity
 // instance simulation object definition.
 //==========================================================================
-
-// SpaceFOM include files.
-##include "SpaceFOM/PhysicalEntity.hh"
-##include "SpaceFOM/PhysicalEntityLagComp.hh"
-##include "SpaceFOM/PhysicalEntityConditionalBase.hh"
-##include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
-##include "SpaceFOM/PhysicalEntityDeleted.hh"
-
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
-
 class SpaceFOMPhysicalEntitySimObject : public TrickHLAPackingBaseSimObject {
 
   public:

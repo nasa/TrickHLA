@@ -199,8 +199,7 @@ void Attribute::initialize(
              << trick_name << "' has an invalid 'preferred_order' and it must be"
              << " one of TRANSPORT_TYPE_SPECIFIED_IN_FOM, THLA_TIMESTAMP_ORDER or"
              << " THLA_RECEIVE_ORDER. Please check your input or modified-data"
-             << " files to make sure the 'preferred_order' is correctly specified."
-             << '\n';
+             << " files to make sure the 'preferred_order' is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -225,8 +224,7 @@ void Attribute::initialize(
          errmsg << "Attribute::initialize():" << __LINE__
                 << " WARNING: FOM Object Attribute '"
                 << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                << trick_name << "' has a 'config' value of CONFIG_TYPE_NONE."
-                << '\n';
+                << trick_name << "' has a 'config' value of CONFIG_TYPE_NONE.\n";
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
@@ -428,8 +426,7 @@ void Attribute::initialize(
                 << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                 << trick_name << "' and type '" << ref2->attr->type_name
                 << "' is a " << ref2->attr->num_index << "-dimensional dynamic array."
-                << " Only one-dimensional dynamic arrays are supported for now."
-                << '\n';
+                << " Only one-dimensional dynamic arrays are supported for now.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    } else {
@@ -449,8 +446,7 @@ void Attribute::initialize(
                       << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                       << trick_name << "' is a " << ( ref2->attr->num_index + 1 )
                       << "-dimensional dynamic array of strings. Only"
-                      << " one-dimensional dynamic arrays are supported for now."
-                      << '\n';
+                      << " one-dimensional dynamic arrays are supported for now.\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -603,8 +599,7 @@ void Attribute::determine_cycle_ratio(
                 << " seconds (i.e. the core job cycle time for the"
                 << " send_cyclic_and_requested_data() job). Please check your"
                 << " input or modified-data files to make sure the value for"
-                << " the attribute 'cycle_time' is specified correctly."
-                << '\n';
+                << " the attribute 'cycle_time' is specified correctly.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 

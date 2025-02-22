@@ -75,8 +75,7 @@ void LagCompensation::send_lag_compensation()
    ostringstream errmsg;
    errmsg << "LagCompensation::send_lag_compensation():" << __LINE__
           << " ERROR: Your class that extends LagCompensation must implement"
-          << " the 'virtual void send_lag_compensation()' function!"
-          << '\n';
+          << " the 'virtual void send_lag_compensation()' function!\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -88,8 +87,7 @@ void LagCompensation::receive_lag_compensation()
    ostringstream errmsg;
    errmsg << "LagCompensation::receive_lag_compensation():" << __LINE__
           << " ERROR: Your class that extends LagCompensation must implement"
-          << " the 'virtual void receive_lag_compensation()' function!"
-          << '\n';
+          << " the 'virtual void receive_lag_compensation()' function!\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -114,8 +112,7 @@ Attribute *LagCompensation::get_attribute_and_validate(
    if ( attr_FOM_name == NULL ) {
       ostringstream errmsg;
       errmsg << "LagCompensation::get_attribute_and_validate():" << __LINE__
-             << " ERROR: Unexpected NULL attribute FOM name specified."
-             << '\n';
+             << " ERROR: Unexpected NULL attribute FOM name specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

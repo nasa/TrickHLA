@@ -223,8 +223,7 @@ void ExecutionControl::initialize()
          errmsg << "IMSim::ExecutionControl::initialize():" << __LINE__
                 << " WARNING: Only a preset master is supported. Make sure to set"
                 << " 'THLA.federate.use_preset_master = true' in your input.py file."
-                << " Setting use_preset_master to true!"
-                << '\n';
+                << " Setting use_preset_master to true!\n";
          send_hs( stdout, errmsg.str().c_str() );
          this->use_preset_master = true;
       }
@@ -454,8 +453,7 @@ initiating restore request for '%s' with the RTI.\n",
                       << __LINE__
                       << " ERROR: You indicated that you wanted to restore a "
                       << "checkpoint => I AM THE MASTER <= "
-                      << "wait_for_federation_restore_to_complete() failed!!!"
-                      << '\n';
+                      << "wait_for_federation_restore_to_complete() failed!!!\n";
                errmsg << '\n'
                       << tStr;
                DebugHandler::terminate_with_message( errmsg.str() );
@@ -873,8 +871,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -907,8 +904,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
    } else {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():"
-             << __LINE__ << " ERROR: Failed to determine if late joiner or restore federate!!!"
-             << '\n';
+             << __LINE__ << " ERROR: Failed to determine if late joiner or restore federate!!!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -995,8 +991,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    if ( freeze_handler == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for FreezeInteractionHandler!"
-             << '\n';
+             << " FAILED to allocate enough memory for FreezeInteractionHandler!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -1071,8 +1066,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       ostringstream msg2;
       msg2 << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__ << '\n'
            << "--------------- Trick REF-Attributes ---------------\n"
-           << " FOM-Interaction:'" << freeze_interaction->get_FOM_name() << "'"
-           << '\n';
+           << " FOM-Interaction:'" << freeze_interaction->get_FOM_name() << "'\n";
       send_hs( stdout, msg2.str().c_str() );
    }
 
@@ -1456,8 +1450,8 @@ void ExecutionControl::set_next_execution_control_mode(
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
             errmsg << "IMSim::ExecutionControl::set_next_execution_mode():"
-                   << __LINE__ << " WARNING: Unknown execution mode value: " << exec_control
-                   << '\n';
+                   << __LINE__ << " WARNING: Unknown execution mode value: "
+                   << exec_control << '\n';
             send_hs( stdout, errmsg.str().c_str() );
          }
          break;
@@ -1477,8 +1471,7 @@ bool ExecutionControl::check_mode_transition_request()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::check_mode_transition_request():"
              << __LINE__ << " WARNING: Received Mode Transition Request and not Master: "
-             << mtr_enum_to_string( this->pending_mtr )
-             << '\n';
+             << mtr_enum_to_string( this->pending_mtr ) << '\n';
       send_hs( stdout, errmsg.str().c_str() );
       return false;
    }
@@ -1488,8 +1481,7 @@ bool ExecutionControl::check_mode_transition_request()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::check_mode_transition_request():"
              << __LINE__ << " WARNING: Invalid Mode Transition Request: "
-             << mtr_enum_to_string( this->pending_mtr )
-             << '\n';
+             << mtr_enum_to_string( this->pending_mtr ) << '\n';
       send_hs( stdout, errmsg.str().c_str() );
       return false;
    }
@@ -1652,8 +1644,7 @@ bool ExecutionControl::process_execution_control_updates()
              << execution_control_enum_to_string( this->current_execution_control_mode )
              << ") and the ExCO current execution mode ("
              << execution_mode_enum_to_string( exco_cem )
-             << ")!"
-             << '\n';
+             << ")!\n";
       send_hs( stdout, errmsg.str().c_str() );
    }
 
@@ -1671,8 +1662,7 @@ bool ExecutionControl::process_execution_control_updates()
       } else {
          errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
                 << __LINE__ << " WARNING: Invalid ExCO next execution mode: "
-                << execution_mode_enum_to_string( exco_nem ) << "!"
-                << '\n';
+                << execution_mode_enum_to_string( exco_nem ) << "!\n";
          send_hs( stdout, errmsg.str().c_str() );
 
          // Return that no mode changes occurred.
@@ -1716,8 +1706,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->current_execution_control_mode )
                    << ") and the requested execution mode ("
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
-                   << ")!"
-                   << '\n';
+                   << ")!\n";
             send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
@@ -1776,8 +1765,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->current_execution_control_mode )
                    << ") and the requested execution mode ("
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
-                   << ")!"
-                   << '\n';
+                   << ")!\n";
             send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
@@ -1798,8 +1786,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->current_execution_control_mode )
                    << ") and the requested execution mode ("
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
-                   << ")!"
-                   << '\n';
+                   << ")!\n";
             send_hs( stdout, errmsg.str().c_str() );
 
             // Mark the current execution mode as SHUTDOWN.
@@ -1849,8 +1836,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->current_execution_control_mode )
                    << ") and the requested execution mode ("
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
-                   << ")!"
-                   << '\n';
+                   << ")!\n";
             send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
@@ -1889,8 +1875,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->current_execution_control_mode )
                    << ") and the requested execution mode ("
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
-                   << ")!"
-                   << '\n';
+                   << ")!\n";
             send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
@@ -2328,7 +2313,9 @@ bool ExecutionControl::check_scenario_freeze_time()
                infomsg << "IMSim::ExecutionControl::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:\n";
                if ( federate->is_time_management_enabled() ) {
-                  infomsg << "  Granted HLA-time:" << federate->get_granted_time().get_time_in_seconds() << '\n';
+                  infomsg << "  Granted HLA-time:"
+                          << federate->get_granted_time().get_time_in_seconds()
+                          << '\n';
                }
                infomsg << "  Trick sim-time:" << curr_sim_time << '\n'
                        << "  Freeze sim-time:" << freeze_sim_time << '\n'
@@ -2380,8 +2367,7 @@ bool ExecutionControl::is_save_initiated()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
