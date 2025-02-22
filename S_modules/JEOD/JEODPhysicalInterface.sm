@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object for the JEOD-based Physical Interface.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines a JEOD-based
- * Physical Interface simulation object instance.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines a
+ *     JEOD-based Physical Interface simulation object instance.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -21,13 +22,6 @@
  * Description: 
  ****************************************************************************/
  
-
-//==========================================================================
-// SIM_OBJECT: JEODPhysicalInterfaceSimObject - A JEOD-based SpaceFOM
-// Physical Interface instance simulation object definition.
-//==========================================================================
-
-
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
@@ -37,6 +31,10 @@
 ##include "SpaceFOM/PhysicalInterfaceOwnershipHandler.hh"
 ##include "SpaceFOM/PhysicalInterfaceDeleted.hh"
 
+//==========================================================================
+// SIM_OBJECT: JEODPhysicalInterfaceSimObject - A JEOD-based SpaceFOM
+// Physical Interface instance simulation object definition.
+//==========================================================================
 class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
 
   public:

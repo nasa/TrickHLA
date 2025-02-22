@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object for the standard reference frames.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM/JEOD reference frame tree.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     standard SpaceFOM/JEOD reference frame tree.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -20,15 +21,22 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
+
+##include <iostream>
+##include "utils/ref_frames/include/ref_frame_state.hh"
+
+// TrickHLA include files.
+##include "TrickHLA/Manager.hh"
+
+// SpaceFOM include files.
+##include "SpaceFOM/ExecutionControl.hh"
+
+#include "SpaceFOM/RefFrameTreeBase.sm"
 
 //==========================================================================
 // SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
-##include <iostream>
-##include "utils/ref_frames/include/ref_frame_state.hh"
-#include "SpaceFOM/RefFrameTreeBase.sm"
 class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
 
   public:
@@ -69,7 +77,6 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
       P_CONFIG ("initialization") earth_centered_fixed.set_frames( &earth.inertial, &earth.pfix );
       P_CONFIG ("initialization") moon_centered_fixed.set_frames( &moon.inertial, &moon.pfix );
       P_CONFIG ("initialization") mars_centered_fixed.set_frames( &mars.inertial, &mars.pfix );
-      
    }
 
 

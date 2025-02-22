@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object for a JEOD-based physical entity.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * SpaceFOM JEOD-based PhysicalEntity simulation object instance.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     SpaceFOM JEOD-based PhysicalEntity simulation object instance.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -20,12 +21,6 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
-
-//==========================================================================
-// SIM_OBJECT: JEODPhysicalEntitySimObject - A SpaceFOM JEOD-based
-// PhysicalEntity instance simulation object definition.
-//==========================================================================
 
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
@@ -37,6 +32,10 @@
 ##include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
 ##include "SpaceFOM/PhysicalEntityDeleted.hh"
 
+//==========================================================================
+// SIM_OBJECT: JEODPhysicalEntitySimObject - A SpaceFOM JEOD-based
+// PhysicalEntity instance simulation object definition.
+//==========================================================================
 class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
 
   public:

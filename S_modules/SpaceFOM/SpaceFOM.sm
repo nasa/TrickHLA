@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines a general
- * HLA interface using TrickHLA for Trick based simulations.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines a
+ *     general HLA interface using TrickHLA for Trick based simulations.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -39,7 +40,6 @@
 //=========================================================================
 // SIM_OBJECT: SpaceFOM - Extend the TrickHLA Base SimObject.
 //=========================================================================
-
 class SpaceFOMSimObject : public THLABaseSimObject {
 
  public:

@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object for the standard reference frames.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM reference frame tree.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines
+ *     the standard SpaceFOM reference frame tree.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -20,12 +21,18 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
 
 //==========================================================================
 // SIM_OBJECT: RefFrameTreeSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
+
+// TrickHLA include files.
+##include "TrickHLA/DebugHandler.hh"
+##include "TrickHLA/Manager.hh"
+
+// SpaceFOM include files.
+##include "SpaceFOM/ExecutionControl.hh"
 ##include "SpaceFOM/RefFrameData.hh"
 ##include "SpaceFOM/RefFrameBase.hh"
 
@@ -62,10 +69,9 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
    // Define the interface to configure the reference frame tree.
    void configure_tree()
    {
-      std::ostringstream errmsg;
-
       // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ){
+      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
+         std::ostringstream errmsg;
          errmsg << "SpaceFOMRefFrameTreeSimObject::configure_tree():" << __LINE__
                 << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
          // Print message and terminate.
@@ -76,7 +82,7 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
       root_frame_ptr->base_config( false,
                                    "root_ref_frame",
                                    "frame_packing",
-                                   "RootFrame"      );
+                                   "RootFrame" );
 
       // Set the root reference frame in the ExCO.
       exec_cntrl.root_ref_frame = root_frame_ptr;
@@ -88,8 +94,6 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
                                       "FrameA",
                                       "RootFrame",
                                       root_frame_ptr );
-
-      return;
    }
 
   private:

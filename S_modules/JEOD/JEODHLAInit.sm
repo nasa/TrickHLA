@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object that initialized the JEOD HLA interfaces.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * initialization interfaces between HLA/SpaceFOM and JEOD.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     initialization interfaces between HLA/SpaceFOM and JEOD.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -21,11 +22,17 @@
  * Description: 
  ****************************************************************************/
 
+// TrickHLA include files.
+##include "TrickHLA/Federate.hh"
+##include "TrickHLA/Manager.hh"
+
+// SpaceFOM include files.
+##include "SpaceFOM/ExecutionControl.hh"
+
 //==========================================================================
 // SIM_OBJECT: JEODHLAInitSimObject - An example simulation object definition.
 // This can be used for JEOD/SpaceFOM initialization.
 //==========================================================================
-
 class JEODHLAInitSimObject : public Trick::SimObject {
 
  public:

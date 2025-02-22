@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object for the standard reference frames.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM reference frame tree.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     standard SpaceFOM reference frame tree.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -20,20 +21,25 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
 
-//==========================================================================
-// SIM_OBJECT: RefFrameTreeSimObject - An JEOD reference frame tree
-// simulation object definition.
-//==========================================================================
 ##include <iostream>
 ##include <map>
 
+// TrickHLA include files.
+##include "TrickHLA/DebugHandler.hh"
+##include "TrickHLA/Manager.hh"
+
+// SpaceFOM include files.
+##include "SpaceFOM/ExecutionControl.hh"
 ##include "SpaceFOM/RefFrameData.hh"
 ##include "SpaceFOM/RefFrameBase.hh"
 
 #include "SpaceFOM/RefFrameTreeBase.sm"
 
+//==========================================================================
+// SIM_OBJECT: RefFrameTreeSimObject - An JEOD reference frame tree
+// simulation object definition.
+//==========================================================================
 class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
 
   public:
@@ -64,14 +70,12 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
         moon_pfix_frame_ptr( NULL ),
         mars_pfix_frame_ptr( NULL )
    {
-      
       // For now, everything is handled in the base SimObject.
-
+      return;
    }
 
 
   public:
-
    // References to working SpaceFOM reference frames.
    SpaceFOM::RefFrameBase * ssbary_frame_ptr;
    SpaceFOM::RefFrameBase * sun_frame_ptr;
@@ -83,16 +87,14 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
    SpaceFOM::RefFrameBase * moon_pfix_frame_ptr;
    SpaceFOM::RefFrameBase * mars_pfix_frame_ptr;
 
-
   private:
 
    // Configure the reference frame tree.
    void configure_tree()
    {
-      std::ostringstream errmsg;
-
       // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ){
+      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
+         std::ostringstream errmsg;
          errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
                 << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
          // Print message and terminate.
@@ -176,7 +178,6 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
    // This object is not copyable
    SpaceFOMEMMRefFrameTreeSimObject( const SpaceFOMEMMRefFrameTreeSimObject & );
    SpaceFOMEMMRefFrameTreeSimObject & operator=( const SpaceFOMEMMRefFrameTreeSimObject & );
-
 };
 
 

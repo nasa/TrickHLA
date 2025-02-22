@@ -1,8 +1,9 @@
 /*****************************************************************************
  * General TrickHLA Federate Interface Simulation Object
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines a general
- * HLA interface using TrickHLA for Trick based simulations.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines a
+ *     general HLA interface using TrickHLA for Trick based simulations.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Dan E. Dexter
@@ -30,7 +31,6 @@
 //============================================================================
 // SIM_OBJECT: THLAFedSimObject - TrickHLA Multi-Thread interface routines.
 //============================================================================
-
 class THLAFedSimObject : public Trick::SimObject {
 
  public:
@@ -41,6 +41,7 @@ class THLAFedSimObject : public Trick::SimObject {
       : federate( thla_fed )
    {
       // No jobs for now.
+      return;
    }
 
  protected:

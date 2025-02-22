@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object for the standard reference frames.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM reference frame simulation object instance.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     standard SpaceFOM reference frame simulation object instance.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -20,24 +21,23 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
+
+// SpaceFOM include files.
+##include "SpaceFOM/RefFrameConditionalBase.hh"
+##include "SpaceFOM/RefFrameData.hh"
+##include "SpaceFOM/RefFrameDeleted.hh"
+##include "SpaceFOM/RefFrameLagComp.hh"
+##include "SpaceFOM/RefFrameOwnershipHandler.hh"
+##include "SpaceFOM/RefFrameState.hh"
+##include "SpaceFOM/RefFrameTree.hh"
+
+// Include TrickHLA Packing object base simulation definition module.
+#include "THLAPackingBase.sm"
 
 //==========================================================================
 // SIM_OBJECT: SpaceFOMRefFrameSimObject - A SpaceFOM reference frame
 // instance simulation object definition.
 //==========================================================================
-
-// SpaceFOM include files.
-##include "SpaceFOM/RefFrameTree.hh"
-##include "SpaceFOM/RefFrameState.hh"
-##include "SpaceFOM/RefFrameLagComp.hh"
-##include "SpaceFOM/RefFrameConditionalBase.hh"
-##include "SpaceFOM/RefFrameOwnershipHandler.hh"
-##include "SpaceFOM/RefFrameDeleted.hh"
-
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
-
 class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
 
   public:
@@ -60,7 +60,7 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    // SimObject constructor.
    SpaceFOMRefFrameSimObject( SpaceFOM::RefFrameTree & frame_tree_ref,
                               SpaceFOM::RefFrameData & frame_data_ref,   
-                              unsigned short           _INIT = P_HLA_INIT  )
+                              unsigned short           _INIT = P_HLA_INIT )
       : TrickHLAPackingBaseSimObject( _INIT ),
         frame_packing( frame_data_ref ),
         lag_compensation( frame_packing ),
@@ -78,7 +78,6 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
       // Initialization jobs
       //
       P_INIT ("initialization") frame_tree.add_frame( &frame_packing );
-
    }
 
   protected:
