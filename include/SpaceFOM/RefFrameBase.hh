@@ -217,7 +217,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Print out the reference frame data values.
     *  @param stream Output stream. */
-   virtual void print_data( std::ostream &stream = std::cout );
+   virtual void debug_print( std::ostream &stream = std::cout );
 
   private:
    // This object is not copyable

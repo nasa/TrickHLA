@@ -352,10 +352,6 @@ bool RefFrameDataState::transform_to_child(
  */
 void RefFrameDataState::print_data( std::ostream &stream )
 {
-   double euler_angles[3];
-
-   // Compute the attitude Euler angles.
-   state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
 
    // Set the print precision.
    stream.precision( 15 );

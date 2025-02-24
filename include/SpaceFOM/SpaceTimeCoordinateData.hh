@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH
 #define SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH
 
+// System include files.
+#include <iostream>
+
 // Trick includes.
 #include "trick/vector_macros.h"
 
@@ -83,6 +86,10 @@ class SpaceTimeCoordinateData
    /*! @brief Copy the state-time coordinate data.
     *  @param stc_data Source to copy from. */
    void copy( SpaceTimeCoordinateData const &stc_data );
+
+   /*! @brief Print out the data values.
+    *  @param stream Output stream. */
+   void print_data( std::ostream &stream = std::cout );
 };
 
 } // namespace SpaceFOM

@@ -1,0 +1,317 @@
+//==========================================================================
+// Space Reference FOM: Simulation to test the SpaceFOM roles implementation.
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// of an SpaceFOM compliant federate that services all SpaceFOM roles.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+#include "sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the Dynamics job cycle times.
+//==========================================================================
+#define INTEG_STEP_TIME 0.025 // State integration time step.
+
+//==========================================================================
+// Define the Trick HLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
+
+
+//==========================================================================
+// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// for inputfile instantiations.
+//==========================================================================
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/CTETimelineBase.hh"
+
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMEMMRefFrameTreeSimObject - An example reference frame
+// tree simulation object definition.
+//==========================================================================
+#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
+#include "SpaceFOM/EMMRefFrameTree.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI   )
+      : thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.send_init_data();
+
+      // Wait to receive all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.receive_init_data();
+
+      // Do some processing here if needed...
+
+      // Clear remaining initialization sync-points.
+      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
+
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+};
+
+
+//==========================================================================
+// Simple 6DOF dynamics for reference frame propagation.
+//==========================================================================
+##include "../../../models/FrameDynamics/include/FrameDynamics.hh"
+class FrameDynamicsSimObject : public Trick::SimObject {
+
+  public:
+   FrameDynamics frame;
+   ExecutionControlBase & execution_control;
+
+  public:
+   FrameDynamicsSimObject( ExecutionControlBase & exec_cntrl )
+   : execution_control(exec_cntrl)
+   {
+      ("default_data")            frame.default_data();
+      ("initialization")          frame.initialize();
+      ("derivative")              frame.derivative();
+      ("integration") trick_ret = frame.integrate();
+      
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
+   }
+   
+   // Print state job.
+   void print_state()
+   {
+      std::cout << "----------------------------------------------------------------------\n";
+      std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
+      std::cout << " Sim Timeline: " << execution_control.sim_timeline->get_time() << "\n";
+      std::cout << " Scenario Timeline: " << execution_control.scenario_timeline->get_time() << "\n";
+      frame.data.print_data();
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+
+  private:
+   // This object is not copyable
+   FrameDynamicsSimObject( FrameDynamicsSimObject const & rhs );
+   FrameDynamicsSimObject & operator=( FrameDynamicsSimObject const & rhs );
+};
+
+
+//==========================================================================
+// Simple 6DOF dynamics for a Physical/Dynamical Entity.
+//==========================================================================
+##include "../../../models/EntityDynamics/include/EntityDynamics.hh"
+class EntityDynamicsSimObject : public Trick::SimObject {
+
+  public:
+   EntityDynamics entity;
+   ExecutionControlBase & execution_control;
+
+  public:
+   EntityDynamicsSimObject( ExecutionControlBase & exec_cntrl )
+   : execution_control(exec_cntrl)
+   {
+      ("default_data")            entity.default_data();
+      ("initialization")          entity.initialize();
+      ("derivative")              entity.derivative();
+      ("integration") trick_ret = entity.integrate();
+      
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
+   }
+   
+   // Print state job.
+   void print_state()
+   {
+      std::cout << "----------------------------------------------------------------------\n";
+      std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
+      std::cout << " Sim Timeline: " << execution_control.sim_timeline->get_time() << "\n";
+      std::cout << " Scenario Timeline: " << execution_control.scenario_timeline->get_time() << "\n";
+      entity.pe_data.print_data();
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+
+  private:
+   // This object is not copyable
+   EntityDynamicsSimObject( EntityDynamicsSimObject const & rhs );
+   EntityDynamicsSimObject & operator=( EntityDynamicsSimObject const & rhs );
+};
+
+
+//==========================================================================
+// Test out the Relative State classes.
+//==========================================================================
+##include "SpaceFOM/RelStateBase.hh"
+class RelStateTestSimObject : public Trick::SimObject {
+
+  public:
+   RelStateBase rel_state;
+
+  public:
+   RelStateTestSimObject( SpaceFOM::RefFrameBase & ref_frame,
+                          SpaceFOM::RefFrameTree & frame_tree )
+      : rel_state( ref_frame , frame_tree )
+   {
+   }
+
+  private:
+   // This object is not copyable
+   RelStateTestSimObject( RelStateTestSimObject const & rhs );
+   RelStateTestSimObject & operator=( RelStateTestSimObject const & rhs );
+
+   // Don't allow the default constructor
+   RelStateTestSimObject();
+};
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+
+// Instantiate the standard solar systems reference frames.
+FrameDynamicsSimObject ssbary_frame( THLA.execution_control );
+FrameDynamicsSimObject sun_frame( THLA.execution_control );
+FrameDynamicsSimObject embary_frame( THLA.execution_control );
+FrameDynamicsSimObject earth_inertial_frame( THLA.execution_control );
+FrameDynamicsSimObject earth_fixed_frame( THLA.execution_control );
+FrameDynamicsSimObject moon_inertial_frame( THLA.execution_control );
+FrameDynamicsSimObject moon_fixed_frame( THLA.execution_control );
+FrameDynamicsSimObject mars_inertial_frame( THLA.execution_control );
+FrameDynamicsSimObject mars_fixed_frame( THLA.execution_control );
+
+// Instantiate the standard solar systems SpaceFOM reference frames for the tree.
+SpaceFOMRefFrameSimObject solar_system_barycenter( ref_frame_tree.frame_tree, ssbary_frame.frame.data, P_HLA_INIT );
+SpaceFOMRefFrameSimObject sun_inertial( ref_frame_tree.frame_tree, sun_frame.frame.data, P_HLA_INIT );
+SpaceFOMRefFrameSimObject earth_moon_barycenter( ref_frame_tree.frame_tree, embary_frame.frame.data, P_HLA_INIT );
+SpaceFOMRefFrameSimObject earth_centered_inertial( ref_frame_tree.frame_tree, earth_inertial_frame.frame.data, P_HLA_INIT );
+SpaceFOMRefFrameSimObject moon_centered_inertial( ref_frame_tree.frame_tree, moon_inertial_frame.frame.data, P_HLA_INIT );
+SpaceFOMRefFrameSimObject mars_centered_inertial( ref_frame_tree.frame_tree, mars_inertial_frame.frame.data, P_HLA_INIT );
+SpaceFOMRefFrameSimObject earth_centered_fixed( ref_frame_tree.frame_tree, earth_fixed_frame.frame.data, P_HLA_INIT );
+SpaceFOMRefFrameSimObject moon_centered_fixed( ref_frame_tree.frame_tree, moon_fixed_frame.frame.data, P_HLA_INIT );
+SpaceFOMRefFrameSimObject mars_centered_fixed( ref_frame_tree.frame_tree, mars_fixed_frame.frame.data, P_HLA_INIT );
+
+// Instantiate a vehicle to test against.
+EntityDynamicsSimObject vehicle( THLA.execution_control );
+
+// Main TrickHLA SimObject.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
+
+// SimObject used capture simulation specific initialization.
+THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+
+
+// FIXME: Need a FrameManager to simplify and coordinate frame propagation.
+// Place the frames in associated integration loops.
+IntegLoop sun_loop            (INTEG_STEP_TIME) sun_frame;
+IntegLoop embary_loop         (INTEG_STEP_TIME) embary_frame;
+IntegLoop earth_inertial_loop (INTEG_STEP_TIME) earth_inertial_frame;
+IntegLoop earth_fixed_loop    (INTEG_STEP_TIME) earth_fixed_frame;
+IntegLoop moon_inertial_loop  (INTEG_STEP_TIME) moon_inertial_frame;
+IntegLoop moon_fixed_loop     (INTEG_STEP_TIME) moon_fixed_frame;
+IntegLoop mars_inertial_loop  (INTEG_STEP_TIME) mars_inertial_frame;
+IntegLoop mars_fixed_loop     (INTEG_STEP_TIME) mars_fixed_frame;
+
+// Integrate the state of the vehicle.
+IntegLoop vehicle_loop (INTEG_STEP_TIME) vehicle;
+
+
+//==========================================================================
+// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+//==========================================================================
+void create_connections() {
+
+   // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.
+   ref_frame_tree.ssbary_frame_ptr = &solar_system_barycenter.frame_packing;
+   ref_frame_tree.sun_frame_ptr = &sun_inertial.frame_packing;
+   ref_frame_tree.embary_frame_ptr = &earth_moon_barycenter.frame_packing;
+   ref_frame_tree.earth_frame_ptr = &earth_centered_inertial.frame_packing;
+   ref_frame_tree.moon_frame_ptr = &moon_centered_inertial.frame_packing;
+   ref_frame_tree.mars_frame_ptr = &mars_centered_inertial.frame_packing;
+   ref_frame_tree.earth_pfix_frame_ptr = &earth_centered_fixed.frame_packing;
+   ref_frame_tree.moon_pfix_frame_ptr = &moon_centered_fixed.frame_packing;
+   ref_frame_tree.mars_pfix_frame_ptr = &mars_centered_fixed.frame_packing;
+
+#ifdef DEFAULT_DATA_CONFIG
+
+   //
+   // This code will only be executed when we want to configure the reference
+   // frame tree using default data instead of in the input file.
+   //
+   // Allocate the HLA objects for the Reference Frame tree.
+   THLA.manager.obj_count = 9;
+   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                    THLA.manager.obj_count );
+   // Assign the HLA objects to the associated frame.
+   solar_system_barycenter.frame_packing.set_object(&(THLA.manager.objects[0]));
+   sun_inertial.frame_packing.set_object(&(THLA.manager.objects[1]));
+   earth_moon_barycenter.frame_packing.set_object(&(THLA.manager.objects[2]));
+   earth_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[3]));
+   moon_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[4]));
+   mars_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[5]));
+   earth_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[6]));
+   moon_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[7]));
+   mars_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[8]));
+
+#endif
+
+}

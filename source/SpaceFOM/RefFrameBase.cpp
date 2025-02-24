@@ -607,7 +607,7 @@ void RefFrameBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       cout << "RefFrameBase::pack():" << __LINE__ << '\n';
-      this->print_data();
+      this->debug_print();
    }
 
    // Encode the data into the buffer.
@@ -640,7 +640,7 @@ void RefFrameBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       cout << "RefFrameBase::unpack():" << __LINE__ << '\n';
-      this->print_data();
+      this->debug_print();
    }
 
    return;
@@ -649,12 +649,8 @@ void RefFrameBase::unpack()
 /*!
  * @job_class{scheduled}
  */
-void RefFrameBase::print_data( std::ostream &stream )
+void RefFrameBase::debug_print( std::ostream &stream )
 {
-   double euler_angles[3];
-
-   // Compute the attitude Euler angles.
-   packing_data.state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
 
    // Set the print precision.
    stream.precision( 15 );

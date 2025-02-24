@@ -180,3 +180,40 @@ void PhysicalEntityData::copy( PhysicalEntityData const &source )
 
    return;
 }
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityData::print_data( std::ostream &stream )
+{
+
+   // Set the print precision.
+   stream.precision( 15 );
+
+   stream << "\tname:         '" << ( name != NULL ? name : "" ) << "'\n"
+          << "\ttype:         '" << ( type != NULL ? type : "" ) << "'\n"
+          << "\tstatus:       '" << ( status != NULL ? status : "" ) << "'\n"
+          << "\tparent_frame: '" << ( parent_frame != NULL ? parent_frame : "" ) << "'\n";
+
+   state.print_data( stream );
+
+   stream << "\tacceleration: "
+          << "\t\t" << accel[0] << ", "
+          << "\t\t" << accel[1] << ", "
+          << "\t\t" << accel[2] << '\n';
+
+   stream << "\tangular acceleration: "
+          << "\t\t" << ang_accel[0] << ", "
+          << "\t\t" << ang_accel[1] << ", "
+          << "\t\t" << ang_accel[2] << '\n';
+
+   stream << "\tcenter of mass (cm): "
+          << "\t\t" << cm[0] << ", "
+          << "\t\t" << cm[1] << ", "
+          << "\t\t" << cm[2] << '\n';
+
+   stream << "\tBody frame orientation:\n";
+   body_wrt_struct.print_data();
+
+   return;
+}

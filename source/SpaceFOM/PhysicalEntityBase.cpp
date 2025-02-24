@@ -553,46 +553,9 @@ void PhysicalEntityBase::debug_print( std::ostream &stream )
           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'\n"
           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'\n"
           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'\n"
-          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'\n"
-          << "\ttime: " << pe_packing_data.state.time << '\n';
-   stream << "\tposition: "
-          << "\t\t" << pe_packing_data.state.pos[0] << ", "
-          << "\t\t" << pe_packing_data.state.pos[1] << ", "
-          << "\t\t" << pe_packing_data.state.pos[2] << '\n';
-   stream << "\tvelocity: "
-          << "\t\t" << pe_packing_data.state.vel[0] << ", "
-          << "\t\t" << pe_packing_data.state.vel[1] << ", "
-          << "\t\t" << pe_packing_data.state.vel[2] << '\n';
-   stream << "\tacceleration: "
-          << "\t\t" << pe_packing_data.accel[0] << ", "
-          << "\t\t" << pe_packing_data.accel[1] << ", "
-          << "\t\t" << pe_packing_data.accel[2] << '\n';
-   stream << "\tattitude (s,v): "
-          << "\t\t" << pe_packing_data.state.att.scalar << "; "
-          << "\t\t" << pe_packing_data.state.att.vector[0] << ", "
-          << "\t\t" << pe_packing_data.state.att.vector[1] << ", "
-          << "\t\t" << pe_packing_data.state.att.vector[2] << '\n';
-   stream << "\tattitude (RPY): "
-          << "\t\t" << euler_angles[0] << ", "
-          << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
-   stream << "\tangular velocity: "
-          << "\t\t" << pe_packing_data.state.ang_vel[0] << ", "
-          << "\t\t" << pe_packing_data.state.ang_vel[1] << ", "
-          << "\t\t" << pe_packing_data.state.ang_vel[2] << '\n';
-   stream << "\tangular acceleration: "
-          << "\t\t" << pe_packing_data.ang_accel[0] << ", "
-          << "\t\t" << pe_packing_data.ang_accel[1] << ", "
-          << "\t\t" << pe_packing_data.ang_accel[2] << '\n';
-   stream << "\tcenter of mass (cm): "
-          << "\t\t" << pe_packing_data.cm[0] << ", "
-          << "\t\t" << pe_packing_data.cm[1] << ", "
-          << "\t\t" << pe_packing_data.cm[2] << '\n';
-   stream << "\tbody wrt. struct (s;v): "
-          << "\t\t" << pe_packing_data.body_wrt_struct.scalar << "; "
-          << "\t\t" << pe_packing_data.body_wrt_struct.vector[0] << ", "
-          << "\t\t" << pe_packing_data.body_wrt_struct.vector[1] << ", "
-          << "\t\t" << pe_packing_data.body_wrt_struct.vector[2] << '\n';
+          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'\n";
+
+   pe_packing_data.print_data();
 
    return;
 }
