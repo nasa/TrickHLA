@@ -32,6 +32,10 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_DATA_HH
 #define SPACEFOM_PHYSICAL_ENTITY_DATA_HH
 
+// System include files.
+#include <iostream>
+
+// SpaceFOM include files.
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
@@ -74,6 +78,10 @@ class PhysicalEntityData
    /*! @brief Copy the PhysicalEntityData.
     *  @param source Source PhysicalEntityData to copy from. */
    virtual void copy( PhysicalEntityData const &source );
+
+   /*! @brief Print out the data values.
+    *  @param stream Output stream. */
+   virtual void print_data( std::ostream &stream = std::cout );
 };
 
 } // namespace SpaceFOM

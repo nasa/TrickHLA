@@ -1,0 +1,7 @@
+/**
+ * @defgroup FrameDynamics FrameDynamics
+ * A class to perform a simple propagation of a SpaceFOM RefFrame for testing
+ * @details This class shows how to propagate the state of a SpaceFOM Reference Frame.
+ * It can be used to propagate frame state.
+ * @ingroup TrickHLAModels
+ */
