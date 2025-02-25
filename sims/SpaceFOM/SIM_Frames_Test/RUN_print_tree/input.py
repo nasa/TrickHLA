@@ -392,6 +392,19 @@ ref_frame_tree.frame_tree.debug = True
 
 
 #---------------------------------------------------------------------------
+# Set up the relative state object.
+#---------------------------------------------------------------------------
+rel_test.rel_state.debug = True
+rel_test.ref_entity = vehicle.entity.pe_data
+#rel_test.ref_frame  = solar_system_barycenter.frame_packing
+rel_test.ref_frame  = earth_moon_barycenter.frame_packing
+#rel_test.ref_frame  = earth_centered_inertial.frame_packing
+#rel_test.ref_frame  = earth_centered_fixed.frame_packing
+#rel_test.ref_frame  = moon_centered_inertial.frame_packing
+#rel_test.ref_frame  = moon_centered_fixed.frame_packing
+
+
+#---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
 # This is really only useful for turning on and off HLA objects.
 #---------------------------------------------------------------------------

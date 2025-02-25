@@ -401,6 +401,77 @@ void LRTreeBase::print_nodes( std::ostream &stream )
 /*!
  * @job_class{scheduled}
  */
+void LRTreeBase::print_path(
+   LRTreeNodeBase &start,
+   LRTreeNodeBase &end,
+   std::ostream   &stream )
+{
+
+   // Check to see if a paths matrix has been allocated.
+   if ( paths != NULL ) {
+      print_path( start.node_id, end.node_id, stream );
+   } else {
+      send_hs( stdout, "LRTreeBase::print_path():%d Warning: No path matrix allocated.\n",
+               __LINE__ );
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void LRTreeBase::print_path(
+   unsigned int  start,
+   unsigned int  end,
+   std::ostream &stream )
+{
+   unsigned int num_nodes = this->nodes.size();
+
+   // Perform a few sanity checks.
+   if ( (start >= num_nodes) || (end >= num_nodes) ){
+      send_hs( stdout, "LRTreeBase::print_path():%d ERROR: node not found: start %d, end %d, bound %d!\n",
+               __LINE__, start, end, num_nodes );
+      return;
+   }
+
+   // Check to see if a paths matrix has been allocated.
+   if ( paths != NULL ) {
+
+      // Get the size of the path.
+      unsigned int path_size = paths[start][end].size();
+
+      // Print out header tag.
+      stream << "["<< start << "][" << end << "]: ";
+
+      // Loop through the node path vector.
+      for ( unsigned int kinc = 0; kinc < path_size; ++kinc ) {
+         stream << paths[start][end][kinc]->node_id;
+         if ( kinc < path_size - 1 ) {
+            // stream << ", ";
+            if ( paths[start][end][kinc + 1]->parent != NULL ) {
+               if ( paths[start][end][kinc + 1]->parent->node_id == paths[start][end][kinc]->node_id ) {
+                  stream << " > ";
+               } else {
+                  stream << " < ";
+               }
+            } else {
+               stream << " < ";
+            }
+         }
+      }
+
+   } else {
+      send_hs( stdout, "LRTreeBase::print_path():%d Warning: No path matrix allocated.\n",
+               __LINE__ );
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
 void LRTreeBase::print_paths( std::ostream &stream )
 {
    // Check to see if a paths matrix has been allocated.
