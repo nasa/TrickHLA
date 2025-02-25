@@ -64,6 +64,9 @@ class RelStateBase : public SpaceFOM::PhysicalEntityData
    friend void init_attrSpaceFOM__RelStateBase();
 
   public:
+   bool debug; ///< @trick_units{--} Debug output flag.
+
+  public:
    /*! @brief Default constructor for the SpaceFOM RelStateBase class.
     *  @param wrt_frame The frame in which to express the source state.
     *  @param tree  The reference frame tree containing all reference frames. */

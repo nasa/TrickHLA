@@ -149,6 +149,22 @@ class LRTreeBase
     *  @param stream Output stream. */
    virtual void print_nodes( std::ostream &stream = std::cout );
 
+   /*! @brief Print out the path between two LRTree nodes.
+    *  @param start  Starting node for path.
+    *  @paran end    Ending node for path.
+    *  @param stream Output stream. */
+   virtual void print_path( LRTreeNodeBase &start,
+                            LRTreeNodeBase &end,
+                            std::ostream   &stream = std::cout );
+
+   /*! @brief Print out the path between two LRTree nodes.
+    *  @param start  Starting node for path.
+    *  @paran end    Ending node for path.
+    *  @param stream Output stream. */
+   virtual void print_path( unsigned int  start,
+                            unsigned int  end,
+                            std::ostream &stream = std::cout );
+
   public:
    bool debug; ///< @trick_units{--} Debug output flag.
 

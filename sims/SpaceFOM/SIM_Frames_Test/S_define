@@ -201,14 +201,48 @@ class EntityDynamicsSimObject : public Trick::SimObject {
 class RelStateTestSimObject : public Trick::SimObject {
 
   public:
-   RelStateBase rel_state;
+   RelStateBase         rel_state;
+   RefFrameBase       * ref_frame;
+   PhysicalEntityData * ref_entity;
+   RefFrameBase       * entity_frame;
+   RefFrameTree       & frame_tree;
 
   public:
-   RelStateTestSimObject( SpaceFOM::RefFrameBase & ref_frame,
-                          SpaceFOM::RefFrameTree & frame_tree )
-      : rel_state( ref_frame , frame_tree )
+   RelStateTestSimObject( SpaceFOM::RefFrameTree & frame_tree,
+                          SpaceFOM::RefFrameBase & default_frame   )
+      : rel_state( default_frame , frame_tree ),
+        frame_tree( frame_tree )
    {
+
+      ("initialization") initialize( );
+      (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( ref_entity, ref_frame );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
    }
+   
+   // Print state job.
+   void initialize()
+   {
+      entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
+   }
+   
+   // Print state job.
+   void print_state()
+   {
+      std::cout << "----------------------------------------------------------------------\n";
+      std::cout << " Relative state for entity: " << ref_entity->name << "\n";
+      std::cout << " Entity state frame: " << ref_entity->parent_frame << "\n";
+      std::cout << " Expressed in frame: " << ref_frame->get_name() << "\n";
+      std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
+      std::cout << " Reference frame tree path: ";
+      frame_tree.print_path( *entity_frame, *ref_frame );
+      std::cout << "\n";
+      rel_state.print_data();
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+   
+  protected:
+   
 
   private:
    // This object is not copyable
@@ -248,6 +282,9 @@ SpaceFOMRefFrameSimObject mars_centered_fixed( ref_frame_tree.frame_tree, mars_f
 
 // Instantiate a vehicle to test against.
 EntityDynamicsSimObject vehicle( THLA.execution_control );
+
+// Instantiate a relative state test object.
+RelStateTestSimObject rel_test( ref_frame_tree.frame_tree, solar_system_barycenter.frame_packing );
 
 // Main TrickHLA SimObject.
 SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
