@@ -182,6 +182,67 @@ void PhysicalEntityData::copy( PhysicalEntityData const &source )
 }
 
 /*!
+ * @job_class{initialization}
+ */
+void PhysicalEntityData::set_name( char const *new_name )
+{
+   if ( this->name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityData::set_name():%d WARNING deleting Trick Memory for 'this->name'\n",
+                  __LINE__ );
+      }
+   }
+   name = trick_MM->mm_strdup( new_name );
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalEntityData::set_type( char const *new_type )
+{
+   if ( this->type != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->type ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityData::set_type():%d WARNING deleting Trick Memory for 'this->type'\n",
+                  __LINE__ );
+      }
+   }
+   type = trick_MM->mm_strdup( new_type );
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalEntityData::set_status( char const *new_status )
+{
+   if ( this->status != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->status ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityData::set_status():%d WARNING deleting Trick Memory for 'this->status'\n",
+                  __LINE__ );
+      }
+   }
+   this->status = trick_MM->mm_strdup( new_status );
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalEntityData::set_parent_frame( char const *new_frame )
+{
+   if ( this->parent_frame != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->parent_frame ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityData::set_parent_frame():%d WARNING deleting Trick Memory for 'this->parent_frame'\n",
+                  __LINE__ );
+      }
+   }
+   parent_frame = trick_MM->mm_strdup( new_frame );
+
+   return;
+}
+
+/*!
  * @job_class{scheduled}
  */
 void PhysicalEntityData::print_data( std::ostream &stream )

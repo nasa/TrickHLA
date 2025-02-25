@@ -79,6 +79,24 @@ class PhysicalEntityData
     *  @param source Source PhysicalEntityData to copy from. */
    virtual void copy( PhysicalEntityData const &source );
 
+   // Access functions.
+   /*! @brief Set the name of the PhysicalEntityData instance.
+    *  @param new_name Name of the PhysicalEntityData instance. */
+   virtual void set_name( char const *new_name );
+
+   /*! @brief Set the type string of the PhysicalEntityData.
+    *  @param new_type Type string associated with the PhysicalEntityData. */
+   virtual void set_type( char const *new_type );
+
+   /*! @brief Set the status string of the PhysicalEntityData.
+    *  @param new_status Status string associated with the PhysicalEntityData. */
+   virtual void set_status( char const *new_status );
+
+   /*! @brief Set the name of the parent reference frame for the PhysicalEntityData.
+    *  @param new_frame The name of the parent reference frame associated
+    *  with the PhysicalEntityData. */
+   virtual void set_parent_frame( char const *new_frame );
+
    /*! @brief Print out the data values.
     *  @param stream Output stream. */
    virtual void print_data( std::ostream &stream = std::cout );

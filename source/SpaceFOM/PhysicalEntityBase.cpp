@@ -425,13 +425,7 @@ void PhysicalEntityBase::initialize_callback(
  */
 void PhysicalEntityBase::set_name( char const *new_name )
 {
-   if ( this->pe_packing_data.name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_name():%d WARNING deleting Trick Memory for 'this->name'\n",
-                  __LINE__ );
-      }
-   }
-   pe_packing_data.name = trick_MM->mm_strdup( new_name );
+   pe_packing_data.set_name( new_name );
    return;
 }
 
@@ -440,13 +434,7 @@ void PhysicalEntityBase::set_name( char const *new_name )
  */
 void PhysicalEntityBase::set_type( char const *new_type )
 {
-   if ( this->pe_packing_data.type != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.type ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_type():%d WARNING deleting Trick Memory for 'this->type'\n",
-                  __LINE__ );
-      }
-   }
-   pe_packing_data.type = trick_MM->mm_strdup( new_type );
+   pe_packing_data.set_type( new_type );
    return;
 }
 
@@ -455,13 +443,7 @@ void PhysicalEntityBase::set_type( char const *new_type )
  */
 void PhysicalEntityBase::set_status( char const *new_status )
 {
-   if ( this->pe_packing_data.status != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.status ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_status():%d WARNING deleting Trick Memory for 'this->status'\n",
-                  __LINE__ );
-      }
-   }
-   this->pe_packing_data.status = trick_MM->mm_strdup( new_status );
+   pe_packing_data.set_status( new_status );
    return;
 }
 
@@ -470,14 +452,7 @@ void PhysicalEntityBase::set_status( char const *new_status )
  */
 void PhysicalEntityBase::set_parent_frame( char const *new_frame )
 {
-   if ( this->pe_packing_data.parent_frame != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.parent_frame ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_parent_frame():%d WARNING deleting Trick Memory for 'this->parent_frame'\n",
-                  __LINE__ );
-      }
-   }
-   pe_packing_data.parent_frame = trick_MM->mm_strdup( new_frame );
-
+   pe_packing_data.set_parent_frame( new_frame );
    return;
 }
 

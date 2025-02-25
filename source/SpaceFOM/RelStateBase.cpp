@@ -60,7 +60,8 @@ using namespace SpaceFOM;
 RelStateBase::RelStateBase(
    RefFrameBase &wrt_frame,
    RefFrameTree &tree )
-   : express_frame( &wrt_frame ),
+   : debug(false),
+     express_frame( &wrt_frame ),
      frame_tree( &tree )
 {
    this->name         = NULL;
@@ -223,6 +224,12 @@ bool RelStateBase::compute_state(
       }
       return ( false );
    }
+
+   // Copy over the identification data strings.
+   this->set_name( entity->name );
+   this->set_type( entity->type );
+   this->set_status( entity->status );
+   this->set_parent_frame( express_frame->name );
 
    //**************************************************************************
    // Compute the state of the entity with respect to a new express (parent)
