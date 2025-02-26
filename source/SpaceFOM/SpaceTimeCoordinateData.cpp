@@ -157,7 +157,6 @@ bool SpaceTimeCoordinateData::is_equal(
    return ( true );
 }
 
-
 /*!
  * @job_class{scheduled}
  */
