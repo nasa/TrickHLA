@@ -6,5 +6,3 @@ The documentation included with TrickHLA:
 - SpaceFOM: Space Reference FOM (SpaceFOM) documents.
 - TrickHLA: TrickHLA specific documents.
 - doxygen: TrickHLA and SpaceFOM API documentation.
-- scripts: Scripts documentation. 
-- sims: Simulation documentation.
