@@ -101,7 +101,7 @@ def parse_command_line( ):
 print_usage = False
 
 # Set the default run duration.
-run_duration = 1.0
+run_duration = 0.5
 
 # Default is to NOT show verbose messages.
 verbose = False
@@ -223,7 +223,7 @@ sun_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 sun_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 sun_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "sun_frame.print_state", 1, True )
+trick.exec_set_job_onoff( "sun_frame.print_state", 1, False )
 
 #
 # Earth-Moon system
@@ -235,7 +235,7 @@ embary_frame.frame.data.state.vel = [0.01, 0.0, 0.0]
 embary_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 embary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "embary_frame.print_state", 1, True )
+trick.exec_set_job_onoff( "embary_frame.print_state", 1, False )
 
 # Earth inertial
 earth_inertial_frame.frame.data.name = "EarthCentricInertial"
@@ -389,6 +389,7 @@ mars_centered_fixed.frame_packing.publish()
 # Set up the Reference Frame Tree
 #---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
+trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
 
 
 #---------------------------------------------------------------------------
@@ -397,8 +398,8 @@ ref_frame_tree.frame_tree.debug = True
 rel_test.rel_state.debug = True
 rel_test.ref_entity = vehicle.entity.pe_data
 #rel_test.ref_frame  = solar_system_barycenter.frame_packing
-rel_test.ref_frame  = earth_moon_barycenter.frame_packing
-#rel_test.ref_frame  = earth_centered_inertial.frame_packing
+#rel_test.ref_frame  = earth_moon_barycenter.frame_packing
+rel_test.ref_frame  = earth_centered_inertial.frame_packing
 #rel_test.ref_frame  = earth_centered_fixed.frame_packing
 #rel_test.ref_frame  = moon_centered_inertial.frame_packing
 #rel_test.ref_frame  = moon_centered_fixed.frame_packing
