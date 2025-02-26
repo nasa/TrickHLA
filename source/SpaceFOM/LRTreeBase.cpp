@@ -429,7 +429,7 @@ void LRTreeBase::print_path(
    unsigned int num_nodes = this->nodes.size();
 
    // Perform a few sanity checks.
-   if ( (start >= num_nodes) || (end >= num_nodes) ){
+   if ( ( start >= num_nodes ) || ( end >= num_nodes ) ) {
       send_hs( stdout, "LRTreeBase::print_path():%d ERROR: node not found: start %d, end %d, bound %d!\n",
                __LINE__, start, end, num_nodes );
       return;
@@ -442,7 +442,7 @@ void LRTreeBase::print_path(
       unsigned int path_size = paths[start][end].size();
 
       // Print out header tag.
-      stream << "["<< start << "][" << end << "]: ";
+      stream << "[" << start << "][" << end << "]: ";
 
       // Loop through the node path vector.
       for ( unsigned int kinc = 0; kinc < path_size; ++kinc ) {

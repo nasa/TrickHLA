@@ -50,13 +50,13 @@ using namespace SpaceFOM;
  */
 DynamicalEntityData::DynamicalEntityData()
 {
-   mass = 1.0;
+   mass      = 1.0;
    mass_rate = 0.0;
    for ( unsigned int iinc = 0; iinc < 3; iinc++ ) {
       this->force[iinc]  = 0.0;
       this->torque[iinc] = 0.0;
       for ( unsigned int jinc = 0; jinc < 3; jinc++ ) {
-         this->inertia[iinc][jinc] = 0.0;
+         this->inertia[iinc][jinc]      = 0.0;
          this->inertia_rate[iinc][jinc] = 0.0;
       }
       this->inertia[iinc][iinc] = 1.0;
@@ -108,7 +108,7 @@ void DynamicalEntityData::copy( DynamicalEntityData const &source )
       this->force[iinc]  = source.force[iinc];
       this->torque[iinc] = source.torque[iinc];
       for ( unsigned int jinc = 0; jinc < 3; jinc++ ) {
-         this->inertia[iinc][jinc] = source.inertia[iinc][jinc];
+         this->inertia[iinc][jinc]      = source.inertia[iinc][jinc];
          this->inertia_rate[iinc][jinc] = source.inertia_rate[iinc][jinc];
       }
    }

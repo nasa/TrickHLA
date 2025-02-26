@@ -62,7 +62,7 @@ using namespace SpaceFOM;
 RelStateBase::RelStateBase(
    RefFrameBase &wrt_frame,
    RefFrameTree &tree )
-   : debug(false),
+   : debug( false ),
      express_frame( &wrt_frame ),
      frame_tree( &tree )
 {
