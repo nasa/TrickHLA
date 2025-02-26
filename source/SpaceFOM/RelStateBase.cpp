@@ -54,6 +54,8 @@ using namespace std;
 using namespace TrickHLA;
 using namespace SpaceFOM;
 
+#define REL_STATE_EXTRA_DEBUG 0
+
 /*!
  * @job_class{initialization}
  */
@@ -205,6 +207,14 @@ bool RelStateBase::compute_state(
       // Just copy the state and return.
       this->copy( *entity );
 
+      // Print out the path transformation if debug is set.
+      if ( debug ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+         path_transform.print_data( errmsg );
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+
       return ( true );
    }
 
@@ -303,6 +313,14 @@ bool RelStateBase::compute_state(
    // Add the rotational acceleration of the entity frame with respect
    // to the parent frame.
    V_ADD( this->ang_accel, wdot_c_p_bdy, entity->ang_accel );
+
+   // Print out the path transformation if debug is set.
+   if ( debug ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+      path_transform.print_data( errmsg );
+      send_hs( stderr, errmsg.str().c_str() );
+   }
 
    return ( true );
 }

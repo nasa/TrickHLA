@@ -607,7 +607,7 @@ void RefFrameBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       cout << "RefFrameBase::pack():" << __LINE__ << '\n';
-      this->debug_print();
+      this->print_data();
    }
 
    // Encode the data into the buffer.
@@ -640,7 +640,7 @@ void RefFrameBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       cout << "RefFrameBase::unpack():" << __LINE__ << '\n';
-      this->debug_print();
+      this->print_data();
    }
 
    return;
@@ -649,7 +649,7 @@ void RefFrameBase::unpack()
 /*!
  * @job_class{scheduled}
  */
-void RefFrameBase::debug_print( std::ostream &stream )
+void RefFrameBase::print_data( std::ostream &stream )
 {
 
    // Set the print precision.
