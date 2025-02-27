@@ -489,8 +489,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 {
    ostringstream errormsg;
    errormsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-            << " ERROR: This routine does NOT work and should not be called!"
-            << '\n';
+            << " ERROR: This routine does NOT work and should not be called!\n";
    DebugHandler::terminate_with_message( errormsg.str() );
    return;
 }
@@ -563,8 +562,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -592,8 +590,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified."
-             << '\n';
+             << " files to make sure the 'subscribe' value is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

@@ -181,8 +181,13 @@ bool RefFrameConditionalBase::should_send(
          }
       } else {
          ostringstream errmsg;
-         errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Parent Frame for RefFrame!\n";
+         if ( frame.packing_data.name != NULL ) {
+            errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
+                   << " ERROR: Unexpected NULL Parent Frame for RefFrame '" << frame.packing_data.name << "'!\n";
+         } else {
+            errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
+                   << " ERROR: Unexpected NULL Parent Frame for RefFrame!\n";
+         }
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }

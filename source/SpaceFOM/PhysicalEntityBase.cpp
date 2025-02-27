@@ -425,13 +425,7 @@ void PhysicalEntityBase::initialize_callback(
  */
 void PhysicalEntityBase::set_name( char const *new_name )
 {
-   if ( this->pe_packing_data.name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_name():%d WARNING deleting Trick Memory for 'this->name'\n",
-                  __LINE__ );
-      }
-   }
-   pe_packing_data.name = trick_MM->mm_strdup( new_name );
+   pe_packing_data.set_name( new_name );
    return;
 }
 
@@ -440,13 +434,7 @@ void PhysicalEntityBase::set_name( char const *new_name )
  */
 void PhysicalEntityBase::set_type( char const *new_type )
 {
-   if ( this->pe_packing_data.type != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.type ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_type():%d WARNING deleting Trick Memory for 'this->type'\n",
-                  __LINE__ );
-      }
-   }
-   pe_packing_data.type = trick_MM->mm_strdup( new_type );
+   pe_packing_data.set_type( new_type );
    return;
 }
 
@@ -455,13 +443,7 @@ void PhysicalEntityBase::set_type( char const *new_type )
  */
 void PhysicalEntityBase::set_status( char const *new_status )
 {
-   if ( this->pe_packing_data.status != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.status ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_status():%d WARNING deleting Trick Memory for 'this->status'\n",
-                  __LINE__ );
-      }
-   }
-   this->pe_packing_data.status = trick_MM->mm_strdup( new_status );
+   pe_packing_data.set_status( new_status );
    return;
 }
 
@@ -470,14 +452,7 @@ void PhysicalEntityBase::set_status( char const *new_status )
  */
 void PhysicalEntityBase::set_parent_frame( char const *new_frame )
 {
-   if ( this->pe_packing_data.parent_frame != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.parent_frame ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_parent_frame():%d WARNING deleting Trick Memory for 'this->parent_frame'\n",
-                  __LINE__ );
-      }
-   }
-   pe_packing_data.parent_frame = trick_MM->mm_strdup( new_frame );
-
+   pe_packing_data.set_parent_frame( new_frame );
    return;
 }
 
@@ -553,46 +528,9 @@ void PhysicalEntityBase::debug_print( std::ostream &stream )
           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'\n"
           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'\n"
           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'\n"
-          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'\n"
-          << "\ttime: " << pe_packing_data.state.time << '\n';
-   stream << "\tposition: "
-          << "\t\t" << pe_packing_data.state.pos[0] << ", "
-          << "\t\t" << pe_packing_data.state.pos[1] << ", "
-          << "\t\t" << pe_packing_data.state.pos[2] << '\n';
-   stream << "\tvelocity: "
-          << "\t\t" << pe_packing_data.state.vel[0] << ", "
-          << "\t\t" << pe_packing_data.state.vel[1] << ", "
-          << "\t\t" << pe_packing_data.state.vel[2] << '\n';
-   stream << "\tacceleration: "
-          << "\t\t" << pe_packing_data.accel[0] << ", "
-          << "\t\t" << pe_packing_data.accel[1] << ", "
-          << "\t\t" << pe_packing_data.accel[2] << '\n';
-   stream << "\tattitude (s,v): "
-          << "\t\t" << pe_packing_data.state.att.scalar << "; "
-          << "\t\t" << pe_packing_data.state.att.vector[0] << ", "
-          << "\t\t" << pe_packing_data.state.att.vector[1] << ", "
-          << "\t\t" << pe_packing_data.state.att.vector[2] << '\n';
-   stream << "\tattitude (RPY): "
-          << "\t\t" << euler_angles[0] << ", "
-          << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
-   stream << "\tangular velocity: "
-          << "\t\t" << pe_packing_data.state.ang_vel[0] << ", "
-          << "\t\t" << pe_packing_data.state.ang_vel[1] << ", "
-          << "\t\t" << pe_packing_data.state.ang_vel[2] << '\n';
-   stream << "\tangular acceleration: "
-          << "\t\t" << pe_packing_data.ang_accel[0] << ", "
-          << "\t\t" << pe_packing_data.ang_accel[1] << ", "
-          << "\t\t" << pe_packing_data.ang_accel[2] << '\n';
-   stream << "\tcenter of mass (cm): "
-          << "\t\t" << pe_packing_data.cm[0] << ", "
-          << "\t\t" << pe_packing_data.cm[1] << ", "
-          << "\t\t" << pe_packing_data.cm[2] << '\n';
-   stream << "\tbody wrt. struct (s;v): "
-          << "\t\t" << pe_packing_data.body_wrt_struct.scalar << "; "
-          << "\t\t" << pe_packing_data.body_wrt_struct.vector[0] << ", "
-          << "\t\t" << pe_packing_data.body_wrt_struct.vector[1] << ", "
-          << "\t\t" << pe_packing_data.body_wrt_struct.vector[2] << '\n';
+          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'\n";
+
+   pe_packing_data.print_data();
 
    return;
 }

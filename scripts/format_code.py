@@ -512,8 +512,15 @@ def format_directory(
          # Only interested in files with certain extensions.
          if    file.endswith( '.hh' ) \
             or file.endswith( '.h' ) \
+            or file.endswith( '.hpp' ) \
+            or file.endswith( '.hxx' ) \
+            or file.endswith( '.h++' ) \
             or file.endswith( '.cpp' ) \
-            or file.endswith( '.c' ):
+            or file.endswith( '.c' ) \
+            or file.endswith( '.C' ) \
+            or file.endswith( '.cc' ) \
+            or file.endswith( '.cxx' ) \
+            or file.endswith( '.c++' ):
 
             # Execute different command depending on 'in place' setting.
             if in_place:

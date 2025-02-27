@@ -124,8 +124,7 @@ Attribute *Packing::get_attribute_and_validate(
    if ( attr_FOM_name == NULL ) {
       ostringstream errmsg;
       errmsg << "Packing::get_attribute_and_validate():" << __LINE__
-             << " ERROR: Unexpected NULL attribute FOM name specified."
-             << '\n';
+             << " ERROR: Unexpected NULL attribute FOM name specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

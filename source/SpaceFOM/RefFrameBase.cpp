@@ -651,39 +651,13 @@ void RefFrameBase::unpack()
  */
 void RefFrameBase::print_data( std::ostream &stream )
 {
-   double euler_angles[3];
-
-   // Compute the attitude Euler angles.
-   packing_data.state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
 
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'\n"
-          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'\n"
-          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'\n"
-          << "\ttime:   " << packing_data.state.time << '\n';
-   stream << "\tposition: "
-          << "\t\t" << packing_data.state.pos[0] << ", "
-          << "\t\t" << packing_data.state.pos[1] << ", "
-          << "\t\t" << packing_data.state.pos[2] << '\n';
-   stream << "\tvelocity: "
-          << "\t\t" << packing_data.state.vel[0] << ", "
-          << "\t\t" << packing_data.state.vel[1] << ", "
-          << "\t\t" << packing_data.state.vel[2] << '\n';
-   stream << "\tattitude (s,v): "
-          << "\t\t" << packing_data.state.att.scalar << "; "
-          << "\t\t" << packing_data.state.att.vector[0] << ", "
-          << "\t\t" << packing_data.state.att.vector[1] << ", "
-          << "\t\t" << packing_data.state.att.vector[2] << '\n';
-   stream << "\tattitude (RPY){deg}: "
-          << "\t\t" << euler_angles[0] << ", "
-          << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
-   stream << "\tangular velocity: "
-          << "\t\t" << packing_data.state.ang_vel[0] << ", "
-          << "\t\t" << packing_data.state.ang_vel[1] << ", "
-          << "\t\t" << packing_data.state.ang_vel[2] << '\n';
+   stream << "\tObject-Name: '" << object->get_name() << "'\n";
+   stream << "\ttime:   " << packing_data.state.time << '\n';
+   packing_data.print_data( stream );
    stream << '\n';
 
    return;

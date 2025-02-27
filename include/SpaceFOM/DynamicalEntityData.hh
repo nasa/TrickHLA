@@ -20,15 +20,19 @@ NASA, Johnson Space Center\n
 
 @python_module{SpaceFOM}
 
+@tldh
+@trick_link_dependency{../../source/SpaceFOM/DynamicalEntityData.cpp}
+
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, July 2023, --, Initial version }
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, February 2025, --, Added class functionality.}
 @revs_end
 
 */
 
-#ifndef SPACEFOM_DYNAMICAL_ENTITY_FRAME_DATA_H
-#define SPACEFOM_DYNAMICAL_ENTITY_FRAME_DATA_H
+#ifndef SPACEFOM_DYNAMICAL_ENTITY_DATA_H
+#define SPACEFOM_DYNAMICAL_ENTITY_DATA_H
 
 namespace SpaceFOM
 {
@@ -44,6 +48,30 @@ class DynamicalEntityData
 
    double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix.
    double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Entity inertia rate matrix.
+
+   // Default constructor.
+   DynamicalEntityData();
+
+   // Copy constructor.
+   /*! @brief Copy constructor for DynamicalEntityData class.
+    *  @param source Source data to copy from. */
+   DynamicalEntityData( DynamicalEntityData const &source );
+
+   // Destructor.
+   /*! @brief Destructor for the SpaceFOM DynamicalEntityData class. */
+   virtual ~DynamicalEntityData();
+
+   /*! @brief Assignment operator for DynamicalEntityData class.
+    *  @param rhs Right operand data to copy from. */
+   virtual DynamicalEntityData &operator=( DynamicalEntityData const &rhs );
+
+   /*! @brief Copy the DynamicalEntityData.
+    *  @param source Source DynamicalEntityData to copy from. */
+   virtual void copy( DynamicalEntityData const &source );
+
+   /*! @brief Print out the data values.
+    *  @param stream Output stream. */
+   virtual void print_data( std::ostream &stream = std::cout );
 };
 
 } // namespace SpaceFOM

@@ -2,8 +2,9 @@
  * General TrickHLA Simulation Definition module for the base Trick HLA
  * Packing object.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * standard base interface for a TrickHLA packing object instance.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     standard base interface for a TrickHLA packing object instance.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -24,11 +25,6 @@
 #ifndef TRICKHLA_PACKING_BASE_SIM_OBJECT
 #define TRICKHLA_PACKING_BASE_SIM_OBJECT
 
-//==========================================================================
-// SIM_OBJECT: TrickHLAPackingBaseSimObject - A base simulation definition
-// module implementation to support a TrickHLA packing object instance.
-// This simulation definition module is entended to be extended.
-//==========================================================================
 // System include files.
 ##include <sstream>
 
@@ -41,6 +37,11 @@
 ##include "TrickHLA/OwnershipHandler.hh"
 ##include "TrickHLA/Packing.hh"
 
+//==========================================================================
+// SIM_OBJECT: TrickHLAPackingBaseSimObject - A base simulation definition
+// module implementation to support a TrickHLA packing object instance.
+// This simulation definition module is entended to be extended.
+//==========================================================================
 class TrickHLAPackingBaseSimObject : public Trick::SimObject {
 
   public:

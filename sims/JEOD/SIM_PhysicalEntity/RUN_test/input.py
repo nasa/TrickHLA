@@ -301,16 +301,15 @@ active_vehicle.mass_init.properties.inertia[2]  = [ 0.0, 0.0, 1.0]
 
 # Create the docking port mass point interface.
 active_vehicle.mass_init.set_subject_body( active_vehicle.dyn_body.mass )
-active_vehicle.mass_init.num_points = 1
-active_vehicle.mass_init.points = trick.sim_services.alloc_type( active_vehicle.mass_init.num_points, "jeod::MassPointInit")
+active_vehicle.mass_init.allocate_points(1)
 
-active_vehicle.mass_init.points[0].set_name("Active docking port")
-active_vehicle.mass_init.points[0].pt_frame_spec              = trick.MassPointInit.StructToBody
-active_vehicle.mass_init.points[0].position                   = trick.attach_units( "m",[ 1.0, 0.0, 0.0])
-active_vehicle.mass_init.points[0].pt_orientation.data_source = trick.Orientation.InputEigenRotation
+active_vehicle.mass_init.get_mass_point(0).set_name("Active docking port")
+active_vehicle.mass_init.get_mass_point(0).pt_frame_spec              = trick.MassPointInit.StructToBody
+active_vehicle.mass_init.get_mass_point(0).position                   = trick.attach_units( "m",[ 1.0, 0.0, 0.0])
+active_vehicle.mass_init.get_mass_point(0).pt_orientation.data_source = trick.Orientation.InputEigenRotation
 
-active_vehicle.mass_init.points[0].pt_orientation.eigen_angle = trick.attach_units( "degree",0.0)
-active_vehicle.mass_init.points[0].pt_orientation.eigen_axis  = [ 0.0, 0.0, 1.0]
+active_vehicle.mass_init.get_mass_point(0).pt_orientation.eigen_angle = trick.attach_units( "degree",0.0)
+active_vehicle.mass_init.get_mass_point(0).pt_orientation.eigen_axis  = [ 0.0, 0.0, 1.0]
 
 # Set initial state.
 active_vehicle.pfix.reference_name     = "Moon"
@@ -403,16 +402,15 @@ passive_vehicle.mass_init.properties.inertia[2]  = [ 0.0, 0.0, 1.0]
 
 # Create the docking port mass point interface.
 passive_vehicle.mass_init.set_subject_body( passive_vehicle.dyn_body.mass )
-passive_vehicle.mass_init.num_points = 1
-passive_vehicle.mass_init.points = trick.sim_services.alloc_type( passive_vehicle.mass_init.num_points, "jeod::MassPointInit")
+passive_vehicle.mass_init.allocate_points(1)
 
-passive_vehicle.mass_init.points[0].set_name("Passive docking port")
-passive_vehicle.mass_init.points[0].pt_frame_spec              = trick.MassPointInit.StructToBody
-passive_vehicle.mass_init.points[0].position                   = trick.attach_units( "m",[ 0.0, 1.0, 0.0])
-passive_vehicle.mass_init.points[0].pt_orientation.data_source = trick.Orientation.InputEigenRotation
+passive_vehicle.mass_init.get_mass_point(0).set_name("Passive docking port")
+passive_vehicle.mass_init.get_mass_point(0).pt_frame_spec              = trick.MassPointInit.StructToBody
+passive_vehicle.mass_init.get_mass_point(0).position                   = trick.attach_units( "m",[ 0.0, 1.0, 0.0])
+passive_vehicle.mass_init.get_mass_point(0).pt_orientation.data_source = trick.Orientation.InputEigenRotation
 
-passive_vehicle.mass_init.points[0].pt_orientation.eigen_angle = trick.attach_units( "degree",0.0)
-passive_vehicle.mass_init.points[0].pt_orientation.eigen_axis  = [ 0.0, 1.0, 0.0]
+passive_vehicle.mass_init.get_mass_point(0).pt_orientation.eigen_angle = trick.attach_units( "degree",0.0)
+passive_vehicle.mass_init.get_mass_point(0).pt_orientation.eigen_axis  = [ 0.0, 1.0, 0.0]
 
 # Set initial state.
 passive_vehicle.pfix.reference_name     = "Moon"

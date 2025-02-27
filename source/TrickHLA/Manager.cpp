@@ -205,8 +205,7 @@ void Manager::initialize()
    if ( this->execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'execution_control' pointer!"
-             << '\n';
+             << " ERROR: Unexpected NULL 'execution_control' pointer!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -335,8 +334,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
              << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
              << " Please check your input or modified-data files to make sure"
-             << " the 'Manager::objects' array is correctly configured."
-             << '\n';
+             << " the 'Manager::objects' array is correctly configured.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -363,8 +361,7 @@ void Manager::verify_object_and_interaction_arrays()
                          << " object instance '" << obj_name2
                          << "' at array index " << k << ". Please check your"
                          << " input or modified-data files to make sure the"
-                         << " object instance names are unique with no duplicates."
-                         << '\n';
+                         << " object instance names are unique with no duplicates.\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -392,8 +389,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
              << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
              << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured."
-             << '\n';
+             << " sure the 'Manager::interactions' array is correctly configured.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -588,8 +584,7 @@ federate so this call will be ignored.\n",
                                << " This means we are either not connected to the"
                                << " RTI or we are no longer joined to the federation"
                                << " execution because someone forced our resignation at"
-                               << " the Central RTI Component (CRC) level!"
-                               << '\n';
+                               << " the Central RTI Component (CRC) level!\n";
                         DebugHandler::terminate_with_message( errmsg.str() );
                      }
                   }
@@ -663,8 +658,7 @@ void Manager::receive_init_data(
       errmsg << "Manager::receive_init_data():" << __LINE__
              << " ERROR: The specified Object Instance Name '" << instance_name
              << "' does not correspond to any known object. Please check your"
-             << " S_define file or simulation module to verify the settings."
-             << '\n';
+             << " S_define file or simulation module to verify the settings.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -709,8 +703,7 @@ void Manager::receive_init_data(
                             << " This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << '\n';
+                            << " the Central RTI Component (CRC) level!\n";
                      DebugHandler::terminate_with_message( errmsg.str() );
                   }
                }
@@ -1066,8 +1059,7 @@ void Manager::setup_object_ref_attributes(
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attrs[i].get_FOM_name() << "'"
-                << " Trick-Name:'" << attrs[i].get_trick_name() << "'"
-                << '\n';
+                << " Trick-Name:'" << attrs[i].get_trick_name() << "'" << '\n';
          }
       }
 
@@ -1101,8 +1093,7 @@ void Manager::setup_interaction_ref_attributes()
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          msg << "Manager::setup_interaction_ref_attributes():" << __LINE__ << '\n'
              << "--------------- Trick REF-Attributes ---------------\n"
-             << " FOM-Interaction:'" << interactions[n].get_FOM_name() << "'"
-             << '\n';
+             << " FOM-Interaction:'" << interactions[n].get_FOM_name() << "'\n";
       }
 
       // Initialize the TrickHLA Interaction before we use it.
@@ -1117,8 +1108,7 @@ void Manager::setup_interaction_ref_attributes()
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << param_count
                 << " FOM-Parameter:'" << params[i].get_FOM_name() << "'"
-                << " Trick-Name:'" << params[i].get_trick_name() << "'"
-                << '\n';
+                << " Trick-Name:'" << params[i].get_trick_name() << "'\n";
          }
 
          // Initialize the TrickHLA Parameter.
@@ -1215,8 +1205,7 @@ void Manager::setup_object_RTI_handles(
                 << '\n'
                 << "Getting RTI Object-Class-Handle for"
                 << " Object:'" << data_objects[n].get_name() << "'"
-                << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
-                << '\n';
+                << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'\n";
          }
 
          // Create the wide-string object FOM name.
@@ -1417,8 +1406,7 @@ void Manager::setup_interaction_RTI_handles(
             msg << "Manager::setup_interaction_RTI_handles()" << __LINE__ << '\n'
                 << "----------------- RTI Handles (Interactions & Parameters) ---------------\n"
                 << "Getting RTI Interaction-Class-Handle for"
-                << " FOM-Name:'" << inter_FOM_name << "'"
-                << '\n';
+                << " FOM-Name:'" << inter_FOM_name << "'\n";
          }
 
          // Get the Interaction class handle.
@@ -2026,8 +2014,7 @@ void Manager::wait_for_registration_of_required_objects()
                          << " member. This means we are either not connected to"
                          << " the RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation"
-                         << " at the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " at the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -2179,8 +2166,7 @@ void Manager::set_object_instance_handles_by_name(
                ostringstream errmsg;
                errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
                       << " ERROR: Object Instance Not Known for '"
-                      << ( instance_name != NULL ? instance_name : "" ) << "'"
-                      << '\n';
+                      << ( instance_name != NULL ? instance_name : "" ) << "'\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2780,8 +2766,7 @@ void Manager::pull_ownership_at_init(
    if ( obj_instance_name == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::pull_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << '\n';
+             << " ERROR: Unexpected NULL obj_instance_name specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2811,8 +2796,7 @@ void Manager::handle_pulled_ownership_at_init(
    if ( obj_instance_name == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << '\n';
+             << " ERROR: Unexpected NULL obj_instance_name specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2878,8 +2862,7 @@ void Manager::push_ownership_at_init(
    if ( obj_instance_name == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::push_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << '\n';
+             << " ERROR: Unexpected NULL obj_instance_name specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2909,8 +2892,7 @@ void Manager::handle_pushed_ownership_at_init(
    if ( obj_instance_name == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected NULL obj_instance_name specified!"
-             << '\n';
+             << " ERROR: Unexpected NULL obj_instance_name specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -3113,8 +3095,7 @@ void Manager::encode_checkpoint_interactions()
          ostringstream errmsg;
          errmsg << "Manager::encode_checkpoint_interactions():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
-                << " linear array of " << check_interactions_count << " elements."
-                << '\n';
+                << " linear array of " << check_interactions_count << " elements.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
@@ -3318,8 +3299,7 @@ void Manager::wait_for_discovery_of_objects()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }

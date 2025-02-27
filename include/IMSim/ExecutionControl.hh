@@ -135,7 +135,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
-   virtual void sync_point_announced(
+   virtual void sync_point_announced( // cppcheck-suppress [uselessOverride]
       std::wstring const     &label,
       RTI1516_USERDATA const &user_supplied_tag );
 

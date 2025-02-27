@@ -2,8 +2,9 @@
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
  * Simulation Definition Object that defines a JEOD refrence frame.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines a mapping
- * between a JEOD reference frame and a SpaceFOM reference frame.
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines a
+ *     mapping between a JEOD reference frame and a SpaceFOM reference frame.)
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -21,12 +22,6 @@
  * Description: 
  ****************************************************************************/
 
-//==========================================================================
-// SIM_OBJECT: JEODRefFrameSimObject - An example reference frame
-// simulation object definition. This can be used for SpaceFOM ReferenceFrame
-// object discovery and data exchange.
-//==========================================================================
-
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
@@ -41,6 +36,11 @@
 ##include "SpaceFOM/RefFrameOwnershipHandler.hh"
 ##include "SpaceFOM/RefFrameDeleted.hh"
 
+//==========================================================================
+// SIM_OBJECT: JEODRefFrameSimObject - An example reference frame
+// simulation object definition. This can be used for SpaceFOM ReferenceFrame
+// object discovery and data exchange.
+//==========================================================================
 class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
 
   public:

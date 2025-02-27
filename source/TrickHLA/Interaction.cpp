@@ -162,8 +162,7 @@ void Interaction::initialize(
              << FOM_name << "', the 'preferred_order' is not valid and must be one"
              << " of TRANSPORT_SPECIFIED_IN_FOM, TRANSPORT_TIMESTAMP_ORDER or"
              << " TRANSPORT_RECEIVE_ORDER. Please check your input or modified-data"
-             << " files to make sure the 'preferred_order' is correctly specified."
-             << '\n';
+             << " files to make sure the 'preferred_order' is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -242,8 +241,7 @@ void Interaction::initialize(
              << " ERROR: An Interaction-Handler for"
              << " 'handler' was not specified for the '" << FOM_name << "'"
              << " interaction. Please check your input or modified-data files to"
-             << " make sure an Interaction-Handler is correctly specified."
-             << '\n';
+             << " make sure an Interaction-Handler is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 

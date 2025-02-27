@@ -336,8 +336,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       ostringstream msg2;
       msg2 << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__ << '\n'
            << "--------------- Trick REF-Attributes ---------------\n"
-           << " FOM-Interaction:'" << mtr_interaction->get_FOM_name() << "'"
-           << '\n';
+           << " FOM-Interaction:'" << mtr_interaction->get_FOM_name() << "'\n";
       send_hs( stdout, msg2.str().c_str() );
    }
 
@@ -705,8 +704,7 @@ void ExecutionControl::role_determination_process()
                             << " This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << '\n';
+                            << " the Central RTI Component (CRC) level!\n";
                      DebugHandler::terminate_with_message( errmsg.str() );
                   }
                }
@@ -892,8 +890,7 @@ void ExecutionControl::designated_late_joiner_init_process()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << '\n';
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -2821,8 +2818,7 @@ void ExecutionControl::receive_root_ref_frame()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << '\n';
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -2861,8 +2857,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
 {
    ostringstream errmsg;
    errmsg << "SpaceFOM::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__
-          << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!"
-          << '\n';
+          << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -2876,8 +2871,7 @@ void ExecutionControl::set_least_common_time_step(
    if ( !is_enabled_least_common_time_step() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
-             << " ERROR: Least Common Time Step (LCTS) is not enabled!"
-             << '\n';
+             << " ERROR: Least Common Time Step (LCTS) is not enabled!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2888,8 +2882,7 @@ void ExecutionControl::set_least_common_time_step(
       if ( ExCO == NULL ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
-                << " ERROR: Execution Configuration is not an SpaceFOM ExCO."
-                << '\n';
+                << " ERROR: Execution Configuration is not an SpaceFOM ExCO.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }

@@ -167,7 +167,8 @@ void RefFrameState::pack_from_working_data()
             send_hs( stderr, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
                      __LINE__ );
          }
-         packing_data.parent_name = NULL;
+         // For a NULL parent frame, we must pack an 'empty' string.
+         packing_data.parent_name = trick_MM->mm_strdup( "" );
       }
    }
 
