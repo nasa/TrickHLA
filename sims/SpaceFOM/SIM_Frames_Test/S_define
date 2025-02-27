@@ -222,7 +222,32 @@ class RelStateTestSimObject : public Trick::SimObject {
    // Print state job.
    void initialize()
    {
-      entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
+      std::ostringstream errmsg;
+      bool error = false;
+      
+      // Make sure that all the references are set.
+      if ( ref_frame == NULL ){
+         errmsg << "RelStateTestSimObject:initialize(): NULL ref_frame!\n";
+         errmsg << "\t You probably forgot to set the RelStateBase reference frame in the input file.\n";
+         error = true;
+      }
+      if ( ref_entity == NULL ){
+         errmsg << "RelStateTestSimObject:initialize(): NULL ref_entity!\n";
+         errmsg << "\t You probably forgot to set the PhysicalEntityData entity reference in the input file.\n";
+         error = true;
+      }
+      else {
+         entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
+         if ( entity_frame == NULL ){
+            errmsg << "RelStateTestSimObject:initialize(): ref_entity parent frame not found: "
+                   << ref_entity->parent_frame << "!";
+            error = true;
+         }
+      }
+      
+      if ( error ) {
+         exec_terminate( __FILE__, errmsg.str().c_str() );
+      }
    }
    
    // Print state job.
