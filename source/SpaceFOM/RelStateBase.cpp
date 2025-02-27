@@ -109,6 +109,7 @@ bool RelStateBase::set_frame(
    lookup_frame = frame_tree->find_frame( wrt_frame );
    if ( lookup_frame ) {
       express_frame = lookup_frame;
+      this->set_parent_frame( express_frame->name );
       return ( true );
    }
 
@@ -134,6 +135,7 @@ bool RelStateBase::set_frame(
    lookup_frame = frame_tree->find_frame( wrt_frame );
    if ( lookup_frame ) {
       express_frame = lookup_frame;
+      this->set_parent_frame( express_frame->name );
       return ( true );
    }
 
@@ -211,6 +213,7 @@ bool RelStateBase::compute_state(
       if ( debug ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+         errmsg << "Path transformation for " << entity->name << "\n";
          path_transform.print_data( errmsg );
          send_hs( stderr, errmsg.str().c_str() );
       }
@@ -309,7 +312,7 @@ bool RelStateBase::compute_state(
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the current frame's angular acceleration wrt the parent frame
    // into the entity 'body' frame.
-   entity->state.att.conjugate_transform_vector( path_transform.state.ang_vel, wdot_c_p_bdy );
+   entity->state.att.conjugate_transform_vector( path_transform.ang_accel, wdot_c_p_bdy );
    // Add the rotational acceleration of the entity frame with respect
    // to the parent frame.
    V_ADD( this->ang_accel, wdot_c_p_bdy, entity->ang_accel );

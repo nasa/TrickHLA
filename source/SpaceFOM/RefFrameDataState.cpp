@@ -223,7 +223,7 @@ bool RefFrameDataState::transform_to_parent(
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular acceleration wrt the parent frame into
    // this 'body' frame.
-   this->state.att.conjugate_transform_vector( transform_c_p.state.ang_vel, wdot_c_p_bdy );
+   this->state.att.conjugate_transform_vector( transform_c_p.ang_accel, wdot_c_p_bdy );
    // Add the rotational acceleration of this frame's child frame with respect
    // to the parent frame.
    V_ADD( frame_p->ang_accel, wdot_c_p_bdy, this->ang_accel );
@@ -339,12 +339,12 @@ bool RefFrameDataState::transform_to_child(
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular acceleration wrt the parent frame into
    // this 'body' frame.
-   frame_c->state.att.transform_vector( transform_c_p.state.ang_vel, wdot_c_bdy );
+   frame_c->state.att.transform_vector( transform_c_p.ang_accel, wdot_c_bdy );
    // Add the rotational acceleration of this frame's child frame with respect
    // to the parent frame.
    V_ADD( frame_c->ang_accel, wdot_c_bdy, this->ang_accel );
 
-   return ( false );
+   return ( true );
 }
 
 /*!

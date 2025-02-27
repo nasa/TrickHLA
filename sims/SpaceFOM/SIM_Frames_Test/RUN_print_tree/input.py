@@ -240,7 +240,7 @@ trick.exec_set_job_onoff( "embary_frame.print_state", 1, False )
 # Earth inertial
 earth_inertial_frame.frame.data.name = "EarthCentricInertial"
 earth_inertial_frame.frame.data.parent_name = "EarthMoonBarycentricInertial"
-earth_inertial_frame.frame.data.state.pos = [0.1, 0.0, 0.0]
+earth_inertial_frame.frame.data.state.pos = [1.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 earth_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
@@ -323,7 +323,7 @@ vehicle.entity.pe_data.status       = 'Lost'
 vehicle.entity.pe_data.parent_frame = 'EarthCentricInertial'
 
 # Initial translational state.
-vehicle.entity.pe_data.state.pos = [ 0.0, 0.0, 0.0 ]
+vehicle.entity.pe_data.state.pos = [ 2.0, 0.0, 0.0 ]
 vehicle.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
 
 # Initial rotational state.
@@ -398,9 +398,10 @@ trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
 rel_test.rel_state.debug = True
 rel_test.ref_entity = vehicle.entity.pe_data
 #rel_test.ref_frame  = solar_system_barycenter.frame_packing
+#rel_test.ref_frame  = sun_inertial.frame_packing
 #rel_test.ref_frame  = earth_moon_barycenter.frame_packing
-rel_test.ref_frame  = earth_centered_inertial.frame_packing
-#rel_test.ref_frame  = earth_centered_fixed.frame_packing
+#rel_test.ref_frame  = earth_centered_inertial.frame_packing
+rel_test.ref_frame  = earth_centered_fixed.frame_packing
 #rel_test.ref_frame  = moon_centered_inertial.frame_packing
 #rel_test.ref_frame  = moon_centered_fixed.frame_packing
 

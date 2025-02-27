@@ -141,7 +141,8 @@ void QuaternionData::print_data( std::ostream &stream )
  */
 void QuaternionData::initialize()
 {
-   this->scalar    = 0.0;
+   // Initialize to a unit quaternion with no rotation.
+   this->scalar    = 1.0;
    this->vector[0] = 0.0;
    this->vector[1] = 0.0;
    this->vector[2] = 0.0;
