@@ -209,6 +209,11 @@ def main():
       if os.path.isdir( './models/EntityDynamics/include' ):
          include_dirs.extend( ['-I./models/EntityDynamics/include'] )
       
+      if os.path.isdir( './models/FrameDynamics/src' ):
+         source_dirs.extend( ['./models/FrameDynamics/src/'] )
+      if os.path.isdir( './models/FrameDynamics/include' ):
+         include_dirs.extend( ['-I./models/FrameDynamics/include'] )
+      
       if os.path.isdir( './models/SAIntegrator/src' ):
          source_dirs.extend( ['./models/SAIntegrator/src/'] )
       if os.path.isdir( './models/SAIntegrator/include' ):
