@@ -67,7 +67,7 @@ class FrameDynamics
 
   public:
    // PhysicalEntity data.
-   RefFrameData  data; ///< @trick_units{--} Basic frame propagation data.
+   RefFrameData data; ///< @trick_units{--} Basic frame propagation data.
 
    double accel_env[3];     ///< @trick_units{m/s2} Environmental acceleration.
    double ang_accel_env[3]; ///< @trick_units{rad/s2} Environmental rotational acceleration.

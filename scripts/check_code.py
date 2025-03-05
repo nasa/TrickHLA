@@ -264,6 +264,8 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       trickhla_include_dirs.extend( ['-I', './models/DistIf/include'] )
    if os.path.isdir( './models/EntityDynamics/include' ):
       trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
+   if os.path.isdir( './models/FrameDynamics/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/FrameDynamics/include'] )
    if os.path.isdir( './models/SAIntegrator/include' ):
       trickhla_include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
    if os.path.isdir( './models/simconfig/include' ):
@@ -289,6 +291,8 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       trickhla_source_dirs.extend( ['./models/DistIf/src'] )
    if os.path.isdir( './models/EntityDynamics/src' ):
       trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
+   if os.path.isdir( './models/FrameDynamics/src' ):
+      trickhla_source_dirs.extend( ['./models/FrameDynamics/src'] )
    if os.path.isdir( './models/SAIntegrator/src' ):
       trickhla_source_dirs.extend( ['./models/SAIntegrator/src'] )
    if os.path.isdir( './models/simconfig/src' ):
