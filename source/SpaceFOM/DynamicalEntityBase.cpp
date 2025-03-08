@@ -348,7 +348,9 @@ void DynamicalEntityBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "DynamicalEntityBase::pack():" << __LINE__ << '\n';
+      ostringstream msg;
+      msg << "DynamicalEntityBase::pack():" << __LINE__ << '\n';
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Call the PhysicalEntityBase pack routine.
@@ -372,8 +374,10 @@ void DynamicalEntityBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << '\n';
-      cout << "DynamicalEntityBase::unpack():" << __LINE__ << '\n';
+      ostringstream msg;
+      msg << "DynamicalEntityBase::unpack():" << __LINE__ << '\n'
+          << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << '\n';
+      send_hs( stderr, msg.str().c_str() );
    }
 
    // Call the PhysicalEntityBase unpack routine.

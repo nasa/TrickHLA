@@ -1509,25 +1509,27 @@ bool ExecutionControl::process_mode_transition_request()
 
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      cout << "=============================================================\n"
-           << "IMSim::ExecutionControl::process_mode_transition_request()\n"
-           << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
-           << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
-           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << scenario_time_epoch << '\n'
-           << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
-           << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << '\n'
-           << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << '\n'
-           << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << '\n'
-           << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << '\n';
+      ostringstream msg;
+      msg << "=============================================================\n"
+          << "IMSim::ExecutionControl::process_mode_transition_request()\n"
+          << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
+          << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
+          << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << scenario_time_epoch << '\n'
+          << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
+          << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << '\n'
+          << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << '\n'
+          << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << '\n'
+          << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << '\n';
       if ( does_cte_timeline_exist() ) {
-         cout << "\t current_CTE_time:          " << setprecision( 18 ) << cte_timeline->get_time() << '\n'
-              << "\t CTE_time_epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << '\n';
+         msg << "\t current_CTE_time:          " << setprecision( 18 ) << cte_timeline->get_time() << '\n'
+             << "\t CTE_time_epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << '\n';
       }
-      cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << next_mode_scenario_time << '\n'
-           << "\t next_mode_cte_time:        " << setprecision( 18 ) << next_mode_cte_time << '\n'
-           << "\t scenario_freeze_time:      " << setprecision( 18 ) << scenario_freeze_time << '\n'
-           << "\t simulation_freeze_time:    " << setprecision( 18 ) << simulation_freeze_time << '\n'
-           << "=============================================================\n";
+      msg << "\t next_mode_scenario_time:   " << setprecision( 18 ) << next_mode_scenario_time << '\n'
+          << "\t next_mode_cte_time:        " << setprecision( 18 ) << next_mode_cte_time << '\n'
+          << "\t scenario_freeze_time:      " << setprecision( 18 ) << scenario_freeze_time << '\n'
+          << "\t simulation_freeze_time:    " << setprecision( 18 ) << simulation_freeze_time << '\n'
+          << "=============================================================\n";
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Check Mode Transition Request.
@@ -1801,22 +1803,24 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Print diagnostic message if appropriate.
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               cout << "ExecutionControl::process_execution_control_updates():" << __LINE__ << '\n'
-                    << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
-                    << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
-                    << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << scenario_time_epoch << '\n'
-                    << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
-                    << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << '\n'
-                    << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << '\n';
+               ostringstream msg;
+               msg << "ExecutionControl::process_execution_control_updates():" << __LINE__ << '\n'
+                   << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
+                   << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
+                   << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << scenario_time_epoch << '\n'
+                   << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
+                   << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << '\n'
+                   << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << '\n';
                if ( does_cte_timeline_exist() ) {
-                  cout << "\t current_CTE_time:          " << setprecision( 18 ) << cte_timeline->get_time() << '\n'
-                       << "\t CTE_time_epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << '\n';
+                  msg << "\t current_CTE_time:          " << setprecision( 18 ) << cte_timeline->get_time() << '\n'
+                      << "\t CTE_time_epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << '\n';
                }
-               cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << next_mode_scenario_time << '\n'
-                    << "\t next_mode_cte_time:        " << setprecision( 18 ) << next_mode_cte_time << '\n'
-                    << "\t scenario_freeze_time:      " << setprecision( 18 ) << scenario_freeze_time << '\n'
-                    << "\t simulation_freeze_time:    " << setprecision( 18 ) << simulation_freeze_time << '\n'
-                    << "=============================================================\n";
+               msg << "\t next_mode_scenario_time:   " << setprecision( 18 ) << next_mode_scenario_time << '\n'
+                   << "\t next_mode_cte_time:        " << setprecision( 18 ) << next_mode_cte_time << '\n'
+                   << "\t scenario_freeze_time:      " << setprecision( 18 ) << scenario_freeze_time << '\n'
+                   << "\t simulation_freeze_time:    " << setprecision( 18 ) << simulation_freeze_time << '\n'
+                   << "=============================================================\n";
+               send_hs( stdout, msg.str().c_str() );
             }
 
             // Announce the pending freeze.

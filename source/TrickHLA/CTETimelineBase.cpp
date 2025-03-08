@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/Clock.hh"
+#include "trick/exec_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/CTETimelineBase.hh"
@@ -54,8 +55,9 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 CTETimelineBase::CTETimelineBase()
-   : Clock( 1000000, "GetTimeOfDay - CLOCK_REALTIME" ),
-     clk_id( CLOCK_REALTIME )
+   : Clock( exec_get_time_tic_value(), "GetTimeOfDay - CLOCK_REALTIME" ),
+     clk_id( CLOCK_REALTIME ),
+     ts()
 {
    return;
 }
@@ -78,32 +80,32 @@ int CTETimelineBase::clock_init()
 }
 
 /*!
- * @details Get the global time base on the CTE.
+ * @details Get the global time in seconds based on the CTE.
  */
 double const CTETimelineBase::get_time()
 {
-   struct timespec ts;
-   clock_gettime( CLOCK_REALTIME, &ts );
-   return ( (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 ) );
+   clock_gettime( clk_id, &ts );
+   return static_cast< double >( ts.tv_sec ) + ( ts.tv_nsec * 0.000000001 );
 }
 
 /*!
- * @details Get the minimum time resolution, which is the smallest time
- * representation for this timeline.
+ * @details Get the minimum time resolution in seconds, which is the smallest
+ * time representation for this timeline.
  */
 double const CTETimelineBase::get_min_resolution()
 {
-   return ( 0.000000001 );
+   return 0.000000001;
 }
 
 /*!
- * @details Call the system clock_gettime to get the current real time.
+ * @details Call the system clock_gettime to get the current real time with
+ * a resolution set by Clock::clock_tics_per_sec.
  */
 long long CTETimelineBase::wall_clock_time()
 {
-   struct timespec tp;
-   clock_gettime( clk_id, &tp );
-   return (long long)tp.tv_sec * 1000000LL + (long long)( ( tp.tv_nsec ) / 1000 );
+   clock_gettime( clk_id, &ts );
+   return ( ts.tv_sec * clock_tics_per_sec )
+          + ( ( ts.tv_nsec * clock_tics_per_sec ) / 1000000000 );
 }
 
 /*!
@@ -116,21 +118,23 @@ int CTETimelineBase::clock_stop()
 
 void CTETimelineBase::set_clock_ID( clockid_t const id )
 {
+   this->clk_id = id;
+
    switch ( id ) {
       case CLOCK_REALTIME: {
-         name = "GetTimeOfDay - CLOCK_REALTIME";
+         this->name = "GetTimeOfDay - CLOCK_REALTIME";
          break;
       }
       case CLOCK_MONOTONIC: {
-         name = "GetTimeOfDay - CLOCK_MONOTONIC";
+         this->name = "GetTimeOfDay - CLOCK_MONOTONIC";
          break;
       }
       case CLOCK_MONOTONIC_RAW: {
-         name = "GetTimeOfDay - CLOCK_MONOTONIC_RAW";
+         this->name = "GetTimeOfDay - CLOCK_MONOTONIC_RAW";
          break;
       }
       default: {
-         name = "GetTimeOfDay - other";
+         this->name = "GetTimeOfDay - other";
          break;
       }
    }
@@ -138,5 +142,5 @@ void CTETimelineBase::set_clock_ID( clockid_t const id )
 
 clockid_t const CTETimelineBase::get_clock_ID()
 {
-   return clk_id;
+   return this->clk_id;
 }

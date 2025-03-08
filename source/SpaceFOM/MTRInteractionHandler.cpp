@@ -172,22 +172,24 @@ void MTRInteractionHandler::send_interaction(
 
          string rti_user_supplied_tag_string;
          StringUtilities::to_string( rti_user_supplied_tag_string, rti_user_supplied_tag );
+         ostringstream msg;
 
-         cout << "++++SENDING++++ MTRInteractionHandler::send_interaction("
-              << "Receive Order):" << __LINE__ << '\n'
-              << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-              << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
-              << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << '\n'
-              << "  mode request: " << mtr_enum_to_string( mtr_mode ) << '\n'
-              << "  Scenario time: " << scenario_time << '\n'
-              << "  Simulation time: " << sim_time << '\n';
+         msg << "++++SENDING++++ MTRInteractionHandler::send_interaction("
+             << "Receive Order):" << __LINE__ << '\n'
+             << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+             << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
+             << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << '\n'
+             << "  mode request: " << mtr_enum_to_string( mtr_mode ) << '\n'
+             << "  Scenario time: " << scenario_time << '\n'
+             << "  Simulation time: " << sim_time << '\n';
          if ( exco_base->does_cte_timeline_exist() ) {
-            cout << "  CTE time: " << cte_time << '\n';
+            msg << "  CTE time: " << cte_time << '\n';
          }
-         cout << "  HLA grant time: " << granted_time << " ("
-              << Int64BaseTime::to_base_time( granted_time ) << " "
-              << Int64BaseTime::get_units() << ")\n"
-              << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+         msg << "  HLA grant time: " << granted_time << " ("
+             << Int64BaseTime::to_base_time( granted_time ) << " "
+             << Int64BaseTime::get_units() << ")\n"
+             << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+         send_hs( stdout, msg.str().c_str() );
       }
 
       // Update the send count, which is just used for the message in this example.
@@ -206,17 +208,19 @@ void MTRInteractionHandler::send_interaction(
          granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
          // The interaction was Not sent.
-         cout << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
-              << __LINE__ << '\n'
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-              << "  Scenario time: " << scenario_time << '\n'
-              << "  Simulation time: " << sim_time << '\n';
+         ostringstream msg;
+         msg << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
+             << __LINE__ << '\n'
+             << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+             << "  Scenario time: " << scenario_time << '\n'
+             << "  Simulation time: " << sim_time << '\n';
          if ( exco_base->does_cte_timeline_exist() ) {
-            cout << "  CTE time: " << cte_time << '\n';
+            msg << "  CTE time: " << cte_time << '\n';
          }
-         cout << "  HLA grant time: " << granted_time << " ("
-              << Int64BaseTime::to_base_time( granted_time ) << " "
-              << Int64BaseTime::get_units() << ")\n";
+         msg << "  HLA grant time: " << granted_time << " ("
+             << Int64BaseTime::to_base_time( granted_time ) << " "
+             << Int64BaseTime::get_units() << ")\n";
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 }
@@ -271,21 +275,24 @@ void MTRInteractionHandler::receive_interaction(
 
       string user_supplied_tag_string;
       StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );
-      cout << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
-           << __LINE__ << '\n'
-           << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-           << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
-           << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << '\n'
-           << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << '\n'
-           << "  Scenario time: " << this->scenario_time << '\n'
-           << "  Simulation time: " << this->sim_time << '\n';
+
+      ostringstream msg;
+      msg << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
+          << __LINE__ << '\n'
+          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+          << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
+          << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << '\n'
+          << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << '\n'
+          << "  Scenario time: " << this->scenario_time << '\n'
+          << "  Simulation time: " << this->sim_time << '\n';
       if ( exco->does_cte_timeline_exist() ) {
-         cout << "  CTE time: " << this->cte_time << '\n';
+         msg << "  CTE time: " << this->cte_time << '\n';
       }
-      cout << "  HLA grant time: " << this->granted_time << " ("
-           << Int64BaseTime::to_base_time( this->granted_time ) << " "
-           << Int64BaseTime::get_units() << ")\n"
-           << "  receive_cnt:" << ( receive_cnt + 1 ) << '\n';
+      msg << "  HLA grant time: " << this->granted_time << " ("
+          << Int64BaseTime::to_base_time( this->granted_time ) << " "
+          << Int64BaseTime::get_units() << ")\n"
+          << "  receive_cnt:" << ( receive_cnt + 1 ) << '\n';
+      send_hs( stdout, msg.str().c_str() );
    }
 
    ++receive_cnt;
