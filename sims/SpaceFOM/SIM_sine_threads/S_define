@@ -228,7 +228,8 @@ class THLAInitSimObject : public Trick::SimObject {
                       TrickHLA::Federate & thla_fed,
                       unsigned int         _MPI_1   = 100,
                       unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
-      : scenario_timeline( sim_timeline, 0.0, 0.0 ),
+      : sim_timeline(),
+        scenario_timeline( sim_timeline, 0.0, 0.0 ),
         thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {

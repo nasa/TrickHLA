@@ -328,8 +328,10 @@ void PhysicalInterfaceBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "PhysicalInterfaceBase::pack():" << __LINE__ << '\n';
-      this->print_data();
+      ostringstream msg;
+      msg << "PhysicalInterfaceBase::pack():" << __LINE__ << '\n';
+      this->print_data( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Encode the data into the buffer.
@@ -340,12 +342,11 @@ void PhysicalInterfaceBase::pack()
 
 void PhysicalInterfaceBase::unpack()
 {
-
-   // double dt; // Local vs. remote time difference.
-
    if ( !initialized ) {
-      cout << "PhysicalInterfaceBase::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!\n";
+      ostringstream msg;
+      msg << "PhysicalInterfaceBase::unpack():" << __LINE__
+          << " ERROR: The initialize() function has not been called!\n";
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Use the HLA encoder helpers to decode the PhysicalInterface fixed record.
@@ -356,8 +357,10 @@ void PhysicalInterfaceBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "PhysicalInterfaceBase::unpack():" << __LINE__ << '\n';
-      this->print_data();
+      ostringstream msg;
+      msg << "PhysicalInterfaceBase::unpack():" << __LINE__ << '\n';
+      this->print_data( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    return;

@@ -474,8 +474,10 @@ void PhysicalEntityBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      send_hs( stdout, "PhysicalEntityBase::pack():%d\n", __LINE__ );
-      this->debug_print( cout );
+      ostringstream msg;
+      msg << "PhysicalEntityBase::pack():" << __LINE__ << "\n";
+      this->debug_print( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Encode the data into the buffer.
@@ -506,8 +508,10 @@ void PhysicalEntityBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      send_hs( stdout, "PhysicalEntityBase::unpack():%d\n", __LINE__ );
-      this->debug_print( cout );
+      ostringstream msg;
+      msg << "PhysicalEntityBase::unpack():" << __LINE__ << "\n";
+      this->debug_print( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    return;

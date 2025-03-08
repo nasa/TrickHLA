@@ -381,18 +381,18 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
 void ExecutionConfiguration::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "=============================================================\n"
-           << "IMSim::ExecutionConfiguration::pack():" << __LINE__ << '\n'
-           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << '\n'
-           << "\t Current Simulation Time: " << the_exec->get_sim_time() << '\n'
-           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
-           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
-           << ".............................................................\n";
-      this->print_simconfig( cout );
-      cout << "=============================================================\n";
+      ostringstream msg;
+      msg << "=============================================================\n"
+          << "IMSim::ExecutionConfiguration::pack():" << __LINE__ << '\n'
+          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << '\n'
+          << "\t Current Simulation Time: " << the_exec->get_sim_time() << '\n'
+          << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
+          << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
+          << ".............................................................\n";
+      this->print_simconfig( msg );
+      msg << "=============================================================\n";
+      send_hs( stdout, msg.str().c_str() );
    }
-
-   return;
 }
 
 /*!
@@ -400,17 +400,18 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "=============================================================\n"
-           << "IMSim::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
-           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << '\n'
-           << "\t Current Simulation Time: " << the_exec->get_sim_time() << '\n'
-           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
-           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
-           << ".............................................................\n";
-      this->print_simconfig( cout );
-      cout << "=============================================================\n";
+      ostringstream msg;
+      msg << "=============================================================\n"
+          << "IMSim::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
+          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << '\n'
+          << "\t Current Simulation Time: " << the_exec->get_sim_time() << '\n'
+          << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
+          << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
+          << ".............................................................\n";
+      this->print_simconfig( msg );
+      msg << "=============================================================\n";
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Mark that we have a Simulation Configuration update with pending changes.
@@ -496,11 +497,12 @@ void ExecutionConfiguration::setup_ref_attributes(
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   cout << "=============================================================\n"
-        << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << '\n';
-   this->print_simconfig( cout );
-   cout << "=============================================================\n";
-   return;
+   ostringstream msg;
+   msg << "=============================================================\n"
+       << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << '\n';
+   this->print_simconfig( msg );
+   msg << "=============================================================\n";
+   send_hs( stdout, msg.str().c_str() );
 }
 
 void ExecutionConfiguration::print_simconfig( std::ostream &stream )

@@ -960,19 +960,21 @@ void ExecutionControl::late_joiner_hla_init_process()
 
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      cout << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
-           << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
-           << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
-           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
-           << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
-           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
-           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
-           << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
-           << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
+      ostringstream msg;
+      msg << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
+          << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
+          << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
+          << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
+          << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
+          << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
+          << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
+          << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
+          << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
       if ( does_cte_timeline_exist() ) {
-         cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
-              << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
+         msg << "\t current-CTE-time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
+             << "\t CTE-time-epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
       }
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Set the requested execution mode from the ExCO.
@@ -1195,19 +1197,21 @@ void ExecutionControl::post_multi_phase_init_processes()
 
       // Print diagnostic message if appropriate.
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         cout << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
-              << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
-              << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
-              << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
-              << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
-              << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
-              << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
-              << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
-              << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
+         ostringstream msg;
+         msg << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
+             << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
+             << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
+             << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
+             << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
+             << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
+             << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
+             << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
+             << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
          if ( does_cte_timeline_exist() ) {
-            cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
-                 << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
+            msg << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
+                << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
          }
+         send_hs( stdout, msg.str().c_str() );
       }
 
       // Check the current ExecutionControl execution mode to figure out
@@ -1660,25 +1664,27 @@ bool ExecutionControl::process_mode_transition_request()
 
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      cout << "=============================================================\n"
-           << "SpaceFOM::ExecutionControl::process_mode_transition_request()\n"
-           << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
-           << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
-           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
-           << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
-           << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
-           << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
-           << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
-           << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
+      ostringstream msg;
+      msg << "=============================================================\n"
+          << "SpaceFOM::ExecutionControl::process_mode_transition_request()\n"
+          << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
+          << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
+          << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
+          << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
+          << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << '\n'
+          << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << '\n'
+          << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
+          << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
       if ( does_cte_timeline_exist() ) {
-         cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
-              << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
+         msg << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
+             << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
       }
-      cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << '\n'
-           << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << '\n'
-           << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << '\n'
-           << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << '\n'
-           << "=============================================================\n";
+      msg << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << '\n'
+          << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << '\n'
+          << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << '\n'
+          << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << '\n'
+          << "=============================================================\n";
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Check Mode Transition Request.
@@ -1690,7 +1696,8 @@ bool ExecutionControl::process_mode_transition_request()
          clear_mode_transition_requested();
 
          // Transition to run can only happen from initialization or freeze.
-         // We don't really need to do anything if we're in initialization.
+         // We don't really need to do anything if we're in initialization
+         // because Trick will automatically transitionton to run.
          if ( this->current_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
 
             // Tell Trick to exit freeze and go to run.
@@ -2015,22 +2022,24 @@ bool ExecutionControl::process_execution_control_updates()
             case EXECUTION_CONTROL_FREEZE: {
                // Print diagnostic message if appropriate.
                if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  cout << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__ << '\n'
-                       << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
-                       << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
-                       << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
-                       << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
-                       << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
-                       << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
+                  ostringstream msg;
+                  msg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__ << '\n'
+                      << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << '\n'
+                      << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << '\n'
+                      << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << '\n'
+                      << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << '\n'
+                      << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << '\n'
+                      << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << '\n';
                   if ( does_cte_timeline_exist() ) {
-                     cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
-                          << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
+                     msg << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << '\n'
+                         << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << '\n';
                   }
-                  cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << '\n'
-                       << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << '\n'
-                       << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << '\n'
-                       << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << '\n'
-                       << "=============================================================\n";
+                  msg << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << '\n'
+                      << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << '\n'
+                      << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << '\n'
+                      << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << '\n'
+                      << "=============================================================\n";
+                  send_hs( stdout, msg.str().c_str() );
                }
 
                // Announce the pending freeze.
@@ -2175,67 +2184,67 @@ bool ExecutionControl::run_mode_transition()
       errmsg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_run' sync-point was not found!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
+      return false;
+   }
 
-      // Wait for 'mtr_run' sync-point announce.
-      wait_for_sync_point_announced( SpaceFOM::MTR_RUN_SYNC_POINT );
+   // Wait for 'mtr_run' sync-point announce.
+   wait_for_sync_point_announced( SpaceFOM::MTR_RUN_SYNC_POINT );
 
-      // Achieve the 'mtr-run' sync-point and wait for synchronization.
-      achieve_sync_point_and_wait_for_synchronization( SpaceFOM::MTR_RUN_SYNC_POINT );
+   // Achieve the 'mtr-run' sync-point and wait for synchronization.
+   achieve_sync_point_and_wait_for_synchronization( SpaceFOM::MTR_RUN_SYNC_POINT );
 
-      // Set the current execution mode to running.
-      ExecutionConfiguration *ExCO   = get_execution_configuration();
-      current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
-      ExCO->set_current_execution_mode( EXECUTION_MODE_RUNNING );
+   // Set the current execution mode to running.
+   ExecutionConfiguration *ExCO   = get_execution_configuration();
+   current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
+   ExCO->set_current_execution_mode( EXECUTION_MODE_RUNNING );
 
-      // Check for CTE.
-      if ( does_cte_timeline_exist() ) {
+   // Check for CTE.
+   if ( does_cte_timeline_exist() ) {
 
-         double go_to_run_time;
+      double go_to_run_time;
 
-         // The Master federate updates the ExCO with the CTE got-to-run time.
-         if ( is_master() ) {
+      // The Master federate updates the ExCO with the CTE got-to-run time.
+      if ( is_master() ) {
 
-            go_to_run_time = ExCO->get_next_mode_cte_time();
-            ExCO->send_init_data();
+         go_to_run_time = ExCO->get_next_mode_cte_time();
+         ExCO->send_init_data();
 
-         } else {
-            // Other federates wait on the ExCO update with the CTE go-to-run time.
+      } else {
+         // Other federates wait on the ExCO update with the CTE go-to-run time.
 
-            // Wait for the ExCO update with the CTE time.
-            ExCO->wait_for_update();
+         // Wait for the ExCO update with the CTE time.
+         ExCO->wait_for_update();
 
-            // Process the just received ExCO update.
-            process_execution_control_updates();
+         // Process the just received ExCO update.
+         process_execution_control_updates();
 
-            // Set the CTE time to go to run.
-            go_to_run_time = ExCO->get_next_mode_cte_time();
-         }
+         // Set the CTE time to go to run.
+         go_to_run_time = ExCO->get_next_mode_cte_time();
+      }
 
-         // Wait for the CTE go-to-run time.
-         double diff;
-         while ( get_cte_time() < go_to_run_time ) {
+      // Wait for the CTE go-to-run time.
+      while ( get_cte_time() < go_to_run_time ) {
 
-            // Check for shutdown.
-            federate->check_for_shutdown_with_termination();
+         // Check for shutdown.
+         federate->check_for_shutdown_with_termination();
 
-            diff = go_to_run_time - get_cte_time();
-            if ( fmod( diff, 1.0 ) == 0.0 ) {
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.\n",
-                           __LINE__, diff );
-               }
+         double diff = go_to_run_time - get_cte_time();
+         if ( fmod( diff, 1.0 ) == 0.0 ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %f seconds.\n",
+                        __LINE__, diff );
             }
          }
+      }
 
-         // Print debug message if appropriate.
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            double curr_cte_time = get_cte_time();
+ //     the_exec->run();//TEMP
 
-            diff = curr_cte_time - go_to_run_time;
-            send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.\n",
-                     __LINE__, go_to_run_time, curr_cte_time, diff );
-         }
+      // Print debug message if appropriate.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         double curr_cte_time = get_cte_time();
+         double diff          = curr_cte_time - go_to_run_time;
+         send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds.\n  Current CTE time %.18G seconds.\n  Difference: %.9lf seconds.\n",
+                  __LINE__, go_to_run_time, curr_cte_time, diff );
       }
    }
    return true;
@@ -2927,7 +2936,7 @@ void ExecutionControl::set_time_padding(
    }
 
    // Time padding needs to be an integer multiple of the LCTS.
-   if ( padding_base_time % this->least_common_time_step != 0 ) {
+   if ( ( padding_base_time % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value ("

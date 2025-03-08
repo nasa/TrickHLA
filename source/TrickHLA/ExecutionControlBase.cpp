@@ -234,7 +234,7 @@ void ExecutionControlBase::initialize()
 {
    // Set Trick's realtime clock to the CTE clock if used.
    if ( does_cte_timeline_exist() ) {
-      this->cte_timeline->clock_init();
+      cte_timeline->clock_init();
    }
 
    // Reset the master flag if it is not preset by the user.
@@ -856,11 +856,8 @@ double ExecutionControlBase::get_scenario_time()
 
 double ExecutionControlBase::get_cte_time()
 {
-   if ( does_cte_timeline_exist() ) {
-      return cte_timeline->get_time();
-   }
-
-   return -std::numeric_limits< double >::max();
+   return does_cte_timeline_exist() ? cte_timeline->get_time()
+                                    : -std::numeric_limits< double >::max();
 }
 
 void ExecutionControlBase::clear_mode_values()

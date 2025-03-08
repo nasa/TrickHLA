@@ -55,11 +55,11 @@ class Timeline
    //-----------------------------------------------------------------
    // Constructors / destructors
    //-----------------------------------------------------------------
-   /*! @brief Initialization constructor for the TrickHLA CTETimelineBase class.
+   /*! @brief Initialization constructor for the TrickHLA Timeline class.
     *  @param t0 Epoch for the timeline. */
    explicit Timeline( double const t0 = 0.0 );
 
-   /*! @brief Pure virtual destructor for the TrickHLA CTETimelineBase class. */
+   /*! @brief Pure virtual destructor for the TrickHLA Timeline class. */
    virtual ~Timeline() = 0;
 
    //-----------------------------------------------------------------

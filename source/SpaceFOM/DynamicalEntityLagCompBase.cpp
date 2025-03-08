@@ -176,8 +176,10 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data before compensation: \n";
-      this->print_lag_comp_data();
+      ostringstream msg;
+      msg << "Send data before compensation: \n";
+      this->print_lag_comp_data( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Compensate the data
@@ -185,8 +187,10 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data after compensation: \n";
-      this->print_lag_comp_data();
+      ostringstream msg;
+      msg << "Send data after compensation: \n";
+      this->print_lag_comp_data( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Copy the compensated state to the packing data.
@@ -228,8 +232,10 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data before compensation: \n";
-         this->print_lag_comp_data();
+         ostringstream msg;
+         msg << "Receive data before compensation: \n";
+         this->print_lag_comp_data( msg );
+         send_hs( stdout, msg.str().c_str() );
       }
 
       // Compensate the data
@@ -237,8 +243,10 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data after compensation: \n";
-         this->print_lag_comp_data();
+         ostringstream msg;
+         msg << "Receive data after compensation: \n";
+         this->print_lag_comp_data( msg );
+         send_hs( stdout, msg.str().c_str() );
       }
 
    } else {

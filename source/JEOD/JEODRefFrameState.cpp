@@ -193,16 +193,18 @@ void JEODRefFrameState::pack_from_working_data()
    packing_data.state.time = get_scenario_time();
 
    if ( debug ) {
-      cout << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << '\n'
-           << "\tSim Sec: " << exec_get_sim_time() << '\n'
-           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << '\n'
-           << "\tDate: " << time_tt->calendar_year
-           << "-" << time_tt->calendar_month
-           << "-" << time_tt->calendar_day
-           << "::" << time_tt->calendar_hour
-           << ":" << time_tt->calendar_minute
-           << ":" << time_tt->calendar_second << '\n'
-           << '\n';
+      ostringstream msg;
+      msg << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << '\n'
+          << "\tSim Sec: " << exec_get_sim_time() << '\n'
+          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << '\n'
+          << "\tDate: " << time_tt->calendar_year
+          << "-" << time_tt->calendar_month
+          << "-" << time_tt->calendar_day
+          << "::" << time_tt->calendar_hour
+          << ":" << time_tt->calendar_minute
+          << ":" << time_tt->calendar_second << '\n'
+          << '\n';
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -251,16 +253,18 @@ void JEODRefFrameState::unpack_into_working_data()
    }
 
    if ( debug ) {
-      cout << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << '\n'
-           << "\tSim Sec: " << exec_get_sim_time() << '\n'
-           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << '\n'
-           << "\tDate: " << time_tt->calendar_year
-           << "-" << time_tt->calendar_month
-           << "-" << time_tt->calendar_day
-           << "::" << time_tt->calendar_hour
-           << ":" << time_tt->calendar_minute
-           << ":" << time_tt->calendar_second << '\n'
-           << '\n';
+      ostringstream msg;
+      msg << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << '\n'
+          << "\tSim Sec: " << exec_get_sim_time() << '\n'
+          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << '\n'
+          << "\tDate: " << time_tt->calendar_year
+          << "-" << time_tt->calendar_month
+          << "-" << time_tt->calendar_day
+          << "::" << time_tt->calendar_hour
+          << ":" << time_tt->calendar_minute
+          << ":" << time_tt->calendar_second << '\n'
+          << '\n';
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
