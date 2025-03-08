@@ -2089,12 +2089,13 @@ bool ExecutionControl::process_execution_control_updates()
                break;
             }
             case EXECUTION_CONTROL_RUNNING: {
+
                // Tell Trick to exit freeze and go to run.
                the_exec->run();
 
                // The run transition logic will be done just when exiting
                // Freeze. This is done in the TrickHLA::Federate::exit_freeze()
-               // routine called when entering Freeze.
+               // routine called when entering Freeze, which will then call
                // run_mode_transition();
                break;
             }
@@ -2194,13 +2195,14 @@ bool ExecutionControl::run_mode_transition()
    achieve_sync_point_and_wait_for_synchronization( SpaceFOM::MTR_RUN_SYNC_POINT );
 
    // Set the current execution mode to running.
-   ExecutionConfiguration *ExCO   = get_execution_configuration();
-   current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
+   ExecutionConfiguration *ExCO         = get_execution_configuration();
+   this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
    ExCO->set_current_execution_mode( EXECUTION_MODE_RUNNING );
 
    // Check for CTE.
    if ( does_cte_timeline_exist() ) {
 
+#if 0 //TEMP
       double go_to_run_time;
 
       // The Master federate updates the ExCO with the CTE got-to-run time.
@@ -2221,6 +2223,9 @@ bool ExecutionControl::run_mode_transition()
          // Set the CTE time to go to run.
          go_to_run_time = ExCO->get_next_mode_cte_time();
       }
+#else //TEMP
+      double go_to_run_time = ExCO->get_next_mode_cte_time();
+#endif //TEMP
 
       // Wait for the CTE go-to-run time.
       while ( get_cte_time() < go_to_run_time ) {
@@ -2237,13 +2242,10 @@ bool ExecutionControl::run_mode_transition()
          }
       }
 
- //     the_exec->run();//TEMP
-
-      // Print debug message if appropriate.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          double curr_cte_time = get_cte_time();
          double diff          = curr_cte_time - go_to_run_time;
-         send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds.\n  Current CTE time %.18G seconds.\n  Difference: %.9lf seconds.\n",
+         send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d  Going to RUN at CTE time %.18G seconds.\n  Current CTE time %.18G seconds.\n  Difference: %.9lf seconds.\n",
                   __LINE__, go_to_run_time, curr_cte_time, diff );
       }
    }
@@ -2604,7 +2606,9 @@ void ExecutionControl::exit_freeze()
    // to synchronize the mtr_goto_run mode transition. This is
    // particularly true when using the CTE clock and a large mode
    // transition padding time.
-   the_clock->clock_reset( the_exec->get_time_tics() );
+   //  the_clock->clock_reset( the_clock->wall_clock_time() ); //TEMP
+   //  the_clock->clock_reset( the_clock->clock_time() ); //TEMP
+   //  the_clock->clock_reset( the_exec->get_time_tics() ); //ORIG
 }
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
