@@ -258,8 +258,9 @@ void ExecutionConfiguration::configure()
 */
 void ExecutionConfiguration::pack()
 {
+   ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "===================================================\n";
+      msg << "===================================================\n";
    }
 
    double terminate_time = exec_get_terminate_time();
@@ -268,9 +269,9 @@ void ExecutionConfiguration::pack()
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
-              << " Setting simulation termination time to "
-              << run_duration << " seconds.\n";
+         msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
+             << " Setting simulation termination time to "
+             << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    } else {
@@ -282,9 +283,9 @@ void ExecutionConfiguration::pack()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
-              << " Setting simulation duration to "
-              << run_duration << " seconds.\n";
+         msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
+             << " Setting simulation duration to "
+             << run_duration << " seconds.\n";
       }
    }
 
@@ -292,14 +293,15 @@ void ExecutionConfiguration::pack()
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << '\n'
-           << "\tObject-Name:'" << this->object->get_name() << "'\n"
-           << "\towner:'" << ( owner != NULL ? owner : "" ) << "'\n"
-           << "\trun_duration:" << run_duration << " seconds\n"
-           << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
-           << "\tnum_federates:" << num_federates << '\n'
-           << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
-           << "===================================================\n";
+      msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << '\n'
+          << "\tObject-Name:'" << this->object->get_name() << "'\n"
+          << "\towner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\trun_duration:" << run_duration << " seconds\n"
+          << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
+          << "\tnum_federates:" << num_federates << '\n'
+          << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "===================================================\n";
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -308,8 +310,9 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
+   ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "===================================================\n";
+      msg << "===================================================\n";
    }
 
    // Decode the run duration from a 64 bit integer in bae time to seconds.
@@ -319,22 +322,23 @@ void ExecutionConfiguration::unpack()
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         cout << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__
-              << " Setting simulation duration to "
-              << run_duration << " seconds.\n";
+         msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__
+             << " Setting simulation duration to "
+             << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
-           << "\tObject-Name:'" << this->object->get_name() << "'\n"
-           << "\towner:'" << ( owner != NULL ? owner : "" ) << "'\n"
-           << "\trun_duration:" << run_duration << " seconds\n"
-           << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
-           << "\tnum_federates:" << num_federates << '\n'
-           << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
-           << "===================================================\n";
+      msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
+          << "\tObject-Name:'" << this->object->get_name() << "'\n"
+          << "\towner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\trun_duration:" << run_duration << " seconds\n"
+          << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
+          << "\tnum_federates:" << num_federates << '\n'
+          << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "===================================================\n";
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Mark that we have an ExCO update with pending changes.

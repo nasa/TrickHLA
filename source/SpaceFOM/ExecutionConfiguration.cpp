@@ -291,8 +291,11 @@ void ExecutionConfiguration::pack()
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << '\n'
-          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n'
-          << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
+          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n';
+      if ( this->execution_control->does_cte_timeline_exist() ) {
+         msg << "\t current-cte-time:        " << setprecision( 18 ) << this->execution_control->cte_timeline->get_time() << '\n';
+      }
+      msg << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n';
       if ( this->next_execution_mode == EXECUTION_MODE_FREEZE ) {
@@ -357,8 +360,11 @@ void ExecutionConfiguration::unpack()
           << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
           << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << '\n'
-          << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << '\n'
-          << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
+          << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << '\n';
+      if ( this->execution_control->does_cte_timeline_exist() ) {
+         msg << "\t current-cte-time:       " << setprecision( 18 ) << this->execution_control->cte_timeline->get_time() << '\n';
+      }
+      msg << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
           << "\t least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n'
           << "=============================================================\n";
@@ -671,8 +677,11 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << '\n'
-          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n'
-          << "\t current_execution_mode:  " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
+          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n';
+      if ( this->execution_control->does_cte_timeline_exist() ) {
+         msg << "\t current-cte-time:        " << setprecision( 18 ) << this->execution_control->cte_timeline->get_time() << '\n';
+      }
+      msg << "\t current_execution_mode:  " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:     " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n'
           << "=============================================================\n";
