@@ -392,14 +392,14 @@ double Utilities::byteswap_double(
    return ( output );
 }
 
-size_t Utilities::next_positive_multiple_of_8(
+size_t const Utilities::next_positive_multiple_of_8(
    size_t const value )
 {
    // Round up to the next positive multiple of 8.
    return Utilities::next_positive_multiple_of_N( value, 8 );
 }
 
-size_t Utilities::next_positive_multiple_of_N(
+size_t const Utilities::next_positive_multiple_of_N(
    size_t const       value,
    unsigned int const n )
 {

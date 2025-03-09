@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/Clock.hh"
+#include "trick/Executive.hh"
 #include "trick/exec_proto.h"
 
 // TrickHLA include files.
@@ -55,7 +56,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 CTETimelineBase::CTETimelineBase()
-   : Clock( exec_get_time_tic_value(), "GetTimeOfDay - CLOCK_REALTIME" ),
+   : Clock( exec_get_time_tic_value(), "CTETimelineBase - CLOCK_REALTIME" ),
      clk_id( CLOCK_REALTIME ),
      ts()
 {
@@ -75,7 +76,11 @@ CTETimelineBase::~CTETimelineBase()
  */
 int CTETimelineBase::clock_init()
 {
-   set_global_clock();
+   // Use this CTE timeline as the global Trick clock.
+   //set_global_clock();
+
+   //this->clock_tics_per_sec = exec_get_time_tic_value();
+
    return 0;
 }
 
@@ -85,7 +90,7 @@ int CTETimelineBase::clock_init()
 double const CTETimelineBase::get_time()
 {
    clock_gettime( clk_id, &ts );
-   return static_cast< double >( ts.tv_sec ) + ( ts.tv_nsec * 0.000000001 );
+   return (double)ts.tv_sec + ( ts.tv_nsec * 0.000000001 );
 }
 
 /*!
@@ -94,7 +99,7 @@ double const CTETimelineBase::get_time()
  */
 double const CTETimelineBase::get_min_resolution()
 {
-   return 0.000000001;
+   return 0.000000001; // 1-nanosecond
 }
 
 /*!
@@ -122,19 +127,19 @@ void CTETimelineBase::set_clock_ID( clockid_t const id )
 
    switch ( id ) {
       case CLOCK_REALTIME: {
-         this->name = "GetTimeOfDay - CLOCK_REALTIME";
+         this->name = "CTETimelineBase - CLOCK_REALTIME";
          break;
       }
       case CLOCK_MONOTONIC: {
-         this->name = "GetTimeOfDay - CLOCK_MONOTONIC";
+         this->name = "CTETimelineBase - CLOCK_MONOTONIC";
          break;
       }
       case CLOCK_MONOTONIC_RAW: {
-         this->name = "GetTimeOfDay - CLOCK_MONOTONIC_RAW";
+         this->name = "CTETimelineBase - CLOCK_MONOTONIC_RAW";
          break;
       }
       default: {
-         this->name = "GetTimeOfDay - other";
+         this->name = "CTETimelineBase - other";
          break;
       }
    }
