@@ -252,7 +252,7 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
 
 
-THLA.execution_control.set_time_padding( 2.0 ) #TEMP
+#THLA.execution_control.set_time_padding( 2.0 ) #TEMP
 
 
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).

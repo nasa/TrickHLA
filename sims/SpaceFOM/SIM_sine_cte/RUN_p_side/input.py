@@ -151,12 +151,14 @@ trick.exec_set_trap_sigfpe( True )
 #trick.checkpoint_end( 1 )
 
 # Setup for Trick real time execution. This is the "Pacing" function.
-#exec( open( "Modified_data/trick/realtime.py" ).read() )
+exec( open( "Modified_data/trick/realtime.py" ).read() )
 
 trick.exec_set_enable_freeze( False )
 trick.exec_set_freeze_command( False )
 trick.sim_control_panel_set_enabled( False )
 trick.exec_set_stack_trace( False )
+
+#trick.sim_control_panel_set_enabled( True )
 
 #---------------------------------------------
 # Set up data to record.
@@ -230,6 +232,7 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 
 # Set the CTE timeline.
 THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
+
 
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
