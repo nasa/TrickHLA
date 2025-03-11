@@ -77,9 +77,10 @@ CTETimelineBase::~CTETimelineBase()
 int CTETimelineBase::clock_init()
 {
    // Use this CTE timeline as the global Trick clock.
-   //set_global_clock();
+   set_global_clock();
 
-   //this->clock_tics_per_sec = exec_get_time_tic_value();
+   // Make sure this clock picks up the current time-tic value.
+   this->clock_tics_per_sec = exec_get_time_tic_value();
 
    return 0;
 }
