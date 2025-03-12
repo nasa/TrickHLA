@@ -83,6 +83,10 @@ void FrameDynamics::default_data()
  */
 void FrameDynamics::initialize()
 {
+
+   // Use derivative evaluation to complete the state initialization.
+   this->derivative();
+
    return;
 }
 
