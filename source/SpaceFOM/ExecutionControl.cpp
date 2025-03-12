@@ -86,6 +86,8 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
+#define TIME_DEBUG 0
+
 // SpaceFOM file level declarations.
 namespace SpaceFOM
 {
@@ -162,6 +164,26 @@ input.py files and reduce input.py file setting errors.
 */
 void ExecutionControl::initialize()
 {
+
+#if TIME_DEBUG
+   long long     clk_time = the_clock->clock_time();
+   long long     wc_time  = the_clock->wall_clock_time();
+   ostringstream msg1;
+   msg1 << "ExecutionControl::initialize():" << __LINE__ << "\n"
+        << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
+        << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
+        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
+        << "             clock_time: " << clk_time << "\n"
+        << "        wall_clock_time: " << wc_time << "\n"
+        << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
+        << "wall_clock_time - ref_time_tics: " << ( wc_time - the_clock->ref_time_tics ) << "\n"
+        << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
+        << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
+        << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
+        << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
+   send_hs( stdout, msg1.str().c_str() ); // TEMP
+#endif                                    // TEMP
+
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
@@ -2598,16 +2620,25 @@ void ExecutionControl::exit_freeze()
    // Transition to run mode.
    run_mode_transition();
 
-
-#define TIME_DEBUG 0
-
 #if TIME_DEBUG
-   send_hs( stdout, "ExecutionControl::exit_freeze():%ld \n\t clock_time:%ld \n\t wall_clock_time:%ld \n\t rt_clock_ratio:%ld \n\t sim_tic_ratio:%ld \n\t ref_time_tics:%ld \n\t clock_tics_per_sec:%ld \n\t ref_time_tics:%ld \n\t exec_get_time_tic_value:%d \n",
-            __LINE__, the_clock->clock_time(), the_clock->wall_clock_time(),
-            the_clock->get_rt_clock_ratio(), the_clock->sim_tic_ratio,
-            the_clock->ref_time_tics, the_clock->clock_tics_per_sec,
-            the_clock->ref_time_tics, exec_get_time_tic_value() ); // TEMP
-#endif                                                             // TEMP
+   long long     clk_time1 = the_clock->clock_time();
+   long long     wc_time1  = the_clock->wall_clock_time();
+   ostringstream msg1;
+   msg1 << "ExecutionControl::exit_freeze():" << __LINE__ << "\n"
+        << "BEFORE CLOCK RESET \n"
+        << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
+        << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
+        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
+        << "             clock_time: " << clk_time1 << "\n"
+        << "        wall_clock_time: " << wc_time1 << "\n"
+        << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
+        << "wall_clock_time - ref_time_tics: " << ( wc_time1 - the_clock->ref_time_tics ) << "\n"
+        << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
+        << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
+        << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
+        << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
+   send_hs( stdout, msg1.str().c_str() ); // TEMP
+#endif                                    // TEMP
 
    // Tell Trick to reset the realtime clock. We need to do this
    // since the exit_freeze job waits an indeterminate amount of time
@@ -2617,12 +2648,24 @@ void ExecutionControl::exit_freeze()
    the_clock->clock_reset( the_exec->get_time_tics() );
 
 #if TIME_DEBUG
-   send_hs( stdout, "ExecutionControl::exit_freeze():%ld \nAFTER RESET \n\t clock_time:%ld \n\t wall_clock_time:%ld \n\t rt_clock_ratio:%ld \n\t sim_tic_ratio:%ld \n\t ref_time_tics:%ld \n\t clock_tics_per_sec:%ld \n\t ref_time_tics:%ld \n\t exec_get_time_tic_value:%d \n",
-            __LINE__, the_clock->clock_time(), the_clock->wall_clock_time(),
-            the_clock->get_rt_clock_ratio(), the_clock->sim_tic_ratio,
-            the_clock->ref_time_tics, the_clock->clock_tics_per_sec,
-            the_clock->ref_time_tics, exec_get_time_tic_value() ); // TEMP
-#endif                                                             // TEMP
+   long long     clk_time2 = the_clock->clock_time();
+   long long     wc_time2  = the_clock->wall_clock_time();
+   ostringstream msg2;
+   msg2 << "ExecutionControl::exit_freeze():" << __LINE__ << "\n"
+        << "AFTER CLOCK RESET \n"
+        << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
+        << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
+        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
+        << "             clock_time: " << clk_time2 << "\n"
+        << "        wall_clock_time: " << wc_time2 << "\n"
+        << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
+        << "wall_clock_time - ref_time_tics: " << ( wc_time2 - the_clock->ref_time_tics ) << "\n"
+        << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
+        << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
+        << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
+        << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
+   send_hs( stdout, msg2.str().c_str() ); // TEMP
+#endif                                    // TEMP
 }
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
