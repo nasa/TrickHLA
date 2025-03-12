@@ -168,20 +168,21 @@ void ExecutionControl::initialize()
 #if TIME_DEBUG
    long long     clk_time = the_clock->clock_time();
    long long     wc_time  = the_clock->wall_clock_time();
-   ostringstream msg;
-   msg << "ExecutionControl::initialize():" << __LINE__ << "\n"
-       << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
-       << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
-       << "             clock_time: " << clk_time << "\n"
-       << "        wall_clock_time: " << wc_time << "\n"
-       << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
-       << "wall_clock_time - ref_time_tics: " << ( wc_time - the_clock->ref_time_tics ) << "\n"
-       << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
-       << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
-       << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
-       << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
-   send_hs( stdout, msg.str().c_str() ); // TEMP
-#endif                                   // TEMP
+   ostringstream msg1;
+   msg1 << "ExecutionControl::initialize():" << __LINE__ << "\n"
+        << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
+        << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
+        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
+        << "             clock_time: " << clk_time << "\n"
+        << "        wall_clock_time: " << wc_time << "\n"
+        << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
+        << "wall_clock_time - ref_time_tics: " << ( wc_time - the_clock->ref_time_tics ) << "\n"
+        << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
+        << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
+        << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
+        << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
+   send_hs( stdout, msg1.str().c_str() ); // TEMP
+#endif                                    // TEMP
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
@@ -2627,6 +2628,7 @@ void ExecutionControl::exit_freeze()
         << "BEFORE CLOCK RESET \n"
         << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
         << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
+        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
         << "             clock_time: " << clk_time1 << "\n"
         << "        wall_clock_time: " << wc_time1 << "\n"
         << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
@@ -2653,6 +2655,7 @@ void ExecutionControl::exit_freeze()
         << "AFTER CLOCK RESET \n"
         << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
         << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
+        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
         << "             clock_time: " << clk_time2 << "\n"
         << "        wall_clock_time: " << wc_time2 << "\n"
         << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
