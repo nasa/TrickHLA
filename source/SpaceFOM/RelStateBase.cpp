@@ -321,6 +321,7 @@ bool RelStateBase::compute_state(
    if ( debug ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+      errmsg << "\tPath transform: \n";
       path_transform.print_data( errmsg );
       send_hs( stderr, errmsg.str().c_str() );
    }

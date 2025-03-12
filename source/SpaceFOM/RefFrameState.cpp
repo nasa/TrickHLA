@@ -177,12 +177,14 @@ void RefFrameState::pack_from_working_data()
    for ( iinc = 0; iinc < 3; ++iinc ) {
       packing_data.state.pos[iinc] = ref_frame_data->state.pos[iinc];
       packing_data.state.vel[iinc] = ref_frame_data->state.vel[iinc];
+      packing_data.accel[iinc]     = ref_frame_data->accel[iinc];
    }
    // Attitude quaternion.
    packing_data.state.att.scalar = ref_frame_data->state.att.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
       packing_data.state.att.vector[iinc] = ref_frame_data->state.att.vector[iinc];
       packing_data.state.ang_vel[iinc]    = ref_frame_data->state.ang_vel[iinc];
+      packing_data.ang_accel[iinc]        = ref_frame_data->ang_accel[iinc];
    }
    // Time tag for this state data.
    packing_data.state.time = ref_frame_data->state.time = get_scenario_time();
@@ -259,6 +261,18 @@ void RefFrameState::unpack_into_working_data()
       // Time tag for this state data.
       ref_frame_data->state.time = packing_data.state.time;
    }
+
+   // FIXME: Need to support acceleration data.
+   //if ( accel_attr->is_received() ) {
+   //   for ( int iinc = 0; iinc < 3; ++iinc ) {
+   //      ref_frame_data->accel[iinc] = packing_data.accel[iinc];
+   //   }
+   //}
+   //if ( ang_accel_attr->is_received() ) {
+   //   for ( int iinc = 0; iinc < 3; ++iinc ) {
+   //    ref_frame_data->ang_accel[iinc] = packing_data.ang_accel[iinc];
+   //   }
+   //}
 
    return;
 }

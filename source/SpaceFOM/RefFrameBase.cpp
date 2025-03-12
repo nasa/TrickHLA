@@ -334,6 +334,9 @@ void RefFrameBase::initialize()
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
+   // Initialize from the initial state of the working data.
+   this->pack_from_working_data();
+
    // Mark this as initialized.
    TrickHLA::Packing::initialize();
 

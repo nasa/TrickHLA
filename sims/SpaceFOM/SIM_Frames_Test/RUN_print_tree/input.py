@@ -117,8 +117,8 @@ if (print_usage == True):
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
-#trick.checkpoint_pre_init(1)
-#trick.checkpoint_post_init(1)
+trick.checkpoint_pre_init(1)
+trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 #trick.checkpoint_end(1)
 
@@ -254,6 +254,9 @@ earth_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 earth_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 earth_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.001 * deg2rad]
+# Set the environmental acceleration values.
+earth_fixed_frame.frame.accel_env = [0.0, 0.0, 0.0]
+earth_fixed_frame.frame.ang_accel_env = [0.0, 0.0, 0.0001 * deg2rad]
 # Control print job.
 trick.exec_set_job_onoff( "earth_fixed_frame.print_state", 1, True )
 
@@ -434,5 +437,6 @@ federate.initialize()
 #---------------------------------------------------------------------------
 # Set up simulation termination time.
 #---------------------------------------------------------------------------
-if run_duration:
-   trick.sim_services.exec_set_terminate_time( run_duration )
+trick.stop(0.0)
+#if run_duration:
+#   trick.sim_services.exec_set_terminate_time( run_duration )
