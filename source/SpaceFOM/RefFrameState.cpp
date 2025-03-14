@@ -263,12 +263,12 @@ void RefFrameState::unpack_into_working_data()
    }
 
    // FIXME: Need to support acceleration data.
-   //if ( accel_attr->is_received() ) {
+   // if ( accel_attr->is_received() ) {
    //   for ( int iinc = 0; iinc < 3; ++iinc ) {
    //      ref_frame_data->accel[iinc] = packing_data.accel[iinc];
    //   }
    //}
-   //if ( ang_accel_attr->is_received() ) {
+   // if ( ang_accel_attr->is_received() ) {
    //   for ( int iinc = 0; iinc < 3; ++iinc ) {
    //    ref_frame_data->ang_accel[iinc] = packing_data.ang_accel[iinc];
    //   }

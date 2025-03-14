@@ -66,8 +66,9 @@ void FluidDistributedIfLagBuffer::initialize(
       mBuffer1[i].initialize( nBulk, nTc );
       mBuffer2[i].initialize( nBulk, nTc );
    }
-   if ( mDelayFrames > 9 )
+   if ( mDelayFrames > 9 ) {
       mDelayFrames = 9;
+   }
    mHeadIndex = mDelayFrames;
    updatePointers();
 }
@@ -80,10 +81,12 @@ void FluidDistributedIfLagBuffer::step()
 {
    mHeadIndex++;
    mTailIndex++;
-   if ( mHeadIndex > 9 )
+   if ( mHeadIndex > 9 ) {
       mHeadIndex = 0;
-   if ( mTailIndex > 9 )
+   }
+   if ( mTailIndex > 9 ) {
       mTailIndex = 0;
+   }
    updatePointers();
 }
 

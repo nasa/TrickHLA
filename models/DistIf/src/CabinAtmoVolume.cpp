@@ -179,8 +179,9 @@ void CabinAtmoVolume::convertNameForTmm(
       while ( std::string::npos != ( loc = name.find( tokFrom, loc ) ) ) {
          name.replace( loc, frLen, tokTo );
          loc += toLen;
-         if ( loc >= name.length() )
+         if ( loc >= name.length() ) {
             break;
+         }
       }
    }
 }
