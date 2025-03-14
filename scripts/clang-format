@@ -3,6 +3,7 @@ Language: Cpp
 # BasedOnStyle: LLVM
 AccessModifierOffset: -1
 AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Right
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
 AlignEscapedNewlines: Right
@@ -20,7 +21,8 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: MultiLine
 BinPackArguments: true
 BinPackParameters: true
-BraceWrapping:   
+BraceWrapping:
+  AfterCaseLabel:        false
   AfterClass:            false
   AfterControlStatement: false
   AfterEnum:             false
@@ -56,12 +58,12 @@ DerivePointerAlignment: false
 DisableFormat: false
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
-ForEachMacros:   
+ForEachMacros:
   - foreach
   - Q_FOREACH
   - BOOST_FOREACH
 IncludeBlocks: Preserve
-IncludeCategories: 
+IncludeCategories:
   - Regex:    '^"(llvm|llvm-c|clang|clang-c)/'
     Priority: 2
   - Regex:    '^(<|"(gtest|gmock|isl|json)/)'
@@ -69,13 +71,19 @@ IncludeCategories:
   - Regex:    '.*'
     Priority: 1
 IncludeIsMainRegex: '(Test)?$'
+IndentCaseBlocks: false
 IndentCaseLabels: true
 IndentPPDirectives: AfterHash
 IndentWidth: 3
 IndentWrappedFunctionNames: false
+InsertBraces: true
+InsertNewlineAtEOF: true
 JavaScriptQuotes: Leave
 JavaScriptWrapImports: true
-KeepEmptyLinesAtTheStartOfBlocks: true
+KeepEmptyLines:
+  AtEndOfFile: false
+  AtStartOfBlock: true
+  AtStartOfFile: false
 MacroBlockBegin: ''
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 1
@@ -100,6 +108,7 @@ SortUsingDeclarations: true
 SpaceAfterCStyleCast: false
 SpaceAfterTemplateKeyword: true
 SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
