@@ -140,7 +140,7 @@ void CTETimelineBase::set_clock_ID( clockid_t const id )
          break;
       }
       default: {
-         this->name = "CTETimelineBase - other";
+         this->name = "CTETimelineBase - Other";
          break;
       }
    }
