@@ -328,8 +328,9 @@ TEST( ArenaTest, getNeighbors_four )
    // Test for (0,1) gridSquare
    bool n0_1_found_flag = false;
    neighbors_iterator   = find( neighbors.begin(), neighbors.end(), n0_1 ); // search for neighbor (0,1) in neighbors
-   if ( neighbors_iterator != neighbors.end() )                             // if the value is found
+   if ( neighbors_iterator != neighbors.end() ) {                           // if the value is found
       n0_1_found_flag = true;                                               // change the found flag to true
+   }
 
    Point point;
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
@@ -340,8 +341,9 @@ TEST( ArenaTest, getNeighbors_four )
    // Test for (0,2) gridSquare
    bool n0_2_found_flag = false;
    neighbors_iterator   = find( neighbors.begin(), neighbors.end(), n0_2 ); // search for neighbor (0,2) in neighbors
-   if ( neighbors_iterator != neighbors.end() )                             // if the value is found
+   if ( neighbors_iterator != neighbors.end() ) {                           // if the value is found
       n0_2_found_flag = true;                                               // change the found flag to true
+   }
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
    std::cout << point.getX() << " " << point.getY() << std::endl;
@@ -351,8 +353,9 @@ TEST( ArenaTest, getNeighbors_four )
    // Test for (1,0) gridSquare
    bool n1_0_found_flag = false;
    neighbors_iterator   = find( neighbors.begin(), neighbors.end(), n1_0 ); // search for neighbor (0,2) in neighbors
-   if ( neighbors_iterator != neighbors.end() )                             // if the value is found
+   if ( neighbors_iterator != neighbors.end() ) {                           // if the value is found
       n1_0_found_flag = true;                                               // change the found flag to true
+   }
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
    std::cout << point.getX() << " " << point.getY() << std::endl;
@@ -362,8 +365,9 @@ TEST( ArenaTest, getNeighbors_four )
    // Test for (1,2) gridSquare
    bool n1_2_found_flag = false;
    neighbors_iterator   = find( neighbors.begin(), neighbors.end(), n1_2 ); // search for neighbor (1,2) in neighbors
-   if ( neighbors_iterator != neighbors.end() )                             // if the value is found
+   if ( neighbors_iterator != neighbors.end() ) {                           // if the value is found
       n1_2_found_flag = true;                                               // change the found flag to true
+   }
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
    std::cout << point.getX() << " " << point.getY() << std::endl;
@@ -373,8 +377,9 @@ TEST( ArenaTest, getNeighbors_four )
    // Test for (2,1) gridSquare
    bool n2_1_found_flag = false;
    neighbors_iterator   = find( neighbors.begin(), neighbors.end(), n2_1 ); // search for neighbor (2,1) in neighbors
-   if ( neighbors_iterator != neighbors.end() )                             // if the value is found
+   if ( neighbors_iterator != neighbors.end() ) {                           // if the value is found
       n2_1_found_flag = true;                                               // change the found flag to true
+   }
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
    std::cout << point.getX() << " " << point.getY() << std::endl;
