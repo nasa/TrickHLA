@@ -13,6 +13,7 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (Feb 2025) (--) (SpaceFOM frames testing.)))
 ##############################################################################
+import os
 import sys
 sys.path.append('../../../')
 
@@ -30,6 +31,7 @@ def print_usage_message( ):
 
    print(' ')
    print('SpaceFOM Reference Frame Simulation Command Line Configuration Options:')
+   print('  -c --case [case]     : Set the name of the test case to run.')
    print('  -e --express [frame] : Set express frame for the relative state.')
    print('  -f --frame [frame]   : Set the native frame for the entity.')
    print('  -h --help            : Print this help message.')
@@ -53,6 +55,8 @@ def parse_command_line( ):
    global frames_list
    global express_frame
    global native_frame
+   global case_name
+   global case_file
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -69,6 +73,18 @@ def parse_command_line( ):
             run_duration = float(str(argv[index]))
          else:
             print('ERROR: Missing --stop [time] argument.')
+            print_usage = True
+         
+      elif ((str(argv[index]) == '-c') | (str(argv[index]) == '--case')):
+         index = index + 1
+         if (index < argc):
+            case_name = str(argv[index])
+            case_file = "RUN_test/" + case_name + ".py"
+            if not os.path.exists( case_file ):
+               print('ERROR: Case file not found: ' + case_file)
+               print_usage = True
+         else:
+            print('ERROR: Missing case name.')
             print_usage = True
          
       elif ((str(argv[index]) == '-e') | (str(argv[index]) == '--express')):
@@ -152,6 +168,10 @@ frames_list = [
 express_frame = frames_list[3]
 native_frame = frames_list[4]
 
+# Set the default case name.
+case_name = 'case0'
+case_file = 'RUN_test/' + case_name + '.py'
+
 # Parse command line arguments to override defaults.
 parse_command_line()
 
@@ -165,8 +185,8 @@ if (print_usage == True):
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
-trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
+#trick.checkpoint_pre_init(1)
+#trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 #trick.checkpoint_end(1)
 
@@ -440,7 +460,7 @@ mars_centered_fixed.frame_packing.publish()
 # Set up the Reference Frame Tree
 #---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
-trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, True )
+trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
 
 
 #---------------------------------------------------------------------------
@@ -466,6 +486,15 @@ elif express_frame == frames_list[7]:
    rel_test.ref_frame  = mars_centered_inertial.frame_packing
 elif express_frame == frames_list[8]:
    rel_test.ref_frame  = mars_centered_fixed.frame_packing
+   
+   
+#---------------------------------------------------------------------------
+# Set 
+#---------------------------------------------------------------------------
+if os.path.exists( case_file ):
+   exec(open(case_file).read())
+else:
+   print('ERROR: Case file not found: ' + case_file)
 
 
 #---------------------------------------------------------------------------

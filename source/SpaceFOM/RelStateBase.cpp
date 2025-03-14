@@ -155,10 +155,6 @@ bool RelStateBase::set_frame(
 bool RelStateBase::compute_state(
    PhysicalEntityData const *entity )
 {
-   RefFrameData path_transform; /* The reference frame transformation data
-                                   needed to transform from the entity's
-                                   parent frame into a desired express frame. */
-
    double r_ent_c_p[3]; /* Position vector of the entity with respect to its
                            current frame (child) but expressed in the desired
                            parent frame. */
@@ -387,4 +383,16 @@ bool RelStateBase::compute_state(
    }
 
    return ( false );
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void RelStateBase::print_path_transform( std::ostream &stream )
+{
+
+   // Call the path transformation print function.
+   path_transform.print_data( stream );
+
+   return;
 }
