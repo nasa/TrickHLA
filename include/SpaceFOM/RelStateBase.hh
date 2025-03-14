@@ -97,6 +97,10 @@ class RelStateBase : public SpaceFOM::PhysicalEntityData
     *  @return Frame in which an entity state will be expressed. */
    RefFrameBase const *get_frame() { return ( express_frame ); }
 
+   /*! @brief Get a copy of the current transformation path.
+    *  @return Transformation data associated with current frame path. */
+   RefFrameData get_transform() { return ( path_transform ); }
+
    /*! @brief Compute the state of an entity with respect to a given frame.
     *  @return True if state successfully computed, false otherwise.
     *  @param entity The entity state to express in a different frame. */
@@ -120,9 +124,16 @@ class RelStateBase : public SpaceFOM::PhysicalEntityData
     *  @param wrt_frame The frame in which to express the source state. */
    bool compute_state( PhysicalEntityData const *source, RefFrameBase const *wrt_frame );
 
+   /*! @brief Print out the path transformation data.
+    *  @param stream Output stream. */
+   virtual void print_path_transform( std::ostream &stream = std::cout );
+
   protected:
-   RefFrameBase const *express_frame;
-   RefFrameTree       *frame_tree;
+   RefFrameBase const *express_frame;  ///< @trick_units{--} Frame in which state is expressed.
+   RefFrameTree       *frame_tree;     ///< @trick_units{--} Frame tree.
+   RefFrameData        path_transform; /**< @trick_units{--} The reference frame transformation data
+                                            needed to transform from an entity's
+                                            parent frame into a desired express frame. */
 
   private:
    // This object is not copyable

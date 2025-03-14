@@ -263,6 +263,8 @@ class RelStateTestSimObject : public Trick::SimObject {
       frame_tree.print_path( *entity_frame, *ref_frame );
       std::cout << "\n";
       rel_state.print_data();
+      std::cout << " Path transformation data: \n";
+      rel_state.print_path_transform();
       std::cout << "----------------------------------------------------------------------\n";
       return;
    }
