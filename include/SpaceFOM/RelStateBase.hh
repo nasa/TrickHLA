@@ -99,7 +99,7 @@ class RelStateBase : public SpaceFOM::PhysicalEntityData
 
    /*! @brief Get a copy of the current transformation path.
     *  @return Transformation data associated with current frame path. */
-   RefFrameData get_transform() { return ( path_transform ); }
+   RefFrameData const & get_transform() { return ( path_transform ); }
 
    /*! @brief Compute the state of an entity with respect to a given frame.
     *  @return True if state successfully computed, false otherwise.
