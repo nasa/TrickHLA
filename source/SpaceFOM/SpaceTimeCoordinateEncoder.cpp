@@ -69,7 +69,6 @@ SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder(
      time_encoder( &data.time ),
      encoder()
 {
-
    // Build up the encoders.
    // ObjectClass: ReferenceFrame, FOM-Module: SISO_SpaceFOM_environment.xml
    //   Attribute-Name: state, dataType: SpaceTimeCoordinateState, encoding: HLAfixedRecord, FOM-Module: SISO_SpaceFOM_datatypes.xml

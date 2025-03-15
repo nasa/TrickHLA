@@ -226,7 +226,7 @@ void ExecutionConfiguration::configure()
    ostringstream federate_list;
    int           required_federate_count = 0;
 
-   Federate *federate = this->manager->get_federate();
+   Federate *federate = manager->get_federate();
    if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
@@ -277,7 +277,7 @@ void ExecutionConfiguration::pack()
    } else {
       // Set the run_duration based on the Trick simulation termination time
       // and the current granted HLA time.
-      this->run_duration = terminate_time - this->object->get_granted_time().get_time_in_seconds();
+      this->run_duration = terminate_time - object->get_granted_time().get_time_in_seconds();
       if ( run_duration < 0.0 ) {
          run_duration = 0.0;
       }
@@ -294,7 +294,7 @@ void ExecutionConfiguration::pack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << '\n'
-          << "\tObject-Name:'" << this->object->get_name() << "'\n"
+          << "\tObject-Name:'" << object->get_name() << "'\n"
           << "\towner:'" << ( owner != NULL ? owner : "" ) << "'\n"
           << "\trun_duration:" << run_duration << " seconds\n"
           << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
@@ -331,7 +331,7 @@ void ExecutionConfiguration::unpack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
-          << "\tObject-Name:'" << this->object->get_name() << "'\n"
+          << "\tObject-Name:'" << object->get_name() << "'\n"
           << "\towner:'" << ( owner != NULL ? owner : "" ) << "'\n"
           << "\trun_duration:" << run_duration << " seconds\n"
           << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
@@ -361,7 +361,7 @@ void ExecutionConfiguration::print_execution_configuration()
       msg << '\n'
           << "=============================================================\n"
           << "TrickHLA::ExecutionConfiguration::print_exec_config():" << __LINE__ << '\n'
-          << "\t Object-Name:           '" << this->get_name() << "'\n"
+          << "\t Object-Name:           '" << get_name() << "'\n"
           << "\t run_duration:          " << setprecision( 18 ) << run_duration << " seconds\n"
           << "\t run_duration_base_time:" << setprecision( 18 ) << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
           << "\t num_federates:         " << setprecision( 18 ) << num_federates << '\n'

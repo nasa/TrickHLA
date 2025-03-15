@@ -117,8 +117,7 @@ PhysicalEntityData::~PhysicalEntityData()
 PhysicalEntityData &PhysicalEntityData::operator=(
    PhysicalEntityData const &rhs )
 {
-
-   this->copy( rhs );
+   copy( rhs );
 
    return ( *this );
 }

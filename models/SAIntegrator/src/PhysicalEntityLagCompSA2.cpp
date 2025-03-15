@@ -168,10 +168,10 @@ void PhysicalEntityLagCompSA2::load()
    // Compute the derivatives of the lag compensation state vector.
    // Note: The SAIntegrator does not require a pre-integration derivative
    // evaluation.  The integrator calls the derivative() routine.
-   // this->derivative_first();
+   // derivative_first();
 
    // Load the integration states and derivatives.
-   this->integrator.load();
+   integrator.load();
    return;
 }
 
@@ -182,14 +182,13 @@ void PhysicalEntityLagCompSA2::unload()
 {
 
    // Unload the integrated states and derivatives.
-   this->integrator.unload();
+   integrator.unload();
 
    // Normalize the propagated attitude quaternion.
-   this->lag_comp_data.att.normalize();
+   lag_comp_data.att.normalize();
 
    // Compute the angular velocity vector.
-   this->Q_dot.compute_omega( this->lag_comp_data.att,
-                              this->lag_comp_data.ang_vel );
+   Q_dot.compute_omega( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    // Return to calling routine.
    return;
@@ -216,7 +215,7 @@ int PhysicalEntityLagCompSA2::integrate(
    // Propagate the current PhysicalEntity state to the desired time.
    // Set the current integration time for the integrator.
    this->integ_t = t_begin;
-   this->integrator.setIndyVar( 0.0 );
+   integrator.setIndyVar( 0.0 );
 
    // Loop through integrating the state forward to the current scenario time.
    while ( ( dt_go >= 0.0 ) && ( fabs( dt_go ) > this->integ_tol ) ) {
@@ -231,34 +230,33 @@ int PhysicalEntityLagCompSA2::integrate(
       }
 
       // Load the integration states and derivatives.
-      this->load();
+      load();
 
       // Perform the integration propagation one integration step.
       if ( dt_go > this->integ_dt ) {
          // Not near the end; so, use the defined integration step size.
-         this->integrator.step( this->integ_dt );
+         integrator.step( this->integ_dt );
       } else {
          // Near the end; so, integrate to the end of the compensation step.
-         this->integrator.step( dt_go );
+         integrator.step( dt_go );
       }
 
       // Unload the integrated states and derivatives.
-      this->unload();
+      unload();
 
       // Update the integration time.
-      this->integ_t = t_begin + this->integrator.getIndyVar();
+      this->integ_t = t_begin + integrator.getIndyVar();
 
       // Compute the remaining time in the compensation step.
-      dt_go = compensate_dt - this->integrator.getIndyVar();
+      dt_go = compensate_dt - integrator.getIndyVar();
    }
 
    // Update the lag compensated time,
-   this->update_time();
+   update_time();
 
    // Compute the angular velocity vector from the propagated attitude
    // quaternion and its derivative.
-   this->Q_dot.compute_omega( this->lag_comp_data.att,
-                              this->lag_comp_data.ang_vel );
+   Q_dot.compute_omega( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    // Print out debug information if desired.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
@@ -275,11 +273,9 @@ int PhysicalEntityLagCompSA2::integrate(
 void PhysicalEntityLagCompSA2::derivative_first(
    void *user_data )
 {
-
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   Q_dot.derivative_first( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    return;
 }

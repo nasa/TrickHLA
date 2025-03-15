@@ -167,7 +167,7 @@ void SimpleSimConfig::pack()
    } else {
       // Set the run_duration based on the Trick simulation termination time
       // and the current granted HLA time.
-      this->run_duration = terminate_time - this->object->get_granted_time().get_time_in_seconds();
+      this->run_duration = terminate_time - object->get_granted_time().get_time_in_seconds();
       if ( run_duration < 0.0 ) {
          run_duration = 0.0;
       }
@@ -184,7 +184,7 @@ void SimpleSimConfig::pack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::pack():" << __LINE__ << '\n'
-           << "\t Object-Name:'" << this->object->get_name() << "'\n"
+           << "\t Object-Name:'" << object->get_name() << "'\n"
            << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
            << "\t run_duration:" << run_duration << " seconds\n"
            << "\t run_duration_base_time:" << run_duration_base_time << " "
@@ -217,7 +217,7 @@ void SimpleSimConfig::unpack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::unpack():" << __LINE__ << '\n'
-           << "\t Object-Name:'" << this->object->get_name() << "'\n"
+           << "\t Object-Name:'" << object->get_name() << "'\n"
            << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
            << "\t run_duration:" << run_duration << " seconds\n"
            << "\t run_duration_base_time:" << run_duration_base_time << " "

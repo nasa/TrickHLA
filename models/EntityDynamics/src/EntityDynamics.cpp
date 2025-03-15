@@ -122,7 +122,7 @@ void EntityDynamics::derivative()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   this->Q_dot.derivative_first( pe_data.state.att, pe_data.state.ang_vel );
+   Q_dot.derivative_first( pe_data.state.att, pe_data.state.ang_vel );
 
    //
    // Compute the translational dynamics.
@@ -175,7 +175,7 @@ int EntityDynamics::integrate()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   // this->Q_dot.first_derivative( pe_data.state.att, pe_data.state.ang_vel );
+   // Q_dot.first_derivative( pe_data.state.att, pe_data.state.ang_vel );
 
    // Return the Trick integrator integration step.
    return ( ipass );

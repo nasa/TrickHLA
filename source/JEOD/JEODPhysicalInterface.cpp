@@ -180,7 +180,7 @@ void JEODPhysicalInterface::configure(
    }
 
    // Call the final configuration check.
-   this->configure();
+   configure();
 }
 
 /*!
@@ -201,7 +201,7 @@ void JEODPhysicalInterface::configure(
    this->vehicle_point_data = vehicle_point_ptr;
 
    // Call the final configuration check.
-   this->configure();
+   configure();
 }
 
 /*!
@@ -236,7 +236,7 @@ void JEODPhysicalInterface::configure(
    }
 
    // Call the final configuration check.
-   this->configure();
+   configure();
 }
 
 /*!

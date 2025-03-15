@@ -73,7 +73,6 @@ DynamicalEntityLagCompInteg::~DynamicalEntityLagCompInteg() // RETURN: -- None.
  */
 void DynamicalEntityLagCompInteg::initialize()
 {
-
    if ( this->integ_dt < this->integ_tol ) {
       ostringstream errmsg;
 

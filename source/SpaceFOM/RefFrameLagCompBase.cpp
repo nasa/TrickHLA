@@ -99,7 +99,7 @@ void RefFrameLagCompBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->TrickHLA::LagCompensation::initialize_callback( obj );
+   TrickHLA::LagCompensation::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
@@ -112,11 +112,9 @@ void RefFrameLagCompBase::initialize_callback(
 /*! @brief Initialization integration states. */
 void RefFrameLagCompBase::initialize_states()
 {
-
    // Copy the current RefFrameLag state over to the lag compensated state.
-   this->lag_comp_data = this->ref_frame.packing_data.state;
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   this->lag_comp_data = ref_frame.packing_data.state;
+   Q_dot.derivative_first( lag_comp_data.att, lag_comp_data.ang_vel );
 
    // Return to calling routine.
    return;
@@ -130,7 +128,7 @@ void RefFrameLagCompBase::bypass_send_lag_compensation()
    // When lag compensation is present but disabled, we still need to copy
    // the working data into the packing data.  This makes sure that the
    // current working state is packed.
-   this->ref_frame.pack_from_working_data();
+   ref_frame.pack_from_working_data();
    return;
 }
 
@@ -142,7 +140,7 @@ void RefFrameLagCompBase::bypass_receive_lag_compensation()
    // When lag compensation is present but disabled, we still need to copy
    // the packing data back into the working data.  This makes sure that the
    // working state is updated from the received packing data.
-   this->ref_frame.unpack_into_working_data();
+   ref_frame.unpack_into_working_data();
    return;
 }
 
@@ -152,7 +150,7 @@ void RefFrameLagCompBase::bypass_receive_lag_compensation()
 void RefFrameLagCompBase::unload_lag_comp_data()
 {
    // Copy the current RefFrameLag state over to the lag compensated state.
-   this->ref_frame.packing_data.state = this->lag_comp_data;
+   ref_frame.packing_data.state = this->lag_comp_data;
 
    return;
 }
@@ -163,7 +161,7 @@ void RefFrameLagCompBase::unload_lag_comp_data()
 void RefFrameLagCompBase::load_lag_comp_data()
 {
    // Copy the current RefFrameLag state over to the lag compensated state.
-   this->lag_comp_data = this->ref_frame.packing_data.state;
+   this->lag_comp_data = ref_frame.packing_data.state;
 
    return;
 }
@@ -182,7 +180,7 @@ void RefFrameLagCompBase::print_lag_comp_data( std::ostream &stream )
    // Compute the attitude Euler angles.
    euler_quat( euler_angles, quat, 1, Pitch_Yaw_Roll );
 
-   stream << "\tScenario time: " << this->get_scenario_time() << '\n';
+   stream << "\tScenario time: " << get_scenario_time() << '\n';
    stream << "\tLag comp time: " << this->lag_comp_data.time << '\n';
    stream << "\tposition: "
           << "\t\t" << this->lag_comp_data.pos[0] << ", "

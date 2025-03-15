@@ -45,7 +45,7 @@ using namespace SpaceFOM;
  */
 QuaternionData::QuaternionData()
 {
-   this->initialize();
+   initialize();
 }
 
 /*!
@@ -53,7 +53,7 @@ QuaternionData::QuaternionData()
  */
 QuaternionData::QuaternionData( QuaternionData const &source )
 {
-   this->copy( source );
+   copy( source );
 }
 
 /*!
@@ -63,7 +63,7 @@ QuaternionData::QuaternionData(
    Euler_Seq    sequence,
    double const angles[3] )
 {
-   this->set_from_Euler( sequence, angles );
+   set_from_Euler( sequence, angles );
 }
 
 /*!
@@ -72,7 +72,7 @@ QuaternionData::QuaternionData(
 QuaternionData::QuaternionData(
    double const T[3][3] )
 {
-   this->set_from_transfrom( T );
+   set_from_transfrom( T );
 }
 
 /***********************************************************************
@@ -98,7 +98,7 @@ QuaternionData &QuaternionData::operator=(
 bool QuaternionData::operator==(
    QuaternionData const &rhs )
 {
-   return ( this->is_equal( rhs ) );
+   return ( is_equal( rhs ) );
 }
 
 /*!
@@ -107,7 +107,7 @@ bool QuaternionData::operator==(
 bool QuaternionData::operator!=(
    QuaternionData const &rhs )
 {
-   return ( !( this->is_equal( rhs ) ) );
+   return ( !( is_equal( rhs ) ) );
 }
 
 /*!

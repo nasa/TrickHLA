@@ -99,7 +99,6 @@ RefFrameState::~RefFrameState()
 void RefFrameState::configure(
    RefFrameData *ref_frame_data_ptr )
 {
-
    // First call the base class pre_initialize function.
    RefFrameBase::configure();
 
@@ -122,7 +121,6 @@ void RefFrameState::configure(
  */
 void RefFrameState::initialize()
 {
-
    // Set the reference to the reference frame.
    if ( ref_frame_data == NULL ) {
       ostringstream errmsg;
@@ -197,7 +195,6 @@ void RefFrameState::pack_from_working_data()
  */
 void RefFrameState::unpack_into_working_data()
 {
-
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
    // incoming value.  If we locally own the attribute then we do not want to

@@ -64,6 +64,6 @@ void PhysicalEntityDeleted::deleted()
 {
    std::ostringstream msg;
    msg << "SpaceFOM::PhysicalEntityDeleted::deleted():" << __LINE__
-       << " Object '" << this->object->get_name() << "' deleted from the federation.";
+       << " Object '" << object->get_name() << "' deleted from the federation.";
    send_hs( stdout, msg.str().c_str() );
 }

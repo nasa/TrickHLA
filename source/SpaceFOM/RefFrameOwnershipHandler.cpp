@@ -74,7 +74,7 @@ void RefFrameOwnershipHandler::initialize_callback(
    TrickHLA::Object *obj )
 {
    // Make sure we call the original function so that the callback is initialized.
-   this->OwnershipHandler::initialize_callback( obj );
+   OwnershipHandler::initialize_callback( obj );
 
    return;
 }

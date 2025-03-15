@@ -60,7 +60,6 @@ using namespace SpaceFOM;
 PhysicalEntityLagComp::PhysicalEntityLagComp( PhysicalEntityBase &entity_ref ) // RETURN: -- None.
    : PhysicalEntityLagCompInteg( entity_ref )
 {
-
    // Assign the integrator state references.
    // Translational position
    integ_states[0] = &( this->lag_comp_data.pos[0] );
@@ -101,7 +100,6 @@ PhysicalEntityLagComp::~PhysicalEntityLagComp() // RETURN: -- None.
  */
 void PhysicalEntityLagComp::initialize()
 {
-
    // Create and get a reference to the Trick Euler integrator.
    this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt );
 
@@ -170,19 +168,17 @@ void PhysicalEntityLagComp::load()
  */
 void PhysicalEntityLagComp::unload()
 {
-
    // Unload state array: position and velocity.
    for ( int iinc = 0; iinc < 13; ++iinc ) {
       *( integ_states[iinc] ) = integrator->state[iinc];
    }
 
    // Normalize the propagated attitude quaternion.
-   this->lag_comp_data.att.normalize();
+   lag_comp_data.att.normalize();
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   Q_dot.derivative_first( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    // Return to calling routine.
    return;
@@ -192,11 +188,9 @@ void PhysicalEntityLagComp::unload()
 void PhysicalEntityLagComp::derivative_first(
    void *user_data )
 {
-
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   Q_dot.derivative_first( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    return;
 }

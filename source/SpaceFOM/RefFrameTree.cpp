@@ -68,7 +68,7 @@ RefFrameTree::~RefFrameTree()
  */
 bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 {
-   return ( this->add_node( frame_ptr ) );
+   return ( add_node( frame_ptr ) );
 }
 
 /*!
@@ -107,7 +107,7 @@ void RefFrameTree::print_tree( std::ostream &stream )
  */
 bool RefFrameTree::has_frame( char const *name )
 {
-   return ( this->has_node( name ) );
+   return ( has_node( name ) );
 }
 
 /*!
@@ -115,7 +115,7 @@ bool RefFrameTree::has_frame( char const *name )
  */
 bool RefFrameTree::has_frame( string const &name )
 {
-   return ( this->has_node( name ) );
+   return ( has_node( name ) );
 }
 
 /*!

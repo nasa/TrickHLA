@@ -79,7 +79,6 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
  */
 PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 {
-
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
@@ -192,7 +191,6 @@ void PhysicalInterfaceBase::base_config(
  */
 void PhysicalInterfaceBase::configure()
 {
-
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
       ostringstream errmsg;
@@ -221,7 +219,6 @@ void PhysicalInterfaceBase::configure()
  */
 void PhysicalInterfaceBase::initialize()
 {
-
    // Must have interface instance name.
    if ( this->packing_data.name == NULL ) {
       ostringstream errmsg;
@@ -266,7 +263,7 @@ void PhysicalInterfaceBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->TrickHLA::Packing::initialize_callback( obj );
+   TrickHLA::Packing::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
@@ -312,7 +309,6 @@ void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
 
 void PhysicalInterfaceBase::pack()
 {
-
    // Check for initialization.
    if ( !initialized ) {
       ostringstream errmsg;
@@ -323,14 +319,14 @@ void PhysicalInterfaceBase::pack()
 
    // Check for latency/lag compensation.
    if ( this->object->lag_comp == NULL ) {
-      this->pack_from_working_data();
+      pack_from_working_data();
    }
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
       msg << "PhysicalInterfaceBase::pack():" << __LINE__ << '\n';
-      this->print_data( msg );
+      print_data( msg );
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -353,13 +349,13 @@ void PhysicalInterfaceBase::unpack()
    quat_encoder.decode();
 
    // Transfer the packing data into the working data.
-   this->unpack_into_working_data();
+   unpack_into_working_data();
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
       msg << "PhysicalInterfaceBase::unpack():" << __LINE__ << '\n';
-      this->print_data( msg );
+      print_data( msg );
       send_hs( stdout, msg.str().c_str() );
    }
 

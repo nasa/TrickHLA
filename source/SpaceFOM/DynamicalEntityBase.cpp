@@ -337,7 +337,6 @@ void DynamicalEntityBase::initialize_callback(
  */
 void DynamicalEntityBase::pack()
 {
-
    // Check for initialization.
    if ( !initialized ) {
       ostringstream errmsg;
@@ -364,7 +363,6 @@ void DynamicalEntityBase::pack()
  */
 void DynamicalEntityBase::unpack()
 {
-
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
@@ -392,7 +390,6 @@ void DynamicalEntityBase::unpack()
 void DynamicalEntityBase::debug_print(
    std::ostream &stream )
 {
-
    // Call the PhysicalEntity print routine first.
    PhysicalEntityBase::debug_print( stream );
 

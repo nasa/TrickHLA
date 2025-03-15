@@ -130,7 +130,7 @@ void SineConditional::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->Conditional::initialize_callback( obj );
+   Conditional::initialize_callback( obj );
 
    // Get a reference to the TrickHL-AAttribute for all the FOM attributes
    // names. We do this here so that we only do the attribute lookup once

@@ -1431,7 +1431,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the ExecutionControl freeze times.
          this->scenario_freeze_time   = this->next_mode_scenario_time;
-         this->simulation_freeze_time = this->scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
+         this->simulation_freeze_time = scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
          break;
       }
       case TrickHLA::EXECUTION_CONTROL_SHUTDOWN: {
@@ -1660,7 +1660,7 @@ bool ExecutionControl::process_execution_control_updates()
       } else if ( exco_nem == IMSim::EXECUTION_MODE_FREEZE ) {
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_FREEZE;
          this->scenario_freeze_time             = this->next_mode_scenario_time;
-         this->simulation_freeze_time           = this->scenario_timeline->compute_simulation_time( this->scenario_freeze_time );
+         this->simulation_freeze_time           = scenario_timeline->compute_simulation_time( this->scenario_freeze_time );
       } else {
          errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
                 << __LINE__ << " WARNING: Invalid ExCO next execution mode: "
@@ -2235,7 +2235,7 @@ void ExecutionControl::trigger_freeze_interaction(
    FreezeInteractionHandler *freeze_intr =
       static_cast< FreezeInteractionHandler * >( freeze_interaction->get_handler() );
 
-   freeze_intr->send_scenario_freeze_interaction( new_freeze_time, this->is_late_joiner() );
+   freeze_intr->send_scenario_freeze_interaction( new_freeze_time, is_late_joiner() );
 
    // Save the new time into the passed-in value...
    freeze_scenario_time = new_freeze_time;

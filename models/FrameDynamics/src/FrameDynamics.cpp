@@ -85,7 +85,7 @@ void FrameDynamics::initialize()
 {
 
    // Use derivative evaluation to complete the state initialization.
-   this->derivative();
+   derivative();
 
    return;
 }
@@ -98,7 +98,7 @@ void FrameDynamics::derivative()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   this->Q_dot.derivative_first( data.state.att, data.state.ang_vel );
+   Q_dot.derivative_first( data.state.att, data.state.ang_vel );
 
    //
    // Compute the translational dynamics.
@@ -135,7 +135,7 @@ int FrameDynamics::integrate()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   // this->Q_dot.first_derivative( data.state.att, data.state.ang_vel );
+   // Q_dot.first_derivative( data.state.att, data.state.ang_vel );
 
    // Return the Trick integrator integration step.
    return ( ipass );
