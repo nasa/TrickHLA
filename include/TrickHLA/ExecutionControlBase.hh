@@ -176,6 +176,12 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    {
       return;
    }
+   /*! @brief Is the specified sync-point label contained in the multiphase init
+    *  sync-point list.
+    *  @param sync_point_label Name of the synchronization point label.
+    *  @return True if the multiphase init sync-point list contains the sync-point,
+    *  false otherwise. */
+   bool const contains_multiphase_init_sync_point( std::wstring const &sync_point_label );
    /*! Add initialization synchronization points to regulate startup. */
    virtual void add_initialization_sync_points() = 0;
    /*! Add user defined multiphase initialization synchronization points to
@@ -272,7 +278,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
     *  specific initialization synchronization points in sprecific orders.
     *  Currently, only the 'Simple' and 'DIS' scheme do not.
     *  @return True if ExecutionControl needs to wait on the initialization synchronization points. */
-   virtual bool wait_for_init_sync_point()
+   virtual bool is_wait_for_init_sync_point_supported()
    {
       return ( true );
    }
