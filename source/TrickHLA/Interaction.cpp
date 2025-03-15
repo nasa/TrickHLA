@@ -1239,15 +1239,15 @@ Int64Time Interaction::get_granted_time() const
 
 Federate *Interaction::get_federate()
 {
-   return ( ( this->manager != NULL ) ? this->manager->get_federate() : NULL );
+   return ( ( this->manager != NULL ) ? manager->get_federate() : NULL );
 }
 
 RTIambassador *Interaction::get_RTI_ambassador()
 {
-   return ( ( this->manager != NULL ) ? this->manager->get_RTI_ambassador() : NULL );
+   return ( ( this->manager != NULL ) ? manager->get_RTI_ambassador() : NULL );
 }
 
 bool Interaction::is_shutdown_called() const
 {
-   return ( ( this->manager != NULL ) ? this->manager->is_shutdown_called() : false );
+   return ( ( this->manager != NULL ) ? manager->is_shutdown_called() : false );
 }

@@ -55,13 +55,13 @@ SineData::SineData()
      name( NULL )
 {
    // We don't want a NULL name by default (Trick Memory Manager allocated).
-   this->set_name( "" );
+   set_name( "" );
 
    // Compute the value.
-   this->compute_value( time );
+   compute_value( time );
 
    // Compute the initial derivative value.
-   this->compute_derivative( time );
+   compute_derivative( time );
 }
 
 /*!
@@ -81,13 +81,13 @@ SineData::SineData(
      name( NULL )
 {
    // We don't want a NULL name by default (Trick Memory Manager allocated).
-   this->set_name( "" );
+   set_name( "" );
 
    // Compute the value.
-   this->compute_value( time );
+   compute_value( time );
 
    // Compute the initial derivative value.
-   this->compute_derivative( time );
+   compute_derivative( time );
 }
 
 /*!
@@ -144,14 +144,14 @@ void SineData::set_name( char const *new_name )
 void SineData::copy_data(
    SineData const *orig ) // IN: -- Original source data to copy from.
 {
-   this->set_name( orig->get_name() );
-   this->set_time( orig->get_time() );
-   this->set_value( orig->get_value() );
-   this->set_derivative( orig->get_derivative() );
-   this->set_phase( orig->get_phase() );
-   this->set_frequency( orig->get_frequency() );
-   this->set_amplitude( orig->get_amplitude() );
-   this->set_tolerance( orig->get_tolerance() );
+   set_name( orig->get_name() );
+   set_time( orig->get_time() );
+   set_value( orig->get_value() );
+   set_derivative( orig->get_derivative() );
+   set_phase( orig->get_phase() );
+   set_frequency( orig->get_frequency() );
+   set_amplitude( orig->get_amplitude() );
+   set_tolerance( orig->get_tolerance() );
 }
 
 /*!

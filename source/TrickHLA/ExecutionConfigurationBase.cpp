@@ -146,7 +146,7 @@ void ExecutionConfigurationBase::setup(
    this->execution_control = &exec_control;
 
    // Configure the default Execution Configuration attributes.
-   this->configure_attributes();
+   configure_attributes();
 }
 
 /*!
@@ -267,7 +267,7 @@ void ExecutionConfigurationBase::wait_for_registration()
          int cnt = 0;
 
          // Determine if the Exec-Configuration object has been registered.
-         if ( this->is_instance_handle_valid() ) {
+         if ( is_instance_handle_valid() ) {
             ++cnt;
          }
 
@@ -291,17 +291,17 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << __LINE__ << "\nOBJECTS: " << total_obj_cnt;
 
          // Execution-Configuration object
-         summary << "\n  1:Object instance '" << this->get_name() << "' ";
+         summary << "\n  1:Object instance '" << get_name() << "' ";
 
-         if ( this->is_instance_handle_valid() ) {
+         if ( is_instance_handle_valid() ) {
             string id_str;
-            StringUtilities::to_string( id_str, this->get_instance_handle() );
+            StringUtilities::to_string( id_str, get_instance_handle() );
             summary << "(ID:" << id_str << ") ";
          }
-         summary << "for class '" << this->get_FOM_name() << "' is "
-                 << ( this->is_required() ? "REQUIRED" : "not required" )
+         summary << "for class '" << get_FOM_name() << "' is "
+                 << ( is_required() ? "REQUIRED" : "not required" )
                  << " and is "
-                 << ( this->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
+                 << ( is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
                  << '\n';
          // Display the summary.
          send_hs( stdout, summary.str().c_str() );
@@ -360,21 +360,21 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    }
 
    // Make sure we have at least one piece of Execution Configuration data we can receive.
-   if ( this->any_remotely_owned_subscribed_init_attribute() ) {
+   if ( any_remotely_owned_subscribed_init_attribute() ) {
 
       int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.
-      while ( !this->is_changed() ) {
+      while ( !is_changed() ) {
 
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
-         if ( !this->is_changed() ) {
+         if ( !is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();
@@ -407,7 +407,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
       }
 
       // Receive the Execution Configuration data from the master federate.
-      this->receive_init_data();
+      receive_init_data();
 
    } else {
       ostringstream errmsg;

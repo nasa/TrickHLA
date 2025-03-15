@@ -111,17 +111,17 @@ Int64Interval::~Int64Interval()
 
 int64_t Int64Interval::get_seconds() const
 {
-   return ( (int64_t)( this->hla_interval.getInterval() / Int64BaseTime::get_base_time_multiplier() ) );
+   return ( (int64_t)( hla_interval.getInterval() / Int64BaseTime::get_base_time_multiplier() ) );
 }
 
 int64_t Int64Interval::get_fractional_seconds() const
 {
-   return ( (int64_t)( this->hla_interval.getInterval() % Int64BaseTime::get_base_time_multiplier() ) );
+   return ( (int64_t)( hla_interval.getInterval() % Int64BaseTime::get_base_time_multiplier() ) );
 }
 
 int64_t Int64Interval::get_base_time() const
 {
-   return ( this->hla_interval.getInterval() );
+   return ( hla_interval.getInterval() );
 }
 
 double Int64Interval::get_time_in_seconds() const
@@ -133,7 +133,7 @@ double Int64Interval::get_time_in_seconds() const
 
 bool Int64Interval::is_zero() const
 {
-   return this->hla_interval.isZero();
+   return hla_interval.isZero();
 }
 
 wstring Int64Interval::to_wstring() const

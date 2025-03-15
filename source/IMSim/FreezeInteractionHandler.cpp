@@ -247,7 +247,7 @@ new freeze HLA time:%lf \n",
    // Notify the parent interaction handler to send the interaction using
    // Timestamp Order at the earliest convenience, even if the federation is to
    // freeze in the future...
-   if ( this->InteractionHandler::send_interaction( interaction_hla_time.get_time_in_seconds() ) ) {
+   if ( InteractionHandler::send_interaction( interaction_hla_time.get_time_in_seconds() ) ) {
       ostringstream infomsg;
       infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
               << __LINE__ << '\n'

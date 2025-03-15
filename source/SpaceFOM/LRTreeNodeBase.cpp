@@ -86,7 +86,6 @@ LRTreeNodeBase::LRTreeNodeBase(
      is_root_node( false ),
      node_id( 0 )
 {
-
    // Copy the name.
    if ( trick_MM != NULL ) {
       name = trick_MM->mm_strdup( node_name );
@@ -135,7 +134,6 @@ LRTreeNodeBase::~LRTreeNodeBase()
  */
 void LRTreeNodeBase::set_name( char const *node_name )
 {
-
    // Check to see if a node name has already been set.
    if ( name == NULL ) {
 
@@ -183,7 +181,6 @@ void LRTreeNodeBase::set_name( char const *node_name )
  */
 bool LRTreeNodeBase::set_root( bool root_status )
 {
-
    // If setting as root node.
    if ( root_status ) {
 
@@ -224,7 +221,6 @@ bool LRTreeNodeBase::set_root( bool root_status )
  */
 void LRTreeNodeBase::print_node( std::ostream &stream )
 {
-
    stream << "Node Name: '" << this->name << "'\n"
           << "\tID: " << this->node_id << '\n';
 

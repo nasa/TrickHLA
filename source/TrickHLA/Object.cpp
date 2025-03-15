@@ -563,7 +563,7 @@ void Object::initialize(
 
 Federate *Object::get_federate()
 {
-   return ( ( this->manager != NULL ) ? this->manager->get_federate() : NULL );
+   return ( ( this->manager != NULL ) ? manager->get_federate() : NULL );
 }
 
 RTI1516_NAMESPACE::RTIambassador *Object::get_RTI_ambassador()
@@ -5044,14 +5044,14 @@ void Object::build_attribute_map()
  *  @return Lookahead time interval. */
 Int64Interval Object::get_lookahead() const
 {
-   return this->manager->get_federate()->get_lookahead();
+   return manager->get_federate()->get_lookahead();
 }
 
 /*! @brief Get the currently granted federation HLA logical time.
  *  @return A copy of the granted HLA logical time. */
 Int64Time Object::get_granted_time() const
 {
-   return this->manager->get_federate()->get_granted_time();
+   return manager->get_federate()->get_granted_time();
 }
 
 Attribute *Object::get_attribute(
@@ -5530,7 +5530,7 @@ for Attributes of object '%s', waiting...\n",
 
 bool Object::is_shutdown_called() const
 {
-   return ( ( this->manager != NULL ) ? this->manager->is_shutdown_called() : false );
+   return ( ( this->manager != NULL ) ? manager->is_shutdown_called() : false );
 }
 
 void Object::initialize_thread_ID_array()

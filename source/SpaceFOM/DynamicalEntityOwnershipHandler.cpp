@@ -74,7 +74,7 @@ void DynamicalEntityOwnershipHandler::initialize_callback(
    TrickHLA::Object *obj )
 {
    // Make sure we call the original function so that the callback is initialized.
-   this->PhysicalEntityOwnershipHandler::initialize_callback( obj );
+   PhysicalEntityOwnershipHandler::initialize_callback( obj );
 
    return;
 }

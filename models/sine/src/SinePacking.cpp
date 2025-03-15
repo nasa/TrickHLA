@@ -131,7 +131,7 @@ void SinePacking::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->Packing::initialize_callback( obj );
+   Packing::initialize_callback( obj );
 
    // Get a reference to the TrickHL-AAttribute for all the FOM attributes
    // names. We do this here so that we only do the attribute lookup once
@@ -162,14 +162,14 @@ void SinePacking::pack()
    // state.
 
    // Copy over the sim-data over to the packing data as a starting point.
-   this->set_name( sim_data->get_name() );
-   this->set_time( sim_data->get_time() );
-   this->set_value( sim_data->get_value() );
-   this->set_derivative( sim_data->get_derivative() );
-   this->set_phase( sim_data->get_phase() );
-   this->set_frequency( sim_data->get_frequency() );
-   this->set_amplitude( sim_data->get_amplitude() );
-   this->set_tolerance( sim_data->get_tolerance() );
+   set_name( sim_data->get_name() );
+   set_time( sim_data->get_time() );
+   set_value( sim_data->get_value() );
+   set_derivative( sim_data->get_derivative() );
+   set_phase( sim_data->get_phase() );
+   set_frequency( sim_data->get_frequency() );
+   set_amplitude( sim_data->get_amplitude() );
+   set_tolerance( sim_data->get_tolerance() );
 
    // For this example to show how to use the Packing API's, we will assume
    // that the phase shared between federates is in degrees so covert it from
@@ -179,7 +179,7 @@ void SinePacking::pack()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::pack():" << __LINE__ << '\n'
            << "\t Object-Name:'" << obj_name << "'\n"
@@ -240,7 +240,7 @@ void SinePacking::pack()
          }
       }
 
-      string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
            << "\t Object-Name:'" << obj_name << "'\n";
@@ -304,25 +304,25 @@ void SinePacking::unpack()
 
    // Make sure to copy over the packing data over to the sim-data.
    if ( name_attr->is_received() ) {
-      sim_data->set_name( this->get_name() );
+      sim_data->set_name( get_name() );
    }
    if ( time_attr->is_received() ) {
-      sim_data->set_time( this->get_time() );
+      sim_data->set_time( get_time() );
    }
    if ( value_attr->is_received() ) {
-      sim_data->set_value( this->get_value() );
+      sim_data->set_value( get_value() );
    }
    if ( dvdt_attr->is_received() ) {
-      sim_data->set_derivative( this->get_derivative() );
+      sim_data->set_derivative( get_derivative() );
    }
    if ( freq_attr->is_received() ) {
-      sim_data->set_frequency( this->get_frequency() );
+      sim_data->set_frequency( get_frequency() );
    }
    if ( amp_attr->is_received() ) {
-      sim_data->set_amplitude( this->get_amplitude() );
+      sim_data->set_amplitude( get_amplitude() );
    }
    if ( tol_attr->is_received() ) {
-      sim_data->set_tolerance( this->get_tolerance() );
+      sim_data->set_tolerance( get_tolerance() );
    }
 
    if ( phase_attr->is_received() ) {
@@ -336,7 +336,7 @@ void SinePacking::unpack()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
-      string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::unpack():" << __LINE__ << '\n'
            << "\t Object-Name:'" << obj_name << "'\n"
@@ -386,7 +386,7 @@ void SinePacking::unpack()
          }
       }
 
-      string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
            << "\t Object-Name:'" << obj_name << "'\n";

@@ -111,7 +111,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void setup_interaction_RTI_handles();
    /*! Add initialization synchronization points to regulate startup. */
    virtual void add_initialization_sync_points();
-   /*! Add initialization synchronization points to regulate startup. */
+   /*! Add multiphase initialization synchronization points to regulate startup. */
    virtual void add_multiphase_init_sync_points();
    /*! Clear any remaining multiphase initialization synchronization points
     *  that have not been achieved and wait for the federation to be
@@ -146,7 +146,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  specific initialization synchronization points in sprecific orders.
     *  Currently, only the 'Simple' and 'DIS' scheme do not.
     *  @return True if ExecutionControl needs to wait on the initialization synchronization points. */
-   bool wait_for_init_sync_point()
+   bool is_wait_for_init_sync_point_supported()
    {
       return ( false );
    }

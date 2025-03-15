@@ -70,7 +70,6 @@ PhysicalEntityLagCompInteg::~PhysicalEntityLagCompInteg() // RETURN: -- None.
  */
 void PhysicalEntityLagCompInteg::initialize()
 {
-
    if ( this->integ_dt < this->integ_tol ) {
       ostringstream errmsg;
 

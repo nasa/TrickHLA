@@ -67,6 +67,7 @@ RefFrameDataState::RefFrameDataState( RefFrameDataState const &source )
  */
 RefFrameDataState::~RefFrameDataState()
 {
+   return;
 }
 
 /***********************************************************************
@@ -79,8 +80,7 @@ RefFrameDataState::~RefFrameDataState()
 RefFrameDataState &RefFrameDataState::operator=(
    RefFrameDataState const &rhs )
 {
-
-   this->copy( rhs );
+   copy( rhs );
 
    return ( *this );
 }
@@ -90,7 +90,6 @@ RefFrameDataState &RefFrameDataState::operator=(
  */
 void RefFrameDataState::copy( RefFrameDataState const &source )
 {
-
    // Copy the state.
    this->state = source.state;
 
@@ -121,7 +120,6 @@ bool RefFrameDataState::transform_to_parent(
    RefFrameDataState const &transform_c_p,
    RefFrameDataState       *frame_p )
 {
-
    double r_frm_c_p[3]; /* Position vector of this frame with respect to its
                            current native frame (child) frame but expressed in
                            the desired parent frame. */
@@ -194,7 +192,7 @@ bool RefFrameDataState::transform_to_parent(
    // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular velocity wrt the parent frame into
    // this 'body' frame.
-   this->state.att.conjugate_transform_vector( transform_c_p.state.ang_vel, w_c_p_bdy );
+   state.att.conjugate_transform_vector( transform_c_p.state.ang_vel, w_c_p_bdy );
    // Add the rotational velocity of the this frame's child frame with respect
    // to the parent frame.
    V_ADD( frame_p->state.ang_vel, w_c_p_bdy, this->state.ang_vel );
@@ -223,7 +221,7 @@ bool RefFrameDataState::transform_to_parent(
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular acceleration wrt the parent frame into
    // this 'body' frame.
-   this->state.att.conjugate_transform_vector( transform_c_p.ang_accel, wdot_c_p_bdy );
+   state.att.conjugate_transform_vector( transform_c_p.ang_accel, wdot_c_p_bdy );
    // Add the rotational acceleration of this frame's child frame with respect
    // to the parent frame.
    V_ADD( frame_p->ang_accel, wdot_c_p_bdy, this->ang_accel );
@@ -238,7 +236,6 @@ bool RefFrameDataState::transform_to_child(
    RefFrameDataState const &transform_c_p,
    RefFrameDataState       *frame_c )
 {
-
    // Working variables.
    // Translation.
    double dr_p[3];
@@ -357,7 +354,6 @@ bool RefFrameDataState::transform_to_child(
  */
 void RefFrameDataState::print_data( std::ostream &stream )
 {
-
    // Set the print precision.
    stream.precision( 15 );
 

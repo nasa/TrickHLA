@@ -98,7 +98,7 @@ void PhysicalInterfaceConditionalBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->Conditional::initialize_callback( obj );
+   Conditional::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object status.
    // We do this here so that we only do the attribute lookup once instead of
@@ -186,8 +186,8 @@ bool PhysicalInterfaceConditionalBase::should_send(
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-   } // Check for change in position.
-   else if ( attr == position_attr ) {
+   } else if ( attr == position_attr ) {
+      // Check for change in position.
 
       if ( ( interface.packing_data.position[0] != prev_data.position[0] )
            || ( interface.packing_data.position[1] != prev_data.position[1] )
@@ -202,8 +202,8 @@ bool PhysicalInterfaceConditionalBase::should_send(
          send_attr = true;
       }
 
-   } // Check for change in interface attitude.
-   else if ( attr == attitude_attr ) {
+   } else if ( attr == attitude_attr ) {
+      // Check for change in interface attitude.
 
       if ( interface.packing_data.attitude != prev_data.attitude ) {
 

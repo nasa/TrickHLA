@@ -203,7 +203,6 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 void ExecutionConfiguration::configure_attributes(
    char const *sim_config_name )
 {
-
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( sim_config_name == NULL ) {
       ostringstream errmsg;
@@ -222,7 +221,7 @@ void ExecutionConfiguration::configure_attributes(
    }
 
    // Now call the default configure_attributes function.
-   this->configure_attributes();
+   configure_attributes();
 
    return;
 }
@@ -233,7 +232,6 @@ void ExecutionConfiguration::configure_attributes(
  */
 void ExecutionConfiguration::configure_attributes()
 {
-
    // Check to make sure we have an S_define name for this simulation configuration instance.
    if ( S_define_name == NULL ) {
       ostringstream errmsg;
@@ -389,7 +387,7 @@ void ExecutionConfiguration::pack()
           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
           << ".............................................................\n";
-      this->print_simconfig( msg );
+      print_simconfig( msg );
       msg << "=============================================================\n";
       send_hs( stdout, msg.str().c_str() );
    }
@@ -409,7 +407,7 @@ void ExecutionConfiguration::unpack()
           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << '\n'
           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << '\n'
           << ".............................................................\n";
-      this->print_simconfig( msg );
+      print_simconfig( msg );
       msg << "=============================================================\n";
       send_hs( stdout, msg.str().c_str() );
    }
@@ -500,14 +498,14 @@ void ExecutionConfiguration::print_execution_configuration()
    ostringstream msg;
    msg << "=============================================================\n"
        << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << '\n';
-   this->print_simconfig( msg );
+   print_simconfig( msg );
    msg << "=============================================================\n";
    send_hs( stdout, msg.str().c_str() );
 }
 
 void ExecutionConfiguration::print_simconfig( std::ostream &stream )
 {
-   stream << "\t Object-Name:         '" << this->get_name() << "'\n"
+   stream << "\t Object-Name:         '" << get_name() << "'\n"
           << "\t owner:               '" << owner << '\n'
           << "\t scenario:            " << scenario << '\n'
           << "\t mode:                " << mode << '\n'
@@ -526,7 +524,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    Federate *federate = get_federate();
 
    // We can only receive the exec-configuration if we are not the master.
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       return false;
    }
 
@@ -536,21 +534,21 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
-   if ( this->any_remotely_owned_subscribed_init_attribute() ) {
+   if ( any_remotely_owned_subscribed_init_attribute() ) {
 
       int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
-      while ( !this->is_changed() ) {
+      while ( !is_changed() ) {
 
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
-         if ( !this->is_changed() ) {
+         if ( !is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();
@@ -583,7 +581,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
       }
 
       // Receive the exec-config data from the master federate.
-      this->receive_init_data();
+      receive_init_data();
 
    } else {
       ostringstream errmsg;

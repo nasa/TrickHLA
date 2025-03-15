@@ -100,7 +100,7 @@ void RefFrameConditionalBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->Conditional::initialize_callback( obj );
+   Conditional::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object status.
    // We do this here so that we only do the attribute lookup once instead of
@@ -157,8 +157,8 @@ bool RefFrameConditionalBase::should_send(
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-   } // Check for Parent Frame change.
-   else if ( attr == parent_name_attr ) {
+   } else if ( attr == parent_name_attr ) {
+      // Check for Parent Frame change.
 
       if ( frame.packing_data.parent_name != NULL ) {
          if ( prev_data.parent_name != NULL ) {
@@ -192,8 +192,8 @@ bool RefFrameConditionalBase::should_send(
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-   } // Check for change in state.
-   else if ( attr == state_attr ) {
+   } else if ( attr == state_attr ) {
+      // Check for change in state.
 
       if ( frame.packing_data.state != prev_data.state ) {
 

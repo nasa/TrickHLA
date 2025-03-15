@@ -124,11 +124,11 @@ void SineInteractionHandler::send_sine_interaction(
    // Notify the parent interaction handler to send the interaction using
    // Timestamp Order (TSO) at the current simulation time plus the
    // lookahead_time.
-   bool was_sent = this->InteractionHandler::send_interaction( timestamp, user_supplied_tag );
+   bool was_sent = InteractionHandler::send_interaction( timestamp, user_supplied_tag );
 #else
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
-   bool was_sent = this->InteractionHandler::send_interaction( user_supplied_tag );
+   bool was_sent = InteractionHandler::send_interaction( user_supplied_tag );
 #endif
 
    if ( was_sent ) {

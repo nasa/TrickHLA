@@ -141,7 +141,7 @@ void RefFrameBase::base_config(
 
    // Set the frame name.
    if ( ref_frame_name != NULL ) {
-      this->set_name( ref_frame_name );
+      set_name( ref_frame_name );
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
@@ -160,7 +160,7 @@ void RefFrameBase::base_config(
       this->is_root_node             = true;
    }
    if ( ref_frame_parent != NULL ) {
-      this->set_parent_frame( ref_frame_parent );
+      set_parent_frame( ref_frame_parent );
    }
 
    //---------------------------------------------------------
@@ -335,7 +335,7 @@ void RefFrameBase::initialize()
    }
 
    // Initialize from the initial state of the working data.
-   this->pack_from_working_data();
+   pack_from_working_data();
 
    // Mark this as initialized.
    TrickHLA::Packing::initialize();
@@ -360,7 +360,7 @@ void RefFrameBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->TrickHLA::Packing::initialize_callback( obj );
+   TrickHLA::Packing::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
@@ -460,9 +460,9 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
 
    // Set the parent frame name.
    if ( this->parent_frame != NULL ) {
-      this->set_parent_name( this->parent_frame->packing_data.name );
+      set_parent_name( this->parent_frame->packing_data.name );
    } else {
-      this->set_parent_name( NULL );
+      set_parent_name( NULL );
    }
 
    return;
@@ -473,7 +473,6 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
  */
 bool RefFrameBase::set_root( bool root_status )
 {
-
    // If setting as root reference frame.
    if ( root_status ) {
 
@@ -492,7 +491,7 @@ bool RefFrameBase::set_root( bool root_status )
          } else {
             // Parent name cannot be NULL but it should be safe to set it empty.
             // Note that this will also set the is_root_node state to true.
-            this->set_parent_name( "" );
+            set_parent_name( "" );
             return ( true );
          }
 
@@ -503,8 +502,8 @@ bool RefFrameBase::set_root( bool root_status )
          return ( false );
       }
 
-   } // If setting is NOT a root reference frame.
-   else {
+   } else {
+      // If setting is NOT a root reference frame.
 
       // Check to make sure predicates are satisfied.
       if ( this->parent_frame != NULL ) {
@@ -523,8 +522,8 @@ bool RefFrameBase::set_root( bool root_status )
             return ( true );
          }
 
-      } // Parent frame is NULL.  Automatic fail.
-      else {
+      } else {
+         // Parent frame is NULL.  Automatic fail.
 
          // Note that we DO NOT change the is_root_node state.
          return ( false );
@@ -591,7 +590,6 @@ void RefFrameBase::subscribe()
  */
 void RefFrameBase::pack()
 {
-
    // Check for initialization.
    if ( !initialized ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
@@ -604,14 +602,14 @@ void RefFrameBase::pack()
 
    // Check for latency/lag compensation.
    if ( this->object->lag_comp == NULL ) {
-      this->pack_from_working_data();
+      pack_from_working_data();
    }
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
       msg << "RefFrameBase::pack():" << __LINE__ << '\n';
-      this->print_data( msg );
+      print_data( msg );
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -626,7 +624,6 @@ void RefFrameBase::pack()
  */
 void RefFrameBase::unpack()
 {
-
    if ( !initialized ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
@@ -640,13 +637,13 @@ void RefFrameBase::unpack()
    stc_encoder.decode();
 
    // Transfer the packing data into the working data.
-   this->unpack_into_working_data();
+   unpack_into_working_data();
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
       msg << "RefFrameBase::unpack():" << __LINE__ << '\n';
-      this->print_data( msg );
+      print_data( msg );
       send_hs( stdout, msg.str().c_str() );
    }
 

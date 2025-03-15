@@ -113,7 +113,6 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
  */
 PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
 {
-
    if ( this->pe_packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->name'\n",
@@ -285,7 +284,6 @@ void PhysicalEntityBase::base_config(
  */
 void PhysicalEntityBase::configure()
 {
-
    // Must have federation instance name.
    if ( pe_packing_data.name == NULL ) {
       ostringstream errmsg;
@@ -335,7 +333,6 @@ void PhysicalEntityBase::configure()
  */
 void PhysicalEntityBase::initialize()
 {
-
    // Must have federation instance name.
    if ( pe_packing_data.name == NULL ) {
       ostringstream errmsg;
@@ -399,7 +396,7 @@ void PhysicalEntityBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->TrickHLA::Packing::initialize_callback( obj );
+   TrickHLA::Packing::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
@@ -415,7 +412,7 @@ void PhysicalEntityBase::initialize_callback(
    body_frame_attr   = get_attribute_and_validate( "body_wrt_structural" );
 
    // Initialize with the working data in the packing data.
-   this->pack_from_working_data();
+   pack_from_working_data();
 
    return;
 }
@@ -469,14 +466,14 @@ void PhysicalEntityBase::pack()
 
    // Check for latency/lag compensation.
    if ( this->object->lag_comp == NULL ) {
-      this->pack_from_working_data();
+      pack_from_working_data();
    }
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
       msg << "PhysicalEntityBase::pack():" << __LINE__ << "\n";
-      this->debug_print( msg );
+      debug_print( msg );
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -504,13 +501,13 @@ void PhysicalEntityBase::unpack()
    quat_encoder.decode();
 
    // Transfer the packing data into the working data.
-   this->unpack_into_working_data();
+   unpack_into_working_data();
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
       msg << "PhysicalEntityBase::unpack():" << __LINE__ << "\n";
-      this->debug_print( msg );
+      debug_print( msg );
       send_hs( stdout, msg.str().c_str() );
    }
 

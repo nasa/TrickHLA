@@ -156,16 +156,16 @@ void MTRInteractionHandler::send_interaction(
    }
 
    // Get the current time line values.
-   scenario_time = this->get_scenario_time();
-   sim_time      = this->get_sim_time();
+   scenario_time = get_scenario_time();
+   sim_time      = get_sim_time();
    if ( exco_base->does_cte_timeline_exist() ) {
-      cte_time = this->get_cte_time();
+      cte_time = get_cte_time();
    }
-   granted_time = this->interaction->get_federate()->get_granted_time().get_time_in_seconds();
+   granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
-   bool was_sent = this->InteractionHandler::send_interaction( rti_user_supplied_tag );
+   bool was_sent = InteractionHandler::send_interaction( rti_user_supplied_tag );
 
    if ( was_sent ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
@@ -200,10 +200,10 @@ void MTRInteractionHandler::send_interaction(
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          // Get the current time line values.
-         scenario_time = this->get_scenario_time();
-         sim_time      = this->get_sim_time();
+         scenario_time = get_scenario_time();
+         sim_time      = get_sim_time();
          if ( exco_base->does_cte_timeline_exist() ) {
-            cte_time = this->get_cte_time();
+            cte_time = get_cte_time();
          }
          granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
@@ -262,10 +262,10 @@ void MTRInteractionHandler::receive_interaction(
    StringUtilities::to_string( user_tag_string, the_user_supplied_tag );
 
    // Get the current time line values.
-   this->scenario_time = this->get_scenario_time();
-   this->sim_time      = this->get_sim_time();
+   this->scenario_time = get_scenario_time();
+   this->sim_time      = get_sim_time();
    if ( exco->does_cte_timeline_exist() ) {
-      this->cte_time = this->get_cte_time();
+      this->cte_time = get_cte_time();
    }
    this->granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
