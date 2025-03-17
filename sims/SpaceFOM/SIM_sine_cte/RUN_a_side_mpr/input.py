@@ -251,10 +251,6 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 # Set the CTE timeline.
 THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
 
-
-#THLA.execution_control.set_time_padding( 2.0 ) #TEMP
-
-
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_100_NANOSECONDS )
 

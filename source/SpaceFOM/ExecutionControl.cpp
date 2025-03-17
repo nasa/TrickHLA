@@ -164,12 +164,12 @@ input.py files and reduce input.py file setting errors.
 */
 void ExecutionControl::initialize()
 {
-
 #if TIME_DEBUG
    long long     clk_time = the_clock->clock_time();
    long long     wc_time  = the_clock->wall_clock_time();
    ostringstream msg1;
    msg1 << "ExecutionControl::initialize():" << __LINE__ << "\n"
+        << "             clock-name: '" << the_clock->get_name() << "'\n"
         << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
         << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
         << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
@@ -2626,6 +2626,7 @@ void ExecutionControl::exit_freeze()
    ostringstream msg1;
    msg1 << "ExecutionControl::exit_freeze():" << __LINE__ << "\n"
         << "BEFORE CLOCK RESET \n"
+        << "             clock-name: '" << the_clock->get_name() << "'\n"
         << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
         << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
         << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
@@ -2653,6 +2654,7 @@ void ExecutionControl::exit_freeze()
    ostringstream msg2;
    msg2 << "ExecutionControl::exit_freeze():" << __LINE__ << "\n"
         << "AFTER CLOCK RESET \n"
+        << "             clock-name: '" << the_clock->get_name() << "'\n"
         << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
         << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
         << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
