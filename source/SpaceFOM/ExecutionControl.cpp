@@ -91,10 +91,8 @@ NASA, Johnson Space Center\n
 // SpaceFOM file level declarations.
 namespace SpaceFOM
 {
-
 // ExecutionControl type string.
 std::string const ExecutionControl::type = "SpaceFOM";
-
 } // namespace SpaceFOM
 
 // Access the Trick global objects the Clock.
