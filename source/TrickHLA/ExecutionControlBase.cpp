@@ -80,7 +80,6 @@ using namespace TrickHLA;
 // Declare default time lines.
 namespace TrickHLA
 {
-
 SimTimeline      def_sim_timeline;
 ScenarioTimeline def_scenario_timeline( def_sim_timeline );
 } // namespace TrickHLA
@@ -232,7 +231,7 @@ void ExecutionControlBase::setup(
  */
 void ExecutionControlBase::initialize()
 {
-   // Set Trick's realtime clock to the CTE clock if used.
+   // Initialize the CTE clock if used and set as the global Trick clock.
    if ( does_cte_timeline_exist() ) {
       cte_timeline->clock_init();
    }

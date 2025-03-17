@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
+#include "trick/Clock.hh"
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
