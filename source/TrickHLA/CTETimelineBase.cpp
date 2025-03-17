@@ -34,12 +34,21 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, June 2016, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Added support for CLOCK_TAI.}
 @revs_end
 
 */
 
 // System include files.
+#include <sstream>
+#include <string>
 #include <time.h>
+#if defined( __linux__ )
+#   include <linux/version.h>
+#   if ( LINUX_VERSION_CODE >= KERNEL_VERSION( 3, 10, 0 ) )
+#      define THLA_CLOCK_TAI
+#   endif
+#endif
 
 // Trick include files.
 #include "trick/Clock.hh"
@@ -49,6 +58,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/CTETimelineBase.hh"
 
+using namespace std;
 using namespace Trick;
 using namespace TrickHLA;
 
@@ -56,9 +66,15 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 CTETimelineBase::CTETimelineBase()
-   : Clock( exec_get_time_tic_value(), "CTETimelineBase - CLOCK_REALTIME" ),
+#if defined( THLA_CLOCK_TAI )
+   : Clock( exec_get_time_tic_value(), "CTETimelineBase - clock_gettime - CLOCK_TAI" ),
+     clk_id( CLOCK_TAI ),
+     tspec()
+#else
+   : Clock( exec_get_time_tic_value(), "CTETimelineBase - clock_gettime - CLOCK_REALTIME" ),
      clk_id( CLOCK_REALTIME ),
-     ts()
+     tspec()
+#endif
 {
    return;
 }
@@ -82,6 +98,12 @@ int CTETimelineBase::clock_init()
    // Make sure this clock picks up the current time-tic value.
    this->clock_tics_per_sec = exec_get_time_tic_value();
 
+   this->sim_tic_ratio = 1.0;
+
+   set_rt_clock_ratio( 1.0 );
+
+   clock_reset( exec_get_time_tics() );
+
    return 0;
 }
 
@@ -90,8 +112,8 @@ int CTETimelineBase::clock_init()
  */
 double const CTETimelineBase::get_time()
 {
-   clock_gettime( clk_id, &ts );
-   return (double)ts.tv_sec + ( ts.tv_nsec * 0.000000001 );
+   clock_gettime( clk_id, &tspec );
+   return (double)tspec.tv_sec + ( tspec.tv_nsec * 0.000000001 );
 }
 
 /*!
@@ -109,9 +131,9 @@ double const CTETimelineBase::get_min_resolution()
  */
 long long CTETimelineBase::wall_clock_time()
 {
-   clock_gettime( clk_id, &ts );
-   return ( ts.tv_sec * clock_tics_per_sec )
-          + ( ( ts.tv_nsec * clock_tics_per_sec ) / 1000000000 );
+   clock_gettime( clk_id, &tspec );
+   return ( tspec.tv_sec * clock_tics_per_sec )
+          + ( ( tspec.tv_nsec * clock_tics_per_sec ) / 1000000000 );
 }
 
 /*!
@@ -128,19 +150,28 @@ void CTETimelineBase::set_clock_ID( clockid_t const id )
 
    switch ( id ) {
       case CLOCK_REALTIME: {
-         this->name = "CTETimelineBase - CLOCK_REALTIME";
+         this->name = "CTETimelineBase - clock_gettime - CLOCK_REALTIME";
          break;
       }
       case CLOCK_MONOTONIC: {
-         this->name = "CTETimelineBase - CLOCK_MONOTONIC";
+         this->name = "CTETimelineBase - clock_gettime - CLOCK_MONOTONIC";
          break;
       }
       case CLOCK_MONOTONIC_RAW: {
-         this->name = "CTETimelineBase - CLOCK_MONOTONIC_RAW";
+         this->name = "CTETimelineBase - clock_gettime - CLOCK_MONOTONIC_RAW";
          break;
       }
+#if defined( THLA_CLOCK_TAI )
+      case CLOCK_TAI: {
+         // International Atomic Time
+         this->name = "CTETimelineBase - clock_gettime - CLOCK_TAI";
+         break;
+      }
+#endif
       default: {
-         this->name = "CTETimelineBase - Other";
+         ostringstream name_oss;
+         name_oss << "CTETimelineBase - clock_gettime - clock_id(" << id << ")";
+         this->name = name_oss.str();
          break;
       }
    }

@@ -109,7 +109,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
 
   protected:
    clockid_t       clk_id; /**< @trick_io{**} System clock type used. The default clock ID is <i>CLOCK_REALTIME</i>. */
-   struct timespec ts;     /**< @trick_io{**} Timespec used for the clock. */
+   struct timespec tspec;  /**< @trick_io{**} Timespec used for the clock. */
 
   private:
    // Do not allow the copy constructor or assignment operator.
