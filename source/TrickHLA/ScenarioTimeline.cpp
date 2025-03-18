@@ -15,6 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{ScenarioTimeline.cpp}
 @trick_link_dependency{SimTimeline.cpp}
@@ -37,6 +38,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
@@ -110,5 +112,5 @@ double const ScenarioTimeline::get_time()
  */
 double const ScenarioTimeline::get_min_resolution()
 {
-   return ( DBL_MIN ); // Full double floating point resolution.
+   return ( 1.0 / (double)Int64BaseTime::get_base_time_multiplier() );
 }

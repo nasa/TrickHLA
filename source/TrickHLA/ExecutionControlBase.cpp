@@ -16,12 +16,15 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{CTETimelineBase.cpp}
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{ScenarioTimeline.cpp}
+@trick_link_dependency{SimTimeline.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
@@ -44,6 +47,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
+#include "trick/Clock.hh"
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
@@ -51,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
@@ -58,6 +63,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/ScenarioTimeline.hh"
+#include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
@@ -72,6 +79,9 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
+
+// Access the Trick global objects the Clock.
+extern Trick::Clock *the_clock;
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -231,9 +241,25 @@ void ExecutionControlBase::setup(
  */
 void ExecutionControlBase::initialize()
 {
-   // Initialize the CTE clock if used and set as the global Trick clock.
+   // Verify the CTE clock if used.
    if ( does_cte_timeline_exist() ) {
-      cte_timeline->clock_init();
+
+      if ( cte_timeline != the_clock ) {
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::initialize():" << __LINE__
+                << " ERROR: The CTE timeline is specified but it is not"
+                << " configured as the Trick real time clock! Make sure"
+                << " the CTETimelineBase class constructor is calling"
+                << " real_time_change_clock( this );\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Make sure to update the clock resolution so that it uses the
+      // latest Trick executive time tic value, which may have changed
+      // by a setting in the input.py file. Clock time resolution is
+      // maintained separately from the Trick executive time resolution,
+      // which is why we need to explicitly update it.
+      cte_timeline->update_clock_resolution();
    }
 
    // Reset the master flag if it is not preset by the user.

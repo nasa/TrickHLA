@@ -297,7 +297,7 @@ void ExecutionConfiguration::pack()
       }
       msg << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
-          << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n';
+          << "\t least_common_time_step:  " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")\n";
       if ( this->next_execution_mode == EXECUTION_MODE_FREEZE ) {
          msg << "\t simulation_freeze_time:  " << execution_control->get_simulation_freeze_time() << " seconds\n";
       }
@@ -314,7 +314,7 @@ void ExecutionConfiguration::pack()
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
              << " " << Int64BaseTime::get_units()
              << ") is not greater than or equal to this federates lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
+             << fed_lookahead << " units:" << Int64BaseTime::get_units()
              << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -328,9 +328,9 @@ void ExecutionConfiguration::pack()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
                 << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units()
+                << " units:" << Int64BaseTime::get_units()
                 << ") is not an integer multiple of the federate lookahead time ("
-                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << fed_lookahead << " units:" << Int64BaseTime::get_units()
                 << ")!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -366,7 +366,7 @@ void ExecutionConfiguration::unpack()
       }
       msg << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
-          << "\t least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n'
+          << "\t least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")\n"
           << "=============================================================\n";
       send_hs( stdout, msg.str().c_str() );
    }
@@ -683,7 +683,7 @@ void ExecutionConfiguration::print_execution_configuration()
       }
       msg << "\t current_execution_mode:  " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:     " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
-          << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n'
+          << "\t least_common_time_step:  " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")\n"
           << "=============================================================\n";
       send_hs( stdout, msg.str().c_str() );
    }
