@@ -77,6 +77,13 @@ class Timeline
    //-----------------------------------------------------------------
    // These are virtual functions for the class.
    //-----------------------------------------------------------------
+   /*! @brief Update the clock tics per second resolution of this clock
+    *  to match the Trick executive resolution. */
+   virtual void update_clock_resolution()
+   {
+      return;
+   }
+
    /*! @brief Get the elapsed time for this timeline in seconds from epoch.
     *  @return Returns the elapsed time from epoch in seconds. */
    virtual double const get_elapsed_time()

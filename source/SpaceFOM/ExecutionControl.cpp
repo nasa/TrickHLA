@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/CTETimelineBase.cpp}
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
@@ -58,6 +59,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 
 // TrickHLA include files.
+#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
