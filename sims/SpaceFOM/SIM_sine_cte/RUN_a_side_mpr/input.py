@@ -248,6 +248,11 @@ THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
 # Set the CTE timeline and change the Trick real time clock to use it.
 THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
 
+# NOTE: Need more than enough time padding for the MTR message
+# to propagate to all federates in time for the coordinated CTE
+# go to run message to have a valid pending CTE start time.
+federate.set_time_padding( 5.0 )
+
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_100_NANOSECONDS )
 

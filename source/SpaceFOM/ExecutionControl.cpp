@@ -2246,26 +2246,45 @@ bool ExecutionControl::run_mode_transition()
          go_to_run_time = ExCO->get_next_mode_cte_time();
       }
 
-      // Wait for the CTE go-to-run time.
-      while ( get_cte_time() < go_to_run_time ) {
+      double cte_time, diff;
 
-         // Check for shutdown.
+      // Wait for the CTE go-to-run time.
+      cte_time = get_cte_time();
+      while ( cte_time < go_to_run_time ) {
+
+         // Always check for shutdown in wait loops.
          federate->check_for_shutdown_with_termination();
 
-         double diff = go_to_run_time - get_cte_time();
+         diff = go_to_run_time - cte_time;
          if ( fmod( diff, 1.0 ) == 0.0 ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %f seconds.\n",
-                        __LINE__, diff );
+               ostringstream msg;
+               msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
+                   << " Going to run in " << diff << " seconds.\n";
+               send_hs( stdout, msg.str().c_str() );
             }
          }
+
+         cte_time = get_cte_time();
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         double curr_cte_time = get_cte_time();
-         double diff          = curr_cte_time - go_to_run_time;
-         send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d  Going to RUN at CTE time %.18G seconds.\n  Current CTE time %.18G seconds.\n  Difference: %.9lf seconds.\n",
-                  __LINE__, go_to_run_time, curr_cte_time, diff );
+         diff = cte_time - go_to_run_time;
+         ostringstream msg;
+         msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__ << "\n"
+             << "Go to RUN at CTE time: " << setprecision( 18 ) << go_to_run_time << " seconds\n"
+             << "     Current CTE time: " << setprecision( 18 ) << cte_time << " seconds\n"
+             << "           Difference: " << setprecision( 9 ) << diff << " seconds\n";
+         if ( is_master() && ( diff >= 0.1 ) ) {
+            msg << "WARNING: Current CTE time exceeded the go to run time by"
+                << " more than 0.1 seconds. Please add more time to the"
+                << " time padding configured in your input.py file, which is"
+                << " currently set to 'federate.set_time_padding( "
+                << setprecision( 9 ) << get_time_padding()
+                << " )', to allow the go to run CTE message to propagate to"
+                << " all federates in time to be used.\n";
+         }
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 
