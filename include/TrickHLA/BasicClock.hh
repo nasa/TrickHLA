@@ -34,7 +34,9 @@ NASA, Johnson Space Center\n
 // System includes
 
 // Trick includes
+#include "trick/Executive.hh"
 #include "trick/clock_proto.h"
+#include "trick/exec_proto.h"
 
 // TrickHLA includes
 
@@ -73,8 +75,8 @@ class BasicClock
     *  @return Computer system time in seconds. */
    static double get_time()
    {
-      // Convert from an integer time in microseconds to a floating-point time in seconds.
-      return ( (double)clock_wall_time() * 0.000001 );
+      // Convert from an integer time to a floating-point time in seconds.
+      return ( (double)clock_wall_time() / (double)exec_get_time_tic_value() );
    }
 
   private:

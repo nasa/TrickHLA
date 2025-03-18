@@ -76,6 +76,7 @@ DynamicalEntityData::DynamicalEntityData( DynamicalEntityData const &source )
  */
 DynamicalEntityData::~DynamicalEntityData()
 {
+   return;
 }
 
 /***********************************************************************
@@ -88,8 +89,7 @@ DynamicalEntityData::~DynamicalEntityData()
 DynamicalEntityData &DynamicalEntityData::operator=(
    DynamicalEntityData const &rhs )
 {
-
-   this->copy( rhs );
+   copy( rhs );
 
    return ( *this );
 }

@@ -291,10 +291,13 @@ void ExecutionConfiguration::pack()
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << '\n'
-          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n'
-          << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
+          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n';
+      if ( execution_control->does_cte_timeline_exist() ) {
+         msg << "\t current-cte-time:        " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << '\n';
+      }
+      msg << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
-          << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n';
+          << "\t least_common_time_step:  " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")\n";
       if ( this->next_execution_mode == EXECUTION_MODE_FREEZE ) {
          msg << "\t simulation_freeze_time:  " << execution_control->get_simulation_freeze_time() << " seconds\n";
       }
@@ -311,7 +314,7 @@ void ExecutionConfiguration::pack()
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
              << " " << Int64BaseTime::get_units()
              << ") is not greater than or equal to this federates lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
+             << fed_lookahead << " units:" << Int64BaseTime::get_units()
              << ")!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -325,9 +328,9 @@ void ExecutionConfiguration::pack()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
                 << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units()
+                << " units:" << Int64BaseTime::get_units()
                 << ") is not an integer multiple of the federate lookahead time ("
-                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << fed_lookahead << " units:" << Int64BaseTime::get_units()
                 << ")!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -357,10 +360,13 @@ void ExecutionConfiguration::unpack()
           << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
           << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << '\n'
-          << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << '\n'
-          << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
+          << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << '\n';
+      if ( execution_control->does_cte_timeline_exist() ) {
+         msg << "\t current-cte-time:       " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << '\n';
+      }
+      msg << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
-          << "\t least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n'
+          << "\t least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")\n"
           << "=============================================================\n";
       send_hs( stdout, msg.str().c_str() );
    }
@@ -403,7 +409,7 @@ void ExecutionConfiguration::set_scenario_time_epoch(
    double scenario_time )
 {
    // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       this->scenario_time_epoch = scenario_time;
    }
 }
@@ -416,7 +422,7 @@ void ExecutionConfiguration::set_next_mode_scenario_time(
 {
    // TODO: Need more checking here.
    // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       this->next_mode_scenario_time = next_mode_time;
    }
 }
@@ -429,7 +435,7 @@ void ExecutionConfiguration::set_next_mode_cte_time(
 {
    // TODO: Need more checking here.
    // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       this->next_mode_cte_time = cte_time;
    }
 }
@@ -441,7 +447,7 @@ void ExecutionConfiguration::set_current_execution_mode(
    short mode )
 {
    // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       this->current_execution_mode = mode;
    }
 }
@@ -463,7 +469,7 @@ void ExecutionConfiguration::set_next_execution_mode(
    short mode )
 {
    // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       this->next_execution_mode = mode;
    }
 }
@@ -514,7 +520,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->FOM_name      = trick_MM->mm_strdup( "SpaceFOM::ExecutionConfiguration" );
 
    // Create the ExCO instance only if the SpaceFOM Master federate.
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       this->create_HLA_instance = true;
    } else {
       this->create_HLA_instance = false;
@@ -557,7 +563,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    //
    // Setup the "root_frame_name" attribute.
    this->attributes[0].FOM_name = trick_MM->mm_strdup( "root_frame_name" );
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       this->attributes[0].publish       = true;
       this->attributes[0].subscribe     = false;
       this->attributes[0].locally_owned = true;
@@ -633,14 +639,14 @@ void ExecutionConfiguration::setup_ref_attributes(
    // in-line, and not via the Trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified Trick
    // name to access the ATTRIBUTES if the trick variable...
-   // this->attributes[0].initialize( this->FOM_name,
-   //                                &(this->root_frame_name),
-   //                                (ATTRIBUTES *) exco_attr );
+   // attributes[0].initialize( this->FOM_name,
+   //                           &(this->root_frame_name),
+   //                           (ATTRIBUTES *) exco_attr );
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
-          << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
+          << " FOM-Parameter:'" << attributes[0].get_FOM_name() << "'"
           << " NOTE: This is an auto-generated parameter so there is no"
           << " associated 'Trick-Name'.\n";
       send_hs( stdout, msg.str().c_str() );
@@ -671,10 +677,13 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << '\n'
-          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n'
-          << "\t current_execution_mode:  " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
+          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n';
+      if ( execution_control->does_cte_timeline_exist() ) {
+         msg << "\t current-cte-time:        " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << '\n';
+      }
+      msg << "\t current_execution_mode:  " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << '\n'
           << "\t next_execution_mode:     " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << '\n'
-          << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << '\n'
+          << "\t least_common_time_step:  " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")\n"
           << "=============================================================\n";
       send_hs( stdout, msg.str().c_str() );
    }
@@ -685,7 +694,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    Federate *federate = get_federate();
 
    // We can only receive the exec-configuration if we are not the master.
-   if ( this->execution_control->is_master() ) {
+   if ( execution_control->is_master() ) {
       return false;
    }
 

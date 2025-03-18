@@ -92,7 +92,6 @@ PhysicalInterface::~PhysicalInterface()
  */
 void PhysicalInterface::configure( PhysicalInterfaceData *interface_data_ptr )
 {
-
    // First call the base class pre_initialize function.
    PhysicalInterfaceBase::configure();
 
@@ -116,7 +115,6 @@ void PhysicalInterface::configure( PhysicalInterfaceData *interface_data_ptr )
  */
 void PhysicalInterface::initialize()
 {
-
    // Check to make sure the PhysicalInterface data is set.
    if ( interface_data == NULL ) {
       ostringstream errmsg;
@@ -225,7 +223,6 @@ void PhysicalInterface::pack_from_working_data()
  */
 void PhysicalInterface::unpack_into_working_data()
 {
-
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
    // incoming value.  If we locally own the attribute then we do not want to
@@ -295,7 +292,6 @@ void PhysicalInterface::unpack_into_working_data()
  */
 void PhysicalInterface::set_name( char const *new_name )
 {
-
    // Call the base class method.
    PhysicalInterfaceBase::set_name( new_name );
 
@@ -324,7 +320,6 @@ void PhysicalInterface::set_name( char const *new_name )
  */
 void PhysicalInterface::set_parent( char const *new_parent_name )
 {
-
    // Call the base class method.
    PhysicalInterfaceBase::set_parent( new_parent_name );
 

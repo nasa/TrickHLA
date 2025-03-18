@@ -178,15 +178,15 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // We are the master if we successfully created the federation and the
    // user has not preset a master value.
-   if ( !this->is_master_preset() ) {
-      this->set_master( federate->is_federation_created_by_federate() );
+   if ( !is_master_preset() ) {
+      set_master( federate->is_federation_created_by_federate() );
    }
 
    // Don't forget to enable asynchronous delivery of messages.
    federate->enable_async_delivery();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      if ( this->is_master() ) {
+      if ( is_master() ) {
          send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER\n",
                   __LINE__ );
       } else {
@@ -294,7 +294,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
  */
 void ExecutionControl::setup_object_RTI_handles()
 {
-   ExecutionConfiguration *ExCO = this->get_execution_configuration();
+   ExecutionConfiguration *ExCO = get_execution_configuration();
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::setup_object_RTI_handles():" << __LINE__
@@ -302,7 +302,7 @@ void ExecutionControl::setup_object_RTI_handles()
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-   this->manager->setup_object_RTI_handles( 1, ExCO );
+   manager->setup_object_RTI_handles( 1, ExCO );
 }
 
 /*!

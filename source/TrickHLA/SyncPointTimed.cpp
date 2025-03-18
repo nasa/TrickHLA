@@ -99,13 +99,13 @@ SyncPointTimed::~SyncPointTimed()
 
 RTI1516_USERDATA const SyncPointTimed::encode_user_supplied_tag()
 {
-   return this->time.encode();
+   return time.encode();
 }
 
 void SyncPointTimed::decode_user_supplied_tag(
    RTI1516_USERDATA const &supplied_tag )
 {
-   this->time.decode( supplied_tag );
+   time.decode( supplied_tag );
 }
 
 std::string SyncPointTimed::to_string()
@@ -113,7 +113,7 @@ std::string SyncPointTimed::to_string()
    string label_str;
    StringUtilities::to_string( label_str, this->label );
 
-   string result = "[" + label_str + "/" + this->time.to_string() + "] -- ";
+   string result = "[" + label_str + "/" + time.to_string() + "] -- ";
    switch ( this->state ) {
       case TrickHLA::SYNC_PT_STATE_ERROR: {
          result += "SYNC_PT_STATE_ERROR";

@@ -89,6 +89,10 @@ class CTETimelineBase : public Trick::Clock, public Timeline
     *  @return Returns the minimum time resolution in seconds. */
    virtual double const get_min_resolution();
 
+   /*! @brief Update the clock tics per second resolution of this clock
+    *  to match the Trick executive resolution. */
+   virtual void update_clock_resolution();
+
    /*! @brief Initialize the Trick::Clock functions. */
    virtual int clock_init();
 
@@ -108,8 +112,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    virtual clockid_t const get_clock_ID();
 
   protected:
-   clockid_t clk_id; /**<  @trick_io{**}
-      System clock type used. The default clock ID is <i>CLOCK_REALTIME</i>. */
+   clockid_t clk_id; /**< @trick_io{**} System clock type used. The default clock ID is <i>CLOCK_MONOTONIC</i>. */
 
   private:
    // Do not allow the copy constructor or assignment operator.

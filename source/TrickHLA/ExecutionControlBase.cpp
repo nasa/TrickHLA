@@ -16,12 +16,15 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{CTETimelineBase.cpp}
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{ScenarioTimeline.cpp}
+@trick_link_dependency{SimTimeline.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
@@ -44,6 +47,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
+#include "trick/Clock.hh"
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
@@ -51,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
@@ -58,6 +63,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/ScenarioTimeline.hh"
+#include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
@@ -73,6 +80,9 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
+// Access the Trick global objects the Clock.
+extern Trick::Clock *the_clock;
+
 using namespace std;
 using namespace RTI1516_NAMESPACE;
 using namespace TrickHLA;
@@ -80,7 +90,6 @@ using namespace TrickHLA;
 // Declare default time lines.
 namespace TrickHLA
 {
-
 SimTimeline      def_sim_timeline;
 ScenarioTimeline def_scenario_timeline( def_sim_timeline );
 } // namespace TrickHLA
@@ -156,7 +165,7 @@ ExecutionControlBase::ExecutionControlBase(
 ExecutionControlBase::~ExecutionControlBase()
 {
    // TODO: Should not call a virtual function from within virtual destructor.
-   // this->clear_mode_values();
+   // clear_mode_values();
 
    // Free the memory used for the multiphase initialization synchronization points.
    if ( multiphase_init_sync_points != NULL ) {
@@ -192,10 +201,10 @@ void ExecutionControlBase::setup(
    this->execution_configuration = &exec_config;
 
    // Setup the TrickHLA::ExecutionConfigurationBase instance.
-   this->execution_configuration->setup( *this );
+   execution_configuration->setup( *this );
 
    // Configure the default Execution Configuration attributes.
-   this->execution_configuration->configure_attributes();
+   execution_configuration->configure_attributes();
 }
 
 /*!
@@ -220,10 +229,10 @@ void ExecutionControlBase::setup(
    if ( this->execution_configuration != NULL ) {
 
       // Setup the TrickHLA::ExecutionConfigurationBase instance.
-      this->execution_configuration->setup( *this );
+      execution_configuration->setup( *this );
 
       // Configure the default Execution Configuration attributes.
-      this->execution_configuration->configure_attributes();
+      execution_configuration->configure_attributes();
    }
 }
 
@@ -232,9 +241,25 @@ void ExecutionControlBase::setup(
  */
 void ExecutionControlBase::initialize()
 {
-   // Set Trick's realtime clock to the CTE clock if used.
+   // Verify the CTE clock if used.
    if ( does_cte_timeline_exist() ) {
-      this->cte_timeline->clock_init();
+
+      if ( cte_timeline != the_clock ) {
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::initialize():" << __LINE__
+                << " ERROR: The CTE timeline is specified but it is not"
+                << " configured as the Trick real time clock! Make sure"
+                << " the CTETimelineBase class constructor is calling"
+                << " real_time_change_clock( this );\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Make sure to update the clock resolution so that it uses the
+      // latest Trick executive time tic value, which may have changed
+      // by a setting in the input.py file. Clock time resolution is
+      // maintained separately from the Trick executive time resolution,
+      // which is why we need to explicitly update it.
+      cte_timeline->update_clock_resolution();
    }
 
    // Reset the master flag if it is not preset by the user.
@@ -297,7 +322,7 @@ Trick simulation time as the default scenario-timeline.\n",
 */
 void ExecutionControlBase::join_federation_process()
 {
-   TrickHLA::Federate *fed = this->get_federate();
+   TrickHLA::Federate *fed = get_federate();
 
    // Create the RTI Ambassador and connect.
    fed->create_RTI_ambassador_and_connect();
@@ -343,8 +368,8 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
 
          // We are the Master federate if we succeeded in reserving the
          // ExecutionConfiguration object name and the master was not preset.
-         if ( !this->is_master_preset() ) {
-            this->set_master( true );
+         if ( !is_master_preset() ) {
+            set_master( true );
          }
 
          // The name is successfully registered.
@@ -384,8 +409,8 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       // If this is not designated as the preset Master federate, then we are
       // NOT the Master federate since we failed to reserve the ExecutionControl
       // object instance name.
-      if ( !this->is_master_preset() ) {
-         this->set_master( false );
+      if ( !is_master_preset() ) {
+         set_master( false );
       } else { // If this is the designated preset Master federate, then this is an ERROR.
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
@@ -430,7 +455,7 @@ void ExecutionControlBase::register_objects_with_RTI()
       execution_configuration->register_object_with_RTI();
 
       // Place the ExecutionConfiguration object into the Manager's object map.
-      this->add_object_to_map( execution_configuration );
+      add_object_to_map( execution_configuration );
    }
 }
 
@@ -441,7 +466,20 @@ void ExecutionControlBase::add_object_to_map(
    Object *object )
 {
    // Add the registered ExecutionConfiguration object instance to the map.
-   this->manager->add_object_to_map( object );
+   manager->add_object_to_map( object );
+}
+
+/*!
+ * @brief Is the specified sync-point label contained in the multiphase init
+ *  sync-point list.
+ * @param sync_point_label Name of the synchronization point label.
+ * @return True if the multiphase init sync-point list contains the sync-point,
+ *  false otherwise.
+ */
+bool const ExecutionControlBase::contains_multiphase_init_sync_point(
+   wstring const &sync_point_label )
+{
+   return contains_sync_point( sync_point_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
 }
 
 /*!
@@ -479,7 +517,7 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
 {
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
-   if ( this->manager->is_late_joining_federate() ) {
+   if ( manager->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
 joining federate so this call will be ignored.\n",
@@ -501,7 +539,7 @@ joining federate so this call will be ignored.\n",
    wait_for_all_multiphase_init_sync_points();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      this->print_sync_points();
+      print_sync_points();
    }
 }
 
@@ -540,7 +578,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    // Only the master federate can send the ExecutionConfiguration.
-   if ( !this->is_master() ) {
+   if ( !is_master() ) {
       return;
    }
 
@@ -581,7 +619,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    // We can only receive the ExecutionConfiguration if we are not the master.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       return;
    }
 
@@ -677,7 +715,7 @@ void ExecutionControlBase::receive_cyclic_data()
       // buffer/queue, which shows up as changed.
       while ( execution_configuration->is_changed() ) {
          execution_configuration->receive_init_data();
-         this->process_execution_control_updates();
+         process_execution_control_updates();
       }
    }
 }
@@ -851,16 +889,13 @@ double ExecutionControlBase::get_scenario_time()
       send_hs( stdout, errmsg.str().c_str() );
    }
 
-   return this->get_sim_time();
+   return get_sim_time();
 }
 
 double ExecutionControlBase::get_cte_time()
 {
-   if ( does_cte_timeline_exist() ) {
-      return cte_timeline->get_time();
-   }
-
-   return -std::numeric_limits< double >::max();
+   return does_cte_timeline_exist() ? cte_timeline->get_time()
+                                    : -std::numeric_limits< double >::max();
 }
 
 void ExecutionControlBase::clear_mode_values()
@@ -921,10 +956,10 @@ void ExecutionControlBase::check_pause( double const check_pause_delta )
 void ExecutionControlBase::check_pause_at_init( double const check_pause_delta )
 {
    // Dispatch to the ExecutionControl method.
-   this->check_pause( check_pause_delta );
+   check_pause( check_pause_delta );
 
    // Mark that freeze has been announced in the Federate.
-   set_freeze_announced( this->is_master() );
+   set_freeze_announced( is_master() );
 }
 
 void ExecutionControlBase::set_master( bool master_flag )

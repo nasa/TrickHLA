@@ -47,7 +47,7 @@ SpaceTimeCoordinateData::SpaceTimeCoordinateData()
    : att(),
      time( 0.0 )
 {
-   this->initialize();
+   initialize();
 }
 
 /*!
@@ -95,7 +95,7 @@ void SpaceTimeCoordinateData::copy( SpaceTimeCoordinateData const &stc_data )
 SpaceTimeCoordinateData &SpaceTimeCoordinateData::operator=(
    SpaceTimeCoordinateData const &rhs )
 {
-   this->copy( rhs );
+   copy( rhs );
    return ( *this );
 }
 
@@ -105,7 +105,7 @@ SpaceTimeCoordinateData &SpaceTimeCoordinateData::operator=(
 bool SpaceTimeCoordinateData::operator==(
    SpaceTimeCoordinateData const &rhs )
 {
-   return ( this->is_equal( rhs ) );
+   return ( is_equal( rhs ) );
 }
 
 /*!
@@ -114,7 +114,7 @@ bool SpaceTimeCoordinateData::operator==(
 bool SpaceTimeCoordinateData::operator!=(
    SpaceTimeCoordinateData const &rhs )
 {
-   return ( !( this->is_equal( rhs ) ) );
+   return ( !( is_equal( rhs ) ) );
 }
 
 /*!
@@ -138,7 +138,7 @@ bool SpaceTimeCoordinateData::is_equal(
    }
 
    // Compare attitude
-   if ( !( this->att.is_equal( rhs.att ) ) ) {
+   if ( !( att.is_equal( rhs.att ) ) ) {
       return ( false );
    }
 
@@ -162,7 +162,6 @@ bool SpaceTimeCoordinateData::is_equal(
  */
 void SpaceTimeCoordinateData::print_data( std::ostream &stream )
 {
-
    // Set the print precision.
    stream.precision( 15 );
 

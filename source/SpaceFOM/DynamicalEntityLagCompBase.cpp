@@ -121,7 +121,7 @@ void DynamicalEntityLagCompBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->PhysicalEntityLagCompBase::initialize_callback( obj );
+   PhysicalEntityLagCompBase::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
@@ -169,28 +169,31 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    }
 
    // Copy the current DynamicalEntity state over to the lag compensated state.
-   this->entity.pack_from_working_data();
-   this->load_lag_comp_data();
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   entity.pack_from_working_data();
+   load_lag_comp_data();
+   Q_dot.derivative_first( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data before compensation: \n";
-      this->print_lag_comp_data();
+      ostringstream msg;
+      msg << "Send data before compensation: \n";
+      print_lag_comp_data( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Compensate the data
-   this->compensate( begin_t, end_t );
+   compensate( begin_t, end_t );
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data after compensation: \n";
-      this->print_lag_comp_data();
+      ostringstream msg;
+      msg << "Send data after compensation: \n";
+      print_lag_comp_data( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Copy the compensated state to the packing data.
-   this->unload_lag_comp_data();
+   unload_lag_comp_data();
 
    // Return to calling routine.
    return;
@@ -219,38 +222,41 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 
    // Because of ownership transfers and attributes being sent at different
    // rates we need to check to see if we received attribute data.
-   if ( this->state_attr->is_received() ) {
+   if ( state_attr->is_received() ) {
 
       // Copy the current DynamicalEntity state over to the lag compensated state.
-      this->load_lag_comp_data();
-      this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                    this->lag_comp_data.ang_vel );
+      load_lag_comp_data();
+      Q_dot.derivative_first( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data before compensation: \n";
-         this->print_lag_comp_data();
+         ostringstream msg;
+         msg << "Receive data before compensation: \n";
+         print_lag_comp_data( msg );
+         send_hs( stdout, msg.str().c_str() );
       }
 
       // Compensate the data
-      this->compensate( data_t, end_t );
+      compensate( data_t, end_t );
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data after compensation: \n";
-         this->print_lag_comp_data();
+         ostringstream msg;
+         msg << "Receive data after compensation: \n";
+         print_lag_comp_data( msg );
+         send_hs( stdout, msg.str().c_str() );
       }
 
    } else {
       if ( debug ) {
          ostringstream errmsg;
          errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received.\n"
-                << "\tvalue_changed: " << this->state_attr->is_changed()
-                << "; locally owned: " << this->state_attr->locally_owned << '\n';
+                << "\tvalue_changed: " << state_attr->is_changed()
+                << "; locally owned: " << state_attr->locally_owned << '\n';
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
-   if ( this->inertia_attr->is_received() ) {
+   if ( inertia_attr->is_received() ) {
       // Compute the inverse of the inertia matrix.  If this fails, the
       // inverse matrix will be set to all zeros.  This will zero out any
       // torque affects in the lag compensation dynamics.
@@ -263,10 +269,10 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    }
 
    // Copy the compensated state to the packing data.
-   this->unload_lag_comp_data();
+   unload_lag_comp_data();
 
    // Move the unpacked data into the working data.
-   this->entity.unpack_into_working_data();
+   entity.unpack_into_working_data();
 
    // Return to calling routine.
    return;
@@ -280,7 +286,7 @@ void DynamicalEntityLagCompBase::bypass_send_lag_compensation()
    // When lag compensation is present but disabled, we still need to copy
    // the working data into the packing data.  This makes sure that the
    // current working state is packed.
-   this->de_entity.pack_from_working_data();
+   de_entity.pack_from_working_data();
    return;
 }
 
@@ -292,7 +298,7 @@ void DynamicalEntityLagCompBase::bypass_receive_lag_compensation()
    // When lag compensation is present but disabled, we still need to copy
    // the packing data back into the working data.  This makes sure that the
    // working state is updated from the received packing data.
-   this->de_entity.unpack_into_working_data();
+   de_entity.unpack_into_working_data();
    return;
 }
 
@@ -350,7 +356,7 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
    // Compute the translational dynamics.
    //
    // Transform the force into the body frame.
-   this->body_wrt_struct.transform_vector( this->force, force_bdy );
+   body_wrt_struct.transform_vector( this->force, force_bdy );
 
    // Compute the force contribution to the translational acceleration.
    V_SCALE( accel_force_bdy, force_bdy, 1.0 / this->mass );
@@ -362,7 +368,7 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
    // Compute the rotational dynamics.
    //
    // Transform the torque into the body frame.
-   this->body_wrt_struct.transform_vector( this->torque, torque_bdy );
+   body_wrt_struct.transform_vector( this->torque, torque_bdy );
 
    // External torque acceleration.
    MxV( ang_accel_torque_bdy, this->inertia_inv, torque_bdy );

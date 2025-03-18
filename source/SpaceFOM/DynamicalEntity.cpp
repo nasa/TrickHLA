@@ -97,7 +97,6 @@ void DynamicalEntity::configure(
    PhysicalEntityData  *physical_data_ptr,
    DynamicalEntityData *dynamics_data_ptr )
 {
-
    // First call the base class pre_initialize function.
    DynamicalEntityBase::configure();
 

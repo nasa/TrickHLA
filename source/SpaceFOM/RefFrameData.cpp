@@ -52,6 +52,7 @@ RefFrameData::RefFrameData()
    : name( NULL ),
      parent_name( NULL )
 {
+   return;
 }
 
 /*!
@@ -96,8 +97,7 @@ RefFrameData::~RefFrameData()
 RefFrameData &RefFrameData::operator=(
    RefFrameData const &rhs )
 {
-
-   this->copy( rhs );
+   copy( rhs );
 
    return ( *this );
 }
@@ -137,7 +137,6 @@ void RefFrameData::copy( RefFrameData const &source )
  */
 void RefFrameData::initialize()
 {
-
    // Initialize the reference frame data state.
    RefFrameDataState::initialize();
 
@@ -149,7 +148,6 @@ void RefFrameData::initialize()
  */
 void RefFrameData::set_name( char const *new_name )
 {
-
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
          send_hs( stderr, "SpaceFOM::RefFrameData::set_name():%d ERROR deleting Trick Memory for 'this->name'\n",
@@ -165,7 +163,6 @@ void RefFrameData::set_name( char const *new_name )
  */
 void RefFrameData::set_parent_name( char const *name )
 {
-
    // Set the parent frame name appropriately.
    if ( this->parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
@@ -187,7 +184,6 @@ bool RefFrameData::transform_to_parent(
    RefFrameData const &transform_c_p,
    RefFrameData       *frame_p )
 {
-
    // Check for null reference to transformed frame data.
    if ( frame_p == NULL ) {
       std::ostringstream errmsg;
@@ -238,7 +234,6 @@ bool RefFrameData::transform_to_child(
    RefFrameData const &transform_c_p,
    RefFrameData       *frame_c )
 {
-
    // Check for null reference to transformed frame data.
    if ( frame_c == NULL ) {
       std::ostringstream errmsg;
@@ -283,7 +278,6 @@ bool RefFrameData::transform_to_child(
  */
 void RefFrameData::print_data( std::ostream &stream )
 {
-
    // Set the print precision.
    stream.precision( 15 );
 

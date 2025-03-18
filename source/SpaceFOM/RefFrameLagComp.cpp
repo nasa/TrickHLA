@@ -100,7 +100,6 @@ RefFrameLagComp::~RefFrameLagComp() // RETURN: -- None.
  */
 void RefFrameLagComp::initialize()
 {
-
    // Create and get a reference to the Trick Euler integrator.
    this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt );
 
@@ -142,9 +141,9 @@ void RefFrameLagComp::load()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   this->Q_dot.derivative_first( this->integrator->state[6],
-                                 &( this->integrator->state[7] ),
-                                 &( this->integrator->state[10] ) );
+   Q_dot.derivative_first( this->integrator->state[6],
+                           &( this->integrator->state[7] ),
+                           &( this->integrator->state[10] ) );
 
    // Load the integrator derivative references.
    // Translational velocity
@@ -174,7 +173,6 @@ void RefFrameLagComp::load()
  */
 void RefFrameLagComp::unload()
 {
-
    // Unload state array: position and velocity.
    for ( int iinc = 0; iinc < 13; ++iinc ) {
       *( integ_states[iinc] ) = integrator->state[iinc];
@@ -182,11 +180,10 @@ void RefFrameLagComp::unload()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   Q_dot.derivative_first( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    // Normalize the propagated attitude quaternion.
-   this->lag_comp_data.att.normalize();
+   lag_comp_data.att.normalize();
 
    // Return to calling routine.
    return;
@@ -196,11 +193,9 @@ void RefFrameLagComp::unload()
 void RefFrameLagComp::derivative_first(
    void *user_data )
 {
-
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   Q_dot.derivative_first( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    return;
 }

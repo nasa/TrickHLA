@@ -30,10 +30,12 @@ def print_usage_message( ):
 
    print(' ')
    print('SpaceFOM Reference Frame Simulation Command Line Configuration Options:')
-   print('  -h --help          : Print this help message.')
-   print('  --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
-   print('  --nostop           : Set no stop time on simulation.')
-   print('  --verbose [on|off] : on: Show verbose messages (Default), off: disable messages.')
+   print('  -e --express [frame] : Set express frame for the relative state.')
+   print('  -f --frame [frame]   : Set the native frame for the entity.')
+   print('  -h --help            : Print this help message.')
+   print('  --stop [time]        : Time to stop simulation, default is 0.5 seconds.')
+   print('  --nostop             : Set no stop time on simulation.')
+   print('  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -48,6 +50,9 @@ def parse_command_line( ):
    global print_usage
    global run_duration
    global verbose
+   global frames_list
+   global express_frame
+   global native_frame
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -64,6 +69,30 @@ def parse_command_line( ):
             run_duration = float(str(argv[index]))
          else:
             print('ERROR: Missing --stop [time] argument.')
+            print_usage = True
+         
+      elif ((str(argv[index]) == '-e') | (str(argv[index]) == '--express')):
+         index = index + 1
+         if (index < argc):
+            if str(argv[index]) in frames_list:
+               express_frame = str(argv[index])
+            else:
+               print('ERROR: Unknown express frame: ' + str(argv[index]))
+               print_usage = True
+         else:
+            print('ERROR: Missing express frame name.')
+            print_usage = True
+         
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--frame')):
+         index = index + 1
+         if (index < argc):
+            if str(argv[index]) in frames_list:
+               native_frame = str(argv[index])
+            else:
+               print('ERROR: Unknown native entity frame: ' + str(argv[index]))
+               print_usage = True
+         else:
+            print('ERROR: Missing express frame name.')
             print_usage = True
             
       elif (str(argv[index]) == '--nostop'):
@@ -106,8 +135,27 @@ run_duration = 0.5
 # Default is to NOT show verbose messages.
 verbose = False
 
+# Create reference frame set.
+frames_list = [
+   'SolarSystemBarycentricInertial',
+   'SunCentricInertial',
+   'EarthMoonBarycentricInertial',
+   'EarthCentricInertial',
+   'EarthCentricFixed',
+   'MoonCentricInertial',
+   'MoonCentricFixed',
+   'MarsCentricInertial',
+   'MarsCentricFixed'
+   ]
+
+# Set the default frames.
+express_frame = frames_list[3]
+native_frame = frames_list[4]
+
+# Parse command line arguments to override defaults.
 parse_command_line()
 
+# Check for print usage flag.  Terminates in call.
 if (print_usage == True):
    print_usage_message()
 
@@ -117,8 +165,8 @@ if (print_usage == True):
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
-#trick.checkpoint_pre_init(1)
-#trick.checkpoint_post_init(1)
+trick.checkpoint_pre_init(1)
+trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 #trick.checkpoint_end(1)
 
@@ -204,7 +252,7 @@ federate.set_time_constrained( True )
 # Set up the frame states.
 #---------------------------------------------------------------------------
 # Solar system barycenter (Not propagated and ALWAYS zero.)
-ssbary_frame.frame.data.name = "SolarSystemBarycentricInertial"
+ssbary_frame.frame.data.name = frames_list[0]
 ssbary_frame.frame.data.parent_name = ""
 ssbary_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 ssbary_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
@@ -216,8 +264,8 @@ trick.exec_set_job_onoff( "ssbary_frame.print_state", 1, False )
 #
 # Sun
 #
-sun_frame.frame.data.name = "SunCentricInertial"
-sun_frame.frame.data.parent_name = "SolarSystemBarycentricInertial"
+sun_frame.frame.data.name = frames_list[1]
+sun_frame.frame.data.parent_name = frames_list[0]
 sun_frame.frame.data.state.pos = [0.1, 0.0, 0.0]
 sun_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 sun_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
@@ -228,8 +276,8 @@ trick.exec_set_job_onoff( "sun_frame.print_state", 1, False )
 #
 # Earth-Moon system
 #
-embary_frame.frame.data.name = "EarthMoonBarycentricInertial"
-embary_frame.frame.data.parent_name = "SolarSystemBarycentricInertial"
+embary_frame.frame.data.name = frames_list[2]
+embary_frame.frame.data.parent_name = frames_list[1]
 embary_frame.frame.data.state.pos = [0.0, 10.0, 0.0]
 embary_frame.frame.data.state.vel = [0.01, 0.0, 0.0]
 embary_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
@@ -238,9 +286,9 @@ embary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 trick.exec_set_job_onoff( "embary_frame.print_state", 1, False )
 
 # Earth inertial
-earth_inertial_frame.frame.data.name = "EarthCentricInertial"
-earth_inertial_frame.frame.data.parent_name = "EarthMoonBarycentricInertial"
-earth_inertial_frame.frame.data.state.pos = [0.1, 0.0, 0.0]
+earth_inertial_frame.frame.data.name = frames_list[3]
+earth_inertial_frame.frame.data.parent_name = frames_list[2]
+earth_inertial_frame.frame.data.state.pos = [1.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 earth_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
@@ -248,18 +296,21 @@ earth_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 trick.exec_set_job_onoff( "earth_inertial_frame.print_state", 1, True )
 
 # Earth fixed
-earth_fixed_frame.frame.data.name = "EarthCentricFixed"
-earth_fixed_frame.frame.data.parent_name = "EarthCentricInertial"
+earth_fixed_frame.frame.data.name = frames_list[4]
+earth_fixed_frame.frame.data.parent_name = frames_list[3]
 earth_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 earth_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 earth_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.001 * deg2rad]
+# Set the environmental acceleration values.
+earth_fixed_frame.frame.accel_env = [0.0, 0.0, 0.0]
+earth_fixed_frame.frame.ang_accel_env = [0.0, 0.0, 0.0000 * deg2rad]
 # Control print job.
 trick.exec_set_job_onoff( "earth_fixed_frame.print_state", 1, True )
 
 # Moon inertial
-moon_inertial_frame.frame.data.name = "MoonCentricInertial"
-moon_inertial_frame.frame.data.parent_name = "EarthMoonBarycentricInertial"
+moon_inertial_frame.frame.data.name = frames_list[5]
+moon_inertial_frame.frame.data.parent_name = frames_list[2]
 moon_inertial_frame.frame.data.state.pos = [-1.0, 0.0, 0.0]
 moon_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 moon_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
@@ -268,8 +319,8 @@ moon_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 trick.exec_set_job_onoff( "moon_inertial_frame.print_state", 1, False )
 
 # Moon fixed
-moon_fixed_frame.frame.data.name = "MoonCentricFixed"
-moon_fixed_frame.frame.data.parent_name = "MoonCentricInertial"
+moon_fixed_frame.frame.data.name = frames_list[6]
+moon_fixed_frame.frame.data.parent_name = frames_list[5]
 moon_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 moon_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 moon_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
@@ -281,8 +332,8 @@ trick.exec_set_job_onoff( "moon_fixed_frame.print_state", 1, False )
 # Mars system
 #
 # Mars inertial
-mars_inertial_frame.frame.data.name = "MarsCentricInertial"
-mars_inertial_frame.frame.data.parent_name = "SolarSystemBarycentricInertial"
+mars_inertial_frame.frame.data.name = frames_list[7]
+mars_inertial_frame.frame.data.parent_name = frames_list[2]
 mars_inertial_frame.frame.data.state.pos = [0.0, 0.0, 20.0]
 mars_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 mars_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
@@ -291,8 +342,8 @@ mars_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 trick.exec_set_job_onoff( "mars_inertial_frame.print_state", 1, False )
 
 # Moon fixed
-mars_fixed_frame.frame.data.name = "MarsCentricFixed"
-mars_fixed_frame.frame.data.parent_name = "MarsCentricInertial"
+mars_fixed_frame.frame.data.name = frames_list[8]
+mars_fixed_frame.frame.data.parent_name = frames_list[7]
 mars_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 mars_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 mars_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
@@ -320,10 +371,10 @@ mars_fixed_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
 vehicle.entity.pe_data.name         = 'Voyager'
 vehicle.entity.pe_data.type         = 'Intrepid-class Starship'
 vehicle.entity.pe_data.status       = 'Lost'
-vehicle.entity.pe_data.parent_frame = 'EarthCentricInertial'
+vehicle.entity.pe_data.parent_frame = native_frame
 
 # Initial translational state.
-vehicle.entity.pe_data.state.pos = [ 0.0, 0.0, 0.0 ]
+vehicle.entity.pe_data.state.pos = [ 1.0, 0.0, 0.0 ]
 vehicle.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
 
 # Initial rotational state.
@@ -389,7 +440,7 @@ mars_centered_fixed.frame_packing.publish()
 # Set up the Reference Frame Tree
 #---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
-trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
+trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, True )
 
 
 #---------------------------------------------------------------------------
@@ -397,12 +448,24 @@ trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
 #---------------------------------------------------------------------------
 rel_test.rel_state.debug = True
 rel_test.ref_entity = vehicle.entity.pe_data
-#rel_test.ref_frame  = solar_system_barycenter.frame_packing
-#rel_test.ref_frame  = earth_moon_barycenter.frame_packing
-rel_test.ref_frame  = earth_centered_inertial.frame_packing
-#rel_test.ref_frame  = earth_centered_fixed.frame_packing
-#rel_test.ref_frame  = moon_centered_inertial.frame_packing
-#rel_test.ref_frame  = moon_centered_fixed.frame_packing
+if express_frame == frames_list[0]:
+   rel_test.ref_frame  = solar_system_barycenter.frame_packing
+elif express_frame == frames_list[1]:
+   rel_test.ref_frame  = sun_inertial.frame_packing
+elif express_frame == frames_list[2]:
+   rel_test.ref_frame  = earth_moon_barycenter.frame_packing
+elif express_frame == frames_list[3]:
+   rel_test.ref_frame  = earth_centered_inertial.frame_packing
+elif express_frame == frames_list[4]:
+   rel_test.ref_frame  = earth_centered_fixed.frame_packing
+elif express_frame == frames_list[5]:
+   rel_test.ref_frame  = moon_centered_inertial.frame_packing
+elif express_frame == frames_list[6]:
+   rel_test.ref_frame  = moon_centered_fixed.frame_packing
+elif express_frame == frames_list[7]:
+   rel_test.ref_frame  = mars_centered_inertial.frame_packing
+elif express_frame == frames_list[8]:
+   rel_test.ref_frame  = mars_centered_fixed.frame_packing
 
 
 #---------------------------------------------------------------------------
@@ -433,5 +496,10 @@ federate.initialize()
 #---------------------------------------------------------------------------
 # Set up simulation termination time.
 #---------------------------------------------------------------------------
-if run_duration:
-   trick.sim_services.exec_set_terminate_time( run_duration )
+
+if run_duration != None:
+   if run_duration == 0.0:
+      trick.stop(0.0)
+   else:
+      trick.sim_services.exec_set_terminate_time( run_duration )
+

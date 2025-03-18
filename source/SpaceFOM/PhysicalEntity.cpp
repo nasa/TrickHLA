@@ -93,7 +93,6 @@ PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
  */
 void PhysicalEntity::configure( PhysicalEntityData *physical_data_ptr )
 {
-
    // First call the base class pre_initialize function.
    PhysicalEntityBase::configure();
 
@@ -117,7 +116,6 @@ void PhysicalEntity::configure( PhysicalEntityData *physical_data_ptr )
  */
 void PhysicalEntity::initialize()
 {
-
    // Check to make sure the PhysicalEntity data is set.
    if ( physical_data == NULL ) {
       ostringstream errmsg;
@@ -161,14 +159,15 @@ void PhysicalEntity::pack_from_working_data()
             pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
          }
 
-      } // No name to compare so copy name.
-      else {
+      } else {
+         // No name to compare so copy name.
 
          pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
       }
 
-   } // This is bad scoobies so just punt.
-   else {
+   } else {
+      // This is bad scoobies so just punt.
+
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL name for PhysicalEntity!\n";
@@ -237,13 +236,13 @@ void PhysicalEntity::pack_from_working_data()
             pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
          }
 
-      } // No parent frame name to compare so copy name.
-      else {
+      } else {
+         // No parent frame name to compare so copy name.
          pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
       }
 
-   } // This is bad scoobies so just punt.
-   else {
+   } else {
+      // This is bad scoobies so just punt.
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL parent frame for PhysicalEntity: "
@@ -298,7 +297,6 @@ void PhysicalEntity::pack_from_working_data()
  */
 void PhysicalEntity::unpack_into_working_data()
 {
-
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
    // incoming value.  If we locally own the attribute then we do not want to

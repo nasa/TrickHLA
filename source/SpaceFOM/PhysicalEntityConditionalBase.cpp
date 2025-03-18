@@ -106,7 +106,7 @@ void PhysicalEntityConditionalBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->Conditional::initialize_callback( obj );
+   Conditional::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object status.
    // We do this here so that we only do the attribute lookup once instead of

@@ -337,7 +337,6 @@ void DynamicalEntityBase::initialize_callback(
  */
 void DynamicalEntityBase::pack()
 {
-
    // Check for initialization.
    if ( !initialized ) {
       ostringstream errmsg;
@@ -348,7 +347,9 @@ void DynamicalEntityBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "DynamicalEntityBase::pack():" << __LINE__ << '\n';
+      ostringstream msg;
+      msg << "DynamicalEntityBase::pack():" << __LINE__ << '\n';
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Call the PhysicalEntityBase pack routine.
@@ -362,7 +363,6 @@ void DynamicalEntityBase::pack()
  */
 void DynamicalEntityBase::unpack()
 {
-
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
@@ -372,8 +372,10 @@ void DynamicalEntityBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << '\n';
-      cout << "DynamicalEntityBase::unpack():" << __LINE__ << '\n';
+      ostringstream msg;
+      msg << "DynamicalEntityBase::unpack():" << __LINE__ << '\n'
+          << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << '\n';
+      send_hs( stderr, msg.str().c_str() );
    }
 
    // Call the PhysicalEntityBase unpack routine.
@@ -388,7 +390,6 @@ void DynamicalEntityBase::unpack()
 void DynamicalEntityBase::debug_print(
    std::ostream &stream )
 {
-
    // Call the PhysicalEntity print routine first.
    PhysicalEntityBase::debug_print( stream );
 

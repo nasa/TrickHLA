@@ -55,11 +55,11 @@ class Timeline
    //-----------------------------------------------------------------
    // Constructors / destructors
    //-----------------------------------------------------------------
-   /*! @brief Initialization constructor for the TrickHLA CTETimelineBase class.
+   /*! @brief Initialization constructor for the TrickHLA Timeline class.
     *  @param t0 Epoch for the timeline. */
    explicit Timeline( double const t0 = 0.0 );
 
-   /*! @brief Pure virtual destructor for the TrickHLA CTETimelineBase class. */
+   /*! @brief Pure virtual destructor for the TrickHLA Timeline class. */
    virtual ~Timeline() = 0;
 
    //-----------------------------------------------------------------
@@ -77,6 +77,13 @@ class Timeline
    //-----------------------------------------------------------------
    // These are virtual functions for the class.
    //-----------------------------------------------------------------
+   /*! @brief Update the clock tics per second resolution of this clock
+    *  to match the Trick executive resolution. */
+   virtual void update_clock_resolution()
+   {
+      return;
+   }
+
    /*! @brief Get the elapsed time for this timeline in seconds from epoch.
     *  @return Returns the elapsed time from epoch in seconds. */
    virtual double const get_elapsed_time()

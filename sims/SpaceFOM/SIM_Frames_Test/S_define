@@ -57,62 +57,6 @@
 
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMEMMRefFrameTreeSimObject - An example reference frame
-// tree simulation object definition.
-//==========================================================================
-#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
-#include "SpaceFOM/EMMRefFrameTree.sm"
-
-
-//==========================================================================
-// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
-// initialization SimObject.
-//==========================================================================
-class THLAInitSimObject : public Trick::SimObject {
-
- public:
-
-   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed,
-                      unsigned int         _MPI_1   = 100,
-                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI   )
-      : thla_manager( thla_mngr ),
-        thla_federate( thla_fed )
-   {
-      //--------------------------------------------------------------------
-      // NOTE: Initialization phase numbers must be greater than P60
-      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
-      // P60 THLA.manager->initialize() job.
-      //--------------------------------------------------------------------
-
-      // Alternative method: Send and receive all the initialization data.
-
-      // Send all the initialization data.
-      P_MPI_1 ("initialization") thla_manager.send_init_data();
-
-      // Wait to receive all the initialization data.
-      P_MPI_1 ("initialization") thla_manager.receive_init_data();
-
-      // Do some processing here if needed...
-
-      // Clear remaining initialization sync-points.
-      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
-   }
-
- private:
-   TrickHLA::Manager  & thla_manager;
-   TrickHLA::Federate & thla_federate;
-
-   // Do not allow the implicit copy constructor or assignment operator.
-   THLAInitSimObject( THLAInitSimObject const & rhs );
-   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
-
-   // Do not allow the default constructor.
-   THLAInitSimObject();
-};
-
-
-//==========================================================================
 // Simple 6DOF dynamics for reference frame propagation.
 //==========================================================================
 ##include "../../../models/FrameDynamics/include/FrameDynamics.hh"
@@ -123,11 +67,12 @@ class FrameDynamicsSimObject : public Trick::SimObject {
    ExecutionControlBase & execution_control;
 
   public:
-   FrameDynamicsSimObject( ExecutionControlBase & exec_cntrl )
+   FrameDynamicsSimObject( ExecutionControlBase & exec_cntrl,
+                           unsigned int           _INIT = P_HLA_INIT )
    : execution_control(exec_cntrl)
    {
       ("default_data")            frame.default_data();
-      ("initialization")          frame.initialize();
+      P_INIT ("initialization")   frame.initialize();
       ("derivative")              frame.derivative();
       ("integration") trick_ret = frame.integrate();
       
@@ -195,6 +140,62 @@ class EntityDynamicsSimObject : public Trick::SimObject {
 
 
 //==========================================================================
+// SIM_OBJECT: SpaceFOMEMMRefFrameTreeSimObject - An example reference frame
+// tree simulation object definition.
+//==========================================================================
+#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
+#include "SpaceFOM/EMMRefFrameTree.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI   )
+      : thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.send_init_data();
+
+      // Wait to receive all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.receive_init_data();
+
+      // Do some processing here if needed...
+
+      // Clear remaining initialization sync-points.
+      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
+
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+};
+
+
+//==========================================================================
 // Test out the Relative State classes.
 //==========================================================================
 ##include "SpaceFOM/RelStateBase.hh"
@@ -222,7 +223,32 @@ class RelStateTestSimObject : public Trick::SimObject {
    // Print state job.
    void initialize()
    {
-      entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
+      std::ostringstream errmsg;
+      bool error = false;
+      
+      // Make sure that all the references are set.
+      if ( ref_frame == NULL ){
+         errmsg << "RelStateTestSimObject:initialize(): NULL ref_frame!\n";
+         errmsg << "\t You probably forgot to set the RelStateBase reference frame in the input file.\n";
+         error = true;
+      }
+      if ( ref_entity == NULL ){
+         errmsg << "RelStateTestSimObject:initialize(): NULL ref_entity!\n";
+         errmsg << "\t You probably forgot to set the PhysicalEntityData entity reference in the input file.\n";
+         error = true;
+      }
+      else {
+         entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
+         if ( entity_frame == NULL ){
+            errmsg << "RelStateTestSimObject:initialize(): ref_entity parent frame not found: "
+                   << ref_entity->parent_frame << "!";
+            error = true;
+         }
+      }
+      
+      if ( error ) {
+         exec_terminate( __FILE__, errmsg.str().c_str() );
+      }
    }
    
    // Print state job.
@@ -237,6 +263,8 @@ class RelStateTestSimObject : public Trick::SimObject {
       frame_tree.print_path( *entity_frame, *ref_frame );
       std::cout << "\n";
       rel_state.print_data();
+      std::cout << " Path transformation data: \n";
+      rel_state.print_path_transform();
       std::cout << "----------------------------------------------------------------------\n";
       return;
    }
@@ -259,15 +287,15 @@ class RelStateTestSimObject : public Trick::SimObject {
 //==========================================================================
 
 // Instantiate the standard solar systems reference frames.
-FrameDynamicsSimObject ssbary_frame( THLA.execution_control );
-FrameDynamicsSimObject sun_frame( THLA.execution_control );
-FrameDynamicsSimObject embary_frame( THLA.execution_control );
-FrameDynamicsSimObject earth_inertial_frame( THLA.execution_control );
-FrameDynamicsSimObject earth_fixed_frame( THLA.execution_control );
-FrameDynamicsSimObject moon_inertial_frame( THLA.execution_control );
-FrameDynamicsSimObject moon_fixed_frame( THLA.execution_control );
-FrameDynamicsSimObject mars_inertial_frame( THLA.execution_control );
-FrameDynamicsSimObject mars_fixed_frame( THLA.execution_control );
+FrameDynamicsSimObject ssbary_frame( THLA.execution_control, P_HLA_INIT );
+FrameDynamicsSimObject sun_frame( THLA.execution_control, P_HLA_INIT );
+FrameDynamicsSimObject embary_frame( THLA.execution_control, P_HLA_INIT );
+FrameDynamicsSimObject earth_inertial_frame( THLA.execution_control, P_HLA_INIT );
+FrameDynamicsSimObject earth_fixed_frame( THLA.execution_control, P_HLA_INIT );
+FrameDynamicsSimObject moon_inertial_frame( THLA.execution_control, P_HLA_INIT );
+FrameDynamicsSimObject moon_fixed_frame( THLA.execution_control, P_HLA_INIT );
+FrameDynamicsSimObject mars_inertial_frame( THLA.execution_control, P_HLA_INIT );
+FrameDynamicsSimObject mars_fixed_frame( THLA.execution_control, P_HLA_INIT );
 
 // Instantiate the standard solar systems SpaceFOM reference frames for the tree.
 SpaceFOMRefFrameSimObject solar_system_barycenter( ref_frame_tree.frame_tree, ssbary_frame.frame.data, P_HLA_INIT );

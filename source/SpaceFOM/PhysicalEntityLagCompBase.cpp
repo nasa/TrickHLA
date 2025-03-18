@@ -84,6 +84,7 @@ PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase &entity
  */
 PhysicalEntityLagCompBase::~PhysicalEntityLagCompBase() // RETURN: -- None.
 {
+   return;
 }
 
 /*!
@@ -111,7 +112,7 @@ void PhysicalEntityLagCompBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->TrickHLA::LagCompensation::initialize_callback( obj );
+   TrickHLA::LagCompensation::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
@@ -132,17 +133,15 @@ void PhysicalEntityLagCompBase::initialize_callback(
 /*! @brief Initialization integration states. */
 void PhysicalEntityLagCompBase::initialize_states()
 {
-
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->lag_comp_data   = this->entity.pe_packing_data.state;
-   this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
+   this->lag_comp_data   = entity.pe_packing_data.state;
+   this->body_wrt_struct = entity.pe_packing_data.body_wrt_struct;
    for ( int iinc = 0; iinc < 3; ++iinc ) {
-      this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
-      this->ang_accel[iinc] = this->entity.pe_packing_data.ang_accel[iinc];
-      this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
+      this->accel[iinc]     = entity.pe_packing_data.accel[iinc];
+      this->ang_accel[iinc] = entity.pe_packing_data.ang_accel[iinc];
+      this->cm[iinc]        = entity.pe_packing_data.cm[iinc];
    }
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   Q_dot.derivative_first( lag_comp_data.att, lag_comp_data.ang_vel );
 
    // Return to calling routine.
    return;
@@ -171,28 +170,31 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    }
 
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->entity.pack_from_working_data();
-   this->load_lag_comp_data();
-   this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel );
+   entity.pack_from_working_data();
+   load_lag_comp_data();
+   Q_dot.derivative_first( lag_comp_data.att, lag_comp_data.ang_vel );
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data before compensation: \n";
-      this->print_lag_comp_data();
+      ostringstream msg;
+      msg << "Send data before compensation: \n";
+      print_lag_comp_data( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Compensate the data
-   this->compensate( begin_t, end_t );
+   compensate( begin_t, end_t );
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Send data after compensation: \n";
-      this->print_lag_comp_data();
+      ostringstream msg;
+      msg << "Send data after compensation: \n";
+      print_lag_comp_data( msg );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Copy the compensated state to the packing data.
-   this->unload_lag_comp_data();
+   unload_lag_comp_data();
 
    // Return to calling routine.
    return;
@@ -221,34 +223,37 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
 
    // Because of ownership transfers and attributes being sent at different
    // rates we need to check to see if we received attribute data.
-   if ( this->state_attr->is_received() ) {
+   if ( state_attr->is_received() ) {
 
       // Copy the current PhysicalEntity state over to the lag compensated state.
-      this->load_lag_comp_data();
-      this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                    this->lag_comp_data.ang_vel );
+      load_lag_comp_data();
+      Q_dot.derivative_first( lag_comp_data.att, lag_comp_data.ang_vel );
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data before compensation: \n";
-         this->print_lag_comp_data();
+         ostringstream msg;
+         msg << "Receive data before compensation: \n";
+         print_lag_comp_data( msg );
+         send_hs( stdout, msg.str().c_str() );
       }
 
       // Compensate the data
-      this->compensate( data_t, end_t );
+      compensate( data_t, end_t );
 
       // Print out debug information if desired.
       if ( debug ) {
-         cout << "Receive data after compensation: \n";
-         this->print_lag_comp_data();
+         ostringstream msg;
+         msg << "Receive data after compensation: \n";
+         print_lag_comp_data( msg );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 
    // Copy the compensated state to the packing data.
-   this->unload_lag_comp_data();
+   unload_lag_comp_data();
 
    // Move the unpacked data into the working data.
-   this->entity.unpack_into_working_data();
+   entity.unpack_into_working_data();
 
    // Return to calling routine.
    return;
@@ -262,7 +267,7 @@ void PhysicalEntityLagCompBase::bypass_send_lag_compensation()
    // When lag compensation is present but disabled, we still need to copy
    // the working data into the packing data.  This makes sure that the
    // current working state is packed.
-   this->entity.pack_from_working_data();
+   entity.pack_from_working_data();
    return;
 }
 
@@ -274,7 +279,7 @@ void PhysicalEntityLagCompBase::bypass_receive_lag_compensation()
    // When lag compensation is present but disabled, we still need to copy
    // the packing data back into the working data.  This makes sure that the
    // working state is updated from the received packing data.
-   this->entity.unpack_into_working_data();
+   entity.unpack_into_working_data();
    return;
 }
 
@@ -284,12 +289,12 @@ void PhysicalEntityLagCompBase::bypass_receive_lag_compensation()
 void PhysicalEntityLagCompBase::unload_lag_comp_data()
 {
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->entity.pe_packing_data.state           = this->lag_comp_data;
-   this->entity.pe_packing_data.body_wrt_struct = this->body_wrt_struct;
+   entity.pe_packing_data.state           = this->lag_comp_data;
+   entity.pe_packing_data.body_wrt_struct = this->body_wrt_struct;
    for ( int iinc = 0; iinc < 3; ++iinc ) {
-      this->entity.pe_packing_data.accel[iinc]     = this->accel[iinc];
-      this->entity.pe_packing_data.ang_accel[iinc] = this->ang_accel[iinc];
-      this->entity.pe_packing_data.cm[iinc]        = this->cm[iinc];
+      entity.pe_packing_data.accel[iinc]     = this->accel[iinc];
+      entity.pe_packing_data.ang_accel[iinc] = this->ang_accel[iinc];
+      entity.pe_packing_data.cm[iinc]        = this->cm[iinc];
    }
 
    return;
@@ -301,12 +306,12 @@ void PhysicalEntityLagCompBase::unload_lag_comp_data()
 void PhysicalEntityLagCompBase::load_lag_comp_data()
 {
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->lag_comp_data   = this->entity.pe_packing_data.state;
-   this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
+   this->lag_comp_data   = entity.pe_packing_data.state;
+   this->body_wrt_struct = entity.pe_packing_data.body_wrt_struct;
    for ( int iinc = 0; iinc < 3; ++iinc ) {
-      this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
-      this->ang_accel[iinc] = this->entity.pe_packing_data.ang_accel[iinc];
-      this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
+      this->accel[iinc]     = entity.pe_packing_data.accel[iinc];
+      this->ang_accel[iinc] = entity.pe_packing_data.ang_accel[iinc];
+      this->cm[iinc]        = entity.pe_packing_data.cm[iinc];
    }
 
    return;
@@ -325,7 +330,7 @@ void PhysicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream )
    // Compute the attitude Euler angles.
    lag_comp_data.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
 
-   stream << "\tScenario time: " << this->get_scenario_time() << '\n';
+   stream << "\tScenario time: " << get_scenario_time() << '\n';
    stream << "\tLag comp time: " << this->lag_comp_data.time << '\n';
    stream << "\tposition: "
           << "\t\t" << this->lag_comp_data.pos[0] << ", "

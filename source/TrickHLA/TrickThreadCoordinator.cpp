@@ -128,7 +128,7 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
    }
 
    // Make sure we destroy the mutex.
-   this->mutex.destroy();
+   mutex.destroy();
 }
 
 /*!
@@ -309,17 +309,17 @@ void TrickThreadCoordinator::initialize(
    }
 
    // Allocate memory for the data cycle times per each object instance.
-   if ( this->manager->obj_count > 0 ) {
-      this->data_cycle_base_time_per_obj = static_cast< long long * >( TMM_declare_var_1d( "long long", this->manager->obj_count ) );
+   if ( manager->obj_count > 0 ) {
+      this->data_cycle_base_time_per_obj = static_cast< long long * >( TMM_declare_var_1d( "long long", manager->obj_count ) );
       if ( this->data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
                 << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_obj'"
-                << " for requested size " << this->manager->obj_count
+                << " for requested size " << manager->obj_count
                 << "'!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+      for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
          this->data_cycle_base_time_per_obj[obj_index] = 0LL;
       }
    }
@@ -486,17 +486,17 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
    // Search all the objects for a thread ID match and configure data arrays.
    bool any_valid_thread_id_found = false;
-   for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+   for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
 
       // Is this thread associated to this object.
-      if ( this->manager->objects[obj_index].is_thread_associated( thread_id ) ) {
+      if ( manager->objects[obj_index].is_thread_associated( thread_id ) ) {
 
          if ( ( this->data_cycle_base_time_per_thread[thread_id] > 0LL )
               && ( this->data_cycle_base_time_per_thread[thread_id] != data_cycle_base_time ) ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
                    << " ERROR: For the object instance name '"
-                   << this->manager->objects[obj_index].get_name() << "', the Trick "
+                   << manager->objects[obj_index].get_name() << "', the Trick "
                    << ( ( thread_id == 0 ) ? "main" : "child" )
                    << " thread (thread-id:" << thread_id << ", data_cycle:"
                    << setprecision( 18 )
@@ -514,7 +514,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
                    << " ERROR: For the object instance name '"
-                   << this->manager->objects[obj_index].get_name()
+                   << manager->objects[obj_index].get_name()
                    << "', an existing entry for this"
                    << " object (thread-id:" << thread_id << ", data_cycle:"
                    << setprecision( 18 )
@@ -529,7 +529,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
          } else {
             summary << "  thread-id:" << thread_id
                     << "  data_cycle:" << setprecision( 18 ) << data_cycle
-                    << "  obj-instance:'" << this->manager->objects[obj_index].get_name()
+                    << "  obj-instance:'" << manager->objects[obj_index].get_name()
                     << "'\n";
 
             any_valid_thread_id_found = true;
@@ -698,9 +698,9 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
                   summary << setprecision( 18 )
                           << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
                           << "\t ";
-                  for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
-                     if ( this->manager->objects[obj_index].is_thread_associated( thread_id ) ) {
-                        summary << "'" << this->manager->objects[obj_index].get_name() << "' ";
+                  for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
+                     if ( manager->objects[obj_index].is_thread_associated( thread_id ) ) {
+                        summary << "'" << manager->objects[obj_index].get_name() << "' ";
                      }
                   }
                   break;
@@ -711,11 +711,11 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
          // Summary of the thread-ID's per object instance.
          summary << "Object-Instance   ThreadIDs\n";
-         for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
-            summary << "'" << this->manager->objects[obj_index].get_name() << "'\t  ";
+         for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
+            summary << "'" << manager->objects[obj_index].get_name() << "'\t  ";
             bool printed_thread_id = false;
-            for ( unsigned int thread_id = 0; thread_id < this->manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
-               if ( this->manager->objects[obj_index].thread_ids_array[thread_id] ) {
+            for ( unsigned int thread_id = 0; thread_id < manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
+               if ( manager->objects[obj_index].thread_ids_array[thread_id] ) {
                   if ( printed_thread_id ) {
                      summary << ", ";
                   }
@@ -731,16 +731,16 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
    // Verify every thread ID specified in the input file for each object has a
    // Trick child thread association made in the S_define file.
-   for ( int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
-      for ( unsigned int thread_id = 0; thread_id < this->manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
+   for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
+      for ( unsigned int thread_id = 0; thread_id < manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
 
          if ( ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
-              && this->manager->objects[obj_index].thread_ids_array[thread_id]
+              && manager->objects[obj_index].thread_ids_array[thread_id]
               && ( this->data_cycle_base_time_per_thread[thread_id] == 0LL ) ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::verify_trick_thread_associations():"
                    << __LINE__ << " ERROR: Object instance '"
-                   << this->manager->objects[obj_index].get_name()
+                   << manager->objects[obj_index].get_name()
                    << "' specified a Trick thread-ID:" << thread_id << ", but no thread"
                    << " with this ID was associated in the S_define file!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -898,7 +898,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
    if ( !all_ready_to_send ) {
 
       int64_t      wallclock_time;
-      SleepTimeout print_timer( this->federate->wait_status_time );
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for all Trick child threads associated to TrickHLA to be
@@ -906,7 +906,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
       do {
 
          // Check for shutdown.
-         this->federate->check_for_shutdown_with_termination();
+         federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
@@ -951,7 +951,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
-               if ( !this->federate->is_execution_member() ) {
+               if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "TrickThreadCoordinator::wait_to_send_data_for_main_thread():" << __LINE__
                          << " ERROR: Unexpectedly the Federate is no longer an execution"
@@ -1022,13 +1022,13 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
    if ( !sent_data ) {
 
       int64_t      wallclock_time;
-      SleepTimeout print_timer( this->federate->wait_status_time );
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the main thread to have sent the data.
       do {
          // Check for shutdown.
-         this->federate->check_for_shutdown_with_termination();
+         federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
@@ -1047,7 +1047,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
-               if ( !this->federate->is_execution_member() ) {
+               if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "TrickThreadCoordinator::wait_to_send_data_for_child_thread():" << __LINE__
                          << " ERROR: Unexpectedly the Federate is no longer an execution"
@@ -1118,13 +1118,13 @@ void TrickThreadCoordinator::wait_to_receive_data()
    if ( !ready_to_receive ) {
 
       int64_t      wallclock_time;
-      SleepTimeout print_timer( this->federate->wait_status_time );
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the main thread to receive data.
       do {
          // Check for shutdown.
-         this->federate->check_for_shutdown_with_termination();
+         federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
@@ -1143,7 +1143,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
-               if ( !this->federate->is_execution_member() ) {
+               if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "TrickThreadCoordinator::wait_to_receive_data():" << __LINE__
                          << " ERROR: Unexpectedly the Federate is no longer an execution"
@@ -1179,7 +1179,7 @@ bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
 {
    // On boundary if sim-time is an integer multiple of a valid cycle-time.
    return ( ( this->any_child_thread_associated
-              && ( obj_index < this->manager->obj_count )
+              && ( obj_index < manager->obj_count )
               && ( this->data_cycle_base_time_per_obj[obj_index] > 0LL ) )
                ? ( ( sim_time_in_base_time % this->data_cycle_base_time_per_obj[obj_index] ) == 0LL )
                : true );
@@ -1192,7 +1192,7 @@ int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
    int64_t const default_data_cycle_base_time ) const
 {
    return ( this->any_child_thread_associated
-            && ( obj_index < this->manager->obj_count )
+            && ( obj_index < manager->obj_count )
             && ( this->data_cycle_base_time_per_obj[obj_index] > default_data_cycle_base_time ) )
              ? this->data_cycle_base_time_per_obj[obj_index]
              : default_data_cycle_base_time;

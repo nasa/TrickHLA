@@ -106,10 +106,10 @@ int LagCompensationInteg::integrate(
       // Step through the integrator's integration steps.
       do {
          // Compute the derivatives of the lag compensation state vector.
-         this->derivative_first();
+         derivative_first();
 
          // Load the integration states and derivatives.
-         this->load();
+         load();
 
          // Perform the integration propagation one integration step.
          if ( dt_go > this->integ_dt ) {
@@ -121,12 +121,12 @@ int LagCompensationInteg::integrate(
          }
 
          // Call the integrator.
-         // Was: ipass |= this->integrator->integrate();
+         // Was: ipass |= integrator->integrate();
          // Only need the |= if using multiple integrators.
-         ipass = this->integrator->integrate();
+         ipass = integrator->integrate();
 
          // Unload the integrated states.
-         this->unload();
+         unload();
 
       } while ( ipass );
 
@@ -138,10 +138,10 @@ int LagCompensationInteg::integrate(
    }
 
    // Update the lag compensated time,
-   this->update_time();
+   update_time();
 
    // Compute the derivatives of the lag compensation state vector.
-   this->derivative_first();
+   derivative_first();
 
    return ( 0 );
 }

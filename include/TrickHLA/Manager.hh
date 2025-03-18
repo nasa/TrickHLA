@@ -449,21 +449,21 @@ class Manager : public CheckpointConversionBase
     *  @param exec_config Pointer to the associated execution configuration object. */
    void set_execution_configuration( ExecutionConfigurationBase *exec_config )
    {
-      this->execution_control->set_execution_configuration( exec_config );
+      execution_control->set_execution_configuration( exec_config );
    }
 
    /*! @brief Get the execution configuration object.
     *  @return Pointer to the associated execution configuration object. */
    ExecutionConfigurationBase *get_execution_configuration()
    {
-      return this->execution_control->get_execution_configuration();
+      return execution_control->get_execution_configuration();
    }
 
    /*! @brief Test is an execution configuration object is used.
     *  @return True if an execution configuration object is used. */
    bool is_execution_configuration_used()
    {
-      return this->execution_control->is_execution_configuration_used();
+      return execution_control->is_execution_configuration_used();
    }
 
    /*! @brief Check if federate is shutdown function was called.

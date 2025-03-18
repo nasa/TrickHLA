@@ -64,6 +64,6 @@ void RefFrameDeleted::deleted()
 {
    std::ostringstream msg;
    msg << "SpaceFOM::RefFrameDeleted::deleted():" << __LINE__
-       << " Object '" << this->object->get_name() << "' deleted from the federation.";
+       << " Object '" << object->get_name() << "' deleted from the federation.";
    send_hs( stdout, msg.str().c_str() );
 }

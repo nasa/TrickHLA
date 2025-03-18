@@ -707,7 +707,7 @@ class Federate
    /*! @brief Get the main thread data cycle in the base time */
    virtual int64_t const get_main_thread_data_cycle_base_time() const
    {
-      return this->thread_coordinator.get_main_thread_data_cycle_base_time();
+      return thread_coordinator.get_main_thread_data_cycle_base_time();
    }
 
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
@@ -923,7 +923,7 @@ class Federate
     *  @return Reference to current granted HLA federation execution time. */
    double const get_granted_base_time() const
    {
-      return this->granted_time.get_base_time();
+      return granted_time.get_base_time();
    }
 
    /*! @brief Get the requested HLA federation execution time.
@@ -944,14 +944,14 @@ class Federate
     *  @return Current federate lookahead time in the base time. */
    int64_t const get_lookahead_in_base_time() const
    {
-      return this->lookahead.get_base_time();
+      return lookahead.get_base_time();
    }
 
    /*! @brief Query of federate has a zero lookahead time.
     *  @return True if lookahead time is zero; False otherwise. */
    bool const is_zero_lookahead_time() const
    {
-      return ( this->lookahead.get_base_time() <= 0LL );
+      return ( lookahead.get_base_time() <= 0LL );
    }
 
    /*! @brief Set the name of the save.

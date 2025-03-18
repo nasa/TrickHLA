@@ -97,7 +97,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
    }
 
    // Make sure that the node is not already in the tree.
-   if ( this->has_node( node_ptr ) ) {
+   if ( has_node( node_ptr ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout, "LRTreeBase::add_node():%d WARNING: Node \'%s\' is already in the tree.\n",
                   __LINE__, node_ptr->name );
@@ -113,7 +113,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
    }
 
    // Make sure that the node name is unique.
-   if ( this->has_node( node_ptr->name ) ) {
+   if ( has_node( node_ptr->name ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout, "LRTreeBase::add_node():%d WARNING: Node \'%s\' duplicate name is already in the tree.\n",
                   __LINE__, node_ptr->name );
@@ -147,7 +147,7 @@ bool LRTreeBase::build_tree()
    }
 
    // Find the root node for this tree.
-   LRTreeNodeBase const *root_node = this->find_root();
+   LRTreeNodeBase const *root_node = find_root();
    if ( root_node == NULL ) {
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
@@ -156,7 +156,7 @@ bool LRTreeBase::build_tree()
    }
 
    // Sweep through the nodes vector to populate the paths matrix.
-   for ( unsigned int iinc = 0; iinc < this->nodes.size(); ++iinc ) {
+   for ( unsigned int iinc = 0; iinc < nodes.size(); ++iinc ) {
 
       for ( unsigned int jinc = 0; jinc <= iinc; ++jinc ) {
          // Any diagonal elements just have themselves.
@@ -203,7 +203,7 @@ bool LRTreeBase::check_tree()
    bool check_state = true;
 
    // Iterate through all the nodes.
-   for ( unsigned int iinc = 0; iinc < this->nodes.size(); ++iinc ) {
+   for ( unsigned int iinc = 0; iinc < nodes.size(); ++iinc ) {
 
       // Get the reference to the node in the vector.
       LRTreeNodeBase *node_ptr = this->nodes[iinc];
@@ -250,7 +250,7 @@ bool LRTreeBase::check_tree()
       } else { // Not a root node.
 
          // Make sure that the parent node exists within the tree.
-         if ( this->has_node( node_ptr->parent ) ) {
+         if ( has_node( node_ptr->parent ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d INFO: Parent \'%s\' found for node \'%s\'!\n",
                         __LINE__, node_ptr->parent->name, node_ptr->name );
@@ -275,7 +275,7 @@ bool LRTreeBase::check_tree()
          }
 
          // Need to check to make sure that tree is acyclic.
-         if ( this->is_cyclic( node_ptr ) ) {
+         if ( is_cyclic( node_ptr ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                send_hs( stdout, "LRTreeBase::check_tree():%d WARNING: Branch node is part of a cyclic segment: \'%s\'!\n",
                         __LINE__, node_ptr->name );
@@ -304,7 +304,7 @@ bool LRTreeBase::check_tree()
  */
 bool LRTreeBase::has_node( unsigned int const node_id )
 {
-   return ( node_id < this->nodes.size() );
+   return ( node_id < nodes.size() );
 }
 
 /*!
@@ -426,7 +426,7 @@ void LRTreeBase::print_path(
    unsigned int  end,
    std::ostream &stream )
 {
-   unsigned int num_nodes = this->nodes.size();
+   unsigned int num_nodes = nodes.size();
 
    // Perform a few sanity checks.
    if ( ( start >= num_nodes ) || ( end >= num_nodes ) ) {
@@ -478,7 +478,7 @@ void LRTreeBase::print_paths( std::ostream &stream )
    if ( paths != NULL ) {
 
       // Get the size of the path matrix.
-      unsigned int num_nodes = this->nodes.size();
+      unsigned int num_nodes = nodes.size();
 
       // Print out header tag.
       stream << "LRTreeBase::print_paths: \n";
@@ -536,10 +536,10 @@ void LRTreeBase::print_paths( std::ostream &stream )
 bool LRTreeBase::allocate_paths()
 {
    // Free any old paths before allocating new paths.
-   this->free_paths();
+   free_paths();
 
    // Size the path matrix.
-   unsigned int num_nodes = this->nodes.size();
+   unsigned int num_nodes = nodes.size();
 
    // Allocate the rows of the matrix.
    this->paths = new LRTreeNodeVector *[num_nodes];
@@ -582,7 +582,7 @@ void LRTreeBase::free_paths()
    if ( paths != NULL ) {
 
       // Size the path matrix.
-      unsigned int num_nodes = this->nodes.size();
+      unsigned int num_nodes = nodes.size();
 
       // Iterate through and free the path matrix.
       // Iterate through the rows.
@@ -628,7 +628,7 @@ LRTreeNodeBase *LRTreeBase::find_root()
    bool            found_root = false;
 
    // Get the number of nodes in the tree.
-   num_nodes = this->nodes.size();
+   num_nodes = nodes.size();
 
    // Iterate through all the nodes.
    // for ( node_iter = nodes.begin(); node_iter < nodes.end(); ++node_iter ) {
@@ -699,7 +699,7 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
    node_id = node->node_id;
 
    // Get the number of nodes in the tree.
-   num_nodes = this->nodes.size();
+   num_nodes = nodes.size();
 
    // Crawl up the tree using parents looking for a repeat of this node ID.
    // The crawl will end when one of these three conditions are meet:
@@ -741,7 +741,7 @@ LRTreeNodeVector *LRTreeBase::get_path_to_root( unsigned int const node_id )
    LRTreeNodeVector *return_vector = NULL;
 
    // Make sure the node is in the tree.
-   node_ptr = this->find_node( node_id );
+   node_ptr = find_node( node_id );
    if ( node_ptr != NULL ) {
 
       // Allocate the return node path vector;
@@ -792,13 +792,13 @@ LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
    LRTreeNodeVector::iterator down_itr;
 
    // Make sure these nodes are in the tree.
-   if ( this->has_node( local ) && this->has_node( wrt ) ) {
+   if ( has_node( local ) && has_node( wrt ) ) {
 
       // Get path from local node to root.
-      up_path = this->get_path_to_root( local );
+      up_path = get_path_to_root( local );
 
       // Get path from wrt node to root.
-      down_path = this->get_path_to_root( wrt );
+      down_path = get_path_to_root( wrt );
 
       // Check to find the common path.
       if ( ( up_path != NULL ) && ( down_path != NULL ) ) {
@@ -902,13 +902,13 @@ LRTreeNodeBase *LRTreeBase::find_common_node( unsigned int const local,
    LRTreeNodeBase   *common_node_ptr = NULL;
 
    // Make sure these nodes are in the tree.
-   if ( this->has_node( local ) && this->has_node( wrt ) ) {
+   if ( has_node( local ) && has_node( wrt ) ) {
 
       // Get path from local node to root.
-      up_path = this->get_path_to_root( local );
+      up_path = get_path_to_root( local );
 
       // Get path from wrt node to root.
-      down_path = this->get_path_to_root( wrt );
+      down_path = get_path_to_root( wrt );
 
       // Now find the common node.
       common_node_ptr = find_common_node( up_path, down_path );

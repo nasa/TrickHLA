@@ -109,6 +109,7 @@ bool RelStateBase::set_frame(
    lookup_frame = frame_tree->find_frame( wrt_frame );
    if ( lookup_frame ) {
       express_frame = lookup_frame;
+      set_parent_frame( express_frame->name );
       return ( true );
    }
 
@@ -134,6 +135,7 @@ bool RelStateBase::set_frame(
    lookup_frame = frame_tree->find_frame( wrt_frame );
    if ( lookup_frame ) {
       express_frame = lookup_frame;
+      set_parent_frame( express_frame->name );
       return ( true );
    }
 
@@ -153,10 +155,6 @@ bool RelStateBase::set_frame(
 bool RelStateBase::compute_state(
    PhysicalEntityData const *entity )
 {
-   RefFrameData path_transform; /* The reference frame transformation data
-                                   needed to transform from the entity's
-                                   parent frame into a desired express frame. */
-
    double r_ent_c_p[3]; /* Position vector of the entity with respect to its
                            current frame (child) but expressed in the desired
                            parent frame. */
@@ -205,12 +203,13 @@ bool RelStateBase::compute_state(
    if ( entity_parent_frame == express_frame ) {
 
       // Just copy the state and return.
-      this->copy( *entity );
+      copy( *entity );
 
       // Print out the path transformation if debug is set.
       if ( debug ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+         errmsg << "Path transformation for " << entity->name << "\n";
          path_transform.print_data( errmsg );
          send_hs( stderr, errmsg.str().c_str() );
       }
@@ -236,10 +235,10 @@ bool RelStateBase::compute_state(
    }
 
    // Copy over the identification data strings.
-   this->set_name( entity->name );
-   this->set_type( entity->type );
-   this->set_status( entity->status );
-   this->set_parent_frame( express_frame->name );
+   set_name( entity->name );
+   set_type( entity->type );
+   set_status( entity->status );
+   set_parent_frame( express_frame->name );
 
    //**************************************************************************
    // Compute the state of the entity with respect to a new express (parent)
@@ -259,7 +258,7 @@ bool RelStateBase::compute_state(
    V_ADD( this->state.pos, path_transform.state.pos, r_ent_c_p )
 
    // Compute the entity attitude in the express frame.
-   this->state.att.multiply( path_transform.state.att, entity->state.att );
+   state.att.multiply( path_transform.state.att, entity->state.att );
 
    //
    // Velocity computations.
@@ -280,7 +279,7 @@ bool RelStateBase::compute_state(
    // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular velocity wrt the parent frame into
    // this entity's 'body' frame.
-   this->state.att.conjugate_transform_vector( path_transform.state.ang_vel, w_c_p_bdy );
+   state.att.conjugate_transform_vector( path_transform.state.ang_vel, w_c_p_bdy );
    // Add the rotational velocity of the entity's current frame (child) with
    // respect to the new parent frame.
    V_ADD( this->state.ang_vel, w_c_p_bdy, entity->state.ang_vel );
@@ -309,7 +308,7 @@ bool RelStateBase::compute_state(
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the current frame's angular acceleration wrt the parent frame
    // into the entity 'body' frame.
-   entity->state.att.conjugate_transform_vector( path_transform.state.ang_vel, wdot_c_p_bdy );
+   entity->state.att.conjugate_transform_vector( path_transform.ang_accel, wdot_c_p_bdy );
    // Add the rotational acceleration of the entity frame with respect
    // to the parent frame.
    V_ADD( this->ang_accel, wdot_c_p_bdy, entity->ang_accel );
@@ -318,6 +317,7 @@ bool RelStateBase::compute_state(
    if ( debug ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+      errmsg << "\tPath transform: \n";
       path_transform.print_data( errmsg );
       send_hs( stderr, errmsg.str().c_str() );
    }
@@ -332,11 +332,10 @@ bool RelStateBase::compute_state(
    PhysicalEntityData const *entity,
    char const               *wrt_frame )
 {
-
    // Set the frame in which to express the state.
-   if ( this->set_frame( wrt_frame ) ) {
+   if ( set_frame( wrt_frame ) ) {
       // Call the base function.
-      return ( this->compute_state( entity, express_frame ) );
+      return ( compute_state( entity, express_frame ) );
    }
 
    return ( false );
@@ -349,11 +348,10 @@ bool RelStateBase::compute_state(
    PhysicalEntityData const *entity,
    std::string const        &wrt_frame )
 {
-
    // Set the frame in which to express the state.
-   if ( this->set_frame( wrt_frame ) ) {
+   if ( set_frame( wrt_frame ) ) {
       // Call the base function.
-      return ( this->compute_state( entity, express_frame ) );
+      return ( compute_state( entity, express_frame ) );
    }
 
    return ( false );
@@ -377,10 +375,21 @@ bool RelStateBase::compute_state(
    }
 
    // Set the frame in which to express the state.
-   if ( this->set_frame( *wrt_frame ) ) { // cppcheck-suppress [knownConditionTrueFalse]
+   if ( set_frame( *wrt_frame ) ) { // cppcheck-suppress [knownConditionTrueFalse]
       // Call the base function to compute the state.
-      return ( this->compute_state( entity ) );
+      return ( compute_state( entity ) );
    }
 
    return ( false );
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void RelStateBase::print_path_transform( std::ostream &stream )
+{
+   // Call the path transformation print function.
+   path_transform.print_data( stream );
+
+   return;
 }

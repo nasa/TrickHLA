@@ -164,7 +164,8 @@ class THLAInitSimObj : public Trick::SimObject {
 
    THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
                    TrickHLA::Federate & thla_fed )
-      : scenario_timeline( sim_timeline, 0.0, 0.0 ),
+      : sim_timeline(),
+        scenario_timeline( sim_timeline, 0.0, 0.0 ),
         thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {

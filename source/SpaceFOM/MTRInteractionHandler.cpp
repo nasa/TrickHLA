@@ -156,38 +156,40 @@ void MTRInteractionHandler::send_interaction(
    }
 
    // Get the current time line values.
-   scenario_time = this->get_scenario_time();
-   sim_time      = this->get_sim_time();
+   scenario_time = get_scenario_time();
+   sim_time      = get_sim_time();
    if ( exco_base->does_cte_timeline_exist() ) {
-      cte_time = this->get_cte_time();
+      cte_time = get_cte_time();
    }
-   granted_time = this->interaction->get_federate()->get_granted_time().get_time_in_seconds();
+   granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
-   bool was_sent = this->InteractionHandler::send_interaction( rti_user_supplied_tag );
+   bool was_sent = InteractionHandler::send_interaction( rti_user_supplied_tag );
 
    if ( was_sent ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          string rti_user_supplied_tag_string;
          StringUtilities::to_string( rti_user_supplied_tag_string, rti_user_supplied_tag );
+         ostringstream msg;
 
-         cout << "++++SENDING++++ MTRInteractionHandler::send_interaction("
-              << "Receive Order):" << __LINE__ << '\n'
-              << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-              << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
-              << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << '\n'
-              << "  mode request: " << mtr_enum_to_string( mtr_mode ) << '\n'
-              << "  Scenario time: " << scenario_time << '\n'
-              << "  Simulation time: " << sim_time << '\n';
+         msg << "++++SENDING++++ MTRInteractionHandler::send_interaction("
+             << "Receive Order):" << __LINE__ << '\n'
+             << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+             << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
+             << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << '\n'
+             << "  mode request: " << mtr_enum_to_string( mtr_mode ) << '\n'
+             << "  Scenario time: " << scenario_time << '\n'
+             << "  Simulation time: " << sim_time << '\n';
          if ( exco_base->does_cte_timeline_exist() ) {
-            cout << "  CTE time: " << cte_time << '\n';
+            msg << "  CTE time: " << cte_time << '\n';
          }
-         cout << "  HLA grant time: " << granted_time << " ("
-              << Int64BaseTime::to_base_time( granted_time ) << " "
-              << Int64BaseTime::get_units() << ")\n"
-              << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+         msg << "  HLA grant time: " << granted_time << " ("
+             << Int64BaseTime::to_base_time( granted_time ) << " "
+             << Int64BaseTime::get_units() << ")\n"
+             << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+         send_hs( stdout, msg.str().c_str() );
       }
 
       // Update the send count, which is just used for the message in this example.
@@ -198,25 +200,27 @@ void MTRInteractionHandler::send_interaction(
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          // Get the current time line values.
-         scenario_time = this->get_scenario_time();
-         sim_time      = this->get_sim_time();
+         scenario_time = get_scenario_time();
+         sim_time      = get_sim_time();
          if ( exco_base->does_cte_timeline_exist() ) {
-            cte_time = this->get_cte_time();
+            cte_time = get_cte_time();
          }
          granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
          // The interaction was Not sent.
-         cout << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
-              << __LINE__ << '\n'
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-              << "  Scenario time: " << scenario_time << '\n'
-              << "  Simulation time: " << sim_time << '\n';
+         ostringstream msg;
+         msg << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
+             << __LINE__ << '\n'
+             << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+             << "  Scenario time: " << scenario_time << '\n'
+             << "  Simulation time: " << sim_time << '\n';
          if ( exco_base->does_cte_timeline_exist() ) {
-            cout << "  CTE time: " << cte_time << '\n';
+            msg << "  CTE time: " << cte_time << '\n';
          }
-         cout << "  HLA grant time: " << granted_time << " ("
-              << Int64BaseTime::to_base_time( granted_time ) << " "
-              << Int64BaseTime::get_units() << ")\n";
+         msg << "  HLA grant time: " << granted_time << " ("
+             << Int64BaseTime::to_base_time( granted_time ) << " "
+             << Int64BaseTime::get_units() << ")\n";
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 }
@@ -258,10 +262,10 @@ void MTRInteractionHandler::receive_interaction(
    StringUtilities::to_string( user_tag_string, the_user_supplied_tag );
 
    // Get the current time line values.
-   this->scenario_time = this->get_scenario_time();
-   this->sim_time      = this->get_sim_time();
+   this->scenario_time = get_scenario_time();
+   this->sim_time      = get_sim_time();
    if ( exco->does_cte_timeline_exist() ) {
-      this->cte_time = this->get_cte_time();
+      this->cte_time = get_cte_time();
    }
    this->granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
@@ -271,21 +275,24 @@ void MTRInteractionHandler::receive_interaction(
 
       string user_supplied_tag_string;
       StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );
-      cout << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
-           << __LINE__ << '\n'
-           << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-           << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
-           << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << '\n'
-           << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << '\n'
-           << "  Scenario time: " << this->scenario_time << '\n'
-           << "  Simulation time: " << this->sim_time << '\n';
+
+      ostringstream msg;
+      msg << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
+          << __LINE__ << '\n'
+          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+          << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
+          << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << '\n'
+          << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << '\n'
+          << "  Scenario time: " << this->scenario_time << '\n'
+          << "  Simulation time: " << this->sim_time << '\n';
       if ( exco->does_cte_timeline_exist() ) {
-         cout << "  CTE time: " << this->cte_time << '\n';
+         msg << "  CTE time: " << this->cte_time << '\n';
       }
-      cout << "  HLA grant time: " << this->granted_time << " ("
-           << Int64BaseTime::to_base_time( this->granted_time ) << " "
-           << Int64BaseTime::get_units() << ")\n"
-           << "  receive_cnt:" << ( receive_cnt + 1 ) << '\n';
+      msg << "  HLA grant time: " << this->granted_time << " ("
+          << Int64BaseTime::to_base_time( this->granted_time ) << " "
+          << Int64BaseTime::get_units() << ")\n"
+          << "  receive_cnt:" << ( receive_cnt + 1 ) << '\n';
+      send_hs( stdout, msg.str().c_str() );
    }
 
    ++receive_cnt;

@@ -30,7 +30,9 @@ NASA, Johnson Space Center\n
 #include <time.h>
 
 // Trick include files.
+#include "trick/Executive.hh"
 #include "trick/clock_proto.h"
+#include "trick/exec_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/SleepTimeout.hh"
@@ -103,9 +105,14 @@ int const SleepTimeout::sleep() const
    return nanosleep( &sleep_time, NULL );
 }
 
+// Current time as an integer in microseconds.
 int64_t const SleepTimeout::time() const
 {
-   return clock_wall_time();
+   // Make sure the time is always an integer in microseconds.
+   int const time_tic_value = exec_get_time_tic_value();
+   return ( time_tic_value == 1000000 )
+             ? clock_wall_time()
+             : ( ( clock_wall_time() * 1000000 ) / time_tic_value );
 }
 
 bool const SleepTimeout::timeout() const
@@ -122,7 +129,7 @@ bool const SleepTimeout::timeout(
 /*! @brief Reset the internal timeout time. */
 void SleepTimeout::reset()
 {
-   int64_t t = time();
+   int64_t const t = time();
    if ( t < ( INT64_MAX - this->timeout_time ) ) {
       this->timeout_clock_time = t + this->timeout_time;
    } else {

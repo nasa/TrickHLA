@@ -86,7 +86,7 @@ class SleepTimeout
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
    int const sleep() const;
 
-   /*! @brief Gets the wall clock time.
+   /*! @brief Gets the wall clock time in microseconds.
     *  @return The wall clock time in microseconds. */
    int64_t const time() const;
 
