@@ -30,8 +30,6 @@ NASA, Johnson Space Center\n
 #include <time.h>
 
 // Trick include files.
-#include "trick/Executive.hh"
-#include "trick/exec_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/TimeOfDayTimeline.hh"
@@ -70,5 +68,7 @@ double const TimeOfDayTimeline::get_time()
  */
 double const TimeOfDayTimeline::get_min_resolution()
 {
-   return ( 0.000000001 );
+   struct timespec ts;
+   clock_getres( CLOCK_REALTIME, &ts );
+   return ( (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 ) );
 }

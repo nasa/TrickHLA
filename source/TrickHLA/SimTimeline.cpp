@@ -65,6 +65,6 @@ double const SimTimeline::get_time()
  */
 double const SimTimeline::get_min_resolution()
 {
-   // Minimum time resolution for the Trick Simulation Environment.
+   // Time resolution for the Trick Simulation Environment.
    return ( 1.0 / (double)exec_get_time_tic_value() );
 }

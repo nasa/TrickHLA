@@ -2246,7 +2246,7 @@ bool ExecutionControl::run_mode_transition()
          go_to_run_time = ExCO->get_next_mode_cte_time();
       }
 
-      double cte_time, diff;
+      double cte_time, cte_time_diff;
 
       // Wait for the CTE go-to-run time.
       cte_time = get_cte_time();
@@ -2255,12 +2255,12 @@ bool ExecutionControl::run_mode_transition()
          // Always check for shutdown in wait loops.
          federate->check_for_shutdown_with_termination();
 
-         diff = go_to_run_time - cte_time;
-         if ( fmod( diff, 1.0 ) == 0.0 ) {
+         cte_time_diff = go_to_run_time - cte_time;
+         if ( fmod( cte_time_diff, 1.0 ) == 0.0 ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                ostringstream msg;
                msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
-                   << " Going to run in " << diff << " seconds.\n";
+                   << " Going to run in " << cte_time_diff << " seconds.\n";
                send_hs( stdout, msg.str().c_str() );
             }
          }
@@ -2268,30 +2268,44 @@ bool ExecutionControl::run_mode_transition()
          cte_time = get_cte_time();
       }
 
-      diff = cte_time - go_to_run_time;
+      cte_time_diff = cte_time - go_to_run_time;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          ostringstream msg;
          msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__ << "\n"
              << "Go to RUN at CTE time: " << setprecision( 18 ) << go_to_run_time << " seconds\n"
              << "     Current CTE time: " << setprecision( 18 ) << cte_time << " seconds\n"
-             << "           Difference: " << setprecision( 9 ) << diff << " seconds\n";
+             << "           Difference: " << setprecision( 9 ) << cte_time_diff << " seconds\n";
          send_hs( stdout, msg.str().c_str() );
       }
 
       // Always show a warning message if the manager does not have a big
       // enough time padding specified by the user when using CTE.
-      if ( is_master() && ( diff >= 0.1 ) ) {
-         ostringstream msg;
-         msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
-             << " WARNING: Current CTE time exceeded the go-to-run time by"
-             << " more than 0.1 seconds. Please add more time to the"
-             << " time padding configured in your input.py file, which is"
-             << " currently set to 'federate.set_time_padding( "
-             << setprecision( 9 ) << get_time_padding()
-             << " )', to allow the go-to-run CTE message to propagate to"
-             << " all federates in time to be used.\n";
-         send_hs( stdout, msg.str().c_str() );
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( cte_time_diff >= 0.1 ) {
+            if ( is_master() ) {
+               ostringstream msg;
+               msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
+                   << " WARNING: Current CTE time exceeded the go-to-run time by"
+                   << " more than 0.1 seconds. Please add more time to the"
+                   << " time padding configured in your input.py file, which is"
+                   << " currently set to 'federate.set_time_padding( "
+                   << setprecision( 9 ) << get_time_padding()
+                   << " )', to allow the go-to-run CTE message to propagate to"
+                   << " all federates in time to be used.\n";
+               send_hs( stdout, msg.str().c_str() );
+            } else {
+               ostringstream msg;
+               msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
+                   << " WARNING: Current CTE time exceeded the go-to-run time by"
+                   << " more than 0.1 seconds. Please update the Master federate"
+                   << " to add more time to the time padding configured in the"
+                   << " input.py file for this call 'federate.set_time_padding( pad )',"
+                   << " to allow the go-to-run CTE message to propagate to"
+                   << " all federates in time to be used.\n";
+               send_hs( stdout, msg.str().c_str() );
+            }
+         }
       }
    }
 
