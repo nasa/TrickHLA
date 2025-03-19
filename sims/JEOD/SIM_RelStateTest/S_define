@@ -1,0 +1,419 @@
+//==========================================================================
+// Space Reference FOM: Simulation to test the SpaceFOM reference frame
+// tree and asscoiated relative state computations.
+//==========================================================================
+// Description:
+// This simulation generates a SpaceFOM compliant reference frame tree
+// using JEOD models and mapping them into SpaceFOM ReferenceFrame object
+// instances.  Three space vehicles are placed in orbit around the Earth,
+// Moon, and Mars.  The JEOD RelKin models are then used to validate the
+// relative state computations based on the SpaceFOM Reference Frame Tree
+// reltative state code.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+
+// Define the Trick default system infrastructure.
+#include "sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the JEOD job cycle times.
+//==========================================================================
+#define LOW_RATE_ENV  60.00    // Low-rate environment update interval
+#define HIGH_RATE_ENV  0.250   // High-rate environment update interval
+#define DYNAMICS       0.03125 // Vehicle and planetary dynamics interval (32Hz)
+
+//==========================================================================
+// Define the Trick HLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        HIGH_RATE_ENV // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME DYNAMICS      // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 9     // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          9     // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
+
+
+//==========================================================================
+// JEOD include files used in SimObject definitions or for input file
+// instantiations.
+//==========================================================================
+#include "default_priority_settings.sm"
+#include "jeod_sys.sm"
+
+// Set up desired time types and include the JEOD time S_module
+#define TIME_MODEL_UT1
+#define TIME_MODEL_UTC
+#define TIME_MODEL_TT
+#define TIME_MODEL_GMST
+#define TIME_CALENDAR_UPDATE_INTERVAL  DYNAMICS
+#include "jeod_time.sm"
+
+#include "dynamics.sm"
+
+#ifndef EPHEM_DE440
+ #define EPHEM_DE440
+#endif
+#include "environment.sm"
+#include "sun_basic.sm"
+#include "earth_GGM05C.sm"
+#include "mars_MRO110B2.sm"
+
+
+/*****************************************************************************
+Moon is a copy of the default Moon-with-LP150Q gravity field sim object, but
+this also has a derivative class job to update the lunar orientation.
+*****************************************************************************/
+#include "Base/moon_LP150Q.sm"
+class MoonSimObject : public Moon_LP150Q_SimObject
+{
+  protected:
+   jeod::De4xxEphemeris & de4xx;
+  public:
+   MoonSimObject( jeod::DynManager     & dyn_manager_,
+                  jeod::GravityManager & grav_manager_,
+                  jeod::De4xxEphemeris & de4xx_)
+   : Moon_LP150Q_SimObject( dyn_manager_, grav_manager_), de4xx( de4xx_)
+  {
+     P_ENV ("derivative") de4xx.propagate_lunar_rnp ( );
+  }
+  private:
+   // Unimplemented copy constructor and assignment operator
+   MoonSimObject (const MoonSimObject&);
+   MoonSimObject & operator = (const MoonSimObject&);
+   // Do not allow the default constructor.
+   MoonSimObject();
+};
+MoonSimObject moon (dynamics.dyn_manager, env.gravity_manager, env.de4xx);
+
+
+//==========================================================================
+// Instantiate two simple JEOD vehicles for orbital state computation.
+//==========================================================================
+##include "dynamics/dyn_body/include/dyn_body.hh"
+##include "environment/gravity/include/spherical_harmonics_gravity_controls.hh"
+##include "dynamics/body_action/include/dyn_body_init_trans_state.hh"
+##include "dynamics/body_action/include/dyn_body_init_rot_state.hh"
+##include "dynamics/body_action/include/mass_body_init.hh"
+##include "environment/gravity/include/gravity_manager.hh"
+
+class VehicleSimObject: public Trick::SimObject
+{
+  protected:
+   // External references
+   jeod::DynManager & dyn_manager;
+
+  public:
+   jeod::DynBody dyn_body;
+   jeod::SphericalHarmonicsGravityControls  sun_grav_control;
+   jeod::SphericalHarmonicsGravityControls  earth_grav_control;
+   jeod::SphericalHarmonicsGravityControls  moon_grav_control;
+   jeod::SphericalHarmonicsGravityControls  mars_grav_control;
+
+   jeod::DynBodyInitTransState trans_init;
+   jeod::DynBodyInitRotState rot_init;
+   jeod::MassBodyInit mass_init;
+
+   //Constructor
+   VehicleSimObject( jeod::DynManager & dyn_mngr_in )
+   : dyn_manager(dyn_mngr_in)
+   {
+      //
+      //Default data jobs
+      //
+
+      //
+      // Initialization jobs
+      //
+      P_ENV("initialization") dyn_body.initialize_model(dyn_manager);
+      
+      //
+      // Environment class jobs
+      //
+
+      //
+      // Derivative class jobs
+      //
+      
+   }
+
+  private:
+   VehicleSimObject (const VehicleSimObject&) = delete;
+   VehicleSimObject & operator = (const VehicleSimObject&) = delete;
+   // Do not allow the default constructor.
+   VehicleSimObject();
+   
+};
+VehicleSimObject veh1(dynamics.dyn_manager);
+VehicleSimObject veh2(dynamics.dyn_manager);
+
+
+//==========================================================================
+// Define the RelKinSimObject that is used to compute the JEOD-based
+// relative state computations.
+//==========================================================================
+
+// Include headers for classes that this class contains:
+##include "dynamics/rel_kin/include/relative_kinematics.hh"
+##include "dynamics/derived_state/include/relative_derived_state.hh"
+
+class RelkinSimObject: public Trick::SimObject
+{
+protected:
+    // Instances for matching to other sim objects:
+
+    jeod::DynManager & dyn_mgr;
+    jeod::DynBody    & body1;
+    jeod::DynBody    & body2;
+
+public:
+    jeod::RelativeKinematics relkin;
+    jeod::RelativeDerivedState veh1_relstate;
+    jeod::RelativeDerivedState veh2_relstate;
+
+    // Constructor
+    RelkinSimObject( jeod::DynManager & dyn_mgr_in,
+                     jeod::DynBody    & body1_in,
+                     jeod::DynBody    & body2_in    )
+        : dyn_mgr(dyn_mgr_in),
+          body1(body1_in),
+          body2(body2_in)
+    {
+        //
+        // Initialization jobs
+        //
+        P_DYN("initialization") veh1_relstate.initialize( body1, dyn_mgr );
+        P_DYN("initialization") relkin.add_relstate( veh1_relstate );
+        P_DYN("initialization") veh2_relstate.initialize( body2, dyn_mgr );
+        P_DYN("initialization") relkin.add_relstate( veh2_relstate );
+        //
+        // Environment class jobs
+        //
+        (DYNAMICS, "environment") relkin.update_all();
+        //
+        // Derivative class jobs
+        //
+        P_ENV("derivative") relkin.update_single( veh1_relstate.name.c_str() );
+        P_ENV("derivative") relkin.update_single( veh2_relstate.name.c_str() );
+    }
+
+    RelkinSimObject(const RelkinSimObject &) = delete;
+    RelkinSimObject & operator=(const RelkinSimObject &) = delete;
+};
+
+RelkinSimObject relkin( dynamics.dyn_manager, veh1.dyn_body, veh2.dyn_body );
+
+
+//==========================================================================
+// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// for input file instantiations.
+//==========================================================================
+
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/CTETimelineBase.hh"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+#include "JEOD/JEODHLAInit.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
+// simulation object definition.
+//==========================================================================
+#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
+#include "JEOD/JEODRefFrameTree.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: JEODPhysicalEntiySimObject - An example PhysicalEntity
+// simulation object definition. This can be used for SpaceFOM
+// PhysicalEntity object discovery and data exchange.
+//==========================================================================
+#include "JEOD/JEODPhysicalEntity.sm"
+
+
+// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+JEODPhysicalEntiySimObject veh1_physical_entity( veh1.dyn_body, P_HLA_INIT );
+JEODPhysicalEntiySimObject veh2_physical_entity( veh2.dyn_body, P_HLA_INIT );
+
+
+//==========================================================================
+// Test out the Relative State classes.
+//==========================================================================
+##include "SpaceFOM/RelStateBase.hh"
+class RelStateTestSimObject : public Trick::SimObject {
+
+  public:
+   SpaceFOM::RelStateBase         rel_state;
+   SpaceFOM::RefFrameBase       * ref_frame;
+   SpaceFOM::PhysicalEntityData * ref_entity;
+   SpaceFOM::RefFrameBase       * entity_frame;
+   SpaceFOM::RefFrameTree       & frame_tree;
+
+  public:
+   RelStateTestSimObject( SpaceFOM::RefFrameTree & frame_tree,
+                          SpaceFOM::RefFrameBase & default_frame   )
+      : rel_state( default_frame , frame_tree ),
+        frame_tree( frame_tree )
+   {
+
+      ("initialization") initialize( );
+      (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( ref_entity, ref_frame );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
+   }
+   
+   // Print state job.
+   void initialize()
+   {
+      std::ostringstream errmsg;
+      bool error = false;
+      
+      // Make sure that all the references are set.
+      if ( ref_frame == NULL ){
+         errmsg << "RelStateTestSimObject:initialize(): NULL ref_frame!\n";
+         errmsg << "\t You probably forgot to set the RelStateBase reference frame in the input file.\n";
+         error = true;
+      }
+      if ( ref_entity == NULL ){
+         errmsg << "RelStateTestSimObject:initialize(): NULL ref_entity!\n";
+         errmsg << "\t You probably forgot to set the PhysicalEntityData entity reference in the input file.\n";
+         error = true;
+      }
+      else {
+         entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
+         if ( entity_frame == NULL ){
+            errmsg << "RelStateTestSimObject:initialize(): ref_entity parent frame not found: "
+                   << ref_entity->parent_frame << "!";
+            error = true;
+         }
+      }
+      
+      if ( error ) {
+         exec_terminate( __FILE__, errmsg.str().c_str() );
+      }
+   }
+   
+   // Print state job.
+   void print_state()
+   {
+      std::cout << "----------------------------------------------------------------------\n";
+      std::cout << " Relative state for entity: " << ref_entity->name << "\n";
+      std::cout << " Entity state frame: " << ref_entity->parent_frame << "\n";
+      std::cout << " Expressed in frame: " << ref_frame->get_name() << "\n";
+      std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
+      std::cout << " Reference frame tree path: ";
+      frame_tree.print_path( *entity_frame, *ref_frame );
+      std::cout << "\n";
+      rel_state.print_data();
+      std::cout << " Path transformation data: \n";
+      rel_state.print_path_transform();
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+   
+  protected:
+   
+
+  private:
+   // This object is not copyable
+   RelStateTestSimObject( RelStateTestSimObject const & rhs );
+   RelStateTestSimObject & operator=( RelStateTestSimObject const & rhs );
+
+   // Don't allow the default constructor
+   RelStateTestSimObject();
+};
+
+// Instantiate a relative state test object.
+RelStateTestSimObject rel_test( ref_frame_tree.frame_tree, solar_system_barycenter.frame_packing );
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// Main TrickHLA SimObject.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
+
+// SimObject used capture simulation specific initialization.
+JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
+                                jeod_time.time_manager_init,
+                                jeod_time.time_tai,
+                                jeod_time.time_tt,
+                                THLA.manager,
+                                THLA.federate,
+                                THLA.execution_control,
+                                P_SF_INIT_EPOCH_RRF,
+                                10,
+                                P_HLA_INIT );
+
+
+// Setup the integration loop.
+IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, dynamics, relkin;
+
+
+//==========================================================================
+// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+//==========================================================================
+void create_connections() {
+
+   // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.
+   ref_frame_tree.ssbary_frame_ptr = &solar_system_barycenter.frame_packing;
+   ref_frame_tree.sun_frame_ptr = &sun_inertial.frame_packing;
+   ref_frame_tree.embary_frame_ptr = &earth_moon_barycenter.frame_packing;
+   ref_frame_tree.earth_frame_ptr = &earth_centered_inertial.frame_packing;
+   ref_frame_tree.moon_frame_ptr = &moon_centered_inertial.frame_packing;
+   ref_frame_tree.mars_frame_ptr = &mars_centered_inertial.frame_packing;
+   ref_frame_tree.earth_pfix_frame_ptr = &earth_centered_fixed.frame_packing;
+   ref_frame_tree.moon_pfix_frame_ptr = &moon_centered_fixed.frame_packing;
+   ref_frame_tree.mars_pfix_frame_ptr = &mars_centered_fixed.frame_packing;
+
+#ifdef DEFAULT_DATA_CONFIG
+
+   //
+   // This code will only be executed when we want to configure the reference
+   // frame tree using default data instead of in the input file.
+   //
+   // Allocate the HLA objects for the Reference Frame tree.
+   THLA.manager.obj_count = 9;
+   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                    THLA.manager.obj_count );
+   // Assign the HLA objects to the associated frame.
+   solar_system_barycenter.frame_packing.set_object(&(THLA.manager.objects[0]));
+   sun_inertial.frame_packing.set_object(&(THLA.manager.objects[1]));
+   earth_moon_barycenter.frame_packing.set_object(&(THLA.manager.objects[2]));
+   earth_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[3]));
+   moon_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[4]));
+   mars_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[5]));
+   earth_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[6]));
+   moon_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[7]));
+   mars_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[8]));
+
+#endif
+
+}
+
