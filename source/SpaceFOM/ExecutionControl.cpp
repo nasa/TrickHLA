@@ -2268,22 +2268,29 @@ bool ExecutionControl::run_mode_transition()
          cte_time = get_cte_time();
       }
 
+      diff = cte_time - go_to_run_time;
+
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         diff = cte_time - go_to_run_time;
          ostringstream msg;
          msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__ << "\n"
              << "Go to RUN at CTE time: " << setprecision( 18 ) << go_to_run_time << " seconds\n"
              << "     Current CTE time: " << setprecision( 18 ) << cte_time << " seconds\n"
              << "           Difference: " << setprecision( 9 ) << diff << " seconds\n";
-         if ( is_master() && ( diff >= 0.1 ) ) {
-            msg << "WARNING: Current CTE time exceeded the go to run time by"
-                << " more than 0.1 seconds. Please add more time to the"
-                << " time padding configured in your input.py file, which is"
-                << " currently set to 'federate.set_time_padding( "
-                << setprecision( 9 ) << get_time_padding()
-                << " )', to allow the go to run CTE message to propagate to"
-                << " all federates in time to be used.\n";
-         }
+         send_hs( stdout, msg.str().c_str() );
+      }
+
+      // Always show a warning message if the manager does not have a big
+      // enough time padding specified by the user when using CTE.
+      if ( is_master() && ( diff >= 0.1 ) ) {
+         ostringstream msg;
+         msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
+             << " WARNING: Current CTE time exceeded the go-to-run time by"
+             << " more than 0.1 seconds. Please add more time to the"
+             << " time padding configured in your input.py file, which is"
+             << " currently set to 'federate.set_time_padding( "
+             << setprecision( 9 ) << get_time_padding()
+             << " )', to allow the go-to-run CTE message to propagate to"
+             << " all federates in time to be used.\n";
          send_hs( stdout, msg.str().c_str() );
       }
    }

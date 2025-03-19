@@ -177,7 +177,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
       earth_frame_ptr->base_config( false,
                                     "earth_centered_inertial",
                                     "frame_packing",
-                                    "EarthMJ2000Eq",
+                                    "EarthCentricInertial",
                                     "EarthMoonBarycentricInertial",
                                     embary_frame_ptr );
 
