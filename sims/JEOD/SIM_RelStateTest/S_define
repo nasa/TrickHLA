@@ -198,15 +198,100 @@ public:
         P_DYN("initialization") relkin.add_relstate( veh1_relstate );
         P_DYN("initialization") veh2_relstate.initialize( body2, dyn_mgr );
         P_DYN("initialization") relkin.add_relstate( veh2_relstate );
+        
         //
         // Environment class jobs
         //
         (DYNAMICS, "environment") relkin.update_all();
+        (THLA_DATA_CYCLE_TIME, "scheduled") print_body( body1, std::cout );
+        (THLA_DATA_CYCLE_TIME, "scheduled") print_state( body1, veh1_relstate );
+        
         //
         // Derivative class jobs
         //
         P_ENV("derivative") relkin.update_single( veh1_relstate.name.c_str() );
         P_ENV("derivative") relkin.update_single( veh2_relstate.name.c_str() );
+    }
+    
+    // Print state job.
+    void print_state( jeod::DynBody              & body,
+                      jeod::RelativeDerivedState & rel_deriv_state )
+    {
+       std::ostream &stream = std::cout;
+       
+       // Set the print precision.
+       stream.precision( 15 );
+       
+       // Shortcut to JEOD relative RefFrameState in RelativeDerivedState.
+       jeod::RefFrameState & rel_state = rel_deriv_state.rel_state;
+
+       stream << "----------------------------------------------------------------------\n";
+       stream << " Relative state for DynBody: " << body.mass.name.get_name() << "\n";
+       stream << " Relative state name: " << rel_deriv_state.name << "\n";
+       stream << " Entity state frame: " << rel_deriv_state.subject_frame_name << "\n";
+       stream << " Expressed in frame: " << rel_deriv_state.target_frame_name << "\n";
+       stream << " Simulation Time: " << exec_get_sim_time() << "\n";
+
+       stream << "\tposition: "
+              << "\t\t" << rel_state.trans.position[0] << ", "
+              << "\t\t" << rel_state.trans.position[1] << ", "
+              << "\t\t" << rel_state.trans.position[2] << '\n';
+       stream << "\tvelocity: "
+              << "\t\t" << rel_state.trans.velocity[0] << ", "
+              << "\t\t" << rel_state.trans.velocity[1] << ", "
+              << "\t\t" << rel_state.trans.velocity[2] << '\n';
+//       stream << "\tacceleration: "
+//              << "\t\t" << accel[0] << ", "
+//              << "\t\t" << accel[1] << ", "
+//              << "\t\t" << accel[2] << '\n';
+       stream << "\tattitude (s,v): "
+              << "\t\t" << rel_state.rot.Q_parent_this.scalar << "; "
+              << "\t\t" << rel_state.rot.Q_parent_this.vector[0] << ", "
+              << "\t\t" << rel_state.rot.Q_parent_this.vector[1] << ", "
+              << "\t\t" << rel_state.rot.Q_parent_this.vector[2] << '\n';
+//       stream << "\tattitude (RPY){deg}: "
+//              << "\t\t" << euler_angles[0] << ", "
+//              << "\t\t" << euler_angles[1] << ", "
+//              << "\t\t" << euler_angles[2] << '\n';
+       stream << "\tangular velocity: "
+              << "\t\t" << rel_state.rot.ang_vel_this[0] << ", "
+              << "\t\t" << rel_state.rot.ang_vel_this[1] << ", "
+              << "\t\t" << rel_state.rot.ang_vel_this[2] << '\n';
+//       stream << "\tangular acceleration: "
+//              << "\t\t" << ang_accel[0] << ", "
+//              << "\t\t" << ang_accel[1] << ", "
+//              << "\t\t" << ang_accel[2] << '\n';
+       std::cout << "----------------------------------------------------------------------\n";
+       return;
+    }
+    
+    // Print a DynBody.
+    void print_body( jeod::DynBody & body, std::ostream &stream )
+    {
+       jeod::RefFrame const * parent_frame = body.composite_body.get_parent();
+
+       stream << "----------------------------------------------------------------------\n";
+       stream << " DynBody: " << body.mass.name.get_name() << "\n";
+       stream << " Expressed in frame: " << parent_frame->get_name() << "\n";
+       stream << "\tposition: "
+              << "\t\t" << body.composite_body.state.trans.position[0] << ", "
+              << "\t\t" << body.composite_body.state.trans.position[1] << ", "
+              << "\t\t" << body.composite_body.state.trans.position[2] << '\n';
+       stream << "\tvelocity: "
+              << "\t\t" << body.composite_body.state.trans.velocity[0] << ", "
+              << "\t\t" << body.composite_body.state.trans.velocity[1] << ", "
+              << "\t\t" << body.composite_body.state.trans.velocity[2] << '\n';
+       stream << "\tattitude (s,v): "
+              << "\t\t" << body.composite_body.state.rot.Q_parent_this.scalar << "; "
+              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[0] << ", "
+              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[1] << ", "
+              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[2] << '\n';
+       stream << "\tangular velocity: "
+              << "\t\t" << body.composite_body.state.rot.ang_vel_this[0] << ", "
+              << "\t\t" << body.composite_body.state.rot.ang_vel_this[1] << ", "
+              << "\t\t" << body.composite_body.state.rot.ang_vel_this[2] << '\n';
+       std::cout << "----------------------------------------------------------------------\n";
+       return;
     }
 
     RelkinSimObject(const RelkinSimObject &) = delete;
@@ -281,6 +366,7 @@ class RelStateTestSimObject : public Trick::SimObject {
 
       ("initialization") initialize( );
       (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( ref_entity, ref_frame );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_entity( *ref_entity, std::cout );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
    }
    
@@ -330,6 +416,18 @@ class RelStateTestSimObject : public Trick::SimObject {
       std::cout << " Path transformation data: \n";
       rel_state.print_path_transform();
       std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+   
+   // Print state job.
+   void print_entity( SpaceFOM::PhysicalEntityData & entity, std::ostream &stream )
+   {
+
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Entity: " << entity.name << "\n";
+      stream << " Entity state frame: " << entity.parent_frame << "\n";
+      entity.print_data();
+      stream << "----------------------------------------------------------------------\n";
       return;
    }
    

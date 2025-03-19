@@ -124,7 +124,7 @@ trick.exec_set_trap_sigfpe(True)
 trick.exec_set_software_frame(0.250)
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(False)
-trick.sim_control_panel_set_enabled(True)
+trick.sim_control_panel_set_enabled(False)
 trick.exec_set_stack_trace(False)
 
 
@@ -181,8 +181,8 @@ if (verbose == True) :
    federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
    #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else :
-   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
 
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -264,6 +264,7 @@ mars_centered_fixed.frame_packing.publish();
 # Set up the Reference Frame Tree
 #---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
+trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
 
 
 #---------------------------------------------------------------------------
@@ -285,7 +286,7 @@ federate.add_fed_object( v1 )
 # FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
 veh1_physical_entity.entity_packing.set_type( 'Starship' )
 veh1_physical_entity.entity_packing.set_status( 'Active' )
-veh1_physical_entity.entity_packing.set_parent_frame( 'EarthCentricInertial' )
+veh1_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 
 
 #---------------------------------------------------------------------------
@@ -307,7 +308,7 @@ federate.add_fed_object( v2 )
 # FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
 veh2_physical_entity.entity_packing.set_type( 'Shuttle' )
 veh2_physical_entity.entity_packing.set_status( 'In Flight' )
-veh2_physical_entity.entity_packing.set_parent_frame( 'EarthCentricInertial' )
+veh2_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 
 
 #---------------------------------------------------------------------------
@@ -329,9 +330,8 @@ relkin.veh2_relstate.direction_sense    = trick.RelativeDerivedState.ComputeSubj
 # Set up the SpaceFOM relative state object.
 #---------------------------------------------------------------------------
 rel_test.rel_state.debug = True
-#rel_test.ref_entity = veh1_physical_entity.entity_packing.pe_packing_data
 rel_test.ref_entity = veh1_physical_entity.entity_packing.get_packing_data()
-rel_test.ref_frame  = earth_centered_fixed.frame_packing
+rel_test.ref_frame  = moon_centered_fixed.frame_packing
 
 
 #---------------------------------------------------------------------------
@@ -362,5 +362,8 @@ federate.initialize()
 #---------------------------------------------------------------------------
 # Set up simulation termination time.
 #---------------------------------------------------------------------------
-if run_duration:
-   trick.sim_services.exec_set_terminate_time( run_duration )
+if run_duration != None:
+   if run_duration == 0.0:
+      trick.stop(0.0)
+   else:
+      trick.sim_services.exec_set_terminate_time( run_duration )
