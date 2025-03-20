@@ -172,9 +172,8 @@ void TimeOfDayCTETimeline::set_clock_ID( clockid_t const id )
          break;
       }
       default: {
-         ostringstream name_stream;
-         name_stream << "TrickHLA::TimeOfDayCTETimeline - clock_id(" << id << ")";
-         this->name = name_stream.str();
+         this->name = "TrickHLA::TimeOfDayCTETimeline - clock_id("
+                      + std::to_string( id ) + ")";
          break;
       }
    }
