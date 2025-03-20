@@ -1506,6 +1506,40 @@ bool const TrickThreadCoordinator::verify_time_constraints(
             }
          }
       }
+
+      // For a Master federate using CTE, we need to make sure the padding
+      // time is at least two times the freeze frame time. Otherwise we can
+      // not coordinate a go to run in time.
+      if ( manager->get_execution_control()->is_master()
+           && manager->get_execution_control()->does_cte_timeline_exist() ) {
+
+         double time_padding = manager->get_execution_control()->get_time_padding();
+
+         if ( time_padding <= ( 2.0 * exec_get_freeze_frame() ) ) {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
+                   << " ERROR: Mode transition padding time (" << time_padding
+                   << " seconds) must be more than two times the Trick freeze"
+                   << " frame time (" << exec_get_freeze_frame() << " seconds)!"
+                   << " In your input.py file, please update the padding time"
+                   << " and/or the Trick freeze frame time using directives"
+                   << " like the following:\n"
+                   << "federate.set_time_padding( pad )\n"
+                   << "trick.exec_set_freeze_frame( frame_time )\n"
+                   << "For example, adjusting the freeze frame time for the"
+                   << " given time padding:\n";
+            if ( time_padding > ( 2.0 * exec_get_software_frame() ) ) {
+               // Example using the Trick software frame time to set freeze frame.
+               errmsg << "federate.set_time_padding( " << time_padding << " )\n"
+                      << "trick.exec_set_freeze_frame( " << exec_get_software_frame() << " )\n";
+            } else {
+               errmsg << "federate.set_time_padding( " << time_padding << " )\n"
+                      << "trick.exec_set_freeze_frame( " << ( time_padding / 4 ) << " )\n";
+            }
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return false;
+         }
+      }
    }
 
    return true;

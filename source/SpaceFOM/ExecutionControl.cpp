@@ -2655,7 +2655,20 @@ void ExecutionControl::exit_freeze()
    // to synchronize the mtr_goto_run mode transition. This is
    // particularly true when using the CTE clock and a large mode
    // transition padding time.
-   the_clock->clock_reset( the_exec->get_time_tics() );
+   if ( does_cte_timeline_exist() ) {
+      ExecutionConfiguration *ExCO = get_execution_configuration();
+
+      // Account for the difference between the go-to-run CTE time and the
+      // current CTE time. We may have been late trying to meet the go-to-run
+      // time because there was not enough padding time.
+      //
+      // TODO: Verify if this is the adjustment we need to make.
+      the_clock->clock_reset( the_exec->get_time_tics()
+                              - ( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
+                                  * the_clock->clock_tics_per_sec ) );
+   } else {
+      the_clock->clock_reset( the_exec->get_time_tics() );
+   }
 
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
