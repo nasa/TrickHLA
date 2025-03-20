@@ -173,7 +173,7 @@ void TimeOfDayCTETimeline::set_clock_ID( clockid_t const id )
       }
       default: {
          this->name = "TrickHLA::TimeOfDayCTETimeline - clock_id("
-                      + to_string( id ) + ")";
+                      + std::to_string( id ) + ")";
          break;
       }
    }

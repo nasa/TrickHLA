@@ -166,7 +166,7 @@ input.py files and reduce input.py file setting errors.
 void ExecutionControl::initialize()
 {
 #if THLA_TIME_DEBUG
-   print_clock_summary( "ExecutionControl::initialize():" + to_string( __LINE__ ) + "\n" );
+   print_clock_summary( "ExecutionControl::initialize():" + std::to_string( __LINE__ ) + "\n" );
 #endif
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -2646,7 +2646,7 @@ void ExecutionControl::exit_freeze()
    run_mode_transition();
 
 #if THLA_TIME_DEBUG
-   print_clock_summary( "ExecutionControl::exit_freeze():" + to_string( __LINE__ )
+   print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
                         + "\n BEFORE CLOCK RESET \n" );
 #endif
 
@@ -2658,7 +2658,7 @@ void ExecutionControl::exit_freeze()
    the_clock->clock_reset( the_exec->get_time_tics() );
 
 #if THLA_TIME_DEBUG
-   print_clock_summary( "ExecutionControl::exit_freeze():" + to_string( __LINE__ )
+   print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
                         + "\n AFTER CLOCK RESET \n" );
 #endif
 }
