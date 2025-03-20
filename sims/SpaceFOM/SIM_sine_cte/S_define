@@ -47,9 +47,9 @@
 // TrickHLA includes.
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
-##include "TrickHLA/CTETimelineBase.hh"
 ##include "TrickHLA/SimTimeline.hh"
 ##include "TrickHLA/ScenarioTimeline.hh"
+##include "TrickHLA/TimeOfDayCTETimeline.hh"
 
 // Sine model includes.
 ##include "sine/include/SineData.hh"
@@ -205,9 +205,9 @@ class THLAInitSimObject : public Trick::SimObject {
 
  public:
 
-   TrickHLA::SimTimeline      sim_timeline;
-   TrickHLA::ScenarioTimeline scenario_timeline;
-   TrickHLA::CTETimelineBase  cte_timeline;
+   TrickHLA::SimTimeline            sim_timeline;
+   TrickHLA::ScenarioTimeline       scenario_timeline;
+   TrickHLA::TimeOfDayCTETimeline   cte_timeline;
 
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
                       TrickHLA::Federate & thla_fed,

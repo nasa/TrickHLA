@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/CTETimelineBase.hh
+@file TrickHLA/TimeOfDayCTETimeline.hh
 @ingroup TrickHLA
 @brief This class represents the CTE timeline.
 
@@ -13,7 +13,7 @@ starting point of the CTE timeline. This will correspond to the starting
 time in the TT time standard represented in Truncated Julian Date format
 (TJD) expressed in seconds.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -31,31 +31,34 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/CTETimelineBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/TimeOfDayCTETimeline.cpp}
 
 @revs_title
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, January 2019, --, Initial implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Made into base class.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Rewrite of CTE Timeline into this class.}
 @revs_end
 
 */
 
-#ifndef TRICKHLA_CTE_TIMELINE_BASE_HH
-#define TRICKHLA_CTE_TIMELINE_BASE_HH
+#ifndef TRICKHLA_TIMEOFDAY_CTE_TIMELINE_HH
+#define TRICKHLA_TIMEOFDAY_CTE_TIMELINE_HH
 
 // System include files.
+#include <time.h>
 
 // Trick include files.
 #include "trick/Clock.hh"
 
 // TrickHLA include files.
+#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/Timeline.hh"
 
 namespace TrickHLA
 {
 
-class CTETimelineBase : public Trick::Clock, public Timeline
+class TimeOfDayCTETimeline : public CTETimelineBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -65,59 +68,66 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__CTETimelineBase();
+   friend void init_attrTrickHLA__TimeOfDayCTETimeline();
 
   public:
    //-----------------------------------------------------------------
    // Constructors / destructors
    //-----------------------------------------------------------------
-   /*! @brief Constructor for the TrickHLA CTETimelineBase class. */
-   CTETimelineBase( unsigned long long const clock_tics_per_sec,
-                    std::string const       &clock_name );
-   /*! @brief Destructor for the TrickHLA CTETimelineBase class. */
-   virtual ~CTETimelineBase();
+   /*! @brief Default constructor for the TrickHLA TimeOfDayCTETimeline class. */
+   TimeOfDayCTETimeline();
+   /*! @brief Destructor for the TrickHLA TimeOfDayCTETimeline class. */
+   virtual ~TimeOfDayCTETimeline();
 
    //-----------------------------------------------------------------
    // These virtual function must be defined by a full class.
    //-----------------------------------------------------------------
    // Virtual TrickHLATimeline functions.
 
-   /*! Get the time resolution which is the smallest nonzero
+   /*! Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
-    *  @return Returns the time resolution in seconds. */
-   virtual double const get_min_resolution() = 0;
+    *  @return Returns the minimum time resolution in seconds. */
+   virtual double const get_min_resolution();
 
    /*! @brief Update the clock tics per second resolution of this clock
     *  to match the Trick executive resolution. */
-   virtual void update_clock_resolution() = 0;
+   virtual void update_clock_resolution();
 
    /*! @brief Get the current CTE time.
     *  @return Current time of day in seconds. */
-   virtual double const get_time() = 0;
+   virtual double const get_time();
 
    /*! @brief Initialize the Trick::Clock functions. */
    virtual int clock_init();
 
    /*! @brief Get the wall clock time.
     *  @return The current real time as a count of microseconds. */
-   virtual long long wall_clock_time() = 0;
+   virtual long long wall_clock_time();
 
    /*! @brief Stop the CTE clock.
     *  @return Default implementation always returns 0. */
-   virtual int clock_stop() = 0;
+   virtual int clock_stop();
+
+   /*! @brief Sets the clock ID (system clock type). */
+   virtual void set_clock_ID( clockid_t const id );
+
+   /*! @brief Gets the current clock ID (system clock type).
+    *  @return The system clock type in use. */
+   virtual clockid_t const get_clock_ID();
+
+  protected:
+   clockid_t clk_id; /**< @trick_io{**} System clock type used. The default clock ID is <i>CLOCK_MONOTONIC</i>. */
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Default constructor for CTETimelineBase class. */
-   CTETimelineBase();
-   /*! @brief Copy constructor for CTETimelineBase class.
+   /*! @brief Copy constructor for TimeOfDayCTETimeline class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   CTETimelineBase( CTETimelineBase const &rhs );
-   /*! @brief Assignment operator for CTETimelineBase class.
+   TimeOfDayCTETimeline( TimeOfDayCTETimeline const &rhs );
+   /*! @brief Assignment operator for TimeOfDayCTETimeline class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   CTETimelineBase &operator=( CTETimelineBase const &rhs );
+   TimeOfDayCTETimeline &operator=( TimeOfDayCTETimeline const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_CTE_TIMELINE_BASE_HH: Do NOT put anything after this line!
+#endif // TRICKHLA_TIMEOFDAY_CTE_TIMELINE_HH: Do NOT put anything after this line!
