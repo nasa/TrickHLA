@@ -166,23 +166,7 @@ input.py files and reduce input.py file setting errors.
 void ExecutionControl::initialize()
 {
 #if THLA_TIME_DEBUG
-   long long     clk_time = the_clock->clock_time();
-   long long     wc_time  = the_clock->wall_clock_time();
-   ostringstream msg1;
-   msg1 << "ExecutionControl::initialize():" << __LINE__ << "\n"
-        << "             clock-name: '" << the_clock->get_name() << "'\n"
-        << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
-        << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
-        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
-        << "             clock_time: " << clk_time << "\n"
-        << "        wall_clock_time: " << wc_time << "\n"
-        << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
-        << "wall_clock_time - ref_time_tics: " << ( wc_time - the_clock->ref_time_tics ) << "\n"
-        << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
-        << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
-        << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
-        << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
-   send_hs( stdout, msg1.str().c_str() );
+   print_clock_summary( "ExecutionControl::initialize():" + std::to_string( __LINE__ ) + "\n" );
 #endif
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -2662,24 +2646,8 @@ void ExecutionControl::exit_freeze()
    run_mode_transition();
 
 #if THLA_TIME_DEBUG
-   long long     clk_time1 = the_clock->clock_time();
-   long long     wc_time1  = the_clock->wall_clock_time();
-   ostringstream msg1;
-   msg1 << "ExecutionControl::exit_freeze():" << __LINE__ << "\n"
-        << "BEFORE CLOCK RESET \n"
-        << "             clock-name: '" << the_clock->get_name() << "'\n"
-        << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
-        << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
-        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
-        << "             clock_time: " << clk_time1 << "\n"
-        << "        wall_clock_time: " << wc_time1 << "\n"
-        << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
-        << "wall_clock_time - ref_time_tics: " << ( wc_time1 - the_clock->ref_time_tics ) << "\n"
-        << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
-        << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
-        << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
-        << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
-   send_hs( stdout, msg1.str().c_str() );
+   print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
+                        + "\n BEFORE CLOCK RESET \n" );
 #endif
 
    // Tell Trick to reset the realtime clock. We need to do this
@@ -2690,24 +2658,8 @@ void ExecutionControl::exit_freeze()
    the_clock->clock_reset( the_exec->get_time_tics() );
 
 #if THLA_TIME_DEBUG
-   long long     clk_time2 = the_clock->clock_time();
-   long long     wc_time2  = the_clock->wall_clock_time();
-   ostringstream msg2;
-   msg2 << "ExecutionControl::exit_freeze():" << __LINE__ << "\n"
-        << "AFTER CLOCK RESET \n"
-        << "             clock-name: '" << the_clock->get_name() << "'\n"
-        << "      exec_get_sim_time: " << exec_get_sim_time() << "\n"
-        << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
-        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
-        << "             clock_time: " << clk_time2 << "\n"
-        << "        wall_clock_time: " << wc_time2 << "\n"
-        << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
-        << "wall_clock_time - ref_time_tics: " << ( wc_time2 - the_clock->ref_time_tics ) << "\n"
-        << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
-        << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
-        << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
-        << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
-   send_hs( stdout, msg2.str().c_str() );
+   print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
+                        + "\n AFTER CLOCK RESET \n" );
 #endif
 }
 
@@ -3070,4 +3022,29 @@ void ExecutionControl::set_time_padding(
 
    // Set the padding time in seconds.
    this->time_padding = Int64BaseTime::to_seconds( padding_base_time );
+}
+
+void ExecutionControl::print_clock_summary(
+   string const &message )
+{
+   long long const clk_time = the_clock->clock_time();
+   long long const wc_time  = the_clock->wall_clock_time();
+   ostringstream   msg;
+   msg << message
+       << "      global-clock-name: '" << the_clock->get_name() << "'\n";
+   if ( does_cte_timeline_exist() ) {
+      msg << "         CTE-clock-name: '" << cte_timeline->get_name() << "'\n"
+          << "   CTE-clock-resolution: " << setprecision( 10 ) << cte_timeline->get_min_resolution() << " seconds\n";
+   }
+   msg << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
+       << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
+       << "             clock_time: " << clk_time << "\n"
+       << "        wall_clock_time: " << wc_time << "\n"
+       << "          ref_time_tics: " << the_clock->ref_time_tics << "\n"
+       << "wall_clock_time - ref_time_tics: " << ( wc_time - the_clock->ref_time_tics ) << "\n"
+       << "         rt_clock_ratio: " << the_clock->get_rt_clock_ratio() << "\n"
+       << "          sim_tic_ratio: " << the_clock->sim_tic_ratio << "\n"
+       << "     clock_tics_per_sec: " << the_clock->clock_tics_per_sec << "\n"
+       << "exec_get_time_tic_value: " << exec_get_time_tic_value() << "\n";
+   send_hs( stdout, msg.str().c_str() );
 }

@@ -13,7 +13,7 @@ starting point of the CTE timeline. This will correspond to the starting
 time in the TT time standard represented in Truncated Julian Date format
 (TJD) expressed in seconds.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, January 2019, --, Initial implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Rewrite of CTE Timeline into this class.}
 @revs_end
 
 */

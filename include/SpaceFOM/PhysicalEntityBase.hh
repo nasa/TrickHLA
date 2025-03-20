@@ -187,7 +187,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    /*! @brief Get a constant reference to the PhysicalEntity packing data.
     *  @return A constant reference to the PhysicalEntity packing data. */
-   PhysicalEntityData const & get_packing_data(){ return(pe_packing_data); };
+   PhysicalEntityData const &get_packing_data() { return ( pe_packing_data ); };
 
   protected:
    // Setup Object Attribute references. These are set in initialize_callback

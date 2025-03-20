@@ -34,7 +34,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, June 2016, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Added support for CLOCK_TAI.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Made into base class.}
 @revs_end
 
 */
@@ -61,7 +61,7 @@ using namespace TrickHLA;
  */
 CTETimelineBase::CTETimelineBase(
    unsigned long long const clock_tics_per_sec,
-   string                   clock_name )
+   string const            &clock_name )
    : Clock( clock_tics_per_sec, clock_name )
 {
    // Change the Trick real time clock to this clock.

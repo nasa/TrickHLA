@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, January 2019, --, Initial implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Made into base class.}
 @revs_end
 
 */
@@ -72,7 +73,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    //-----------------------------------------------------------------
    /*! @brief Constructor for the TrickHLA CTETimelineBase class. */
    CTETimelineBase( unsigned long long const clock_tics_per_sec,
-                    std::string              clock_name );
+                    std::string const       &clock_name );
    /*! @brief Destructor for the TrickHLA CTETimelineBase class. */
    virtual ~CTETimelineBase();
 

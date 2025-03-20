@@ -15,7 +15,7 @@ and provided for the CTE hardware used in a specific federation execution.
 - This implementation uses the system clock which is assumed to be
 synchronized using an external mechanism like NTP.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, June 2016, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Added support for CLOCK_TAI.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Rewrite of CTE Timeline into this class.}
 @revs_end
 
 */

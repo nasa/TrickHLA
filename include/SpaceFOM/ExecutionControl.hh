@@ -330,6 +330,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Assignment operator for ExecutionControl class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    ExecutionControl &operator=( ExecutionControl const &rhs );
+
+   /*! Print clock summary debug info. */
+   void print_clock_summary( std::string const &msg );
 };
 
 } // namespace SpaceFOM
