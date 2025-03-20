@@ -201,6 +201,10 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 
+   /*! @brief Print out the reference frame data values.
+    *  @param stream Output stream. */
+   virtual void print_data( std::ostream &stream = std::cout );
+
   protected:
    RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frame's parent frame.
 
@@ -214,10 +218,6 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
-
-   /*! @brief Print out the reference frame data values.
-    *  @param stream Output stream. */
-   virtual void print_data( std::ostream &stream = std::cout );
 
   private:
    // This object is not copyable

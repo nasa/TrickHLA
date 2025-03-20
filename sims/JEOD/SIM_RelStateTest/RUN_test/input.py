@@ -22,6 +22,9 @@ from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
+# Load the SpaceFOM/JEOD specific reference frame tree configuration object.
+from Modified_data.JEOD.JEODRefFrameTreeObject import *
+
 # Load the SpaceFOM vehicle PhysicalEntity configuration object.
 from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
 
@@ -237,6 +240,11 @@ federate.set_time_constrained( True )
 #---------------------------------------------------------------------------
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
+frame_tree = JEODRefFrameTreeObject(
+   federate_instance    = federate,
+   tree_instance        = ref_frame_tree,
+   create_frame_objects = True,
+   lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose
@@ -248,17 +256,6 @@ mars_centered_inertial.frame_packing.debug  = verbose
 earth_centered_fixed.frame_packing.debug    = verbose
 moon_centered_fixed.frame_packing.debug     = verbose
 mars_centered_fixed.frame_packing.debug     = verbose
-
-# Mark the frames as published.
-solar_system_barycenter.frame_packing.publish();
-sun_inertial.frame_packing.publish();
-earth_moon_barycenter.frame_packing.publish();
-earth_centered_inertial.frame_packing.publish();
-moon_centered_inertial.frame_packing.publish();
-mars_centered_inertial.frame_packing.publish();
-earth_centered_fixed.frame_packing.publish();
-moon_centered_fixed.frame_packing.publish();
-mars_centered_fixed.frame_packing.publish();
 
 #---------------------------------------------------------------------------
 # Set up the Reference Frame Tree
@@ -350,6 +347,8 @@ federate.add_sim_object( mars_centered_inertial )
 federate.add_sim_object( earth_centered_fixed )
 federate.add_sim_object( moon_centered_fixed )
 federate.add_sim_object( mars_centered_fixed )
+federate.add_sim_object( v1 )
+federate.add_sim_object( v2 )
 
 
 #---------------------------------------------------------------------------

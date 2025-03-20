@@ -96,7 +96,7 @@ class JEODRefFrameTreeObject():
 
       # Setup the Earth inertial frame.
       earth_frame_obj = SpaceFOMRefFrameObject( create_frame_object          = create_frame_objects,
-                                                frame_instance_name          = 'EarthMJ2000Eq',
+                                                frame_instance_name          = 'EarthCentricInertial',
                                                 frame_S_define_instance      = earth_frame,
                                                 frame_S_define_instance_name = 'earth_centered_inertial.frame_packing',
                                                 parent_S_define_instance     = earth_moon_barycenter.frame_packing,
