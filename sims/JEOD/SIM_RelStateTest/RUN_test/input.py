@@ -22,6 +22,9 @@ from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
+# Load the SpaceFOM/JEOD specific reference frame tree configuration object.
+from Modified_data.JEOD.JEODRefFrameTreeObject import *
+
 # Load the SpaceFOM vehicle PhysicalEntity configuration object.
 from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
 
@@ -124,7 +127,7 @@ trick.exec_set_trap_sigfpe(True)
 trick.exec_set_software_frame(0.250)
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(False)
-trick.sim_control_panel_set_enabled(True)
+trick.sim_control_panel_set_enabled(False)
 trick.exec_set_stack_trace(False)
 
 
@@ -181,8 +184,8 @@ if (verbose == True) :
    federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
    #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else :
-   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
 
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -237,6 +240,11 @@ federate.set_time_constrained( True )
 #---------------------------------------------------------------------------
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
+frame_tree = JEODRefFrameTreeObject(
+   federate_instance    = federate,
+   tree_instance        = ref_frame_tree,
+   create_frame_objects = True,
+   lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose
@@ -249,21 +257,11 @@ earth_centered_fixed.frame_packing.debug    = verbose
 moon_centered_fixed.frame_packing.debug     = verbose
 mars_centered_fixed.frame_packing.debug     = verbose
 
-# Mark the frames as published.
-solar_system_barycenter.frame_packing.publish();
-sun_inertial.frame_packing.publish();
-earth_moon_barycenter.frame_packing.publish();
-earth_centered_inertial.frame_packing.publish();
-moon_centered_inertial.frame_packing.publish();
-mars_centered_inertial.frame_packing.publish();
-earth_centered_fixed.frame_packing.publish();
-moon_centered_fixed.frame_packing.publish();
-mars_centered_fixed.frame_packing.publish();
-
 #---------------------------------------------------------------------------
 # Set up the Reference Frame Tree
 #---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
+trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
 
 
 #---------------------------------------------------------------------------
@@ -285,7 +283,7 @@ federate.add_fed_object( v1 )
 # FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
 veh1_physical_entity.entity_packing.set_type( 'Starship' )
 veh1_physical_entity.entity_packing.set_status( 'Active' )
-veh1_physical_entity.entity_packing.set_parent_frame( 'EarthCentricInertial' )
+veh1_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 
 
 #---------------------------------------------------------------------------
@@ -307,7 +305,7 @@ federate.add_fed_object( v2 )
 # FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
 veh2_physical_entity.entity_packing.set_type( 'Shuttle' )
 veh2_physical_entity.entity_packing.set_status( 'In Flight' )
-veh2_physical_entity.entity_packing.set_parent_frame( 'EarthCentricInertial' )
+veh2_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 
 
 #---------------------------------------------------------------------------
@@ -329,9 +327,8 @@ relkin.veh2_relstate.direction_sense    = trick.RelativeDerivedState.ComputeSubj
 # Set up the SpaceFOM relative state object.
 #---------------------------------------------------------------------------
 rel_test.rel_state.debug = True
-#rel_test.ref_entity = veh1_physical_entity.entity_packing.pe_packing_data
 rel_test.ref_entity = veh1_physical_entity.entity_packing.get_packing_data()
-rel_test.ref_frame  = earth_centered_fixed.frame_packing
+rel_test.ref_frame  = moon_centered_fixed.frame_packing
 
 
 #---------------------------------------------------------------------------
@@ -350,6 +347,8 @@ federate.add_sim_object( mars_centered_inertial )
 federate.add_sim_object( earth_centered_fixed )
 federate.add_sim_object( moon_centered_fixed )
 federate.add_sim_object( mars_centered_fixed )
+federate.add_sim_object( v1 )
+federate.add_sim_object( v2 )
 
 
 #---------------------------------------------------------------------------
@@ -362,5 +361,8 @@ federate.initialize()
 #---------------------------------------------------------------------------
 # Set up simulation termination time.
 #---------------------------------------------------------------------------
-if run_duration:
-   trick.sim_services.exec_set_terminate_time( run_duration )
+if run_duration != None:
+   if run_duration == 0.0:
+      trick.stop(0.0)
+   else:
+      trick.sim_services.exec_set_terminate_time( run_duration )
