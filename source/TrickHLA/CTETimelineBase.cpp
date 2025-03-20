@@ -27,14 +27,14 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Timeline.cpp}
 @trick_link_dependency{CTETimelineBase.cpp}
+@trick_link_dependency{Timeline.cpp}
 
 @revs_title
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, June 2016, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Added support for CLOCK_TAI.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Made into base class.}
 @revs_end
 
 */
@@ -46,9 +46,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/Clock.hh"
-#include "trick/Executive.hh"
 #include "trick/RealtimeSync.hh"
-#include "trick/exec_proto.h"
 #include "trick/realtimesync_proto.h"
 
 // TrickHLA include files.
@@ -61,9 +59,10 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-CTETimelineBase::CTETimelineBase()
-   : Clock( 1000000, "TrickHLA::CTETimelineBase - CLOCK_MONOTONIC" ),
-     clk_id( CLOCK_MONOTONIC )
+CTETimelineBase::CTETimelineBase(
+   unsigned long long const clock_tics_per_sec,
+   string const            &clock_name )
+   : Clock( clock_tics_per_sec, clock_name )
 {
    // Change the Trick real time clock to this clock.
    real_time_change_clock( this );
@@ -82,100 +81,8 @@ CTETimelineBase::~CTETimelineBase()
  */
 int CTETimelineBase::clock_init()
 {
-   // Make sure the CTE clock resolution is updated to meet
-   // the time resolution needed by the Trick executive.
-   update_clock_resolution();
-
    // Use this CTE timeline as the global Trick clock.
    set_global_clock();
 
    return 0;
-}
-
-/*!
- * @details Get the global time in seconds based on the CTE.
- */
-double const CTETimelineBase::get_time()
-{
-   struct timespec ts;
-   clock_gettime( clk_id, &ts );
-   return (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 );
-}
-
-/*!
- * @details Get the minimum time resolution in seconds, which is the smallest
- * time representation for this timeline.
- */
-double const CTETimelineBase::get_min_resolution()
-{
-   return 0.000000001; // 1-nanosecond
-}
-
-/*!
- * @brief Update the clock tics per second resolution of this clock
- *  to match the Trick executive resolution.
- */
-void CTETimelineBase::update_clock_resolution()
-{
-   // Make sure resolution of this clock can meet the time resolution
-   // needed by the Trick executive. Limit the resolution to 1-nanosecond,
-   // which this clock supports.
-   this->clock_tics_per_sec = ( exec_get_time_tic_value() <= 1000000000LL )
-                                 ? exec_get_time_tic_value()
-                                 : 1000000000ULL;
-
-   // Update the sim time ratio given the Trick executive time resolution
-   // and the updated clock_tics_per_sec may have changed.
-   calc_sim_time_ratio( exec_get_time_tic_value() );
-}
-
-/*!
- * @details Call the system clock_gettime to get the current real time with
- * a resolution set by Clock::clock_tics_per_sec.
- */
-long long CTETimelineBase::wall_clock_time()
-{
-   struct timespec ts;
-   clock_gettime( clk_id, &ts );
-   return ( ts.tv_sec * clock_tics_per_sec )
-          + ( ( ts.tv_nsec * clock_tics_per_sec ) / 1000000000LL );
-}
-
-/*!
- * @details This function is empty
- */
-int CTETimelineBase::clock_stop()
-{
-   return 0;
-}
-
-void CTETimelineBase::set_clock_ID( clockid_t const id )
-{
-   this->clk_id = id;
-
-   switch ( id ) {
-      case CLOCK_REALTIME: {
-         this->name = "TrickHLA::CTETimelineBase - CLOCK_REALTIME";
-         break;
-      }
-      case CLOCK_MONOTONIC: {
-         this->name = "TrickHLA::CTETimelineBase - CLOCK_MONOTONIC";
-         break;
-      }
-      case CLOCK_MONOTONIC_RAW: {
-         this->name = "TrickHLA::CTETimelineBase - CLOCK_MONOTONIC_RAW";
-         break;
-      }
-      default: {
-         ostringstream name_stream;
-         name_stream << "TrickHLA::CTETimelineBase - clock_id(" << id << ")";
-         this->name = name_stream.str();
-         break;
-      }
-   }
-}
-
-clockid_t const CTETimelineBase::get_clock_ID()
-{
-   return this->clk_id;
 }
