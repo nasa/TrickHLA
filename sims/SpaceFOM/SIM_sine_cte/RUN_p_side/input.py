@@ -153,7 +153,7 @@ trick.exec_set_trap_sigfpe( True )
 # Setup for Trick real time execution. This is the "Pacing" function.
 exec( open( "Modified_data/trick/realtime.py" ).read() )
 
-trick.exec_set_freeze_frame( 0.025 )
+trick.exec_set_freeze_frame( 0.125 )
 
 trick.exec_set_enable_freeze( False )
 trick.exec_set_freeze_command( False )

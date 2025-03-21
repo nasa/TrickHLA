@@ -541,6 +541,36 @@ void ExecutionControl::set_time_padding( double t )
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
+   // For a Master federate using CTE, we need to make sure the padding
+   // time is at least two times the freeze frame time. Otherwise we can
+   // not coordinate a go to run in time.
+   if ( is_master() && does_cte_timeline_exist() ) {
+
+      if ( t <= ( 2.0 * exec_get_freeze_frame() ) ) {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
+                << " ERROR: Mode transition padding time (" << t
+                << " seconds) must be more than two times the Trick freeze"
+                << " frame time (" << exec_get_freeze_frame() << " seconds)!"
+                << " In your input.py file, please update the padding time"
+                << " and/or the Trick freeze frame time using directives"
+                << " like the following:\n"
+                << "federate.set_time_padding( pad )\n"
+                << "trick.exec_set_freeze_frame( frame_time )\n"
+                << "For example, adjusting the freeze frame time for the"
+                << " given time padding:\n";
+         if ( t > ( 2.0 * exec_get_software_frame() ) ) {
+            // Example using the Trick software frame time to set freeze frame.
+            errmsg << "federate.set_time_padding( " << t << " )\n"
+                   << "trick.exec_set_freeze_frame( " << exec_get_software_frame() << " )\n";
+         } else {
+            errmsg << "federate.set_time_padding( " << t << " )\n"
+                   << "trick.exec_set_freeze_frame( " << ( t / 4 ) << " )\n";
+         }
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+   }
+
    this->time_padding = Int64BaseTime::to_seconds( padding_base_time );
 }
 
