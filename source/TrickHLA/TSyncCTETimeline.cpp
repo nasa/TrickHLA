@@ -41,8 +41,8 @@ NASA, Johnson Space Center\n
 #include "trick/Executive.hh"
 #include "trick/RealtimeSync.hh"
 #include "trick/exec_proto.h"
-#include "trick/realtimesync_proto.h"
 #include "trick/message_proto.h"
+#include "trick/realtimesync_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/CTETimelineBase.hh"
@@ -112,10 +112,10 @@ double const TSyncCTETimeline::get_time()
 {
 #if defined( TSYNC_CTE )
 
-   TSYNC_HWTimeSecondsObj hwTime;
+   TSYNC_hw_timeSecondsObj hw_time;
 
    // Send Get Seconds Time message
-   TSYNC_ERROR err = TSYNC_HW_getTimeSec( pBoard, &hwTime );
+   TSYNC_ERROR err = TSYNC_HW_getTimeSec( board_handle, &hw_time );
 
    if ( err != TSYNC_SUCCESS ) {
       ostringstream errmsg;
@@ -126,7 +126,7 @@ double const TSyncCTETimeline::get_time()
    }
 
    // Convert the TSync time based on clock tics per second resolution.
-   return (double)hwTime.time.seconds + ( (double)hwTime.time.ns * 0.000000001 );
+   return (double)hw_time.time.seconds + ( (double)hw_time.time.ns * 0.000000001 );
 #else
    ostringstream errmsg;
    errmsg << "TSyncCTETimeline::get_time():" << __LINE__
@@ -143,12 +143,12 @@ int TSyncCTETimeline::clock_init()
 {
 #if defined( TSYNC_CTE )
 
-   int rc = TSYNC_open( &pBoard, (char *)dev_name.c_str() );
+   int rc = TSYNC_open( &board_handle, (char *)dev_name.c_str() );
 
    if ( rc != TSYNC_SUCCESS ) {
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::clock_init():" << __LINE__
-             << " ERROR: Could Not Open TSync Board '"
+             << " ERROR: Could not open TSync board '"
              << dev_name.c_str() << "' [" << rc << "]\n";
       send_hs( stdout, errmsg.str().c_str() );
       return ( 1 );
@@ -173,10 +173,10 @@ long long TSyncCTETimeline::wall_clock_time()
 {
 #if defined( TSYNC_CTE )
 
-   TSYNC_HWTimeSecondsObj hwTime;
+   TSYNC_hw_timeSecondsObj hw_time;
 
    // Send Get Seconds Time message
-   TSYNC_ERROR err = TSYNC_HW_getTimeSec( pBoard, &hwTime );
+   TSYNC_ERROR err = TSYNC_HW_getTimeSec( board_handle, &hw_time );
 
    if ( err != TSYNC_SUCCESS ) {
       ostringstream errmsg;
@@ -187,8 +187,8 @@ long long TSyncCTETimeline::wall_clock_time()
    }
 
    // Convert the TSync board time based on clock tics per second resolution.
-   return ( hwTime.time.seconds * clock_tics_per_sec )
-          + ( ( hwTime.time.ns * clock_tics_per_sec ) / 1000000000LL );
+   return ( hw_time.time.seconds * clock_tics_per_sec )
+          + ( ( hw_time.time.ns * clock_tics_per_sec ) / 1000000000LL );
 #else
    ostringstream errmsg;
    errmsg << "TSyncCTETimeline::wall_clock_time():" << __LINE__
@@ -204,11 +204,11 @@ long long TSyncCTETimeline::wall_clock_time()
 int TSyncCTETimeline::clock_stop()
 {
 #if defined( TSYNC_CTE )
-   int rc = TSYNC_close( pBoard );
+   int rc = TSYNC_close( board_handle );
    if ( rc != TSYNC_SUCCESS ) {
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::clock_stop():" << __LINE__
-             << " ERROR: Could close TSync Board '"
+             << " ERROR: Could not close TSync Board '"
              << dev_name.c_str() << "' [" << rc << "]\n";
       send_hs( stdout, errmsg.str().c_str() );
    }

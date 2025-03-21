@@ -208,9 +208,9 @@ class PropagatedSineSimObj : public Trick::SimObject {
 class THLAInitSimObject : public Trick::SimObject {
 
  public:
-
    TrickHLA::SimTimeline            sim_timeline;
    TrickHLA::ScenarioTimeline       scenario_timeline;
+
 #ifdef TSYNC_CTE
    TrickHLA::TSyncCTETimeline       cte_timeline;
 #else

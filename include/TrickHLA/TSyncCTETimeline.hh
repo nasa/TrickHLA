@@ -115,7 +115,7 @@ class TSyncCTETimeline : public CTETimelineBase
    TSyncCTETimeline &operator=( TSyncCTETimeline const &rhs );
 
 #ifdef _TPRO_CTE
-   TSYNC_BoardObj *pBoard; /* ** board handle */
+   TSYNC_BoardObj *board_handle; /* ** TSync board handle */
 #endif
 };
 
