@@ -6,6 +6,9 @@
 This is a baseline implementation based off of the TSync hardware clock.
 It is intended to provide the definition of the CTE Timeline interface.
 
+TSync Driver:
+https://safran-navigation-timing.com/portal/public-downloads/latest-tsyncpcie-update-files/
+
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
@@ -24,9 +27,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Dan Dexter, NASA ER7, TrickHLA, June 2016, --, Initial version.}
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Rewrite of CTE Timeline into this class.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Initial implementation.}
 @revs_end
 
 */
@@ -50,11 +51,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/TSyncCTETimeline.hh"
 #include "TrickHLA/Timeline.hh"
 
-#if defined( TSYNC_CTE )
 extern "C" {
-#   include "tsync.h"
+#include "tsync.h" // cppcheck-suppress [missingInclude]
 }
-#endif
 
 using namespace std;
 using namespace Trick;
@@ -65,7 +64,8 @@ using namespace TrickHLA;
  */
 TSyncCTETimeline::TSyncCTETimeline()
    : CTETimelineBase( exec_get_time_tic_value(),
-                      "TrickHLA::TSyncCTETimeline - TSYNC" )
+                      "TrickHLA::TSyncCTETimeline - TSYNC" ),
+     board_handle( NULL )
 {
    return;
 }
@@ -110,8 +110,6 @@ void TSyncCTETimeline::update_clock_resolution()
  */
 double const TSyncCTETimeline::get_time()
 {
-#if defined( TSYNC_CTE )
-
    TSYNC_hw_timeSecondsObj hw_time;
 
    // Send Get Seconds Time message
@@ -127,13 +125,6 @@ double const TSyncCTETimeline::get_time()
 
    // Convert the TSync time based on clock tics per second resolution.
    return (double)hw_time.time.seconds + ( (double)hw_time.time.ns * 0.000000001 );
-#else
-   ostringstream errmsg;
-   errmsg << "TSyncCTETimeline::get_time():" << __LINE__
-          << " ERROR: Not configured for TSync CTE card.\n";
-   send_hs( stdout, errmsg.str().c_str() );
-   return 0;
-#endif
 }
 
 /*!
@@ -141,28 +132,19 @@ double const TSyncCTETimeline::get_time()
  */
 int TSyncCTETimeline::clock_init()
 {
-#if defined( TSYNC_CTE )
-
-   int rc = TSYNC_open( &board_handle, (char *)dev_name.c_str() );
+   int rc = TSYNC_open( &board_handle, static_cast< char * >( dev_name.c_str() ) );
 
    if ( rc != TSYNC_SUCCESS ) {
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::clock_init():" << __LINE__
-             << " ERROR: Could not open TSync board '"
+             << " ERROR: Could not open TSync CTE card '"
              << dev_name.c_str() << "' [" << rc << "]\n";
       send_hs( stdout, errmsg.str().c_str() );
-      return ( 1 );
+      return 1;
    }
 
    set_global_clock();
    return 0;
-#else
-   ostringstream errmsg;
-   errmsg << "TSyncCTETimeline::clock_init():" << __LINE__
-          << " ERROR: Not configured for TSync CTE card.\n";
-   send_hs( stdout, errmsg.str().c_str() );
-   return -1;
-#endif
 }
 
 /*!
@@ -171,11 +153,9 @@ int TSyncCTETimeline::clock_init()
  */
 long long TSyncCTETimeline::wall_clock_time()
 {
-#if defined( TSYNC_CTE )
-
    TSYNC_hw_timeSecondsObj hw_time;
 
-   // Send Get Seconds Time message
+   // Get the time in seconds.
    TSYNC_ERROR err = TSYNC_HW_getTimeSec( board_handle, &hw_time );
 
    if ( err != TSYNC_SUCCESS ) {
@@ -186,16 +166,9 @@ long long TSyncCTETimeline::wall_clock_time()
       return 0;
    }
 
-   // Convert the TSync board time based on clock tics per second resolution.
+   // Convert the TSync board time using the clock tics per second resolution.
    return ( hw_time.time.seconds * clock_tics_per_sec )
           + ( ( hw_time.time.ns * clock_tics_per_sec ) / 1000000000LL );
-#else
-   ostringstream errmsg;
-   errmsg << "TSyncCTETimeline::wall_clock_time():" << __LINE__
-          << " ERROR: Not configured for TSync CTE card.\n";
-   send_hs( stdout, errmsg.str().c_str() );
-   return 0;
-#endif
 }
 
 /*!
@@ -203,15 +176,13 @@ long long TSyncCTETimeline::wall_clock_time()
  */
 int TSyncCTETimeline::clock_stop()
 {
-#if defined( TSYNC_CTE )
    int rc = TSYNC_close( board_handle );
    if ( rc != TSYNC_SUCCESS ) {
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::clock_stop():" << __LINE__
-             << " ERROR: Could not close TSync Board '"
+             << " ERROR: Could not close TSync CTE card '"
              << dev_name.c_str() << "' [" << rc << "]\n";
       send_hs( stdout, errmsg.str().c_str() );
    }
-#endif
    return 0;
 }

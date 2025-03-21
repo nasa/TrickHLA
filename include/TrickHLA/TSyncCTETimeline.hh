@@ -6,6 +6,9 @@
 This is a baseline implementation based off of the TSync hardware clock.
 It is intended to provide the definition of the CTE Timeline interface.
 
+TSync Driver:
+https://safran-navigation-timing.com/portal/public-downloads/latest-tsyncpcie-update-files/
+
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
@@ -46,11 +49,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/Timeline.hh"
 
-#if defined( TSYNC_CTE )
 extern "C" {
-#   include "tsync.h"
+#include "tsync.h" // cppcheck-suppress [missingInclude]
 }
-#endif
 
 namespace TrickHLA
 {
@@ -114,9 +115,7 @@ class TSyncCTETimeline : public CTETimelineBase
     *  @details This assignment operator is private to prevent inadvertent copies. */
    TSyncCTETimeline &operator=( TSyncCTETimeline const &rhs );
 
-#ifdef _TPRO_CTE
    TSYNC_BoardObj *board_handle; /* ** TSync board handle */
-#endif
 };
 
 } // namespace TrickHLA

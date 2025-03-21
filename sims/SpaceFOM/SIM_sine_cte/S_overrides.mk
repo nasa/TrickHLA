@@ -15,11 +15,11 @@ endif
 # Construct Build Environment
 #=============================================================================
 
-# Use the TSync CTE card if the path to the driver is set in the
+# Add the TSync CTE card if the home path to the driver is set for the
 # TSYNC_HOME environment variable.
 ifdef TSYNC_HOME
-TRICK_CFLAGS   += -DTSYNC_CTE -I$(TSYNC_HOME)/libtsync/include
-TRICK_CXXFLAGS += -DTSYNC_CTE -I$(TSYNC_HOME)/libtsync/include
+TRICK_CFLAGS   += -I$(TSYNC_HOME)/libtsync/include
+TRICK_CXXFLAGS += -I$(TSYNC_HOME)/libtsync/include
 endif
 
 TRICK_CFLAGS   += -I.

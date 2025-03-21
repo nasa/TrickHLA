@@ -37,6 +37,8 @@
 #define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
 #define P_HLA_LATE          65534 // HLA late job phase.
 
+// Should the TSync CTE card be used as an external Trick clock.
+#define NO_TSYNC_CTE
 
 //==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
