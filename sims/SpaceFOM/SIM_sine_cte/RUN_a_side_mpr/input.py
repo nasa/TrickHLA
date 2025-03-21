@@ -170,7 +170,7 @@ trick.exec_set_enable_freeze( True )
 trick.exec_set_freeze_command( True )
 trick.exec_set_stack_trace( False )
 
-trick.exec_set_freeze_frame( 0.025 )
+trick.exec_set_freeze_frame( 0.125 )
 
 trick.var_server_set_port( 7000 )
 #trick.var_server_set_source_address( "127.0.0.1" )
