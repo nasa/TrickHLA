@@ -3047,17 +3047,17 @@ void ExecutionControl::set_time_padding(
                 << " In your input.py file, please update the padding time"
                 << " and/or the Trick freeze frame time using directives"
                 << " like the following:\n"
-                << "federate.set_time_padding( pad )\n"
-                << "trick.exec_set_freeze_frame( frame_time )\n"
+                << "   federate.set_time_padding( pad )\n"
+                << "   trick.exec_set_freeze_frame( frame_time )\n"
                 << "For example, adjusting the freeze frame time for the"
                 << " given time padding:\n";
          if ( t > ( 2.0 * exec_get_software_frame() ) ) {
             // Example using the Trick software frame time to set freeze frame.
-            errmsg << "federate.set_time_padding( " << t << " )\n"
-                   << "trick.exec_set_freeze_frame( " << exec_get_software_frame() << " )\n";
+            errmsg << "   federate.set_time_padding( " << t << " )\n"
+                   << "   trick.exec_set_freeze_frame( " << exec_get_software_frame() << " )\n";
          } else {
-            errmsg << "federate.set_time_padding( " << t << " )\n"
-                   << "trick.exec_set_freeze_frame( " << ( t / 4 ) << " )\n";
+            errmsg << "   federate.set_time_padding( " << t << " )\n"
+                   << "   trick.exec_set_freeze_frame( " << ( t / 4 ) << " )\n";
          }
          DebugHandler::terminate_with_message( errmsg.str() );
       }
