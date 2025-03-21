@@ -13,8 +13,8 @@ endif
 
 # Use the TSync CTE card if the path to the driver is set.
 ifdef TSYNC_HOME
-TRICK_CFLAGS   += -DTSYNC_CTE -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/tsync-driver -I$(TSYNC_HOME)/tsync-driver/include
-TRICK_CXXFLAGS += -DTSYNC_CTE -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/tsync-driver -I$(TSYNC_HOME)/tsync-driver/include
+TRICK_CFLAGS   += -DTSYNC_CTE -I$(TSYNC_HOME)/libtsync/include
+TRICK_CXXFLAGS += -DTSYNC_CTE -I$(TSYNC_HOME)/libtsync/include
 endif
 
 #=============================================================================
