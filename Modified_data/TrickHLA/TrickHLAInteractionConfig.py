@@ -35,7 +35,7 @@ class TrickHLAInteractionConfig( object ):
                  thla_publish               = True,
                  thla_subscribe             = True,
                  thla_handler_instance      = None,
-                 thla_handlet_instance_name = None,
+                 thla_handler_instance_name = None,
                  thla_manager_interaction   = None ):
 
       # Allocate and empty parameters list.
