@@ -18,8 +18,9 @@ endif
 # Add the TSync CTE card if the home path to the driver is set for the
 # TSYNC_HOME environment variable.
 ifdef TSYNC_HOME
-TRICK_CFLAGS   += -I$(TSYNC_HOME)/libtsync/include
-TRICK_CXXFLAGS += -I$(TSYNC_HOME)/libtsync/include
+TRICK_CFLAGS      += -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/libtsync/src
+TRICK_CXXFLAGS    += -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/libtsync/src
+TRICK_ICG_EXCLUDE += :$(TSYNC_HOME)
 endif
 
 TRICK_CFLAGS   += -I.

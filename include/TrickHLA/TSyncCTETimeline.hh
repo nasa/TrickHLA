@@ -50,7 +50,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Timeline.hh"
 
 extern "C" {
-#include "tsync.h" // cppcheck-suppress [missingInclude]
+#include "tsync.h"       // cppcheck-suppress [missingInclude]
+#include "tsync_trans.h" // cppcheck-suppress [missingInclude]
 }
 
 namespace TrickHLA
