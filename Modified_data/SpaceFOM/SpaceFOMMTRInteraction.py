@@ -43,7 +43,7 @@ class SpaceFOMMTRInteraction( TrickHLAInteractionConfig ):
                                              thla_publish               = False,
                                              thla_subscribe             = True,
                                              thla_handler_instance      = S_define_instance,
-                                             thla_handlet_instance_name = S_define_instance_name,
+                                             thla_handler_instance_name = S_define_instance_name,
                                              thla_manager_interaction   = manger_interaction )
       else:
          TrickHLAInteractionConfig.__init__( self,
@@ -51,7 +51,7 @@ class SpaceFOMMTRInteraction( TrickHLAInteractionConfig ):
                                              thla_publish               = True,
                                              thla_subscribe             = False,
                                              thla_handler_instance      = S_define_instance,
-                                             thla_handlet_instance_name = S_define_instance_name,
+                                             thla_handler_instance_name = S_define_instance_name,
                                              thla_manager_interaction   = manger_interaction )
 
       # Build the interaction parameters list.
