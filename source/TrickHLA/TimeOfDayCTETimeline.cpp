@@ -13,7 +13,7 @@ and provided for the CTE hardware used in a specific federation execution.
 
 \par<b>Assumptions and Limitations:</b>
 - This implementation uses the system clock which is assumed to be
-synchronized using an external mechanism like NTP.
+synchronized using an external mechanism like PTP or NTP.
 
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.

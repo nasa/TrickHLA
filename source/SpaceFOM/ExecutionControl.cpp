@@ -2645,6 +2645,15 @@ void ExecutionControl::exit_freeze()
    // Transition to run mode.
    run_mode_transition();
 
+#if 0
+   if ( !is_master() ) {                                    // TEMP
+      int sleep_time = 1500000 * exec_get_software_frame(); // TEMP
+      cout << "Software Frame:" << exec_get_software_frame() << " seconds,"
+           << " Sleep time:" << sleep_time << " milliseconds\n"; // TEMP
+      Utilities::micro_sleep( sleep_time );                      // TEMP
+   } // TEMP
+#endif
+
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
                         + "\n BEFORE CLOCK RESET \n" );
@@ -2655,20 +2664,30 @@ void ExecutionControl::exit_freeze()
    // to synchronize the mtr_goto_run mode transition. This is
    // particularly true when using the CTE clock and a large mode
    // transition padding time.
-   if ( does_cte_timeline_exist() ) {
-      ExecutionConfiguration *ExCO = get_execution_configuration();
+   //   if ( does_cte_timeline_exist() ) {
+   //      ExecutionConfiguration *ExCO = get_execution_configuration();
+   //
+   //      // Account for the difference between the go-to-run CTE time and the
+   //      // current CTE time. We may have been late trying to meet the go-to-run
+   //      // time because there was not enough padding time.
+   //      //
+   //      // TODO: Verify if this is the adjustment we need to make.
+   //      the_clock->clock_reset( the_exec->get_time_tics()
+   //                              - ( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
+   //                                  * the_clock->clock_tics_per_sec ) );
+   //   } else {
+   //      the_clock->clock_reset( the_exec->get_time_tics() );
+   //   }
 
-      // Account for the difference between the go-to-run CTE time and the
-      // current CTE time. We may have been late trying to meet the go-to-run
-      // time because there was not enough padding time.
-      //
-      // TODO: Verify if this is the adjustment we need to make.
-      the_clock->clock_reset( the_exec->get_time_tics()
-                              - ( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
-                                  * the_clock->clock_tics_per_sec ) );
-   } else {
-      the_clock->clock_reset( the_exec->get_time_tics() );
-   }
+   the_clock->clock_reset( the_exec->get_time_tics() ); // TEMP
+#if 0
+   if ( !is_master() ) {//TEMP
+      int sleep_time = 1100000 * exec_get_software_frame(); //TEMP
+      cout << "Software Frame:" << exec_get_software_frame() << " seconds,"
+           << " Sleep time:" << sleep_time << " milliseconds\n"; //TEMP
+      Utilities::micro_sleep( sleep_time ); //TEMP
+   }//TEMP
+#endif
 
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
