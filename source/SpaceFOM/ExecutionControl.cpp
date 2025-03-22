@@ -128,7 +128,7 @@ ExecutionControl::ExecutionControl()
      mtr_interaction( NULL ),
      mtr_interaction_handler( NULL )
 {
-   this->enable_least_commong_time_step = true;
+   this->enable_least_common_time_step = true;
 }
 
 /*!
@@ -145,7 +145,7 @@ ExecutionControl::ExecutionControl(
      mtr_interaction( NULL ),
      mtr_interaction_handler( NULL )
 {
-   this->enable_least_commong_time_step = true;
+   this->enable_least_common_time_step = true;
 }
 
 /*!
