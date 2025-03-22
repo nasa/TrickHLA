@@ -128,7 +128,7 @@ ExecutionControl::ExecutionControl()
      mtr_interaction( NULL ),
      mtr_interaction_handler( NULL )
 {
-   this->enable_least_commong_time_step = true;
+   this->enable_least_common_time_step = true;
 }
 
 /*!
@@ -145,7 +145,7 @@ ExecutionControl::ExecutionControl(
      mtr_interaction( NULL ),
      mtr_interaction_handler( NULL )
 {
-   this->enable_least_commong_time_step = true;
+   this->enable_least_common_time_step = true;
 }
 
 /*!
@@ -240,7 +240,7 @@ void ExecutionControl::initialize()
 
 /*!
  * @details This routine is used to perform and inline build of the Trick
- * ref ATTRIBUTES for the SpaceFOM ExcutionControl.
+ * ref ATTRIBUTES for the SpaceFOM ExecutionControl.
  *
  * @job_class{initialization}
  */
@@ -1837,7 +1837,7 @@ bool ExecutionControl::process_execution_control_updates()
    ExecutionModeEnum exco_nem              = execution_mode_int16_to_enum( ExCO->next_execution_mode );
    ExecutionModeEnum current_exection_mode = from_execution_control_enum( this->current_execution_control_mode );
 
-   // Check for consistency between ExecutionControl and ExCO ExcutionMode.
+   // Check for consistency between ExecutionControl and ExCO ExecutionMode.
    if ( exco_cem != current_exection_mode ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
