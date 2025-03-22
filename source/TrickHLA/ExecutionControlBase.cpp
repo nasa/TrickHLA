@@ -106,7 +106,7 @@ ExecutionControlBase::ExecutionControlBase()
      master( false ),
      multiphase_init_sync_points( NULL ),
      time_padding( 0.0 ),
-     enable_least_commong_time_step( false ),
+     enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( NULL ),
@@ -139,7 +139,7 @@ ExecutionControlBase::ExecutionControlBase(
      master( false ),
      multiphase_init_sync_points( NULL ),
      time_padding( 0.0 ),
-     enable_least_commong_time_step( false ),
+     enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( &exec_config ),
@@ -355,7 +355,7 @@ void ExecutionControlBase::join_federation_process()
 bool ExecutionControlBase::object_instance_name_reservation_succeeded(
    std::wstring const &obj_instance_name )
 {
-   // If ExcutionConfiguration is not set, then there is no match.
+   // If ExecutionConfiguration is not set, then there is no match.
    if ( execution_configuration != NULL ) {
 
       // We need the wide-string version of the ExCO name.
@@ -394,7 +394,7 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
 bool ExecutionControlBase::object_instance_name_reservation_failed(
    std::wstring const &obj_instance_name )
 {
-   // If ExcutionConfiguration is not set, then there is no match.
+   // If ExecutionConfiguration is not set, then there is no match.
    if ( execution_configuration == NULL ) {
       return false;
    }
