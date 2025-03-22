@@ -65,8 +65,8 @@ using namespace TrickHLA;
 TSyncCTETimeline::TSyncCTETimeline()
    : CTETimelineBase( exec_get_time_tic_value(),
                       "TrickHLA::TSyncCTETimeline - TSYNC" ),
-     device_name(),
-     board_handle( NULL )
+     full_device_name(),
+     board_handle()
 {
    return;
 }
@@ -133,13 +133,13 @@ double const TSyncCTETimeline::get_time()
  */
 int TSyncCTETimeline::clock_init()
 {
-   int rc = TSYNC_open( &board_handle, static_cast< char * >( device_name.c_str() ) );
+   int rc = TSYNC_open( &board_handle, full_device_name.c_str() );
 
    if ( rc != TSYNC_SUCCESS ) {
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::clock_init():" << __LINE__
              << " ERROR: Could not open TSync CTE card '"
-             << device_name << "' [" << rc << "]\n";
+             << full_device_name << "' [" << rc << "]\n";
       send_hs( stdout, errmsg.str().c_str() );
       return 1;
    }
@@ -182,7 +182,7 @@ int TSyncCTETimeline::clock_stop()
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::clock_stop():" << __LINE__
              << " ERROR: Could not close TSync CTE card '"
-             << device_name << "' [" << rc << "]\n";
+             << full_device_name << "' [" << rc << "]\n";
       send_hs( stdout, errmsg.str().c_str() );
    }
    return 0;

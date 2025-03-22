@@ -70,7 +70,7 @@ class TSyncCTETimeline : public CTETimelineBase
    friend void init_attrTrickHLA__TSyncCTETimeline();
 
   public:
-   std::string device_name; /* ** TSync board device name. */
+   std::string full_device_name; /* ** TSync board device name. */
 
   public:
    //-----------------------------------------------------------------
@@ -119,7 +119,7 @@ class TSyncCTETimeline : public CTETimelineBase
     *  @details This assignment operator is private to prevent inadvertent copies. */
    TSyncCTETimeline &operator=( TSyncCTETimeline const &rhs );
 
-   TSYNC_BoardObj *board_handle; /* ** TSync board handle */
+   TSYNC_BoardObj board_handle; /* ** TSync board handle */
 };
 
 } // namespace TrickHLA
