@@ -119,7 +119,7 @@ class TSyncCTETimeline : public CTETimelineBase
     *  @details This assignment operator is private to prevent inadvertent copies. */
    TSyncCTETimeline &operator=( TSyncCTETimeline const &rhs );
 
-   TSYNC_BoardObj board_handle; /* ** TSync board handle */
+   TSYNC_BoardHandle board_handle; /* ** TSync board handle */
 };
 
 } // namespace TrickHLA
