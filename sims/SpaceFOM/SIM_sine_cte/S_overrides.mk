@@ -21,8 +21,8 @@ TRICK_CXXFLAGS += -I.
 # Only for Linux, add the TSync CTE card if the home path to the driver is
 # set for the TSYNC_HOME environment variable. TSync Driver:
 # https://safran-navigation-timing.com/portal/public-downloads/latest-tsyncpcie-update-files/
-ifneq ($(TRICK_HOST_TYPE),Darwin)
-   ifdef TSYNC_HOME
+ifdef TSYNC_HOME
+   ifeq ($(TRICK_HOST_TYPE),Linux)
       TRICK_CFLAGS         += -DNIOS -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/tsync-driver/include
       TRICK_CXXFLAGS       += -DNIOS -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/tsync-driver/include
       TRICK_USER_LINK_LIBS += -L${TSYNC_HOME}/libtsync/src/build -ltsync

@@ -36,6 +36,10 @@ NASA, Johnson Space Center\n
 
 */
 
+#if !defined( __linux__ )
+#   error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
+#endif
+
 #ifndef TRICKHLA_TSYNC_CTE_TIMELINE_HH
 #define TRICKHLA_TSYNC_CTE_TIMELINE_HH
 
