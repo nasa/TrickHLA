@@ -32,6 +32,10 @@ NASA, Johnson Space Center\n
 
 */
 
+#if !defined( __linux__ )
+#   error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
+#endif
+
 // System include files.
 #include <sstream>
 #include <string>
