@@ -37,6 +37,8 @@
 #define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
 #define P_HLA_LATE          65534 // HLA late job phase.
 
+// Should the TSync CTE card be used as an external Trick clock.
+#define NO_TSYNC_CTE
 
 //==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
@@ -49,7 +51,11 @@
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/SimTimeline.hh"
 ##include "TrickHLA/ScenarioTimeline.hh"
+#ifdef TSYNC_CTE
+##include "TrickHLA/TSyncCTETimeline.hh"
+#else
 ##include "TrickHLA/TimeOfDayCTETimeline.hh"
+#endif
 
 // Sine model includes.
 ##include "sine/include/SineData.hh"
@@ -204,10 +210,14 @@ class PropagatedSineSimObj : public Trick::SimObject {
 class THLAInitSimObject : public Trick::SimObject {
 
  public:
-
    TrickHLA::SimTimeline            sim_timeline;
    TrickHLA::ScenarioTimeline       scenario_timeline;
+
+#ifdef TSYNC_CTE
+   TrickHLA::TSyncCTETimeline       cte_timeline;
+#else
    TrickHLA::TimeOfDayCTETimeline   cte_timeline;
+#endif
 
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
                       TrickHLA::Federate & thla_fed,
