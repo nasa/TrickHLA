@@ -5,10 +5,10 @@
 -include ${HOME}/.trickhla/S_user_env.mk
 
 ifdef TRICKHLA_HOME
-TRICK_SFLAGS += -I${TRICKHLA_HOME}/S_modules
-include ${TRICKHLA_HOME}/makefiles/S_hla.mk
+   TRICK_SFLAGS += -I${TRICKHLA_HOME}/S_modules
+   include ${TRICKHLA_HOME}/makefiles/S_hla.mk
 else
-$(error "You must set the TRICKHLA_HOME environment variable.")
+   $(error S_overrides.mk:ERROR: You must set the TRICKHLA_HOME environment variable.)
 endif
 
 #=============================================================================
