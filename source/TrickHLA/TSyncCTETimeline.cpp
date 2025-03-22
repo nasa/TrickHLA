@@ -32,10 +32,6 @@ NASA, Johnson Space Center\n
 
 */
 
-#if !defined( __linux__ )
-#   error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
-#endif
-
 // System include files.
 #include <sstream>
 #include <string>
@@ -56,6 +52,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Timeline.hh"
 
 #if !defined( SWIG )
+#   if !defined( __linux__ )
+#      error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
+#   endif
+
 extern "C" {
 #   include "tsync.h" // cppcheck-suppress [missingInclude]
 }
