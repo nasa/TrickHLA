@@ -202,7 +202,7 @@ federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
 # to configure the ExCO. This is only needed for input file configuration.
-#federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
+#federate.set_config_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.
 if ( verbose == True ): 
