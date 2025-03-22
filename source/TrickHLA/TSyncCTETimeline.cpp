@@ -111,7 +111,7 @@ void TSyncCTETimeline::update_clock_resolution()
  */
 double const TSyncCTETimeline::get_time()
 {
-   TSYNC_hw_timeSecondsObj hw_time;
+   TSYNC_HWTimeSecondsObj hw_time;
 
    // Send Get Seconds Time message
    TSYNC_ERROR err = TSYNC_HW_getTimeSec( board_handle, &hw_time );
@@ -154,7 +154,7 @@ int TSyncCTETimeline::clock_init()
  */
 long long TSyncCTETimeline::wall_clock_time()
 {
-   TSYNC_hw_timeSecondsObj hw_time;
+   TSYNC_HWTimeSecondsObj hw_time;
 
    // Get the time in seconds.
    TSYNC_ERROR err = TSYNC_HW_getTimeSec( board_handle, &hw_time );
