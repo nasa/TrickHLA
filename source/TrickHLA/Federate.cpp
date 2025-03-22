@@ -2644,7 +2644,7 @@ void Federate::setup_checkpoint()
    // or I am the federate that called start_federation_save
    this->announce_save = !this->start_to_save;
 
-   // Check to see if the save has been initiated in the ExcutionControl process?
+   // Check to see if the save has been initiated in the ExecutionControl process?
    // If not then just return.
    if ( !execution_control->is_save_initiated() ) {
       return;

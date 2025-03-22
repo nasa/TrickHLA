@@ -953,7 +953,7 @@ void ExecutionControl::shutdown()
 
 /*!
  * @details This routine is used to perform and inline build of the Trick
- * ref ATTRIBUTES for the IMSim ExcutionControl.
+ * ref ATTRIBUTES for the IMSim ExecutionControl.
  *
  * @job_class{initialization}
  */
