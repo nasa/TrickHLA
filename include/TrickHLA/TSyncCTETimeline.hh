@@ -51,8 +51,7 @@ NASA, Johnson Space Center\n
 
 #if !defined( SWIG )
 extern "C" {
-#include "tsync.h"       // cppcheck-suppress [missingInclude]
-#include "tsync_trans.h" // cppcheck-suppress [missingInclude]
+#   include "tsync.h"       // cppcheck-suppress [missingInclude]
 }
 #endif
 
