@@ -51,9 +51,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/TSyncCTETimeline.hh"
 #include "TrickHLA/Timeline.hh"
 
+#if !defined( SWIG )
 extern "C" {
 #include "tsync.h" // cppcheck-suppress [missingInclude]
 }
+#endif
 
 using namespace std;
 using namespace Trick;
