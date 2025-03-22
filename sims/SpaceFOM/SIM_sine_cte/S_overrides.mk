@@ -21,7 +21,7 @@ ifdef TSYNC_HOME
 TRICK_CFLAGS         += -DNIOS -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/libtsync/src -I$(TSYNC_HOME)/tsync-driver/include
 TRICK_CXXFLAGS       += -DNIOS -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/libtsync/src -I$(TSYNC_HOME)/tsync-driver/include
 TRICK_ICG_EXCLUDE    += :$(TSYNC_HOME)
-TRICK_USER_LINK_LIBS += -L${TSYNC_HOME}/libtsync/src/build -llibtsync
+TRICK_USER_LINK_LIBS += -L${TSYNC_HOME}/libtsync/src/build -ltsync
 endif
 
 TRICK_CFLAGS   += -I.
