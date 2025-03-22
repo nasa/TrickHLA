@@ -16,7 +16,8 @@ endif
 #=============================================================================
 
 # Add the TSync CTE card if the home path to the driver is set for the
-# TSYNC_HOME environment variable.
+# TSYNC_HOME environment variable. TSync Driver:
+# https://safran-navigation-timing.com/portal/public-downloads/latest-tsyncpcie-update-files/
 ifdef TSYNC_HOME
 TRICK_CFLAGS         += -DNIOS -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/tsync-driver/include
 TRICK_CXXFLAGS       += -DNIOS -I$(TSYNC_HOME)/libtsync/include -I$(TSYNC_HOME)/tsync-driver/include
