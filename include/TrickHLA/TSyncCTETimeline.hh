@@ -70,6 +70,9 @@ class TSyncCTETimeline : public CTETimelineBase
    friend void init_attrTrickHLA__TSyncCTETimeline();
 
   public:
+   std::string device_name; /* ** TSync board device name. */
+
+  public:
    //-----------------------------------------------------------------
    // Constructors / destructors
    //-----------------------------------------------------------------
