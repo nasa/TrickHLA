@@ -135,13 +135,16 @@ double const TSyncCTETimeline::get_time()
  */
 int TSyncCTETimeline::clock_init()
 {
-   int rc = TSYNC_open( &board_handle, full_device_name.c_str() );
+   // Make sure the CTE clock resolution is updated to meet
+   // the time resolution needed by the Trick executive.
+   update_clock_resolution();
 
-   if ( rc != TSYNC_SUCCESS ) {
+   TSYNC_ERROR err = TSYNC_open( &board_handle, full_device_name.c_str() );
+   if ( err != TSYNC_SUCCESS ) {
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::clock_init():" << __LINE__
              << " ERROR: Could not open TSync CTE card '"
-             << full_device_name << "' [" << rc << "]\n";
+             << full_device_name << "' [" << tsync_strerror( err ) << "]\n";
       send_hs( stdout, errmsg.str().c_str() );
       return 1;
    }
