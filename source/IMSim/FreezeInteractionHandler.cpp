@@ -299,7 +299,7 @@ void FreezeInteractionHandler::receive_interaction(
    // if the interaction was not initialized into the parent class, get out of here...
    if ( interaction == NULL ) {
       ostringstream errmsg;
-      errmsg << "IMSim::FreezeInteractionHandler::recieve_interaction():"
+      errmsg << "IMSim::FreezeInteractionHandler::receive_interaction():"
              << __LINE__ << " ERROR:"
              << " 'interaction' was not initialized to callback an Interaction"
              << " class. Cannot send the time to the Interaction in order for it to"
