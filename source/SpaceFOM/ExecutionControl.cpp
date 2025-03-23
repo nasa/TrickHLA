@@ -2645,13 +2645,17 @@ void ExecutionControl::exit_freeze()
    // Transition to run mode.
    run_mode_transition();
 
-#if 0
-   if ( !is_master() ) {                                    // TEMP
-      int sleep_time = 1500000 * exec_get_software_frame(); // TEMP
-      cout << "Software Frame:" << exec_get_software_frame() << " seconds,"
-           << " Sleep time:" << sleep_time << " milliseconds\n"; // TEMP
-      Utilities::micro_sleep( sleep_time );                      // TEMP
-   } // TEMP
+#if 0 // TEST ONLY
+   // TEMP Test adding a delay to non-master federates to make them late to
+   // go to run. This will allow us to verify we calculate the correct clock
+   // reset value with the expected behavior being the federates only overrun
+   // for a few frames until they catch back up to realtime.
+   if ( !is_master() ) {
+      int sleep_time = 4.0 * ( 1000000 * exec_get_software_frame() );
+      cout << "========== Software Frame:" << exec_get_software_frame()
+           << " seconds, delay time:" << sleep_time << " milliseconds\n";
+      Utilities::micro_sleep( sleep_time );
+   }
 #endif
 
 #if THLA_TIME_DEBUG
@@ -2659,35 +2663,24 @@ void ExecutionControl::exit_freeze()
                         + "\n BEFORE CLOCK RESET \n" );
 #endif
 
-   // Tell Trick to reset the realtime clock. We need to do this
-   // since the exit_freeze job waits an indeterminate amount of time
-   // to synchronize the mtr_goto_run mode transition. This is
-   // particularly true when using the CTE clock and a large mode
-   // transition padding time.
-   //   if ( does_cte_timeline_exist() ) {
-   //      ExecutionConfiguration *ExCO = get_execution_configuration();
-   //
-   //      // Account for the difference between the go-to-run CTE time and the
-   //      // current CTE time. We may have been late trying to meet the go-to-run
-   //      // time because there was not enough padding time.
-   //      //
-   //      // TODO: Verify if this is the adjustment we need to make.
-   //      the_clock->clock_reset( the_exec->get_time_tics()
-   //                              - ( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
-   //                                  * the_clock->clock_tics_per_sec ) );
-   //   } else {
-   //      the_clock->clock_reset( the_exec->get_time_tics() );
-   //   }
+   // Reset the Trick realtime clock. We need to do this since the exit_freeze
+   // job waits an indeterminate amount of time to synchronize the mtr_goto_run
+   // mode transition. This is particularly true when using the CTE clock and a
+   // large mode transition padding time that controls when we go to run.
+   if ( does_cte_timeline_exist() ) {
+      ExecutionConfiguration *ExCO = get_execution_configuration();
 
-   the_clock->clock_reset( the_exec->get_time_tics() ); // TEMP
-#if 0
-   if ( !is_master() ) {//TEMP
-      int sleep_time = 1100000 * exec_get_software_frame(); //TEMP
-      cout << "Software Frame:" << exec_get_software_frame() << " seconds,"
-           << " Sleep time:" << sleep_time << " milliseconds\n"; //TEMP
-      Utilities::micro_sleep( sleep_time ); //TEMP
-   }//TEMP
-#endif
+      // Account for the difference between the go-to-run CTE time and the
+      // current CTE time. We may have been late trying to meet the go-to-run
+      // time because there was not enough padding time. Adjust the Trick
+      // clock reference to account for this to keep it's clock reference
+      // aligned with the other federates.
+      the_clock->clock_reset( the_exec->get_time_tics()
+                              + (long long)( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
+                                             * the_exec->get_time_tic_value() ) );
+   } else {
+      the_clock->clock_reset( the_exec->get_time_tics() );
+   }
 
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )

@@ -1529,7 +1529,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                    << "For example, adjusting the freeze frame time for the"
                    << " given time padding:\n";
             if ( time_padding > ( 2.0 * exec_get_software_frame() ) ) {
-               // Example using the Trick software frame time to set freeze frame.
+               // Example using the Trick software frame time for the freeze frame.
                errmsg << "   federate.set_time_padding( " << time_padding << " )\n"
                       << "   trick.exec_set_freeze_frame( " << exec_get_software_frame() << " )\n";
             } else {
