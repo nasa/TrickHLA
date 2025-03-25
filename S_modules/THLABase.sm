@@ -129,7 +129,7 @@ class THLABaseSimObject : public Trick::SimObject {
       // Coordinate federates going to run mode.
       P_1ST ("freeze_init") federate.freeze_init();
       P_1ST ("freeze") federate.check_freeze();
-      ("unfreeze") federate.exit_freeze();
+      P60000 ("unfreeze") federate.exit_freeze();
 
       //--------------------
       //-- SCHEDULED JOBS --
