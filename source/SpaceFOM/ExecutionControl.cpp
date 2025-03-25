@@ -2651,10 +2651,10 @@ void ExecutionControl::exit_freeze()
    // reset value with the expected behavior being the federates only overrun
    // for a few frames until they catch back up to realtime.
    if ( !is_master() ) {
-      int sleep_time = 4.0 * ( 1000000 * exec_get_software_frame() );
+      int sleep_time_usec = 4.0 * ( 1000000 * exec_get_software_frame() );
       cout << "========== Software Frame:" << exec_get_software_frame()
-           << " seconds, delay time:" << sleep_time << " milliseconds\n";
-      Utilities::micro_sleep( sleep_time );
+           << " seconds, delay time:" << sleep_time_usec << " microseconds\n";
+      Utilities::micro_sleep( sleep_time_usec );
    }
 #endif
 
@@ -2667,6 +2667,7 @@ void ExecutionControl::exit_freeze()
    // job waits an indeterminate amount of time to synchronize the mtr_goto_run
    // mode transition. This is particularly true when using the CTE clock and a
    // large mode transition padding time that controls when we go to run.
+   long long ref;
    if ( does_cte_timeline_exist() ) {
       ExecutionConfiguration *ExCO = get_execution_configuration();
 
@@ -2675,16 +2676,18 @@ void ExecutionControl::exit_freeze()
       // time because there was not enough padding time. Adjust the Trick
       // clock reference to account for this to keep it's clock reference
       // aligned with the other federates.
-      the_clock->clock_reset( the_exec->get_time_tics()
-                              + (long long)( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
-                                             * the_exec->get_time_tic_value() ) );
+      ref = the_exec->get_time_tics()
+            + (long long)( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
+                           * the_exec->get_time_tic_value() );
    } else {
-      the_clock->clock_reset( the_exec->get_time_tics() );
+      ref = the_exec->get_time_tics();
    }
+   the_clock->clock_reset( ref );
 
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
                         + "\n AFTER CLOCK RESET \n" );
+   cout << "========== clock_reset to: " << ref << "\n";
 #endif
 }
 
@@ -3089,7 +3092,7 @@ void ExecutionControl::print_clock_summary(
        << "      global-clock-name: '" << the_clock->get_name() << "'\n";
    if ( does_cte_timeline_exist() ) {
       msg << "         CTE-clock-name: '" << cte_timeline->get_name() << "'\n"
-          << "   CTE-clock-resolution: " << setprecision( 10 ) << cte_timeline->get_min_resolution() << " seconds\n";
+          << "      CTE-clock-min-res: " << setprecision( 10 ) << cte_timeline->get_min_resolution() << " seconds\n";
    }
    msg << "     exec_get_time_tics: " << exec_get_time_tics() << "\n"
        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << "\n"
