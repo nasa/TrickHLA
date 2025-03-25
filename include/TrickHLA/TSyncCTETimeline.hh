@@ -98,7 +98,7 @@ class TSyncCTETimeline : public CTETimelineBase
 
    /*! @brief Update the clock tics per second resolution of this clock
     *  to match the Trick executive resolution. */
-   virtual void update_clock_resolution();
+   virtual void set_clock_tics_per_sec( int const tics_per_sec );
 
    /*! @brief Get the current CTE time.
     *  @return Current time of day in seconds. */

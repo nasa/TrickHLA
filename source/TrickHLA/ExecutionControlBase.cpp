@@ -259,7 +259,7 @@ void ExecutionControlBase::initialize()
       // by a setting in the input.py file. Clock time resolution is
       // maintained separately from the Trick executive time resolution,
       // which is why we need to explicitly update it.
-      cte_timeline->update_clock_resolution();
+      cte_timeline->set_clock_tics_per_sec( exec_get_time_tic_value() );
    }
 
    // Reset the master flag if it is not preset by the user.

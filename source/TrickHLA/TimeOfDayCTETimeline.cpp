@@ -95,18 +95,16 @@ double const TimeOfDayCTETimeline::get_min_resolution()
  * @brief Update the clock tics per second resolution of this clock
  *  to match the Trick executive resolution.
  */
-void TimeOfDayCTETimeline::update_clock_resolution()
+void TimeOfDayCTETimeline::set_clock_tics_per_sec(
+   int const tics_per_sec )
 {
    // Make sure resolution of this clock can meet the time resolution
    // needed by the Trick executive. Limit the resolution to 1-nanosecond,
    // which this clock supports.
-   this->clock_tics_per_sec = ( exec_get_time_tic_value() <= 1000000000LL )
-                                 ? exec_get_time_tic_value()
-                                 : 1000000000ULL;
+   this->clock_tics_per_sec = ( tics_per_sec > 0 ) ? tics_per_sec : 1;
 
-   // Update the sim time ratio given the Trick executive time resolution
-   // and the updated clock_tics_per_sec may have changed.
-   calc_sim_time_ratio( exec_get_time_tic_value() );
+   // Update the sim time ratio given the Trick executive time resolution.
+   calc_sim_time_ratio( tics_per_sec );
 }
 
 /*!
@@ -126,7 +124,7 @@ int TimeOfDayCTETimeline::clock_init()
 {
    // Make sure the CTE clock resolution is updated to meet
    // the time resolution needed by the Trick executive.
-   update_clock_resolution();
+   set_clock_tics_per_sec( exec_get_time_tic_value() );
 
    // Use this CTE timeline as the global Trick clock.
    set_global_clock();
