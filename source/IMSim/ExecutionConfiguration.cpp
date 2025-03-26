@@ -97,7 +97,8 @@ extern ATTRIBUTES attrIMSim__ExecutionConfiguration[];
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration()
-   : owner( NULL ),
+   : TrickHLA::ExecutionConfigurationBase(),
+     owner( NULL ),
      scenario( NULL ),
      mode( NULL ),
      run_duration( -1 ),
@@ -129,7 +130,7 @@ ExecutionConfiguration::ExecutionConfiguration()
  */
 ExecutionConfiguration::ExecutionConfiguration(
    char const *s_define_name )
-   : ExecutionConfigurationBase( s_define_name ),
+   : TrickHLA::ExecutionConfigurationBase( s_define_name ),
      owner( NULL ),
      scenario( NULL ),
      mode( NULL ),

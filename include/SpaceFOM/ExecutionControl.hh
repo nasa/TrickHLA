@@ -105,7 +105,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    ExecutionControl();
    /*! @brief Initialization constructor for the ExecutionControl class.
     *  @param exec_config The associated ExecutionControl class instance. */
-   explicit ExecutionControl( ExecutionConfiguration &exec_config );
+   explicit ExecutionControl( SpaceFOM::ExecutionConfiguration &exec_config );
    /*! @brief Destructor for the SpaceFOM ExecutionControl class. */
    virtual ~ExecutionControl();
 

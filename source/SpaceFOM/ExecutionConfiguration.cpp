@@ -108,7 +108,8 @@ extern ATTRIBUTES attrSpaceFOM__ExecutionConfiguration[];
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration()
-   : root_frame_name( NULL ),
+   : TrickHLA::ExecutionConfigurationBase(),
+     root_frame_name( NULL ),
      scenario_time_epoch( -std::numeric_limits< double >::max() ),
      next_mode_scenario_time( -std::numeric_limits< double >::max() ),
      next_mode_cte_time( -std::numeric_limits< double >::max() ),
@@ -124,7 +125,7 @@ ExecutionConfiguration::ExecutionConfiguration()
  */
 ExecutionConfiguration::ExecutionConfiguration(
    char const *s_define_name )
-   : ExecutionConfigurationBase( s_define_name ),
+   : TrickHLA::ExecutionConfigurationBase( s_define_name ),
      root_frame_name( NULL ),
      scenario_time_epoch( -std::numeric_limits< double >::max() ),
      next_mode_scenario_time( -std::numeric_limits< double >::max() ),

@@ -120,7 +120,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 ExecutionControl::ExecutionControl()
-   : designated_late_joiner( false ),
+   : TrickHLA::ExecutionControlBase(),
+     designated_late_joiner( false ),
      pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
@@ -135,7 +136,7 @@ ExecutionControl::ExecutionControl()
  * @job_class{initialization}
  */
 ExecutionControl::ExecutionControl(
-   ExecutionConfiguration &exec_config )
+   SpaceFOM::ExecutionConfiguration &exec_config )
    : TrickHLA::ExecutionControlBase( exec_config ),
      designated_late_joiner( false ),
      pacing( false ),
