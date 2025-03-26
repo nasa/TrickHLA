@@ -1254,8 +1254,7 @@ void ExecutionControl::receive_interaction(
                string handle;
                StringUtilities::to_string( handle, theInteraction );
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::receive_interaction(FREEZE):%d ID:%s, HLA-time:%G\n",
-                                __LINE__, handle.c_str(), _time.get_time_in_seconds(),
-                                '\n' );
+                                __LINE__, handle.c_str(), _time.get_time_in_seconds() );
             } else {
                string handle;
                StringUtilities::to_string( handle, theInteraction );

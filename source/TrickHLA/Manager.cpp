@@ -463,8 +463,7 @@ void Manager::send_init_data(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          message_publish( MSG_NORMAL, "Manager::send_init_data():%d Late joining \
 federate so the data will not be sent for '%s'.\n",
-                          __LINE__, instance_name,
-                          '\n' );
+                          __LINE__, instance_name );
       }
       return;
    }
@@ -897,8 +896,7 @@ void Manager::object_instance_name_reservation_succeeded(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::object_instance_name_reservation_succeeded():%d \
 RESERVED Object Instance Name '%s'\n",
-                             __LINE__, trickhla_obj->get_name(),
-                             '\n' );
+                             __LINE__, trickhla_obj->get_name() );
          }
       }
    }
@@ -2263,11 +2261,6 @@ void Manager::provide_attribute_update(
  */
 void Manager::send_cyclic_and_requested_data()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::send_cyclic_and_requested_data():%d\n",
-                       __LINE__ );
-   }
-
    // Current time values.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
    int64_t const granted_base_time     = get_granted_base_time();
@@ -2354,8 +2347,7 @@ void Manager::send_cyclic_and_requested_data()
 void Manager::receive_cyclic_data()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::receive_cyclic_data():%d\n",
-                       __LINE__ );
+      message_publish( MSG_NORMAL, "Manager::receive_cyclic_data():%d\n", __LINE__ );
    }
 
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
@@ -2387,8 +2379,7 @@ void Manager::process_interactions()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::process_interactions():%d\n",
-                       __LINE__ );
+      message_publish( MSG_NORMAL, "Manager::process_interactions():%d\n", __LINE__ );
    }
 
    // Process all the interactions in the queue.
@@ -2480,8 +2471,7 @@ void Manager::receive_interaction(
                string handle;
                StringUtilities::to_string( handle, theInteraction );
                message_publish( MSG_NORMAL, "Manager::receive_interaction():%d ID:%s, HLA-time:%G\n",
-                                __LINE__, handle.c_str(), _time.get_time_in_seconds(),
-                                '\n' );
+                                __LINE__, handle.c_str(), _time.get_time_in_seconds() );
             } else {
                string handle;
                StringUtilities::to_string( handle, theInteraction );
@@ -3218,22 +3208,19 @@ void Manager::print_checkpoint_interactions()
              << "check_interactions[" << i << "].interaction_type       = '"
              << check_interactions[i].interaction_type << "'\n"
              << "check_interactions[" << i << "].parm_items_count       = "
-             << check_interactions[i].parm_items_count
-             << '\n';
+             << check_interactions[i].parm_items_count << '\n';
          for ( int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
             msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
                 << check_interactions[i].parm_items[k].index << '\n'
                 << "check_interactions[" << i << "].parm_items[" << k << "].size     = "
-                << check_interactions[i].parm_items[k].size
-                << '\n';
+                << check_interactions[i].parm_items[k].size << '\n';
          }
          msg << "check_interactions[" << i << "].user_supplied_tag_size = "
              << check_interactions[i].user_supplied_tag_size << '\n'
              << "check_interactions[" << i << "].order_is_TSO           = "
              << check_interactions[i].order_is_TSO << '\n'
              << "check_interactions[" << i << "].time                   = "
-             << check_interactions[i].time.get_base_time()
-             << '\n';
+             << check_interactions[i].time.get_base_time() << '\n';
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

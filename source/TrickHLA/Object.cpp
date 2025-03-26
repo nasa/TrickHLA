@@ -1838,8 +1838,7 @@ void Object::send_requested_data(
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                message_publish( MSG_NORMAL, "Object::send_requested_data():%d \
 Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.\n",
-                                __LINE__, get_name(), update_time.get_time_in_seconds(),
-                                '\n' );
+                                __LINE__, get_name(), update_time.get_time_in_seconds() );
             }
             // Send as Timestamp Order
             rti_amb->updateAttributeValues( this->instance_handle,
@@ -2100,8 +2099,7 @@ void Object::send_cyclic_and_requested_data(
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                   message_publish( MSG_NORMAL, "Object::send_cyclic_and_requested_data():%d \
 Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.\n",
-                                   __LINE__, get_name(), update_time.get_time_in_seconds(),
-                                   '\n' );
+                                   __LINE__, get_name(), update_time.get_time_in_seconds() );
                }
 
                // Send as Timestamp Order
@@ -2380,8 +2378,7 @@ void Object::send_zero_lookahead_and_requested_data(
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                   message_publish( MSG_NORMAL, "Object::send_zero_lookahead_and_requested_data():%d \
 Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.\n",
-                                   __LINE__, get_name(), update_time.get_time_in_seconds(),
-                                   '\n' );
+                                   __LINE__, get_name(), update_time.get_time_in_seconds() );
                }
 
                // Send as Timestamp Order
@@ -2885,8 +2882,7 @@ void Object::receive_cyclic_data()
       do {
 #if THLA_OBJ_DEBUG_RECEIVE
          message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d for '%s' at HLA-logical-time=%G\n",
-                          __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                          '\n' );
+                          __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
 #endif
 
          // Unpack the buffer and copy the values to the object attributes.
@@ -2930,15 +2926,13 @@ void Object::receive_cyclic_data()
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 }
@@ -2966,8 +2960,7 @@ void Object::receive_zero_lookahead_data()
 
 #if THLA_OBJ_DEBUG_RECEIVE
       message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
 #endif
 
       // Unpack the buffer and copy the values to the object attributes.
@@ -3011,15 +3004,13 @@ void Object::receive_zero_lookahead_data()
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 }
@@ -3047,8 +3038,7 @@ void Object::receive_blocking_io_data()
 
 #if THLA_OBJ_DEBUG_RECEIVE
       message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
 #endif
 
       // Unpack the buffer and copy the values to the object attributes.
@@ -3092,15 +3082,13 @@ void Object::receive_blocking_io_data()
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 }
@@ -3865,8 +3853,7 @@ void Object::pull_ownership()
 pull Attribute '%s'->'%s' of object '%s' for time %G because it is either already \
 owned or is not configured to be published.\n",
                                       __LINE__, get_FOM_name(),
-                                      attr->get_FOM_name(), get_name(), pull_time,
-                                      '\n' );
+                                      attr->get_FOM_name(), get_name(), pull_time );
                   }
                }
             }
@@ -3998,8 +3985,7 @@ void Object::pull_ownership_at_init(
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d Can not \
 push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n",
-                                __LINE__, get_FOM_name(), attr->get_FOM_name(), get_name(),
-                                '\n' );
+                                __LINE__, get_FOM_name(), attr->get_FOM_name(), get_name() );
             }
          }
       }
@@ -4043,8 +4029,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::pull_ownership_at_init():%d Unable to pull attributes of \
 object '%s' because of error: '%s'\n",
-                          __LINE__, get_name(), rti_err_msg.c_str(),
-                          '\n' );
+                          __LINE__, get_name(), rti_err_msg.c_str() );
       }
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4444,8 +4429,7 @@ calling negotiated_attribute_ownership_divestiture()\n",
 #if THLA_OBJ_OWNERSHIP_DEBUG
       message_publish( MSG_NORMAL, "====== Object::ownership_divestiture_pthread_function():%d \
 returned from calling negotiated_attribute_ownership_divestiture()\n",
-                       __LINE__,
-                       '\n' );
+                       __LINE__ );
 #endif
 
       delete divest_thread_args;
@@ -4790,8 +4774,7 @@ void Object::push_ownership_at_init(
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                message_publish( MSG_NORMAL, "Object::push_ownership_at_init():%d Can not \
 push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n",
-                                __LINE__, get_FOM_name(), attr->get_FOM_name(), get_name(),
-                                '\n' );
+                                __LINE__, get_FOM_name(), attr->get_FOM_name(), get_name() );
             }
          }
       }
@@ -5398,8 +5381,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
 rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an RTIinternalError: %s\n",
-                          __LINE__, attributes[i].get_FOM_name(), rti_err_msg.c_str(),
-                          '\n' );
+                          __LINE__, attributes[i].get_FOM_name(), rti_err_msg.c_str() );
       }
 
       // Macro to restore the saved FPU Control Word register value.

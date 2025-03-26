@@ -3152,8 +3152,7 @@ void Federate::set_time_advance_granted(
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::set_time_advance_granted():%d Granted-time:%f, Requested-time:%f.\n",
-                          __LINE__, this->HLA_time, requested_time.get_time_in_seconds(),
-                          '\n' );
+                          __LINE__, this->HLA_time, requested_time.get_time_in_seconds() );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -4789,8 +4788,7 @@ void Federate::announce_data_sent()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::announce_data_sent():%d Thread:%d Granted HLA-time:%.12G seconds.\n",
-                       __LINE__, exec_get_process_id(), granted_time.get_time_in_seconds(),
-                       '\n' );
+                       __LINE__, exec_get_process_id(), granted_time.get_time_in_seconds() );
    }
 
    // Delegate to the Trick child thread coordinator.
@@ -5267,8 +5265,7 @@ simulation to be slightly different in the 7th or 8th decimal place. Please \
 contact the TrickHLA team for support.\n",
                           __FILE__, __LINE__,
                           ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),
-                          ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ),
-                          '\n' );
+                          ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ) );
       }
 #endif
    }
