@@ -342,14 +342,14 @@ void DynamicalEntityBase::pack()
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
              << " been called!\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
       msg << "DynamicalEntityBase::pack():" << __LINE__ << '\n';
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Call the PhysicalEntityBase pack routine.
@@ -367,7 +367,7 @@ void DynamicalEntityBase::unpack()
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
              << " ERROR: The initialize() function has not been called!\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Print out debug information if desired.
@@ -375,7 +375,7 @@ void DynamicalEntityBase::unpack()
       ostringstream msg;
       msg << "DynamicalEntityBase::unpack():" << __LINE__ << '\n'
           << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << '\n';
-      send_hs( stderr, msg.str().c_str() );
+      message_publish( MSG_WARNING, msg.str().c_str() );
    }
 
    // Call the PhysicalEntityBase unpack routine.

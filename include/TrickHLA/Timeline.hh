@@ -77,13 +77,6 @@ class Timeline
    //-----------------------------------------------------------------
    // These are virtual functions for the class.
    //-----------------------------------------------------------------
-   /*! @brief Update the clock tics per second resolution of this clock
-    *  to match the Trick executive resolution. */
-   virtual void update_clock_resolution()
-   {
-      return;
-   }
-
    /*! @brief Get the elapsed time for this timeline in seconds from epoch.
     *  @return Returns the elapsed time from epoch in seconds. */
    virtual double const get_elapsed_time()
@@ -113,10 +106,10 @@ class Timeline
       double const min_resolution = get_min_resolution();
       if ( min_resolution > DBL_MIN ) {
          // Compute the time in tics, which truncates to a fixed-point number.
-         long long const time_tics = value / min_resolution;
+         long long const time_tics = (long long)( value / min_resolution );
 
          // Convert to a time in seconds with the minimum time resolution.
-         return ( (double)time_tics * min_resolution );
+         return (double)( time_tics * min_resolution );
       }
       return ( value );
    }

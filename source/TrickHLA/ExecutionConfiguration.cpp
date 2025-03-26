@@ -128,16 +128,16 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         send_hs( stderr, "ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
+                          __LINE__ );
       }
       required_federates = NULL;
    }
 
    if ( owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
-         send_hs( stderr, "ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'owner'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'owner'\n",
+                          __LINE__ );
       }
       owner = NULL;
    }
@@ -217,8 +217,8 @@ void ExecutionConfiguration::configure()
    // Release the memory used by the required_federates c-string.
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         send_hs( stderr, "ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
+                          __LINE__ );
       }
       required_federates = NULL;
    }
@@ -301,7 +301,7 @@ void ExecutionConfiguration::pack()
           << "\tnum_federates:" << num_federates << '\n'
           << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
           << "===================================================\n";
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
 
@@ -338,7 +338,7 @@ void ExecutionConfiguration::unpack()
           << "\tnum_federates:" << num_federates << '\n'
           << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
           << "===================================================\n";
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Mark that we have an ExCO update with pending changes.
@@ -368,6 +368,6 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t required_federates:    '" << required_federates << "'\n"
           << "\t owner:                 '" << owner << "'\n"
           << "=============================================================\n";
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

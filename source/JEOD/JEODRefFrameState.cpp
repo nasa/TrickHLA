@@ -204,7 +204,7 @@ void JEODRefFrameState::pack_from_working_data()
           << ":" << time_tt->calendar_minute
           << ":" << time_tt->calendar_second << '\n'
           << '\n';
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
 
@@ -264,6 +264,6 @@ void JEODRefFrameState::unpack_into_working_data()
           << ":" << time_tt->calendar_minute
           << ":" << time_tt->calendar_second << '\n'
           << '\n';
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

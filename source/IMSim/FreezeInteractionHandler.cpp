@@ -113,7 +113,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
              << " Interaction class. Cannot send out an interaction in"
              << " order for the rest of the federates to participate in a"
              << " federation freeze.\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       return;
    }
 
@@ -123,7 +123,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
        << " ===> debug <===" << endl
        << " granted-time:" << interaction->get_granted_time().get_time_in_seconds() << endl
        << " lookahead-time:" << interaction->get_lookahead().get_time_in_seconds() << endl;
-   send_hs( stdout, msg.str().c_str() );
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 #endif
 
    /// We will calculate two important times related to the freeze scenario time:
@@ -160,8 +160,8 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    /// The wait for Time Advance Grant will be at the top of the next frame.
    if ( !interaction->get_federate()->is_time_advance_granted() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).\n",
-                  __LINE__ );
+         message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).\n",
+                          __LINE__ );
       }
       interaction->get_federate()->wait_for_time_advance_grant();
    }
@@ -185,9 +185,9 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
       interaction_hla_time += lookahead;
 
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
+         message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Late joining federate, Freeze Interaction will now be sent for HLA time:%lf \n",
-                  __LINE__, interaction_hla_time.get_time_in_seconds() );
+                          __LINE__, interaction_hla_time.get_time_in_seconds() );
       }
    }
 
@@ -215,7 +215,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf \n",
                  << "  Freeze federation at HLA time:" << freeze_hla_time << '\n'
                  << "  Freeze Interaction sent for HLA time:" << interaction_hla_time.get_time_in_seconds() << '\n'
                  << "  Current granted HLA time:" << granted.get_time_in_seconds() << '\n';
-         send_hs( stdout, infomsg.str().c_str() );
+         message_publish( MSG_NORMAL, infomsg.str().c_str() );
       }
    }
 
@@ -226,11 +226,11 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf \n",
          freeze_hla_time = freeze_t + lookahead.get_time_in_seconds();
 
          if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
+            message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Freeze HLA time is not an integer multiple of the lookahead time:%lf, using \
 new freeze HLA time:%lf \n",
-                     __LINE__, lookahead.get_time_in_seconds(),
-                     freeze_hla_time );
+                             __LINE__, lookahead.get_time_in_seconds(),
+                             freeze_hla_time );
          }
       }
    }
@@ -260,14 +260,14 @@ new freeze HLA time:%lf \n",
               << "  Federation Freeze HLA time:" << freeze_hla_time << " ("
               << freeze_hla_time << " " << Int64BaseTime::get_units()
               << ")\n";
-      send_hs( stdout, infomsg.str().c_str() );
+      message_publish( MSG_NORMAL, infomsg.str().c_str() );
 
       // Inform the Federate the scenario time to freeze the simulation on.
       execution_control->add_freeze_scenario_time( time );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf \n",
-                  __LINE__, time );
+         message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf \n",
+                          __LINE__, time );
       }
    } else {
       // The interaction was Not sent.
@@ -281,7 +281,7 @@ new freeze HLA time:%lf \n",
               << "  Federation Freeze HLA time:" << freeze_hla_time << " ("
               << freeze_hla_time << " " << Int64BaseTime::get_units()
               << ")\n";
-      send_hs( stdout, infomsg.str().c_str() );
+      message_publish( MSG_NORMAL, infomsg.str().c_str() );
    }
 }
 
@@ -294,7 +294,7 @@ void FreezeInteractionHandler::receive_interaction(
        << "  Freeze scenario-time:" << time << " ("
        << Int64BaseTime::to_base_time( time ) << " " << Int64BaseTime::get_units()
        << ")\n";
-   send_hs( stdout, msg.str().c_str() );
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 
    // if the interaction was not initialized into the parent class, get out of here...
    if ( interaction == NULL ) {
@@ -304,7 +304,7 @@ void FreezeInteractionHandler::receive_interaction(
              << " 'interaction' was not initialized to callback an Interaction"
              << " class. Cannot send the time to the Interaction in order for it to"
              << " participate in a federation freeze.\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_NORMAL, errmsg.str().c_str() );
    } else {
       // Inform the Federate the scenario time to freeze the simulation on.
       execution_control->add_freeze_scenario_time( time );
@@ -316,7 +316,7 @@ void FreezeInteractionHandler::receive_interaction(
               << " ===> debug <===" << endl
               << " granted-time:" << interaction->get_granted_time().get_time_in_seconds() << endl
               << " lookahead-time:" << interaction->get_lookahead().get_time_in_seconds() << '\n';
-      send_hs( stdout, infomsg.str().c_str() );
+      message_publish( MSG_NORMAL, infomsg.str().c_str() );
 #endif
    }
 }

@@ -118,8 +118,8 @@ Attribute::~Attribute()
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "Attribute::~Attribute():%d WARNING failed to delete Trick Memory for 'buffer'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "Attribute::~Attribute():%d WARNING failed to delete Trick Memory for 'buffer'\n",
+                          __LINE__ );
       }
       buffer          = NULL;
       buffer_capacity = 0;
@@ -225,7 +225,7 @@ void Attribute::initialize(
                 << " WARNING: FOM Object Attribute '"
                 << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                 << trick_name << "' has a 'config' value of CONFIG_TYPE_NONE.\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
 
@@ -522,7 +522,7 @@ void Attribute::initialize(
              << "' has an unexpected size of zero bytes! Make sure your simulation"
              << " variable is properly initialized before the initialize()"
              << " function is called.\n";
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
 
@@ -560,7 +560,7 @@ void Attribute::initialize(
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
@@ -634,7 +634,7 @@ void Attribute::determine_cycle_ratio(
              << "  core_job_cycle_time:" << core_job_cycle_time << " seconds\n"
              << "  cyle_time:" << this->cycle_time << " seconds\n"
              << "  cycle_ratio:" << this->cycle_ratio << '\n';
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
 }
@@ -677,7 +677,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
                    << " size or type.\n";
-            send_hs( stderr, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
             return false;
@@ -710,7 +710,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " FOM. If you are using Lag Compensation one possible cause of"
                    << " this problem is that your lag compensation variables are not"
                    << " the correct size or type.\n";
-            send_hs( stderr, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // Just return if we have a data size mismatch. This will allow us
             // to continue to run even though the other federate is sending us
@@ -772,7 +772,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
                    << " variables are not the correct size or type.\n";
-            send_hs( stderr, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
             return false;
@@ -803,7 +803,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " you are using Lag Compensation one possible cause of this"
                    << " problem is that your lag compensation variables are not the"
                    << " correct size or type.\n";
-            send_hs( stderr, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
             return false;
@@ -822,8 +822,8 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-      send_hs( stdout, "Attribute::extract_data():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
-               __LINE__, get_FOM_name(), get_trick_name() );
+      message_publish( MSG_NORMAL, "Attribute::extract_data():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
+                       __LINE__, get_FOM_name(), get_trick_name() );
    }
    if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       print_buffer();
@@ -980,7 +980,7 @@ void Attribute::calculate_size_and_number_of_items()
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    return;
@@ -1073,7 +1073,7 @@ void Attribute::pack_attribute_buffer()
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Don't pack the buffer if the attribute is not locally owned. Otherwise this will
@@ -1085,7 +1085,7 @@ void Attribute::pack_attribute_buffer()
              << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
              << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
              << " Skipping pack because attribute is not locally owned!\n";
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
       return;
    }
@@ -1120,7 +1120,7 @@ void Attribute::pack_attribute_buffer()
                 << "================== ATTRIBUTE ENCODE ==================================\n"
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')\n";
-            send_hs( stdout, msg.str().c_str() );
+            message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1141,7 +1141,7 @@ void Attribute::pack_attribute_buffer()
                 << "================== ATTRIBUTE ENCODE ==================================\n"
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')\n";
-            send_hs( stdout, msg.str().c_str() );
+            message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1167,7 +1167,7 @@ void Attribute::pack_attribute_buffer()
                    << "================== ATTRIBUTE ENCODE ==================================\n"
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name
                    << "')\n";
-               send_hs( stdout, msg.str().c_str() );
+               message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
          } else {
@@ -1208,7 +1208,7 @@ void Attribute::pack_attribute_buffer()
                    << "================== ATTRIBUTE ENCODE ==================================\n"
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name
                    << "')\n";
-               send_hs( stdout, msg.str().c_str() );
+               message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
          }
@@ -1250,7 +1250,7 @@ void Attribute::pack_attribute_buffer()
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg2 << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
       }
-      send_hs( stdout, msg2.str().c_str() );
+      message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 }
 
@@ -1265,7 +1265,7 @@ void Attribute::unpack_attribute_buffer()
              << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
              << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
              << " Skipping unpack of attribute buffer because the attribute is locally owned.\n";
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
       return;
    }
@@ -1296,7 +1296,7 @@ void Attribute::unpack_attribute_buffer()
                 << "================== ATTRIBUTE DECODE ==================================\n"
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')\n";
-            send_hs( stdout, msg.str().c_str() );
+            message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1315,7 +1315,7 @@ void Attribute::unpack_attribute_buffer()
                 << "================== ATTRIBUTE DECODE =============================\n"
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')\n";
-            send_hs( stdout, msg.str().c_str() );
+            message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1343,7 +1343,7 @@ void Attribute::unpack_attribute_buffer()
                    << "================== ATTRIBUTE DECODE ==================================\n"
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name << "')"
                    << " value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
-               send_hs( stdout, msg.str().c_str() );
+               message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
 
@@ -1380,7 +1380,7 @@ void Attribute::unpack_attribute_buffer()
                       << "================== ATTRIBUTE DECODE ==================================\n"
                       << " attribute '" << FOM_name << "' (trick name '" << trick_name
                       << "')\n";
-                  send_hs( stdout, msg.str().c_str() );
+                  message_publish( MSG_NORMAL, msg.str().c_str() );
                   print_buffer();
                }
             }
@@ -1423,7 +1423,7 @@ void Attribute::unpack_attribute_buffer()
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
 
@@ -1748,9 +1748,9 @@ void Attribute::decode_opaque_data_from_buffer() // RETURN: -- None.
 
       // Do a sanity check on the decoded length, it should not be negative.
       if ( decoded_length < 0 ) {
-         send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
+         message_publish( MSG_WARNING, "Attribute::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.\n",
-                  __LINE__, FOM_name, decoded_length );
+                          __LINE__, FOM_name, decoded_length );
          decoded_length = 0;
       }
 
@@ -1763,10 +1763,10 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
          data_buff_size = 0;
       }
       if ( decoded_length > data_buff_size ) {
-         send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
+         message_publish( MSG_WARNING, "Attribute::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.\n",
-                  __LINE__, FOM_name, decoded_length, data_buff_size );
+                          __LINE__, FOM_name, decoded_length, data_buff_size );
          decoded_length = data_buff_size;
       }
 
@@ -2414,10 +2414,10 @@ void Attribute::decode_string_from_buffer() // RETURN: -- None.
             // Do a sanity check on the decoded length, it should not be negative.
             int length;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded length %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, ( ( trick_name != NULL ) ? trick_name : "NULL" ),
-                        decoded_count );
+                                __LINE__, FOM_name, ( ( trick_name != NULL ) ? trick_name : "NULL" ),
+                                decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2440,10 +2440,10 @@ WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded 
                   data_buff_size = size;
                }
                if ( length > data_buff_size ) {
-                  send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.\n",
-                           __LINE__, FOM_name, length, data_buff_size );
+                                   __LINE__, FOM_name, length, data_buff_size );
                   length = data_buff_size;
                }
             }
@@ -2522,9 +2522,9 @@ size %d, will use the data buffer size instead.\n",
 
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -2533,9 +2533,9 @@ WARNING: For ENCODING_UNICODE_STRING attribute '%s', decoded element count %d < 
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for attribute '%s'!\n",
-                        __LINE__, num_elements, num_items, FOM_name );
+                                __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -2574,10 +2574,10 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
                // Do a sanity check on the decoded length, it should not be negative.
                int length;
                if ( decoded_count < 0 ) {
-                  send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
 length %d < 0, will use 0 instead.\n",
-                           __LINE__, i, FOM_name, decoded_count );
+                                   __LINE__, i, FOM_name, decoded_count );
                   length = 0;
                } else {
                   length = decoded_count;
@@ -2586,11 +2586,11 @@ length %d < 0, will use 0 instead.\n",
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
                if ( length > data_buff_size ) {
-                  send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.\n",
-                           __LINE__, i, FOM_name, length, data_buff_size,
-                           '\n' );
+                                   __LINE__, i, FOM_name, length, data_buff_size,
+                                   '\n' );
                   length = data_buff_size;
                }
 
@@ -2697,9 +2697,9 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             // Do a sanity check on the decoded length, it should not be negative.
             int length;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2715,10 +2715,10 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will u
             }
 
             if ( length > data_buff_size ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.\n",
-                        __LINE__, FOM_name, length, data_buff_size );
+                                __LINE__, FOM_name, length, data_buff_size );
                length = data_buff_size;
             }
 
@@ -2792,9 +2792,9 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buff
 
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -2803,9 +2803,9 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded element count %d < 0,
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for attribute '%s'!\n",
-                        __LINE__, num_elements, num_items, FOM_name );
+                                __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -2837,10 +2837,10 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
                // Do a sanity check on the decoded length, it should not be negative.
                int length;
                if ( decoded_count < 0 ) {
-                  send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
 length %d < 0, will use 0 instead.\n",
-                           __LINE__, i, FOM_name, decoded_count );
+                                   __LINE__, i, FOM_name, decoded_count );
                   length = 0;
                } else {
                   length = decoded_count;
@@ -2849,11 +2849,11 @@ length %d < 0, will use 0 instead.\n",
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
                if ( length > data_buff_size ) {
-                  send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.\n",
-                           __LINE__, i, FOM_name, length, data_buff_size,
-                           '\n' );
+                                   __LINE__, i, FOM_name, length, data_buff_size,
+                                   '\n' );
                   length = data_buff_size;
                }
 
@@ -2958,9 +2958,9 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             // Do a sanity check on the decoded length, it should not be negative.
             int length;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2975,10 +2975,10 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
                data_buff_size = 0;
             }
             if ( length > data_buff_size ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.\n",
-                        __LINE__, FOM_name, length, data_buff_size );
+                                __LINE__, FOM_name, length, data_buff_size );
                length = data_buff_size;
             }
 
@@ -3042,9 +3042,9 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
 
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded element count %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -3053,9 +3053,9 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded element count %d < 0, 
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
-               send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for attribute '%s'!\n",
-                        __LINE__, num_elements, num_items, FOM_name );
+                                __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -3087,10 +3087,10 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
                // Do a sanity check on the decoded length, it should not be negative.
                int length;
                if ( decoded_count < 0 ) {
-                  send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, attribute '%s', the decoded \
 length %d < 0, will use 0 instead.\n",
-                           __LINE__, i, FOM_name, decoded_count );
+                                   __LINE__, i, FOM_name, decoded_count );
                   length = 0;
                } else {
                   length = decoded_count;
@@ -3099,10 +3099,10 @@ length %d < 0, will use 0 instead.\n",
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
                if ( length > data_buff_size ) {
-                  send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, attribute '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.\n",
-                           __LINE__, i, FOM_name, length, data_buff_size );
+                                   __LINE__, i, FOM_name, length, data_buff_size );
                   length = data_buff_size;
                }
 
@@ -3289,7 +3289,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
              << trick_name << "' has an unexpected size of zero bytes! Make"
              << " sure your simulation variable is properly initialized before"
              << " this initialize() function is called.\n";
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
       return;
    }
@@ -3582,5 +3582,5 @@ void Attribute::print_buffer() const
          msg << '\n';
       }
    }
-   send_hs( stdout, msg.str().c_str() );
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 }

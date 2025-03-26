@@ -76,8 +76,8 @@ OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'\n",
+                          __LINE__ );
       }
       buffer   = NULL;
       capacity = 0;
@@ -156,8 +156,8 @@ void OpaqueBuffer::push_to_buffer(
    EncodingEnum const encoding )
 {
    if ( size == 0 ) {
-      send_hs( stderr, "OpaqueBuffer::push_to_buffer():%d WARNING: Unexpected zero number of bytes to push into buffer!\n",
-               __LINE__ );
+      message_publish( MSG_WARNING, "OpaqueBuffer::push_to_buffer():%d WARNING: Unexpected zero number of bytes to push into buffer!\n",
+                       __LINE__ );
       return;
    }
 
@@ -178,7 +178,7 @@ void OpaqueBuffer::push_to_buffer(
              << " position " << push_pos << ", which exceeds the buffer capacity"
              << " by " << ( ( push_pos + size ) - capacity ) << " bytes! Resizing the"
              << " buffer to accommodate the data.\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + size );
    }
 
@@ -190,7 +190,7 @@ void OpaqueBuffer::push_to_buffer(
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
              << ", or ENCODING_NONE:" << ENCODING_NONE << '\n';
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Copy the source data into the buffer and do a byte-swap if needed.
@@ -210,8 +210,8 @@ void OpaqueBuffer::pull_from_buffer(
    EncodingEnum const encoding )
 {
    if ( size == 0 ) {
-      send_hs( stderr, "OpaqueBuffer::pull_from_buffer():%d WARNING: Unexpected zero number of bytes to pull from buffer!\n",
-               __LINE__ );
+      message_publish( MSG_WARNING, "OpaqueBuffer::pull_from_buffer():%d WARNING: Unexpected zero number of bytes to pull from buffer!\n",
+                       __LINE__ );
       return;
    }
 
@@ -242,7 +242,7 @@ void OpaqueBuffer::pull_from_buffer(
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
              << ", or ENCODING_NONE:" << ENCODING_NONE << '\n';
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Copy the data from the buffer into the destination and do a byte-swap
@@ -268,7 +268,7 @@ void OpaqueBuffer::push_pad_to_buffer(
              << " buffer at position " << push_pos << ", which exceeds the buffer"
              << " capacity by " << ( ( push_pos + pad_size ) - capacity ) << " bytes!"
              << " Resizing the buffer to accommodate the data.\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + pad_size );
    }
 

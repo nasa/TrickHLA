@@ -100,7 +100,7 @@ void ParameterItem::clear()
 {
    if ( data != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( data ) ) ) {
-         send_hs( stderr, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
+         message_publish( MSG_WARNING, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
       }
       data  = NULL;
       size  = 0;

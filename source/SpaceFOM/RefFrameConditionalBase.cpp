@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
@@ -134,9 +134,9 @@ bool RefFrameConditionalBase::should_send(
          if ( prev_data.name != NULL ) {
             if ( strcmp( frame.packing_data.name, prev_data.name ) ) {
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.name ) ) ) {
-                  send_hs( stderr,
-                           "RefFrameConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'\n",
-                           __LINE__ );
+                  message_publish( MSG_WARNING,
+                                   "RefFrameConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'\n",
+                                   __LINE__ );
                }
                // Update the previous value.
                prev_data.name = trick_MM->mm_strdup( frame.packing_data.name );
@@ -164,9 +164,9 @@ bool RefFrameConditionalBase::should_send(
          if ( prev_data.parent_name != NULL ) {
             if ( strcmp( frame.packing_data.parent_name, prev_data.parent_name ) ) {
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.parent_name ) ) ) {
-                  send_hs( stderr,
-                           "RefFrameConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_name'\n",
-                           __LINE__ );
+                  message_publish( MSG_WARNING,
+                                   "RefFrameConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_name'\n",
+                                   __LINE__ );
                }
                // Update the previous value.
                prev_data.parent_name = trick_MM->mm_strdup( frame.packing_data.parent_name );

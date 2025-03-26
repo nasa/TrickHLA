@@ -98,18 +98,16 @@ double const TSyncCTETimeline::get_min_resolution()
  * @brief Update the clock tics per second resolution of this clock
  *  to match the Trick executive resolution.
  */
-void TSyncCTETimeline::update_clock_resolution()
+void TSyncCTETimeline::set_clock_tics_per_sec(
+   int const tics_per_sec )
 {
    // Make sure resolution of this clock can meet the time resolution
    // needed by the Trick executive. Limit the resolution to 1-nanosecond,
    // which this clock supports.
-   this->clock_tics_per_sec = ( exec_get_time_tic_value() <= 1000000000LL )
-                                 ? exec_get_time_tic_value()
-                                 : 1000000000ULL;
+   this->clock_tics_per_sec = ( tics_per_sec > 0 ) ? tics_per_sec : 1;
 
-   // Update the sim time ratio given the Trick executive time resolution
-   // and the updated clock_tics_per_sec may have changed.
-   calc_sim_time_ratio( exec_get_time_tic_value() );
+   // Update the sim time ratio given the Trick executive time resolution.
+   calc_sim_time_ratio( tics_per_sec );
 }
 
 /*!
@@ -126,7 +124,7 @@ double const TSyncCTETimeline::get_time()
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::get_time():" << __LINE__
              << " ERROR: '" << tsync_strerror( err ) << "'\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
       return 0;
    }
 
@@ -141,7 +139,7 @@ int TSyncCTETimeline::clock_init()
 {
    // Make sure the CTE clock resolution is updated to meet
    // the time resolution needed by the Trick executive.
-   update_clock_resolution();
+   set_clock_tics_per_sec( exec_get_time_tic_value() );
 
    TSYNC_ERROR err = TSYNC_open( &board_handle, full_device_name.c_str() );
    if ( err != TSYNC_SUCCESS ) {
@@ -149,7 +147,7 @@ int TSyncCTETimeline::clock_init()
       errmsg << "TSyncCTETimeline::clock_init():" << __LINE__
              << " ERROR: Could not open TSync CTE card '"
              << full_device_name << "' [" << tsync_strerror( err ) << "]\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
       return 1;
    }
 
@@ -172,7 +170,7 @@ long long TSyncCTETimeline::wall_clock_time()
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::wall_clock_time():" << __LINE__
              << " ERROR: '" << tsync_strerror( err ) << "'\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
       return 0;
    }
 
@@ -192,7 +190,7 @@ int TSyncCTETimeline::clock_stop()
       errmsg << "TSyncCTETimeline::clock_stop():" << __LINE__
              << " ERROR: Could not close TSync CTE card '"
              << full_device_name << "' [" << rc << "]\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
    }
    return 0;
 }

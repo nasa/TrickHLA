@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h" // for send_hs
 
 namespace TrickHLAModel
 {

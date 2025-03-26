@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 
 // TrickHLA include files
 #include "TrickHLA/Int64Interval.hh"
@@ -297,7 +297,7 @@ class Interaction
    {
       if ( this->FOM_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
-            send_hs( stderr, "Interaction::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n", __LINE__ );
+            message_publish( MSG_WARNING, "Interaction::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n", __LINE__ );
          }
          this->FOM_name = NULL;
       }

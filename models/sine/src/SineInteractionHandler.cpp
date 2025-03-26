@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 
 // Model include files.
 #include "../include/SineInteractionHandler.hh"
@@ -94,11 +94,12 @@ void SineInteractionHandler::send_sine_interaction(
    ostringstream msg;
    msg << "Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" ) << "\" "
        << "Send-count:" << ( send_cnt + 1 );
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 
    if ( message != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'\n",
+                          __LINE__ );
       }
    }
    message = trick_MM->mm_strdup( msg.str().c_str() );
@@ -136,7 +137,8 @@ void SineInteractionHandler::send_sine_interaction(
          string user_supplied_tag_string;
          StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
 
-         cout << "++++SENDING++++ SineInteractionHandler::send_sine_interaction("
+         ostringstream msg2;
+         msg2 << "++++SENDING++++ SineInteractionHandler::send_sine_interaction("
 #if SINE_SEND_INTERACTION_TSO
               << "Timestamp Order):"
 #else
@@ -159,6 +161,7 @@ void SineInteractionHandler::send_sine_interaction(
               << "  time:" << time << '\n'
               << "  year:" << year << '\n'
               << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+         message_publish( MSG_NORMAL, msg2.str().c_str() );
       }
 
       // Update the send count, which is just used for the message in this example.
@@ -168,9 +171,11 @@ void SineInteractionHandler::send_sine_interaction(
       // on and off from a setting in the input file. Use a higher debug level.
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // The interaction was Not sent.
-         cout << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
+         ostringstream msg2;
+         msg2 << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
               << __LINE__ << '\n'
               << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n";
+         message_publish( MSG_NORMAL, msg2.str().c_str() );
       }
    }
 }
@@ -187,16 +192,18 @@ void SineInteractionHandler::receive_interaction(
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      cout << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
-           << __LINE__ << '\n'
-           << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-           << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
-           << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n'
-           << "  user-supplied-tag:'" << user_tag_string << "'\n"
-           << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << '\n'
-           << "  scenario_time:" << get_scenario_time() << '\n'
-           << "  time:" << time << '\n'
-           << "  year:" << year << '\n'
-           << "  receive_cnt:" << receive_cnt << '\n';
+      ostringstream msg;
+      msg << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
+          << __LINE__ << '\n'
+          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+          << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
+          << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n'
+          << "  user-supplied-tag:'" << user_tag_string << "'\n"
+          << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << '\n'
+          << "  scenario_time:" << get_scenario_time() << '\n'
+          << "  time:" << time << '\n'
+          << "  year:" << year << '\n'
+          << "  receive_cnt:" << receive_cnt << '\n';
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

@@ -720,7 +720,7 @@ bool const SyncPointList::wait_for_announced(
          ostringstream message;
          message << "SyncPointList::wait_for_announced():" << __LINE__
                  << " Sync-point: " << sp->to_string() << '\n';
-         send_hs( stdout, message.str().c_str() );
+         message_publish( MSG_NORMAL, message.str().c_str() );
       }
 
       // Always check to see is a shutdown was received.
@@ -770,7 +770,7 @@ bool const SyncPointList::wait_for_announced(
       ostringstream message;
       message << "SyncPointList::wait_for_announced():" << __LINE__
               << " Sync-point announced: " << sp->to_string() << '\n';
-      send_hs( stdout, message.str().c_str() );
+      message_publish( MSG_NORMAL, message.str().c_str() );
    }
 
    return announced;
@@ -846,7 +846,7 @@ bool const SyncPointList::achieve_sync_point(
       ostringstream msg;
       msg << "SyncPointList::achieve_sync_point():" << __LINE__
           << " Known Sync-point " << sp->to_string() << '\n';
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    bool achieved = false;
@@ -899,7 +899,7 @@ bool const SyncPointList::achieve_sync_point(
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " Sync-point '" << label_str
                 << "' has already been achieved with the RTI!\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
 
       achieved = true;
@@ -914,7 +914,7 @@ bool const SyncPointList::achieve_sync_point(
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " Sync-point '" << label_str
                 << "' has already been synchronized with the RTI!\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
 
       achieved = true;
@@ -927,7 +927,7 @@ bool const SyncPointList::achieve_sync_point(
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " WARNING: Sync-point '" << label_str
                 << "' is registered but has not been announced by the RTI!\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    } else if ( sp->is_known() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -937,7 +937,7 @@ bool const SyncPointList::achieve_sync_point(
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " WARNING: Sync-point '" << label_str
                 << "' is known but has not been registered or announced!\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    } else {
       // Sync-point is unknown.
@@ -948,7 +948,7 @@ bool const SyncPointList::achieve_sync_point(
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " WARNING: Sync-point '" << label_str
                 << "' is unknown!\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
 
@@ -1062,7 +1062,7 @@ bool const SyncPointList::wait_for_synchronized(
          ostringstream msg;
          msg << "SyncPointList::wait_for_synchronized():" << __LINE__
              << " Sync-point '" << label_str << "'\n";
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
       // Critical code section.
@@ -1190,7 +1190,7 @@ void SyncPointList::free_checkpoint()
 {
    if ( this->list_name_chkpt != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->list_name_chkpt ) ) ) {
-         send_hs( stderr, "SyncPointList::free_checkpoint():%d WARNING failed to delete Trick Memory for 'list_name_chkpt'\n", __LINE__ );
+         message_publish( MSG_WARNING, "SyncPointList::free_checkpoint():%d WARNING failed to delete Trick Memory for 'list_name_chkpt'\n", __LINE__ );
       }
       this->list_name_chkpt = NULL;
    }

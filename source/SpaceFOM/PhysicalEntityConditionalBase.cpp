@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
@@ -146,9 +146,9 @@ bool PhysicalEntityConditionalBase::should_send(
          if ( prev_data.name != NULL ) {
             if ( strcmp( entity.pe_packing_data.name, prev_data.name ) ) {
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.name ) ) ) {
-                  send_hs( stderr,
-                           "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'\n",
-                           __LINE__ );
+                  message_publish( MSG_WARNING,
+                                   "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'\n",
+                                   __LINE__ );
                }
                // Update the previous value.
                prev_data.name = trick_MM->mm_strdup( entity.pe_packing_data.name );
@@ -176,9 +176,9 @@ bool PhysicalEntityConditionalBase::should_send(
          if ( prev_data.type != NULL ) {
             if ( strcmp( entity.pe_packing_data.type, prev_data.type ) ) {
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.type ) ) ) {
-                  send_hs( stderr,
-                           "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.type'\n",
-                           __LINE__ );
+                  message_publish( MSG_WARNING,
+                                   "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.type'\n",
+                                   __LINE__ );
                }
                // Update the previous value.
                prev_data.type = trick_MM->mm_strdup( entity.pe_packing_data.type );
@@ -206,9 +206,9 @@ bool PhysicalEntityConditionalBase::should_send(
          if ( prev_data.status != NULL ) {
             if ( strcmp( entity.pe_packing_data.status, prev_data.status ) ) {
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.status ) ) ) {
-                  send_hs( stderr,
-                           "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.status'\n",
-                           __LINE__ );
+                  message_publish( MSG_WARNING,
+                                   "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.status'\n",
+                                   __LINE__ );
                }
                // Update the previous value.
                prev_data.status = trick_MM->mm_strdup( entity.pe_packing_data.status );
@@ -236,9 +236,9 @@ bool PhysicalEntityConditionalBase::should_send(
          if ( prev_data.parent_frame != NULL ) {
             if ( strcmp( entity.pe_packing_data.parent_frame, prev_data.parent_frame ) ) {
                if ( trick_MM->delete_var( static_cast< void * >( prev_data.parent_frame ) ) ) {
-                  send_hs( stderr,
-                           "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_frame'\n",
-                           __LINE__ );
+                  message_publish( MSG_WARNING,
+                                   "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_frame'\n",
+                                   __LINE__ );
                }
                // Update the previous value.
                prev_data.parent_frame = trick_MM->mm_strdup( entity.pe_packing_data.parent_frame );

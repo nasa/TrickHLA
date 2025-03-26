@@ -45,8 +45,8 @@ MutexProtection::MutexProtection(
    : mutex( mutex_lock )
 {
    if ( mutex->lock() != 0 ) {
-      send_hs( stderr, "MutexProtection::MutexProtection():%d ERROR Locking the MutexLock!\n",
-               __LINE__ );
+      message_publish( MSG_ERROR, "MutexProtection::MutexProtection():%d ERROR Locking the MutexLock!\n",
+                       __LINE__ );
    }
 }
 

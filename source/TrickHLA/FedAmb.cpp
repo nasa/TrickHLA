@@ -147,8 +147,8 @@ void FedAmb::initialize()
    char const *fed_name = federate->get_federate_name();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::initialize():%d Federate:\"%s\"\n",
-               __LINE__, fed_name );
+      message_publish( MSG_NORMAL, "FedAmb::initialize():%d Federate:\"%s\"\n",
+                       __LINE__, fed_name );
    }
 
    if ( ( fed_name == NULL ) || ( *fed_name == '\0' ) ) {
@@ -187,9 +187,9 @@ void FedAmb::connectionLost(
 void FedAmb::reportFederationExecutions(
    RTI1516_NAMESPACE::FederationExecutionInformationVector const &theFederationExecutionInformationList ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::reportFederationExecutions():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::synchronizationPointRegistrationSucceeded(
@@ -198,8 +198,8 @@ void FedAmb::synchronizationPointRegistrationSucceeded(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      send_hs( stdout, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%s'\n",
-               __LINE__, label_str.c_str() );
+      message_publish( MSG_NORMAL, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%s'\n",
+                       __LINE__, label_str.c_str() );
    }
 
    federate->sync_point_registration_succeeded( label );
@@ -212,8 +212,8 @@ void FedAmb::synchronizationPointRegistrationFailed(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      send_hs( stdout, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%s'\n",
-               __LINE__, label_str.c_str() );
+      message_publish( MSG_NORMAL, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%s'\n",
+                       __LINE__, label_str.c_str() );
    }
    federate->sync_point_registration_failed( label, reason );
 }
@@ -225,8 +225,8 @@ void FedAmb::announceSynchronizationPoint(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      send_hs( stdout, "FedAmb::announceSynchronizationPoint():%d Label:'%s'\n",
-               __LINE__, label_str.c_str() );
+      message_publish( MSG_NORMAL, "FedAmb::announceSynchronizationPoint():%d Label:'%s'\n",
+                       __LINE__, label_str.c_str() );
    }
    federate->announce_sync_point( label, theUserSuppliedTag );
 }
@@ -238,8 +238,8 @@ void FedAmb::federationSynchronized(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      send_hs( stdout, "FedAmb::federationSynchronized():%d Label:'%s'\n",
-               __LINE__, label_str.c_str() );
+      message_publish( MSG_NORMAL, "FedAmb::federationSynchronized():%d Label:'%s'\n",
+                       __LINE__, label_str.c_str() );
    }
 
    federate->federation_synchronized( label );
@@ -254,9 +254,9 @@ void FedAmb::federationSynchronized(
       }
       string label_str;
       StringUtilities::to_string( label_str, label );
-      send_hs( stderr, "FedAmb::federationSynchronized():%d ERROR: These \
+      message_publish( MSG_WARNING, "FedAmb::federationSynchronized():%d ERROR: These \
 federate handles failed to synchronize on sync-point '%s': %s\n",
-               __LINE__, label_str.c_str(), strIds.c_str() );
+                       __LINE__, label_str.c_str(), strIds.c_str() );
    }
 }
 
@@ -264,8 +264,8 @@ void FedAmb::initiateFederateSave(
    wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::initiateFederateSave():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d \n",
+                       __LINE__ );
    }
    federate->set_save_name( label );
    federate->set_start_to_save( true );
@@ -278,8 +278,8 @@ void FedAmb::initiateFederateSave(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       Int64Time time;
       time.set( theTime );
-      send_hs( stdout, "FedAmb::initiateFederateSave():%d HLA-time:%.12G seconds.\n",
-               __LINE__, time.get_time_in_seconds() );
+      message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d HLA-time:%.12G seconds.\n",
+                       __LINE__, time.get_time_in_seconds() );
    }
    federate->set_save_name( label );
    federate->set_start_to_save( true );
@@ -288,8 +288,8 @@ void FedAmb::initiateFederateSave(
 void FedAmb::federationSaved() throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationSaved():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::federationSaved():%d \n",
+                       __LINE__ );
    }
    federate->set_start_to_save( false );
    federate->set_save_completed();
@@ -300,8 +300,8 @@ void FedAmb::federationNotSaved(
    RTI1516_NAMESPACE::SaveFailureReason theSaveFailureReason ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationNotSaved():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::federationNotSaved():%d \n",
+                       __LINE__ );
    }
 
    federate->print_save_failure_reason( theSaveFailureReason );
@@ -316,8 +316,8 @@ void FedAmb::federationSaveStatusResponse(
    RTI1516_NAMESPACE::FederateHandleSaveStatusPairVector const &theFederateStatusVector ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationSaveStatusResponse():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::federationSaveStatusResponse():%d \n",
+                       __LINE__ );
    }
    federate->process_requested_federation_save_status( theFederateStatusVector );
 }
@@ -326,8 +326,8 @@ void FedAmb::requestFederationRestoreSucceeded(
    wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::requestFederationRestoreSucceeded():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreSucceeded():%d \n",
+                       __LINE__ );
    }
    federate->set_restore_request_succeeded();
    federate->requested_federation_restore_status( true );
@@ -337,8 +337,8 @@ void FedAmb::requestFederationRestoreFailed(
    wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::requestFederationRestoreFailed():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreFailed():%d \n",
+                       __LINE__ );
    }
    federate->set_restore_request_failed();
    federate->requested_federation_restore_status( false );
@@ -347,8 +347,8 @@ void FedAmb::requestFederationRestoreFailed(
 void FedAmb::federationRestoreBegun() throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationRestoreBegun():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::federationRestoreBegun():%d \n",
+                       __LINE__ );
    }
    federate->set_restore_begun();
 }
@@ -361,8 +361,8 @@ void FedAmb::initiateFederateRestore(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string name;
       StringUtilities::to_string( name, federateName );
-      send_hs( stdout, "FedAmb::initiateFederateRestore():%d for federate '%s'\n",
-               __LINE__, name.c_str() );
+      message_publish( MSG_NORMAL, "FedAmb::initiateFederateRestore():%d for federate '%s'\n",
+                       __LINE__, name.c_str() );
    }
    federate->set_start_to_restore( true );
    federate->set_restore_name( label );
@@ -371,8 +371,8 @@ void FedAmb::initiateFederateRestore(
 void FedAmb::federationRestored() throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationRestored():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::federationRestored():%d \n",
+                       __LINE__ );
    }
    federate->set_restore_completed();
 }
@@ -381,8 +381,8 @@ void FedAmb::federationNotRestored(
    RTI1516_NAMESPACE::RestoreFailureReason theRestoreFailureReason ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationNotRestored():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::federationNotRestored():%d \n",
+                       __LINE__ );
    }
    federate->set_restore_failed();
    federate->print_restore_failure_reason( theRestoreFailureReason );
@@ -392,8 +392,8 @@ void FedAmb::federationRestoreStatusResponse(
    RTI1516_NAMESPACE::FederateRestoreStatusVector const &theFederateStatusVector ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationRestoreStatusResponse():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::federationRestoreStatusResponse():%d \n",
+                       __LINE__ );
    }
    if ( !this->federation_restore_status_response_context_switch ) {
       // process
@@ -411,35 +411,35 @@ void FedAmb::federationRestoreStatusResponse(
 void FedAmb::startRegistrationForObjectClass(
    RTI1516_NAMESPACE::ObjectClassHandle theClass ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::startRegistrationForObjectClass():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::stopRegistrationForObjectClass(
    RTI1516_NAMESPACE::ObjectClassHandle theClass ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::stopRegistrationForObjectClass():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::turnInteractionsOn(
    RTI1516_NAMESPACE::InteractionClassHandle theHandle ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnInteractionsOn():%d \n",
-            federate->get_federate_name(),
-            __LINE__ );
+                    federate->get_federate_name(),
+                    __LINE__ );
 }
 
 void FedAmb::turnInteractionsOff(
    RTI1516_NAMESPACE::InteractionClassHandle theHandle ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnInteractionsOff():%d \n",
-            federate->get_federate_name(),
-            __LINE__ );
+                    federate->get_federate_name(),
+                    __LINE__ );
 }
 
 ////////////////////////////////
@@ -454,8 +454,8 @@ void FedAmb::objectInstanceNameReservationSucceeded(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
          StringUtilities::to_string( instance_name, theObjectInstanceName );
-         send_hs( stdout, "FedAmb::objectInstanceNameReservationSucceeded():%d '%s'\n",
-                  __LINE__, instance_name.c_str() );
+         message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationSucceeded():%d '%s'\n",
+                          __LINE__, instance_name.c_str() );
       }
 
       manager->object_instance_name_reservation_succeeded( theObjectInstanceName );
@@ -470,8 +470,8 @@ void FedAmb::objectInstanceNameReservationFailed(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
          StringUtilities::to_string( instance_name, theObjectInstanceName );
-         send_hs( stdout, "FedAmb::objectInstanceNameReservationFailed():%d FAILED '%s'\n",
-                  __LINE__, instance_name.c_str() );
+         message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationFailed():%d FAILED '%s'\n",
+                          __LINE__, instance_name.c_str() );
       }
 
       manager->object_instance_name_reservation_failed( theObjectInstanceName );
@@ -490,8 +490,8 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string instance_name;
             StringUtilities::to_string( instance_name, *iter );
-            send_hs( stdout, "FedAmb::objectInstanceNameReservationSucceeded():%d '%s'\n",
-                     __LINE__, instance_name.c_str() );
+            message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationSucceeded():%d '%s'\n",
+                             __LINE__, instance_name.c_str() );
          }
 
          manager->object_instance_name_reservation_succeeded( *iter );
@@ -510,8 +510,8 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string instance_name;
             StringUtilities::to_string( instance_name, *iter );
-            send_hs( stdout, "FedAmb::objectInstanceNameReservationFailed():%d FAILED '%s'\n",
-                     __LINE__, instance_name.c_str() );
+            message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationFailed():%d FAILED '%s'\n",
+                             __LINE__, instance_name.c_str() );
          }
 
          manager->object_instance_name_reservation_failed( *iter );
@@ -529,8 +529,8 @@ void FedAmb::discoverObjectInstance(
       string id_str, name_str;
       StringUtilities::to_string( id_str, theObject );
       StringUtilities::to_string( name_str, theObjectInstanceName );
-      send_hs( stdout, "FedAmb::discoverObjectInstance():%d DISCOVERED '%s' Instance-ID:%s\n",
-               __LINE__, name_str.c_str(), id_str.c_str() );
+      message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d DISCOVERED '%s' Instance-ID:%s\n",
+                       __LINE__, name_str.c_str(), id_str.c_str() );
    }
 
    if ( manager == NULL ) {
@@ -538,17 +538,17 @@ void FedAmb::discoverObjectInstance(
          string id_str, name_str;
          StringUtilities::to_string( id_str, theObject );
          StringUtilities::to_string( name_str, theObjectInstanceName );
-         send_hs( stdout, "FedAmb::discoverObjectInstance():%d Unexpected \
+         message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
 NULL Manager! Can't do anything with discovered object '%s' Instance-ID:%s\n",
-                  __LINE__, name_str.c_str(), id_str.c_str() );
+                          __LINE__, name_str.c_str(), id_str.c_str() );
       }
    } else if ( !manager->discover_object_instance( theObject, theObjectClass, theObjectInstanceName ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, theObject );
          StringUtilities::to_string( name_str, theObjectInstanceName );
-         send_hs( stderr, "FedAmb::discoverObjectInstance():%d Object '%s' with Instance-ID:%s is UNKNOWN to me!\n",
-                  __LINE__, name_str.c_str(), id_str.c_str() );
+         message_publish( MSG_WARNING, "FedAmb::discoverObjectInstance():%d Object '%s' with Instance-ID:%s is UNKNOWN to me!\n",
+                          __LINE__, name_str.c_str(), id_str.c_str() );
       }
    }
 }
@@ -562,9 +562,9 @@ void FedAmb::discoverObjectInstance(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string fed_id;
       StringUtilities::to_string( fed_id, producingFederate );
-      send_hs( stdout, "FedAmb::discoverObjectInstance(producing \
+      message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance(producing \
 federate '%s'):%d calling 'discoverObjectInstance' to finish the discovery.\n",
-               fed_id.c_str(), __LINE__ );
+                       fed_id.c_str(), __LINE__ );
    }
 
    discoverObjectInstance( theObject, theObjectClass, theObjectInstanceName );
@@ -584,8 +584,8 @@ void FedAmb::reflectAttributeValues(
 
    if ( trickhla_obj != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s'\n",
-                  __LINE__, trickhla_obj->get_name() );
+         message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s'\n",
+                          __LINE__, trickhla_obj->get_name() );
       }
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
@@ -599,17 +599,17 @@ void FedAmb::reflectAttributeValues(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
             StringUtilities::to_string( id_str, theObject );
-            send_hs( stdout, "FedAmb::reflectAttributeValues(%d elements):%d Rebuilding federate handle for Federate ID:%s\n",
-                     (int)theAttributeValues.size(),
-                     __LINE__, id_str.c_str() );
+            message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues(%d elements):%d Rebuilding federate handle for Federate ID:%s\n",
+                             (int)theAttributeValues.size(),
+                             __LINE__, id_str.c_str() );
          }
          federate->rebuild_federate_handles( theObject, theAttributeValues );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
             StringUtilities::to_string( id_str, theObject );
-            send_hs( stdout, "FedAmb::reflectAttributeValues():%d Setting name for Federate ID:%s\n",
-                     __LINE__, id_str.c_str() );
+            message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues():%d Setting name for Federate ID:%s\n",
+                             __LINE__, id_str.c_str() );
          }
          federate->set_MOM_HLAfederate_instance_attributes( theObject, theAttributeValues );
       }
@@ -618,8 +618,8 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, theObject );
-         send_hs( stdout, "FedAmb::reflectAttributeValues():%d Setting name for Federation ID:%s\n",
-                  __LINE__, id_str.c_str() );
+         message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues():%d Setting name for Federation ID:%s\n",
+                          __LINE__, id_str.c_str() );
       }
       federate->set_MOM_HLAfederation_instance_attributes( theObject, theAttributeValues );
    } else {
@@ -639,7 +639,7 @@ void FedAmb::reflectAttributeValues(
             StringUtilities::to_string( handle_str, attr_iter->first );
             summary << "   + Attribute-Handle:" << handle_str << '\n';
          }
-         send_hs( stdout, summary.str().c_str() );
+         message_publish( MSG_NORMAL, summary.str().c_str() );
       }
    }
 }
@@ -662,9 +662,9 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time time;
          time.set( theTime );
-         send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
-                  __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(),
-                  '\n' );
+         message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
+                          __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(),
+                          '\n' );
       }
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
@@ -676,8 +676,8 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, theObject );
-         send_hs( stderr, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s\n",
-                  __LINE__, id_str.c_str() );
+         message_publish( MSG_WARNING, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s\n",
+                          __LINE__, id_str.c_str() );
       }
    }
 }
@@ -701,8 +701,8 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time time;
          time.set( theTime );
-         send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
-                  __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds() );
+         message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
+                          __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds() );
       }
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
@@ -714,8 +714,8 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, theObject );
-         send_hs( stderr, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s\n",
-                  __LINE__, id_str.c_str() );
+         message_publish( MSG_WARNING, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s\n",
+                          __LINE__, id_str.c_str() );
       }
    }
 }
@@ -729,14 +729,14 @@ void FedAmb::receiveInteraction(
    RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( manager == NULL ) {
-      send_hs( stderr, "FedAmb::receiveInteraction():%d NULL Manager!\n",
-               __LINE__ );
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
+                       __LINE__ );
    } else {
       Int64Time dummyTime;
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         send_hs( stderr, "FedAmb::receiveInteraction():%d \n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d \n",
+                          __LINE__ );
       }
 
       // Process the interaction.
@@ -759,15 +759,15 @@ void FedAmb::receiveInteraction(
    RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( manager == NULL ) {
-      send_hs( stderr, "FedAmb::receiveInteraction():%d NULL Manager!\n",
-               __LINE__ );
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
+                       __LINE__ );
    } else {
       // Process the interaction.
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time time;
          time.set( theTime );
-         send_hs( stderr, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.\n",
-                  __LINE__, time.get_time_in_seconds() );
+         message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.\n",
+                          __LINE__, time.get_time_in_seconds() );
       }
 
       manager->receive_interaction( theInteraction,
@@ -790,14 +790,14 @@ void FedAmb::receiveInteraction(
    RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( manager == NULL ) {
-      send_hs( stderr, "FedAmb::receiveInteraction():%d NULL Manager!\n",
-               __LINE__ );
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
+                       __LINE__ );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time time;
          time.set( theTime );
-         send_hs( stderr, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.\n",
-                  __LINE__, time.get_time_in_seconds() );
+         message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.\n",
+                          __LINE__, time.get_time_in_seconds() );
       }
 
       // Process the interaction.
@@ -821,13 +821,13 @@ void FedAmb::removeObjectInstance(
 
       if ( theUserSuppliedTag.size() > 0 ) {
          char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d User-Supplied-Tag='%s' Instance-ID:%s Valid-ID:%s \n",
-                  __LINE__, tag, id_str.c_str(),
-                  ( theObject.isValid() ? "Yes" : "No" ) );
+         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d User-Supplied-Tag='%s' Instance-ID:%s Valid-ID:%s \n",
+                          __LINE__, tag, id_str.c_str(),
+                          ( theObject.isValid() ? "Yes" : "No" ) );
       } else {
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d Instance-ID:%s Valid-ID:%s \n",
-                  __LINE__, id_str.c_str(),
-                  ( theObject.isValid() ? "Yes" : "No" ) );
+         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s Valid-ID:%s \n",
+                          __LINE__, id_str.c_str(),
+                          ( theObject.isValid() ? "Yes" : "No" ) );
       }
    }
 
@@ -857,11 +857,11 @@ void FedAmb::removeObjectInstance(
 
       if ( theUserSuppliedTag.size() > 0 ) {
          char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.\n",
-                  __LINE__, tag, id_str.c_str(), time.get_time_in_seconds() );
+         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.\n",
+                          __LINE__, tag, id_str.c_str(), time.get_time_in_seconds() );
       } else {
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.\n",
-                  __LINE__, id_str.c_str(), time.get_time_in_seconds() );
+         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.\n",
+                          __LINE__, id_str.c_str(), time.get_time_in_seconds() );
       }
    }
 
@@ -890,11 +890,11 @@ void FedAmb::removeObjectInstance(
 
       if ( theUserSuppliedTag.size() > 0 ) {
          char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.\n",
-                  __LINE__, tag, id_str.c_str(), time.get_time_in_seconds() );
+         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.\n",
+                          __LINE__, tag, id_str.c_str(), time.get_time_in_seconds() );
       } else {
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.\n",
-                  __LINE__, id_str.c_str(), time.get_time_in_seconds() );
+         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.\n",
+                          __LINE__, id_str.c_str(), time.get_time_in_seconds() );
       }
    }
 
@@ -906,20 +906,20 @@ void FedAmb::attributesInScope(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributesInScope():%d \n",
-            federate->get_federate_name(),
-            __LINE__ );
+                    federate->get_federate_name(),
+                    __LINE__ );
 }
 
 void FedAmb::attributesOutOfScope(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributesOutOfScope():%d \n",
-            federate->get_federate_name(),
-            __LINE__ );
+                    federate->get_federate_name(),
+                    __LINE__ );
 }
 
 void FedAmb::provideAttributeValueUpdate(
@@ -937,9 +937,9 @@ void FedAmb::turnUpdatesOnForObjectInstance(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnUpdatesOnForObjectInstance():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::turnUpdatesOnForObjectInstance(
@@ -947,18 +947,18 @@ void FedAmb::turnUpdatesOnForObjectInstance(
    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
    wstring const                               &updateRateDesignator ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnUpdatesOnForObjectInstance():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::turnUpdatesOffForObjectInstance(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnUpdatesOffForObjectInstance():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::confirmAttributeTransportationTypeChange(
@@ -966,9 +966,9 @@ void FedAmb::confirmAttributeTransportationTypeChange(
    RTI1516_NAMESPACE::AttributeHandleSet   theAttributes,
    RTI1516_NAMESPACE::TransportationType   theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::confirmAttributeTransportationTypeChange():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::reportAttributeTransportationType(
@@ -976,18 +976,18 @@ void FedAmb::reportAttributeTransportationType(
    RTI1516_NAMESPACE::AttributeHandle      theAttribute,
    RTI1516_NAMESPACE::TransportationType   theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::reportAttributeTransportationType():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::confirmInteractionTransportationTypeChange(
    RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
    RTI1516_NAMESPACE::TransportationType     theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::confirmInteractionTransportationTypeChange():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 void FedAmb::reportInteractionTransportationType(
@@ -995,9 +995,9 @@ void FedAmb::reportInteractionTransportationType(
    RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
    RTI1516_NAMESPACE::TransportationType     theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::reportInteractionTransportationType():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 ///////////////////////////////////
@@ -1012,8 +1012,8 @@ void FedAmb::requestAttributeOwnershipAssumption(
 {
    char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::requestAttributeOwnershipAssumption():%d push request received, tag='%s'\n",
-               __LINE__, tag );
+      message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipAssumption():%d push request received, tag='%s'\n",
+                       __LINE__, tag );
    }
 
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
@@ -1047,12 +1047,12 @@ void FedAmb::requestAttributeOwnershipAssumption(
                trick_hla_attr->set_push_requested( true );
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-                  send_hs( stdout, "FedAmb::requestAttributeOwnershipAssumption():%d\
+                  message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipAssumption():%d\
 \n   Attribute '%s'->'%s' of object '%s'.\n",
-                           __LINE__,
-                           trickhla_obj->get_FOM_name(),
-                           trick_hla_attr->get_FOM_name(),
-                           trickhla_obj->get_name() );
+                                   __LINE__,
+                                   trickhla_obj->get_FOM_name(),
+                                   trick_hla_attr->get_FOM_name(),
+                                   trickhla_obj->get_name() );
                }
             } else if ( trick_hla_attr == NULL ) {
 
@@ -1060,11 +1060,11 @@ void FedAmb::requestAttributeOwnershipAssumption(
                any_attribute_not_recognized = true;
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-                  send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
+                  message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
-                           __LINE__,
-                           trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                           '\n' );
+                                   __LINE__,
+                                   trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
+                                   '\n' );
                }
             } else if ( trick_hla_attr->is_locally_owned() ) {
 
@@ -1072,12 +1072,12 @@ Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
                any_attribute_already_owned = true;
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-                  send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
+                  message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
-                           __LINE__,
-                           trickhla_obj->get_name(),
-                           trickhla_obj->get_FOM_name(),
-                           trick_hla_attr->get_FOM_name() );
+                                   __LINE__,
+                                   trickhla_obj->get_name(),
+                                   trickhla_obj->get_FOM_name(),
+                                   trick_hla_attr->get_FOM_name() );
                }
             } else if ( !trick_hla_attr->is_publish() ) {
 
@@ -1085,12 +1085,12 @@ Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
                any_attribute_not_published = true;
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-                  send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
+                  message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Attribute Not Published ERROR: Object '%s' with attribute '%s'->'%s'!\n",
-                           __LINE__,
-                           trickhla_obj->get_name(),
-                           trickhla_obj->get_FOM_name(),
-                           trick_hla_attr->get_FOM_name() );
+                                   __LINE__,
+                                   trickhla_obj->get_name(),
+                                   trickhla_obj->get_FOM_name(),
+                                   trick_hla_attr->get_FOM_name() );
                }
             }
          }
@@ -1118,9 +1118,9 @@ Attribute for Object is not published." );
    } else {
       string id_str;
       StringUtilities::to_string( id_str, theObject );
-      send_hs( stdout, "FedAmb::requestAttributeOwnershipAssumption():%d \
+      message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Unknown object instance (ID:%s), push request rejected, tag='%s' \n",
-               __LINE__, id_str.c_str(), tag );
+                       __LINE__, id_str.c_str(), tag );
 
       throw FederateInternalError( L"FedAmb::requestAttributeOwnershipAssumption() Unknown object instance" );
    }
@@ -1136,10 +1136,10 @@ void FedAmb::requestDivestitureConfirmation(
    if ( trickhla_obj == NULL ) {
       string id_str;
       StringUtilities::to_string( id_str, theObject );
-      send_hs( stdout, "FedAmb::requestDivestitureConfirmation():%d Unknown \
+      message_publish( MSG_NORMAL, "FedAmb::requestDivestitureConfirmation():%d Unknown \
 object instance (ID:%s), push request rejected.\n",
-               __LINE__, id_str.c_str(),
-               '\n' );
+                       __LINE__, id_str.c_str(),
+                       '\n' );
 
       throw FederateInternalError( L"FedAmb::requestDivestitureConfirmation() Unknown object instance." );
    }
@@ -1166,12 +1166,12 @@ object instance (ID:%s), push request rejected.\n",
          any_devist_requested = true;
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-            send_hs( stdout, "FedAmb::requestDivestitureConfirmation():%d\
+            message_publish( MSG_NORMAL, "FedAmb::requestDivestitureConfirmation():%d\
 \n   Attribute '%s'->'%s' of object '%s'.\n",
-                     __LINE__,
-                     trickhla_obj->get_FOM_name(),
-                     trick_hla_attr->get_FOM_name(),
-                     trickhla_obj->get_name() );
+                             __LINE__,
+                             trickhla_obj->get_FOM_name(),
+                             trick_hla_attr->get_FOM_name(),
+                             trickhla_obj->get_name() );
          }
       } else if ( trick_hla_attr == NULL ) {
 
@@ -1179,11 +1179,11 @@ object instance (ID:%s), push request rejected.\n",
          any_attribute_not_recognized = true;
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-            send_hs( stderr, "FedAmb::requestDivestitureConfirmation():%d \
+            message_publish( MSG_WARNING, "FedAmb::requestDivestitureConfirmation():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
-                     __LINE__,
-                     trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                     '\n' );
+                             __LINE__,
+                             trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
+                             '\n' );
          }
       } else if ( trick_hla_attr->is_remotely_owned() ) {
 
@@ -1191,12 +1191,12 @@ Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
          any_attribute_not_owned = true;
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-            send_hs( stderr, "FedAmb::requestDivestitureConfirmation():%d \
+            message_publish( MSG_WARNING, "FedAmb::requestDivestitureConfirmation():%d \
 Attribute Not Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
-                     __LINE__,
-                     trickhla_obj->get_name(),
-                     trickhla_obj->get_FOM_name(),
-                     trick_hla_attr->get_FOM_name() );
+                             __LINE__,
+                             trickhla_obj->get_name(),
+                             trickhla_obj->get_FOM_name(),
+                             trick_hla_attr->get_FOM_name() );
          }
       }
    }
@@ -1227,8 +1227,8 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::attributeOwnershipAcquisitionNotification():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "FedAmb::attributeOwnershipAcquisitionNotification():%d \n",
+                       __LINE__ );
    }
 
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
@@ -1256,12 +1256,12 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
             any_attribute_acquired = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stdout, "FedAmb::attributeOwnershipAcquisitionNotification():%d\
+               message_publish( MSG_NORMAL, "FedAmb::attributeOwnershipAcquisitionNotification():%d\
 \n   ACQUIRED ownership of attribute '%s'->'%s' of object '%s'.\n",
-                        __LINE__,
-                        trickhla_obj->get_FOM_name(),
-                        trick_hla_attr->get_FOM_name(),
-                        trickhla_obj->get_name() );
+                                __LINE__,
+                                trickhla_obj->get_FOM_name(),
+                                trick_hla_attr->get_FOM_name(),
+                                trickhla_obj->get_name() );
             }
          } else if ( trick_hla_attr == NULL ) {
 
@@ -1269,11 +1269,11 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
             any_attribute_not_recognized = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stderr, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
+               message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
-                        __LINE__,
-                        trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                        '\n' );
+                                __LINE__,
+                                trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
+                                '\n' );
             }
          } else if ( trick_hla_attr->is_locally_owned() ) {
 
@@ -1281,12 +1281,12 @@ Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
             any_attribute_already_owned = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stderr, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
+               message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
 Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
-                        __LINE__,
-                        trickhla_obj->get_name(),
-                        trickhla_obj->get_FOM_name(),
-                        trick_hla_attr->get_FOM_name() );
+                                __LINE__,
+                                trickhla_obj->get_name(),
+                                trickhla_obj->get_FOM_name(),
+                                trick_hla_attr->get_FOM_name() );
             }
          } else if ( !trick_hla_attr->is_publish() ) {
 
@@ -1294,12 +1294,12 @@ Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
             any_attribute_not_published = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stderr, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
+               message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
 Attribute Not Published ERROR: Object '%s' with attribute '%s'->'%s'!\n",
-                        __LINE__,
-                        trickhla_obj->get_name(),
-                        trickhla_obj->get_FOM_name(),
-                        trick_hla_attr->get_FOM_name() );
+                                __LINE__,
+                                trickhla_obj->get_name(),
+                                trickhla_obj->get_FOM_name(),
+                                trick_hla_attr->get_FOM_name() );
             }
          }
       }
@@ -1325,9 +1325,9 @@ Attribute for Object is not published." );
       }
 
    } else {
-      send_hs( stderr, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
+      message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
 Ownership acquisition rejected (object not found)\n",
-               __LINE__ );
+                       __LINE__ );
 
       throw FederateInternalError( L"FedAmb::attributeOwnershipAcquisitionNotification() Unknown object instance" );
    }
@@ -1338,9 +1338,9 @@ void FedAmb::attributeOwnershipUnavailable(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::AttributeHandleSet const &releasedAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributeOwnershipUnavailable():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 // 7.11
@@ -1351,8 +1351,8 @@ void FedAmb::requestAttributeOwnershipRelease(
 {
    char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::requestAttributeOwnershipRelease():%d pull request received, tag='%s'\n",
-               __LINE__, tag );
+      message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipRelease():%d pull request received, tag='%s'\n",
+                       __LINE__, tag );
    }
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
 
@@ -1380,12 +1380,12 @@ void FedAmb::requestAttributeOwnershipRelease(
             any_pull_requested = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stdout, "FedAmb::requestAttributeOwnershipRelease():%d\
+               message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipRelease():%d\
 \n   Attribute '%s'->'%s' of object '%s'.\n",
-                        __LINE__,
-                        trickhla_obj->get_FOM_name(),
-                        trick_hla_attr->get_FOM_name(),
-                        trickhla_obj->get_name() );
+                                __LINE__,
+                                trickhla_obj->get_FOM_name(),
+                                trick_hla_attr->get_FOM_name(),
+                                trickhla_obj->get_name() );
             }
          } else if ( trick_hla_attr == NULL ) {
 
@@ -1393,11 +1393,11 @@ void FedAmb::requestAttributeOwnershipRelease(
             any_attribute_not_recognized = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stderr, "FedAmb::requestAttributeOwnershipRelease():%d \
+               message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
-                        __LINE__,
-                        trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                        '\n' );
+                                __LINE__,
+                                trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
+                                '\n' );
             }
          } else if ( trick_hla_attr->is_remotely_owned() ) {
 
@@ -1405,12 +1405,12 @@ Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
             any_attribute_not_owned = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stderr, "FedAmb::requestAttributeOwnershipRelease():%d \
+               message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d \
 Attribute Not Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
-                        __LINE__,
-                        trickhla_obj->get_name(),
-                        trickhla_obj->get_FOM_name(),
-                        trick_hla_attr->get_FOM_name() );
+                                __LINE__,
+                                trickhla_obj->get_name(),
+                                trickhla_obj->get_FOM_name(),
+                                trick_hla_attr->get_FOM_name() );
             }
          }
       }
@@ -1433,8 +1433,8 @@ Attribute for Object Not Owned." );
       }
 
    } else {
-      send_hs( stderr, "FedAmb::requestAttributeOwnershipRelease():%d pull rejected (not found), tag='%s'\n",
-               __LINE__, tag );
+      message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d pull rejected (not found), tag='%s'\n",
+                       __LINE__, tag );
       throw FederateInternalError( L"FedAmb::requestAttributeOwnershipRelease() Unknown object instance" );
    }
 }
@@ -1444,9 +1444,9 @@ void FedAmb::confirmAttributeOwnershipAcquisitionCancellation(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::AttributeHandleSet const &releasedAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::confirmAttributeOwnershipAcquisitionCancellation():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 // 7.17
@@ -1455,9 +1455,9 @@ void FedAmb::informAttributeOwnership(
    RTI1516_NAMESPACE::AttributeHandle      theAttribute,
    RTI1516_NAMESPACE::FederateHandle       theOwner ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::informAttributeOwnership():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 // 7.17
@@ -1465,9 +1465,9 @@ void FedAmb::attributeIsNotOwned(
    RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
    RTI1516_NAMESPACE::AttributeHandle      theAttribute ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributeIsNotOwned():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 // 7.17
@@ -1475,9 +1475,9 @@ void FedAmb::attributeIsOwnedByRTI(
    RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
    RTI1516_NAMESPACE::AttributeHandle      theAttribute ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributeIsOwnedByRTI():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 //////////////////////////////
@@ -1488,8 +1488,8 @@ void FedAmb::timeRegulationEnabled(
    RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::timeRegulationEnabled():%d Federate \"%s\" \n",
-               __LINE__, federate->get_federate_name() );
+      message_publish( MSG_NORMAL, "FedAmb::timeRegulationEnabled():%d Federate \"%s\" \n",
+                       __LINE__, federate->get_federate_name() );
    }
    federate->set_time_regulation_enabled( theFederateTime );
 }
@@ -1498,9 +1498,9 @@ void FedAmb::timeConstrainedEnabled(
    RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::timeConstrainedEnabled():%d Federate \"%s\" Time granted to: %.12G \n",
-               __LINE__, federate->get_federate_name(),
-               federate->get_granted_time().get_time_in_seconds() );
+      message_publish( MSG_NORMAL, "FedAmb::timeConstrainedEnabled():%d Federate \"%s\" Time granted to: %.12G \n",
+                       __LINE__, federate->get_federate_name(),
+                       federate->get_granted_time().get_time_in_seconds() );
    }
    federate->set_time_constrained_enabled( theFederateTime );
 }
@@ -1514,9 +1514,9 @@ void FedAmb::timeAdvanceGrant(
 void FedAmb::requestRetraction(
    RTI1516_NAMESPACE::MessageRetractionHandle theHandle ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   send_hs( stderr, "This federate '%s' does not support this function: \
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::requestRetraction():%d \n",
-            federate->get_federate_name(), __LINE__ );
+                    federate->get_federate_name(), __LINE__ );
 }
 
 #pragma GCC diagnostic pop

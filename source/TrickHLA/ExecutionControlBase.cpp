@@ -170,8 +170,8 @@ ExecutionControlBase::~ExecutionControlBase()
    // Free the memory used for the multiphase initialization synchronization points.
    if ( multiphase_init_sync_points != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( multiphase_init_sync_points ) ) ) {
-         send_hs( stderr, "ExecutionControlBase::~ExecutionControlBase():%d WARNING failed to delete Trick Memory for 'multiphase_init_sync_points'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "ExecutionControlBase::~ExecutionControlBase():%d WARNING failed to delete Trick Memory for 'multiphase_init_sync_points'\n",
+                          __LINE__ );
       }
       multiphase_init_sync_points = NULL;
    }
@@ -259,7 +259,7 @@ void ExecutionControlBase::initialize()
       // by a setting in the input.py file. Clock time resolution is
       // maintained separately from the Trick executive time resolution,
       // which is why we need to explicitly update it.
-      cte_timeline->update_clock_resolution();
+      cte_timeline->set_clock_tics_per_sec( exec_get_time_tic_value() );
    }
 
    // Reset the master flag if it is not preset by the user.
@@ -293,10 +293,10 @@ void ExecutionControlBase::initialize()
 
    if ( !does_scenario_timeline_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "ExecutionControlBase::initialize():%d WARNING: \
+         message_publish( MSG_NORMAL, "ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
 Trick simulation time as the default scenario-timeline.\n",
-                  __LINE__ );
+                          __LINE__ );
       }
 
       // Use the simulation timeline as the default scenario timeline.
@@ -343,8 +343,8 @@ void ExecutionControlBase::join_federation_process()
    // a running federation execution that is shutting down. This is an
    // unlikely but possible race condition.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "ExecutionControl::join_federation_process():%d Checking for shutdown \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "ExecutionControl::join_federation_process():%d Checking for shutdown \n",
+                       __LINE__ );
    }
    fed->check_for_shutdown_with_termination();
 }
@@ -378,8 +378,8 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             string name_str;
             StringUtilities::to_string( name_str, obj_instance_name );
-            send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%s'\n",
-                     __LINE__, name_str.c_str() );
+            message_publish( MSG_NORMAL, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%s'\n",
+                             __LINE__, name_str.c_str() );
          }
 
          return true;
@@ -427,8 +427,8 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string name_str;
          StringUtilities::to_string( name_str, obj_instance_name );
-         send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%s'\n",
-                  __LINE__, name_str.c_str() );
+         message_publish( MSG_NORMAL, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%s'\n",
+                          __LINE__, name_str.c_str() );
       }
 
       // We found a match to return 'true'.
@@ -444,8 +444,8 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
 void ExecutionControlBase::register_objects_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "ExecutionControlBase::register_objects_with_RTI():%d\n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "ExecutionControlBase::register_objects_with_RTI():%d\n",
+                       __LINE__ );
    }
 
    // Register any ExecutionConfiguration objects.
@@ -519,16 +519,16 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
    // initialization process so just return.
    if ( manager->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
+         message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
 joining federate so this call will be ignored.\n",
-                  __LINE__ );
+                          __LINE__ );
       }
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d \n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d \n",
+                       __LINE__ );
    }
 
    // Achieve all the multiphase initialization synchronization points except.
@@ -570,9 +570,9 @@ void ExecutionControlBase::send_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "ExecutionControlBase::send_execution_configuration():%d This call \
+         message_publish( MSG_NORMAL, "ExecutionControlBase::send_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.\n",
-                  __LINE__ );
+                          __LINE__ );
       }
       return;
    }
@@ -583,7 +583,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "ExecutionControlBase::send_ssend_execution_configurationim_config():%d\n", __LINE__ );
+      message_publish( MSG_NORMAL, "ExecutionControlBase::send_ssend_execution_configurationim_config():%d\n", __LINE__ );
    }
 
    // Make sure we have at least one piece of ExecutionConfiguration data we can send.
@@ -611,9 +611,9 @@ void ExecutionControlBase::receive_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d This call \
+         message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.\n",
-                  __LINE__ );
+                          __LINE__ );
       }
       return;
    }
@@ -624,8 +624,8 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Waiting...\n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d Waiting...\n",
+                       __LINE__ );
    }
 
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
@@ -664,15 +664,15 @@ will be ignored because the Simulation Initialization Scheme does not support it
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Waiting...\n",
-                        __LINE__ );
+               message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d Waiting...\n",
+                                __LINE__ );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Received data.\n",
-                  __LINE__ );
+         message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d Received data.\n",
+                          __LINE__ );
       }
 
       // Receive the ExecutionConfiguration data from the master federate.
@@ -834,9 +834,9 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
-         send_hs( stdout, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
-                  __LINE__, execution_configuration->get_name(), id_str.c_str(),
-                  ( instance_id.isValid() ? "Yes" : "No" ) );
+         message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+                          __LINE__, execution_configuration->get_name(), id_str.c_str(),
+                          ( instance_id.isValid() ? "Yes" : "No" ) );
       }
       execution_configuration->remove_object_instance();
       return true;
@@ -869,7 +869,7 @@ double ExecutionControlBase::get_sim_time()
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
              << " file. Returning Trick simulation time instead!\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
    return exec_get_sim_time();
 }
@@ -886,7 +886,7 @@ double ExecutionControlBase::get_scenario_time()
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
              << " file. Returning Trick simulation time instead!\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
 
    return get_sim_time();
@@ -932,9 +932,9 @@ void ExecutionControlBase::enter_freeze()
 {
    // The default is to do nothing.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s\n",
-               __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
-               ( is_freeze_pending() ? "Yes" : "No" ) );
+      message_publish( MSG_NORMAL, "ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s\n",
+                       __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
+                       ( is_freeze_pending() ? "Yes" : "No" ) );
    }
 }
 

@@ -104,8 +104,8 @@ Parameter::~Parameter()
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'buffer'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'buffer'\n",
+                          __LINE__ );
       }
       buffer          = NULL;
       buffer_capacity = 0;
@@ -113,8 +113,8 @@ Parameter::~Parameter()
 
    if ( interaction_FOM_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( interaction_FOM_name ) ) ) {
-         send_hs( stderr, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'interaction_FOM_name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'interaction_FOM_name'\n",
+                          __LINE__ );
       }
       interaction_FOM_name = NULL;
    }
@@ -492,7 +492,7 @@ void Parameter::complete_initialization()
           << "' has an unexpected size of zero bytes! Make sure your simulation"
           << " variable is properly initialized before the initialize()"
           << " function is called.\n";
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
@@ -527,7 +527,7 @@ void Parameter::complete_initialization()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
@@ -572,7 +572,7 @@ bool Parameter::extract_data(
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
                    << " variables are not the correct size or type.\n";
-            send_hs( stderr, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
             return false;
@@ -606,7 +606,7 @@ bool Parameter::extract_data(
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
                    << " size or type.\n";
-            send_hs( stderr, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // Just return if we have a data size mismatch. This will allow us
             // to continue to run even though the other federate is sending us
@@ -669,7 +669,7 @@ bool Parameter::extract_data(
                    << " and type as what is defined in the FOM. If you are using Lag"
                    << " Compensation one possible cause of this problem is that your"
                    << " lag compensation variables are not the correct size or type.\n";
-            send_hs( stderr, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
             return false;
@@ -699,7 +699,7 @@ bool Parameter::extract_data(
                    << " type as what is defined in the FOM. If you are using Lag"
                    << " Compensation one possible cause of this problem is that your"
                    << " lag compensation variables are not the correct size or type.\n";
-            send_hs( stderr, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here.
             return false;
@@ -718,9 +718,9 @@ bool Parameter::extract_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
-      send_hs( stdout, "Parameter::extract_data():%d Decoded '%s' (trick_name '%s') \
+      message_publish( MSG_NORMAL, "Parameter::extract_data():%d Decoded '%s' (trick_name '%s') \
 from parameter map, buffer-size:%d, expected-byte-count:%d.\n",
-               __LINE__, FOM_name, trick_name, param_size, expected_byte_count );
+                       __LINE__, FOM_name, trick_name, param_size, expected_byte_count );
    }
    if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       print_buffer();
@@ -871,7 +871,7 @@ void Parameter::calculate_size_and_number_of_items()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
 
@@ -961,7 +961,7 @@ void Parameter::pack_parameter_buffer()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // TODO: Use a transcoder for each type to encode and decode depending on
@@ -994,7 +994,7 @@ void Parameter::pack_parameter_buffer()
                 << "================== PARAMETER ENCODE ==================================\n"
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
                 << "')\n";
-            send_hs( stdout, msg.str().c_str() );
+            message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1015,7 +1015,7 @@ void Parameter::pack_parameter_buffer()
                 << "================== PARAMETER ENCODE ==================================\n"
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
                 << "')\n";
-            send_hs( stdout, msg.str().c_str() );
+            message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1042,7 +1042,7 @@ void Parameter::pack_parameter_buffer()
                    << "================== PARAMETER ENCODE ==================================\n"
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name
                    << "')\n";
-               send_hs( stdout, msg.str().c_str() );
+               message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
          } else {
@@ -1082,7 +1082,7 @@ void Parameter::pack_parameter_buffer()
                    << "================== PARAMETER ENCODE ==================================\n"
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name
                    << "')\n";
-               send_hs( stdout, msg.str().c_str() );
+               message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
          }
@@ -1121,7 +1121,7 @@ void Parameter::pack_parameter_buffer()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
 
@@ -1153,7 +1153,7 @@ void Parameter::unpack_parameter_buffer()
                 << "================== PARAMETER DECODE ==================================\n"
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
                 << "')\n";
-            send_hs( stdout, msg.str().c_str() );
+            message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1172,7 +1172,7 @@ void Parameter::unpack_parameter_buffer()
                 << "================== PARAMETER DECODE ==================================\n"
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
                 << "')\n";
-            send_hs( stdout, msg.str().c_str() );
+            message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1201,7 +1201,7 @@ void Parameter::unpack_parameter_buffer()
                    << "================ PARAMETER DECODE ================================\n"
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name << "')"
                    << " value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
-               send_hs( stdout, msg.str().c_str() );
+               message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
          } else {
@@ -1237,7 +1237,7 @@ void Parameter::unpack_parameter_buffer()
                       << "================== PARAMETER DECODE ================================\n"
                       << " parameter '" << FOM_name << "' (trick name '" << trick_name
                       << "')\n";
-                  send_hs( stdout, msg.str().c_str() );
+                  message_publish( MSG_NORMAL, msg.str().c_str() );
                   print_buffer();
                }
             }
@@ -1277,7 +1277,7 @@ void Parameter::unpack_parameter_buffer()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
 
@@ -1603,9 +1603,9 @@ void Parameter::decode_opaque_data_from_buffer()
       // Do a sanity check on the decoded length, it should not be negative.
       int length;
       if ( decoded_count < 0 ) {
-         send_hs( stderr, "Parameter::decode_opaque_data_from_buffer():%d \
+         message_publish( MSG_WARNING, "Parameter::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.\n",
-                  __LINE__, FOM_name, decoded_count );
+                          __LINE__, FOM_name, decoded_count );
          length = 0;
       } else {
          length = decoded_count;
@@ -1621,10 +1621,10 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
       }
 
       if ( length > data_buff_size ) {
-         send_hs( stderr, "Parameter::decode_opaque_data_from_buffer():%d \
+         message_publish( MSG_WARNING, "Parameter::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.\n",
-                  __LINE__, FOM_name, length, data_buff_size );
+                          __LINE__, FOM_name, length, data_buff_size );
          length = data_buff_size;
       }
 
@@ -2276,9 +2276,9 @@ void Parameter::decode_string_from_buffer()
             // Do a sanity check on the decoded length, it should not be negative.
             int length;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2294,11 +2294,11 @@ WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d < 0, will
                   data_buff_size = 0;
                }
                if ( length > data_buff_size ) {
-                  send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.\n",
-                           __LINE__, FOM_name, length,
-                           data_buff_size );
+                                   __LINE__, FOM_name, length,
+                                   data_buff_size );
                   length = data_buff_size;
                }
             }
@@ -2378,9 +2378,9 @@ size %d, will use the data buffer size instead.\n",
             // Sanity check, we should not get a negative element count.
             int num_elements;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parmeter '%s', decoded element count %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -2389,9 +2389,9 @@ WARNING: For ENCODING_UNICODE_STRING parmeter '%s', decoded element count %d < 0
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for parameter '%s'!\n",
-                        __LINE__, num_elements, num_items, FOM_name );
+                                __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -2430,10 +2430,10 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
                // Do a sanity check on the decoded length, it should not be negative.
                int length;
                if ( decoded_inner_count < 0 ) {
-                  send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d of %d, parameter '%s', the decoded \
 length %d < 0, will use 0 instead.\n",
-                           __LINE__, ( i + 1 ), num_elements, FOM_name, decoded_inner_count );
+                                   __LINE__, ( i + 1 ), num_elements, FOM_name, decoded_inner_count );
                   length = 0;
                } else {
                   length = decoded_inner_count;
@@ -2442,11 +2442,11 @@ length %d < 0, will use 0 instead.\n",
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
                if ( length > data_buff_size ) {
-                  send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d of %d, parameter '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.\n",
-                           __LINE__, ( i + 1 ), num_elements, FOM_name, length, data_buff_size,
-                           '\n' );
+                                   __LINE__, ( i + 1 ), num_elements, FOM_name, length, data_buff_size,
+                                   '\n' );
                   length = data_buff_size;
                }
 
@@ -2551,9 +2551,9 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             // Do a sanity check on the decoded length, it should not be negative.
             int length;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING parmeter '%s', decoded length %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2569,10 +2569,10 @@ WARNING: For ENCODING_ASCII_STRING parmeter '%s', decoded length %d < 0, will us
             }
 
             if ( length > data_buff_size ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.\n",
-                        __LINE__, FOM_name, length, data_buff_size );
+                                __LINE__, FOM_name, length, data_buff_size );
                length = data_buff_size;
             }
 
@@ -2648,9 +2648,9 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buff
             // Sanity check, we should not get a negative element count.
             int num_elements;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded element count %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -2659,9 +2659,9 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded element count %d < 0,
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for parameter '%s'!\n",
-                        __LINE__, num_elements, num_items, FOM_name );
+                                __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -2694,10 +2694,10 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for pa
                // Do a sanity check on the decoded length, it should not be negative.
                int length;
                if ( decoded_inner_count < 0 ) {
-                  send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, parameter '%s', the decoded \
 length %d < 0, will use 0 instead.\n",
-                           __LINE__, i, FOM_name, decoded_inner_count );
+                                   __LINE__, i, FOM_name, decoded_inner_count );
                   length = 0;
                } else {
                   length = decoded_inner_count;
@@ -2706,11 +2706,11 @@ length %d < 0, will use 0 instead.\n",
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
                if ( length > data_buff_size ) {
-                  send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, parameter '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.\n",
-                           __LINE__, i, FOM_name, length, data_buff_size,
-                           '\n' );
+                                   __LINE__, i, FOM_name, length, data_buff_size,
+                                   '\n' );
                   length = data_buff_size;
                }
 
@@ -2815,9 +2815,9 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
             // Do a sanity check on the decoded length, it should not be negative.
             int length;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                length = 0;
             } else {
                length = decoded_count;
@@ -2832,10 +2832,10 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d < 0, will us
                data_buff_size = 0;
             }
             if ( length > data_buff_size ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.\n",
-                        __LINE__, FOM_name, length, data_buff_size );
+                                __LINE__, FOM_name, length, data_buff_size );
                length = data_buff_size;
             }
 
@@ -2901,9 +2901,9 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d > data buffe
             // Sanity check, we should not get a negative element count.
             int num_elements;
             if ( decoded_count < 0 ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded element count %d < 0, will use 0 instead.\n",
-                        __LINE__, FOM_name, decoded_count );
+                                __LINE__, FOM_name, decoded_count );
                num_elements = 0;
             } else {
                num_elements = decoded_count;
@@ -2912,9 +2912,9 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded element count %d < 0, 
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
-               send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+               message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for parameter '%s'!\n",
-                        __LINE__, num_elements, num_items, FOM_name );
+                                __LINE__, num_elements, num_items, FOM_name );
                num_elements = num_items;
             }
 
@@ -2947,10 +2947,10 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for par
                // Do a sanity check on the decoded length, it should not be negative.
                int length;
                if ( decoded_inner_count < 0 ) {
-                  send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, parameter '%s', the decoded \
 length %d < 0, will use 0 instead.\n",
-                           __LINE__, i, FOM_name, decoded_inner_count );
+                                   __LINE__, i, FOM_name, decoded_inner_count );
                   length = 0;
                } else {
                   length = decoded_inner_count;
@@ -2959,10 +2959,10 @@ length %d < 0, will use 0 instead.\n",
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
                if ( length > data_buff_size ) {
-                  send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
+                  message_publish( MSG_WARNING, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, parameter '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.\n",
-                           __LINE__, i, FOM_name, length, data_buff_size );
+                                   __LINE__, i, FOM_name, length, data_buff_size );
                   length = data_buff_size;
                }
 
@@ -3145,7 +3145,7 @@ void Parameter::byteswap_buffer_copy(
              << trick_name << "' has an unexpected size of zero bytes! Make"
              << " sure your simulation variable is properly initialized before"
              << " this initialize() function is called.\n";
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
       return;
    }
@@ -3439,5 +3439,5 @@ void Parameter::print_buffer() const
          msg << '\n';
       }
    }
-   send_hs( stdout, msg.str().c_str() );
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 }
