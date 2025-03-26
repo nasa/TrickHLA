@@ -334,8 +334,7 @@ void Interaction::setup_preferred_order_with_RTI()
       message_publish( MSG_NORMAL, "Interaction::setup_preferred_order_with_RTI():%d \
 Published Interaction '%s' Preferred-Order:%s\n",
                        __LINE__, get_FOM_name(),
-                       ( preferred_order == TRANSPORT_TIMESTAMP_ORDER ? "TIMESTAMP" : "RECEIVE" ),
-                       '\n' );
+                       ( preferred_order == TRANSPORT_TIMESTAMP_ORDER ? "TIMESTAMP" : "RECEIVE" ) );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1025,8 +1024,7 @@ bool Interaction::send(
 Interaction '%s' is time-regulating:%s, preferred-order:%s.\n",
                                 __LINE__, get_FOM_name(),
                                 ( federate->in_time_regulating_state() ? "Yes" : "No" ),
-                                ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ),
-                                '\n' );
+                                ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ) );
             }
 
             // Send in Receive Order (i.e. with no timestamp).
@@ -1177,8 +1175,7 @@ bool Interaction::extract_data(
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             message_publish( MSG_NORMAL, "Interaction::extract_data():%d Decoding '%s' from parameter map.\n",
-                             __LINE__, parameters[param_item->index].get_FOM_name(),
-                             '\n' );
+                             __LINE__, parameters[param_item->index].get_FOM_name() );
          }
          // Extract the parameter data for the given parameter-item.
          if ( parameters[param_item->index].extract_data( param_item->size, param_item->data ) ) {

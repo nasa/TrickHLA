@@ -462,7 +462,8 @@ void Manager::send_init_data(
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          message_publish( MSG_NORMAL, "Manager::send_init_data():%d Late joining \
-federate so the data will not be sent for '%s'.\n", __LINE__, instance_name );
+federate so the data will not be sent for '%s'.\n",
+                          __LINE__, instance_name );
       }
       return;
    }
@@ -894,7 +895,8 @@ void Manager::object_instance_name_reservation_succeeded(
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::object_instance_name_reservation_succeeded():%d \
-RESERVED Object Instance Name '%s'\n", __LINE__, trickhla_obj->get_name() );
+RESERVED Object Instance Name '%s'\n",
+                             __LINE__, trickhla_obj->get_name() );
          }
       }
    }
@@ -3206,22 +3208,19 @@ void Manager::print_checkpoint_interactions()
              << "check_interactions[" << i << "].interaction_type       = '"
              << check_interactions[i].interaction_type << "'\n"
              << "check_interactions[" << i << "].parm_items_count       = "
-             << check_interactions[i].parm_items_count
-             << '\n';
+             << check_interactions[i].parm_items_count << '\n';
          for ( int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
             msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
                 << check_interactions[i].parm_items[k].index << '\n'
                 << "check_interactions[" << i << "].parm_items[" << k << "].size     = "
-                << check_interactions[i].parm_items[k].size
-                << '\n';
+                << check_interactions[i].parm_items[k].size << '\n';
          }
          msg << "check_interactions[" << i << "].user_supplied_tag_size = "
              << check_interactions[i].user_supplied_tag_size << '\n'
              << "check_interactions[" << i << "].order_is_TSO           = "
              << check_interactions[i].order_is_TSO << '\n'
              << "check_interactions[" << i << "].time                   = "
-             << check_interactions[i].time.get_base_time()
-             << '\n';
+             << check_interactions[i].time.get_base_time() << '\n';
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

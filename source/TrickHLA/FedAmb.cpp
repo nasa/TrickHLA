@@ -663,8 +663,7 @@ void FedAmb::reflectAttributeValues(
          Int64Time time;
          time.set( theTime );
          message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
-                          __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(),
-                          '\n' );
+                          __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds() );
       }
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
@@ -1062,9 +1061,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                   message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
-                                   __LINE__,
-                                   trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                                   '\n' );
+                                   __LINE__, trickhla_obj->get_name(), trickhla_obj->get_FOM_name() );
                }
             } else if ( trick_hla_attr->is_locally_owned() ) {
 
@@ -1138,8 +1135,7 @@ void FedAmb::requestDivestitureConfirmation(
       StringUtilities::to_string( id_str, theObject );
       message_publish( MSG_NORMAL, "FedAmb::requestDivestitureConfirmation():%d Unknown \
 object instance (ID:%s), push request rejected.\n",
-                       __LINE__, id_str.c_str(),
-                       '\n' );
+                       __LINE__, id_str.c_str() );
 
       throw FederateInternalError( L"FedAmb::requestDivestitureConfirmation() Unknown object instance." );
    }
@@ -1181,9 +1177,7 @@ object instance (ID:%s), push request rejected.\n",
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             message_publish( MSG_WARNING, "FedAmb::requestDivestitureConfirmation():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
-                             __LINE__,
-                             trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                             '\n' );
+                             __LINE__, trickhla_obj->get_name(), trickhla_obj->get_FOM_name() );
          }
       } else if ( trick_hla_attr->is_remotely_owned() ) {
 
@@ -1271,9 +1265,7 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
-                                __LINE__,
-                                trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                                '\n' );
+                                __LINE__, trickhla_obj->get_name(), trickhla_obj->get_FOM_name() );
             }
          } else if ( trick_hla_attr->is_locally_owned() ) {
 
@@ -1395,9 +1387,7 @@ void FedAmb::requestAttributeOwnershipRelease(
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
-                                __LINE__,
-                                trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                                '\n' );
+                                __LINE__, trickhla_obj->get_name(), trickhla_obj->get_FOM_name() );
             }
          } else if ( trick_hla_attr->is_remotely_owned() ) {
 

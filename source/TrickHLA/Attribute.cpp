@@ -2589,8 +2589,7 @@ length %d < 0, will use 0 instead.\n",
                   message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.\n",
-                                   __LINE__, i, FOM_name, length, data_buff_size,
-                                   '\n' );
+                                   __LINE__, i, FOM_name, length, data_buff_size );
                   length = data_buff_size;
                }
 
@@ -2852,8 +2851,7 @@ length %d < 0, will use 0 instead.\n",
                   message_publish( MSG_WARNING, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.\n",
-                                   __LINE__, i, FOM_name, length, data_buff_size,
-                                   '\n' );
+                                   __LINE__, i, FOM_name, length, data_buff_size );
                   length = data_buff_size;
                }
 
