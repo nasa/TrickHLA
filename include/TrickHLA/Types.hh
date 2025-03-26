@@ -169,7 +169,7 @@ typedef enum {
 typedef enum {
 
    // NOTE: As the debug levels increase in numeric value, so does the amount of
-   // output printed to send_hs...
+   // output printed to console...
    DEBUG_LEVEL_NO_TRACE   = 0,  ///< Default: No TrickHLA output is displayed; user messages will still be printed.
    DEBUG_LEVEL_0_TRACE    = 0,  ///< Default: No TrickHLA output is displayed; user messages will still be printed.
    DEBUG_LEVEL_1_TRACE    = 1,  ///< Adds initialization complete and Time Advance Grant messages.

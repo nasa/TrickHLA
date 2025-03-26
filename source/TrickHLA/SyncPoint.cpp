@@ -194,7 +194,7 @@ void SyncPoint::free_checkpoint()
 {
    if ( this->label_chkpt != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->label_chkpt ) ) ) {
-         send_hs( stderr, "SyncPoint::free_checkpoint():%d WARNING failed to delete Trick Memory for 'label_chkpt'\n", __LINE__ );
+         message_publish( MSG_WARNING, "SyncPoint::free_checkpoint():%d WARNING failed to delete Trick Memory for 'label_chkpt'\n", __LINE__ );
       }
       this->label_chkpt = NULL;
    }

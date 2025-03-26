@@ -105,7 +105,7 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
              << " Warning: Encoded data size does not match buffer!"
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    return;

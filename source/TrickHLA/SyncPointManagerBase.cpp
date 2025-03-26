@@ -688,8 +688,8 @@ bool const SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      send_hs( stdout, "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():%d Label:'%s'\n",
-               __LINE__, label_str.c_str() );
+      message_publish( MSG_NORMAL, "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():%d Label:'%s'\n",
+                       __LINE__, label_str.c_str() );
    }
 
    if ( achieve_sync_point( label ) ) {
@@ -770,7 +770,7 @@ void SyncPointManagerBase::print_sync_points()
    ostringstream msg;
    msg << "SyncPointManagerBase::print_sync_points():" << __LINE__ << '\n'
        << to_string();
-   send_hs( stdout, msg.str().c_str() );
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 }
 
 // Callback from FedAmb.
@@ -781,8 +781,8 @@ void SyncPointManagerBase::sync_point_registration_succeeded(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         send_hs( stdout, "SyncPointManagerBase::sync_point_registration_succeeded():%d Label:'%s'\n",
-                  __LINE__, label_str.c_str() );
+         message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_registration_succeeded():%d Label:'%s'\n",
+                          __LINE__, label_str.c_str() );
       }
    } else {
       string label_str;
@@ -811,8 +811,8 @@ void SyncPointManagerBase::sync_point_registration_failed(
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                string label_str;
                StringUtilities::to_string( label_str, label );
-               send_hs( stdout, "SyncPointManagerBase::sync_point_registration_failed():%d Label:'%s' already exists.\n",
-                        __LINE__, label_str.c_str() );
+               message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_registration_failed():%d Label:'%s' already exists.\n",
+                                __LINE__, label_str.c_str() );
             }
          } else {
             string label_str;
@@ -861,8 +861,8 @@ void SyncPointManagerBase::sync_point_announced(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         send_hs( stdout, "SyncPointManagerBase::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.\n",
-                  __LINE__, label_str.c_str() );
+         message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.\n",
+                          __LINE__, label_str.c_str() );
       }
 
       // Achieve all Unrecognized sync-points but don't wait for the
@@ -870,8 +870,8 @@ void SyncPointManagerBase::sync_point_announced(
       if ( !achieve_sync_point( label, user_supplied_tag ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         send_hs( stderr, "SyncPointManagerBase::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.\n",
-                  __LINE__, label_str.c_str() );
+         message_publish( MSG_WARNING, "SyncPointManagerBase::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.\n",
+                          __LINE__, label_str.c_str() );
       }
    } else {
       // Known sync-point that is already in one of the sync-point lists.
@@ -881,8 +881,8 @@ void SyncPointManagerBase::sync_point_announced(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             string label_str;
             StringUtilities::to_string( label_str, label );
-            send_hs( stdout, "SyncPointManagerBase::sync_point_announced():%d Marked sync-point announced:'%s'\n",
-                     __LINE__, label_str.c_str() );
+            message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_announced():%d Marked sync-point announced:'%s'\n",
+                             __LINE__, label_str.c_str() );
          }
       } else {
          string label_str;
@@ -905,8 +905,8 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         send_hs( stdout, "SyncPointManagerBase::sync_point_federation_synchronized():%d Sync-point synchronized:'%s'\n",
-                  __LINE__, label_str.c_str() );
+         message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_federation_synchronized():%d Sync-point synchronized:'%s'\n",
+                          __LINE__, label_str.c_str() );
       }
    } else {
       // Sync-point should have been announced and at least managed in the

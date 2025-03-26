@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
-#include "trick/message_proto.h" // for send_hs
 #include "trick/trick_math.h"
 
 // TrickHLA include files.

@@ -38,7 +38,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/Integrator.hh"
 #include "trick/MemoryManager.hh"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 #include "trick/trick_math.h"
 
 // TrickHLA include files.
@@ -88,8 +88,8 @@ PhysicalEntityLagComp::~PhysicalEntityLagComp() // RETURN: -- None.
    // Free up any allocated intergrator.
    if ( this->integrator != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->integrator ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING failed to delete Trick Memory for 'this->integrator'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING failed to delete Trick Memory for 'this->integrator'\n",
+                          __LINE__ );
       }
       this->integrator = NULL;
    }

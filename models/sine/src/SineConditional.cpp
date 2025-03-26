@@ -34,7 +34,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
@@ -85,8 +85,8 @@ void SineConditional::configure(
    this->sim_data = data;
 
    if ( this->sim_data == NULL ) {
-      send_hs( stderr, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!",
-               __LINE__ );
+      message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!",
+                       __LINE__ );
       exit( -1 );
    }
    return;
@@ -99,8 +99,8 @@ void SineConditional::initialize()
 {
 
    if ( this->sim_data == NULL ) {
-      send_hs( stderr, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!",
-               __LINE__ );
+      message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!",
+                       __LINE__ );
       exit( -1 );
    }
 
@@ -152,8 +152,8 @@ bool SineConditional::should_send(
    TrickHLA::Attribute *attr )
 {
    if ( this->sim_data == NULL ) {
-      send_hs( stderr, "SineConditional::should_send('%s'):%d ERROR: Unexpected NULL sim_data!",
-               attr->get_FOM_name(), __LINE__ );
+      message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: Unexpected NULL sim_data!",
+                       attr->get_FOM_name(), __LINE__ );
       exit( -1 );
    }
 
@@ -199,9 +199,9 @@ bool SineConditional::should_send(
          set_tolerance( sim_data->get_tolerance() ); // Update to the current state
       }
    } else {
-      send_hs( stderr, "SineConditional::should_send('%s'):%d ERROR: \
+      message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: \
 Could not find the data for the specified FOM attribute!",
-               attr->get_FOM_name(), __LINE__ );
+                       attr->get_FOM_name(), __LINE__ );
       exit( -1 );
    }
 

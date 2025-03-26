@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/integrator_c_intf.h"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 #include "trick/trick_math.h"
 
 // Model include files.
@@ -98,7 +98,7 @@ SineData::~SineData()
    // Make sure we free the memory used by the name.
    if ( name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SineData::~SineData():%d WARNING failed to delete Trick Memory for 'name'\n", __LINE__ );
+         message_publish( MSG_WARNING, "TrickHLAModel::SineData::~SineData():%d WARNING failed to delete Trick Memory for 'name'\n", __LINE__ );
       }
       name = NULL;
    }
@@ -113,14 +113,14 @@ void SineData::set_name( char const *new_name )
    if ( new_name != this->name ) {
       if ( this->name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            send_hs( stderr, "TrickHLAModel::SineData::set_name():%d ERROR deleting Trick Memory for 'this->name'\n", __LINE__ );
+            message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR deleting Trick Memory for 'this->name'\n", __LINE__ );
             exit( -1 );
          }
       }
       if ( new_name != NULL ) {
          this->name = trick_MM->mm_strdup( new_name );
          if ( this->name == NULL ) {
-            send_hs( stderr, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
+            message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
             exit( -1 );
          }
       } else {
@@ -132,7 +132,7 @@ void SineData::set_name( char const *new_name )
    if ( this->name == NULL ) {
       this->name = trick_MM->mm_strdup( "" );
       if ( this->name == NULL ) {
-         send_hs( stderr, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
+         message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
          exit( -1 );
       }
    }
@@ -224,7 +224,7 @@ void SineData::adjust_phase() // RETURN: -- None.
          }
       }
       phase -= fmod( ( freq * time ), ( 2.0 * M_PI ) );
-      send_hs( stdout, "Adjusting phase, old=%f, new=%f\n", old_phase, phase );
+      message_publish( MSG_NORMAL, "Adjusting phase, old=%f, new=%f\n", old_phase, phase );
    }
 }
 

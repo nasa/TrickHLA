@@ -149,10 +149,10 @@ void SpaceTimeCoordinateEncoder::encode()
       // Print message and terminate.
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::encode():" << __LINE__
-             << " Warning: Encoded data size does not match buffer!"
+             << " WARNING: Encoded data size does not match buffer!"
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    return;

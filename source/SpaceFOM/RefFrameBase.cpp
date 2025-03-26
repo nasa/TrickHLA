@@ -86,15 +86,15 @@ RefFrameBase::~RefFrameBase()
 {
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
+                          __LINE__ );
       }
       this->packing_data.name = NULL;
    }
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.parent_name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.parent_name'\n",
+                          __LINE__ );
       }
       this->packing_data.parent_name = NULL;
    }
@@ -220,7 +220,7 @@ void RefFrameBase::configure()
          errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
                 << "  Setting frame name to empty string.\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
@@ -232,7 +232,7 @@ void RefFrameBase::configure()
          errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
                 << "  Setting parent frame name to empty string.\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
@@ -292,7 +292,7 @@ void RefFrameBase::initialize()
                 << " Setting parent frame name to empty string."
                 << '\n';
 
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
 
       // Set an empty string.
@@ -388,16 +388,16 @@ void RefFrameBase::set_name( char const *new_name )
 
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
+                          __LINE__ );
       }
    }
    this->packing_data.name = trick_MM->mm_strdup( new_name );
 
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                          __LINE__ );
       }
    }
    this->name = trick_MM->mm_strdup( new_name );
@@ -421,8 +421,8 @@ void RefFrameBase::set_parent_name( char const *name )
    // Set the parent frame name appropriately.
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d WARNING failed to delete Trick Memory for 'this->parent_name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::RefFrameBase::set_parent_name():%d WARNING failed to delete Trick Memory for 'this->parent_name'\n",
+                          __LINE__ );
       }
    }
    if ( name != NULL ) {
@@ -542,7 +542,7 @@ void RefFrameBase::publish()
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
              << " WARNING: Ignoring, reference frame already initialized!\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = true;
       object->attributes[0].publish       = true;
@@ -568,7 +568,7 @@ void RefFrameBase::subscribe()
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
              << " WARNING: Ignoring, reference frame already initialized!\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = false;
       object->attributes[0].publish       = false;
@@ -596,7 +596,7 @@ void RefFrameBase::pack()
          ostringstream errmsg;
          errmsg << "RefFrameBase::pack() Warning: The initialize() function has not"
                 << " been called!\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
 
@@ -610,7 +610,7 @@ void RefFrameBase::pack()
       ostringstream msg;
       msg << "RefFrameBase::pack():" << __LINE__ << '\n';
       print_data( msg );
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Encode the data into the buffer.
@@ -629,7 +629,7 @@ void RefFrameBase::unpack()
          ostringstream errmsg;
          errmsg << "RefFrameBase::unpack():" << __LINE__
                 << " Warning: The initialize() function has not been called!\n";
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
 
@@ -644,7 +644,7 @@ void RefFrameBase::unpack()
       ostringstream msg;
       msg << "RefFrameBase::unpack():" << __LINE__ << '\n';
       print_data( msg );
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    return;

@@ -81,15 +81,15 @@ PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 {
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
+                          __LINE__ );
       }
       this->packing_data.name = NULL;
    }
    if ( this->packing_data.parent_name != (char *)NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->parent'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->parent'\n",
+                          __LINE__ );
       }
       this->packing_data.parent_name = NULL;
    }
@@ -197,7 +197,7 @@ void PhysicalInterfaceBase::configure()
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
              << "  Setting frame name to empty string.\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
 
@@ -207,7 +207,7 @@ void PhysicalInterfaceBase::configure()
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
              << "  Setting parent_ref_frame to empty string.\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
 
@@ -225,7 +225,7 @@ void PhysicalInterfaceBase::initialize()
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
              << "  Setting frame name to empty string.\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
 
@@ -236,7 +236,7 @@ void PhysicalInterfaceBase::initialize()
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
              << "  Setting parent_ref_frame to empty string.\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
 
@@ -283,8 +283,8 @@ void PhysicalInterfaceBase::set_name( char const *new_name )
 {
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterfaceBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
+                          __LINE__ );
       }
    }
    this->packing_data.name = trick_MM->mm_strdup( new_name );
@@ -298,8 +298,8 @@ void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
 {
    if ( this->packing_data.parent_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_parent():%d WARNING failed to delete Trick Memory for 'this->parent_frame'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterfaceBase::set_parent():%d WARNING failed to delete Trick Memory for 'this->parent_frame'\n",
+                          __LINE__ );
       }
    }
    this->packing_data.parent_name = trick_MM->mm_strdup( new_parent_name );
@@ -314,7 +314,7 @@ void PhysicalInterfaceBase::pack()
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
              << " been called!\n";
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Check for latency/lag compensation.
@@ -327,7 +327,7 @@ void PhysicalInterfaceBase::pack()
       ostringstream msg;
       msg << "PhysicalInterfaceBase::pack():" << __LINE__ << '\n';
       print_data( msg );
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Encode the data into the buffer.
@@ -342,7 +342,7 @@ void PhysicalInterfaceBase::unpack()
       ostringstream msg;
       msg << "PhysicalInterfaceBase::unpack():" << __LINE__
           << " ERROR: The initialize() function has not been called!\n";
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Use the HLA encoder helpers to decode the PhysicalInterface fixed record.
@@ -356,7 +356,7 @@ void PhysicalInterfaceBase::unpack()
       ostringstream msg;
       msg << "PhysicalInterfaceBase::unpack():" << __LINE__ << '\n';
       print_data( msg );
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    return;

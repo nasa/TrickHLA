@@ -32,7 +32,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Object.hh"
@@ -65,7 +65,7 @@ void DynamicalEntityDeleted::deleted()
    std::ostringstream msg;
    msg << "SpaceFOM::DynamicalEntityDeleted::deleted():" << __LINE__
        << " Object '" << object->get_name() << "' deleted from the federation.";
-   send_hs( stdout, msg.str().c_str() );
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 
    // Call the PhysicalEntityDeleted base class method.
    PhysicalEntityDeleted::deleted();

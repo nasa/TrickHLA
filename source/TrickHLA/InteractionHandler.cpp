@@ -118,8 +118,8 @@ bool InteractionHandler::send_interaction(
 void InteractionHandler::receive_interaction(
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   send_hs( stdout, "InteractionHandler::receive_interaction():%d \n",
-            __LINE__ );
+   message_publish( MSG_NORMAL, "InteractionHandler::receive_interaction():%d \n",
+                    __LINE__ );
 }
 
 Int64Interval InteractionHandler::get_lookahead() const

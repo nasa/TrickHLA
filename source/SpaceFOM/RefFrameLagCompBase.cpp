@@ -37,7 +37,6 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/message_proto.h" // for send_hs
 #include "trick/trick_math.h"
 #include "trick/trick_math_proto.h"
 

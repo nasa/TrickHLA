@@ -124,7 +124,7 @@ double const TSyncCTETimeline::get_time()
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::get_time():" << __LINE__
              << " ERROR: '" << tsync_strerror( err ) << "'\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
       return 0;
    }
 
@@ -147,7 +147,7 @@ int TSyncCTETimeline::clock_init()
       errmsg << "TSyncCTETimeline::clock_init():" << __LINE__
              << " ERROR: Could not open TSync CTE card '"
              << full_device_name << "' [" << tsync_strerror( err ) << "]\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
       return 1;
    }
 
@@ -170,7 +170,7 @@ long long TSyncCTETimeline::wall_clock_time()
       ostringstream errmsg;
       errmsg << "TSyncCTETimeline::wall_clock_time():" << __LINE__
              << " ERROR: '" << tsync_strerror( err ) << "'\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
       return 0;
    }
 
@@ -190,7 +190,7 @@ int TSyncCTETimeline::clock_stop()
       errmsg << "TSyncCTETimeline::clock_stop():" << __LINE__
              << " ERROR: Could not close TSync CTE card '"
              << full_device_name << "' [" << rc << "]\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
    }
    return 0;
 }

@@ -167,29 +167,29 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
    // Free the allocated strings.
    if ( this->owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->owner ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->owner'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->owner'\n",
+                          __LINE__ );
       }
       this->owner = NULL;
    }
    if ( this->scenario != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->scenario ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->scenario'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->scenario'\n",
+                          __LINE__ );
       }
       this->scenario = NULL;
    }
    if ( this->mode != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->mode ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->mode'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->mode'\n",
+                          __LINE__ );
       }
       this->mode = NULL;
    }
    if ( this->required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->required_federates ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->required_federates'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->required_federates'\n",
+                          __LINE__ );
       }
       this->owner = required_federates;
    }
@@ -214,8 +214,8 @@ void ExecutionConfiguration::configure_attributes(
    // Set the S_define instance name.
    if ( this->S_define_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::configure_attributes():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::configure_attributes():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
+                          __LINE__ );
       }
       this->S_define_name = trick_MM->mm_strdup( sim_config_name );
    }
@@ -389,7 +389,7 @@ void ExecutionConfiguration::pack()
           << ".............................................................\n";
       print_simconfig( msg );
       msg << "=============================================================\n";
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
 
@@ -409,7 +409,7 @@ void ExecutionConfiguration::unpack()
           << ".............................................................\n";
       print_simconfig( msg );
       msg << "=============================================================\n";
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Mark that we have a Simulation Configuration update with pending changes.
@@ -422,8 +422,8 @@ void ExecutionConfiguration::set_owner(
    // Free the Trick memory if it's already allocated.
    if ( this->owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->owner ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::set_owner():%d WARNING failed to delete Trick Memory for 'this->owner'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::set_owner():%d WARNING failed to delete Trick Memory for 'this->owner'\n",
+                          __LINE__ );
       }
       this->owner = NULL;
    }
@@ -438,8 +438,8 @@ void ExecutionConfiguration::set_scenario(
    // Free the Trick memory if it's already allocated.
    if ( this->scenario != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->scenario ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::set_scenario():%d WARNING failed to delete Trick Memory for 'this->scenario'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::set_scenario():%d WARNING failed to delete Trick Memory for 'this->scenario'\n",
+                          __LINE__ );
       }
       this->scenario = NULL;
    }
@@ -454,8 +454,8 @@ void ExecutionConfiguration::set_mode(
    // Free the Trick memory if it's already allocated.
    if ( this->mode != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->mode ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::set_mode():%d WARNING failed to delete Trick Memory for 'this->mode'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::set_mode():%d WARNING failed to delete Trick Memory for 'this->mode'\n",
+                          __LINE__ );
       }
       this->mode = NULL;
    }
@@ -470,8 +470,8 @@ void ExecutionConfiguration::set_required_federates(
    // Free the Trick memory if it's already allocated.
    if ( this->required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->required_federates ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::set_required_federates():%d WARNING failed to delete Trick Memory for 'this->required_federates'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::set_required_federates():%d WARNING failed to delete Trick Memory for 'this->required_federates'\n",
+                          __LINE__ );
       }
       this->required_federates = NULL;
    }
@@ -500,7 +500,7 @@ void ExecutionConfiguration::print_execution_configuration()
        << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << '\n';
    print_simconfig( msg );
    msg << "=============================================================\n";
-   send_hs( stdout, msg.str().c_str() );
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 }
 
 void ExecutionConfiguration::print_simconfig( std::ostream &stream )
@@ -529,8 +529,8 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
+                       __LINE__ );
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
@@ -569,15 +569,15 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
-                        __LINE__ );
+               message_publish( MSG_NORMAL, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
+                                __LINE__ );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         send_hs( stdout, "IMSim::ExecutionConfiguration::wait_for_update():%d Received data.\n",
-                  __LINE__ );
+         message_publish( MSG_NORMAL, "IMSim::ExecutionConfiguration::wait_for_update():%d Received data.\n",
+                          __LINE__ );
       }
 
       // Receive the exec-config data from the master federate.

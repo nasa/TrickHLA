@@ -126,7 +126,7 @@ void ExecutionControl::initialize()
       ostringstream msg;
       msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type() << "'\n";
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Simple initialization does not support a Master.
@@ -159,7 +159,7 @@ void ExecutionControl::join_federation_process()
 void ExecutionControl::pre_multi_phase_init_processes()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n", __LINE__ );
+      message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n", __LINE__ );
    }
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
@@ -187,11 +187,11 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER\n",
-                  __LINE__ );
+         message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER\n",
+                          __LINE__ );
       } else {
-         send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM NOT THE MASTER\n",
-                  __LINE__ );
+         message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM NOT THE MASTER\n",
+                          __LINE__ );
       }
    }
 
@@ -336,7 +336,7 @@ void ExecutionControl::add_multiphase_init_sync_points()
       errmsg << "TrickHLA::ExecutionControl::add_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
              << " support multiphase initialization synchronization points.\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
 }
 
@@ -350,7 +350,7 @@ void ExecutionControl::clear_multiphase_init_sync_points()
       errmsg << "TrickHLA::ExecutionControl::clear_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
              << " support multiphase initialization synchronization points.\n";
-      send_hs( stdout, errmsg.str().c_str() );
+      message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
 }
 

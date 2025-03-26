@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
@@ -78,16 +78,16 @@ SimpleSimConfig::~SimpleSimConfig()
 {
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
+                          __LINE__ );
       }
       required_federates = NULL;
    }
 
    if ( owner != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'owner'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'owner'\n",
+                          __LINE__ );
       }
       owner = NULL;
    }
@@ -103,8 +103,8 @@ void SimpleSimConfig::configure(
    // Release the memory used by the required_federates c-string.
    if ( required_federates != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::initialize():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::initialize():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
+                          __LINE__ );
       }
       required_federates = NULL;
    }
@@ -149,8 +149,10 @@ void SimpleSimConfig::initialize()
  */
 void SimpleSimConfig::pack()
 {
+   ostringstream msg;
+
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      cout << "===================================================\n";
+      msg << "===================================================\n";
    }
 
    double terminate_time = exec_get_terminate_time();
@@ -159,9 +161,9 @@ void SimpleSimConfig::pack()
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         cout << "SimpleSimConfig::pack():" << __LINE__
-              << " Setting simulation termination time to "
-              << run_duration << " seconds.\n";
+         msg << "SimpleSimConfig::pack():" << __LINE__
+             << " Setting simulation termination time to "
+             << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    } else {
@@ -173,9 +175,9 @@ void SimpleSimConfig::pack()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         cout << "SimpleSimConfig::pack(:" << __LINE__
-              << " Setting simulation duration to "
-              << run_duration << " seconds.\n";
+         msg << "SimpleSimConfig::pack(:" << __LINE__
+             << " Setting simulation duration to "
+             << run_duration << " seconds.\n";
       }
    }
 
@@ -183,22 +185,24 @@ void SimpleSimConfig::pack()
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      cout << "SimpleSimConfig::pack():" << __LINE__ << '\n'
-           << "\t Object-Name:'" << object->get_name() << "'\n"
-           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
-           << "\t run_duration:" << run_duration << " seconds\n"
-           << "\t run_duration_base_time:" << run_duration_base_time << " "
-           << Int64BaseTime::get_units() << '\n'
-           << "\t num_federates:" << num_federates << '\n'
-           << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
-           << "===================================================\n";
+      msg << "SimpleSimConfig::pack():" << __LINE__ << '\n'
+          << "\t Object-Name:'" << object->get_name() << "'\n"
+          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\t run_duration:" << run_duration << " seconds\n"
+          << "\t run_duration_base_time:" << run_duration_base_time << " "
+          << Int64BaseTime::get_units() << '\n'
+          << "\t num_federates:" << num_federates << '\n'
+          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "===================================================\n";
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
 
 void SimpleSimConfig::unpack()
 {
+   ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      cout << "===================================================\n";
+      msg << "===================================================\n";
    }
 
    // Decode the run duration from a 64 bit integer in the base time.
@@ -208,22 +212,23 @@ void SimpleSimConfig::unpack()
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         cout << "SimpleSimConfig::unpack():" << __LINE__
-              << " Setting simulation duration to "
-              << run_duration << " seconds.\n";
+         msg << "SimpleSimConfig::unpack():" << __LINE__
+             << " Setting simulation duration to "
+             << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      cout << "SimpleSimConfig::unpack():" << __LINE__ << '\n'
-           << "\t Object-Name:'" << object->get_name() << "'\n"
-           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
-           << "\t run_duration:" << run_duration << " seconds\n"
-           << "\t run_duration_base_time:" << run_duration_base_time << " "
-           << Int64BaseTime::get_units() << '\n'
-           << "\t num_federates:" << num_federates << '\n'
-           << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
-           << "===================================================\n";
+      msg << "SimpleSimConfig::unpack():" << __LINE__ << '\n'
+          << "\t Object-Name:'" << object->get_name() << "'\n"
+          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\t run_duration:" << run_duration << " seconds\n"
+          << "\t run_duration_base_time:" << run_duration_base_time << " "
+          << Int64BaseTime::get_units() << '\n'
+          << "\t num_federates:" << num_federates << '\n'
+          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "===================================================\n";
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

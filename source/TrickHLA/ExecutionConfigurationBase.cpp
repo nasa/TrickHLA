@@ -124,8 +124,8 @@ ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
    if ( this->S_define_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         send_hs( stderr, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
+                          __LINE__ );
       }
       this->S_define_name = NULL;
    }
@@ -157,8 +157,8 @@ void ExecutionConfigurationBase::set_S_define_name(
 {
    if ( this->S_define_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         send_hs( stderr, "ExecutionConfigurationBase::set_S_define_name():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "ExecutionConfigurationBase::set_S_define_name():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
+                          __LINE__ );
       }
       this->S_define_name = NULL;
    }
@@ -242,8 +242,8 @@ void ExecutionConfigurationBase::set_master(
 void ExecutionConfigurationBase::wait_for_registration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "ExecutionConfigurationBase::wait_for_registration():%d\n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_registration():%d\n",
+                       __LINE__ );
    }
 
    Federate *federate = get_federate();
@@ -304,7 +304,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
                  << '\n';
          // Display the summary.
-         send_hs( stdout, summary.str().c_str() );
+         message_publish( MSG_NORMAL, summary.str().c_str() );
       }
 
       // Determine if we have any unregistered objects.
@@ -355,8 +355,8 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
-               __LINE__ );
+      message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
+                       __LINE__ );
    }
 
    // Make sure we have at least one piece of Execution Configuration data we can receive.
@@ -395,15 +395,15 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
-                        __LINE__ );
+               message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
+                                __LINE__ );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Received data.\n",
-                  __LINE__ );
+         message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_update():%d Received data.\n",
+                          __LINE__ );
       }
 
       // Receive the Execution Configuration data from the master federate.

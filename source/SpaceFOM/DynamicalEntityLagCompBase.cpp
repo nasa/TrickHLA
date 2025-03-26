@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 #include "trick/trick_math.h"
 #include "trick/trick_math_proto.h"
 
@@ -165,7 +165,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
              << " scenario-time:" << get_scenario_time() << '\n'
              << "     lookahead:" << this->compensate_dt << '\n'
              << " adjusted-time:" << end_t << '\n';
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Copy the current DynamicalEntity state over to the lag compensated state.
@@ -178,7 +178,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
       ostringstream msg;
       msg << "Send data before compensation: \n";
       print_lag_comp_data( msg );
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Compensate the data
@@ -189,7 +189,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
       ostringstream msg;
       msg << "Send data after compensation: \n";
       print_lag_comp_data( msg );
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Copy the compensated state to the packing data.
@@ -217,7 +217,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
              << "  scenario-time:" << end_t << '\n'
              << "      data-time:" << data_t << '\n'
              << " comp-time-step:" << this->compensate_dt << '\n';
-      send_hs( stderr, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Because of ownership transfers and attributes being sent at different
@@ -233,7 +233,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
          ostringstream msg;
          msg << "Receive data before compensation: \n";
          print_lag_comp_data( msg );
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
       // Compensate the data
@@ -244,7 +244,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
          ostringstream msg;
          msg << "Receive data after compensation: \n";
          print_lag_comp_data( msg );
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
    } else {
@@ -253,7 +253,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
          errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received.\n"
                 << "\tvalue_changed: " << state_attr->is_changed()
                 << "; locally owned: " << state_attr->locally_owned << '\n';
-         send_hs( stderr, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
    if ( inertia_attr->is_received() ) {
@@ -261,9 +261,9 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // inverse matrix will be set to all zeros.  This will zero out any
       // torque affects in the lag compensation dynamics.
       if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {
-         send_hs( stderr,
-                  "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING,
+                          "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!\n",
+                          __LINE__ );
          M_INIT( this->inertia_inv );
       }
    }

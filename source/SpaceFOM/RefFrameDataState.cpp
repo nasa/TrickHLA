@@ -147,7 +147,7 @@ bool RefFrameDataState::transform_to_parent(
    if ( frame_p == NULL ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d NULL transformed frame reference!" << std::endl;
-      send_hs( stderr, errmsg.str().c_str(), __LINE__ );
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
 
@@ -256,7 +256,7 @@ bool RefFrameDataState::transform_to_child(
    if ( frame_c == NULL ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_child() ERROR:%d NULL transformed frame reference!" << std::endl;
-      send_hs( stderr, errmsg.str().c_str(), __LINE__ );
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
 

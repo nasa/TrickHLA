@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/message_proto.h" // for send_hs
+#include "trick/message_proto.h"
 #include "trick/trick_math.h"
 
 // TrickHLA include files.
@@ -207,9 +207,11 @@ int PhysicalEntityLagCompSA2::integrate(
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "**** PhysicalEntityLagCompSA2::integrate(): "
-           << "Compensate: t_begin, t_end, dt_go: "
-           << t_begin << ", " << t_end << ", " << dt_go << '\n';
+      ostringstream msg;
+      msg << "**** PhysicalEntityLagCompSA2::integrate(): "
+          << "Compensate: t_begin, t_end, dt_go: "
+          << t_begin << ", " << t_end << ", " << dt_go << '\n';
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Propagate the current PhysicalEntity state to the desired time.
@@ -223,10 +225,12 @@ int PhysicalEntityLagCompSA2::integrate(
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file.
       if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-         cout << "****** PhysicalEntityLagCompSA2::integrate(): "
-              << "Integ dt, tol, t, dt_go: "
-              << this->integ_dt << ", " << this->integ_tol << ", "
-              << integ_t << ", " << dt_go << '\n';
+         ostringstream msg;
+         msg << "****** PhysicalEntityLagCompSA2::integrate(): "
+             << "Integ dt, tol, t, dt_go: "
+             << this->integ_dt << ", " << this->integ_tol << ", "
+             << integ_t << ", " << dt_go << '\n';
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
       // Load the integration states and derivatives.
@@ -260,10 +264,12 @@ int PhysicalEntityLagCompSA2::integrate(
 
    // Print out debug information if desired.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "\tOmega: "
-           << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
-           << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "
-           << "\t\t" << this->lag_comp_data.ang_vel[2] << '\n';
+      ostringstream msg;
+      msg << "\tOmega: "
+          << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
+          << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "
+          << "\t\t" << this->lag_comp_data.ang_vel[2] << '\n';
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    return ( 0 );

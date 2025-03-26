@@ -99,8 +99,8 @@ MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                  __LINE__ );
+         message_publish( MSG_WARNING, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                          __LINE__ );
       }
       this->name = NULL;
    }
@@ -116,8 +116,8 @@ void MTRInteractionHandler::set_name(
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                     __LINE__ );
+            message_publish( MSG_WARNING, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                             __LINE__ );
          }
       }
       this->name = NULL;
@@ -189,7 +189,7 @@ void MTRInteractionHandler::send_interaction(
              << Int64BaseTime::to_base_time( granted_time ) << " "
              << Int64BaseTime::get_units() << ")\n"
              << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
       // Update the send count, which is just used for the message in this example.
@@ -220,7 +220,7 @@ void MTRInteractionHandler::send_interaction(
          msg << "  HLA grant time: " << granted_time << " ("
              << Int64BaseTime::to_base_time( granted_time ) << " "
              << Int64BaseTime::get_units() << ")\n";
-         send_hs( stdout, msg.str().c_str() );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
 }
@@ -292,7 +292,7 @@ void MTRInteractionHandler::receive_interaction(
           << Int64BaseTime::to_base_time( this->granted_time ) << " "
           << Int64BaseTime::get_units() << ")\n"
           << "  receive_cnt:" << ( receive_cnt + 1 ) << '\n';
-      send_hs( stdout, msg.str().c_str() );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    ++receive_cnt;

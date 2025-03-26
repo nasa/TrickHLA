@@ -152,8 +152,8 @@ void PhysicalInterface::pack_from_working_data()
          // Compare names.
          if ( strcmp( interface_data->name, packing_data.name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( packing_data.name ) ) ) {
-               send_hs( stderr, "PhysicalInterface::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.name'\n",
-                        __LINE__ );
+               message_publish( MSG_WARNING, "PhysicalInterface::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.name'\n",
+                                __LINE__ );
             }
             packing_data.name = trick_MM->mm_strdup( interface_data->name );
          }
@@ -182,8 +182,8 @@ void PhysicalInterface::pack_from_working_data()
          if ( strcmp( interface_data->parent_name, packing_data.parent_name ) ) {
             // Names are different, so reassign the new name string.
             if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
-               send_hs( stderr, "SpaceFOM::PhysicalInterface::pack():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
-                        __LINE__ );
+               message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterface::pack():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
+                                __LINE__ );
             }
             packing_data.parent_name = trick_MM->mm_strdup( interface_data->parent_name );
          }
@@ -237,8 +237,8 @@ void PhysicalInterface::unpack_into_working_data()
       if ( interface_data->name != NULL ) {
          if ( !strcmp( interface_data->name, packing_data.name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( interface_data->name ) ) ) {
-               send_hs( stderr, "PhysicalInterface::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'interface_data->name'\n",
-                        __LINE__ );
+               message_publish( MSG_WARNING, "PhysicalInterface::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'interface_data->name'\n",
+                                __LINE__ );
             }
             interface_data->name = trick_MM->mm_strdup( packing_data.name );
          }
@@ -251,8 +251,8 @@ void PhysicalInterface::unpack_into_working_data()
       if ( interface_data->parent_name != NULL ) {
          if ( !strcmp( interface_data->parent_name, packing_data.parent_name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( interface_data->parent_name ) ) ) {
-               send_hs( stderr, "PhysicalInterface::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'interface_data->parent_name'\n",
-                        __LINE__ );
+               message_publish( MSG_WARNING, "PhysicalInterface::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'interface_data->parent_name'\n",
+                                __LINE__ );
             }
             if ( packing_data.parent_name[0] != '\0' ) {
                interface_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
@@ -299,8 +299,8 @@ void PhysicalInterface::set_name( char const *new_name )
    if ( this->interface_data != NULL ) {
       if ( this->interface_data->name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->interface_data->name ) ) ) {
-            send_hs( stderr, "SpaceFOM::PhysicalInterface::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                     __LINE__ );
+            message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterface::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
+                             __LINE__ );
          }
       }
       this->interface_data->name = trick_MM->mm_strdup( new_name );
@@ -327,8 +327,8 @@ void PhysicalInterface::set_parent( char const *new_parent_name )
    if ( this->interface_data != NULL ) {
       if ( this->interface_data->parent_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->interface_data->parent_name ) ) ) {
-            send_hs( stderr, "SpaceFOM::PhysicalInterface::set_parent():%d WARNING failed to delete Trick Memory for 'this->parent_name'\n",
-                     __LINE__ );
+            message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterface::set_parent():%d WARNING failed to delete Trick Memory for 'this->parent_name'\n",
+                             __LINE__ );
          }
       }
       this->interface_data->parent_name = trick_MM->mm_strdup( new_parent_name );
