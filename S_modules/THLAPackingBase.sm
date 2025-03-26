@@ -121,8 +121,7 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
                 << " ERROR: Unexpected NULL Packing obbject!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-      }
-      else {
+      } else {
          packing_base_ptr->initialize();
       }
 
