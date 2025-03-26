@@ -92,6 +92,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 ExecutionControl::ExecutionControl()
+   : TrickHLA::ExecutionControlBase()
 {
    return;
 }
@@ -100,8 +101,8 @@ ExecutionControl::ExecutionControl()
  * @job_class{initialization}
  */
 ExecutionControl::ExecutionControl(
-   ExecutionConfiguration &exec_config )
-   : ExecutionControlBase( exec_config )
+   TrickHLA::ExecutionConfiguration &exec_config )
+   : TrickHLA::ExecutionControlBase( exec_config )
 {
    return;
 }

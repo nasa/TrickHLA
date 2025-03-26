@@ -95,7 +95,8 @@ extern ATTRIBUTES attrTrickHLA__ExecutionConfiguration[];
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration()
-   : run_duration( 0.0 ),
+   : TrickHLA::ExecutionConfigurationBase(),
+     run_duration( 0.0 ),
      run_duration_base_time( 0L ),
      num_federates( 0 ),
      required_federates( NULL ),
@@ -109,7 +110,7 @@ ExecutionConfiguration::ExecutionConfiguration()
  */
 ExecutionConfiguration::ExecutionConfiguration(
    char const *s_define_name )
-   : ExecutionConfigurationBase( s_define_name ),
+   : TrickHLA::ExecutionConfigurationBase( s_define_name ),
      run_duration( 0.0 ),
      run_duration_base_time( 0L ),
      num_federates( 0 ),
