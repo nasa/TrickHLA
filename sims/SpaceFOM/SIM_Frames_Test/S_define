@@ -64,6 +64,8 @@ class FrameDynamicsSimObject : public Trick::SimObject {
 
   public:
    FrameDynamics frame;
+
+  private:
    ExecutionControlBase & execution_control;
 
   public:
@@ -75,10 +77,10 @@ class FrameDynamicsSimObject : public Trick::SimObject {
       P_INIT ("initialization")   frame.initialize();
       ("derivative")              frame.derivative();
       ("integration") trick_ret = frame.integrate();
-      
+
       (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
    }
-   
+
    // Print state job.
    void print_state()
    {
@@ -106,6 +108,8 @@ class EntityDynamicsSimObject : public Trick::SimObject {
 
   public:
    EntityDynamics entity;
+
+  private:
    ExecutionControlBase & execution_control;
 
   public:
@@ -116,10 +120,10 @@ class EntityDynamicsSimObject : public Trick::SimObject {
       ("initialization")          entity.initialize();
       ("derivative")              entity.derivative();
       ("integration") trick_ret = entity.integrate();
-      
+
       (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
    }
-   
+
    // Print state job.
    void print_state()
    {
@@ -206,6 +210,8 @@ class RelStateTestSimObject : public Trick::SimObject {
    RefFrameBase       * ref_frame;
    PhysicalEntityData * ref_entity;
    RefFrameBase       * entity_frame;
+
+  private:
    RefFrameTree       & frame_tree;
 
   public:
@@ -219,13 +225,13 @@ class RelStateTestSimObject : public Trick::SimObject {
       (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( ref_entity, ref_frame );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
    }
-   
+
    // Print state job.
    void initialize()
    {
       std::ostringstream errmsg;
       bool error = false;
-      
+
       // Make sure that all the references are set.
       if ( ref_frame == NULL ){
          errmsg << "RelStateTestSimObject:initialize(): NULL ref_frame!\n";
@@ -245,12 +251,12 @@ class RelStateTestSimObject : public Trick::SimObject {
             error = true;
          }
       }
-      
+
       if ( error ) {
          exec_terminate( __FILE__, errmsg.str().c_str() );
       }
    }
-   
+
    // Print state job.
    void print_state()
    {
@@ -268,9 +274,6 @@ class RelStateTestSimObject : public Trick::SimObject {
       std::cout << "----------------------------------------------------------------------\n";
       return;
    }
-   
-  protected:
-   
 
   private:
    // This object is not copyable
