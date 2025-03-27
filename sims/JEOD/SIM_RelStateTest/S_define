@@ -114,7 +114,7 @@ MoonSimObject moon (dynamics.dyn_manager, env.gravity_manager, env.de4xx);
 
 class VehicleSimObject: public Trick::SimObject
 {
-  protected:
+  private:
    // External references
    jeod::DynManager & dyn_manager;
 
@@ -174,7 +174,7 @@ VehicleSimObject veh2(dynamics.dyn_manager);
 
 class RelkinSimObject: public Trick::SimObject
 {
-  protected:
+  private:
    // Instances for matching to other sim objects:
 
    jeod::DynManager & dyn_mgr;
@@ -404,7 +404,7 @@ class RelStateTestSimObject : public Trick::SimObject {
    SpaceFOM::PhysicalEntityData * ref_entity;
    SpaceFOM::RefFrameBase       * entity_frame;
 
-  protected:
+  private:
    SpaceFOM::RefFrameTree & frame_tree;
 
   public:
