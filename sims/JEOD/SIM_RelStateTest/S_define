@@ -64,7 +64,7 @@
 #include "dynamics.sm"
 
 #ifndef EPHEM_DE440
- #define EPHEM_DE440
+#define EPHEM_DE440
 #endif
 #include "environment.sm"
 #include "sun_basic.sm"
@@ -79,16 +79,19 @@ this also has a derivative class job to update the lunar orientation.
 #include "Base/moon_LP150Q.sm"
 class MoonSimObject : public Moon_LP150Q_SimObject
 {
-  protected:
+  private:
    jeod::De4xxEphemeris & de4xx;
+
   public:
    MoonSimObject( jeod::DynManager     & dyn_manager_,
                   jeod::GravityManager & grav_manager_,
                   jeod::De4xxEphemeris & de4xx_)
-   : Moon_LP150Q_SimObject( dyn_manager_, grav_manager_), de4xx( de4xx_)
-  {
-     P_ENV ("derivative") de4xx.propagate_lunar_rnp ( );
-  }
+      : Moon_LP150Q_SimObject( dyn_manager_, grav_manager_),
+        de4xx( de4xx_)
+   {
+      P_ENV ("derivative") de4xx.propagate_lunar_rnp ( );
+   }
+
   private:
    // Unimplemented copy constructor and assignment operator
    MoonSimObject (const MoonSimObject&);
@@ -111,7 +114,7 @@ MoonSimObject moon (dynamics.dyn_manager, env.gravity_manager, env.de4xx);
 
 class VehicleSimObject: public Trick::SimObject
 {
-  protected:
+  private:
    // External references
    jeod::DynManager & dyn_manager;
 
@@ -128,7 +131,7 @@ class VehicleSimObject: public Trick::SimObject
 
    //Constructor
    VehicleSimObject( jeod::DynManager & dyn_mngr_in )
-   : dyn_manager(dyn_mngr_in)
+      : dyn_manager(dyn_mngr_in)
    {
       //
       //Default data jobs
@@ -138,7 +141,7 @@ class VehicleSimObject: public Trick::SimObject
       // Initialization jobs
       //
       P_ENV("initialization") dyn_body.initialize_model(dyn_manager);
-      
+
       //
       // Environment class jobs
       //
@@ -146,7 +149,6 @@ class VehicleSimObject: public Trick::SimObject
       //
       // Derivative class jobs
       //
-      
    }
 
   private:
@@ -154,7 +156,7 @@ class VehicleSimObject: public Trick::SimObject
    VehicleSimObject & operator = (const VehicleSimObject&) = delete;
    // Do not allow the default constructor.
    VehicleSimObject();
-   
+
 };
 VehicleSimObject veh1(dynamics.dyn_manager);
 VehicleSimObject veh2(dynamics.dyn_manager);
@@ -172,177 +174,177 @@ VehicleSimObject veh2(dynamics.dyn_manager);
 
 class RelkinSimObject: public Trick::SimObject
 {
-protected:
-    // Instances for matching to other sim objects:
+  private:
+   // Instances for matching to other sim objects:
 
-    jeod::DynManager & dyn_mgr;
-    jeod::DynBody    & body1;
-    jeod::DynBody    & body2;
+   jeod::DynManager & dyn_mgr;
+   jeod::DynBody    & body1;
+   jeod::DynBody    & body2;
 
-public:
-    jeod::RelativeKinematics relkin;
-    jeod::RelativeDerivedState veh1_relstate;
-    jeod::RelativeDerivedState veh2_relstate;
+  public:
+   jeod::RelativeKinematics relkin;
+   jeod::RelativeDerivedState veh1_relstate;
+   jeod::RelativeDerivedState veh2_relstate;
 
-    // Constructor
-    RelkinSimObject( jeod::DynManager & dyn_mgr_in,
-                     jeod::DynBody    & body1_in,
-                     jeod::DynBody    & body2_in    )
-        : dyn_mgr(dyn_mgr_in),
-          body1(body1_in),
-          body2(body2_in)
-    {
-        //
-        // Initialization jobs
-        //
-        P_DYN("initialization") veh1_relstate.initialize( body1, dyn_mgr );
-        P_DYN("initialization") relkin.add_relstate( veh1_relstate );
-        P_DYN("initialization") veh2_relstate.initialize( body2, dyn_mgr );
-        P_DYN("initialization") relkin.add_relstate( veh2_relstate );
-        
-        //
-        // Environment class jobs
-        //
-        (DYNAMICS, "environment") relkin.update_all();
-        (THLA_DATA_CYCLE_TIME, "scheduled") print_body( body1, std::cout );
-        (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( dyn_mgr, veh1_relstate, std::cout );
-        (THLA_DATA_CYCLE_TIME, "scheduled") print_state( body1, veh1_relstate );
-        
-        //
-        // Derivative class jobs
-        //
-        P_ENV("derivative") relkin.update_single( veh1_relstate.name.c_str() );
-        P_ENV("derivative") relkin.update_single( veh2_relstate.name.c_str() );
-    }
-    
-    // Print state job.
-    void print_state( jeod::DynBody              & body,
-                      jeod::RelativeDerivedState & rel_deriv_state )
-    {
-       std::ostream &stream = std::cout;
-       
-       // Set the print precision.
-       stream.precision( 15 );
-       
-       // Shortcut to JEOD relative RefFrameState in RelativeDerivedState.
-       jeod::RefFrameState & rel_state = rel_deriv_state.rel_state;
+   // Constructor
+   RelkinSimObject( jeod::DynManager & dyn_mgr_in,
+                    jeod::DynBody    & body1_in,
+                    jeod::DynBody    & body2_in    )
+      : dyn_mgr(dyn_mgr_in),
+        body1(body1_in),
+        body2(body2_in)
+   {
+      //
+      // Initialization jobs
+      //
+      P_DYN("initialization") veh1_relstate.initialize( body1, dyn_mgr );
+      P_DYN("initialization") relkin.add_relstate( veh1_relstate );
+      P_DYN("initialization") veh2_relstate.initialize( body2, dyn_mgr );
+      P_DYN("initialization") relkin.add_relstate( veh2_relstate );
 
-       stream << "----------------------------------------------------------------------\n";
-       stream << " Relative state for DynBody: " << body.mass.name.get_name() << "\n";
-       stream << " Relative state name: " << rel_deriv_state.name << "\n";
-       stream << " Entity state frame: " << rel_deriv_state.subject_frame_name << "\n";
-       stream << " Expressed in frame: " << rel_deriv_state.target_frame_name << "\n";
-       stream << " Simulation Time: " << exec_get_sim_time() << "\n";
+      //
+      // Environment class jobs
+      //
+      (DYNAMICS, "environment") relkin.update_all();
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_body( body1, std::cout );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( dyn_mgr, veh1_relstate, std::cout );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_state( body1, veh1_relstate );
 
-       stream << "\tposition: "
-              << "\t\t" << rel_state.trans.position[0] << ", "
-              << "\t\t" << rel_state.trans.position[1] << ", "
-              << "\t\t" << rel_state.trans.position[2] << '\n';
-       stream << "\tvelocity: "
-              << "\t\t" << rel_state.trans.velocity[0] << ", "
-              << "\t\t" << rel_state.trans.velocity[1] << ", "
-              << "\t\t" << rel_state.trans.velocity[2] << '\n';
+      //
+      // Derivative class jobs
+      //
+      P_ENV("derivative") relkin.update_single( veh1_relstate.name.c_str() );
+      P_ENV("derivative") relkin.update_single( veh2_relstate.name.c_str() );
+   }
+
+   // Print state job.
+   void print_state( jeod::DynBody              & body,
+                     jeod::RelativeDerivedState & rel_deriv_state )
+   {
+      std::ostream &stream = std::cout;
+
+      // Set the print precision.
+      stream.precision( 15 );
+
+      // Shortcut to JEOD relative RefFrameState in RelativeDerivedState.
+      jeod::RefFrameState & rel_state = rel_deriv_state.rel_state;
+
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Relative state for DynBody: " << body.mass.name.get_name() << "\n";
+      stream << " Relative state name: " << rel_deriv_state.name << "\n";
+      stream << " Entity state frame: " << rel_deriv_state.subject_frame_name << "\n";
+      stream << " Expressed in frame: " << rel_deriv_state.target_frame_name << "\n";
+      stream << " Simulation Time: " << exec_get_sim_time() << "\n";
+
+      stream << "\tposition: "
+             << "\t\t" << rel_state.trans.position[0] << ", "
+             << "\t\t" << rel_state.trans.position[1] << ", "
+             << "\t\t" << rel_state.trans.position[2] << '\n';
+      stream << "\tvelocity: "
+             << "\t\t" << rel_state.trans.velocity[0] << ", "
+             << "\t\t" << rel_state.trans.velocity[1] << ", "
+             << "\t\t" << rel_state.trans.velocity[2] << '\n';
 //       stream << "\tacceleration: "
 //              << "\t\t" << accel[0] << ", "
 //              << "\t\t" << accel[1] << ", "
 //              << "\t\t" << accel[2] << '\n';
-       stream << "\tattitude (s,v): "
-              << "\t\t" << rel_state.rot.Q_parent_this.scalar << "; "
-              << "\t\t" << rel_state.rot.Q_parent_this.vector[0] << ", "
-              << "\t\t" << rel_state.rot.Q_parent_this.vector[1] << ", "
-              << "\t\t" << rel_state.rot.Q_parent_this.vector[2] << '\n';
+      stream << "\tattitude (s,v): "
+             << "\t\t" << rel_state.rot.Q_parent_this.scalar << "; "
+             << "\t\t" << rel_state.rot.Q_parent_this.vector[0] << ", "
+             << "\t\t" << rel_state.rot.Q_parent_this.vector[1] << ", "
+             << "\t\t" << rel_state.rot.Q_parent_this.vector[2] << '\n';
 //       stream << "\tattitude (RPY){deg}: "
 //              << "\t\t" << euler_angles[0] << ", "
 //              << "\t\t" << euler_angles[1] << ", "
 //              << "\t\t" << euler_angles[2] << '\n';
-       stream << "\tangular velocity: "
-              << "\t\t" << rel_state.rot.ang_vel_this[0] << ", "
-              << "\t\t" << rel_state.rot.ang_vel_this[1] << ", "
-              << "\t\t" << rel_state.rot.ang_vel_this[2] << '\n';
+      stream << "\tangular velocity: "
+             << "\t\t" << rel_state.rot.ang_vel_this[0] << ", "
+             << "\t\t" << rel_state.rot.ang_vel_this[1] << ", "
+             << "\t\t" << rel_state.rot.ang_vel_this[2] << '\n';
 //       stream << "\tangular acceleration: "
 //              << "\t\t" << ang_accel[0] << ", "
 //              << "\t\t" << ang_accel[1] << ", "
 //              << "\t\t" << ang_accel[2] << '\n';
-       std::cout << "----------------------------------------------------------------------\n";
-       return;
-    }
-    
-    // Print a DynBody.
-    void print_body( jeod::DynBody & body, std::ostream &stream )
-    {
-       jeod::RefFrame const * parent_frame = body.composite_body.get_parent();
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
 
-       stream << "----------------------------------------------------------------------\n";
-       stream << " DynBody: " << body.mass.name.get_name() << "\n";
-       stream << " Expressed in frame: " << parent_frame->get_name() << "\n";
-       stream << "\tposition: "
-              << "\t\t" << body.composite_body.state.trans.position[0] << ", "
-              << "\t\t" << body.composite_body.state.trans.position[1] << ", "
-              << "\t\t" << body.composite_body.state.trans.position[2] << '\n';
-       stream << "\tvelocity: "
-              << "\t\t" << body.composite_body.state.trans.velocity[0] << ", "
-              << "\t\t" << body.composite_body.state.trans.velocity[1] << ", "
-              << "\t\t" << body.composite_body.state.trans.velocity[2] << '\n';
-       stream << "\tattitude (s,v): "
-              << "\t\t" << body.composite_body.state.rot.Q_parent_this.scalar << "; "
-              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[0] << ", "
-              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[1] << ", "
-              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[2] << '\n';
-       stream << "\tangular velocity: "
-              << "\t\t" << body.composite_body.state.rot.ang_vel_this[0] << ", "
-              << "\t\t" << body.composite_body.state.rot.ang_vel_this[1] << ", "
-              << "\t\t" << body.composite_body.state.rot.ang_vel_this[2] << '\n';
-       stream << "----------------------------------------------------------------------\n";
-       return;
-    }
-    
-    // Print state job.
-    void print_frames( jeod::DynManager           & dyn_mgr,
-                       jeod::RelativeDerivedState & rel_deriv_state,
-                       std::ostream &stream )
-    {
-       // Lookup the relative derived state frames.
-       jeod::RefFrame * subject_frame = dyn_mgr.find_ref_frame(rel_deriv_state.subject_frame_name);
-       jeod::RefFrame * target_frame  = dyn_mgr.find_ref_frame(rel_deriv_state.target_frame_name);
+   // Print a DynBody.
+   void print_body( jeod::DynBody & body, std::ostream &stream )
+   {
+      jeod::RefFrame const * parent_frame = body.composite_body.get_parent();
 
-       stream << "----------------------------------------------------------------------\n";
-       stream << " Subject frame:  " << subject_frame->get_name() << "\n";
-       stream << " Subject parent: " << subject_frame->get_parent()->get_name() << "\n";
-       print_frame( *subject_frame, stream );
-       stream << "----------------------------------------------------------------------\n";
-       stream << " Target frame:  " << target_frame->get_name() << "\n";
-       stream << " Target parent: " << target_frame->get_parent()->get_name() << "\n";
-       print_frame( *target_frame, stream );
-       stream << "----------------------------------------------------------------------\n";
-       
-       return;
-    }
-    
-    // Print state job.
-    void print_frame( jeod::RefFrame & ref_frame, std::ostream &stream )
-    {
-       stream << "\tposition: "
-              << "\t\t" << ref_frame.state.trans.position[0] << ", "
-              << "\t\t" << ref_frame.state.trans.position[1] << ", "
-              << "\t\t" << ref_frame.state.trans.position[2] << '\n';
-       stream << "\tvelocity: "
-              << "\t\t" << ref_frame.state.trans.velocity[0] << ", "
-              << "\t\t" << ref_frame.state.trans.velocity[1] << ", "
-              << "\t\t" << ref_frame.state.trans.velocity[2] << '\n';
-       stream << "\tattitude (s,v): "
-              << "\t\t" << ref_frame.state.rot.Q_parent_this.scalar << "; "
-              << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[0] << ", "
-              << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[1] << ", "
-              << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[2] << '\n';
-       stream << "\tangular velocity: "
-              << "\t\t" << ref_frame.state.rot.ang_vel_this[0] << ", "
-              << "\t\t" << ref_frame.state.rot.ang_vel_this[1] << ", "
-              << "\t\t" << ref_frame.state.rot.ang_vel_this[2] << '\n';
-       return;
-    }
+      stream << "----------------------------------------------------------------------\n";
+      stream << " DynBody: " << body.mass.name.get_name() << "\n";
+      stream << " Expressed in frame: " << parent_frame->get_name() << "\n";
+      stream << "\tposition: "
+             << "\t\t" << body.composite_body.state.trans.position[0] << ", "
+             << "\t\t" << body.composite_body.state.trans.position[1] << ", "
+             << "\t\t" << body.composite_body.state.trans.position[2] << '\n';
+      stream << "\tvelocity: "
+             << "\t\t" << body.composite_body.state.trans.velocity[0] << ", "
+             << "\t\t" << body.composite_body.state.trans.velocity[1] << ", "
+             << "\t\t" << body.composite_body.state.trans.velocity[2] << '\n';
+      stream << "\tattitude (s,v): "
+             << "\t\t" << body.composite_body.state.rot.Q_parent_this.scalar << "; "
+             << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[0] << ", "
+             << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[1] << ", "
+             << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[2] << '\n';
+      stream << "\tangular velocity: "
+             << "\t\t" << body.composite_body.state.rot.ang_vel_this[0] << ", "
+             << "\t\t" << body.composite_body.state.rot.ang_vel_this[1] << ", "
+             << "\t\t" << body.composite_body.state.rot.ang_vel_this[2] << '\n';
+      stream << "----------------------------------------------------------------------\n";
+      return;
+   }
 
-    RelkinSimObject(const RelkinSimObject &) = delete;
-    RelkinSimObject & operator=(const RelkinSimObject &) = delete;
+   // Print state job.
+   void print_frames( jeod::DynManager           & dyn_mgr,
+                      jeod::RelativeDerivedState & rel_deriv_state,
+                      std::ostream &stream )
+   {
+      // Lookup the relative derived state frames.
+      jeod::RefFrame * subject_frame = dyn_mgr.find_ref_frame(rel_deriv_state.subject_frame_name);
+      jeod::RefFrame * target_frame  = dyn_mgr.find_ref_frame(rel_deriv_state.target_frame_name);
+
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Subject frame:  " << subject_frame->get_name() << "\n";
+      stream << " Subject parent: " << subject_frame->get_parent()->get_name() << "\n";
+      print_frame( *subject_frame, stream );
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Target frame:  " << target_frame->get_name() << "\n";
+      stream << " Target parent: " << target_frame->get_parent()->get_name() << "\n";
+      print_frame( *target_frame, stream );
+      stream << "----------------------------------------------------------------------\n";
+
+      return;
+   }
+
+   // Print state job.
+   void print_frame( jeod::RefFrame & ref_frame, std::ostream &stream )
+   {
+      stream << "\tposition: "
+             << "\t\t" << ref_frame.state.trans.position[0] << ", "
+             << "\t\t" << ref_frame.state.trans.position[1] << ", "
+             << "\t\t" << ref_frame.state.trans.position[2] << '\n';
+      stream << "\tvelocity: "
+             << "\t\t" << ref_frame.state.trans.velocity[0] << ", "
+             << "\t\t" << ref_frame.state.trans.velocity[1] << ", "
+             << "\t\t" << ref_frame.state.trans.velocity[2] << '\n';
+      stream << "\tattitude (s,v): "
+             << "\t\t" << ref_frame.state.rot.Q_parent_this.scalar << "; "
+             << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[0] << ", "
+             << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[1] << ", "
+             << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[2] << '\n';
+      stream << "\tangular velocity: "
+             << "\t\t" << ref_frame.state.rot.ang_vel_this[0] << ", "
+             << "\t\t" << ref_frame.state.rot.ang_vel_this[1] << ", "
+             << "\t\t" << ref_frame.state.rot.ang_vel_this[2] << '\n';
+      return;
+   }
+
+   RelkinSimObject(const RelkinSimObject &) = delete;
+   RelkinSimObject & operator=(const RelkinSimObject &) = delete;
 };
 
 RelkinSimObject relkin( dynamics.dyn_manager, veh1.dyn_body, veh2.dyn_body );
@@ -401,7 +403,9 @@ class RelStateTestSimObject : public Trick::SimObject {
    SpaceFOM::RefFrameBase       * ref_frame;
    SpaceFOM::PhysicalEntityData * ref_entity;
    SpaceFOM::RefFrameBase       * entity_frame;
-   SpaceFOM::RefFrameTree       & frame_tree;
+
+  private:
+   SpaceFOM::RefFrameTree & frame_tree;
 
   public:
    RelStateTestSimObject( SpaceFOM::RefFrameTree & frame_tree,
@@ -409,20 +413,19 @@ class RelStateTestSimObject : public Trick::SimObject {
       : rel_state( default_frame , frame_tree ),
         frame_tree( frame_tree )
    {
-
       ("initialization") initialize( );
       (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( ref_entity, ref_frame );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( *ref_frame, *entity_frame, std::cout );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_entity( *ref_entity, std::cout );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
    }
-   
+
    // Print state job.
    void initialize()
    {
       std::ostringstream errmsg;
       bool error = false;
-      
+
       // Make sure that all the references are set.
       if ( ref_frame == NULL ){
          errmsg << "RelStateTestSimObject:initialize(): NULL ref_frame!\n";
@@ -433,8 +436,7 @@ class RelStateTestSimObject : public Trick::SimObject {
          errmsg << "RelStateTestSimObject:initialize(): NULL ref_entity!\n";
          errmsg << "\t You probably forgot to set the PhysicalEntityData entity reference in the input file.\n";
          error = true;
-      }
-      else {
+      } else {
          entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
          if ( entity_frame == NULL ){
             errmsg << "RelStateTestSimObject:initialize(): ref_entity parent frame not found: "
@@ -442,12 +444,12 @@ class RelStateTestSimObject : public Trick::SimObject {
             error = true;
          }
       }
-      
+
       if ( error ) {
          exec_terminate( __FILE__, errmsg.str().c_str() );
       }
    }
-   
+
    // Print state job.
    void print_state()
    {
@@ -465,11 +467,10 @@ class RelStateTestSimObject : public Trick::SimObject {
       std::cout << "----------------------------------------------------------------------\n";
       return;
    }
-   
+
    // Print state job.
    void print_entity( SpaceFOM::PhysicalEntityData & entity, std::ostream &stream )
    {
-
       stream << "----------------------------------------------------------------------\n";
       stream << " Entity: " << entity.name << "\n";
       stream << " Entity state frame: " << entity.parent_frame << "\n";
@@ -477,7 +478,7 @@ class RelStateTestSimObject : public Trick::SimObject {
       stream << "----------------------------------------------------------------------\n";
       return;
    }
-   
+
    // Print relative state frames.
    void print_frames( SpaceFOM::RefFrameBase & subject_frame,
                       SpaceFOM::RefFrameBase & target_frame,
@@ -494,9 +495,6 @@ class RelStateTestSimObject : public Trick::SimObject {
       stream << "----------------------------------------------------------------------\n";
       return;
    }
-   
-  protected:
-   
 
   private:
    // This object is not copyable
@@ -542,7 +540,6 @@ IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, dynamics, relkin;
 // Create the THLA connections for the SpaceFOM Reference Frame Tree.
 //==========================================================================
 void create_connections() {
-
    // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.
    ref_frame_tree.ssbary_frame_ptr = &solar_system_barycenter.frame_packing;
    ref_frame_tree.sun_frame_ptr = &sun_inertial.frame_packing;
@@ -553,6 +550,4 @@ void create_connections() {
    ref_frame_tree.earth_pfix_frame_ptr = &earth_centered_fixed.frame_packing;
    ref_frame_tree.moon_pfix_frame_ptr = &moon_centered_fixed.frame_packing;
    ref_frame_tree.mars_pfix_frame_ptr = &mars_centered_fixed.frame_packing;
-
 }
-

@@ -122,11 +122,12 @@ class MoonSimObject : public Moon_LP150Q_SimObject
 {
   protected:
    jeod::De4xxEphemeris & de4xx;
+
   public:
    MoonSimObject( jeod::DynManager     & dyn_manager_,
                   jeod::GravityManager & grav_manager_,
                   jeod::De4xxEphemeris & de4xx_)
-   : Moon_LP150Q_SimObject( dyn_manager_, grav_manager_), de4xx( de4xx_)
+     : Moon_LP150Q_SimObject( dyn_manager_, grav_manager_), de4xx( de4xx_)
   {
      P_ENV ("derivative") de4xx.propagate_lunar_rnp ( );
   }
@@ -165,6 +166,7 @@ class VehicleSimObject: public VehicleAtmSimObject
 {
   protected:
    const jeod::TimeDyn & dyn_time;
+
   public:
    jeod::DynBodyInitLvlhRotState lvlh_init;
    jeod::EulerDerivedState       euler;
@@ -415,6 +417,4 @@ void create_connections() {
                                                               true );
 
 #endif
-
 }
-
