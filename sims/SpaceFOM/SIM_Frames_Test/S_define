@@ -212,7 +212,7 @@ class RelStateTestSimObject : public Trick::SimObject {
    RefFrameBase       * entity_frame;
 
   private:
-   RefFrameTree       & frame_tree;
+   RefFrameTree & frame_tree;
 
   public:
    RelStateTestSimObject( SpaceFOM::RefFrameTree & frame_tree,
@@ -242,8 +242,7 @@ class RelStateTestSimObject : public Trick::SimObject {
          errmsg << "RelStateTestSimObject:initialize(): NULL ref_entity!\n";
          errmsg << "\t You probably forgot to set the PhysicalEntityData entity reference in the input file.\n";
          error = true;
-      }
-      else {
+      } else {
          entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
          if ( entity_frame == NULL ){
             errmsg << "RelStateTestSimObject:initialize(): ref_entity parent frame not found: "
@@ -272,7 +271,6 @@ class RelStateTestSimObject : public Trick::SimObject {
       std::cout << " Path transformation data: \n";
       rel_state.print_path_transform();
       std::cout << "----------------------------------------------------------------------\n";
-      return;
    }
 
   private:

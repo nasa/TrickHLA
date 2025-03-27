@@ -73,7 +73,6 @@ class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
       //
       // Initialization jobs
       //
-
    }
 
   protected:
@@ -83,5 +82,4 @@ class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
    // This object is not copyable
    JEODPhysicalEntiySimObject( JEODPhysicalEntiySimObject const & );
    JEODPhysicalEntiySimObject & operator=( JEODPhysicalEntiySimObject const & );
-
 };

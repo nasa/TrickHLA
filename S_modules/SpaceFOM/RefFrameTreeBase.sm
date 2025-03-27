@@ -69,14 +69,13 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
    // Define the interface to configure the reference frame tree.
    virtual void configure_tree() = 0;
 
+  protected:
    // Need for scheduled job persitence.
    TrickHLA::Manager          & thla_manager;
    SpaceFOM::ExecutionControl & exec_cntrl;
-
 
   private:
    // This object is not copyable
    SpaceFOMRefFrameTreeBaseSimObject( const SpaceFOMRefFrameTreeBaseSimObject & );
    SpaceFOMRefFrameTreeBaseSimObject & operator=( const SpaceFOMRefFrameTreeBaseSimObject & );
-
 };

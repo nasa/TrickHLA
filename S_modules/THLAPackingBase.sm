@@ -106,7 +106,6 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
          mngr_obj_ptr->conditional = conditional_base_ptr;
          mngr_obj_ptr->ownership   = ownership_base_ptr;
          mngr_obj_ptr->deleted     = deleted_base_ptr;
-      
       }
       
       return( 0 );
@@ -142,7 +141,6 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
    // This object is not copyable
    TrickHLAPackingBaseSimObject( TrickHLAPackingBaseSimObject const & );
    TrickHLAPackingBaseSimObject & operator=( TrickHLAPackingBaseSimObject const & );
-
 };
 
 #endif // TRICKHLA_PACKING_BASE_SIM_OBJECT: Do NOT put anything after this line!

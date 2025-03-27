@@ -93,7 +93,7 @@ void DebugHandler::terminate_with_message(
    string const &message,
    int const     exit_code )
 {
-   message_publish( MESSAGE_TYPE::MSG_ERROR, message.c_str() );
+   message_publish( MSG_ERROR, message.c_str() );
    exec_terminate( __FILE__, message.c_str() );
    exit( exit_code );
 }

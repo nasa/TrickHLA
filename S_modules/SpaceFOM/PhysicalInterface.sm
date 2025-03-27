@@ -39,7 +39,7 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
 
   public:
    // DynamicalEntity data.
-   SpaceFOM::PhysicalInterfaceData  interface_data;
+   SpaceFOM::PhysicalInterfaceData interface_data;
 
    /* HLA associated reference frames packing object. */
    SpaceFOM::PhysicalInterface interface_packing;
@@ -70,5 +70,4 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
    // This object is not copyable
    SpaceFOMPhysicalInterfaceSimObject( SpaceFOMPhysicalInterfaceSimObject const & );
    SpaceFOMPhysicalInterfaceSimObject & operator=( SpaceFOMPhysicalInterfaceSimObject const & );
-
 };

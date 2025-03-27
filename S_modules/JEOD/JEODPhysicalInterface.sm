@@ -63,7 +63,6 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
-
    }
 
   protected:
@@ -73,5 +72,4 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
    // This object is not copyable
    JEODPhysicalInterfaceSimObject( JEODPhysicalInterfaceSimObject const & );
    JEODPhysicalInterfaceSimObject & operator=( JEODPhysicalInterfaceSimObject const & );
-
 };

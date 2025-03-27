@@ -55,4 +55,3 @@ class THLAFedSimObject : public Trick::SimObject {
    // Do not allow the default constructor.
    THLAFedSimObject();
 };
-
