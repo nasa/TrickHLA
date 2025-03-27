@@ -1311,13 +1311,9 @@ Detected object already registered '%s' Instance-ID:%s\n",
          if ( is_name_required() ) {
             wstring ws_obj_name;
             StringUtilities::to_wstring( ws_obj_name, get_name() );
-
-            this->instance_handle = rti_amb->registerObjectInstance(
-               this->class_handle,
-               ws_obj_name );
+            this->instance_handle = rti_amb->registerObjectInstance( this->class_handle, ws_obj_name );
          } else {
-            this->instance_handle = rti_amb->registerObjectInstance(
-               this->class_handle );
+            this->instance_handle = rti_amb->registerObjectInstance( this->class_handle );
          }
       } catch ( ObjectInstanceNameInUse const &e ) {
          message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d ObjectInstanceNameInUse %s \n",
