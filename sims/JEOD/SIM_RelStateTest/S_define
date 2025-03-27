@@ -79,8 +79,6 @@ this also has a derivative class job to update the lunar orientation.
 #include "Base/moon_LP150Q.sm"
 class MoonSimObject : public Moon_LP150Q_SimObject
 {
-  private:
-   jeod::De4xxEphemeris & de4xx;
 
   public:
    MoonSimObject( jeod::DynManager     & dyn_manager_,
@@ -93,9 +91,14 @@ class MoonSimObject : public Moon_LP150Q_SimObject
    }
 
   private:
-   // Unimplemented copy constructor and assignment operator
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   jeod::De4xxEphemeris & de4xx;
+
+   // This object is not copyable.
    MoonSimObject (const MoonSimObject&);
    MoonSimObject & operator = (const MoonSimObject&);
+   
    // Do not allow the default constructor.
    MoonSimObject();
 };
@@ -114,9 +117,6 @@ MoonSimObject moon (dynamics.dyn_manager, env.gravity_manager, env.de4xx);
 
 class VehicleSimObject: public Trick::SimObject
 {
-  private:
-   // External references
-   jeod::DynManager & dyn_manager;
 
   public:
    jeod::DynBody dyn_body;
@@ -152,12 +152,20 @@ class VehicleSimObject: public Trick::SimObject
    }
 
   private:
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   jeod::DynManager & dyn_manager;
+
+   // This object is not copyable
    VehicleSimObject (const VehicleSimObject&) = delete;
    VehicleSimObject & operator = (const VehicleSimObject&) = delete;
+   
    // Do not allow the default constructor.
    VehicleSimObject();
 
 };
+
+// Instantiate two test vehicles.
 VehicleSimObject veh1(dynamics.dyn_manager);
 VehicleSimObject veh2(dynamics.dyn_manager);
 
@@ -174,12 +182,6 @@ VehicleSimObject veh2(dynamics.dyn_manager);
 
 class RelkinSimObject: public Trick::SimObject
 {
-  private:
-   // Instances for matching to other sim objects:
-
-   jeod::DynManager & dyn_mgr;
-   jeod::DynBody    & body1;
-   jeod::DynBody    & body2;
 
   public:
    jeod::RelativeKinematics relkin;
@@ -201,7 +203,7 @@ class RelkinSimObject: public Trick::SimObject
       P_DYN("initialization") relkin.add_relstate( veh1_relstate );
       P_DYN("initialization") veh2_relstate.initialize( body2, dyn_mgr );
       P_DYN("initialization") relkin.add_relstate( veh2_relstate );
-
+        
       //
       // Environment class jobs
       //
@@ -209,7 +211,10 @@ class RelkinSimObject: public Trick::SimObject
       (THLA_DATA_CYCLE_TIME, "scheduled") print_body( body1, std::cout );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( dyn_mgr, veh1_relstate, std::cout );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_state( body1, veh1_relstate );
-
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_body( body2, std::cout );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( dyn_mgr, veh2_relstate, std::cout );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_state( body2, veh2_relstate );
+        
       //
       // Derivative class jobs
       //
@@ -342,9 +347,19 @@ class RelkinSimObject: public Trick::SimObject
              << "\t\t" << ref_frame.state.rot.ang_vel_this[2] << '\n';
       return;
    }
+   
+   private:
 
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   jeod::DynManager & dyn_mgr;
+   jeod::DynBody    & body1;
+   jeod::DynBody    & body2;
+
+   // This object is not copyable
    RelkinSimObject(const RelkinSimObject &) = delete;
    RelkinSimObject & operator=(const RelkinSimObject &) = delete;
+   
 };
 
 RelkinSimObject relkin( dynamics.dyn_manager, veh1.dyn_body, veh2.dyn_body );
@@ -403,9 +418,6 @@ class RelStateTestSimObject : public Trick::SimObject {
    SpaceFOM::RefFrameBase       * ref_frame;
    SpaceFOM::PhysicalEntityData * ref_entity;
    SpaceFOM::RefFrameBase       * entity_frame;
-
-  private:
-   SpaceFOM::RefFrameTree & frame_tree;
 
   public:
    RelStateTestSimObject( SpaceFOM::RefFrameTree & frame_tree,
@@ -497,6 +509,10 @@ class RelStateTestSimObject : public Trick::SimObject {
    }
 
   private:
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   SpaceFOM::RefFrameTree & frame_tree;
+   
    // This object is not copyable
    RelStateTestSimObject( RelStateTestSimObject const & rhs );
    RelStateTestSimObject & operator=( RelStateTestSimObject const & rhs );

@@ -319,7 +319,7 @@ relkin.veh1_relstate.direction_sense    = trick.RelativeDerivedState.ComputeSubj
 
 relkin.veh2_relstate.set_name("Vehicle 2 RelState")
 relkin.veh2_relstate.subject_frame_name = "Galileo.composite_body"
-relkin.veh2_relstate.target_frame_name  = "Moon.pfix"
+relkin.veh2_relstate.target_frame_name  = "EMBary.inertial"
 relkin.veh2_relstate.direction_sense    = trick.RelativeDerivedState.ComputeSubjectStateinTarget
 
 
@@ -327,8 +327,10 @@ relkin.veh2_relstate.direction_sense    = trick.RelativeDerivedState.ComputeSubj
 # Set up the SpaceFOM relative state object.
 #---------------------------------------------------------------------------
 rel_test.rel_state.debug = True
-rel_test.ref_entity = veh1_physical_entity.entity_packing.get_packing_data()
-rel_test.ref_frame  = moon_centered_fixed.frame_packing
+#rel_test.ref_entity = veh1_physical_entity.entity_packing.get_packing_data()
+#rel_test.ref_frame  = moon_centered_fixed.frame_packing
+rel_test.ref_entity = veh2_physical_entity.entity_packing.get_packing_data()
+rel_test.ref_frame  = earth_moon_barycenter.frame_packing
 
 
 #---------------------------------------------------------------------------
