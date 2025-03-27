@@ -65,9 +65,6 @@ class FrameDynamicsSimObject : public Trick::SimObject {
   public:
    FrameDynamics frame;
 
-  private:
-   ExecutionControlBase & execution_control;
-
   public:
    FrameDynamicsSimObject( ExecutionControlBase & exec_cntrl,
                            unsigned int           _INIT = P_HLA_INIT )
@@ -94,7 +91,11 @@ class FrameDynamicsSimObject : public Trick::SimObject {
    }
 
   private:
-   // This object is not copyable
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   ExecutionControlBase & execution_control;
+   
+   // This object is not copyable.
    FrameDynamicsSimObject( FrameDynamicsSimObject const & rhs );
    FrameDynamicsSimObject & operator=( FrameDynamicsSimObject const & rhs );
 };
@@ -108,9 +109,6 @@ class EntityDynamicsSimObject : public Trick::SimObject {
 
   public:
    EntityDynamics entity;
-
-  private:
-   ExecutionControlBase & execution_control;
 
   public:
    EntityDynamicsSimObject( ExecutionControlBase & exec_cntrl )
@@ -137,7 +135,11 @@ class EntityDynamicsSimObject : public Trick::SimObject {
    }
 
   private:
-   // This object is not copyable
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   ExecutionControlBase & execution_control;
+
+   // This object is not copyable.
    EntityDynamicsSimObject( EntityDynamicsSimObject const & rhs );
    EntityDynamicsSimObject & operator=( EntityDynamicsSimObject const & rhs );
 };
@@ -187,6 +189,8 @@ class THLAInitSimObject : public Trick::SimObject {
    }
 
  private:
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
    TrickHLA::Manager  & thla_manager;
    TrickHLA::Federate & thla_federate;
 
@@ -210,9 +214,6 @@ class RelStateTestSimObject : public Trick::SimObject {
    RefFrameBase       * ref_frame;
    PhysicalEntityData * ref_entity;
    RefFrameBase       * entity_frame;
-
-  private:
-   RefFrameTree & frame_tree;
 
   public:
    RelStateTestSimObject( SpaceFOM::RefFrameTree & frame_tree,
@@ -274,7 +275,11 @@ class RelStateTestSimObject : public Trick::SimObject {
    }
 
   private:
-   // This object is not copyable
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   SpaceFOM::RefFrameTree & frame_tree;
+   
+   // This object is not copyable.
    RelStateTestSimObject( RelStateTestSimObject const & rhs );
    RelStateTestSimObject & operator=( RelStateTestSimObject const & rhs );
 

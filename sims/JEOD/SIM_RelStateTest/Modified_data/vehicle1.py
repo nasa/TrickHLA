@@ -64,7 +64,8 @@ veh1.trans_init.reference_ref_frame_name = "Moon.inertial"
 veh1.trans_init.body_frame_id            = "composite_body"
 
 veh1.trans_init.position = trick.attach_units( "km",[  1296.944012, -1060.824450, 2522.289146])
-veh1.trans_init.velocity = trick.attach_units( "km/s",[ -.930578, -.439312, .862075])
+#veh1.trans_init.velocity = trick.attach_units( "km/s",[ -.930578, -.439312, .862075])
+veh1.trans_init.velocity = trick.attach_units( "km/s",[ 0.0, 0.0, 0.0 ])
 
 #veh1.rot_init.state_items = trick.DynBodyInitRotState.Rate
 veh1.rot_init.set_subject_body( veh1.dyn_body )
