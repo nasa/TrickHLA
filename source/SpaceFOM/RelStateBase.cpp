@@ -207,11 +207,11 @@ bool RelStateBase::compute_state(
 
       // Print out the path transformation if debug is set.
       if ( debug ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
-         errmsg << "Path transformation for " << entity->name << "\n";
-         path_transform.print_data( errmsg );
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         ostringstream msg;
+         msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+         msg << "Path transformation for " << entity->name << "\n";
+         path_transform.print_data( msg );
+         message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
       return ( true );
@@ -315,11 +315,11 @@ bool RelStateBase::compute_state(
 
    // Print out the path transformation if debug is set.
    if ( debug ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
-      errmsg << "\tPath transform: \n";
-      path_transform.print_data( errmsg );
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      ostringstream msg;
+      msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+      msg << "\tPath transform: \n";
+      path_transform.print_data( msg );
+      message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    return ( true );
