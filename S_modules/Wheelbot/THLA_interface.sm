@@ -89,7 +89,6 @@ class THLAInitSimObject : public Trick::SimObject {
 	
    // Do not allow the default constructor.
    THLAInitSimObject();
-
 };
 
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate);
@@ -149,5 +148,4 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    // This object is not copyable
    SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
    SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
-
 };

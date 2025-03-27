@@ -76,5 +76,4 @@ class SpaceFOMPhysicalEntitySimObject : public TrickHLAPackingBaseSimObject {
    // This object is not copyable
    SpaceFOMPhysicalEntitySimObject( SpaceFOMPhysicalEntitySimObject const & );
    SpaceFOMPhysicalEntitySimObject & operator=( SpaceFOMPhysicalEntitySimObject const & );
-
 };

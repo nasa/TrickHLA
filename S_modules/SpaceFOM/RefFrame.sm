@@ -80,8 +80,7 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
       P_INIT ("initialization") frame_tree.add_frame( &frame_packing );
    }
 
-  protected:
-   
+  private:
    // Reference to the frame tree manager.
    SpaceFOM::RefFrameTree & frame_tree;
 
@@ -89,5 +88,4 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    // This object is not copyable
    SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
    SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
-
 };

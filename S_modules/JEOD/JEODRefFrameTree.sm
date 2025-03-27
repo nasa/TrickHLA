@@ -118,7 +118,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
       return;
    }
 
-
+   
   public:
 
    // References to working SpaceFOM reference frames.
@@ -222,6 +222,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
                                         mars_frame_ptr );
    }
 
+  private:
     // Need for scheduled job persitence.
    jeod::TimeTT & time_tt;
    jeod::DynManager & dyn_manager;
@@ -240,7 +241,6 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
    // This object is not copyable
    JEODRefFrameTreeSimObject( const JEODRefFrameTreeSimObject & );
    JEODRefFrameTreeSimObject & operator=( const JEODRefFrameTreeSimObject & );
-
 };
 
 

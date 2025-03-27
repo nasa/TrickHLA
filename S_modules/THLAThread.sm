@@ -81,8 +81,10 @@ class THLAThreadSimObject : public Trick::SimObject {
       C_THREAD_ID P_LAST (data_cycle_time, data_send_time, "logging") federate.wait_to_send_data();
    }
 
- protected:
+ private:
    TrickHLA::Federate & federate;
+ 
+ protected:
    double               data_cycle_time;
    double               data_send_time;
    unsigned int         thread_id;

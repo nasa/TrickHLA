@@ -40,12 +40,12 @@
 //==========================================================================
 class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
 
-  public:
-
+  private:
    // DynamicalEntity data.
    SpaceFOM::PhysicalEntityData  & pe_data;
    SpaceFOM::DynamicalEntityData & de_data;
 
+  public:
    /* HLA associated reference frames packing object. */
    SpaceFOM::DynamicalEntity entity_packing;
 
@@ -78,12 +78,10 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
-
    }
 
   private:
    // This object is not copyable
    SpaceFOMDynamicalEntitySimObject( SpaceFOMDynamicalEntitySimObject const & );
    SpaceFOMDynamicalEntitySimObject & operator=( SpaceFOMDynamicalEntitySimObject const & );
-
 };

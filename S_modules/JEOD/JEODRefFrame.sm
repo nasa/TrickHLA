@@ -159,5 +159,4 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    // This object is not copyable
    JEODRefFrameSimObject( const JEODRefFrameSimObject & );
    JEODRefFrameSimObject & operator=( const JEODRefFrameSimObject & );
-
 };

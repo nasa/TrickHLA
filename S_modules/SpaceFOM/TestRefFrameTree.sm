@@ -126,9 +126,7 @@ SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_tree, ref_frame_tree
 // Create the THLA connections for the SpaceFOM Reference Frame Tree.
 //==========================================================================
 void create_connections() {
-
    // Make the connections for the root and child frame in the reference frame tree.
    ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
    ref_frame_tree.vehicle_frame_ptr = &ref_frame_A.frame_packing;
-
 }
