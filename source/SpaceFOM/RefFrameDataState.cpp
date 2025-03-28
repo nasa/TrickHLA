@@ -272,7 +272,7 @@ bool RefFrameDataState::transform_to_child(
    // FIXME: Attempt to explore and fix transformation error.
    QuaternionData q_p_c;
    q_p_c.conjugate( transform_c_p.state.att );
-   //QuaternionData q_p_c( transform_c_p.state.att );
+   // QuaternionData q_p_c( transform_c_p.state.att );
 
    //
    // Position computations.
@@ -287,7 +287,7 @@ bool RefFrameDataState::transform_to_child(
    // Compute the attitude of this frame in the child frame.
    // FIXME: Attempt to explore and fix transformation error.
    frame_c->state.att.multiply( q_p_c, this->state.att );
-   //frame_c->state.att.multiply( transform_c_p.state.att, this->state.att );
+   // frame_c->state.att.multiply( transform_c_p.state.att, this->state.att );
 
    //
    // Velocity computations.
