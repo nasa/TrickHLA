@@ -461,6 +461,15 @@ mars_centered_fixed.frame_packing.publish()
 #---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
 trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
+   
+   
+#---------------------------------------------------------------------------
+# Set 
+#---------------------------------------------------------------------------
+if os.path.exists( case_file ):
+   exec(open(case_file).read())
+else:
+   print('ERROR: Case file not found: ' + case_file)
 
 
 #---------------------------------------------------------------------------
@@ -486,15 +495,6 @@ elif express_frame == frames_list[7]:
    rel_test.ref_frame  = mars_centered_inertial.frame_packing
 elif express_frame == frames_list[8]:
    rel_test.ref_frame  = mars_centered_fixed.frame_packing
-   
-   
-#---------------------------------------------------------------------------
-# Set 
-#---------------------------------------------------------------------------
-if os.path.exists( case_file ):
-   exec(open(case_file).read())
-else:
-   print('ERROR: Case file not found: ' + case_file)
 
 
 #---------------------------------------------------------------------------

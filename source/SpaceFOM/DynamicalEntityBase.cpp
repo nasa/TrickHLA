@@ -388,7 +388,7 @@ void DynamicalEntityBase::unpack()
  * @job_class{scheduled}
  */
 void DynamicalEntityBase::debug_print(
-   std::ostream &stream )
+   std::ostream &stream ) const
 {
    // Call the PhysicalEntity print routine first.
    PhysicalEntityBase::debug_print( stream );

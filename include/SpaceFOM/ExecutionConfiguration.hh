@@ -215,7 +215,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
     *  @param packing_obj Associated packing object. */
    virtual void setup_ref_attributes( TrickHLA::Packing *packing_obj );
    /*! @brief Print the current ExCO state to the console. */
-   virtual void print_execution_configuration();
+   virtual void print_execution_configuration() const;
 
    /*! @brief Wait on an ExCO update.
     *  @return True for successful wait. */

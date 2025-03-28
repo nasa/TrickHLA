@@ -1,0 +1,136 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object for computing the relative state of a
+ * SpaceFOM::PhysicalEntity with respect to a SoaceFOM::RefFrame instance
+ * in the SpaceFOM::RefFrameTree.
+ *---------------------------------------------------------------------------*
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     standard SpaceFOM relative state computation instance.)
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: March 2025
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: 
+ *        Date: 
+ * Description: 
+ ****************************************************************************/
+
+##include "SpaceFOM/RelStateBase.hh"
+class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
+
+  public:
+   SpaceFOM::RelStateBase   rel_state;
+   SpaceFOM::RefFrameBase * rel_state_frame;
+
+  public:
+   SpaceFOMPhysicalEntityRelState( SpaceFOM::RefFrameTree       & frame_tree_in,
+                                   SpaceFOM::PhysicalEntityBase & entity_in,
+                                   SpaceFOM::RefFrameBase       & default_frame )
+      : rel_state( default_frame , frame_tree_in ),
+        frame_tree( frame_tree_in ),
+        entity( entity_in )
+   {
+      
+      ("initialization") initialize( );
+      (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( &(entity.get_packing_data()), rel_state_frame );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( *rel_state_frame, *entity_frame, std::cout );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_entity( entity.get_packing_data(), std::cout );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
+   }
+
+   // Print state job.
+   void initialize()
+   {
+      std::ostringstream errmsg;
+      bool error = false;
+
+      // Make sure that all the references are set.
+      if ( rel_state_frame == NULL ){
+         errmsg << "SpaceFOMPhysicalEntityRelState:initialize(): Entity: " << entity.get_name() << " NULL rel_state_frame!\n";
+         errmsg << "\t You probably forgot to set the RelStateBase reference frame in the input file.\n";
+         error = true;
+      } else {
+         entity_frame = frame_tree.find_frame( entity.get_parent_frame() );
+         if ( entity_frame == NULL ){
+            errmsg << "SpaceFOMPhysicalEntityRelState:initialize(): ref_entity parent frame not found: "
+                   << entity.get_parent_frame() << "!";
+            error = true;
+         }
+      }
+
+      if ( error ) {
+         exec_terminate( __FILE__, errmsg.str().c_str() );
+      }
+   }
+
+   // Print state job.
+   void print_state()
+   {
+      std::cout << "----------------------------------------------------------------------\n";
+      std::cout << " Relative state for entity: " << entity.get_name() << "\n";
+      std::cout << " Entity state frame: " << entity.get_parent_frame() << "\n";
+      std::cout << " Expressed in frame: " << rel_state_frame->get_name() << "\n";
+      std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
+      std::cout << " Reference frame tree path: ";
+      frame_tree.print_path( *entity_frame, *rel_state_frame );
+      std::cout << "\n";
+      rel_state.print_data();
+      std::cout << " Path transformation data: \n";
+      rel_state.print_path_transform();
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+
+   // Print state job.
+   void print_entity( SpaceFOM::PhysicalEntityData const & entity, std::ostream &stream )
+   {
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Entity: " << entity.name << "\n";
+      stream << " Entity state frame: " << entity.parent_frame << "\n";
+      entity.print_data();
+      stream << "----------------------------------------------------------------------\n";
+      return;
+   }
+
+   // Print relative state frames.
+   void print_frames( SpaceFOM::RefFrameBase & subject_frame,
+                      SpaceFOM::RefFrameBase & target_frame,
+                      std::ostream           & stream    )
+   {
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Subject frame:  " << subject_frame.get_name() << "\n";
+      stream << " Subject parent: " << subject_frame.get_parent_frame()->name << "\n";
+      subject_frame.print_data( stream );
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Target frame:  " << target_frame.name << "\n";
+      stream << " Target parent: " << target_frame.get_parent_frame()->name << "\n";
+      target_frame.print_data( stream );
+      stream << "----------------------------------------------------------------------\n";
+      return;
+   }
+   
+  protected:
+   SpaceFOM::RefFrameBase * entity_frame;
+
+  private:
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   SpaceFOM::RefFrameTree       & frame_tree;
+   SpaceFOM::PhysicalEntityBase & entity;
+   
+   // This object is not copyable
+   SpaceFOMPhysicalEntityRelState( SpaceFOMPhysicalEntityRelState const & rhs );
+   SpaceFOMPhysicalEntityRelState & operator=( SpaceFOMPhysicalEntityRelState const & rhs );
+
+   // Don't allow the default constructor
+   SpaceFOMPhysicalEntityRelState();
+};

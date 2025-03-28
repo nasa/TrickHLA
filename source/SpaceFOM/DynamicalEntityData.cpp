@@ -119,7 +119,7 @@ void DynamicalEntityData::copy( DynamicalEntityData const &source )
 /*!
  * @job_class{scheduled}
  */
-void DynamicalEntityData::print_data( std::ostream &stream )
+void DynamicalEntityData::print_data( std::ostream &stream ) const
 {
 
    // Set the print precision.

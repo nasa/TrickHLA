@@ -147,7 +147,7 @@ class LRTreeBase
 
    /*! @brief Print out the LRTree nodes.
     *  @param stream Output stream. */
-   virtual void print_nodes( std::ostream &stream = std::cout );
+   virtual void print_nodes( std::ostream &stream = std::cout ) const;
 
    /*! @brief Print out the path between two LRTree nodes.
     *  @param start  Starting node for path.
@@ -155,7 +155,7 @@ class LRTreeBase
     *  @param stream Output stream. */
    virtual void print_path( LRTreeNodeBase &start,
                             LRTreeNodeBase &end,
-                            std::ostream   &stream = std::cout );
+                            std::ostream   &stream = std::cout ) const;
 
    /*! @brief Print out the path between two LRTree nodes.
     *  @param start  Starting node for path.
@@ -163,7 +163,7 @@ class LRTreeBase
     *  @param stream Output stream. */
    virtual void print_path( unsigned int  start,
                             unsigned int  end,
-                            std::ostream &stream = std::cout );
+                            std::ostream &stream = std::cout ) const;
 
   public:
    bool debug; ///< @trick_units{--} Debug output flag.
@@ -185,7 +185,7 @@ class LRTreeBase
 
    /*! @brief Allocate the entries in the paths matrix.
     *  @param stream A reference to a C++ standard output stream. */
-   virtual void print_paths( std::ostream &stream = std::cout );
+   virtual void print_paths( std::ostream &stream = std::cout ) const;
 
    /*! @brief Find the root node in the list of nodes in the tree.
     *  @return Instance of the root node, else NULL if error. */

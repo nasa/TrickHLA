@@ -1,0 +1,254 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object that defines a JEOD relative state.
+ *---------------------------------------------------------------------------*
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines a
+ *     simulation level capability to generate a relative kinematic state
+ *     for a givin JEOD::DynBody with respect to a known reference frame.)
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: March 2025
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: 
+ *        Date: 
+ * Description: 
+ ****************************************************************************/
+
+// Include headers for classes that this class contains:
+##include "dynamics/dyn_manager/include/dyn_manager.hh"
+##include "dynamics/rel_kin/include/relative_kinematics.hh"
+##include "dynamics/derived_state/include/relative_derived_state.hh"
+
+//==========================================================================
+// Define the RelKinSimObject that is used to compute the JEOD-based
+// relative state computations.  This instantiates a single
+// RelativeKinematics instance used to manage all the RelativeDerivedState
+// computations.  The RelativeDerivedState instances are instantiated
+// in individual instances using the EntityRelStateSimObject further
+// below.  There only needs to be one of these for any JEOD simulation.
+//==========================================================================
+class RelkinSimObject: public Trick::SimObject
+{
+
+  public:
+   jeod::RelativeKinematics rel_kin;
+
+   // Constructor
+   RelkinSimObject( )
+   {
+      //
+      // Initialization jobs
+      //
+        
+      //
+      // Environment class jobs
+      //
+      (DYNAMICS, "environment") rel_kin.update_all();
+        
+      //
+      // Derivative class jobs
+      //
+   }
+   
+  private:
+
+  // This object is not copyable
+  RelkinSimObject(const RelkinSimObject &) = delete;
+  RelkinSimObject & operator=(const RelkinSimObject &) = delete;
+  
+};
+
+#ifndef _JEOD_REL_KIN_INSTANTIATED_
+RelkinSimObject relkin;
+#else
+#define _JEOD_REL_KIN_INSTANTIATED_
+#endif
+
+
+//==========================================================================
+// Define the EntityRelStateSimObject that is used to compute the JEOD-based
+// relative state computations for individual jeod::DynBody instances.
+//==========================================================================
+class EntityRelStateSimObject: public Trick::SimObject
+{
+
+  public:
+   jeod::RelativeDerivedState rel_state;
+
+   // Constructor
+   EntityRelStateSimObject( jeod::DynManager         & dyn_mgr_in,
+                            jeod::RelativeKinematics & rel_kin_in,
+                            jeod::DynBody            & dyn_body_in    )
+      : dyn_mgr(dyn_mgr_in),
+        rel_kin(rel_kin_in),
+        dyn_body(dyn_body_in)
+   {
+      //
+      // Initialization jobs
+      //
+      P_DYN("initialization") rel_state.initialize( dyn_body, dyn_mgr );
+      P_DYN("initialization") rel_kin.add_relstate( rel_state );
+        
+      //
+      // Environment class jobs
+      //
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_dyn_body( dyn_body, std::cout );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( dyn_mgr, rel_state, std::cout );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_rel_state( dyn_body, rel_state );
+        
+      //
+      // Derivative class jobs
+      //
+      P_ENV("derivative") rel_kin.update_single( rel_state.name.c_str() );
+      
+   }
+
+   // Print a DynBody.
+   void print_dyn_body( jeod::DynBody & body, std::ostream &stream )
+   {
+      jeod::RefFrame const * parent_frame = body.composite_body.get_parent();
+
+      stream << "----------------------------------------------------------------------\n";
+      stream << " DynBody: " << body.mass.name.get_name() << "\n";
+      stream << " Expressed in frame: " << parent_frame->get_name() << "\n";
+      stream << "\tposition: "
+             << "\t\t" << body.composite_body.state.trans.position[0] << ", "
+             << "\t\t" << body.composite_body.state.trans.position[1] << ", "
+             << "\t\t" << body.composite_body.state.trans.position[2] << '\n';
+      stream << "\tvelocity: "
+             << "\t\t" << body.composite_body.state.trans.velocity[0] << ", "
+             << "\t\t" << body.composite_body.state.trans.velocity[1] << ", "
+             << "\t\t" << body.composite_body.state.trans.velocity[2] << '\n';
+      stream << "\tattitude (s,v): "
+             << "\t\t" << body.composite_body.state.rot.Q_parent_this.scalar << "; "
+             << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[0] << ", "
+             << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[1] << ", "
+             << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[2] << '\n';
+      stream << "\tangular velocity: "
+             << "\t\t" << body.composite_body.state.rot.ang_vel_this[0] << ", "
+             << "\t\t" << body.composite_body.state.rot.ang_vel_this[1] << ", "
+             << "\t\t" << body.composite_body.state.rot.ang_vel_this[2] << '\n';
+      stream << "----------------------------------------------------------------------\n";
+      return;
+   }
+
+   // Print state job.
+   void print_rel_state( jeod::DynBody              & body,
+                         jeod::RelativeDerivedState & rel_deriv_state )
+   {
+      std::ostream &stream = std::cout;
+
+      // Set the print precision.
+      stream.precision( 15 );
+
+      // Shortcut to JEOD relative RefFrameState in RelativeDerivedState.
+      jeod::RefFrameState & rel_state = rel_deriv_state.rel_state;
+
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Relative state for DynBody: " << body.mass.name.get_name() << "\n";
+      stream << " Relative state name: " << rel_deriv_state.name << "\n";
+      stream << " Entity state frame: " << rel_deriv_state.subject_frame_name << "\n";
+      stream << " Expressed in frame: " << rel_deriv_state.target_frame_name << "\n";
+      stream << " Simulation Time: " << exec_get_sim_time() << "\n";
+
+      stream << "\tposition: "
+             << "\t\t" << rel_state.trans.position[0] << ", "
+             << "\t\t" << rel_state.trans.position[1] << ", "
+             << "\t\t" << rel_state.trans.position[2] << '\n';
+      stream << "\tvelocity: "
+             << "\t\t" << rel_state.trans.velocity[0] << ", "
+             << "\t\t" << rel_state.trans.velocity[1] << ", "
+             << "\t\t" << rel_state.trans.velocity[2] << '\n';
+//       stream << "\tacceleration: "
+//              << "\t\t" << accel[0] << ", "
+//              << "\t\t" << accel[1] << ", "
+//              << "\t\t" << accel[2] << '\n';
+      stream << "\tattitude (s,v): "
+             << "\t\t" << rel_state.rot.Q_parent_this.scalar << "; "
+             << "\t\t" << rel_state.rot.Q_parent_this.vector[0] << ", "
+             << "\t\t" << rel_state.rot.Q_parent_this.vector[1] << ", "
+             << "\t\t" << rel_state.rot.Q_parent_this.vector[2] << '\n';
+//       stream << "\tattitude (RPY){deg}: "
+//              << "\t\t" << euler_angles[0] << ", "
+//              << "\t\t" << euler_angles[1] << ", "
+//              << "\t\t" << euler_angles[2] << '\n';
+      stream << "\tangular velocity: "
+             << "\t\t" << rel_state.rot.ang_vel_this[0] << ", "
+             << "\t\t" << rel_state.rot.ang_vel_this[1] << ", "
+             << "\t\t" << rel_state.rot.ang_vel_this[2] << '\n';
+//       stream << "\tangular acceleration: "
+//              << "\t\t" << ang_accel[0] << ", "
+//              << "\t\t" << ang_accel[1] << ", "
+//              << "\t\t" << ang_accel[2] << '\n';
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+
+   // Print state job.
+   void print_frames( jeod::DynManager           & dyn_mgr,
+                      jeod::RelativeDerivedState & rel_deriv_state,
+                      std::ostream &stream )
+   {
+      // Lookup the relative derived state frames.
+      jeod::RefFrame * subject_frame = dyn_mgr.find_ref_frame(rel_deriv_state.subject_frame_name);
+      jeod::RefFrame * target_frame  = dyn_mgr.find_ref_frame(rel_deriv_state.target_frame_name);
+
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Subject frame:  " << subject_frame->get_name() << "\n";
+      stream << " Subject parent: " << subject_frame->get_parent()->get_name() << "\n";
+      print_frame( *subject_frame, stream );
+      stream << "----------------------------------------------------------------------\n";
+      stream << " Target frame:  " << target_frame->get_name() << "\n";
+      stream << " Target parent: " << target_frame->get_parent()->get_name() << "\n";
+      print_frame( *target_frame, stream );
+      stream << "----------------------------------------------------------------------\n";
+
+      return;
+   }
+
+   // Print state job.
+   void print_frame( jeod::RefFrame & ref_frame, std::ostream &stream )
+   {
+      stream << "\tposition: "
+             << "\t\t" << ref_frame.state.trans.position[0] << ", "
+             << "\t\t" << ref_frame.state.trans.position[1] << ", "
+             << "\t\t" << ref_frame.state.trans.position[2] << '\n';
+      stream << "\tvelocity: "
+             << "\t\t" << ref_frame.state.trans.velocity[0] << ", "
+             << "\t\t" << ref_frame.state.trans.velocity[1] << ", "
+             << "\t\t" << ref_frame.state.trans.velocity[2] << '\n';
+      stream << "\tattitude (s,v): "
+             << "\t\t" << ref_frame.state.rot.Q_parent_this.scalar << "; "
+             << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[0] << ", "
+             << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[1] << ", "
+             << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[2] << '\n';
+      stream << "\tangular velocity: "
+             << "\t\t" << ref_frame.state.rot.ang_vel_this[0] << ", "
+             << "\t\t" << ref_frame.state.rot.ang_vel_this[1] << ", "
+             << "\t\t" << ref_frame.state.rot.ang_vel_this[2] << '\n';
+      return;
+   }
+
+   
+  private:
+
+  // Private internal references to external object instances.
+  // These MUST be assigned in the constructor at instantiation.
+  jeod::DynManager         & dyn_mgr;
+  jeod::RelativeKinematics & rel_kin;
+  jeod::DynBody            & dyn_body;
+
+  // This object is not copyable
+  EntityRelStateSimObject(const EntityRelStateSimObject &) = delete;
+  EntityRelStateSimObject & operator=(const EntityRelStateSimObject &) = delete;
+  
+};

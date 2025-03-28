@@ -276,7 +276,7 @@ bool RefFrameData::transform_to_child(
 /*!
  * @job_class{scheduled}
  */
-void RefFrameData::print_data( std::ostream &stream )
+void RefFrameData::print_data( std::ostream &stream ) const
 {
    // Set the print precision.
    stream.precision( 15 );

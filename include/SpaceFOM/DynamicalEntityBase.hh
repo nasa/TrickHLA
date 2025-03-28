@@ -135,7 +135,7 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
    DynamicalEntityData de_packing_data; ///< @trick_units{--} Additional dynamical entity packing data.
 
    /*! @brief Print out the packing data debug information. */
-   virtual void debug_print( std::ostream &stream );
+   virtual void debug_print( std::ostream &stream ) const;
 
   private:
    // This object is not copyable

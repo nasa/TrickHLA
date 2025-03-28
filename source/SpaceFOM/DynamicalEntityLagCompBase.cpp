@@ -388,7 +388,7 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
 /*!
  * @job_class{scheduled}
  */
-void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream )
+void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream ) const
 {
 
    PhysicalEntityLagCompBase::print_lag_comp_data( stream );

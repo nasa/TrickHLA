@@ -219,7 +219,7 @@ bool LRTreeNodeBase::set_root( bool root_status )
 /*!
  * @job_class{scheduled}
  */
-void LRTreeNodeBase::print_node( std::ostream &stream )
+void LRTreeNodeBase::print_node( std::ostream &stream ) const
 {
    stream << "Node Name: '" << this->name << "'\n"
           << "\tID: " << this->node_id << '\n';

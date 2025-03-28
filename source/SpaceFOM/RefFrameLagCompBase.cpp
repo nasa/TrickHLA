@@ -168,10 +168,14 @@ void RefFrameLagCompBase::load_lag_comp_data()
 /*!
  * @job_class{scheduled}
  */
-void RefFrameLagCompBase::print_lag_comp_data( std::ostream &stream )
+void RefFrameLagCompBase::print_lag_comp_data( std::ostream &stream ) const
 {
-   double  euler_angles[3];
-   double *quat = &( lag_comp_data.att.scalar );
+   double euler_angles[3];
+   double quat[4];
+   quat[0] = lag_comp_data.att.scalar;
+   quat[1] = lag_comp_data.att.vector[0];
+   quat[2] = lag_comp_data.att.vector[1];
+   quat[3] = lag_comp_data.att.vector[2];
 
    // Set the print precision.
    stream.precision( 15 );

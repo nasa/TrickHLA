@@ -212,7 +212,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    /*! @brief Print out the packing data debug information.
     *  @param stream Output stream. */
-   virtual void debug_print( std::ostream &stream = std::cout );
+   virtual void debug_print( std::ostream &stream = std::cout ) const;
 
   private:
    // This object is not copyable

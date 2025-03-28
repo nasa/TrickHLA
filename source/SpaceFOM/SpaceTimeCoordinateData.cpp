@@ -160,7 +160,7 @@ bool SpaceTimeCoordinateData::is_equal(
 /*!
  * @job_class{scheduled}
  */
-void SpaceTimeCoordinateData::print_data( std::ostream &stream )
+void SpaceTimeCoordinateData::print_data( std::ostream &stream ) const
 {
    // Set the print precision.
    stream.precision( 15 );

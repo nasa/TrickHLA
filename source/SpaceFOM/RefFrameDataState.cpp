@@ -269,8 +269,10 @@ bool RefFrameDataState::transform_to_child(
 
    // Compute the conjugate of the child to parent transformation quaternion.
    // This is the parent to child transformation quaternion.
+   // FIXME: Attempt to explore and fix transformation error.
    QuaternionData q_p_c;
    q_p_c.conjugate( transform_c_p.state.att );
+   //QuaternionData q_p_c( transform_c_p.state.att );
 
    //
    // Position computations.
@@ -283,7 +285,9 @@ bool RefFrameDataState::transform_to_child(
    q_p_c.transform_vector( dr_p, frame_c->state.pos );
 
    // Compute the attitude of this frame in the child frame.
+   // FIXME: Attempt to explore and fix transformation error.
    frame_c->state.att.multiply( q_p_c, this->state.att );
+   //frame_c->state.att.multiply( transform_c_p.state.att, this->state.att );
 
    //
    // Velocity computations.
@@ -352,7 +356,7 @@ bool RefFrameDataState::transform_to_child(
 /*!
  * @job_class{scheduled}
  */
-void RefFrameDataState::print_data( std::ostream &stream )
+void RefFrameDataState::print_data( std::ostream &stream ) const
 {
    // Set the print precision.
    stream.precision( 15 );

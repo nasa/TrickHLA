@@ -170,7 +170,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
 
    /*! @brief Print out the interface data values.
     *  @param stream Output stream. */
-   virtual void print_data( std::ostream &stream = std::cout );
+   virtual void print_data( std::ostream &stream = std::cout ) const;
 
   private:
    // This object is not copyable

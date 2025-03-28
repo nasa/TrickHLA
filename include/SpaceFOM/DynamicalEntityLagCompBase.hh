@@ -145,7 +145,7 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
 
    /*! @brief Print out the lag compensation data values.
     *  @param stream Output stream. */
-   virtual void print_lag_comp_data( std::ostream &stream = std::cout );
+   virtual void print_lag_comp_data( std::ostream &stream = std::cout ) const;
 
   private:
    // This object is not copyable
