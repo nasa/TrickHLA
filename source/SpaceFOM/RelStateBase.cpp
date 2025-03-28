@@ -258,15 +258,14 @@ bool RelStateBase::compute_state(
    // in the new parent frame coordinates.
    q_c_p.transform_vector( entity->state.pos, r_ent_c_p );
 
-
    // Compute entity position expressed in the express frame.
    V_ADD( this->state.pos, path_transform.state.pos, r_ent_c_p )
 
    // Compute the entity attitude in the express frame.
    // FIXME: Attempt to explore and fix transformation error.
-   //state.att.multiply( path_transform.state.att, entity->state.att );
+   // state.att.multiply( path_transform.state.att, entity->state.att );
    state.att.multiply( entity->state.att, path_transform.state.att );
-   //state.att.multiply( q_c_p, entity->state.att );
+   // state.att.multiply( q_c_p, entity->state.att );
 
    //
    // Velocity computations.

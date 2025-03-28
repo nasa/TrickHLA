@@ -96,7 +96,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
     *  @param packing_obj Associated packing object. */
    virtual void setup_ref_attributes( Packing *packing_obj );
    /*! @brief Print the current Execution Configuration object to the console. */
-   virtual void print_execution_configuration();
+   virtual void print_execution_configuration() const;
 
   private:
    // Do not allow the copy constructor or assignment operator.

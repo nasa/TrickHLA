@@ -494,7 +494,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    return;
 }
 
-void ExecutionConfiguration::print_execution_configuration()
+void ExecutionConfiguration::print_execution_configuration() const
 {
    ostringstream msg;
    msg << "=============================================================\n"
@@ -504,7 +504,7 @@ void ExecutionConfiguration::print_execution_configuration()
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }
 
-void ExecutionConfiguration::print_simconfig( std::ostream &stream )
+void ExecutionConfiguration::print_simconfig( std::ostream &stream ) const
 {
    stream << "\t Object-Name:         '" << get_name() << "'\n"
           << "\t owner:               '" << owner << '\n'
