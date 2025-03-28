@@ -130,7 +130,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    virtual void setup_ref_attributes( Packing *packing_obj ) = 0;
 
    /*! @brief Print the current Execution Configuration object to the console. */
-   virtual void print_execution_configuration() = 0;
+   virtual void print_execution_configuration() const = 0;
 
    /*! @brief Waits for the registration of the ExecutionConfiguration
     * object instances with the RTI. */

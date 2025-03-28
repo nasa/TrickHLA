@@ -89,7 +89,7 @@ class SpaceTimeCoordinateData
 
    /*! @brief Print out the data values.
     *  @param stream Output stream. */
-   void print_data( std::ostream &stream = std::cout );
+   void print_data( std::ostream &stream = std::cout ) const;
 };
 
 } // namespace SpaceFOM

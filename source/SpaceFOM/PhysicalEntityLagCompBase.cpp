@@ -320,7 +320,7 @@ void PhysicalEntityLagCompBase::load_lag_comp_data()
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream )
+void PhysicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream ) const
 {
    double euler_angles[3];
 

@@ -653,7 +653,7 @@ void RefFrameBase::unpack()
 /*!
  * @job_class{scheduled}
  */
-void RefFrameBase::print_data( std::ostream &stream )
+void RefFrameBase::print_data( std::ostream &stream ) const
 {
    // Set the print precision.
    stream.precision( 15 );

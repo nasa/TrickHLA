@@ -161,7 +161,7 @@ Int64Time LagCompensation::get_granted_time() const
 /*! @brief Returns the current scenario time.
  *  @return Current scenario time.
  */
-double LagCompensation::get_scenario_time()
+double LagCompensation::get_scenario_time() const
 {
    if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
       ExecutionControlBase *execution_control = object->get_federate()->get_execution_control();
@@ -173,7 +173,7 @@ double LagCompensation::get_scenario_time()
 /*! @brief Returns the current Central Timing Equipment (CTE) time.
  *  @return Current CTE time.
  */
-double LagCompensation::get_cte_time()
+double LagCompensation::get_cte_time() const
 {
    if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
       ExecutionControlBase *execution_control = object->get_federate()->get_execution_control();

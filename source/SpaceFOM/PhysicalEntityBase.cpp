@@ -517,7 +517,7 @@ void PhysicalEntityBase::unpack()
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityBase::debug_print( std::ostream &stream )
+void PhysicalEntityBase::debug_print( std::ostream &stream ) const
 {
    double euler_angles[3];
    pe_packing_data.state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );

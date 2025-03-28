@@ -365,7 +365,7 @@ void PhysicalInterfaceBase::unpack()
 /*!
  * @job_class{scheduled}
  */
-void PhysicalInterfaceBase::print_data( std::ostream &stream )
+void PhysicalInterfaceBase::print_data( std::ostream &stream ) const
 {
    double euler_angles[3];
 

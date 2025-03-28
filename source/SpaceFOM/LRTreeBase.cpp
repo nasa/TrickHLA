@@ -390,7 +390,7 @@ LRTreeNodeBase *LRTreeBase::find_node( string const &name )
 /*!
  * @job_class{scheduled}
  */
-void LRTreeBase::print_nodes( std::ostream &stream )
+void LRTreeBase::print_nodes( std::ostream &stream ) const
 {
    for ( unsigned int iinc = 0; iinc < nodes.size(); ++iinc ) {
       nodes[iinc]->print_node( stream );
@@ -404,7 +404,7 @@ void LRTreeBase::print_nodes( std::ostream &stream )
 void LRTreeBase::print_path(
    LRTreeNodeBase &start,
    LRTreeNodeBase &end,
-   std::ostream   &stream )
+   std::ostream   &stream ) const
 {
 
    // Check to see if a paths matrix has been allocated.
@@ -424,7 +424,7 @@ void LRTreeBase::print_path(
 void LRTreeBase::print_path(
    unsigned int  start,
    unsigned int  end,
-   std::ostream &stream )
+   std::ostream &stream ) const
 {
    unsigned int num_nodes = nodes.size();
 
@@ -472,7 +472,7 @@ void LRTreeBase::print_path(
 /*!
  * @job_class{scheduled}
  */
-void LRTreeBase::print_paths( std::ostream &stream )
+void LRTreeBase::print_paths( std::ostream &stream ) const
 {
    // Check to see if a paths matrix has been allocated.
    if ( paths != NULL ) {

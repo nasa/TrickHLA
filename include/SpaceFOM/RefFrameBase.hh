@@ -203,7 +203,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Print out the reference frame data values.
     *  @param stream Output stream. */
-   virtual void print_data( std::ostream &stream = std::cout );
+   virtual void print_data( std::ostream &stream = std::cout ) const;
 
   protected:
    RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frame's parent frame.

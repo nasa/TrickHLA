@@ -122,11 +122,11 @@ class LagCompensation
 
    /*! @brief Returns the current scenario time.
     *  @return Current scenario time. */
-   double get_scenario_time();
+   double get_scenario_time() const;
 
    /*! @brief Returns the current Central Timing Equipment (CTE) time.
     *  @return Current CTE time. */
-   double get_cte_time();
+   double get_cte_time() const;
 
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */

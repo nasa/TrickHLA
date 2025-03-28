@@ -126,7 +126,7 @@ class RelStateBase : public SpaceFOM::PhysicalEntityData
 
    /*! @brief Print out the path transformation data.
     *  @param stream Output stream. */
-   virtual void print_path_transform( std::ostream &stream = std::cout );
+   virtual void print_path_transform( std::ostream &stream = std::cout ) const;
 
   protected:
    RefFrameBase const *express_frame;  ///< @trick_units{--} Frame in which state is expressed.

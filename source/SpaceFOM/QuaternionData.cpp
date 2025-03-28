@@ -113,7 +113,7 @@ bool QuaternionData::operator!=(
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::print_data( std::ostream &stream )
+void QuaternionData::print_data( std::ostream &stream ) const
 {
    double euler_angles[3];
 
@@ -180,9 +180,14 @@ void QuaternionData::set_from_Euler_deg(
  */
 void QuaternionData::get_Euler(
    Euler_Seq sequence,
-   double    angles[3] )
+   double    angles[3] ) const
 {
-   euler_quat( angles, &( this->scalar ), 1, sequence );
+   double work[4];
+   work[0] = this->scalar;
+   work[1] = this->vector[0];
+   work[2] = this->vector[1];
+   work[3] = this->vector[2];
+   euler_quat( angles, work, 1, sequence );
    return;
 }
 
@@ -191,10 +196,15 @@ void QuaternionData::get_Euler(
  */
 void QuaternionData::get_Euler_deg(
    Euler_Seq sequence,
-   double    angles_deg[3] )
+   double    angles_deg[3] ) const
 {
    double angles[3];
-   euler_quat( angles, &( this->scalar ), 1, sequence );
+   double work[4];
+   work[0] = this->scalar;
+   work[1] = this->vector[0];
+   work[2] = this->vector[1];
+   work[3] = this->vector[2];
+   euler_quat( angles, work, 1, sequence );
    angles_deg[0] = angles[0] * RTD;
    angles_deg[1] = angles[1] * RTD;
    angles_deg[2] = angles[2] * RTD;
@@ -215,9 +225,14 @@ void QuaternionData::set_from_transfrom(
  * @job_class{initialization}
  */
 void QuaternionData::get_transfrom(
-   double T[3][3] )
+   double T[3][3] ) const
 {
-   quat_to_mat( (double( * )[3])T, &( this->scalar ) );
+   double work[4];
+   work[0] = this->scalar;
+   work[1] = this->vector[0];
+   work[2] = this->vector[1];
+   work[3] = this->vector[2];
+   quat_to_mat( (double( * )[3])T, work );
    return;
 }
 

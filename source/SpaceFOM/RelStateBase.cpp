@@ -165,6 +165,8 @@ bool RelStateBase::compute_state(
                            current frame (child) but expressed in the desired
                            parent frame. */
 
+   QuaternionData q_c_p; /* The transformation quaternion from child into parent frame. */
+
    // Working variables.
    // Translation
    double wxr_c[3];
@@ -244,6 +246,8 @@ bool RelStateBase::compute_state(
    // Compute the state of the entity with respect to a new express (parent)
    // frame.
    //**************************************************************************
+   // The transformation quaternion is the conjugate of the rotation quaternion.
+   q_c_p.conjugate( path_transform.state.att );
 
    //
    // Position computations.
@@ -252,13 +256,17 @@ bool RelStateBase::compute_state(
    // (child) into the desired express frame (parent).  This is still a vector
    // from the origin of the original child frame to the entity but expressed
    // in the new parent frame coordinates.
-   path_transform.state.att.transform_vector( entity->state.pos, r_ent_c_p );
+   q_c_p.transform_vector( entity->state.pos, r_ent_c_p );
+
 
    // Compute entity position expressed in the express frame.
    V_ADD( this->state.pos, path_transform.state.pos, r_ent_c_p )
 
    // Compute the entity attitude in the express frame.
-   state.att.multiply( path_transform.state.att, entity->state.att );
+   // FIXME: Attempt to explore and fix transformation error.
+   //state.att.multiply( path_transform.state.att, entity->state.att );
+   state.att.multiply( entity->state.att, path_transform.state.att );
+   //state.att.multiply( q_c_p, entity->state.att );
 
    //
    // Velocity computations.
@@ -270,7 +278,7 @@ bool RelStateBase::compute_state(
    V_ADD( v_c, entity->state.vel, wxr_c );
 
    // Transform the entity velocity into the express frame.
-   path_transform.state.att.transform_vector( v_c, v_ent_c_p );
+   q_c_p.transform_vector( v_c, v_ent_c_p );
 
    // Compute entity velocity expressed in the express frame.
    V_ADD( this->state.vel, path_transform.state.vel, v_ent_c_p );
@@ -279,7 +287,7 @@ bool RelStateBase::compute_state(
    // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular velocity wrt the parent frame into
    // this entity's 'body' frame.
-   state.att.conjugate_transform_vector( path_transform.state.ang_vel, w_c_p_bdy );
+   entity->state.att.conjugate_transform_vector( path_transform.state.ang_vel, w_c_p_bdy );
    // Add the rotational velocity of the entity's current frame (child) with
    // respect to the new parent frame.
    V_ADD( this->state.ang_vel, w_c_p_bdy, entity->state.ang_vel );
@@ -299,7 +307,7 @@ bool RelStateBase::compute_state(
    a_c[2] = entity->accel[2] + wxwxr_c[2] + two_wxv_c[2] + axr_c[2];
 
    // Transform the entity acceleration into the parent frame.
-   path_transform.state.att.transform_vector( a_c, a_ent_c_p );
+   q_c_p.transform_vector( a_c, a_ent_c_p );
 
    // Compute entity acceleration expressed in the parent frame.
    V_ADD( this->accel, path_transform.accel, a_ent_c_p );
@@ -386,7 +394,7 @@ bool RelStateBase::compute_state(
 /*!
  * @job_class{scheduled}
  */
-void RelStateBase::print_path_transform( std::ostream &stream )
+void RelStateBase::print_path_transform( std::ostream &stream ) const
 {
    // Call the path transformation print function.
    path_transform.print_data( stream );

@@ -128,7 +128,7 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
 
    /*! @brief Print out the Reference Frame Tree nodes.
     *  @param stream Output stream. */
-   virtual void print_tree( std::ostream &stream = std::cout );
+   virtual void print_tree( std::ostream &stream = std::cout ) const;
 
   private:
    // This object is not copyable

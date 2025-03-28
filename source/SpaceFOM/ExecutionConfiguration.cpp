@@ -667,7 +667,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    exco_ref2 = NULL;
 }
 
-void ExecutionConfiguration::print_execution_configuration()
+void ExecutionConfiguration::print_execution_configuration() const
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;

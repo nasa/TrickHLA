@@ -244,7 +244,7 @@ void PhysicalEntityData::set_parent_frame( char const *new_frame )
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityData::print_data( std::ostream &stream )
+void PhysicalEntityData::print_data( std::ostream &stream ) const
 {
 
    // Set the print precision.

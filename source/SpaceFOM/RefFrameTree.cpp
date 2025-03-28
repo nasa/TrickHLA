@@ -90,7 +90,7 @@ bool RefFrameTree::check_tree()
 /*!
  * @job_class{scheduled}
  */
-void RefFrameTree::print_tree( std::ostream &stream )
+void RefFrameTree::print_tree( std::ostream &stream ) const
 {
    if ( debug || DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       message_publish( MSG_NORMAL, "RefFrameTree::print_tree():%d\n", __LINE__ );
