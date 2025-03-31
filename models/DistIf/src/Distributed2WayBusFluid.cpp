@@ -305,7 +305,9 @@ Distributed2WayBusFluidInterfaceData &Distributed2WayBusFluidInterfaceData::oper
 {
    if ( this != &that ) {
       Distributed2WayBusBaseInterfaceData::operator=( that );
+
       FluidDistributedMixtureData::operator=( that );
+
       mCapacitance = that.mCapacitance;
       mSource      = that.mSource;
    }
