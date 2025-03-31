@@ -426,12 +426,15 @@ int Utilities::micro_sleep(
    return nanosleep( &sleep_time, NULL );
 }
 
-string Utilities::get_version()
+string const Utilities::get_version()
 {
-   return TRICKHLA_VERSION;
+   // Version of the form: "vMajor.Minor.Patch" => v1.2.3
+   return "v" + std::to_string( TRICKHLA_MAJOR_VERSION )
+          + "." + std::to_string( TRICKHLA_MINOR_VERSION )
+          + "." + std::to_string( TRICKHLA_PATCH_VERSION );
 }
 
-string Utilities::get_release_date()
+string const &Utilities::get_release_date()
 {
    return TRICKHLA_RELEASE_DATE;
 }
