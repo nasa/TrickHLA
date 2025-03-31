@@ -232,10 +232,10 @@ JEODPhysicalEntiySimObject veh2_physical_entity( veh2.dyn_body, P_HLA_INIT );
 
 // Instantiate a relative state test object.
 SpaceFOMPhysicalEntityRelState rel_test1( ref_frame_tree.frame_tree,
-                                          veh1_physical_entity.entity_packing,
+                                          veh1_physical_entity.entity_packing.get_packing_data(),
                                           solar_system_barycenter.frame_packing );
 SpaceFOMPhysicalEntityRelState rel_test2( ref_frame_tree.frame_tree,
-                                          veh2_physical_entity.entity_packing,
+                                          veh2_physical_entity.entity_packing.get_packing_data(),
                                           solar_system_barycenter.frame_packing );
 
 

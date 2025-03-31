@@ -139,7 +139,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Access function to get the HLA federation instance name for the reference frame.
     *  @return Object instance name for this reference frame. */
-   virtual char const *get_name()
+   virtual char const *get_name() const
    {
       return packing_data.name;
    }
@@ -150,7 +150,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Access function to get the HLA federation instance name for the parent reference frame.
     *  @return Object instance name for the parent reference frame. */
-   virtual char const *get_parent_name()
+   virtual char const *get_parent_name() const
    {
       return packing_data.parent_name;
    }
@@ -161,7 +161,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Access function to get the pointer to the parent reference frame.
     *  @return Pointer to the parent reference frame. */
-   virtual RefFrameBase *get_parent_frame()
+   virtual RefFrameBase const *get_parent_frame() const
    {
       return parent_frame;
    }
@@ -172,7 +172,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
     *  @return Current time associated with the PhysicalEntity. */
-   double const get_time()
+   double get_time() const
    {
       return packing_data.state.time;
    }

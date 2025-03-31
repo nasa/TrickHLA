@@ -279,7 +279,7 @@ ssbary_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 ssbary_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 ssbary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "ssbary_frame.print_state", 1, False )
+trick.exec_set_job_onoff( "ssbary_frame.print_frame_state", 1, False )
 
 #
 # Sun
@@ -291,7 +291,7 @@ sun_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 sun_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 sun_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "sun_frame.print_state", 1, False )
+trick.exec_set_job_onoff( "sun_frame.print_frame_state", 1, False )
 
 #
 # Earth-Moon system
@@ -303,7 +303,7 @@ embary_frame.frame.data.state.vel = [0.01, 0.0, 0.0]
 embary_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 embary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "embary_frame.print_state", 1, False )
+trick.exec_set_job_onoff( "embary_frame.print_frame_state", 1, False )
 
 # Earth inertial
 earth_inertial_frame.frame.data.name = frames_list[3]
@@ -313,7 +313,7 @@ earth_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 earth_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "earth_inertial_frame.print_state", 1, True )
+trick.exec_set_job_onoff( "earth_inertial_frame.print_frame_state", 1, False )
 
 # Earth fixed
 earth_fixed_frame.frame.data.name = frames_list[4]
@@ -326,7 +326,7 @@ earth_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.001 * deg2rad]
 earth_fixed_frame.frame.accel_env = [0.0, 0.0, 0.0]
 earth_fixed_frame.frame.ang_accel_env = [0.0, 0.0, 0.0000 * deg2rad]
 # Control print job.
-trick.exec_set_job_onoff( "earth_fixed_frame.print_state", 1, True )
+trick.exec_set_job_onoff( "earth_fixed_frame.print_frame_state", 1, False )
 
 # Moon inertial
 moon_inertial_frame.frame.data.name = frames_list[5]
@@ -336,7 +336,7 @@ moon_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 moon_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 moon_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "moon_inertial_frame.print_state", 1, False )
+trick.exec_set_job_onoff( "moon_inertial_frame.print_frame_state", 1, False )
 
 # Moon fixed
 moon_fixed_frame.frame.data.name = frames_list[6]
@@ -346,7 +346,7 @@ moon_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 moon_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 moon_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "moon_fixed_frame.print_state", 1, False )
+trick.exec_set_job_onoff( "moon_fixed_frame.print_frame_state", 1, False )
 
 #
 # Mars system
@@ -359,7 +359,7 @@ mars_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 mars_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 mars_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "mars_inertial_frame.print_state", 1, False )
+trick.exec_set_job_onoff( "mars_inertial_frame.print_frame_state", 1, False )
 
 # Moon fixed
 mars_fixed_frame.frame.data.name = frames_list[8]
@@ -369,7 +369,7 @@ mars_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 mars_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 mars_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "mars_fixed_frame.print_state", 1, False )
+trick.exec_set_job_onoff( "mars_fixed_frame.print_frame_state", 1, False )
 
 
 #---------------------------------------------------------------------------
@@ -475,26 +475,29 @@ else:
 #---------------------------------------------------------------------------
 # Set up the relative state object.
 #---------------------------------------------------------------------------
-rel_test.rel_state.debug = True
-rel_test.ref_entity = vehicle.entity.pe_data
+rel_test.debug_rel_state    = True
+rel_test.debug_entity_state = False
+rel_test.debug_frames       = False
+rel_test.rel_state.debug    = False
+#rel_test.ref_entity = vehicle.entity.pe_data
 if express_frame == frames_list[0]:
-   rel_test.ref_frame  = solar_system_barycenter.frame_packing
+   rel_test.rel_state_frame  = solar_system_barycenter.frame_packing
 elif express_frame == frames_list[1]:
-   rel_test.ref_frame  = sun_inertial.frame_packing
+   rel_test.rel_state_frame  = sun_inertial.frame_packing
 elif express_frame == frames_list[2]:
-   rel_test.ref_frame  = earth_moon_barycenter.frame_packing
+   rel_test.rel_state_frame  = earth_moon_barycenter.frame_packing
 elif express_frame == frames_list[3]:
-   rel_test.ref_frame  = earth_centered_inertial.frame_packing
+   rel_test.rel_state_frame  = earth_centered_inertial.frame_packing
 elif express_frame == frames_list[4]:
-   rel_test.ref_frame  = earth_centered_fixed.frame_packing
+   rel_test.rel_state_frame  = earth_centered_fixed.frame_packing
 elif express_frame == frames_list[5]:
-   rel_test.ref_frame  = moon_centered_inertial.frame_packing
+   rel_test.rel_state_frame  = moon_centered_inertial.frame_packing
 elif express_frame == frames_list[6]:
-   rel_test.ref_frame  = moon_centered_fixed.frame_packing
+   rel_test.rel_state_frame  = moon_centered_fixed.frame_packing
 elif express_frame == frames_list[7]:
-   rel_test.ref_frame  = mars_centered_inertial.frame_packing
+   rel_test.rel_state_frame  = mars_centered_inertial.frame_packing
 elif express_frame == frames_list[8]:
-   rel_test.ref_frame  = mars_centered_fixed.frame_packing
+   rel_test.rel_state_frame  = mars_centered_fixed.frame_packing
 
 
 #---------------------------------------------------------------------------

@@ -311,12 +311,17 @@ veh2_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 #---------------------------------------------------------------------------
 # Set up the JEOD relative state object.
 #---------------------------------------------------------------------------
-
+relstate1.debug_rel_state = True
+relstate1.debug_dyn_body  = True
+relstate1.debug_frames    = True
 relstate1.rel_state.set_name("Vehicle 1 RelState")
 relstate1.rel_state.subject_frame_name = "Enterprise.composite_body"
 relstate1.rel_state.target_frame_name  = "Moon.pfix"
 relstate1.rel_state.direction_sense    = trick.RelativeDerivedState.ComputeSubjectStateinTarget
 
+relstate2.debug_rel_state = False
+relstate2.debug_dyn_body  = False
+relstate2.debug_frames    = False
 relstate2.rel_state.set_name("Vehicle 2 RelState")
 relstate2.rel_state.subject_frame_name = "Galileo.composite_body"
 relstate2.rel_state.target_frame_name  = "EMBary.inertial"
@@ -326,13 +331,17 @@ relstate2.rel_state.direction_sense    = trick.RelativeDerivedState.ComputeSubje
 #---------------------------------------------------------------------------
 # Set up the SpaceFOM relative state object.
 #---------------------------------------------------------------------------
-rel_test1.rel_state.debug = True
-#rel_test.ref_entity = veh1_physical_entity.entity_packing.get_packing_data()
-#rel_test.ref_frame  = moon_centered_fixed.frame_packing
-#rel_test1.ref_entity = veh2_physical_entity.entity_packing.get_packing_data()
-rel_test1.rel_state_frame = moon_centered_fixed.frame_packing
-rel_test2.rel_state.debug = True
-rel_test2.rel_state_frame = earth_moon_barycenter.frame_packing
+rel_test1.debug_rel_state    = True
+rel_test1.debug_entity_state = False
+rel_test1.debug_frames       = False
+rel_test1.rel_state.debug    = False
+rel_test1.rel_state_frame    = moon_centered_fixed.frame_packing
+
+rel_test2.debug_rel_state    = False
+rel_test2.debug_entity_state = False
+rel_test2.debug_frames       = False
+rel_test2.rel_state.debug    = False
+rel_test2.rel_state_frame    = earth_moon_barycenter.frame_packing
 
 
 #---------------------------------------------------------------------------

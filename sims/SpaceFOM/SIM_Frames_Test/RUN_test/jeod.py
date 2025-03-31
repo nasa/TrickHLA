@@ -28,7 +28,7 @@ moon_inertial_frame.frame.data.state.vel = [522.402340923877, 704.817797190995, 
 moon_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 moon_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "moon_inertial_frame.print_state", 1, True )
+trick.exec_set_job_onoff( "moon_inertial_frame.print_frame_state", 1, True )
 
 # Earth fixed
 moon_fixed_frame.frame.data.name = frames_list[6]
@@ -42,7 +42,7 @@ moon_fixed_frame.frame.data.state.ang_vel = [-1.05728117046177e-09, 4.9021055815
 moon_fixed_frame.frame.accel_env = [0.0, 0.0, 0.0]
 moon_fixed_frame.frame.ang_accel_env = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "moon_fixed_frame.print_state", 1, True )
+trick.exec_set_job_onoff( "moon_fixed_frame.print_frame_state", 1, True )
 
 
 #---------------------------------------------------------------------------

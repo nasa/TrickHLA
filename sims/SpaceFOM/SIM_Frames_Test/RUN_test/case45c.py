@@ -28,7 +28,7 @@ earth_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 earth_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 # Control print job.
-trick.exec_set_job_onoff( "earth_inertial_frame.print_state", 1, True )
+trick.exec_set_job_onoff( "earth_inertial_frame.print_frame_state", 1, True )
 
 # Earth fixed
 earth_fixed_frame.frame.data.name = frames_list[4]
@@ -41,7 +41,7 @@ earth_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.001 * deg2rad]
 earth_fixed_frame.frame.accel_env = [0.0, 0.0, 0.0]
 earth_fixed_frame.frame.ang_accel_env = [0.0, 0.0, 0.0000 * deg2rad]
 # Control print job.
-trick.exec_set_job_onoff( "earth_fixed_frame.print_state", 1, True )
+trick.exec_set_job_onoff( "earth_fixed_frame.print_frame_state", 1, True )
 
 
 #---------------------------------------------------------------------------
