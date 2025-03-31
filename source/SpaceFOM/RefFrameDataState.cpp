@@ -269,10 +269,8 @@ bool RefFrameDataState::transform_to_child(
 
    // Compute the conjugate of the child to parent transformation quaternion.
    // This is the parent to child transformation quaternion.
-   // FIXME: Attempt to explore and fix transformation error.
    QuaternionData q_p_c;
    q_p_c.conjugate( transform_c_p.state.att );
-   // QuaternionData q_p_c( transform_c_p.state.att );
 
    //
    // Position computations.
@@ -285,9 +283,7 @@ bool RefFrameDataState::transform_to_child(
    q_p_c.transform_vector( dr_p, frame_c->state.pos );
 
    // Compute the attitude of this frame in the child frame.
-   // FIXME: Attempt to explore and fix transformation error.
    frame_c->state.att.multiply( q_p_c, this->state.att );
-   // frame_c->state.att.multiply( transform_c_p.state.att, this->state.att );
 
    //
    // Velocity computations.
@@ -304,8 +300,6 @@ bool RefFrameDataState::transform_to_child(
 
    // Compute the total velocity of this frame in the rotating child frame.
    V_SUB( frame_c->state.vel, dv_c, wxr_c );
-
-   // FIXME: Is the body frame transformation missing?
 
    // Compute this frame's angular velocity wrt the child frame.
    // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
@@ -338,8 +332,6 @@ bool RefFrameDataState::transform_to_child(
    frame_c->accel[0] = da_c[0] - wxwxr_c[0] - two_wxv_c[0] - axr_c[0];
    frame_c->accel[1] = da_c[1] - wxwxr_c[1] - two_wxv_c[1] - axr_c[1];
    frame_c->accel[2] = da_c[2] - wxwxr_c[2] - two_wxv_c[2] - axr_c[2];
-
-   // FIXME: Is the body frame transformation missing?
 
    // Compute this frame's angular acceleration wrt the child frame.
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
