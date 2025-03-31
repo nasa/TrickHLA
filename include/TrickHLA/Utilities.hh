@@ -236,18 +236,17 @@ class Utilities
     *  function is obsolete (see CWE-676). Create a wrapper around nanosleep()
     *  to provide the same functionality as usleep().
     *  @return Error code, where a value of 0 is for no error.
-    *  @param  usec Time to sleep in microseconds. */
+    *  @param usec Time to sleep in microseconds. */
    static int micro_sleep( long const usec );
 
-   /*! @brief Return the current TrickHLA version string from the auto
-    *  generated Version.hh header file.
-    *  @return Byteswap value. */
-   static std::string get_version();
+   /*! @brief Return the current TrickHLA version string from the Version.hh
+    *  header file.
+    *  @return TrickHKLA version string. */
+   static std::string const get_version();
 
-   /*! @brief Returns the TrickHLA release date from the auto generated
-    * Version.hh header file.
-    *  @return Byteswap value. */
-   static std::string get_release_date();
+   /*! @brief Returns the TrickHLA release date from the Version.hh header file.
+    *  @return TrickHLA release date string. */
+   static std::string const &get_release_date();
 
   private:
    // Do not allow the copy constructor or assignment operator.
