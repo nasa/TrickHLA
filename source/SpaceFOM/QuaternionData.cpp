@@ -217,7 +217,7 @@ void QuaternionData::get_Euler_deg(
 void QuaternionData::set_from_transfrom(
    double const T[3][3] )
 {
-   mat_to_quat( &( this->scalar ), (double( * )[3])T );
+   mat_to_quat( &( this->scalar ), (double ( * )[3])T );
    return;
 }
 
@@ -232,7 +232,7 @@ void QuaternionData::get_transfrom(
    work[1] = this->vector[0];
    work[2] = this->vector[1];
    work[3] = this->vector[2];
-   quat_to_mat( (double( * )[3])T, work );
+   quat_to_mat( (double ( * )[3])T, work );
    return;
 }
 
