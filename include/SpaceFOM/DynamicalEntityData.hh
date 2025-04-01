@@ -34,6 +34,9 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_DATA_H
 #define SPACEFOM_DYNAMICAL_ENTITY_DATA_H
 
+// System include files.
+#include <iostream>
+
 namespace SpaceFOM
 {
 
