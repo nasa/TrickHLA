@@ -196,8 +196,8 @@ vehicle_name = 'test_vehicle'
 vehicle_file = config_dir + '/' + vehicle_name + '.py'
 
 # Set the default frames.
-express_frame = 'EarthCentricInertial'
-native_frame  = 'EarthCentricFixed'
+express_frame = 'EarthCentricFixed'
+native_frame  = 'EarthCentricInertial'
 
 # Set the default case name.
 case_name = None

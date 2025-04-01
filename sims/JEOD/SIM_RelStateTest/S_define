@@ -165,9 +165,8 @@ class VehicleSimObject: public Trick::SimObject
 
 };
 
-// Instantiate two test vehicles.
-VehicleSimObject veh1(dynamics.dyn_manager);
-VehicleSimObject veh2(dynamics.dyn_manager);
+// Instantiate test vehicle.
+VehicleSimObject veh(dynamics.dyn_manager);
 
 
 //==========================================================================
@@ -176,8 +175,7 @@ VehicleSimObject veh2(dynamics.dyn_manager);
 //==========================================================================
 #include "JEOD/JEODDynBodyRelState.sm"
 
-EntityRelStateSimObject relstate1( dynamics.dyn_manager, relkin.rel_kin, veh1.dyn_body );
-EntityRelStateSimObject relstate2( dynamics.dyn_manager, relkin.rel_kin, veh2.dyn_body );
+EntityRelStateSimObject relstate( dynamics.dyn_manager, relkin.rel_kin, veh.dyn_body );
 
 
 //==========================================================================
@@ -218,8 +216,7 @@ EntityRelStateSimObject relstate2( dynamics.dyn_manager, relkin.rel_kin, veh2.dy
 
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject veh1_physical_entity( veh1.dyn_body, P_HLA_INIT );
-JEODPhysicalEntiySimObject veh2_physical_entity( veh2.dyn_body, P_HLA_INIT );
+JEODPhysicalEntiySimObject veh_physical_entity( veh.dyn_body, P_HLA_INIT );
 
 
 //==========================================================================
@@ -231,12 +228,9 @@ JEODPhysicalEntiySimObject veh2_physical_entity( veh2.dyn_body, P_HLA_INIT );
 #include "SpaceFOM/PhysicalEntityRelState.sm"
 
 // Instantiate a relative state test object.
-SpaceFOMPhysicalEntityRelState rel_test1( ref_frame_tree.frame_tree,
-                                          veh1_physical_entity.entity_packing.get_packing_data(),
-                                          solar_system_barycenter.frame_packing );
-SpaceFOMPhysicalEntityRelState rel_test2( ref_frame_tree.frame_tree,
-                                          veh2_physical_entity.entity_packing.get_packing_data(),
-                                          solar_system_barycenter.frame_packing );
+SpaceFOMPhysicalEntityRelState rel_test( ref_frame_tree.frame_tree,
+                                         veh_physical_entity.entity_packing.get_packing_data(),
+                                         solar_system_barycenter.frame_packing );
 
 
 //==========================================================================
