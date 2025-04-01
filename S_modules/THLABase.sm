@@ -131,7 +131,7 @@ class THLABaseSimObject : public Trick::SimObject {
       P_1ST ("freeze") federate.check_freeze();
 
       // Coordinate federates going to run mode as the last unfreeze job.
-      P_LAST ("unfreeze") federate.exit_freeze();
+      P65534 ("unfreeze") federate.exit_freeze();
 
       //--------------------
       //-- SCHEDULED JOBS --
