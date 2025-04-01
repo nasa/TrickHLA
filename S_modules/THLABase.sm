@@ -112,8 +112,8 @@ class THLABaseSimObject : public Trick::SimObject {
 
       // The last step of the multi-phase initialization. We make sure this
       // initialization job runs last by setting the initialization phase
-      // to P65534, since this job indicates to the other federates that
-      // we are ready to start running the simulation.
+      // to the last phase, since this job indicates to the other federates
+      // that we are ready to start running the simulation.
       P_LAST ("initialization") federate.post_multiphase_initialization();
 
       //------------------------------
@@ -121,15 +121,17 @@ class THLABaseSimObject : public Trick::SimObject {
       //------------------------------
 
       // Perform the federate save (checkpoint) or restore in FREEZE mode.
-      P_1ST ("checkpoint") federate.setup_checkpoint();
-      ("freeze") federate.perform_checkpoint();
-      P_1ST ("preload_checkpoint") federate.setup_restore();
-      ("freeze") federate.perform_restore();
+      P_1ST  ("checkpoint") federate.setup_checkpoint();
+      P60000 ("freeze") federate.perform_checkpoint();
+      P_1ST  ("preload_checkpoint") federate.setup_restore();
+      P60000 ("freeze") federate.perform_restore();
 
-      // Coordinate federates going to run mode.
+      // Handle federates going to freeze mode.
       P_1ST ("freeze_init") federate.freeze_init();
       P_1ST ("freeze") federate.check_freeze();
-      P65535 ("unfreeze") federate.exit_freeze();
+
+      // Coordinate federates going to run mode as the last unfreeze job.
+      P_LAST ("unfreeze") federate.exit_freeze();
 
       //--------------------
       //-- SCHEDULED JOBS --
@@ -170,7 +172,7 @@ class THLABaseSimObject : public Trick::SimObject {
       P_LAST (data_cycle, "logging") federate.time_advance_request();
 
       // Coordinate federates going to freeze mode.
-      ("end_of_frame") federate.enter_freeze();
+      P_LAST ("end_of_frame") federate.enter_freeze();
 
       //-------------------
       //-- SHUTDOWN JOBS --
