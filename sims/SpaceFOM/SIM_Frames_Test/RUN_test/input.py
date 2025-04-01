@@ -17,10 +17,6 @@ import os
 import sys
 sys.path.append('../../../')
 
-# Conversions
-import math
-deg2rad = math.pi / 180.0
-
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 
@@ -31,12 +27,16 @@ def print_usage_message( ):
 
    print(' ')
    print('SpaceFOM Reference Frame Simulation Command Line Configuration Options:')
-   print('  -c --case [case]     : Set the name of the test case to run.')
+   print('  -c --case [name]     : Set the name for the case definition file.')
+   print('  -d                   : Pass the input file debug option on to Trick.')
    print('  -e --express [frame] : Set express frame for the relative state.')
-   print('  -f --frame [frame]   : Set the native frame for the entity.')
+   print('  -f --frames [file]   : Set the name for the frames definition file.')
    print('  -h --help            : Print this help message.')
-   print('  --stop [time]        : Time to stop simulation, default is 0.5 seconds.')
+   print('  -n --native [frame]  : Set the native frame for the entity.')
    print('  --nostop             : Set no stop time on simulation.')
+   print('  --stop [time]        : Time to stop simulation, default is 0.5 seconds.')
+   print('  -t --tree            : Print the frame tree data.')
+   print('  -v --vehicle [file]  : Set the name for the vehicle definition file.')
    print('  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
@@ -49,14 +49,25 @@ def print_usage_message( ):
 
 def parse_command_line( ):
    
+   # Execution control parameters
    global print_usage
    global run_duration
    global verbose
+   global config_dir
+   global case_name
+   global case_file
+   
+   # Frame definition parameters
+   global print_tree
    global frames_list
    global express_frame
    global native_frame
-   global case_name
-   global case_file
+   global frames_name
+   global frames_file
+   
+   # Vehicle definition parameters
+   global vehicle_name
+   global vehicle_file
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -66,49 +77,49 @@ def parse_command_line( ):
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
    while (index < argc):
+         
+      if ((str(argv[index]) == '-c') | (str(argv[index]) == '--case')):
+         index = index + 1
+         if (index < argc):
+            case_name = str(argv[index])
+            case_file = config_dir + "/" + case_name + ".py"
+            if not os.path.exists( frames_file ):
+               print('ERROR: Frames file not found: ' + frames_file)
+               print_usage = True
+         else:
+            print('ERROR: Missing frames name.')
+            print_usage = True
       
-      if (str(argv[index]) == '--stop'):
+      elif (str(argv[index]) == '-d'):
+         # Catch the Trick debug command line option an do NOT terminate.
+         print('DEBUG: Specified input file debug option to Trick.')
+         
+      elif ((str(argv[index]) == '-e') | (str(argv[index]) == '--express')):
+         index = index + 1
+         if (index < argc):
+            express_frame = str(argv[index])
+         else:
+            print('ERROR: Missing express frame name.')
+            print_usage = True
+         
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--frames')):
+         index = index + 1
+         if (index < argc):
+            frames_name = str(argv[index])
+            frames_file = config_dir + "/" + frames_name + ".py"
+            if not os.path.exists( frames_file ):
+               print('ERROR: Frames file not found: ' + frames_file)
+               print_usage = True
+         else:
+            print('ERROR: Missing frames name.')
+            print_usage = True
+      
+      elif (str(argv[index]) == '--stop'):
          index = index + 1
          if (index < argc):
             run_duration = float(str(argv[index]))
          else:
             print('ERROR: Missing --stop [time] argument.')
-            print_usage = True
-         
-      elif ((str(argv[index]) == '-c') | (str(argv[index]) == '--case')):
-         index = index + 1
-         if (index < argc):
-            case_name = str(argv[index])
-            case_file = "RUN_test/" + case_name + ".py"
-            if not os.path.exists( case_file ):
-               print('ERROR: Case file not found: ' + case_file)
-               print_usage = True
-         else:
-            print('ERROR: Missing case name.')
-            print_usage = True
-         
-      elif ((str(argv[index]) == '-e') | (str(argv[index]) == '--express')):
-         index = index + 1
-         if (index < argc):
-            if str(argv[index]) in frames_list:
-               express_frame = str(argv[index])
-            else:
-               print('ERROR: Unknown express frame: ' + str(argv[index]))
-               print_usage = True
-         else:
-            print('ERROR: Missing express frame name.')
-            print_usage = True
-         
-      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--frame')):
-         index = index + 1
-         if (index < argc):
-            if str(argv[index]) in frames_list:
-               native_frame = str(argv[index])
-            else:
-               print('ERROR: Unknown native entity frame: ' + str(argv[index]))
-               print_usage = True
-         else:
-            print('ERROR: Missing express frame name.')
             print_usage = True
             
       elif (str(argv[index]) == '--nostop'):
@@ -116,6 +127,29 @@ def parse_command_line( ):
          
       elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
          print_usage = True
+         
+      elif ((str(argv[index]) == '-n') | (str(argv[index]) == '--native')):
+         index = index + 1
+         if (index < argc):
+            native_frame = str(argv[index])
+         else:
+            print('ERROR: Missing entity frame name.')
+            print_usage = True
+         
+      elif ((str(argv[index]) == '-t') | (str(argv[index]) == '--tree')):
+         print_tree = True
+         
+      elif ((str(argv[index]) == '-v') | (str(argv[index]) == '--vehicle')):
+         index = index + 1
+         if (index < argc):
+            vehicle_name = str(argv[index])
+            vehicle_file = config_dir + "/" + vehicle_name + ".py"
+            if not os.path.exists( vehicle_file ):
+               print('ERROR: Vehicle file not found: ' + vehicle_file)
+               print_usage = True
+         else:
+            print('ERROR: Missing vehicle name.')
+            print_usage = True
       
       elif (str(argv[index]) == '--verbose'):
          index = index + 1
@@ -130,10 +164,6 @@ def parse_command_line( ):
          else:
             print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
-      
-      elif (str(argv[index]) == '-d'):
-         # Catch the Trick debug command line option an do NOT terminate.
-         print('DEBUG: Specified input file debug uption to Trick.')
          
       else:
          print('ERROR: Unknown command line argument ' + str(argv[index]))
@@ -151,26 +181,27 @@ run_duration = 0.5
 # Default is to NOT show verbose messages.
 verbose = False
 
-# Create reference frame set.
-frames_list = [
-   'SolarSystemBarycentricInertial',
-   'SunCentricInertial',
-   'EarthMoonBarycentricInertial',
-   'EarthCentricInertial',
-   'EarthCentricFixed',
-   'MoonCentricInertial',
-   'MoonCentricFixed',
-   'MarsCentricInertial',
-   'MarsCentricFixed'
-   ]
+# Default Trick run configuration directory.
+config_dir = 'Modified_data'
+
+# Set the default frames name.
+frames_name = 'emm_test_frames'
+frames_file = config_dir + '/' + frames_name + '.py'
+
+# Default is not to print the frames tree.
+print_tree = False
+
+# Set the default vehicle name.
+vehicle_name = 'test_vehicle'
+vehicle_file = config_dir + '/' + vehicle_name + '.py'
 
 # Set the default frames.
-express_frame = frames_list[3]
-native_frame = frames_list[4]
+express_frame = 'EarthCentricInertial'
+native_frame  = 'EarthCentricFixed'
 
 # Set the default case name.
-case_name = 'case0'
-case_file = 'RUN_test/' + case_name + '.py'
+case_name = None
+case_file = None
 
 # Parse command line arguments to override defaults.
 parse_command_line()
@@ -269,107 +300,35 @@ federate.set_time_constrained( True )
 
 
 #---------------------------------------------------------------------------
+# Load the case file if specified.  Note that you can only override the
+# configuration file locations.  Frame and vehicle data should still be
+# configured in specified frame and vehicle input data files.
+#---------------------------------------------------------------------------
+if ( case_file ):
+   if os.path.exists( case_file ):
+      exec(open(case_file).read())
+   else:
+      print('ERROR: Case file not found: ' + case_file)
+      print_usage_message()
+
+
+#---------------------------------------------------------------------------
 # Set up the frame states.
 #---------------------------------------------------------------------------
-# Solar system barycenter (Not propagated and ALWAYS zero.)
-ssbary_frame.frame.data.name = frames_list[0]
-ssbary_frame.frame.data.parent_name = ""
-ssbary_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
-ssbary_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
-ssbary_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-ssbary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
-# Control print job.
-trick.exec_set_job_onoff( "ssbary_frame.print_frame_state", 1, False )
+if os.path.exists( frames_file ):
+   exec(open(frames_file).read())
+else:
+   print('ERROR: Frames file not found: ' + frames_file)
+   print_usage_message()
 
-#
-# Sun
-#
-sun_frame.frame.data.name = frames_list[1]
-sun_frame.frame.data.parent_name = frames_list[0]
-sun_frame.frame.data.state.pos = [0.1, 0.0, 0.0]
-sun_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
-sun_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-sun_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
-# Control print job.
-trick.exec_set_job_onoff( "sun_frame.print_frame_state", 1, False )
-
-#
-# Earth-Moon system
-#
-embary_frame.frame.data.name = frames_list[2]
-embary_frame.frame.data.parent_name = frames_list[1]
-embary_frame.frame.data.state.pos = [0.0, 10.0, 0.0]
-embary_frame.frame.data.state.vel = [0.01, 0.0, 0.0]
-embary_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-embary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
-# Control print job.
-trick.exec_set_job_onoff( "embary_frame.print_frame_state", 1, False )
-
-# Earth inertial
-earth_inertial_frame.frame.data.name = frames_list[3]
-earth_inertial_frame.frame.data.parent_name = frames_list[2]
-earth_inertial_frame.frame.data.state.pos = [1.0, 0.0, 0.0]
-earth_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
-earth_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-earth_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
-# Control print job.
-trick.exec_set_job_onoff( "earth_inertial_frame.print_frame_state", 1, False )
-
-# Earth fixed
-earth_fixed_frame.frame.data.name = frames_list[4]
-earth_fixed_frame.frame.data.parent_name = frames_list[3]
-earth_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
-earth_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
-earth_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-earth_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.001 * deg2rad]
-# Set the environmental acceleration values.
-earth_fixed_frame.frame.accel_env = [0.0, 0.0, 0.0]
-earth_fixed_frame.frame.ang_accel_env = [0.0, 0.0, 0.0000 * deg2rad]
-# Control print job.
-trick.exec_set_job_onoff( "earth_fixed_frame.print_frame_state", 1, False )
-
-# Moon inertial
-moon_inertial_frame.frame.data.name = frames_list[5]
-moon_inertial_frame.frame.data.parent_name = frames_list[2]
-moon_inertial_frame.frame.data.state.pos = [-1.0, 0.0, 0.0]
-moon_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
-moon_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-moon_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
-# Control print job.
-trick.exec_set_job_onoff( "moon_inertial_frame.print_frame_state", 1, False )
-
-# Moon fixed
-moon_fixed_frame.frame.data.name = frames_list[6]
-moon_fixed_frame.frame.data.parent_name = frames_list[5]
-moon_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
-moon_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
-moon_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-moon_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
-# Control print job.
-trick.exec_set_job_onoff( "moon_fixed_frame.print_frame_state", 1, False )
-
-#
-# Mars system
-#
-# Mars inertial
-mars_inertial_frame.frame.data.name = frames_list[7]
-mars_inertial_frame.frame.data.parent_name = frames_list[2]
-mars_inertial_frame.frame.data.state.pos = [0.0, 0.0, 20.0]
-mars_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
-mars_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-mars_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
-# Control print job.
-trick.exec_set_job_onoff( "mars_inertial_frame.print_frame_state", 1, False )
-
-# Moon fixed
-mars_fixed_frame.frame.data.name = frames_list[8]
-mars_fixed_frame.frame.data.parent_name = frames_list[7]
-mars_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
-mars_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
-mars_fixed_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-mars_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
-# Control print job.
-trick.exec_set_job_onoff( "mars_fixed_frame.print_frame_state", 1, False )
+# Do a sanity check on selected frame names.   
+if not native_frame in frames_list:
+   print('ERROR: Unknown native entity frame: ' + native_frame)
+   print_usage_message()
+ 
+if not express_frame in frames_list:
+   print('ERROR: Unknown express frame: ' + express_frame)
+   print_usage_message()
 
 
 #---------------------------------------------------------------------------
@@ -386,43 +345,14 @@ mars_fixed_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
 
 
 #---------------------------------------------------------------------------
-# Set up the dynamics parameters for the vehicle test entity.
+# Set up the vehicle state.
 #---------------------------------------------------------------------------
-vehicle.entity.pe_data.name         = 'Voyager'
-vehicle.entity.pe_data.type         = 'Intrepid-class Starship'
-vehicle.entity.pe_data.status       = 'Lost'
-vehicle.entity.pe_data.parent_frame = native_frame
+if os.path.exists( vehicle_file ):
+   exec(open(vehicle_file).read())
+else:
+   print('ERROR: Vehicle file not found: ' + vehicle_file)
+   print_usage_message()
 
-# Initial translational state.
-vehicle.entity.pe_data.state.pos = [ 1.0, 0.0, 0.0 ]
-vehicle.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
-
-# Initial rotational state.
-vehicle.entity.pe_data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-vehicle.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.0 ]
-
-#
-# Basic mass properties.
-#
-vehicle_mass = 100.0
-vehicle.entity.pe_data.cm        = [0.0, 0.0, 0.0]
-vehicle.entity.de_data.mass      = vehicle_mass
-vehicle.entity.de_data.mass_rate = 0.0
-vehicle.entity.pe_data.body_wrt_struct.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-
-# Principal inertia of a solid sphere.
-vehicle_radius = 1.0
-Ixx = Iyy = Izz = (2.0 / 5.0) * vehicle_mass * vehicle_radius * vehicle_radius
-vehicle.entity.de_data.inertia[0] = [ Ixx, 0.0, 0.0 ]
-vehicle.entity.de_data.inertia[1] = [ 0.0, Iyy, 0.0 ]
-vehicle.entity.de_data.inertia[2] = [ 0.0, 0.0, Izz ]
-vehicle.entity.de_data.inertia_rate[0] = [ 0.0, 0.0, 0.0 ]
-vehicle.entity.de_data.inertia_rate[1] = [ 0.0, 0.0, 0.0 ]
-vehicle.entity.de_data.inertia_rate[2] = [ 0.0, 0.0, 0.0 ]
-
-# Base propagation parameters.
-vehicle.entity.de_data.force  = [ 0.0, 0.0, 0.0 ]
-vehicle.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
 
 #---------------------------------------------------------------------------
 # Setup the vehicle integrator
@@ -460,26 +390,16 @@ mars_centered_fixed.frame_packing.publish()
 # Set up the Reference Frame Tree
 #---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
-trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
-   
-   
-#---------------------------------------------------------------------------
-# Set 
-#---------------------------------------------------------------------------
-if os.path.exists( case_file ):
-   exec(open(case_file).read())
-else:
-   print('ERROR: Case file not found: ' + case_file)
+trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, print_tree )
 
 
 #---------------------------------------------------------------------------
 # Set up the relative state object.
 #---------------------------------------------------------------------------
 rel_test.debug_rel_state    = True
-rel_test.debug_entity_state = False
+rel_test.debug_entity_state = True
 rel_test.debug_frames       = False
 rel_test.rel_state.debug    = False
-#rel_test.ref_entity = vehicle.entity.pe_data
 if express_frame == frames_list[0]:
    rel_test.rel_state_frame  = solar_system_barycenter.frame_packing
 elif express_frame == frames_list[1]:
