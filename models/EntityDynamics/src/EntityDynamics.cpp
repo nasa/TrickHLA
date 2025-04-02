@@ -86,10 +86,9 @@ void EntityDynamics::default_data()
  */
 void EntityDynamics::initialize()
 {
-   ostringstream errmsg;
-
    // Compute the inverse of the inertia matrix.
    if ( dm_invert_symm( I_inv, de_data.inertia ) != TM_SUCCESS ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
              << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
