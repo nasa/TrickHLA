@@ -56,7 +56,7 @@ embary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 earth_inertial_frame.debug_frame_state = verbose
 earth_inertial_frame.frame.data.name = frames_list[3]
 earth_inertial_frame.frame.data.parent_name = frames_list[2]
-earth_inertial_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
+earth_inertial_frame.frame.data.state.pos = [-1.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 earth_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
@@ -77,7 +77,7 @@ earth_fixed_frame.frame.ang_accel_env = [0.0, 0.0, 0.0000 * deg2rad]
 moon_inertial_frame.debug_frame_state = verbose
 moon_inertial_frame.frame.data.name = frames_list[5]
 moon_inertial_frame.frame.data.parent_name = frames_list[2]
-moon_inertial_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
+moon_inertial_frame.frame.data.state.pos = [1.0, 0.0, 0.0]
 moon_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 moon_inertial_frame.frame.data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 moon_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]

@@ -279,8 +279,11 @@ bool RefFrameDataState::transform_to_child(
    // expressed in parent frame coordinates.
    V_SUB( dr_p, this->state.pos, transform_c_p.state.pos )
 
+
    // Transform the position vector into the child frame coordinates.
-   q_p_c.transform_vector( dr_p, frame_c->state.pos );
+   //q_p_c.transform_vector( dr_p, frame_c->state.pos );
+   // FIXME: Error in accumulating position.
+   transform_c_p.state.att.transform_vector( dr_p, frame_c->state.pos );
 
    // Compute the attitude of this frame in the child frame.
    frame_c->state.att.multiply( q_p_c, this->state.att );
@@ -293,7 +296,9 @@ bool RefFrameDataState::transform_to_child(
    V_SUB( dv_p, this->state.vel, transform_c_p.state.vel );
 
    // Transform the velocity difference into the child frame.
-   q_p_c.transform_vector( dv_p, dv_c );
+   //q_p_c.transform_vector( dv_p, dv_c );
+   // FIXME: Error in accumulating position.
+   transform_c_p.state.att.transform_vector( dv_p, dv_c );
 
    // Compute the apparent velocity of this frame in a rotating child frame.
    V_CROSS( wxr_c, transform_c_p.state.ang_vel, frame_c->state.pos );
@@ -320,7 +325,9 @@ bool RefFrameDataState::transform_to_child(
    V_SUB( da_p, this->accel, transform_c_p.accel );
 
    // Transform the acceleration difference into the child frame.
-   q_p_c.transform_vector( da_p, da_c );
+   //q_p_c.transform_vector( da_p, da_c );
+   // FIXME: Error in accumulating position.
+   transform_c_p.state.att.transform_vector( da_p, da_c );
 
    // Compute the apparent acceleration of this frame in a rotating child frame.
    V_CROSS( axr_c, transform_c_p.ang_accel, frame_c->state.pos );

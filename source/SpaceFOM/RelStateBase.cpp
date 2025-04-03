@@ -264,8 +264,8 @@ bool RelStateBase::compute_state(
    V_ADD( this->state.pos, path_transform.state.pos, r_ent_s_t )
 
    // Compute the entity attitude in the target frame.
-   // FIXME: Attempt to explore and fix transformation error.
    // state.att.multiply( path_transform.state.att, entity->state.att );
+   // FIXME: Attempt to explore and fix transformation error.
    state.att.multiply( entity->state.att, path_transform.state.att );
 
    //
@@ -296,7 +296,7 @@ bool RelStateBase::compute_state(
    // Acceleration computations.
    //
    // Compute the apparent acceleration of the entity in a rotating target frame.
-   V_CROSS( axr_s, path_transform.ang_accel, entity->state.pos ); // FIXME: it this right?
+   V_CROSS( axr_s, path_transform.ang_accel, entity->state.pos );
    V_SCALE( two_w_s, path_transform.state.ang_vel, 2.0 );
    V_CROSS( two_wxv_s, two_w_s, entity->state.vel );
    V_CROSS( wxwxr_s, path_transform.state.ang_vel, wxr_s );

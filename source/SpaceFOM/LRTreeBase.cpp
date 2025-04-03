@@ -446,7 +446,7 @@ void LRTreeBase::print_path(
 
       // Loop through the node path vector.
       for ( unsigned int kinc = 0; kinc < path_size; ++kinc ) {
-         stream << paths[start][end][kinc]->node_id;
+         stream << paths[start][end][kinc]->name << " [" << paths[start][end][kinc]->node_id << "]";
          if ( kinc < path_size - 1 ) {
             // stream << ", ";
             if ( paths[start][end][kinc + 1]->parent != NULL ) {
