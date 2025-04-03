@@ -31,11 +31,17 @@ from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
 def print_usage_message( ):
 
    print(' ')
-   print('JEOD-based SpaceFOM Reference Frame Simulation Command Line Configuration Options:')
-   print('  -h --help         : Print this help message.')
-   print('  --stop [time]     : Time to stop simulation, default is 10.0 seconds.')
-   print('  --nostop          : Set no stop time on simulation.')
-   print('  --verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
+   print('SpaceFOM Reference Frame Simulation Command Line Configuration Options:')
+   print('  -c --case [name]     : Set the name for the case definition file.')
+   print('  -d                   : Pass the input file debug option on to Trick.')
+   print('  -e --express [frame] : Set express frame for the relative state.')
+   print('  -h --help            : Print this help message.')
+   print('  -n --native [frame]  : Set the native frame for the entity.')
+   print('  --nostop             : Set no stop time on simulation.')
+   print('  --stop [time]        : Time to stop simulation, default is 0.5 seconds.')
+   print('  -t --tree            : Print the frame tree data.')
+   print('  -v --vehicle [file]  : Set the name for the vehicle definition file.')
+   print('  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -45,11 +51,25 @@ def print_usage_message( ):
    return
 
 
-def parse_command_line( ) :
+def parse_command_line( ):
    
+   # Execution control parameters
    global print_usage
    global run_duration
    global verbose
+   global config_dir
+   global case_name
+   global case_file
+   
+   # Frame definition parameters
+   global print_tree
+   global frames_dict
+   global express_frame
+   global native_frame
+   
+   # Vehicle definition parameters
+   global vehicle_name
+   global vehicle_file
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -58,41 +78,92 @@ def parse_command_line( ) :
    # Process the command line arguments.
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
-   while (index < argc) :
-      
-      if (str(argv[index]) == '--stop') :
+   while (index < argc):
+         
+      if ((str(argv[index]) == '-c') | (str(argv[index]) == '--case')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
+            case_name = str(argv[index])
+            case_file = config_dir + "/" + case_name + ".py"
+            if not os.path.exists( frames_file ):
+               print('ERROR: Frames file not found: ' + frames_file)
+               print_usage = True
+         else:
+            print('ERROR: Missing frames name.')
+            print_usage = True
+      
+      elif (str(argv[index]) == '-d'):
+         # Catch the Trick debug command line option an do NOT terminate.
+         print('DEBUG: Specified input file debug option to Trick.')
+         
+      elif ((str(argv[index]) == '-e') | (str(argv[index]) == '--express')):
+         index = index + 1
+         if (index < argc):
+            if str(argv[index]) in frames_dict.keys():
+               express_frame = str(argv[index])
+            else:
+               print('ERROR: Express frame \'' + str(argv[index]) + '\' not found!')
+               print_usage = True
+         else:
+            print('ERROR: Missing express frame name.')
+            print_usage = True
+      
+      elif (str(argv[index]) == '--stop'):
+         index = index + 1
+         if (index < argc):
             run_duration = float(str(argv[index]))
-         else :
+         else:
             print('ERROR: Missing --stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '--nostop') :
+      elif (str(argv[index]) == '--nostop'):
          run_duration = None
          
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
          print_usage = True
-      
-      elif (str(argv[index]) == '--verbose') :
+         
+      elif ((str(argv[index]) == '-n') | (str(argv[index]) == '--native')):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
-               verbose = True
-            elif (str(argv[index]) == 'off') :
-               verbose = False
-            else :
-               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
+         if (index < argc):
+            if str(argv[index]) in frames_dict.keys():
+               native_frame = str(argv[index])
+            else:
+               print('ERROR: Native frame \'' + str(argv[index]) + '\' not found!')
                print_usage = True
-         else :
-            print('ERROR: Missing --verbose [on|off] argument.')
+         else:
+            print('ERROR: Missing entity frame name.')
+            print_usage = True
+         
+      elif ((str(argv[index]) == '-t') | (str(argv[index]) == '--tree')):
+         print_tree = True
+         
+      elif ((str(argv[index]) == '-v') | (str(argv[index]) == '--vehicle')):
+         index = index + 1
+         if (index < argc):
+            vehicle_name = str(argv[index])
+            vehicle_file = config_dir + "/" + vehicle_name + ".py"
+            if not os.path.exists( vehicle_file ):
+               print('ERROR: Vehicle file not found: ' + vehicle_file)
+               print_usage = True
+         else:
+            print('ERROR: Missing vehicle name.')
             print_usage = True
       
-      elif (str(argv[index]) == '-d') :
-         # Catch the Trick debug command line option an do NOT terminate.
-         print('DEBUG: Specified input file debug uption to Trick.')
+      elif (str(argv[index]) == '--verbose'):
+         index = index + 1
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
+               verbose = True
+            elif (str(argv[index]) == 'off'):
+               verbose = False
+            else:
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
+               print_usage = True
+         else:
+            print('ERROR: Missing --verbose [on|off] argument.')
+            print_usage = True
          
-      else :
+      else:
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
          
@@ -107,6 +178,37 @@ run_duration = 2.0
 
 # Default is to NOT show verbose messages.
 verbose = False
+
+# Default Trick run configuration directory.
+config_dir = 'Modified_data'
+
+# Create SpaceFOM to JEOD reference frame dictionary.
+frames_dict = {
+   'SolarSystemBarycentricInertial': 'SSBary.inertial',
+   'SunCentricInertial': 'Sun.inertial',
+   'EarthMoonBarycentricInertial': 'EMBary.inertial',
+   'EarthCentricInertial': 'Earth.inertial',
+   'EarthCentricFixed': 'Earth.pfix',
+   'MoonCentricInertial': 'Moon.inertial',
+   'MoonCentricFixed': 'Moon.pfix',
+   'MarsCentricInertial': 'Mars.inertial',
+   'MarsCentricFixed': 'Mars.pfix'
+   }
+
+# Default is not to print the frames tree.
+print_tree = False
+
+# Set the default vehicle name.
+vehicle_name = 'test_vehicle'
+vehicle_file = config_dir + '/' + vehicle_name + '.py'
+
+# Set the default frames.
+express_frame = 'EarthCentricFixed'
+native_frame  = 'EarthCentricInertial'
+
+# Set the default case name.
+case_name = None
+case_file = None
 
 parse_command_line()
 
@@ -238,6 +340,31 @@ federate.set_time_constrained( True )
 
 
 #---------------------------------------------------------------------------
+# Load the case file if specified.  Note that you can only override the
+# configuration file locations.  Frame and vehicle data should still be
+# configured in specified frame and vehicle input data files.
+#---------------------------------------------------------------------------
+if ( case_file ):
+   if os.path.exists( case_file ):
+      exec(open(case_file).read())
+   else:
+      print('ERROR: Case file not found: ' + case_file)
+      print_usage_message()
+
+
+#---------------------------------------------------------------------------
+# Perform some sanity checks.
+#---------------------------------------------------------------------------
+if not native_frame in frames_dict.keys():
+   print('ERROR: Native frame \'' + native_frame + '\' not found!')
+   print_usage_message()
+   
+if not express_frame in frames_dict.keys():
+   print('ERROR: Express frame \'' + express_frame + '\' not found!')
+   print_usage_message()
+   
+
+#---------------------------------------------------------------------------
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
 frame_tree = JEODRefFrameTreeObject(
@@ -261,78 +388,71 @@ mars_centered_fixed.frame_packing.debug     = verbose
 # Set up the Reference Frame Tree
 #---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
-trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, False )
+trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, print_tree )
 
 
 #---------------------------------------------------------------------------
-# Set up the vehicle 1 PhysicalEntity object.
+# Set up the test vehicle PhysicalEntity object.
 #---------------------------------------------------------------------------
-exec(open('Modified_data/vehicle1.py').read())
-v1 = SpaceFOMPhysicalEntityObject(
+if os.path.exists( vehicle_file ):
+   exec(open(vehicle_file).read())
+else:
+   print('ERROR: Vehicle file not found: ' + vehicle_file)
+   print_usage_message()
+   
+pe_object = SpaceFOMPhysicalEntityObject(
    create_entity_object          = True,
-   entity_instance_name          = 'Enterprise',
-   entity_S_define_instance      = veh1_physical_entity.entity_packing,
-   entity_S_define_instance_name = 'veh1_physical_entity.entity_packing' )
+   entity_instance_name          = vehicle_name,
+   entity_S_define_instance      = veh_physical_entity.entity_packing,
+   entity_S_define_instance_name = 'veh_physical_entity.entity_packing' )
 
 # Set the debug flag for the active vehicle.
-veh1_physical_entity.entity_packing.debug = verbose
+veh_physical_entity.entity_packing.debug = verbose
 
 # Add this vehicle to the list of managed object.
-federate.add_fed_object( v1 )
-
-# FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
-veh1_physical_entity.entity_packing.set_type( 'Starship' )
-veh1_physical_entity.entity_packing.set_status( 'Active' )
-veh1_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
-
-
-#---------------------------------------------------------------------------
-# Set up the vehicle 2 PhysicalEntity object.
-#---------------------------------------------------------------------------
-exec(open('Modified_data/vehicle2.py').read())
-v2 = SpaceFOMPhysicalEntityObject(
-   create_entity_object          = True,
-   entity_instance_name          = 'Galileo',
-   entity_S_define_instance      = veh2_physical_entity.entity_packing,
-   entity_S_define_instance_name = 'veh2_physical_entity.entity_packing' )
-
-# Set the debug flag for the active vehicle.
-veh2_physical_entity.entity_packing.debug = verbose
-
-# Add this vehicle to the list of managed object.
-federate.add_fed_object( v2 )
-
-# FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
-veh2_physical_entity.entity_packing.set_type( 'Shuttle' )
-veh2_physical_entity.entity_packing.set_status( 'In Flight' )
-veh2_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
+federate.add_fed_object( pe_object )
 
 
 #---------------------------------------------------------------------------
 # Set up the JEOD relative state object.
 #---------------------------------------------------------------------------
-
-relstate1.rel_state.set_name("Vehicle 1 RelState")
-relstate1.rel_state.subject_frame_name = "Enterprise.composite_body"
-relstate1.rel_state.target_frame_name  = "Moon.pfix"
-relstate1.rel_state.direction_sense    = trick.RelativeDerivedState.ComputeSubjectStateinTarget
-
-relstate2.rel_state.set_name("Vehicle 2 RelState")
-relstate2.rel_state.subject_frame_name = "Galileo.composite_body"
-relstate2.rel_state.target_frame_name  = "EMBary.inertial"
-relstate2.rel_state.direction_sense    = trick.RelativeDerivedState.ComputeSubjectStateinTarget
+rel_state_name = vehicle_name + '_RelState'
+subject_frame_name = vehicle_name + '.composite_body'
+relstate.debug_rel_state = True
+relstate.debug_dyn_body  = True
+relstate.debug_frames    = True
+relstate.rel_state.set_name( rel_state_name )
+relstate.rel_state.subject_frame_name = subject_frame_name
+relstate.rel_state.target_frame_name  = frames_dict[express_frame]
+relstate.rel_state.direction_sense    = trick.RelativeDerivedState.ComputeSubjectStateinTarget
 
 
 #---------------------------------------------------------------------------
 # Set up the SpaceFOM relative state object.
 #---------------------------------------------------------------------------
-rel_test1.rel_state.debug = True
-#rel_test.ref_entity = veh1_physical_entity.entity_packing.get_packing_data()
-#rel_test.ref_frame  = moon_centered_fixed.frame_packing
-#rel_test1.ref_entity = veh2_physical_entity.entity_packing.get_packing_data()
-rel_test1.rel_state_frame = moon_centered_fixed.frame_packing
-rel_test2.rel_state.debug = True
-rel_test2.rel_state_frame = earth_moon_barycenter.frame_packing
+rel_test.debug_rel_state    = True
+rel_test.debug_entity_state = False
+rel_test.debug_frames       = False
+rel_test.rel_state.debug    = False
+if express_frame == 'SolarSystemBarycentricInertial':
+   rel_test.rel_state_frame  = solar_system_barycenter.frame_packing
+elif express_frame == 'SunCentricInertial':
+   rel_test.rel_state_frame  = sun_inertial.frame_packing
+elif express_frame == 'EarthMoonBarycentricInertial':
+   rel_test.rel_state_frame  = earth_moon_barycenter.frame_packing
+elif express_frame == 'EarthCentricInertial':
+   rel_test.rel_state_frame  = earth_centered_inertial.frame_packing
+elif express_frame == 'EarthCentricFixed':
+   rel_test.rel_state_frame  = earth_centered_fixed.frame_packing
+elif express_frame == 'MoonCentricInertial':
+   rel_test.rel_state_frame  = moon_centered_inertial.frame_packing
+elif express_frame == 'MoonCentricFixed':
+   rel_test.rel_state_frame  = moon_centered_fixed.frame_packing
+elif express_frame == 'MarsCentricInertial':
+   rel_test.rel_state_frame  = mars_centered_inertial.frame_packing
+elif express_frame == 'MarsCentricFixed':
+   rel_test.rel_state_frame  = mars_centered_fixed.frame_packing
+
 
 
 #---------------------------------------------------------------------------
@@ -351,8 +471,7 @@ federate.add_sim_object( mars_centered_inertial )
 federate.add_sim_object( earth_centered_fixed )
 federate.add_sim_object( moon_centered_fixed )
 federate.add_sim_object( mars_centered_fixed )
-federate.add_sim_object( v1 )
-federate.add_sim_object( v2 )
+federate.add_sim_object( veh_physical_entity )
 
 
 #---------------------------------------------------------------------------

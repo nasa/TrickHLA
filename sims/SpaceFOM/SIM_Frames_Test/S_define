@@ -64,23 +64,27 @@ class FrameDynamicsSimObject : public Trick::SimObject {
 
   public:
    FrameDynamics frame;
+   
+   bool debug_frame_state;
 
   public:
    FrameDynamicsSimObject( ExecutionControlBase & exec_cntrl,
                            unsigned int           _INIT = P_HLA_INIT )
-   : execution_control(exec_cntrl)
+   : debug_frame_state( false ),
+     execution_control(exec_cntrl)
    {
       ("default_data")            frame.default_data();
       P_INIT ("initialization")   frame.initialize();
       ("derivative")              frame.derivative();
       ("integration") trick_ret = frame.integrate();
 
-      (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_frame_state();
    }
 
    // Print state job.
-   void print_state()
+   void print_frame_state()
    {
+      if( !debug_frame_state ){ return; }
       std::cout << "----------------------------------------------------------------------\n";
       std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
       std::cout << " Sim Timeline: " << execution_control.sim_timeline->get_time() << "\n";
@@ -109,22 +113,27 @@ class EntityDynamicsSimObject : public Trick::SimObject {
 
   public:
    EntityDynamics entity;
+   
+   bool debug_entity_state;
 
   public:
    EntityDynamicsSimObject( ExecutionControlBase & exec_cntrl )
-   : execution_control(exec_cntrl)
+   : debug_entity_state( false ),
+     execution_control(exec_cntrl)
+     
    {
       ("default_data")            entity.default_data();
       ("initialization")          entity.initialize();
       ("derivative")              entity.derivative();
       ("integration") trick_ret = entity.integrate();
 
-      (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_entity_state();
    }
 
    // Print state job.
-   void print_state()
+   void print_entity_state()
    {
+      if( !debug_entity_state ){ return; }
       std::cout << "----------------------------------------------------------------------\n";
       std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
       std::cout << " Sim Timeline: " << execution_control.sim_timeline->get_time() << "\n";
@@ -204,88 +213,12 @@ class THLAInitSimObject : public Trick::SimObject {
 
 
 //==========================================================================
-// Test out the Relative State classes.
+// SIM_OBJECT: SpaceFOMPhysicalEntityRelState - A simulation object
+// definition used to compute the relative state of an instantiated
+// SpaceFOM::PhysicalEntityBase with respect to an identified reference
+// frame present in the reference frame tree.
 //==========================================================================
-##include "SpaceFOM/RelStateBase.hh"
-class RelStateTestSimObject : public Trick::SimObject {
-
-  public:
-   RelStateBase         rel_state;
-   RefFrameBase       * ref_frame;
-   PhysicalEntityData * ref_entity;
-   RefFrameBase       * entity_frame;
-
-  public:
-   RelStateTestSimObject( SpaceFOM::RefFrameTree & frame_tree,
-                          SpaceFOM::RefFrameBase & default_frame   )
-      : rel_state( default_frame , frame_tree ),
-        frame_tree( frame_tree )
-   {
-
-      ("initialization") initialize( );
-      (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( ref_entity, ref_frame );
-      (THLA_DATA_CYCLE_TIME, "scheduled") print_state();
-   }
-
-   // Print state job.
-   void initialize()
-   {
-      std::ostringstream errmsg;
-      bool error = false;
-
-      // Make sure that all the references are set.
-      if ( ref_frame == NULL ){
-         errmsg << "RelStateTestSimObject:initialize(): NULL ref_frame!\n";
-         errmsg << "\t You probably forgot to set the RelStateBase reference frame in the input file.\n";
-         error = true;
-      }
-      if ( ref_entity == NULL ){
-         errmsg << "RelStateTestSimObject:initialize(): NULL ref_entity!\n";
-         errmsg << "\t You probably forgot to set the PhysicalEntityData entity reference in the input file.\n";
-         error = true;
-      } else {
-         entity_frame = frame_tree.find_frame( ref_entity->parent_frame );
-         if ( entity_frame == NULL ){
-            errmsg << "RelStateTestSimObject:initialize(): ref_entity parent frame not found: "
-                   << ref_entity->parent_frame << "!";
-            error = true;
-         }
-      }
-
-      if ( error ) {
-         exec_terminate( __FILE__, errmsg.str().c_str() );
-      }
-   }
-
-   // Print state job.
-   void print_state()
-   {
-      std::cout << "----------------------------------------------------------------------\n";
-      std::cout << " Relative state for entity: " << ref_entity->name << "\n";
-      std::cout << " Entity state frame: " << ref_entity->parent_frame << "\n";
-      std::cout << " Expressed in frame: " << ref_frame->get_name() << "\n";
-      std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
-      std::cout << " Reference frame tree path: ";
-      frame_tree.print_path( *entity_frame, *ref_frame );
-      std::cout << "\n";
-      rel_state.print_data();
-      std::cout << " Path transformation data: \n";
-      rel_state.print_path_transform();
-      std::cout << "----------------------------------------------------------------------\n";
-   }
-
-  private:
-   // Private internal references to external object instances.
-   // These MUST be assigned in the constructor at instantiation.
-   SpaceFOM::RefFrameTree & frame_tree;
-   
-   // This object is not copyable.
-   RelStateTestSimObject( RelStateTestSimObject const & rhs );
-   RelStateTestSimObject & operator=( RelStateTestSimObject const & rhs );
-
-   // Don't allow the default constructor
-   RelStateTestSimObject();
-};
+#include "SpaceFOM/PhysicalEntityRelState.sm"
 
 
 //==========================================================================
@@ -318,7 +251,9 @@ SpaceFOMRefFrameSimObject mars_centered_fixed( ref_frame_tree.frame_tree, mars_f
 EntityDynamicsSimObject vehicle( THLA.execution_control );
 
 // Instantiate a relative state test object.
-RelStateTestSimObject rel_test( ref_frame_tree.frame_tree, solar_system_barycenter.frame_packing );
+SpaceFOMPhysicalEntityRelState rel_test( ref_frame_tree.frame_tree,
+                                         vehicle.entity.pe_data,
+                                         solar_system_barycenter.frame_packing );
 
 // Main TrickHLA SimObject.
 SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,

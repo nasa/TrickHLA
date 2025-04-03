@@ -84,11 +84,18 @@ class EntityRelStateSimObject: public Trick::SimObject
   public:
    jeod::RelativeDerivedState rel_state;
 
+   bool debug_dyn_body;
+   bool debug_rel_state;
+   bool debug_frames;
+
    // Constructor
    EntityRelStateSimObject( jeod::DynManager         & dyn_mgr_in,
                             jeod::RelativeKinematics & rel_kin_in,
                             jeod::DynBody            & dyn_body_in    )
-      : dyn_mgr(dyn_mgr_in),
+      : debug_dyn_body( false ),
+        debug_rel_state( false ),
+        debug_frames( false ),
+        dyn_mgr(dyn_mgr_in),
         rel_kin(rel_kin_in),
         dyn_body(dyn_body_in)
    {
@@ -115,6 +122,8 @@ class EntityRelStateSimObject: public Trick::SimObject
    // Print a DynBody.
    void print_dyn_body( jeod::DynBody & body, std::ostream &stream )
    {
+      if( !debug_dyn_body ){ return; }
+      
       jeod::RefFrame const * parent_frame = body.composite_body.get_parent();
 
       stream << "----------------------------------------------------------------------\n";
@@ -145,6 +154,8 @@ class EntityRelStateSimObject: public Trick::SimObject
    void print_rel_state( jeod::DynBody              & body,
                          jeod::RelativeDerivedState & rel_deriv_state )
    {
+      if( !debug_rel_state ){ return; }
+      
       std::ostream &stream = std::cout;
 
       // Set the print precision.
@@ -198,6 +209,8 @@ class EntityRelStateSimObject: public Trick::SimObject
                       jeod::RelativeDerivedState & rel_deriv_state,
                       std::ostream &stream )
    {
+      if( !debug_frames ){ return; }
+      
       // Lookup the relative derived state frames.
       jeod::RefFrame * subject_frame = dyn_mgr.find_ref_frame(rel_deriv_state.subject_frame_name);
       jeod::RefFrame * target_frame  = dyn_mgr.find_ref_frame(rel_deriv_state.target_frame_name);

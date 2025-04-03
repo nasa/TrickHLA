@@ -155,30 +155,32 @@ bool RelStateBase::set_frame(
 bool RelStateBase::compute_state(
    PhysicalEntityData const *entity )
 {
-   double r_ent_c_p[3]; /* Position vector of the entity with respect to its
-                           current frame (child) but expressed in the desired
-                           parent frame. */
-   double v_ent_c_p[3]; /* Velocity vector of the entity with respect to its
-                           current frame (child) but expressed in the desired
-                           parent frame. */
-   double a_ent_c_p[3]; /* Acceleration vector of the entity with respect to its
-                           current frame (child) but expressed in the desired
-                           parent frame. */
+   double r_ent_s_t[3]; /* Position vector of the entity with respect to its
+                           current frame (subject) but expressed in the desired
+                           target frame. */
+   double v_ent_s_t[3]; /* Velocity vector of the entity with respect to its
+                           current frame (subject) but expressed in the desired
+                           target frame. */
+   double a_ent_s_t[3]; /* Acceleration vector of the entity with respect to its
+                           current frame (subject) but expressed in the desired
+                           target frame. */
 
-   QuaternionData q_c_p; /* The transformation quaternion from child into parent frame. */
+   QuaternionData q_s_t; /* The transformation quaternion from subject into target frame. */
 
    // Working variables.
    // Translation
-   double wxr_c[3];
-   double v_c[3];
-   double axr_c[3];
-   double two_w_c[3];
-   double two_wxv_c[3];
-   double wxwxr_c[3];
-   double a_c[3];
+   double wxr_s[3];
+   double v_s[3];
+   double axr_s[3];
+   double two_w_s[3];
+   double two_wxv_s[3];
+   double wxwxr_s[3];
+   double a_s[3];
    // Rotation
-   double w_c_p_bdy[3];
-   double wdot_c_p_bdy[3];
+   double w_s_t_bdy[3];    /* Angular velocity of the subject frame with respect to
+                              the target frame expressed in the entity body frame. */
+   double wdot_s_t_bdy[3]; /* Angular acceleration of the subject frame with respect to
+                              the target frame expressed in the entity body frame. */
 
    // Check for NULL frame.
    if ( entity == NULL ) {
@@ -191,18 +193,18 @@ bool RelStateBase::compute_state(
    }
 
    // Find the entity parent frame in the tree.
-   RefFrameBase const *entity_parent_frame = frame_tree->find_frame( entity->parent_frame );
-   if ( entity_parent_frame == NULL ) {
+   RefFrameBase const *entity_subject_frame = frame_tree->find_frame( entity->parent_frame );
+   if ( entity_subject_frame == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Could not find parent frame: %s!" << endl;
+         errmsg << "RelStateBase::compute_state() Warning: Could not find subject frame: %s!" << endl;
          message_publish( MSG_WARNING, entity->parent_frame, errmsg.str().c_str() );
       }
       return ( false );
    }
 
    // Check for trivial transformation.
-   if ( entity_parent_frame == express_frame ) {
+   if ( entity_subject_frame == express_frame ) {
 
       // Just copy the state and return.
       copy( *entity );
@@ -226,8 +228,8 @@ bool RelStateBase::compute_state(
    //**************************************************************************
 
    // Ask the Reference Frame Tree to build the transformation for the entity
-   // parent reference frame with respect to the desired express frame.
-   if ( !frame_tree->build_transform( entity_parent_frame, express_frame, &path_transform ) ) {
+   // subject reference frame with respect to the desired express (target) frame.
+   if ( !frame_tree->build_transform( entity_subject_frame, express_frame, &path_transform ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!" << endl;
@@ -247,78 +249,77 @@ bool RelStateBase::compute_state(
    // frame.
    //**************************************************************************
    // The transformation quaternion is the conjugate of the rotation quaternion.
-   q_c_p.conjugate( path_transform.state.att );
+   q_s_t.conjugate( path_transform.state.att );
 
    //
    // Position computations.
    //
    // Transform the entity position vector expressed in its current frame
-   // (child) into the desired express frame (parent).  This is still a vector
-   // from the origin of the original child frame to the entity but expressed
-   // in the new parent frame coordinates.
-   q_c_p.transform_vector( entity->state.pos, r_ent_c_p );
+   // (subject) into the desired express frame (target).  This is still a vector
+   // from the origin of the subject frame to the entity but expressed
+   // in the new target frame coordinates.
+   q_s_t.transform_vector( entity->state.pos, r_ent_s_t );
 
-   // Compute entity position expressed in the express frame.
-   V_ADD( this->state.pos, path_transform.state.pos, r_ent_c_p )
+   // Compute entity position expressed in the target frame.
+   V_ADD( this->state.pos, path_transform.state.pos, r_ent_s_t )
 
-   // Compute the entity attitude in the express frame.
-   // FIXME: Attempt to explore and fix transformation error.
+   // Compute the entity attitude in the target frame.
    // state.att.multiply( path_transform.state.att, entity->state.att );
+   // FIXME: Attempt to explore and fix transformation error.
    state.att.multiply( entity->state.att, path_transform.state.att );
-   // state.att.multiply( q_c_p, entity->state.att );
 
    //
    // Velocity computations.
    //
-   // Compute the apparent velocity of the entity in a rotating parent frame.
-   V_CROSS( wxr_c, path_transform.state.ang_vel, entity->state.pos );
+   // Compute the apparent velocity of the entity in a rotating target frame.
+   V_CROSS( wxr_s, path_transform.state.ang_vel, entity->state.pos );
 
-   // Compute the total velocity of the entity in the rotating parent frame.
-   V_ADD( v_c, entity->state.vel, wxr_c );
+   // Compute the total velocity of the entity in the rotating target frame.
+   V_ADD( v_s, entity->state.vel, wxr_s );
 
-   // Transform the entity velocity into the express frame.
-   q_c_p.transform_vector( v_c, v_ent_c_p );
+   // Transform the entity velocity into the express (target) frame.
+   q_s_t.transform_vector( v_s, v_ent_s_t );
 
-   // Compute entity velocity expressed in the express frame.
-   V_ADD( this->state.vel, path_transform.state.vel, v_ent_c_p );
+   // Compute entity velocity expressed in the express (target) frame.
+   V_ADD( this->state.vel, path_transform.state.vel, v_ent_s_t );
 
-   // Compute this entity's angular velocity wrt the parent frame.
-   // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
-   // Transform the child frame's angular velocity wrt the parent frame into
+   // Compute this entity's angular velocity wrt the target frame.
+   // NOTE: Angular velocity is expressed in the 'body' frame, not the target frame.
+   // Transform the subject frame's angular velocity wrt the target frame into
    // this entity's 'body' frame.
-   entity->state.att.conjugate_transform_vector( path_transform.state.ang_vel, w_c_p_bdy );
-   // Add the rotational velocity of the entity's current frame (child) with
-   // respect to the new parent frame.
-   V_ADD( this->state.ang_vel, w_c_p_bdy, entity->state.ang_vel );
+   entity->state.att.conjugate_transform_vector( path_transform.state.ang_vel, w_s_t_bdy );
+   // Add the rotational velocity of the entity's current frame (subject) with
+   // respect to the desired target frame.
+   V_ADD( this->state.ang_vel, w_s_t_bdy, entity->state.ang_vel );
 
    //
    // Acceleration computations.
    //
-   // Compute the apparent acceleration of the entity in a rotating parent frame.
-   V_CROSS( axr_c, path_transform.ang_accel, entity->state.pos );
-   V_SCALE( two_w_c, path_transform.state.ang_vel, 2.0 );
-   V_CROSS( two_wxv_c, two_w_c, entity->state.vel );
-   V_CROSS( wxwxr_c, path_transform.state.ang_vel, wxr_c );
+   // Compute the apparent acceleration of the entity in a rotating target frame.
+   V_CROSS( axr_s, path_transform.ang_accel, entity->state.pos );
+   V_SCALE( two_w_s, path_transform.state.ang_vel, 2.0 );
+   V_CROSS( two_wxv_s, two_w_s, entity->state.vel );
+   V_CROSS( wxwxr_s, path_transform.state.ang_vel, wxr_s );
 
    // Add up the components of the rotationally induced acceleration.
-   a_c[0] = entity->accel[0] + wxwxr_c[0] + two_wxv_c[0] + axr_c[0];
-   a_c[1] = entity->accel[1] + wxwxr_c[1] + two_wxv_c[1] + axr_c[1];
-   a_c[2] = entity->accel[2] + wxwxr_c[2] + two_wxv_c[2] + axr_c[2];
+   a_s[0] = entity->accel[0] + wxwxr_s[0] + two_wxv_s[0] + axr_s[0];
+   a_s[1] = entity->accel[1] + wxwxr_s[1] + two_wxv_s[1] + axr_s[1];
+   a_s[2] = entity->accel[2] + wxwxr_s[2] + two_wxv_s[2] + axr_s[2];
 
-   // Transform the entity acceleration into the parent frame.
-   q_c_p.transform_vector( a_c, a_ent_c_p );
+   // Transform the entity acceleration into the target frame.
+   q_s_t.transform_vector( a_s, a_ent_s_t );
 
-   // Compute entity acceleration expressed in the parent frame.
-   V_ADD( this->accel, path_transform.accel, a_ent_c_p );
+   // Compute entity acceleration expressed in the target frame.
+   V_ADD( this->accel, path_transform.accel, a_ent_s_t );
 
-   // Compute this entity's angular acceleration wrt the parent frame.
-   // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
-   // Transform the current frame's angular acceleration wrt the parent frame
+   // Compute this entity's angular acceleration wrt the target frame.
+   // NOTE: Angular acceleration is expressed in the 'body' frame, not the subject frame.
+   // Transform the current frame's angular acceleration wrt the target frame
    // into the entity 'body' frame.
-   entity->state.att.conjugate_transform_vector( path_transform.ang_accel, wdot_c_p_bdy );
-   // Add the rotational acceleration of the entity frame with respect
-   // to the parent frame.
-   V_ADD( this->ang_accel, wdot_c_p_bdy, entity->ang_accel );
+   entity->state.att.conjugate_transform_vector( path_transform.ang_accel, wdot_s_t_bdy );
+   // Add the rotational acceleration of the entity subject frame with respect
+   // to the target frame.
+   V_ADD( this->ang_accel, wdot_s_t_bdy, entity->ang_accel );
 
    // Print out the path transformation if debug is set.
    if ( debug ) {
