@@ -64,6 +64,7 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
+using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
@@ -88,12 +89,12 @@ InteractionItem::InteractionItem() // RETURN: -- None.
  * @job_class{initialization}
  */
 InteractionItem::InteractionItem(
-   int const                                         inter_index,
-   InteractionTypeEnum const                         inter_type,
-   int const                                         param_count,
-   Parameter                                        *parameters,
-   RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const                           &theUserSuppliedTag )
+   int const                      inter_index,
+   InteractionTypeEnum const      inter_type,
+   int const                      param_count,
+   Parameter                     *parameters,
+   ParameterHandleValueMap const &theParameterValues,
+   RTI1516_USERDATA const        &theUserSuppliedTag )
    : index( inter_index ),
      parameter_queue(),
      interaction_type( inter_type ),
@@ -110,13 +111,13 @@ InteractionItem::InteractionItem(
  * @job_class{initialization}
  */
 InteractionItem::InteractionItem(
-   int const                                         inter_index,
-   InteractionTypeEnum const                         inter_type,
-   int const                                         param_count,
-   Parameter                                        *parameters,
-   RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const                           &theUserSuppliedTag,
-   RTI1516_NAMESPACE::LogicalTime const             &theTime )
+   int const                      inter_index,
+   InteractionTypeEnum const      inter_type,
+   int const                      param_count,
+   Parameter                     *parameters,
+   ParameterHandleValueMap const &theParameterValues,
+   RTI1516_USERDATA const        &theUserSuppliedTag,
+   LogicalTime const             &theTime )
    : index( inter_index ),
      parameter_queue(),
      interaction_type( inter_type ),
@@ -152,11 +153,11 @@ InteractionItem::~InteractionItem()
  * @job_class{initialization}
  */
 void InteractionItem::initialize(
-   InteractionTypeEnum const                         inter_type,
-   int const                                         param_count,
-   Parameter                                        *parameters,
-   RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const                           &theUserSuppliedTag )
+   InteractionTypeEnum const      inter_type,
+   int const                      param_count,
+   Parameter                     *parameters,
+   ParameterHandleValueMap const &theParameterValues,
+   RTI1516_USERDATA const        &theUserSuppliedTag )
 {
    this->interaction_type = inter_type;
 
@@ -164,7 +165,7 @@ void InteractionItem::initialize(
    for ( int p = 0; p < param_count; ++p ) {
       // Note that we are using a const_iterator since this map does not support
       // an iterator.
-      RTI1516_NAMESPACE::ParameterHandleValueMap::const_iterator param_iter;
+      ParameterHandleValueMap::const_iterator param_iter;
 
       // Get the parameter from the map.
       param_iter = theParameterValues.find( parameters[p].get_parameter_handle() );

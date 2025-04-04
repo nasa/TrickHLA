@@ -52,6 +52,7 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
+using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
@@ -70,8 +71,8 @@ ParameterItem::ParameterItem()
 @job_class{initialization}
 */
 ParameterItem::ParameterItem(
-   int const                                    parameter_index,
-   RTI1516_NAMESPACE::VariableLengthData const *param_value )
+   int const                 parameter_index,
+   VariableLengthData const *param_value )
    : index( parameter_index ),
      size( 0 ),
      data( NULL )

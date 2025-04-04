@@ -80,7 +80,7 @@ Int64Time::Int64Time(
  * @job_class{initialization}
  */
 Int64Time::Int64Time(
-   RTI1516_NAMESPACE::LogicalTime const &value )
+   LogicalTime const &value )
 {
    set( value );
 }
@@ -89,7 +89,7 @@ Int64Time::Int64Time(
  * @job_class{initialization}
  */
 Int64Time::Int64Time(
-   RTI1516_NAMESPACE::HLAinteger64Time const &value )
+   HLAinteger64Time const &value )
    : hla_time( value )
 {
    return;
@@ -166,9 +166,9 @@ void Int64Time::set(
 }
 
 void Int64Time::set(
-   RTI1516_NAMESPACE::LogicalTime const &value )
+   LogicalTime const &value )
 {
-   RTI1516_NAMESPACE::HLAinteger64Time const &t = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Time const & >( value );
+   HLAinteger64Time const &t = dynamic_cast< HLAinteger64Time const & >( value );
 
    this->hla_time = t.getTime();
 }

@@ -120,7 +120,7 @@ class InteractionItem : public Item
    InteractionItem( int const                                         inter_index,
                     InteractionTypeEnum const                         inter_type,
                     int const                                         param_count,
-                    TrickHLA::Parameter                              *parameters,
+                    Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_USERDATA const                           &theUserSuppliedTag );
 
@@ -135,7 +135,7 @@ class InteractionItem : public Item
    InteractionItem( int const                                         inter_index,
                     InteractionTypeEnum const                         inter_type,
                     int const                                         param_count,
-                    TrickHLA::Parameter                              *parameters,
+                    Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_USERDATA const                           &theUserSuppliedTag,
                     RTI1516_NAMESPACE::LogicalTime const             &theTime );
@@ -176,7 +176,7 @@ class InteractionItem : public Item
     *  @param theUserSuppliedTag User supplied tag. */
    void initialize( InteractionTypeEnum const                         inter_type,
                     int const                                         param_count,
-                    TrickHLA::Parameter                              *parameters,
+                    Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_USERDATA const                           &theUserSuppliedTag );
 

@@ -72,8 +72,8 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-using namespace std;
 using namespace RTI1516_NAMESPACE;
+using namespace std;
 using namespace TrickHLA;
 
 /*!
@@ -416,8 +416,8 @@ bool const SyncPointList::register_sync_point(
 }
 
 bool const SyncPointList::register_sync_point(
-   wstring const                              &label,
-   RTI1516_NAMESPACE::FederateHandleSet const &handle_set )
+   wstring const           &label,
+   FederateHandleSet const &handle_set )
 {
    MutexProtection auto_unlock_mutex( mutex );
 
@@ -456,7 +456,7 @@ bool const SyncPointList::register_all()
 }
 
 bool const SyncPointList::register_all(
-   RTI1516_NAMESPACE::FederateHandleSet const &handle_set )
+   FederateHandleSet const &handle_set )
 {
    MutexProtection auto_unlock_mutex( mutex );
 
@@ -534,8 +534,8 @@ bool const SyncPointList::register_sync_point(
 }
 
 bool const SyncPointList::register_sync_point(
-   SyncPoint                                  *sp,
-   RTI1516_NAMESPACE::FederateHandleSet const &handle_set )
+   SyncPoint               *sp,
+   FederateHandleSet const &handle_set )
 {
    if ( sp == NULL ) {
       ostringstream errmsg;

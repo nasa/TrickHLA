@@ -83,8 +83,8 @@ NASA, Johnson Space Center\n
 // Access the Trick global objects the Clock.
 extern Trick::Clock *the_clock;
 
-using namespace std;
 using namespace RTI1516_NAMESPACE;
+using namespace std;
 using namespace TrickHLA;
 
 // Declare default time lines.
@@ -778,8 +778,8 @@ Object *ExecutionControlBase::get_trickhla_object(
  * @job_class{scheduled}
  */
 Object *ExecutionControlBase::get_unregistered_object(
-   RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass,
-   std::wstring const                         &theObjectInstanceName )
+   ObjectClassHandle const &theObjectClass,
+   std::wstring const      &theObjectInstanceName )
 {
    // Check to see if there is and ExecutionConfiguration object.
    if ( execution_configuration != NULL ) {
@@ -806,7 +806,7 @@ Object *ExecutionControlBase::get_unregistered_object(
  * @job_class{scheduled}
  */
 Object *ExecutionControlBase::get_unregistered_remote_object(
-   RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass )
+   ObjectClassHandle const &theObjectClass )
 {
    // Check to see if there is and ExecutionConfiguration object.
    if ( execution_configuration != NULL ) {
@@ -826,7 +826,7 @@ Object *ExecutionControlBase::get_unregistered_remote_object(
 }
 
 bool ExecutionControlBase::mark_object_as_deleted_from_federation(
-   RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_id )
+   ObjectInstanceHandle const &instance_id )
 {
    // Remove the ExecitionControl object if present and the ID matches.
    if ( execution_configuration != NULL
