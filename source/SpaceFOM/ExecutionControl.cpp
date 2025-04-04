@@ -568,7 +568,7 @@ void ExecutionControl::receive_interaction(
 
       if ( received_as_TSO ) {
          InteractionItem item( 0,
-                               TRICKHLA_MANAGER_BUILTIN_MTR_INTERACTION,
+                               INTERACTION_TYPE_BUILTIN_MTR,
                                mtr_interaction->get_parameter_count(),
                                mtr_interaction->get_parameters(),
                                theParameterValues,
@@ -579,7 +579,7 @@ void ExecutionControl::receive_interaction(
          mtr_interaction->process_interaction();
       } else {
          InteractionItem item( 0,
-                               TRICKHLA_MANAGER_BUILTIN_MTR_INTERACTION,
+                               INTERACTION_TYPE_BUILTIN_MTR,
                                mtr_interaction->get_parameter_count(),
                                mtr_interaction->get_parameters(),
                                theParameterValues,
