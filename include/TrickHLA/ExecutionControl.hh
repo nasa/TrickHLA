@@ -176,6 +176,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    {
       return true;
    };
+   /*! @brief Get a comma separated list of interaction FOM names used.
+    *  @return Comma separated list of interaction FOM names used. */
+   virtual std::string get_interaction_FOM_names()
+   {
+      // No interactions used by this execution control.
+      return "";
+   }
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );

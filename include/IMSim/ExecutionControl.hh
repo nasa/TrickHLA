@@ -168,6 +168,14 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param requested_mode Requested mode. */
    virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode );
 
+   /*! @brief Get a comma separated list of interaction FOM names used.
+    *  @return Comma separated list of interaction FOM names used. */
+   virtual std::string get_interaction_FOM_names()
+   {
+      // Only have one interaction used by this execution control.
+      return ( freeze_interaction != NULL ) ? freeze_interaction->get_FOM_name() : "";
+   }
+
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );

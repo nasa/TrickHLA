@@ -305,6 +305,9 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
    virtual bool process_mode_interaction() = 0;
+   /*! @brief Get a comma separated list of interaction FOM names used.
+    *  @return Comma separated list of interaction FOM names used. */
+   virtual std::string get_interaction_FOM_names() = 0;
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( ExecutionControlEnum exec_control ) = 0;

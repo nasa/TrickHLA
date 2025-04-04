@@ -407,6 +407,36 @@ void Manager::verify_object_and_interaction_arrays()
          }
       }
    }
+
+   // Get a comma separated list of the execution control interaction FOM names.
+   VectorOfStrings exec_fom_names_vector;
+   StringUtilities::tokenize( execution_control->get_interaction_FOM_names(),
+                              exec_fom_names_vector,
+                              "," );
+
+   // Make sure there is not already a user defined Interaction that uses
+   // the same interaction FOM name as the execution control interaction.
+   for ( int i = 0; i < exec_fom_names_vector.size(); ++i ) {
+
+      for ( int k = 0; k < inter_count; ++k ) {
+         if ( ( interactions[k].FOM_name != NULL ) && ( *interactions[k].FOM_name != '\0' ) ) {
+            string inter_fom_name = interactions[k].FOM_name;
+
+            if ( exec_fom_names_vector[i] == inter_fom_name ) {
+               ostringstream errmsg;
+               errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                      << " ERROR: Execution Control Interaction '"
+                      << exec_fom_names_vector[i]
+                      << "' has the same FOM name as user specified interaction '"
+                      << inter_fom_name << "' at array index " << k
+                      << ". Please check your input or modified-data files to"
+                      << " make sure the interaction FOM names are unique with"
+                      << " no duplicates.\n";
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+      }
+   }
 }
 
 /*!

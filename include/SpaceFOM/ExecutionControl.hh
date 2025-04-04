@@ -190,6 +190,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
    virtual bool process_mode_interaction();
+   /*! @brief Get a comma separated list of interaction FOM names used.
+    *  @return Comma separated list of interaction FOM names used. */
+   virtual std::string get_interaction_FOM_names()
+   {
+      // Only have one interaction used by this execution control.
+      return ( mtr_interaction != NULL ) ? mtr_interaction->get_FOM_name() : "";
+   }
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );
