@@ -229,6 +229,23 @@ typedef enum {
 } FederateJoinEnum;
 
 /*!
+@emum InteractionTypeEnum
+@brief The following enum is used to distinguish between user-defined and
+built-in interactions. This is needed to distinguish between the interactions
+defined in the user's model CODE and the interaction(s) built into TrickHLA.
+
+Update this enum when adding more built-in interactions into TrickHLA.
+*/
+typedef enum {
+
+   INTERACTION_TYPE_UNDEFINED      = 0, ///< Undefined interaction type.
+   INTERACTION_TYPE_USER_DEFINED   = 1, ///< Interaction must be defined by the user in the input file.
+   INTERACTION_TYPE_BUILTIN_FREEZE = 2, ///< Freeze Interaction internal to TrickHLA.
+   INTERACTION_TYPE_BUILTIN_MTR    = 3  ///< MTR Interaction internal to TrickHLA.
+
+} InteractionTypeEnum;
+
+/*!
 @enum ExecutionControlEnum
 @brief Define the TrickHLA execution control enumeration values.
 */

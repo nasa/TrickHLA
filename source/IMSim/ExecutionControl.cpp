@@ -1265,7 +1265,7 @@ void ExecutionControl::receive_interaction(
 
          if ( received_as_TSO ) {
             InteractionItem item( i,
-                                  TrickHLA::TRICKHLA_MANAGER_BUILTIN_FREEZE_INTERACTION,
+                                  INTERACTION_TYPE_BUILTIN_FREEZE,
                                   freeze_interaction[i].get_parameter_count(),
                                   freeze_interaction[i].get_parameters(),
                                   theParameterValues,
@@ -1276,7 +1276,7 @@ void ExecutionControl::receive_interaction(
             freeze_interaction[i].process_interaction();
          } else {
             InteractionItem item( i,
-                                  TrickHLA::TRICKHLA_MANAGER_BUILTIN_FREEZE_INTERACTION,
+                                  INTERACTION_TYPE_BUILTIN_FREEZE,
                                   freeze_interaction[i].get_parameter_count(),
                                   freeze_interaction[i].get_parameters(),
                                   theParameterValues,

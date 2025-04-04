@@ -254,7 +254,6 @@ bool RefFrameTree::build_transform(
          }
       }
 
-
       // Make the next frame the current frame.
       current_frame = next_frame;
    }

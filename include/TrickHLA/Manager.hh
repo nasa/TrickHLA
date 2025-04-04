@@ -89,19 +89,6 @@ namespace TrickHLA
 class InteractionItem;
 class ExecutionConfigurationBase;
 
-// FIXME: This needs to be handled in a different way and in the ExecutionControl code.
-// The following enum is used to distinguish between user-defined and built-in
-// interactions. This is needed to distinguish between the interactions defined
-// in the user's model and the interaction(s) built into TrickHLA.
-//
-// Update this enum when adding more built-in interactions into TrickHLA.
-//
-typedef enum {
-   TRICKHLA_MANAGER_USER_DEFINED_INTERACTION   = 0, ///< Interaction must be defined by the user in the input file
-   TRICKHLA_MANAGER_BUILTIN_FREEZE_INTERACTION = 1, ///< Freeze Interaction internal to TrickHLA
-   TRICKHLA_MANAGER_BUILTIN_MTR_INTERACTION    = 2  ///< MTR Interaction internal to TrickHLA
-} ManagerTypeOfInteractionEnum;
-
 class Manager : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.

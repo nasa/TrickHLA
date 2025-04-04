@@ -94,23 +94,6 @@ using namespace std;
 using namespace RTI1516_NAMESPACE;
 using namespace TrickHLA;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-// C based model includes.
-
-extern ATTRIBUTES attrTrickHLA__InteractionItem[];
-
-extern ATTRIBUTES attrTrickHLA__Interaction[];
-
-extern ATTRIBUTES attrSRFOM__MTRInteractionHandler[];
-
-extern ATTRIBUTES attrTrickHLA__Parameter[];
-
-#ifdef __cplusplus
-}
-#endif
-
 /*!
  * @job_class{initialization}
  */
@@ -396,6 +379,33 @@ void Manager::verify_object_and_interaction_arrays()
    // Reset the TrickHLA Interaction count if negative.
    if ( inter_count < 0 ) {
       inter_count = 0;
+   }
+
+   // Interactions must be unique and can not be a duplicate for a given
+   // FOM-name. Only one interaction per FOM-name.
+   for ( int i = 0; i < inter_count; ++i ) {
+
+      if ( ( interactions[i].FOM_name != NULL ) && ( *interactions[i].FOM_name != '\0' ) ) {
+         string inter_fom_name1 = interactions[i].FOM_name;
+
+         for ( int k = i + 1; k < inter_count; ++k ) {
+            if ( ( interactions[k].FOM_name != NULL ) && ( *interactions[k].FOM_name != '\0' ) ) {
+               string inter_fom_name2 = interactions[k].FOM_name;
+
+               if ( inter_fom_name1 == inter_fom_name2 ) {
+                  ostringstream errmsg;
+                  errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                         << " ERROR: Interaction '" << inter_fom_name1
+                         << "' at array index " << i << " has the same FOM name"
+                         << " as interaction '" << inter_fom_name2
+                         << "' at array index " << k << ". Please check your"
+                         << " input or modified-data files to make sure the"
+                         << " interaction FOM names are unique with no duplicates.\n";
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+         }
+      }
    }
 }
 
@@ -2390,7 +2400,7 @@ void Manager::process_interactions()
          static_cast< InteractionItem * >( interactions_queue.front() );
 
       switch ( interaction_item->interaction_type ) {
-         case TRICKHLA_MANAGER_USER_DEFINED_INTERACTION: {
+         case INTERACTION_TYPE_USER_DEFINED: {
             // Process the interaction if we subscribed to it and the interaction
             // index is valid.
             if ( ( interaction_item->index >= 0 )
@@ -2445,7 +2455,7 @@ void Manager::receive_interaction(
          InteractionItem *item;
          if ( received_as_TSO ) {
             item = new InteractionItem( i,
-                                        TRICKHLA_MANAGER_USER_DEFINED_INTERACTION,
+                                        INTERACTION_TYPE_USER_DEFINED,
                                         interactions[i].get_parameter_count(),
                                         interactions[i].get_parameters(),
                                         theParameterValues,
@@ -2453,7 +2463,7 @@ void Manager::receive_interaction(
                                         theTime );
          } else {
             item = new InteractionItem( i,
-                                        TRICKHLA_MANAGER_USER_DEFINED_INTERACTION,
+                                        INTERACTION_TYPE_USER_DEFINED,
                                         interactions[i].get_parameter_count(),
                                         interactions[i].get_parameters(),
                                         theParameterValues,

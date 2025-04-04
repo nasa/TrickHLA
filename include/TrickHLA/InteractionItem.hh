@@ -26,6 +26,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/ParameterItem.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -48,6 +49,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -87,7 +89,7 @@ class InteractionItem : public Item
 
    ItemQueue parameter_queue; ///< @trick_io{**} Linked list queue of parameter items.
 
-   int interaction_type; ///< @trick_units{--} type of the containing interaction
+   InteractionTypeEnum interaction_type; ///< @trick_units{--} type of the containing interaction
 
    int            parm_items_count; ///< @trick_units{--} Number of array elements
    ParameterItem *parm_items;       ///< @trick_units{--} checkpoint-able parameter items array
@@ -109,31 +111,31 @@ class InteractionItem : public Item
    InteractionItem();
 
    /*! @brief Initialization constructor for the TrickHLA InteractionItem class.
-    *  @param interaction_index  Interaction index.
-    *  @param interaction_type   Type of the containing interaction.
+    *  @param inter_index        Interaction index.
+    *  @param inter_type         Type of the containing interaction.
     *  @param param_count        Number of parameters.
     *  @param parameters         Interaction Parameters.
     *  @param theParameterValues Parameter values.
     *  @param theUserSuppliedTag User supplied tag. */
-   InteractionItem( int                                               interaction_index,
-                    int                                               interaction_type,
-                    int                                               param_count,
-                    Parameter                                        *parameters,
+   InteractionItem( int const                                         inter_index,
+                    InteractionTypeEnum const                         inter_type,
+                    int const                                         param_count,
+                    TrickHLA::Parameter                              *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_USERDATA const                           &theUserSuppliedTag );
 
    /*! @brief Initialization constructor for the TrickHLA InteractionItem class.
-    *  @param interaction_index  Interaction index.
-    *  @param interaction_type   Type of the containing interaction.
+    *  @param inter_index        Interaction index.
+    *  @param inter_type         Type of the containing interaction.
     *  @param param_count        Number of parameters.
     *  @param parameters         Interaction Parameters.
     *  @param theParameterValues Parameter values.
     *  @param theUserSuppliedTag User supplied tag.
     *  @param theTime            Time for TSO interaction. */
-   InteractionItem( int                                               interaction_index,
-                    int                                               interaction_type,
-                    int                                               param_count,
-                    Parameter                                        *parameters,
+   InteractionItem( int const                                         inter_index,
+                    InteractionTypeEnum const                         inter_type,
+                    int const                                         param_count,
+                    TrickHLA::Parameter                              *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_USERDATA const                           &theUserSuppliedTag,
                     RTI1516_NAMESPACE::LogicalTime const             &theTime );
@@ -172,9 +174,9 @@ class InteractionItem : public Item
     *  @param parameters         Interaction Parameters.
     *  @param theParameterValues Parameter values.
     *  @param theUserSuppliedTag User supplied tag. */
-   void initialize( int                                               inter_type,
-                    int                                               param_count,
-                    Parameter                                        *parameters,
+   void initialize( InteractionTypeEnum const                         inter_type,
+                    int const                                         param_count,
+                    TrickHLA::Parameter                              *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_USERDATA const                           &theUserSuppliedTag );
 

@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -52,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
+#include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -65,24 +67,13 @@ NASA, Johnson Space Center\n
 using namespace std;
 using namespace TrickHLA;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-// C based model includes.
-
-extern ATTRIBUTES attrParameterItem[];
-
-#ifdef __cplusplus
-}
-#endif
-
 /*!
  * @job_class{initialization}
  */
 InteractionItem::InteractionItem() // RETURN: -- None.
    : index( -1 ),
      parameter_queue(),
-     interaction_type( -1 ),
+     interaction_type( INTERACTION_TYPE_UNDEFINED ),
      parm_items_count( 0 ),
      parm_items( NULL ),
      user_supplied_tag_size( 0 ),
@@ -97,38 +88,38 @@ InteractionItem::InteractionItem() // RETURN: -- None.
  * @job_class{initialization}
  */
 InteractionItem::InteractionItem(
-   int                                               interaction_index,
-   int                                               interaction_type,
-   int                                               param_count,
+   int const                                         inter_index,
+   InteractionTypeEnum const                         inter_type,
+   int const                                         param_count,
    Parameter                                        *parameters,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const                           &theUserSuppliedTag )
-   : index( interaction_index ),
+   : index( inter_index ),
      parameter_queue(),
-     interaction_type( -1 ),
+     interaction_type( inter_type ),
      parm_items_count( 0 ),
      parm_items( NULL ),
      order_is_TSO( false ),
      time()
 {
    // Decode the Interaction values into this Item.
-   initialize( interaction_type, param_count, parameters, theParameterValues, theUserSuppliedTag );
+   initialize( inter_type, param_count, parameters, theParameterValues, theUserSuppliedTag );
 }
 
 /*!
  * @job_class{initialization}
  */
 InteractionItem::InteractionItem(
-   int                                               interaction_index,
-   int                                               interaction_type,
-   int                                               param_count,
+   int const                                         inter_index,
+   InteractionTypeEnum const                         inter_type,
+   int const                                         param_count,
    Parameter                                        *parameters,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const                           &theUserSuppliedTag,
    RTI1516_NAMESPACE::LogicalTime const             &theTime )
-   : index( interaction_index ),
+   : index( inter_index ),
      parameter_queue(),
-     interaction_type( -1 ),
+     interaction_type( inter_type ),
      parm_items_count( 0 ),
      parm_items( NULL ),
      order_is_TSO( true ),
@@ -137,7 +128,7 @@ InteractionItem::InteractionItem(
    time.set( theTime );
 
    // Decode the Interaction values into this Item.
-   initialize( interaction_type, param_count, parameters, theParameterValues, theUserSuppliedTag );
+   initialize( inter_type, param_count, parameters, theParameterValues, theUserSuppliedTag );
 }
 
 /*!
@@ -161,8 +152,8 @@ InteractionItem::~InteractionItem()
  * @job_class{initialization}
  */
 void InteractionItem::initialize(
-   int                                               inter_type,
-   int                                               param_count,
+   InteractionTypeEnum const                         inter_type,
+   int const                                         param_count,
    Parameter                                        *parameters,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const                           &theUserSuppliedTag )
