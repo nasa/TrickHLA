@@ -90,8 +90,8 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-using namespace std;
 using namespace RTI1516_NAMESPACE;
+using namespace std;
 using namespace TrickHLA;
 
 /*!
@@ -2507,7 +2507,7 @@ void Manager::receive_interaction(
  * @job_class{scheduled}
  */
 Object *Manager::get_trickhla_object(
-   RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_id )
+   ObjectInstanceHandle const &instance_id )
 {
    // We use a map with the key being the ObjectIntanceHandle for fast lookups.
    ObjectInstanceMap::const_iterator iter = object_map.find( instance_id );

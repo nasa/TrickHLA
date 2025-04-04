@@ -67,8 +67,8 @@ execution.
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-using namespace std;
 using namespace RTI1516_NAMESPACE;
+using namespace std;
 using namespace TrickHLA;
 
 #ifdef __cplusplus

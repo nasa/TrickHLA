@@ -104,8 +104,8 @@ extern ATTRIBUTES attrIMSim__FreezeInteractionHandler[];
 }
 #endif
 
-using namespace std;
 using namespace RTI1516_NAMESPACE;
+using namespace std;
 using namespace TrickHLA;
 using namespace IMSim;
 
@@ -1234,11 +1234,11 @@ void ExecutionControl::unsubscribe()
  * @job_class{scheduled}
  */
 void ExecutionControl::receive_interaction(
-   RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
-   RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const                           &theUserSuppliedTag,
-   RTI1516_NAMESPACE::LogicalTime const             &theTime,
-   bool const                                        received_as_TSO )
+   InteractionClassHandle const  &theInteraction,
+   ParameterHandleValueMap const &theParameterValues,
+   RTI1516_USERDATA const        &theUserSuppliedTag,
+   LogicalTime const             &theTime,
+   bool const                     received_as_TSO )
 {
    // Find the TrickHLAFreezeInteraction we have data for.
    for ( int i = 0; i < freeze_inter_count; ++i ) {

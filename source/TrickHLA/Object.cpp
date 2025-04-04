@@ -94,8 +94,8 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-using namespace std;
 using namespace RTI1516_NAMESPACE;
+using namespace std;
 using namespace TrickHLA;
 
 //-----------------------------------------------------------------
@@ -566,7 +566,7 @@ Federate *Object::get_federate()
    return ( ( this->manager != NULL ) ? manager->get_federate() : NULL );
 }
 
-RTI1516_NAMESPACE::RTIambassador *Object::get_RTI_ambassador()
+RTIambassador *Object::get_RTI_ambassador()
 {
    if ( rti_ambassador == NULL ) {
       // Macro to save the FPU Control Word register value.
@@ -5034,7 +5034,7 @@ Int64Time Object::get_granted_time() const
 }
 
 Attribute *Object::get_attribute(
-   RTI1516_NAMESPACE::AttributeHandle const &attr_handle )
+   AttributeHandle const &attr_handle )
 {
    // We use a map with the key being the AttributeHandle for fast lookups.
    AttributeMap::const_iterator iter = thla_attribute_map.find( attr_handle );
