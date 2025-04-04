@@ -117,18 +117,18 @@ void RefFrameDataState::initialize()
  * @job_class{scheduled}
  */
 bool RefFrameDataState::transform_to_parent(
-   RefFrameDataState const &transform_c_p,
-   RefFrameDataState       *frame_p )
+   RefFrameDataState const &frame_to,
+   RefFrameDataState       *frame_out )
 {
-   double r_frm_c_p[3]; /* Position vector of this frame with respect to its
-                           current native frame (child) frame but expressed in
-                           the desired parent frame. */
-   double v_frm_c_p[3]; /* Velocity vector of this frame with respect to its
-                           current native frame (child) frame but expressed in
-                           the desired parent frame. */
-   double a_frm_c_p[3]; /* Acceleration vector of this frame with respect to its
-                           current native frame (child) frame but expressed in
-                           the desired parent frame. */
+   double r_frm_p[3]; /* Position vector of this frame with respect to its
+                         current native frame (child) frame but expressed in
+                         the desired parent frame. */
+   double v_frm_p[3]; /* Velocity vector of this frame with respect to its
+                         current native frame (child) frame but expressed in
+                         the desired parent frame. */
+   double a_frm_p[3]; /* Acceleration vector of this frame with respect to its
+                         current native frame (child) frame but expressed in
+                         the desired parent frame. */
 
    // Working variables.
    // Translation.
@@ -144,7 +144,7 @@ bool RefFrameDataState::transform_to_parent(
    double wdot_c_p_bdy[3];
 
    // Check for null reference to transformed frame data.
-   if ( frame_p == NULL ) {
+   if ( frame_out == NULL ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d NULL transformed frame reference!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
@@ -158,53 +158,62 @@ bool RefFrameDataState::transform_to_parent(
    // (Appendix E).
    //**************************************************************************
 
+   //**************************************************************************
+   // Note: All frames are rotationally expressed using a left transformation
+   // quaternion.  This transformation quaternion can be used to transform a
+   // vector expressed in the native (child) frame into a vector expressed in
+   // a frame's parent frame.
+   //**************************************************************************
+
    //
    // Position computations.
    //
    // Transform this frame's position vector expressed in its current native
    // frame (child) into the desired parent frame.  This is still a vector
-   // vector the origin of the original frame (child) to this frame's origin
+   // from the origin of the original frame (child) to this frame's origin
    // but expressed in the new parent frame coordinates.
-   transform_c_p.state.att.transform_vector( this->state.pos, r_frm_c_p );
+   frame_to.state.att.transform_vector( this->state.pos, r_frm_p );
 
    // Compute this frame's position expressed in the new parent frame.
-   V_ADD( frame_p->state.pos, transform_c_p.state.pos, r_frm_c_p )
+   V_ADD( frame_out->state.pos, frame_to.state.pos, r_frm_p )
 
    // Compute the attitude of this frame in the new parent frame.
-   frame_p->state.att.multiply( transform_c_p.state.att, this->state.att );
+   // Frame rotations and transformations can be accumulated through quaternion
+   // multiplication.  Note q_02 = q_12 * q_01
+   frame_out->state.att.multiply( frame_to.state.att, this->state.att );
 
    //
    // Velocity computations.
    //
    // Compute the apparent velocity of this frame in a rotating child frame.
-   V_CROSS( wxr_c, transform_c_p.state.ang_vel, this->state.pos );
+   V_CROSS( wxr_c, frame_to.state.ang_vel, this->state.pos );
 
    // Compute the total velocity of this frame in the rotating child frame.
    V_ADD( v_c, this->state.vel, wxr_c );
 
    // Transform the frame velocity into the parent frame.
-   transform_c_p.state.att.transform_vector( v_c, v_frm_c_p );
+   frame_to.state.att.transform_vector( v_c, v_frm_p );
 
    // Compute this frame's velocity expressed in the parent frame.
-   V_ADD( frame_p->state.vel, transform_c_p.state.vel, v_frm_c_p );
+   V_ADD( frame_out->state.vel, frame_to.state.vel, v_frm_p );
 
    // Compute this frame's angular velocity wrt the parent frame.
-   // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
-   // Transform the child frame's angular velocity wrt the parent frame into
-   // this 'body' frame.
-   state.att.conjugate_transform_vector( transform_c_p.state.ang_vel, w_c_p_bdy );
+   // NOTE: Angular velocity is expressed in the 'body' frame, not the parent
+   // frame.  Transform the child frame's angular velocity wrt the parent frame
+   // into this new parent 'body' frame.
+   state.att.conjugate_transform_vector( frame_to.state.ang_vel, w_c_p_bdy );
    // Add the rotational velocity of the this frame's child frame with respect
    // to the parent frame.
-   V_ADD( frame_p->state.ang_vel, w_c_p_bdy, this->state.ang_vel );
+   V_ADD( frame_out->state.ang_vel, w_c_p_bdy, this->state.ang_vel );
 
    //
    // Acceleration computations.
    //
    // Compute the apparent acceleration of this frame in a rotating child frame.
-   V_CROSS( axr_c, transform_c_p.ang_accel, this->state.pos );
-   V_SCALE( two_w_c, transform_c_p.state.ang_vel, 2.0 );
+   V_CROSS( axr_c, frame_to.ang_accel, this->state.pos );
+   V_SCALE( two_w_c, frame_to.state.ang_vel, 2.0 );
    V_CROSS( two_wxv_c, two_w_c, this->state.vel );
-   V_CROSS( wxwxr_c, transform_c_p.state.ang_vel, wxr_c );
+   V_CROSS( wxwxr_c, frame_to.state.ang_vel, wxr_c );
 
    // Add up the components of the rotationally induced acceleration.
    a_c[0] = this->accel[0] + wxwxr_c[0] + two_wxv_c[0] + axr_c[0];
@@ -212,19 +221,19 @@ bool RefFrameDataState::transform_to_parent(
    a_c[2] = this->accel[2] + wxwxr_c[2] + two_wxv_c[2] + axr_c[2];
 
    // Transform this frame's acceleration into the parent frame.
-   transform_c_p.state.att.transform_vector( a_c, a_frm_c_p );
+   frame_to.state.att.transform_vector( a_c, a_frm_p );
 
    // Compute this frame's acceleration expressed in the parent frame.
-   V_ADD( frame_p->accel, transform_c_p.accel, a_frm_c_p );
+   V_ADD( frame_out->accel, frame_to.accel, a_frm_p );
 
    // Compute this frame's angular acceleration wrt the parent frame.
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular acceleration wrt the parent frame into
    // this 'body' frame.
-   state.att.conjugate_transform_vector( transform_c_p.ang_accel, wdot_c_p_bdy );
+   state.att.conjugate_transform_vector( frame_to.ang_accel, wdot_c_p_bdy );
    // Add the rotational acceleration of this frame's child frame with respect
    // to the parent frame.
-   V_ADD( frame_p->ang_accel, wdot_c_p_bdy, this->ang_accel );
+   V_ADD( frame_out->ang_accel, wdot_c_p_bdy, this->ang_accel );
 
    return ( true );
 }
@@ -233,8 +242,8 @@ bool RefFrameDataState::transform_to_parent(
  * @job_class{scheduled}
  */
 bool RefFrameDataState::transform_to_child(
-   RefFrameDataState const &transform_c_p,
-   RefFrameDataState       *frame_c )
+   RefFrameDataState const &frame_to,
+   RefFrameDataState       *frame_out )
 {
    // Working variables.
    // Translation.
@@ -253,7 +262,7 @@ bool RefFrameDataState::transform_to_child(
    double wdot_c_bdy[3];
 
    // Check for null reference to transformed frame data.
-   if ( frame_c == NULL ) {
+   if ( frame_out == NULL ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_child() ERROR:%d NULL transformed frame reference!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
@@ -267,86 +276,93 @@ bool RefFrameDataState::transform_to_child(
    // (Appendix E).
    //**************************************************************************
 
-   // Compute the conjugate of the child to parent transformation quaternion.
-   // This is the parent to child transformation quaternion.
-   QuaternionData q_p_c;
-   q_p_c.conjugate( transform_c_p.state.att );
+   //**************************************************************************
+   // Note: All frames are rotationally expressed using a left transformation
+   // quaternion.  This transformation quaternion can be used to transform a
+   // vector expressed in the native (child) frame into a vector expressed in
+   // a frame's parent frame.  As a consequence of quaternion mathematics, the
+   // conjugate of the transformation quaternion can be used to transform a
+   // vector expressed in the parent frame into a vector expressed in the
+   // native (child) frame.
+   //**************************************************************************
 
    //
    // Position computations.
    //
    // Compute the position difference between this frame and the child frame
    // expressed in parent frame coordinates.
-   V_SUB( dr_p, this->state.pos, transform_c_p.state.pos )
+   // FIXME: Is there a missing transformation here?
+   V_SUB( dr_p, this->state.pos, frame_to.state.pos )
 
    // Transform the position vector into the child frame coordinates.
-   // q_p_c.transform_vector( dr_p, frame_c->state.pos );
-   // FIXME: Error in accumulating position.
-   transform_c_p.state.att.transform_vector( dr_p, frame_c->state.pos );
+   frame_to.state.att.transform_vector( dr_p, frame_out->state.pos );
+
+   // Compute the conjugate of the parent to child transformation quaternion.
+   // This is the child to parent transformation quaternion.
+   QuaternionData q_c_p;
+   q_c_p.conjugate( frame_to.state.att );
 
    // Compute the attitude of this frame in the child frame.
-   frame_c->state.att.multiply( q_p_c, this->state.att );
+   // Frame rotations and transformations can be accumulated through quaternion
+   // multiplication.  Note q_02 = q_12 * q_01
+   frame_out->state.att.multiply( q_c_p, this->state.att );
 
    //
    // Velocity computations.
    //
    // Compute the difference between this frame velocity and the child frame
    // velocity expressed in the parent frame.
-   V_SUB( dv_p, this->state.vel, transform_c_p.state.vel );
+   V_SUB( dv_p, this->state.vel, frame_to.state.vel );
 
    // Transform the velocity difference into the child frame.
-   // q_p_c.transform_vector( dv_p, dv_c );
-   // FIXME: Error in accumulating position.
-   transform_c_p.state.att.transform_vector( dv_p, dv_c );
+   frame_to.state.att.transform_vector( dv_p, dv_c );
 
    // Compute the apparent velocity of this frame in a rotating child frame.
-   V_CROSS( wxr_c, transform_c_p.state.ang_vel, frame_c->state.pos );
+   V_CROSS( wxr_c, frame_to.state.ang_vel, frame_out->state.pos );
 
    // Compute the total velocity of this frame in the rotating child frame.
-   V_SUB( frame_c->state.vel, dv_c, wxr_c );
+   V_SUB( frame_out->state.vel, dv_c, wxr_c );
 
    // Compute this frame's angular velocity wrt the child frame.
    // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular velocity wrt the parent frame into
    // this 'body' frame.
-   frame_c->state.att.transform_vector( transform_c_p.state.ang_vel, w_c_bdy );
+   frame_out->state.att.transform_vector( frame_to.state.ang_vel, w_c_bdy );
 
    // Subtract the rotational velocity of the child frame with respect to the
    // parent frame expressed in the body frame to the rotational velocity of
    // this  body frame with respect to the parent expressed in the body frame.
-   V_SUB( frame_c->state.ang_vel, this->state.ang_vel, w_c_bdy );
+   V_SUB( frame_out->state.ang_vel, this->state.ang_vel, w_c_bdy );
 
    //
    // Acceleration computations.
    //
    // Compute the difference between the parent frame acceleration and the
    // child frame acceleration expressed in the parent frame.
-   V_SUB( da_p, this->accel, transform_c_p.accel );
+   V_SUB( da_p, this->accel, frame_to.accel );
 
    // Transform the acceleration difference into the child frame.
-   // q_p_c.transform_vector( da_p, da_c );
-   // FIXME: Error in accumulating position.
-   transform_c_p.state.att.transform_vector( da_p, da_c );
+   frame_to.state.att.transform_vector( da_p, da_c );
 
    // Compute the apparent acceleration of this frame in a rotating child frame.
-   V_CROSS( axr_c, transform_c_p.ang_accel, frame_c->state.pos );
-   V_SCALE( two_w_c, transform_c_p.state.ang_vel, 2.0 );
-   V_CROSS( two_wxv_c, two_w_c, frame_c->state.vel );
-   V_CROSS( wxwxr_c, transform_c_p.state.ang_vel, wxr_c );
+   V_CROSS( axr_c, frame_to.ang_accel, frame_out->state.pos );
+   V_SCALE( two_w_c, frame_to.state.ang_vel, 2.0 );
+   V_CROSS( two_wxv_c, two_w_c, frame_out->state.vel );
+   V_CROSS( wxwxr_c, frame_to.state.ang_vel, wxr_c );
 
    // Add up the components of the rotationally induced acceleration.
-   frame_c->accel[0] = da_c[0] - wxwxr_c[0] - two_wxv_c[0] - axr_c[0];
-   frame_c->accel[1] = da_c[1] - wxwxr_c[1] - two_wxv_c[1] - axr_c[1];
-   frame_c->accel[2] = da_c[2] - wxwxr_c[2] - two_wxv_c[2] - axr_c[2];
+   frame_out->accel[0] = da_c[0] - wxwxr_c[0] - two_wxv_c[0] - axr_c[0];
+   frame_out->accel[1] = da_c[1] - wxwxr_c[1] - two_wxv_c[1] - axr_c[1];
+   frame_out->accel[2] = da_c[2] - wxwxr_c[2] - two_wxv_c[2] - axr_c[2];
 
    // Compute this frame's angular acceleration wrt the child frame.
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular acceleration wrt the parent frame into
    // this 'body' frame.
-   frame_c->state.att.transform_vector( transform_c_p.ang_accel, wdot_c_bdy );
+   frame_out->state.att.transform_vector( frame_to.ang_accel, wdot_c_bdy );
    // Subtract the rotational acceleration of this frame's child frame with
    // respect to the parent frame expressed in the body frame.
-   V_SUB( frame_c->ang_accel, this->ang_accel, wdot_c_bdy );
+   V_SUB( frame_out->ang_accel, this->ang_accel, wdot_c_bdy );
 
    return ( true );
 }
