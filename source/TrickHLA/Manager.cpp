@@ -418,6 +418,21 @@ void Manager::verify_object_and_interaction_arrays()
    // the same interaction FOM name as the execution control interaction.
    for ( int i = 0; i < exec_fom_names_vector.size(); ++i ) {
 
+      // Make sure Execution Control interactins names are not duplicates.
+      for ( int n = i + 1; n < exec_fom_names_vector.size(); ++n ) {
+         if ( exec_fom_names_vector[n] == exec_fom_names_vector[i] ) {
+            ostringstream errmsg;
+            errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                   << " ERROR: Execution Control has duplicate Interactions for '"
+                   << exec_fom_names_vector[i]
+                   << "'. Please check your Execution Control implementation to"
+                   << " make sure only one interaction implementation exists per"
+                   << " HLA interaction class FOM name.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+      }
+
+      // Check Execution Control interaction names against user defined interactions.
       for ( int k = 0; k < inter_count; ++k ) {
          if ( ( interactions[k].FOM_name != NULL ) && ( *interactions[k].FOM_name != '\0' ) ) {
             string inter_fom_name = interactions[k].FOM_name;
@@ -2475,7 +2490,7 @@ void Manager::receive_interaction(
    LogicalTime const             &theTime,
    bool const                     received_as_TSO )
 {
-   // Find the Interaction we have data for.
+   // Find the user Interaction we have data for.
    for ( int i = 0; i < inter_count; ++i ) {
 
       // Process the interaction if we subscribed to it and we have the same class handle.
@@ -2504,28 +2519,29 @@ void Manager::receive_interaction(
          interactions_queue.push( item );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            string handle;
+            StringUtilities::to_string( handle, theInteraction );
+
             if ( received_as_TSO ) {
                Int64Time _time;
                _time.set( theTime );
-
-               string handle;
-               StringUtilities::to_string( handle, theInteraction );
                message_publish( MSG_NORMAL, "Manager::receive_interaction():%d ID:%s, HLA-time:%G\n",
                                 __LINE__, handle.c_str(), _time.get_time_in_seconds() );
             } else {
-               string handle;
-               StringUtilities::to_string( handle, theInteraction );
                message_publish( MSG_NORMAL, "Manager::receive_interaction():%d ID:%s\n",
                                 __LINE__, handle.c_str() );
             }
          }
 
-         // Return now that we put the interaction-item into the queue.
+         // Return now that we put the interaction-item into the queue
+         // for processing later in the S_define main thread when the
+         // manager.process_interactions() job is called to ensure data
+         // coherency.
          return;
       }
    }
 
-   // Let ExectionControl receive any interactions.
+   // Let the ExectionControl receive and process the interaction if it uses it.
    execution_control->receive_interaction( theInteraction,
                                            theParameterValues,
                                            theUserSuppliedTag,

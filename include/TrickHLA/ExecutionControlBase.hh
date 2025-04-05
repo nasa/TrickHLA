@@ -293,7 +293,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
     * @param theUserSuppliedTag Users tag.
     * @param theTime            HLA time for the interaction.
     * @param received_as_TSO    True if interaction was received by RTI as TSO. */
-   virtual void receive_interaction(
+   virtual bool receive_interaction(
       RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
       RTI1516_USERDATA const                           &theUserSuppliedTag,
@@ -738,7 +738,6 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
       Since this is an abstract class, the actual instance will be a concrete
       derived class instance (e.g. SRFOM:ExecutionControl). */
 
-  protected:
    bool                 mode_transition_requested;        ///< @trick_units{--} Flag to indicate a mode transition has been requested.
    ExecutionControlEnum requested_execution_control_mode; ///< @trick_units{--} The latest mode transition requested.
    ExecutionControlEnum current_execution_control_mode;   ///< @trick_units{--} Current SRFOM federate current execution mode.
