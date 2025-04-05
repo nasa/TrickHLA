@@ -538,7 +538,7 @@ void ExecutionControl::unsubscribe()
 /*!
  * @job_class{scheduled}
  */
-void ExecutionControl::receive_interaction(
+bool ExecutionControl::receive_interaction(
    InteractionClassHandle const  &theInteraction,
    ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const        &theUserSuppliedTag,
@@ -547,20 +547,20 @@ void ExecutionControl::receive_interaction(
 {
    // Process the MTR interaction if we subscribed to it and we have the
    // same class handle.
-   if ( mtr_interaction->is_subscribe() && ( mtr_interaction->get_class_handle() == theInteraction ) ) {
+   if ( mtr_interaction->is_subscribe()
+        && ( mtr_interaction->get_class_handle() == theInteraction ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         string handle;
+         StringUtilities::to_string( handle, theInteraction );
+
          if ( received_as_TSO ) {
             Int64Time _time;
             _time.set( theTime );
 
-            string handle;
-            StringUtilities::to_string( handle, theInteraction );
             message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s, HLA-time:%G\n",
                              __LINE__, handle.c_str(), _time.get_time_in_seconds() );
          } else {
-            string handle;
-            StringUtilities::to_string( handle, theInteraction );
             message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s\n",
                              __LINE__, handle.c_str() );
          }
@@ -588,7 +588,11 @@ void ExecutionControl::receive_interaction(
          mtr_interaction->extract_data( &item );
          mtr_interaction->process_interaction();
       }
+
+      // Return now that we processed the interaction.
+      return true;
    }
+   return false;
 }
 
 /*!

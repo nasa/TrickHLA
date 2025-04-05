@@ -388,15 +388,15 @@ void ExecutionControl::unsubscribe()
 /*!
  * @job_class{scheduled}
  */
-void ExecutionControl::receive_interaction(
+bool ExecutionControl::receive_interaction(
    InteractionClassHandle const  &theInteraction,
    ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const        &theUserSuppliedTag,
    LogicalTime const             &theTime,
    bool const                     received_as_TSO )
 {
-   // Return now that we put the interaction-item into the queue.
-   return;
+   // No execution control specific interaction to process.
+   return false;
 }
 
 void ExecutionControl::send_mode_transition_interaction(

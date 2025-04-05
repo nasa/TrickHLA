@@ -160,7 +160,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * @param theUserSuppliedTag Users tag.
     * @param theTime            HLA time for the interaction.
     * @param received_as_TSO    True if interaction was received by RTI as TSO. */
-   virtual void receive_interaction(
+   virtual bool receive_interaction(
       RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
       RTI1516_USERDATA const                           &theUserSuppliedTag,
@@ -176,6 +176,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    {
       return true;
    };
+   /*! @brief Get a comma separated list of interaction FOM names used.
+    *  @return Comma separated list of interaction FOM names used. */
+   virtual std::string get_interaction_FOM_names()
+   {
+      // No interactions used by this execution control.
+      return "";
+   }
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );

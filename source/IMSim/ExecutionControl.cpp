@@ -959,7 +959,6 @@ void ExecutionControl::shutdown()
  */
 void ExecutionControl::setup_object_ref_attributes()
 {
-
    return;
 }
 
@@ -977,6 +976,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    freeze_inter_count = 1;
    freeze_interaction = reinterpret_cast< Interaction * >(
       alloc_type( freeze_inter_count, "TrickHLA::Interaction" ) );
+
    if ( freeze_interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
@@ -985,9 +985,11 @@ void ExecutionControl::setup_interaction_ref_attributes()
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
+
    FreezeInteractionHandler *freeze_handler =
       reinterpret_cast< FreezeInteractionHandler * >(
          alloc_type( 1, "IMSim::FreezeInteractionHandler" ) );
+
    if ( freeze_handler == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
@@ -995,6 +997,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
+
    // Set the reference to this ExecutionControl instance in the
    // IMSim::FreezeIntrationHandler.
    freeze_handler->execution_control = this;
@@ -1009,6 +1012,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    freeze_interaction->set_parameter_count( 1 );
    Parameter *tParm = reinterpret_cast< Parameter * >(
       alloc_type( freeze_interaction->get_parameter_count(), "TrickHLA::Parameter" ) );
+
    if ( tParm == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
@@ -1233,7 +1237,7 @@ void ExecutionControl::unsubscribe()
 /*!
  * @job_class{scheduled}
  */
-void ExecutionControl::receive_interaction(
+bool ExecutionControl::receive_interaction(
    InteractionClassHandle const  &theInteraction,
    ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const        &theUserSuppliedTag,
@@ -1244,20 +1248,19 @@ void ExecutionControl::receive_interaction(
    for ( int i = 0; i < freeze_inter_count; ++i ) {
       // Process the FREEZE interaction if we subscribed to it and we have the
       // same class handle.
-      if ( freeze_interaction[i].is_subscribe() && ( freeze_interaction[i].get_class_handle() == theInteraction ) ) {
+      if ( freeze_interaction[i].is_subscribe()
+           && ( freeze_interaction[i].get_class_handle() == theInteraction ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            string handle;
+            StringUtilities::to_string( handle, theInteraction );
+
             if ( received_as_TSO ) {
                Int64Time _time;
                _time.set( theTime );
-
-               string handle;
-               StringUtilities::to_string( handle, theInteraction );
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::receive_interaction(FREEZE):%d ID:%s, HLA-time:%G\n",
                                 __LINE__, handle.c_str(), _time.get_time_in_seconds() );
             } else {
-               string handle;
-               StringUtilities::to_string( handle, theInteraction );
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::receive_interaction(FREEZE):%d ID:%s\n",
                                 __LINE__, handle.c_str() );
             }
@@ -1287,9 +1290,10 @@ void ExecutionControl::receive_interaction(
          }
 
          // Return now that we put the interaction-item into the queue.
-         return;
+         return true;
       }
    }
+   return false;
 }
 
 void ExecutionControl::send_mode_transition_interaction(
