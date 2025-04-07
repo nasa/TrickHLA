@@ -264,6 +264,8 @@ bool RelStateBase::compute_state(
    V_ADD( this->state.pos, path_transform.state.pos, r_ent_s_t )
 
    // Compute the entity attitude in the target frame.
+   // Frame rotations and transformations can be accumulated through quaternion
+   // multiplication.  Note q_02 = q_12 * q_01
    // state.att.multiply( path_transform.state.att, entity->state.att );
    // FIXME: Attempt to explore and fix transformation error.
    state.att.multiply( entity->state.att, path_transform.state.att );

@@ -120,28 +120,28 @@ bool RefFrameDataState::transform_to_parent(
    RefFrameDataState const &frame_to,
    RefFrameDataState       *frame_out )
 {
-   double r_frm_p[3]; /* Position vector of this frame with respect to its
+   double r_frm_e[3]; /* Position vector of this frame with respect to its
                          current native frame (child) frame but expressed in
-                         the desired parent frame. */
-   double v_frm_p[3]; /* Velocity vector of this frame with respect to its
+                         the desired express frame. */
+   double v_frm_e[3]; /* Velocity vector of this frame with respect to its
                          current native frame (child) frame but expressed in
-                         the desired parent frame. */
-   double a_frm_p[3]; /* Acceleration vector of this frame with respect to its
+                         the desired express frame. */
+   double a_frm_e[3]; /* Acceleration vector of this frame with respect to its
                          current native frame (child) frame but expressed in
-                         the desired parent frame. */
+                         the desired express frame. */
 
    // Working variables.
    // Translation.
-   double wxr_c[3];
-   double v_c[3];
-   double axr_c[3];
-   double two_w_c[3];
-   double two_wxv_c[3];
-   double wxwxr_c[3];
-   double a_c[3];
+   double wxr_t[3];
+   double v_t[3];
+   double axr_t[3];
+   double two_w_t[3];
+   double two_wxv_t[3];
+   double wxwxr_t[3];
+   double a_t[3];
    // Rotation.
-   double w_c_p_bdy[3];
-   double wdot_c_p_bdy[3];
+   double w_e_t[3];
+   double wdot_e_t[3];
 
    // Check for null reference to transformed frame data.
    if ( frame_out == NULL ) {
@@ -150,12 +150,27 @@ bool RefFrameDataState::transform_to_parent(
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
+   // You cannot call this function on itself.
+   if ( frame_out == this ){
+      std::ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!" << std::endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      return ( false );
+   }
+   // You cannot write into the 'to' frame.
+   if ( frame_out == &frame_to ){
+      std::ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!" << std::endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      return ( false );
+   }
 
    //**************************************************************************
-   // Transform this frame expressed in its current native frame (child) into
-   // a new desired frame (parent).
+   // Transform this frame expressed in its current native frame into another
+   // specified frame.  Here, it is assumed that 'to' frame is the parent of
+   // this frame.
    // See the Reference Frame Transformations section of the SpaceFOM
-   // (Appendix E).
+   // (Appendix E - E.4).
    //**************************************************************************
 
    //**************************************************************************
@@ -169,15 +184,15 @@ bool RefFrameDataState::transform_to_parent(
    // Position computations.
    //
    // Transform this frame's position vector expressed in its current native
-   // frame (child) into the desired parent frame.  This is still a vector
-   // from the origin of the original frame (child) to this frame's origin
-   // but expressed in the new parent frame coordinates.
-   frame_to.state.att.transform_vector( this->state.pos, r_frm_p );
+   // frame into the desired express frame.  This is still a vector
+   // from the origin of the original parent frame to this frame's origin
+   // but expressed in the express frame coordinates.
+   frame_to.state.att.transform_vector( this->state.pos, r_frm_e );
 
-   // Compute this frame's position expressed in the new parent frame.
-   V_ADD( frame_out->state.pos, frame_to.state.pos, r_frm_p )
+   // Compute the output frame's position expressed in the express frame.
+   V_ADD( frame_out->state.pos, frame_to.state.pos, r_frm_e )
 
-   // Compute the attitude of this frame in the new parent frame.
+   // Compute the attitude of this frame in the express frame.
    // Frame rotations and transformations can be accumulated through quaternion
    // multiplication.  Note q_02 = q_12 * q_01
    frame_out->state.att.multiply( frame_to.state.att, this->state.att );
@@ -185,55 +200,56 @@ bool RefFrameDataState::transform_to_parent(
    //
    // Velocity computations.
    //
-   // Compute the apparent velocity of this frame in a rotating child frame.
-   V_CROSS( wxr_c, frame_to.state.ang_vel, this->state.pos );
+   // Compute the apparent velocity of this frame with respect to the rotating
+   // express frame but expressed in this frame.
+   V_CROSS( wxr_t, frame_to.state.ang_vel, this->state.pos );
 
-   // Compute the total velocity of this frame in the rotating child frame.
-   V_ADD( v_c, this->state.vel, wxr_c );
+   // Add this frame's velocity to the apparent rotational velocity.
+   V_ADD( v_t, this->state.vel, wxr_t );
 
-   // Transform the frame velocity into the parent frame.
-   frame_to.state.att.transform_vector( v_c, v_frm_p );
+   // Transform the combined velocity into the express frame.
+   frame_to.state.att.transform_vector( v_t, v_frm_e );
 
-   // Compute this frame's velocity expressed in the parent frame.
-   V_ADD( frame_out->state.vel, frame_to.state.vel, v_frm_p );
+   // Compute the output frame's total velocity in the express frame.
+   V_ADD( frame_out->state.vel, frame_to.state.vel, v_frm_e );
 
-   // Compute this frame's angular velocity wrt the parent frame.
+   // Compute this frame's angular velocity wrt the express frame.
    // NOTE: Angular velocity is expressed in the 'body' frame, not the parent
-   // frame.  Transform the child frame's angular velocity wrt the parent frame
-   // into this new parent 'body' frame.
-   state.att.conjugate_transform_vector( frame_to.state.ang_vel, w_c_p_bdy );
-   // Add the rotational velocity of the this frame's child frame with respect
-   // to the parent frame.
-   V_ADD( frame_out->state.ang_vel, w_c_p_bdy, this->state.ang_vel );
+   // frame.  Transform the express frame's angular velocity into this 'body'
+   // frame.
+   state.att.conjugate_transform_vector( frame_to.state.ang_vel, w_e_t );
+   // Add the rotational velocity of the this frame to the angular velocity
+   // of the express frame expressed in this frame.
+   V_ADD( frame_out->state.ang_vel, w_e_t, this->state.ang_vel );
 
    //
    // Acceleration computations.
    //
    // Compute the apparent acceleration of this frame in a rotating child frame.
-   V_CROSS( axr_c, frame_to.ang_accel, this->state.pos );
-   V_SCALE( two_w_c, frame_to.state.ang_vel, 2.0 );
-   V_CROSS( two_wxv_c, two_w_c, this->state.vel );
-   V_CROSS( wxwxr_c, frame_to.state.ang_vel, wxr_c );
+   V_CROSS( axr_t, frame_to.ang_accel, this->state.pos );
+   V_SCALE( two_w_t, frame_to.state.ang_vel, 2.0 );
+   V_CROSS( two_wxv_t, two_w_t, this->state.vel );
+   V_CROSS( wxwxr_t, frame_to.state.ang_vel, wxr_t );
 
    // Add up the components of the rotationally induced acceleration.
-   a_c[0] = this->accel[0] + wxwxr_c[0] + two_wxv_c[0] + axr_c[0];
-   a_c[1] = this->accel[1] + wxwxr_c[1] + two_wxv_c[1] + axr_c[1];
-   a_c[2] = this->accel[2] + wxwxr_c[2] + two_wxv_c[2] + axr_c[2];
+   a_t[0] = this->accel[0] + wxwxr_t[0] + two_wxv_t[0] + axr_t[0];
+   a_t[1] = this->accel[1] + wxwxr_t[1] + two_wxv_t[1] + axr_t[1];
+   a_t[2] = this->accel[2] + wxwxr_t[2] + two_wxv_t[2] + axr_t[2];
 
    // Transform this frame's acceleration into the parent frame.
-   frame_to.state.att.transform_vector( a_c, a_frm_p );
+   frame_to.state.att.transform_vector( a_t, a_frm_e );
 
    // Compute this frame's acceleration expressed in the parent frame.
-   V_ADD( frame_out->accel, frame_to.accel, a_frm_p );
+   V_ADD( frame_out->accel, frame_to.accel, a_frm_e );
 
    // Compute this frame's angular acceleration wrt the parent frame.
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular acceleration wrt the parent frame into
    // this 'body' frame.
-   state.att.conjugate_transform_vector( frame_to.ang_accel, wdot_c_p_bdy );
+   state.att.conjugate_transform_vector( frame_to.ang_accel, wdot_e_t );
    // Add the rotational acceleration of this frame's child frame with respect
    // to the parent frame.
-   V_ADD( frame_out->ang_accel, wdot_c_p_bdy, this->ang_accel );
+   V_ADD( frame_out->ang_accel, wdot_e_t, this->ang_accel );
 
    return ( true );
 }
@@ -247,19 +263,19 @@ bool RefFrameDataState::transform_to_child(
 {
    // Working variables.
    // Translation.
-   double dr_p[3];
-   double dv_p[3];
-   double dv_c[3];
-   double wxr_c[3];
-   double da_p[3];
-   double da_c[3];
-   double axr_c[3];
-   double two_w_c[3];
-   double two_wxv_c[3];
-   double wxwxr_c[3];
+   double dr_t[3];
+   double dv_t[3];
+   double dv_e[3];
+   double wxr_e[3];
+   double da_t[3];
+   double da_e[3];
+   double axr_e[3];
+   double two_w_e[3];
+   double two_wxv_e[3];
+   double wxwxr_e[3];
    // Rotation.
-   double w_c_bdy[3];
-   double wdot_c_bdy[3];
+   double w_e_bdy[3];
+   double wdot_e_bdy[3];
 
    // Check for null reference to transformed frame data.
    if ( frame_out == NULL ) {
@@ -268,12 +284,27 @@ bool RefFrameDataState::transform_to_child(
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
+   // You cannot call this function on itself.
+   if ( frame_out == this ){
+      std::ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!" << std::endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      return ( false );
+   }
+   // You cannot write into the 'to' frame.
+   if ( frame_out == &frame_to ){
+      std::ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!" << std::endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      return ( false );
+   }
 
    //**************************************************************************
-   // Transform this frame expressed in its current parent frame into one of
-   // its specified child frames.
+   // Transform this frame expressed in its current native frame into another
+   // specified frame.  Here, it is assumed that 'to' frame is the child of
+   // this frame.
    // See the Reference Frame Transformations section of the SpaceFOM
-   // (Appendix E).
+   // (Appendix E - E.4.2).
    //**************************************************************************
 
    //**************************************************************************
@@ -289,20 +320,23 @@ bool RefFrameDataState::transform_to_child(
    //
    // Position computations.
    //
-   // Compute the position difference between this frame and the child frame
-   // expressed in parent frame coordinates.
-   // FIXME: Is there a missing transformation here?
-   V_SUB( dr_p, this->state.pos, frame_to.state.pos )
+   // Compute the position vector from this frame to the desired output frame
+   // expressed in this frame's parent frame.
+   V_SUB( dr_t, this->state.pos, frame_to.state.pos )
 
-   // Transform the position vector into the child frame coordinates.
-   frame_to.state.att.transform_vector( dr_p, frame_out->state.pos );
+   // Transform the position vector from this frame's parent frame into the
+   // desired express frame.
+   frame_to.state.att.transform_vector( dr_t, frame_out->state.pos );
 
-   // Compute the conjugate of the parent to child transformation quaternion.
-   // This is the child to parent transformation quaternion.
+   // Compute the conjugate of the express frame transformation quaternion.
+   // Note that the express frame's parent is this frame or we would not be
+   // calling this function.  The conjugate of attitude quaternion of the
+   // express frame with respect to its parent frame (this) is the same
+   // as the attitude quaterion of this frame with respect to the express frame.
    QuaternionData q_c_p;
    q_c_p.conjugate( frame_to.state.att );
 
-   // Compute the attitude of this frame in the child frame.
+   // Compute the attitude of the output frame in the express frame.
    // Frame rotations and transformations can be accumulated through quaternion
    // multiplication.  Note q_02 = q_12 * q_01
    frame_out->state.att.multiply( q_c_p, this->state.att );
@@ -310,59 +344,66 @@ bool RefFrameDataState::transform_to_child(
    //
    // Velocity computations.
    //
-   // Compute the difference between this frame velocity and the child frame
-   // velocity expressed in the parent frame.
-   V_SUB( dv_p, this->state.vel, frame_to.state.vel );
+   // Compute the difference between this frame's velocity and the express
+   // frame's velocity expressed in this frame.
+   V_SUB( dv_t, this->state.vel, frame_to.state.vel );
 
-   // Transform the velocity difference into the child frame.
-   frame_to.state.att.transform_vector( dv_p, dv_c );
+   // Transform the velocity difference into the express frame.
+   frame_to.state.att.transform_vector( dv_t, dv_e );
 
-   // Compute the apparent velocity of this frame in a rotating child frame.
-   V_CROSS( wxr_c, frame_to.state.ang_vel, frame_out->state.pos );
+   // Compute the apparent velocity of this frame in a rotating express frame.
+   V_CROSS( wxr_e, frame_to.state.ang_vel, frame_out->state.pos );
 
-   // Compute the total velocity of this frame in the rotating child frame.
-   V_SUB( frame_out->state.vel, dv_c, wxr_c );
+   // Compute the total velocity of output frame in the rotating express frame.
+   V_SUB( frame_out->state.vel, dv_e, wxr_e );
 
-   // Compute this frame's angular velocity wrt the child frame.
-   // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
-   // Transform the child frame's angular velocity wrt the parent frame into
-   // this 'body' frame.
-   frame_out->state.att.transform_vector( frame_to.state.ang_vel, w_c_bdy );
+   // Compute output frame's angular velocity.
+   // NOTE: Angular velocity is expressed in the 'body' frame, not the parent
+   // frame.  Transform the express frame's angular velocity into the output
+   // 'body' frame.
+   frame_out->state.att.transform_vector( frame_to.state.ang_vel, w_e_bdy );
 
-   // Subtract the rotational velocity of the child frame with respect to the
-   // parent frame expressed in the body frame to the rotational velocity of
-   // this  body frame with respect to the parent expressed in the body frame.
-   V_SUB( frame_out->state.ang_vel, this->state.ang_vel, w_c_bdy );
+   // Note that the angular velocity of a parent frame wrt to its child is the
+   // negative of the angular velocity of a child frame wrt its parent.
+   // Therefore, subtract the rotational velocity of the express frame
+   // expressed in the output frame (w_e_bdy) from the angular velocity of
+   // this frame, which is already in the output body frame.
+   V_SUB( frame_out->state.ang_vel, this->state.ang_vel, w_e_bdy );
 
    //
    // Acceleration computations.
    //
-   // Compute the difference between the parent frame acceleration and the
-   // child frame acceleration expressed in the parent frame.
-   V_SUB( da_p, this->accel, frame_to.accel );
+   // Compute the difference between this frame's acceleration and the express
+   // frame's acceleration expressed in this frame.
+   V_SUB( da_t, this->accel, frame_to.accel );
 
-   // Transform the acceleration difference into the child frame.
-   frame_to.state.att.transform_vector( da_p, da_c );
+   // Transform the acceleration difference into the express frame.
+   frame_to.state.att.transform_vector( da_t, da_e );
 
-   // Compute the apparent acceleration of this frame in a rotating child frame.
-   V_CROSS( axr_c, frame_to.ang_accel, frame_out->state.pos );
-   V_SCALE( two_w_c, frame_to.state.ang_vel, 2.0 );
-   V_CROSS( two_wxv_c, two_w_c, frame_out->state.vel );
-   V_CROSS( wxwxr_c, frame_to.state.ang_vel, wxr_c );
+   // Compute the apparent acceleration of the output frame in a rotating
+   // express frame.
+   V_CROSS( axr_e, frame_to.ang_accel, frame_out->state.pos );
+   V_SCALE( two_w_e, frame_to.state.ang_vel, 2.0 );
+   V_CROSS( two_wxv_e, two_w_e, frame_out->state.vel );
+   V_CROSS( wxwxr_e, frame_to.state.ang_vel, wxr_e );
 
    // Add up the components of the rotationally induced acceleration.
-   frame_out->accel[0] = da_c[0] - wxwxr_c[0] - two_wxv_c[0] - axr_c[0];
-   frame_out->accel[1] = da_c[1] - wxwxr_c[1] - two_wxv_c[1] - axr_c[1];
-   frame_out->accel[2] = da_c[2] - wxwxr_c[2] - two_wxv_c[2] - axr_c[2];
+   frame_out->accel[0] = da_e[0] - wxwxr_e[0] - two_wxv_e[0] - axr_e[0];
+   frame_out->accel[1] = da_e[1] - wxwxr_e[1] - two_wxv_e[1] - axr_e[1];
+   frame_out->accel[2] = da_e[2] - wxwxr_e[2] - two_wxv_e[2] - axr_e[2];
 
-   // Compute this frame's angular acceleration wrt the child frame.
-   // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
-   // Transform the child frame's angular acceleration wrt the parent frame into
-   // this 'body' frame.
-   frame_out->state.att.transform_vector( frame_to.ang_accel, wdot_c_bdy );
-   // Subtract the rotational acceleration of this frame's child frame with
-   // respect to the parent frame expressed in the body frame.
-   V_SUB( frame_out->ang_accel, this->ang_accel, wdot_c_bdy );
+   // Compute output frame's angular acceleration.
+   // NOTE: Angular acceleration is expressed in the 'body' frame, not the
+   // parent frame.  Transform the express frame's angular acceleration into
+   // the output 'body' frame.
+   frame_out->state.att.transform_vector( frame_to.ang_accel, wdot_e_bdy );
+
+   // Note that the angular acceleration of a parent frame wrt to its child is
+   // the negative of the angular acceleration of a child frame wrt its parent.
+   // Therefore, subtract the rotational acceleration of the express frame
+   // expressed in the output frame (wdot_e_bdy) from the angular acceleration
+   // of this frame, which is already in the output body frame.
+   V_SUB( frame_out->ang_accel, this->ang_accel, wdot_e_bdy );
 
    return ( true );
 }
