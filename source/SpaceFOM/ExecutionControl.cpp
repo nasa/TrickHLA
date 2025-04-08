@@ -589,9 +589,11 @@ bool ExecutionControl::receive_interaction(
          mtr_interaction->process_interaction();
       }
 
-      // Return now that we processed the interaction.
+      // Indicate we processed the interaction.
       return true;
    }
+
+   // Not processed
    return false;
 }
 
