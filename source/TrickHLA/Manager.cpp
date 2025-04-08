@@ -2490,63 +2490,66 @@ void Manager::receive_interaction(
    LogicalTime const             &theTime,
    bool const                     received_as_TSO )
 {
-   // Find the user Interaction we have data for.
-   for ( int i = 0; i < inter_count; ++i ) {
+   // Let the ExectionControl receive and process the interaction
+   // immediately if it uses it. Otherwise handle as a user interaction.
+   if ( !execution_control->receive_interaction( theInteraction,
+                                                 theParameterValues,
+                                                 theUserSuppliedTag,
+                                                 theTime,
+                                                 received_as_TSO ) ) {
 
-      // Process the interaction if we subscribed to it and we have the same class handle.
-      if ( interactions[i].is_subscribe()
-           && ( interactions[i].get_class_handle() == theInteraction ) ) {
+      // Find the user Interaction we received data for.
+      for ( int i = 0; i < inter_count; ++i ) {
 
-         InteractionItem *item;
-         if ( received_as_TSO ) {
-            item = new InteractionItem( i,
-                                        INTERACTION_TYPE_USER_DEFINED,
-                                        interactions[i].get_parameter_count(),
-                                        interactions[i].get_parameters(),
-                                        theParameterValues,
-                                        theUserSuppliedTag,
-                                        theTime );
-         } else {
-            item = new InteractionItem( i,
-                                        INTERACTION_TYPE_USER_DEFINED,
-                                        interactions[i].get_parameter_count(),
-                                        interactions[i].get_parameters(),
-                                        theParameterValues,
-                                        theUserSuppliedTag );
-         }
+         // Process the interaction if we subscribed to it and we have the same class handle.
+         if ( interactions[i].is_subscribe()
+              && ( interactions[i].get_class_handle() == theInteraction ) ) {
 
-         // Add the interaction item to the queue.
-         interactions_queue.push( item );
-
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            string handle;
-            StringUtilities::to_string( handle, theInteraction );
-
+            InteractionItem *item;
             if ( received_as_TSO ) {
-               Int64Time _time;
-               _time.set( theTime );
-               message_publish( MSG_NORMAL, "Manager::receive_interaction():%d ID:%s, HLA-time:%G\n",
-                                __LINE__, handle.c_str(), _time.get_time_in_seconds() );
-            } else {
-               message_publish( MSG_NORMAL, "Manager::receive_interaction():%d ID:%s\n",
-                                __LINE__, handle.c_str() );
-            }
-         }
-
-         // Return now that we put the interaction-item into the queue
-         // for processing later in the S_define main thread when the
-         // manager.process_interactions() job is called to ensure data
-         // coherency.
-         return;
-      }
-   }
-
-   // Let the ExectionControl receive and process the interaction if it uses it.
-   execution_control->receive_interaction( theInteraction,
+               item = new InteractionItem( i,
+                                           INTERACTION_TYPE_USER_DEFINED,
+                                           interactions[i].get_parameter_count(),
+                                           interactions[i].get_parameters(),
                                            theParameterValues,
                                            theUserSuppliedTag,
-                                           theTime,
-                                           received_as_TSO );
+                                           theTime );
+            } else {
+               item = new InteractionItem( i,
+                                           INTERACTION_TYPE_USER_DEFINED,
+                                           interactions[i].get_parameter_count(),
+                                           interactions[i].get_parameters(),
+                                           theParameterValues,
+                                           theUserSuppliedTag );
+            }
+
+            // Add the interaction item to the queue.
+            interactions_queue.push( item );
+
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+               string handle;
+               StringUtilities::to_string( handle, theInteraction );
+
+               if ( received_as_TSO ) {
+                  Int64Time _time;
+                  _time.set( theTime );
+                  message_publish( MSG_NORMAL, "Manager::receive_interaction():%d ID:%s, HLA-time:%G\n",
+                                   __LINE__, handle.c_str(), _time.get_time_in_seconds() );
+               } else {
+                  message_publish( MSG_NORMAL, "Manager::receive_interaction():%d ID:%s\n",
+                                   __LINE__, handle.c_str() );
+               }
+            }
+
+            // Return now that we put the interaction-item into the queue
+            // for processing later in the S_define main thread when the
+            // manager.process_interactions() job is called to ensure data
+            // coherency. Only one interaction handler per HLA interaction
+            // class is supported.
+            return;
+         }
+      }
+   }
 }
 
 /*!
