@@ -1289,10 +1289,12 @@ bool ExecutionControl::receive_interaction(
             freeze_interaction[i].process_interaction();
          }
 
-         // Return now that we put the interaction-item into the queue.
+         // Indicate the interaction has been processed into the queue.
          return true;
       }
    }
+
+   // Not processed.
    return false;
 }
 
