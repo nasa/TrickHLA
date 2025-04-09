@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstdio> // needed for std::FILE used in trick/message_proto.h
+#include <sstream>
 
 // Trick include files.
 #include "trick/message_proto.h"
@@ -42,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 
+using namespace std;
 using namespace TrickHLA;
 
 /*!
@@ -82,10 +84,14 @@ void ItemQueue::dump_head_pointers(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
+   ostringstream msg;
+   msg << "ItemQueue::dump_head_pointers(" << name << "):" << __LINE__ << " ";
    for ( Item *item = head; item != NULL; item = item->next ) {
-      message_publish( MSG_NORMAL, "ItemQueue::dump_head_pointers(%s):%d Element points to '%p'\n",
-                       name, __LINE__, item );
+      msg << item << "->";
    }
+   msg << "NULL\n";
+
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 }
 
 /*!
