@@ -248,8 +248,6 @@ bool RelStateBase::compute_state(
    // Compute the state of the entity with respect to a new express (parent)
    // frame.
    //**************************************************************************
-   // The transformation quaternion is the conjugate of the rotation quaternion.
-   q_s_t.conjugate( path_transform.state.att );
 
    //
    // Position computations.
@@ -258,7 +256,7 @@ bool RelStateBase::compute_state(
    // (subject) into the desired express frame (target).  This is still a vector
    // from the origin of the subject frame to the entity but expressed
    // in the new target frame coordinates.
-   q_s_t.transform_vector( entity->state.pos, r_ent_s_t );
+   path_transform.state.att.conjugate_transform_vector( entity->state.pos, r_ent_s_t );
 
    // Compute entity position expressed in the target frame.
    V_ADD( this->state.pos, path_transform.state.pos, r_ent_s_t )
@@ -266,8 +264,6 @@ bool RelStateBase::compute_state(
    // Compute the entity attitude in the target frame.
    // Frame rotations and transformations can be accumulated through quaternion
    // multiplication.  Note q_02 = q_12 * q_01
-   // state.att.multiply( path_transform.state.att, entity->state.att );
-   // FIXME: Attempt to explore and fix transformation error.
    state.att.multiply( entity->state.att, path_transform.state.att );
 
    //
@@ -280,7 +276,7 @@ bool RelStateBase::compute_state(
    V_ADD( v_s, entity->state.vel, wxr_s );
 
    // Transform the entity velocity into the express (target) frame.
-   q_s_t.transform_vector( v_s, v_ent_s_t );
+   path_transform.state.att.conjugate_transform_vector( v_s, v_ent_s_t );
 
    // Compute entity velocity expressed in the express (target) frame.
    V_ADD( this->state.vel, path_transform.state.vel, v_ent_s_t );
@@ -309,7 +305,7 @@ bool RelStateBase::compute_state(
    a_s[2] = entity->accel[2] + wxwxr_s[2] + two_wxv_s[2] + axr_s[2];
 
    // Transform the entity acceleration into the target frame.
-   q_s_t.transform_vector( a_s, a_ent_s_t );
+   path_transform.state.att.conjugate_transform_vector( a_s, a_ent_s_t );
 
    // Compute entity acceleration expressed in the target frame.
    V_ADD( this->accel, path_transform.accel, a_ent_s_t );

@@ -80,23 +80,29 @@ class RefFrameDataState
       state.time = time;
    }
 
-   /*! @brief Transform this RefFrameDataState into a specified parent frame.
+   /*! @brief Compute a new version of this RefFrameDataState but with respect
+    *  to the parent frame of a specified frame.
+    *  @detail This routine is used to chain together frames when going up
+    *  the tree.  The output frame is the same frame expressed with respect to
+    *  the parent frame of the 'to' frame.
     *  @return True on success, False on failure.
-    *  @param transform_c_p Frame transformation between current parent (child) and the new parent frame.
+    *  @param frame_to Frame transformation between current parent (child) and the new parent frame.
     *  @param frame_p This frame state transformed into the new frame (parent). */
    bool transform_to_parent(
-      RefFrameDataState const &transform_c_p,
-      RefFrameDataState       *frame_p );
+      RefFrameDataState const &frame_to,
+      RefFrameDataState       *frame_out );
 
-   /*! @brief Transform this RefFrameDataState into a specified child frame.
-    *  @detail This routine is used to transform a state with respect to a child
-    *  frame instead of a parent frame.  This is used when going down the tree.
+   /*! @brief Compute a new version of this RefFrameDataState but with respect
+    *  to the child frame of a specified frame.
+    *  @detail This routine is used to chain together frames when going down
+    *  the tree.  The output frame is the same frame expressed with respect to
+    *  the child frame of the 'to' frame.
     *  @return True on success, False on failure.
-    *  @param transform_c_p Frame transformation between new parent (child) and the current parent frame.
+    *  @param frame_to Frame transformation between new parent (child) and the current parent frame.
     *  @param frame_c This frame state transformed into the new frame (child). */
    bool transform_to_child(
-      RefFrameDataState const &transform_c_p,
-      RefFrameDataState       *frame_c );
+      RefFrameDataState const &frame_to,
+      RefFrameDataState       *frame_out );
 
    /*! @brief Print out the reference frame state values.
     *  @param stream Output stream. */

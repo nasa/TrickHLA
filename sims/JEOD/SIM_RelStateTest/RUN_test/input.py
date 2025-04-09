@@ -287,7 +287,7 @@ if (verbose == True) :
    #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
-   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
 
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.

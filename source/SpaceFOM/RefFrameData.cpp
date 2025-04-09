@@ -181,11 +181,11 @@ void RefFrameData::set_parent_name( char const *name )
  * @job_class{scheduled}
  */
 bool RefFrameData::transform_to_parent(
-   RefFrameData const &transform_c_p,
-   RefFrameData       *frame_p )
+   RefFrameData const &frame_to,
+   RefFrameData       *frame_out )
 {
    // Check for null reference to transformed frame data.
-   if ( frame_p == NULL ) {
+   if ( frame_out == NULL ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d NULL transformed frame reference!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
@@ -204,38 +204,38 @@ bool RefFrameData::transform_to_parent(
    // must match the name of the transformation.  The parent frame name for
    // the transformation will indicate the new parent frame for the transformed
    // frame.
-   if ( strcmp( this->name, frame_p->name ) ) {
+   if ( strcmp( this->name, frame_out->name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame name mismatch: %s/%s!" << std::endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name, frame_p->name );
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name, frame_out->name );
       return ( false );
    }
-   if ( strcmp( this->parent_name, transform_c_p.name ) ) {
+   if ( strcmp( this->parent_name, frame_to.name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame incompatibility: %s/%s!" << std::endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->parent_name, transform_c_p.name );
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->parent_name, frame_to.name );
       return ( false );
    }
-   if ( strcmp( transform_c_p.parent_name, frame_p->parent_name ) ) {
+   if ( strcmp( frame_to.parent_name, frame_out->parent_name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame parent: %s/%s!" << std::endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, transform_c_p.parent_name, frame_p->parent_name );
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, frame_to.parent_name, frame_out->parent_name );
       return ( false );
    }
 
    // Call the reference frame data state version of this function.
-   return ( RefFrameDataState::transform_to_parent( transform_c_p, frame_p ) );
+   return ( RefFrameDataState::transform_to_parent( frame_to, frame_out ) );
 }
 
 /*!
  * @job_class{scheduled}
  */
 bool RefFrameData::transform_to_child(
-   RefFrameData const &transform_c_p,
-   RefFrameData       *frame_c )
+   RefFrameData const &frame_to,
+   RefFrameData       *frame_out )
 {
    // Check for null reference to transformed frame data.
-   if ( frame_c == NULL ) {
+   if ( frame_out == NULL ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d NULL transformed frame reference!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
@@ -250,27 +250,27 @@ bool RefFrameData::transform_to_child(
    //**************************************************************************
 
    // Check for frame compatibility.
-   if ( strcmp( this->name, frame_c->name ) ) {
+   if ( strcmp( this->name, frame_out->name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame name mismatch: %s/%s!" << std::endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name, frame_c->name );
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name, frame_out->name );
       return ( false );
    }
-   if ( strcmp( this->name, transform_c_p.parent_name ) ) {
+   if ( strcmp( this->name, frame_to.parent_name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame incompatibility: %s/%s!" << std::endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name, transform_c_p.parent_name );
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name, frame_to.parent_name );
       return ( false );
    }
-   if ( strcmp( transform_c_p.name, frame_c->parent_name ) ) {
+   if ( strcmp( frame_to.name, frame_out->parent_name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame parent: %s/%s!" << std::endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, transform_c_p.name, frame_c->parent_name );
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, frame_to.name, frame_out->parent_name );
       return ( false );
    }
 
    // Call the reference frame data state version of this function.
-   return ( RefFrameDataState::transform_to_child( transform_c_p, frame_c ) );
+   return ( RefFrameDataState::transform_to_child( frame_to, frame_out ) );
 }
 
 /*!
