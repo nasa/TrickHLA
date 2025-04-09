@@ -82,18 +82,9 @@ void ItemQueue::dump_head_pointers(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   Item *temp = head->next;
-
-   message_publish( MSG_NORMAL, "ItemQueue::dump_head_pointers(%s):%d Current element is %p \n",
-                    name, __LINE__, head );
-
-   // Adjust to the next item off the stack in a thread-safe way.
-   while ( temp != NULL ) { // while there are any more elements
-      message_publish( MSG_NORMAL, "ItemQueue::dump_head_pointers(%s):%d Current element points to %p \n",
-                       name, __LINE__, temp );
-
-      // Adjust the "head" to point to the next item in the linked-list.
-      temp = temp->next;
+   for ( Item *item = head; item != NULL; item = item->next ) {
+      message_publish( MSG_NORMAL, "ItemQueue::dump_head_pointers(%s):%d Element points to '%p'\n",
+                       name, __LINE__, item );
    }
 }
 
