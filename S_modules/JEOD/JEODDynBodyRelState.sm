@@ -24,6 +24,8 @@
  ****************************************************************************/
 
 // Include headers for classes that this class contains:
+##include <math.h>
+##include "utils/orientation/include/orientation.hh"
 ##include "dynamics/dyn_manager/include/dyn_manager.hh"
 ##include "dynamics/rel_kin/include/relative_kinematics.hh"
 ##include "dynamics/derived_state/include/relative_derived_state.hh"
@@ -87,6 +89,8 @@ class EntityRelStateSimObject: public Trick::SimObject
    bool debug_dyn_body;
    bool debug_rel_state;
    bool debug_frames;
+   
+   jeod::Orientation::EulerSequence euler_sequence = jeod::Orientation::EulerSequence::EulerXYZ;
 
    // Constructor
    EntityRelStateSimObject( jeod::DynManager         & dyn_mgr_in,
@@ -99,6 +103,7 @@ class EntityRelStateSimObject: public Trick::SimObject
         rel_kin(rel_kin_in),
         dyn_body(dyn_body_in)
    {
+      
       //
       // Initialization jobs
       //
@@ -110,7 +115,7 @@ class EntityRelStateSimObject: public Trick::SimObject
       //
       (THLA_DATA_CYCLE_TIME, "scheduled") print_dyn_body( dyn_body, std::cout );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( dyn_mgr, rel_state, std::cout );
-      (THLA_DATA_CYCLE_TIME, "scheduled") print_rel_state( dyn_body, rel_state );
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_rel_state( dyn_body, rel_state, std::cout );
         
       //
       // Derivative class jobs
@@ -122,9 +127,15 @@ class EntityRelStateSimObject: public Trick::SimObject
    // Print a DynBody.
    void print_dyn_body( jeod::DynBody & body, std::ostream &stream )
    {
+      double euler_angles_deg[3];
+      
+      // Check for debug flag.
       if( !debug_dyn_body ){ return; }
       
       jeod::RefFrame const * parent_frame = body.composite_body.get_parent();
+
+      // Compute the attitude Euler angles.
+      get_Euler_deg( body.composite_body.state.rot.Q_parent_this, euler_sequence,  euler_angles_deg);
 
       stream << "----------------------------------------------------------------------\n";
       stream << " DynBody: " << body.mass.name.get_name() << "\n";
@@ -142,6 +153,10 @@ class EntityRelStateSimObject: public Trick::SimObject
              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[0] << ", "
              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[1] << ", "
              << "\t\t" << body.composite_body.state.rot.Q_parent_this.vector[2] << '\n';
+      stream << "\tattitude (RPY){deg}: "
+             << "\t\t" << euler_angles_deg[0] << ", "
+             << "\t\t" << euler_angles_deg[1] << ", "
+             << "\t\t" << euler_angles_deg[2] << '\n';
       stream << "\tangular velocity: "
              << "\t\t" << body.composite_body.state.rot.ang_vel_this[0] << ", "
              << "\t\t" << body.composite_body.state.rot.ang_vel_this[1] << ", "
@@ -152,17 +167,22 @@ class EntityRelStateSimObject: public Trick::SimObject
 
    // Print state job.
    void print_rel_state( jeod::DynBody              & body,
-                         jeod::RelativeDerivedState & rel_deriv_state )
+                         jeod::RelativeDerivedState & rel_deriv_state,
+                         std::ostream               & stream           )
    {
+      double euler_angles_deg[3];
+
+      // Check for debug flag.
       if( !debug_rel_state ){ return; }
-      
-      std::ostream &stream = std::cout;
 
       // Set the print precision.
       stream.precision( 15 );
 
       // Shortcut to JEOD relative RefFrameState in RelativeDerivedState.
       jeod::RefFrameState & rel_state = rel_deriv_state.rel_state;
+
+      // Compute the attitude Euler angles.
+      get_Euler_deg( rel_state.rot.Q_parent_this, euler_sequence,  euler_angles_deg);
 
       stream << "----------------------------------------------------------------------\n";
       stream << " Relative state for DynBody: " << body.mass.name.get_name() << "\n";
@@ -188,10 +208,10 @@ class EntityRelStateSimObject: public Trick::SimObject
              << "\t\t" << rel_state.rot.Q_parent_this.vector[0] << ", "
              << "\t\t" << rel_state.rot.Q_parent_this.vector[1] << ", "
              << "\t\t" << rel_state.rot.Q_parent_this.vector[2] << '\n';
-//       stream << "\tattitude (RPY){deg}: "
-//              << "\t\t" << euler_angles[0] << ", "
-//              << "\t\t" << euler_angles[1] << ", "
-//              << "\t\t" << euler_angles[2] << '\n';
+      stream << "\tattitude (RPY){deg}: "
+             << "\t\t" << euler_angles_deg[0] << ", "
+             << "\t\t" << euler_angles_deg[1] << ", "
+             << "\t\t" << euler_angles_deg[2] << '\n';
       stream << "\tangular velocity: "
              << "\t\t" << rel_state.rot.ang_vel_this[0] << ", "
              << "\t\t" << rel_state.rot.ang_vel_this[1] << ", "
@@ -209,6 +229,7 @@ class EntityRelStateSimObject: public Trick::SimObject
                       jeod::RelativeDerivedState & rel_deriv_state,
                       std::ostream &stream )
    {
+      // Check for debug flag.
       if( !debug_frames ){ return; }
       
       // Lookup the relative derived state frames.
@@ -231,6 +252,14 @@ class EntityRelStateSimObject: public Trick::SimObject
    // Print state job.
    void print_frame( jeod::RefFrame & ref_frame, std::ostream &stream )
    {
+      double euler_angles_deg[3];
+
+      // Set the print precision.
+      stream.precision( 15 );
+
+      // Compute the attitude Euler angles.
+      get_Euler_deg( ref_frame.state.rot.Q_parent_this, euler_sequence,  euler_angles_deg);
+      
       stream << "\tposition: "
              << "\t\t" << ref_frame.state.trans.position[0] << ", "
              << "\t\t" << ref_frame.state.trans.position[1] << ", "
@@ -244,6 +273,10 @@ class EntityRelStateSimObject: public Trick::SimObject
              << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[0] << ", "
              << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[1] << ", "
              << "\t\t" << ref_frame.state.rot.Q_parent_this.vector[2] << '\n';
+      stream << "\tattitude (RPY){deg}: "
+             << "\t\t" << euler_angles_deg[0] << ", "
+             << "\t\t" << euler_angles_deg[1] << ", "
+             << "\t\t" << euler_angles_deg[2] << '\n';
       stream << "\tangular velocity: "
              << "\t\t" << ref_frame.state.rot.ang_vel_this[0] << ", "
              << "\t\t" << ref_frame.state.rot.ang_vel_this[1] << ", "
@@ -251,6 +284,39 @@ class EntityRelStateSimObject: public Trick::SimObject
       return;
    }
 
+  protected:
+   void get_Euler( jeod::Quaternion                 & quaternion,
+                   jeod::Orientation::EulerSequence   sequence,
+                   double                             euler_angles[3] ) const
+   {
+      // Instantiate the JEOD Orientation object with the reference quaternion.
+      jeod::Orientation orientation( quaternion );
+      
+      // Set the Euler sequence for extraction.
+      orientation.set_euler_sequence( sequence );
+      
+      // Get the Euler angels corresponding to the quaternion rotation.
+      orientation.get_euler_angles( euler_angles );
+      
+      return;
+   }
+   
+   void get_Euler_deg( jeod::Quaternion                 & quaternion,
+                       jeod::Orientation::EulerSequence   sequence,
+                       double                             euler_angles_deg[3] ) const
+   {
+      double rad_to_deg = 180.0 / M_PI;
+      
+      // Call the radian based function.
+      get_Euler( quaternion, sequence, euler_angles_deg );
+
+      // Convert from radians to degrees.
+      euler_angles_deg[0] *= rad_to_deg;
+      euler_angles_deg[1] *= rad_to_deg;
+      euler_angles_deg[2] *= rad_to_deg;
+      
+      return;
+   }
    
   private:
 

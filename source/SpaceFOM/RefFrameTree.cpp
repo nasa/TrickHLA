@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <string.h>
+#include <sstream>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -229,13 +230,20 @@ bool RefFrameTree::build_transform(
 
          // Add transformation into the current frame's parent frame.
          if ( !in_frame_data.transform_to_parent( current_frame->packing_data, &out_frame_data ) ) {
-
             // Print Error message
             message_publish( MSG_WARNING, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_parent'!\n",
                              __LINE__ );
-
             // Error return.
             return ( false );
+         }
+         else {
+            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ){
+               ostringstream errmsg;
+               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_parent:\n"
+                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
+               out_frame_data.print_data( errmsg );
+               message_publish( MSG_NORMAL, errmsg.str().c_str() );
+            }
          }
 
       }
@@ -244,14 +252,22 @@ bool RefFrameTree::build_transform(
 
          // Use the reverse transformation to transform into the next frame.
          if ( !in_frame_data.transform_to_child( next_frame->packing_data, &out_frame_data ) ) {
-
             // Print Error message
             message_publish( MSG_WARNING, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_child'!\n",
                              __LINE__ );
-
             // Error return.
             return ( false );
          }
+         else {
+            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ){
+               ostringstream errmsg;
+               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_child:\n"
+                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
+               out_frame_data.print_data( errmsg );
+               message_publish( MSG_NORMAL, errmsg.str().c_str() );
+            }
+         }
+
       }
 
       // Make the next frame the current frame.
