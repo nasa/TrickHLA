@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstdio> // needed for std::FILE used in trick/message_proto.h
 
 // Trick include files.
 #include "trick/message_proto.h"
@@ -41,7 +42,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 
-// using namespace std;
 using namespace TrickHLA;
 
 /*!
