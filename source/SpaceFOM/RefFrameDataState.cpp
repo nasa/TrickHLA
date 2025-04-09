@@ -151,14 +151,14 @@ bool RefFrameDataState::transform_to_parent(
       return ( false );
    }
    // You cannot call this function on itself.
-   if ( frame_out == this ){
+   if ( frame_out == this ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
    // You cannot write into the 'to' frame.
-   if ( frame_out == &frame_to ){
+   if ( frame_out == &frame_to ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
@@ -285,14 +285,14 @@ bool RefFrameDataState::transform_to_child(
       return ( false );
    }
    // You cannot call this function on itself.
-   if ( frame_out == this ){
+   if ( frame_out == this ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
    // You cannot write into the 'to' frame.
-   if ( frame_out == &frame_to ){
+   if ( frame_out == &frame_to ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );

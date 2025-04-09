@@ -252,43 +252,38 @@ void QuaternionData::set_from_transfrom(
     * elements of 'T' (method = 0, 1, or 2). */
    method = -1;
    tr_max = tr;
-   for ( ii = 0 ; ii < 3 ; ii++ )
-   {
-      if(T[ii][ii] > tr_max)
-      {
+   for ( ii = 0; ii < 3; ii++ ) {
+      if ( T[ii][ii] > tr_max ) {
          method = ii;
          tr_max = T[ii][ii];
       }
    }
 
    /* Use method -1 when no diagonal element dominates the trace. */
-   if(method == -1)
-   {
-      qix2 = std::sqrt(1.0 + tr);
-      qix4_inv = 0.5 / qix2;
-      scalar = 0.5 * qix2;
-      vector[0] = qix4_inv * (T[2][1] - T[1][2]);
-      vector[1] = qix4_inv * (T[0][2] - T[2][0]);
-      vector[2] = qix4_inv * (T[1][0] - T[0][1]);
+   if ( method == -1 ) {
+      qix2      = std::sqrt( 1.0 + tr );
+      qix4_inv  = 0.5 / qix2;
+      scalar    = 0.5 * qix2;
+      vector[0] = qix4_inv * ( T[2][1] - T[1][2] );
+      vector[1] = qix4_inv * ( T[0][2] - T[2][0] );
+      vector[2] = qix4_inv * ( T[1][0] - T[0][1] );
 
    } /* Use method 0,1, or 2 based on the dominant diagonal element. */
-   else
-   {
-       ii = method;
-       int jj = (ii + 1) % 3;
-       int kk = (jj + 1) % 3;
+   else {
+      ii     = method;
+      int jj = ( ii + 1 ) % 3;
+      int kk = ( jj + 1 ) % 3;
 
-       double di = T[kk][jj] - T[jj][kk]; /* T_kj - T_jk */
-       qix2 = sqrt(1.0 + T[ii][ii] - (T[jj][jj] + T[kk][kk]));
-       if(di < 0.0)
-       {
-          qix2 = -qix2;
-       }
-       qix4_inv = 0.5 / qix2;
-       vector[ii] = 0.5 * qix2;
-       vector[jj] = qix4_inv * (T[ii][jj] + T[jj][ii]);
-       vector[kk] = qix4_inv * (T[ii][kk] + T[kk][ii]);
-       scalar = qix4_inv * di;
+      double di = T[kk][jj] - T[jj][kk]; /* T_kj - T_jk */
+      qix2      = sqrt( 1.0 + T[ii][ii] - ( T[jj][jj] + T[kk][kk] ) );
+      if ( di < 0.0 ) {
+         qix2 = -qix2;
+      }
+      qix4_inv   = 0.5 / qix2;
+      vector[ii] = 0.5 * qix2;
+      vector[jj] = qix4_inv * ( T[ii][jj] + T[jj][ii] );
+      vector[kk] = qix4_inv * ( T[ii][kk] + T[kk][ii] );
+      scalar     = qix4_inv * di;
    }
    return;
 }
@@ -301,15 +296,15 @@ void QuaternionData::get_transfrom(
 {
    double qsx2_2 = 2.0 * scalar * scalar;
 
-   T[0][0] = qsx2_2 + (2.0 * vector[0] * vector[0]) - 1.0;
-   T[0][1] = 2.0 * ((vector[0] * vector[1]) - (scalar * vector[2]));
-   T[0][2] = 2.0 * ((vector[0] * vector[2]) + (scalar * vector[1]));
-   T[1][0] = 2.0 * ((vector[0] * vector[1]) + (scalar * vector[2]));
-   T[1][1] = qsx2_2 + (2.0 * vector[1] * vector[1]) - 1.0;
-   T[1][2] = 2.0 * ((vector[1] * vector[2]) - (scalar * vector[0]));
-   T[2][0] = 2.0 * ((vector[0] * vector[2]) - (scalar * vector[1]));
-   T[2][1] = 2.0 * ((vector[1] * vector[2]) + (scalar * vector[0]));
-   T[2][2] = qsx2_2 + (2.0 * vector[2] * vector[2]) - 1.0;
+   T[0][0] = qsx2_2 + ( 2.0 * vector[0] * vector[0] ) - 1.0;
+   T[0][1] = 2.0 * ( ( vector[0] * vector[1] ) - ( scalar * vector[2] ) );
+   T[0][2] = 2.0 * ( ( vector[0] * vector[2] ) + ( scalar * vector[1] ) );
+   T[1][0] = 2.0 * ( ( vector[0] * vector[1] ) + ( scalar * vector[2] ) );
+   T[1][1] = qsx2_2 + ( 2.0 * vector[1] * vector[1] ) - 1.0;
+   T[1][2] = 2.0 * ( ( vector[1] * vector[2] ) - ( scalar * vector[0] ) );
+   T[2][0] = 2.0 * ( ( vector[0] * vector[2] ) - ( scalar * vector[1] ) );
+   T[2][1] = 2.0 * ( ( vector[1] * vector[2] ) + ( scalar * vector[0] ) );
+   T[2][2] = qsx2_2 + ( 2.0 * vector[2] * vector[2] ) - 1.0;
 
    return;
 }

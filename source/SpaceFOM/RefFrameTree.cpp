@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <string.h>
 #include <sstream>
+#include <string.h>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -235,9 +235,8 @@ bool RefFrameTree::build_transform(
                              __LINE__ );
             // Error return.
             return ( false );
-         }
-         else {
-            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ){
+         } else {
+            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                ostringstream errmsg;
                errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_parent:\n"
                       << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
@@ -257,9 +256,8 @@ bool RefFrameTree::build_transform(
                              __LINE__ );
             // Error return.
             return ( false );
-         }
-         else {
-            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ){
+         } else {
+            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                ostringstream errmsg;
                errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_child:\n"
                       << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
@@ -267,7 +265,6 @@ bool RefFrameTree::build_transform(
                message_publish( MSG_NORMAL, errmsg.str().c_str() );
             }
          }
-
       }
 
       // Make the next frame the current frame.
