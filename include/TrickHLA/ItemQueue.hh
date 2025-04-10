@@ -35,6 +35,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_ITEM_QUEUE_HH
 #define TRICKHLA_ITEM_QUEUE_HH
 
+// System include files.
+#include <string>
+
 // TrickHLA include files.
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/MutexLock.hh"
@@ -80,7 +83,7 @@ class ItemQueue
 
    /*! @brief Prints the 'head' pointers for all elements in the queue.
     *  @param name Name of the caller. */
-   void dump_head_pointers( char const *name );
+   void dump_head_pointers( std::string const &name );
 
    /*! @brief Sets head to the passed-in element's next value.
     *  @param item Item to extract the 'next' data pointer. */

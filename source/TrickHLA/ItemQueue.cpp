@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdio> // needed for std::FILE used in trick/message_proto.h
 #include <sstream>
+#include <string>
 
 // Trick include files.
 #include "trick/message_proto.h"
@@ -78,7 +79,7 @@ ItemQueue::~ItemQueue()
  * @param name Name of the caller.
  * */
 void ItemQueue::dump_head_pointers(
-   char const *name )
+   string const &name )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
