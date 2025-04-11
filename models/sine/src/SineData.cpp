@@ -224,7 +224,8 @@ void SineData::adjust_phase() // RETURN: -- None.
          }
       }
       phase -= fmod( ( freq * time ), ( 2.0 * M_PI ) );
-      message_publish( MSG_NORMAL, "Adjusting phase, old=%f, new=%f\n", old_phase, phase );
+      message_publish( MSG_NORMAL, "Adjusting phase, old=%f, new=%f\n",
+                       old_phase, phase );
    }
 }
 

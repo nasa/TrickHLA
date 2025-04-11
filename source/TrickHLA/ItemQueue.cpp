@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, NASA/ER7, IMSim, Feb 2009, --, Initial implementation.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, April 2025, --, Updated thread safety.}
 @revs_end
 
 */
@@ -32,6 +33,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdio> // needed for std::FILE used in trick/message_proto.h
 #include <sstream>
+#include <string>
 
 // Trick include files.
 #include "trick/message_proto.h"
@@ -53,8 +55,7 @@ ItemQueue::ItemQueue()
    : mutex(),
      count( 0 ),
      head( NULL ),
-     tail( NULL ),
-     original_head( NULL )
+     tail( NULL )
 {
    return;
 }
@@ -74,49 +75,43 @@ ItemQueue::~ItemQueue()
 }
 
 /*!
- * @brief Prints the 'head' pointers for all elements in the queue.
- * @param name Name of the caller.
- * */
-void ItemQueue::dump_head_pointers(
-   char const *name )
+ * @brief Query if the item queue is empty.
+ * @return True if empty; False otherwise.
+ */
+bool const ItemQueue::empty()
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
-
-   ostringstream msg;
-   msg << "ItemQueue::dump_head_pointers(" << name << "):" << __LINE__ << " ";
-   for ( Item *item = head; item != NULL; item = item->next ) {
-      msg << item << "->";
-   }
-   msg << "NULL\n";
-
-   message_publish( MSG_NORMAL, msg.str().c_str() );
+   return ( head == NULL );
 }
 
 /*!
- * @brief Sets head to the passed-in element's next value.
- * @param item Item to extract the 'next' data pointer.
+ * @brief Get the size of the item queue.
+ * @return Number of elements in the queue.
  */
-void ItemQueue::next(
-   Item *item )
+unsigned int const ItemQueue::size()
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
+   return count;
+}
 
-   // Adjust to the next item off the stack in a thread-safe way.
-   if ( item->next != NULL ) { // is this not the end of the queue
+/*!
+ * @brief Gets the front item on the item queue.
+ * @return The front or head item on the item queue.
+ */
+Item *ItemQueue::front()
+{
+   MutexProtection auto_unlock_mutex( &mutex );
+   return head;
+}
 
-      // If this is the first call to the routine, capture the head pointer so
-      // it can be restored once we are done with walking the queue...
-      if ( original_head == NULL ) {
-         original_head = head;
-      }
-
-      // Adjust the "head" to point to the next item in the linked-list.
-      head = item->next;
-   }
+/*!
+ * @brief Gets the last item on the item queue.
+ * @return The last item on the item queue.
+ */
+Item *ItemQueue::back()
+{
+   MutexProtection auto_unlock_mutex( &mutex );
+   return tail;
 }
 
 /*!
@@ -130,20 +125,21 @@ void ItemQueue::pop()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   if ( !empty() ) {
+   if ( head != NULL ) {
       Item *item = head;
 
       // Adjust the "head" to point to the next item in the linked-list.
       if ( head == tail ) {
-         head = NULL;
-         tail = NULL;
+         head  = NULL;
+         tail  = NULL;
+         count = 0;
       } else {
          head = item->next;
+         --count;
       }
 
       // Make sure we delete the Item we created when it was pushed on the queue.
       delete item;
-      --count;
    }
 }
 
@@ -163,28 +159,30 @@ void ItemQueue::push( // RETURN: -- None.
    // Add the item to the tail-end of the linked list.
    if ( tail == NULL ) {
       head = item;
-      tail = item;
    } else {
       tail->next = item;
-      tail       = item;
    }
+   tail = item;
    ++count;
 }
 
 /*!
- * @brief Re-established original 'head' queue pointer after the queue has
- *  been walked.
- */
-void ItemQueue::rewind()
+ * @brief Prints the 'head' pointers for all elements in the queue.
+ * @param name Name of the caller.
+ * */
+void ItemQueue::dump_linked_list(
+   string const &name )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   // If the next() routine was ever executed to walk thru the queue without
-   // popping, restore the queue's original 'head' pointer.
-   if ( original_head != NULL ) {
-      head          = original_head;
-      original_head = NULL;
+   ostringstream msg;
+   msg << "ItemQueue::dump_linked_list(" << name << "):" << __LINE__ << " ";
+   for ( Item *item = head; item != NULL; item = item->next ) {
+      msg << item << "->";
    }
+   msg << "NULL\n";
+
+   message_publish( MSG_NORMAL, msg.str().c_str() );
 }

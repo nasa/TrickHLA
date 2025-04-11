@@ -85,7 +85,7 @@ void SineConditional::configure(
    this->sim_data = data;
 
    if ( this->sim_data == NULL ) {
-      message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!",
+      message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!\n",
                        __LINE__ );
       exit( -1 );
    }
@@ -99,7 +99,7 @@ void SineConditional::initialize()
 {
 
    if ( this->sim_data == NULL ) {
-      message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!",
+      message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!\n",
                        __LINE__ );
       exit( -1 );
    }
@@ -152,7 +152,7 @@ bool SineConditional::should_send(
    TrickHLA::Attribute *attr )
 {
    if ( this->sim_data == NULL ) {
-      message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: Unexpected NULL sim_data!",
+      message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: Unexpected NULL sim_data!\n",
                        attr->get_FOM_name(), __LINE__ );
       exit( -1 );
    }
@@ -200,7 +200,7 @@ bool SineConditional::should_send(
       }
    } else {
       message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: \
-Could not find the data for the specified FOM attribute!",
+Could not find the data for the specified FOM attribute!\n",
                        attr->get_FOM_name(), __LINE__ );
       exit( -1 );
    }

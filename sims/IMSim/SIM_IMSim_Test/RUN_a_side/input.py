@@ -16,6 +16,8 @@ trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
 
+#trick.var_server_set_source_address( "127.0.0.1" )
+
 run_duration = 15.0
 
 #---------------------------------------------

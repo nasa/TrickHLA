@@ -92,8 +92,9 @@ void SineInteractionHandler::send_sine_interaction(
    time = send_time;
 
    ostringstream msg;
-   msg << "Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" ) << "\" "
-       << "Send-count:" << ( send_cnt + 1 );
+   msg << "SineInteractionHandler::send_sine_interaction():" << __LINE__
+       << " Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" )
+       << "\" Send-count:" << ( send_cnt + 1 ) << '\n';
    message_publish( MSG_NORMAL, msg.str().c_str() );
 
    if ( message != NULL ) {

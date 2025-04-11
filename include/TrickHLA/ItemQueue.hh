@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, NASA/ER7, IMSim, Feb 2009, --, Initial implementation.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, April 2025, --, Updated thread safety.}
 @revs_end
 
 */
@@ -35,9 +36,13 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_ITEM_QUEUE_HH
 #define TRICKHLA_ITEM_QUEUE_HH
 
+// System include files.
+#include <string>
+
 // TrickHLA include files.
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 
 namespace TrickHLA
 {
@@ -66,25 +71,19 @@ class ItemQueue
   public:
    /*! @brief Query if the item queue is empty.
     *  @return True if empty; False otherwise. */
-   bool empty() const
-   {
-      return ( head == NULL );
-   }
+   bool const empty();
+
+   /*! @brief Get the size of the item queue.
+    *  @return Number of elements in the queue. */
+   unsigned int const size();
 
    /*! @brief Gets the front item on the item queue.
     *  @return The front or head item on the item queue. */
-   Item *front()
-   {
-      return head;
-   }
+   Item *front();
 
-   /*! @brief Prints the 'head' pointers for all elements in the queue.
-    *  @param name Name of the caller. */
-   void dump_head_pointers( char const *name );
-
-   /*! @brief Sets head to the passed-in element's next value.
-    *  @param item Item to extract the 'next' data pointer. */
-   void next( Item *item );
+   /*! @brief Gets the last item on the item queue.
+    *  @return The last item on the item queue. */
+   Item *back();
 
    /*! @brief Pop an item off the queue. */
    void pop();
@@ -93,26 +92,17 @@ class ItemQueue
     *  @param item Item to put into the queue. */
    void push( Item *item );
 
-   /*! @brief Re-established original 'head' queue pointer after the queue has
-    *  been walked. */
-   void rewind();
-
-   /*! @brief Get the size of the item queue.
-    *  @return Number of elements in the queue. */
-   int size() const
-   {
-      return count;
-   }
+   /*! @brief Prints the 'head' pointers for all elements in the queue.
+    *  @param name Name of the caller. */
+   void dump_linked_list( std::string const &name );
 
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
   private:
-   int count; ///< @trick_units{count} Number of elements in the queue.
+   unsigned int count; ///< @trick_units{count} Number of elements in the queue.
 
    Item *head; ///< @trick_units{--} First item in linked-list queue.
    Item *tail; ///< @trick_units{--} Last item in linked-list queue.
-
-   Item *original_head; ///< @trick_units{--} copy of the original head of queue
 
   private:
    // Do not allow the copy constructor or assignment operator.
