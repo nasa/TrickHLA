@@ -152,7 +152,7 @@ void SinePacking::pack()
       ostringstream msg;
       msg << "SinePacking::pack():" << __LINE__
           << " ERROR: The initialize() function has not been called!\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      message_publish( MSG_WARNING, msg.str().c_str() );
    }
 
    // Just count the number of times the pack() function gets called.
@@ -300,7 +300,7 @@ void SinePacking::unpack()
       ostringstream msg;
       msg << "SinePacking::unpack():" << __LINE__
           << " ERROR: The initialize() function has not been called!\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      message_publish( MSG_WARNING, msg.str().c_str() );
    }
 
    // If the HLA phase attribute has changed and is remotely owned (i.e. is
