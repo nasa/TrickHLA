@@ -2441,20 +2441,19 @@ void Manager::process_interactions()
    while ( !interactions_queue.empty() ) {
 
       // Get a reference to the first item on the queue.
-      InteractionItem *interaction_item =
-         static_cast< InteractionItem * >( interactions_queue.front() );
+      InteractionItem *item = static_cast< InteractionItem * >( interactions_queue.front() );
 
-      switch ( interaction_item->interaction_type ) {
+      switch ( item->interaction_type ) {
          case INTERACTION_TYPE_USER_DEFINED: {
             // Process the interaction if we subscribed to it and the interaction
             // index is valid.
-            if ( ( interaction_item->index >= 0 )
-                 && ( interaction_item->index < inter_count )
-                 && interactions[interaction_item->index].is_subscribe() ) {
+            if ( ( item->index >= 0 )
+                 && ( item->index < inter_count )
+                 && interactions[item->index].is_subscribe() ) {
 
-               interactions[interaction_item->index].extract_data( interaction_item );
+               interactions[item->index].extract_data( item );
 
-               interactions[interaction_item->index].process_interaction();
+               interactions[item->index].process_interaction();
             }
             break;
          }
@@ -2463,7 +2462,7 @@ void Manager::process_interactions()
             ostringstream errmsg;
             errmsg << "Manager::process_interactions():" << __LINE__
                    << " FATAL ERROR: encountered an invalid interaction type: "
-                   << interaction_item->interaction_type
+                   << item->interaction_type
                    << ". Verify that you are specifying the correct interaction "
                    << "type defined in 'ManagerTypeOfInteractionEnum' enum "
                    << "found in 'Manager.hh' and re-run.\n";
@@ -3144,7 +3143,7 @@ void Manager::encode_checkpoint_interactions()
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::encode_checkpoint_interactions():%d interactions_queue.size()=%d\n",
+         message_publish( MSG_NORMAL, "Manager::encode_checkpoint_interactions():%d interactions_queue.size():%d\n",
                           __LINE__, interactions_queue.size() );
       }
 
@@ -3163,11 +3162,17 @@ void Manager::encode_checkpoint_interactions()
          return;
       }
 
-      // interactions_queue.dump_head_pointers("interactions_queue.dump");
+      if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         interactions_queue.dump_linked_list( "Manager::encode_checkpoint_interactions()" );
+      }
 
-      for ( int i = 0; i < interactions_queue.size(); ++i ) {
+      unsigned int     i;
+      InteractionItem *item;
 
-         InteractionItem *item = static_cast< InteractionItem * >( interactions_queue.front() );
+      // Iterate through the interactions-queue.
+      for ( i = 0, item = static_cast< InteractionItem * >( interactions_queue.front() );
+            ( i < check_interactions_count ) && ( item != NULL );
+            ++i, item = static_cast< InteractionItem * >( item->next ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::encode_checkpoint_interactions():%d \
@@ -3176,9 +3181,12 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
          }
          check_interactions[i].index            = item->index;
          check_interactions[i].interaction_type = item->interaction_type;
+
          item->checkpoint_queue();
-         check_interactions[i].parm_items_count       = item->parm_items_count;
-         check_interactions[i].parm_items             = item->parm_items;
+
+         check_interactions[i].parm_items_count = item->parm_items_count;
+         check_interactions[i].parm_items       = item->parm_items;
+
          check_interactions[i].user_supplied_tag_size = item->user_supplied_tag_size;
          if ( item->user_supplied_tag_size == 0 ) {
             check_interactions[i].user_supplied_tag = NULL;
@@ -3188,17 +3196,11 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
 
             memcpy( check_interactions[i].user_supplied_tag, item->user_supplied_tag, item->user_supplied_tag_size );
          }
+
          check_interactions[i].order_is_TSO = item->order_is_TSO;
          check_interactions[i].time         = item->time;
-
-         // Now that we extracted the data from the parameter-item, point to the
-         // next element in the queue, without popping!
-         interactions_queue.next( item );
       }
-
-      interactions_queue.rewind();
    }
-   // auto_unlock_mutex unlocks the mutex lock here
 }
 
 void Manager::decode_checkpoint_interactions()
@@ -3208,6 +3210,10 @@ void Manager::decode_checkpoint_interactions()
          message_publish( MSG_NORMAL, "Manager::decode_checkpoint_interactions():%d check_interactions_count=%d\n",
                           __LINE__, check_interactions_count );
       }
+
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
 
       for ( int i = 0; i < check_interactions_count; ++i ) {
 
@@ -3223,7 +3229,9 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
          item->interaction_type = check_interactions[i].interaction_type;
          item->parm_items_count = check_interactions[i].parm_items_count;
          item->parm_items       = check_interactions[i].parm_items;
+
          item->restore_queue();
+
          item->user_supplied_tag_size = check_interactions[i].user_supplied_tag_size;
          if ( check_interactions[i].user_supplied_tag_size == 0 ) {
             item->user_supplied_tag = NULL;

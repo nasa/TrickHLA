@@ -161,22 +161,25 @@ void InteractionItem::initialize(
 {
    this->interaction_type = inter_type;
 
-   // Decode all the parameters from the map.
-   for ( int p = 0; p < param_count; ++p ) {
-      // Note that we are using a const_iterator since this map does not support
-      // an iterator.
-      ParameterHandleValueMap::const_iterator param_iter;
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
 
-      // Get the parameter from the map.
-      param_iter = theParameterValues.find( parameters[p].get_parameter_handle() );
+      // Decode all the parameters from the map.
+      for ( int p = 0; p < param_count; ++p ) {
+         // Note that we are using a const_iterator since this map does not support
+         // an iterator.
+         ParameterHandleValueMap::const_iterator param_iter;
 
-      if ( param_iter != theParameterValues.end() ) {
-         ParameterItem *item;
-         item = new ParameterItem( p, &( param_iter->second ) );
-         parameter_queue.push( item );
+         // Get the parameter from the map.
+         param_iter = theParameterValues.find( parameters[p].get_parameter_handle() );
+
+         if ( param_iter != theParameterValues.end() ) {
+            parameter_queue.push( new ParameterItem( p, &( param_iter->second ) ) );
+         }
       }
    }
-
    // Free the Trick allocated memory for the user supplied tag.
    if ( user_supplied_tag != NULL ) {
       if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
@@ -197,7 +200,12 @@ void InteractionItem::initialize(
 
 void InteractionItem::checkpoint_queue()
 {
-   if ( parameter_queue.size() != 0 ) {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+
+   if ( !parameter_queue.empty() ) {
+
       parm_items_count = parameter_queue.size();
 
       parm_items = reinterpret_cast< ParameterItem * >(
@@ -210,29 +218,25 @@ void InteractionItem::checkpoint_queue()
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+      unsigned int   i;
+      ParameterItem *item;
 
-      for ( int i = 0; i < parm_items_count; ++i ) {
-
-         ParameterItem *item = static_cast< ParameterItem * >( parameter_queue.front() );
+      // Iterate through the parameter-queue.
+      for ( i = 0, item = static_cast< ParameterItem * >( parameter_queue.front() );
+            ( i < parm_items_count ) && ( item != NULL );
+            ++i, item = static_cast< ParameterItem * >( item->next ) ) {
 
          parm_items[i].index = item->index;
          parm_items[i].size  = item->size;
          if ( item->size == 0 ) {
             parm_items[i].data = NULL;
          } else {
-            parm_items[i].data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", item->size ) );
+            parm_items[i].data = static_cast< unsigned char * >(
+               TMM_declare_var_1d( "unsigned char", item->size ) );
+
             memcpy( parm_items[i].data, item->data, item->size );
          }
-
-         // Now that we extracted the data from the parameter-item, point to the
-         // next element in the queue, without popping!
-         parameter_queue.next( item );
       }
-
-      // auto_unlock_mutex releases mutex lock here
    }
 }
 
@@ -256,6 +260,10 @@ void InteractionItem::restore_queue()
 {
    if ( parm_items_count != 0 ) {
 
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+
       for ( int i = 0; i < parm_items_count; ++i ) {
 
          ParameterItem *item = new ParameterItem();
@@ -265,7 +273,8 @@ void InteractionItem::restore_queue()
          if ( parm_items[i].size == 0 ) {
             item->data = NULL;
          } else {
-            item->data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", parm_items[i].size ) );
+            item->data = static_cast< unsigned char * >(
+               TMM_declare_var_1d( "unsigned char", parm_items[i].size ) );
             memcpy( item->data, parm_items[i].data, parm_items[i].size );
          }
 
