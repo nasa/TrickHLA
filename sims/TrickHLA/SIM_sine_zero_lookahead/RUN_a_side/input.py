@@ -382,4 +382,3 @@ THLA.manager.objects[3].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_S
 # Set up simulation termination time.
 #---------------------------------------------
 trick.sim_services.exec_set_terminate_time( run_duration )
-

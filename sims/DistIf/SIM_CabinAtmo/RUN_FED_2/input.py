@@ -2,87 +2,88 @@
 #            National Aeronautics and Space Administration.  All Rights Reserved. */
 #
 
+
 #
 # Define the command line options to configure the simulation.
 #
-def print_usage_message( ):
-   
+def print_usage_message():
+
    global crc_host
    global crc_port
    global local_settings
 
-   print(' ')
-   print('Simulation Command Line Configuration Options:')
-   print('  -h --help              : Print this help message.')
-   print('  -r --crcHost [name]    : Name of RTI CRC Host, currently:', crc_host )
-   print('  -p --crcPort [number]  : Port number for the RTI CRC, currently:', crc_port )
-   print('  -s --settings [string] : RTI CRC local settings:', local_settings )
-   print(' ')
+   print( ' ' )
+   print( 'Simulation Command Line Configuration Options:' )
+   print( '  -h --help              : Print this help message.' )
+   print( '  -r --crcHost [name]    : Name of RTI CRC Host, currently:', crc_host )
+   print( '  -p --crcPort [number]  : Port number for the RTI CRC, currently:', crc_port )
+   print( '  -s --settings [string] : RTI CRC local settings:', local_settings )
+   print( ' ' )
 
    trick.exec_terminate_with_return( -1,
-                                     sys._getframe(0).f_code.co_filename,
-                                     sys._getframe(0).f_lineno,
-                                     'Print usage message.')
+                                     sys._getframe( 0 ).f_code.co_filename,
+                                     sys._getframe( 0 ).f_lineno,
+                                     'Print usage message.' )
    return
 # END: print_usage_message
 
 
-def parse_command_line( ):
-   
+def parse_command_line():
+
    global print_usage
    global crc_host
    global crc_port
    global local_settings
    global override_settings
-   
+
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
    argv = trick.command_line_args_get_argv()
-   
+
    # Process the command line arguments.
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
-   while (index < argc):
-            
-      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
+   while ( index < argc ):
+
+      if ( ( str( argv[index] ) == '-h' ) | ( str( argv[index] ) == '--help' ) ):
          print_usage = True
-      
-      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--crcHost')):
+
+      elif ( ( str( argv[index] ) == '-r' ) | ( str( argv[index] ) == '--crcHost' ) ):
          index = index + 1
-         if (index < argc):
-            crc_host = str(argv[index])
+         if ( index < argc ):
+            crc_host = str( argv[index] )
          else:
-            print('ERROR: Missing --crcHost [name] argument.')
+            print( 'ERROR: Missing --crcHost [name] argument.' )
             print_usage = True
-      
-      elif ((str(argv[index]) == '-p') | (str(argv[index]) == '--crcPort')):
+
+      elif ( ( str( argv[index] ) == '-p' ) | ( str( argv[index] ) == '--crcPort' ) ):
          index = index + 1
-         if (index < argc):
-            crc_port = int(str(argv[index]))
+         if ( index < argc ):
+            crc_port = int( str( argv[index] ) )
          else:
-            print('ERROR: Missing --crcPort [port] argument.')
+            print( 'ERROR: Missing --crcPort [port] argument.' )
             print_usage = True
-      
-      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--settings')):
+
+      elif ( ( str( argv[index] ) == '-s' ) | ( str( argv[index] ) == '--settings' ) ):
          index = index + 1
-         if (index < argc):
-            local_settings = str(argv[index])
+         if ( index < argc ):
+            local_settings = str( argv[index] )
             override_settings = True
          else:
-            print('ERROR: Missing --settings [string] argument.')
+            print( 'ERROR: Missing --settings [string] argument.' )
             print_usage = True
-         
+
       else:
-         print('ERROR: Unknown command line argument ' + str(argv[index]))
+         print( 'ERROR: Unknown command line argument ' + str( argv[index] ) )
          print_usage = True
-   
+
       index = index + 1
-   
+
    return
 # END: parse_command_line
 
-
 # Global configuration variables
+
 
 # Default: Don't show usage:
 print_usage = False
@@ -95,7 +96,7 @@ crc_port = 8989
 
 # Default: local settings string:
 override_settings = False
-local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str(crc_port)
+local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str( crc_port )
 
 # Parse the command line.
 parse_command_line()
@@ -103,27 +104,26 @@ parse_command_line()
 # Check to see if setting were overridden.
 # If not, then form the local_settings string since host and port may have been set.
 if not override_settings:
-   local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str(crc_port)
+   local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str( crc_port )
 
-if (print_usage == True):
+if ( print_usage == True ):
    print_usage_message()
-   
-   
-#trick setup
-trick.sim_services.exec_set_trap_sigfpe(1)
+
+# trick setup
+trick.sim_services.exec_set_trap_sigfpe( 1 )
 simControlPanel = trick.SimControlPanel()
-trick.add_external_application(simControlPanel)
+trick.add_external_application( simControlPanel )
 trickView = trick.TrickView()
-trick.add_external_application(trickView)
-trickView.set_auto_open_file('TV_HLA_modelB.tv')
+trick.add_external_application( trickView )
+trickView.set_auto_open_file( 'TV_HLA_modelB.tv' )
 trick.real_time_enable()
-trick.sim_services.exec_set_terminate_time(86400)
-trick.exec_set_software_frame(0.1)
-trick.exec_set_time_tic_value(100000000)
-trick.TMM_reduced_checkpoint(False)
-trick_mm.mm.set_expanded_arrays(True)
-trick_sys.sched.set_enable_freeze(True)
-#trick_sys.sched.set_freeze_command(True)
+trick.sim_services.exec_set_terminate_time( 86400 )
+trick.exec_set_software_frame( 0.1 )
+trick.exec_set_time_tic_value( 100000000 )
+trick.TMM_reduced_checkpoint( False )
+trick_mm.mm.set_expanded_arrays( True )
+trick_sys.sched.set_enable_freeze( True )
+# trick_sys.sched.set_freeze_command(True)
 
 # Custom initial conditions:
 cabinAtmo.modelConfigA.mImvFanOn = False
@@ -166,10 +166,10 @@ cabinAtmo.modelConfigB.mVestibuleMixture[2] = 0.0
 cabinAtmo.modelConfigB.mVestibuleMixture[3] = 1.0
 
 # Configure interfaces to use energy as specific enthalpy
-#cabinAtmo.modelConfigA.mVestibule.mIsIfEnthalpy = True;
-#cabinAtmo.modelConfigB.mVestibule.mIsIfEnthalpy = True;
-#cabinAtmo.modelConfigA.mImvDuct.mIsIfEnthalpy = True;
-#cabinAtmo.modelConfigB.mImvDuct.mIsIfEnthalpy = True;
+# cabinAtmo.modelConfigA.mVestibule.mIsIfEnthalpy = True;
+# cabinAtmo.modelConfigB.mVestibule.mIsIfEnthalpy = True;
+# cabinAtmo.modelConfigA.mImvDuct.mIsIfEnthalpy = True;
+# cabinAtmo.modelConfigB.mImvDuct.mIsIfEnthalpy = True;
 
 # Demonstrate energy or temperature error caused by different specific heats in models
 # These values are from the NIST reference and differ from the default model values.
@@ -177,10 +177,10 @@ cabinAtmo.modelConfigB.mVestibuleMixture[3] = 1.0
 # standing temperature difference across the interface, but conserves energy.  In
 # contrast, transferring energy as temperature causes temperatures to match, but
 # causes error in conservation of energy.
-#cabinAtmo.modelConfigA.mCompoundCp[0] = 29.161
-#cabinAtmo.modelConfigA.mCompoundCp[1] = 29.368
-#cabinAtmo.modelConfigA.mCompoundCp[2] = 33.831
-#cabinAtmo.modelConfigA.mCompoundCp[3] = 36.963
+# cabinAtmo.modelConfigA.mCompoundCp[0] = 29.161
+# cabinAtmo.modelConfigA.mCompoundCp[1] = 29.368
+# cabinAtmo.modelConfigA.mCompoundCp[2] = 33.831
+# cabinAtmo.modelConfigA.mCompoundCp[3] = 36.963
 
 # Set up lag amount in the lag ring buffers
 # Loop latency will be 2 + (2 * mDelayFrames)
@@ -189,7 +189,7 @@ cabinAtmo.lagBufferImv.mDelayFrames = 0
 
 # Establish reference conservation parameter values at time = 5 second, to give
 # HLA federations time to join and send data across.
-trick.add_read(5.0, """cabinAtmo.conservation.setReference = True""")
+trick.add_read( 5.0, """cabinAtmo.conservation.setReference = True""" )
 
 ################################################################################
 # HLA Setup
@@ -200,29 +200,29 @@ cabinAtmo.conservation.isBsideHla = True
 
 # When using HLA, modelB in this sim is tied to modelA in the other federate,
 # not to the modelA in this sim, so the conservation checks model doesn't work.
-#trick.add_read(1.0, """cabinAtmo.conservation.setReference = True""")
+# trick.add_read(1.0, """cabinAtmo.conservation.setReference = True""")
 
 # Configure the CRC, the default is the local host but can be overridden
 # with command line arguments --crcHost and --crcPort or --settings.
-#THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+# THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 THLA.federate.local_settings = local_settings
 
 # Configure the federate
 Federation_name = "FLUID_DIST_IF_DEMO"
-Federate_name   = "FED_2"
+Federate_name = "FED_2"
 
 # THLA configuration
 from Modified_data.TrickHLA.TrickHLAFederateConfig import *
-federate = TrickHLAFederateConfig( thla_federate        = THLA.federate,
-                                   thla_manager         = THLA.manager,
-                                   thla_control         = THLA.execution_control,
-                                   thla_config          = THLA.simple_sim_config,
+federate = TrickHLAFederateConfig( thla_federate = THLA.federate,
+                                   thla_manager = THLA.manager,
+                                   thla_control = THLA.execution_control,
+                                   thla_config = THLA.simple_sim_config,
                                    thla_federation_name = Federation_name,
-                                   thla_federate_name   = Federate_name,
-                                   thla_enabled         = True )
+                                   thla_federate_name = Federate_name,
+                                   thla_enabled = True )
 # Add required federates.
-federate.add_known_federate( True, "FED_1")
-federate.add_known_federate( True, "FED_2")
+federate.add_known_federate( True, "FED_1" )
+federate.add_known_federate( True, "FED_2" )
 
 # Set time management parameters
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_10_NANOSECONDS )
@@ -239,77 +239,77 @@ federate.add_FOM_module( 'FOMs/DistIf/FluidDistIfFOM.xml' )
 from Modified_data.DistIf.FluidDistIfObjectConfig import *
 
 # Interfaces between modelB in this federate (FED_2) to modelA in the other FED_1:
-data_obj = FluidDistIfAToBObjectConfig(
+data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_Vestibule_1A_to_2B',
-   bus_name           = 'cabinAtmo.modelB.mVestibule.mIf',
-   isBusA             = False,
-   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name = 'cabinAtmo.modelB.mVestibule.mIf',
+   isBusA = False,
+   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
-data_obj = FluidDistIfAToBObjectConfig(
+data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_Vestibule_2B_to_1A',
-   bus_name           = 'cabinAtmo.modelB.mVestibule.mIf',
-   isBusA             = True,
-   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name = 'cabinAtmo.modelB.mVestibule.mIf',
+   isBusA = True,
+   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
-data_obj = FluidDistIfAToBObjectConfig(
+data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_IMV_1A_to_2B',
-   bus_name           = 'cabinAtmo.modelB.mImvDuct.mIf',
-   isBusA             = False,
-   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name = 'cabinAtmo.modelB.mImvDuct.mIf',
+   isBusA = False,
+   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
-data_obj = FluidDistIfAToBObjectConfig(
+data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_IMV_2B_to_1A',
-   bus_name           = 'cabinAtmo.modelB.mImvDuct.mIf',
-   isBusA             = True,
-   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name = 'cabinAtmo.modelB.mImvDuct.mIf',
+   isBusA = True,
+   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 # Interfaces between modelA in this federate (FED_2) to modelB in the other FED_1:
-data_obj = FluidDistIfAToBObjectConfig(
+data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_Vestibule_2A_to_1B',
-   bus_name           = 'cabinAtmo.modelA.mVestibule.mIf',
-   isBusA             = False,
-   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name = 'cabinAtmo.modelA.mVestibule.mIf',
+   isBusA = False,
+   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
-data_obj = FluidDistIfAToBObjectConfig(
+data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_Vestibule_1B_to_2A',
-   bus_name           = 'cabinAtmo.modelA.mVestibule.mIf',
-   isBusA             = True,
-   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name = 'cabinAtmo.modelA.mVestibule.mIf',
+   isBusA = True,
+   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
-data_obj = FluidDistIfAToBObjectConfig(
+data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_IMV_2A_to_1B',
-   bus_name           = 'cabinAtmo.modelA.mImvDuct.mIf',
-   isBusA             = False,
-   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name = 'cabinAtmo.modelA.mImvDuct.mIf',
+   isBusA = False,
+   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
-data_obj = FluidDistIfAToBObjectConfig(
+data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_IMV_1B_to_2A',
-   bus_name           = 'cabinAtmo.modelA.mImvDuct.mIf',
-   isBusA             = True,
-   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name = 'cabinAtmo.modelA.mImvDuct.mIf',
+   isBusA = True,
+   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 # Configure the Conservation parameters HLA data messages
 from Modified_data.DistIf.ConserveParamsObjectConfig import *
-data_obj = ConserveParamsObjectConfig(
+data_obj = ConserveParamsObjectConfig( 
    thla_federate_name = 'ConservationData_2_to_1',
-   model_name         = 'cabinAtmo.modelB.mConserveParams',
-   isOwner            = True,
-   FOM_type           = 'ConservationParams' )
+   model_name = 'cabinAtmo.modelB.mConserveParams',
+   isOwner = True,
+   FOM_type = 'ConservationParams' )
 federate.add_fed_object( data_obj )
 
-data_obj = ConserveParamsObjectConfig(
+data_obj = ConserveParamsObjectConfig( 
    thla_federate_name = 'ConservationData_1_to_2',
-   model_name         = 'cabinAtmo.conservation.modelBConserveParams',
-   isOwner            = False,
-   FOM_type           = 'ConservationParams' )
+   model_name = 'cabinAtmo.conservation.modelBConserveParams',
+   isOwner = False,
+   FOM_type = 'ConservationParams' )
 federate.add_fed_object( data_obj )
 
 # After all configuration is defined, initialize the federate
