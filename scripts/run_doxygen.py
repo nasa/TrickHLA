@@ -356,10 +356,10 @@ def main():
 def determine_version():
 
    grep_cmd = ['grep', 'define TRICKHLA_VERSION ', 'include/TrickHLA/Version.hh']
-   cut_cmd  = ['cut', '-d', '"', '-f2']
+   cut_cmd = ['cut', '-d', '"', '-f2']
 
-   grep_process = subprocess.Popen( grep_cmd, stdout=subprocess.PIPE )
-   cut_process  = subprocess.Popen( cut_cmd, stdin=grep_process.stdout, stdout=subprocess.PIPE )
+   grep_process = subprocess.Popen( grep_cmd, stdout = subprocess.PIPE )
+   cut_process = subprocess.Popen( cut_cmd, stdin = grep_process.stdout, stdout = subprocess.PIPE )
    grep_process.stdout.close()
 
    output, _ = cut_process.communicate()
@@ -386,7 +386,7 @@ def build_version_string(
       version_string = version_id + ': ' + version_tag
    else:
       # Otherwise, get the Git hash.
-      version_tag = subprocess.check_output( ['git', 'rev-parse', '--short', 'HEAD'] ).decode('utf8', errors='strict').strip()
+      version_tag = subprocess.check_output( ['git', 'rev-parse', '--short', 'HEAD'] ).decode( 'utf8', errors = 'strict' ).strip()
       version_string = version_id + ': Git#' + version_tag.rstrip()
 
    return version_string

@@ -241,7 +241,7 @@ def find_clang_format( llvm_bin, verbose = True ):
                   llvm_home_grep_cmd = [ 'grep', 'LLVM_HOME', trick_config_status_file ]
                   try:
                      # S["LLVM_HOME"]="/home/username/clang+llvm-14.0.6-x86_64"
-                     trick_llvm_config = subprocess.check_output( llvm_home_grep_cmd ).decode('utf8', errors='strict').strip()
+                     trick_llvm_config = subprocess.check_output( llvm_home_grep_cmd ).decode( 'utf8', errors = 'strict' ).strip()
                   except subprocess.CalledProcessError:
                      trick_llvm_config = ''
 
@@ -260,16 +260,16 @@ def find_clang_format( llvm_bin, verbose = True ):
 
                # Determine if the default llvm formula is installed.
                if os.path.isdir( '/usr/local/Cellar/llvm' ):
-   
+
                   # There is an llvm installation in brew.
                   llvm_versions = os.listdir( '/usr/local/Cellar/llvm' )
-   
+
                   # Assume we will be using the latest version.
                   llvm_version = llvm_versions[0]
                   for version in llvm_versions:
                      if version > llvm_version:
                         llvm_version = version
-   
+
                   # Generate the clang-format command.
                   bin_path = os.path.join( '/usr/local/Cellar/llvm', llvm_version )
                   command_path = os.path.join( bin_path, 'bin', 'clang-format' )
@@ -295,7 +295,7 @@ def find_clang_format( llvm_bin, verbose = True ):
    else:
       if not os.path.isfile( command_path ):
          TrickHLAMessage.failure( 'Could not find the clang-format command: '
-                                  + command_path )
+                                  +command_path )
       else:
          if verbose:
             TrickHLAMessage.status( 'Using CLANG format command: ' + command_path )
@@ -326,12 +326,12 @@ def link_clang_format( thla_scripts, test_only = False, verbose = True ):
    else:
       if test_only:
          TrickHLAMessage.status( 'Would link format specification: '
-                                 + thla_clang_format )
+                                 +thla_clang_format )
       else:
          os.symlink( thla_clang_format, '.clang-format' )
          if verbose:
             TrickHLAMessage.status( 'Linking to format specification: '
-                                    + thla_clang_format )
+                                    +thla_clang_format )
 
    return
 

@@ -174,7 +174,7 @@ def main():
 
    except subprocess.CalledProcessError:
       TrickHLAMessage.failure( '\'flawfinder\' command failed! '
-                               + subprocess.CalledProcessError.message )
+                               +subprocess.CalledProcessError.message )
 
    # Let the user know that we are done.
    TrickHLAMessage.success( 'Finished checking TrickHLA source code.' )
@@ -242,7 +242,7 @@ def find_flawfinder( flawfinder_bin, verbose = True ):
    else:
       if not os.path.isfile( flawfinder_command ):
          TrickHLAMessage.failure( 'Could not find the flawfinder command!: '\
-                                  + flawfinder_command )
+                                  +flawfinder_command )
       else:
          if verbose:
             TrickHLAMessage.status( 'Using flawfinder command: ' + flawfinder_command )
@@ -251,11 +251,11 @@ def find_flawfinder( flawfinder_bin, verbose = True ):
    # Now get the flawfinder version ID tag.
    #
    try:
-      flawfinder_version = subprocess.check_output( [flawfinder_command, '--version'] ).decode('utf8', errors='strict').strip()
+      flawfinder_version = subprocess.check_output( [flawfinder_command, '--version'] ).decode( 'utf8', errors = 'strict' ).strip()
    except subprocess.CalledProcessError:
       TrickHLAMessage.failure( '\'flawfinder --version\' command failed!: '
-                               + flawfinder_command + ', '
-                               + subprocess.CalledProcessError.message )
+                               +flawfinder_command + ', '
+                               +subprocess.CalledProcessError.message )
 
    return flawfinder_command, flawfinder_version
 
