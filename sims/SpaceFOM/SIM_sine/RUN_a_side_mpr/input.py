@@ -143,7 +143,7 @@ def fix_var_server_source_address( ):
          trick.var_server_set_source_address( "127.0.0.1" )
    except ( socket.gaierror, socket.herror ):
       trick.var_server_set_source_address( "127.0.0.1" )
-   return;
+   return
 
 
 # Default: Don't show usage.
