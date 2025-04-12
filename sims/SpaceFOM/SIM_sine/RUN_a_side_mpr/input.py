@@ -130,6 +130,22 @@ def parse_command_line( ):
    return
 
 
+def fix_variable_server_hostname( ):
+   # The Trick variable server uses the host name without verifying the IP
+   # address it resolves to is actually used by the host computer or not.
+   # Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
+   # Otherwise the simulation control panel will not successfully connect.
+   import socket
+   try:
+      host_ip_addr = socket.gethostbyname( trick.var_server_get_hostname() )
+      hostname, aliases, ipaddrs = socket.gethostbyaddr( host_ip_addr )
+      if ( host_ip_addr not in ipaddrs ):
+         trick.var_server_set_source_address( "127.0.0.1" )
+   except ( socket.gaierror, socket.herror ):
+      trick.var_server_set_source_address( "127.0.0.1" )
+   return;
+
+
 # Default: Don't show usage.
 print_usage = False
 
@@ -153,6 +169,7 @@ parse_command_line()
 
 if ( print_usage == True ):
    print_usage_message()
+
 
 #---------------------------------------------
 # Set up Trick executive parameters.
@@ -178,18 +195,7 @@ trick.sim_control_panel_set_enabled( True )
 #simControlPanel.set_host( "localhost" )
 #trick.add_external_application( simControlPanel )
 
-# The Trick variable server uses the host name without verifying the IP
-# address it resolves to is actually used by the host computer or not.
-# Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
-# Otherwise the simulation control panel will not successfully connect.
-import socket
-try:
-   host_ip_addr = socket.gethostbyname( trick.var_server_get_hostname() )
-   hostname, aliases, ipaddrs = socket.gethostbyaddr( host_ip_addr )
-   if ( host_ip_addr not in ipaddrs ):
-      trick.var_server_set_source_address( "127.0.0.1" )
-except ( socket.gaierror, socket.herror ):
-   trick.var_server_set_source_address( "127.0.0.1" )
+fix_variable_server_hostname()
 
 
 #---------------------------------------------
