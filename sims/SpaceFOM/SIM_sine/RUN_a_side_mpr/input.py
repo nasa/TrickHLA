@@ -129,6 +129,7 @@ def parse_command_line( ):
       index = index + 1
    return
 
+
 # Default: Don't show usage.
 print_usage = False
 
@@ -171,12 +172,25 @@ trick.exec_set_freeze_command( True )
 trick.exec_set_stack_trace( False )
 
 trick.var_server_set_port( 7000 )
-#trick.var_server_set_source_address( "127.0.0.1" )
 trick.sim_control_panel_set_enabled( True )
 
 #simControlPanel = trick.SimControlPanel()
 #simControlPanel.set_host( "localhost" )
 #trick.add_external_application( simControlPanel )
+
+# The Trick variable server uses the host name without verifying the IP
+# address it resolves to is actually used by the host computer or not.
+# Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
+# Otherwise the simulation control panel will not successfully connect.
+import socket
+try:
+   host_ip_addr = socket.gethostbyname( trick.var_server_get_hostname() )
+   hostname, aliases, ipaddrs = socket.gethostbyaddr( host_ip_addr )
+   if ( host_ip_addr not in ipaddrs ):
+      trick.var_server_set_source_address( "127.0.0.1" )
+except ( socket.gaierror, socket.herror ):
+   trick.var_server_set_source_address( "127.0.0.1" )
+
 
 #---------------------------------------------
 # Set up data to record.
@@ -303,7 +317,7 @@ sine_A = SineObject( sine_create_object      = True,
                      sine_lag_comp           = A.lag_compensation,
                      sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
                      sine_ownership          = A.ownership_handler,
-                     sine_deleted            = A.obj_deleted  )
+                     sine_deleted            = A.obj_deleted )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_A )
@@ -315,7 +329,7 @@ sine_P = SineObject( sine_create_object      = False,
                      sine_conditional        = P.conditional,
                      sine_lag_comp           = P.lag_compensation,
                      sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-                     sine_deleted            = P.obj_deleted  )
+                     sine_deleted            = P.obj_deleted )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_P )
