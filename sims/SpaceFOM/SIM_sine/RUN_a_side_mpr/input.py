@@ -130,7 +130,7 @@ def parse_command_line( ):
    return
 
 
-def fix_variable_server_hostname( ):
+def fix_var_server_source_address( ):
    # The Trick variable server uses the host name without verifying the IP
    # address it resolves to is actually used by the host computer or not.
    # Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
@@ -195,7 +195,7 @@ trick.sim_control_panel_set_enabled( True )
 #simControlPanel.set_host( "localhost" )
 #trick.add_external_application( simControlPanel )
 
-fix_variable_server_hostname()
+fix_var_server_source_address()
 
 
 #---------------------------------------------
