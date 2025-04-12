@@ -17,17 +17,18 @@
 import sys
 import os
 
+
 class TrickHLAMessage():
 
    _COMMENT_COLOR = '\033[95m'
-   _STATUS_COLOR  = '\033[93m'
+   _STATUS_COLOR = '\033[93m'
    _SUCCESS_COLOR = '\033[32m'
    _WARNING_COLOR = '\033[94m'
    _FAILURE_COLOR = '\033[91m'
-   _END_COLOR     = '\033[0m'
+   _END_COLOR = '\033[0m'
 
    _COMMENT_TAG = 'COMMENT: '
-   _STATUS_TAG  = 'STATUS: '
+   _STATUS_TAG = 'STATUS: '
    _SUCCESS_TAG = 'SUCCESS: '
    _WARNING_TAG = 'WARNING: '
    _FAILURE_TAG = os.linesep + 'ERROR: '

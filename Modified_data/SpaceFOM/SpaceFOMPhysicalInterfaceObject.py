@@ -17,11 +17,12 @@ import trick
 from ..TrickHLA.TrickHLAObjectConfig import *
 from ..TrickHLA.TrickHLAAttributeConfig import *
 
+
 class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
 
    # The PhysicalInterface FOM name is fixed for the SpaceFOM.
    interface_FOM_name = 'PhysicalInterface'
-   
+
    # Trick simulation object name (constructed).
    trick_interface_sim_obj_name = None
 
@@ -36,14 +37,14 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
                  interface_ownership           = None,
                  interface_deleted             = None,
                  interface_thla_manager_object = None,
-                 interface_thread_IDs          = None  ):
+                 interface_thread_IDs          = None ):
 
       # Copy the PhysicalInterface federation execution instance name.
       interface_federation_instance_name = str( interface_instance_name )
 
       # Save the PhysicalInterface name to use for trick_data_name generation.
       self.trick_interface_sim_obj_name = str( interface_S_define_instance_name )
-      
+
       # By SpaceFOM rule 6-1 the PhysicalInterface instance name must exactly
       # match the PhysicalInterface name in the data.
       if ( create_interface_object ):
@@ -70,7 +71,6 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
 
       return
 
-
    def initialize( self, thla_object ):
 
       # Call the base class initialization utility function.
@@ -78,13 +78,12 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
 
       return
 
-
    def add_attributes( self ):
 
       # Short cut the sim_object name for the PhysicalInterface data.
       interface_instance_name = self.trick_interface_sim_obj_name
 
-      ## Set up the map to the reference PhysicalInterface's name.
+      # Set up the map to the reference PhysicalInterface's name.
       trick_data_name = str( interface_instance_name ) + '.packing_data.name'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'name',
                                            trick_name    = trick_data_name,
@@ -95,7 +94,7 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
-      ## Set up the map to the name of the PhysicalInterface's parent reference frame.
+      # Set up the map to the name of the PhysicalInterface's parent reference frame.
       trick_data_name = str( interface_instance_name ) + '.packing_data.parent_name'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'parent_name',
                                            trick_name    = trick_data_name,
@@ -106,7 +105,7 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalInterface's translational acceleration.
+      # Set up the map to the PhysicalInterface's translational acceleration.
       trick_data_name = str( interface_instance_name ) + '.packing_data.position'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'position',
                                            trick_name    = trick_data_name,
@@ -117,7 +116,7 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalInterface's struct to body attitude quaternion.
+      # Set up the map to the PhysicalInterface's struct to body attitude quaternion.
       trick_data_name = str( interface_instance_name ) + '.quat_encoder.buffer'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'attitude',
                                            trick_name    = trick_data_name,
@@ -129,4 +128,3 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
       self.add_attribute( attribute )
 
       return
-

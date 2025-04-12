@@ -17,6 +17,7 @@ import trick
 from ..TrickHLA.TrickHLAObjectConfig import *
 from ..TrickHLA.TrickHLAAttributeConfig import *
 
+
 class SpaceFOMRefFrameObject( TrickHLAObjectConfig ):
 
    trick_frame_sim_obj_name = None
@@ -38,13 +39,13 @@ class SpaceFOMRefFrameObject( TrickHLAObjectConfig ):
 
       # The Reference Frame FOM name is fixed for the SpaceFOM.
       frame_FOM_name = 'ReferenceFrame'
-      
+
       # Copy the frame federation execution instance name.
       frame_federation_instance_name = str( frame_instance_name )
 
       # Save the frame name to use for trick_data_name generation.
       self.trick_frame_sim_obj_name = str( frame_S_define_instance_name )
-      
+
       # By SpaceFOM rule 5-1 the Reference Frame instance name must exactly
       # match the Reference Frame name in the data.
       if ( create_frame_object ):
@@ -78,12 +79,11 @@ class SpaceFOMRefFrameObject( TrickHLAObjectConfig ):
       # Set the frame parent instance name.
       if ( parent_S_define_instance != None ):
          frame_S_define_instance.set_parent_frame( parent_S_define_instance )
-      
+
       # Build the object attribute list.
       self.add_attributes()
 
       return
-
 
    def initialize( self, thla_object ):
 
@@ -92,13 +92,12 @@ class SpaceFOMRefFrameObject( TrickHLAObjectConfig ):
 
       return
 
-
    def add_attributes( self ):
 
       # Short cut the sim_object name for the frame data.
       frame_instance_name = self.trick_frame_sim_obj_name
 
-      ## Set up the map to the reference frame's name.
+      # Set up the map to the reference frame's name.
       trick_data_name = str( frame_instance_name ) + '.packing_data.name'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'name',
                                            trick_name    = trick_data_name,
@@ -109,7 +108,7 @@ class SpaceFOMRefFrameObject( TrickHLAObjectConfig ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
-      ## Set up the map to the name of the reference frame's parent frame.
+      # Set up the map to the name of the reference frame's parent frame.
       trick_data_name = str( frame_instance_name ) + '.packing_data.parent_name'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'parent_name',
                                            trick_name    = trick_data_name,
@@ -120,7 +119,7 @@ class SpaceFOMRefFrameObject( TrickHLAObjectConfig ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
-      ## Set up the map to the reference frame's space/time coordinate state.
+      # Set up the map to the reference frame's space/time coordinate state.
       trick_data_name = str( frame_instance_name ) + '.stc_encoder.buffer'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'state',
                                            trick_name    = trick_data_name,
@@ -132,4 +131,3 @@ class SpaceFOMRefFrameObject( TrickHLAObjectConfig ):
       self.add_attribute( attribute )
 
       return
-

@@ -19,6 +19,7 @@ from ..TrickHLA.TrickHLAObjectConfig import *
 from ..TrickHLA.TrickHLAAttributeConfig import *
 from ..SpaceFOM.SpaceFOMPhysicalEntityObject import *
 
+
 class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
 
    def __init__( self,
@@ -33,7 +34,6 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
                  entity_deleted             = None,
                  entity_thla_manager_object = None,
                  entity_thread_IDs          = None ):
-
 
       # The DynamicalEntity FOM name is fixed for the SpaceFOM and
       # needs to be overridden before calling the DynamicalEntity constructor.
@@ -66,7 +66,6 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
 
       return
 
-
    def initialize( self, thla_object ):
 
       # Call the base class initialization utility function.
@@ -74,16 +73,15 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
 
       return
 
-
    def add_attributes( self ):
-      
+
       # Add the PhysicalEntity attributes.
-      SpaceFOMPhysicalEntityObject.add_attributes(self)
+      SpaceFOMPhysicalEntityObject.add_attributes( self )
 
       # Short cut the sim_object name for the DynamicalEntity data.
       entity_instance_name = self.trick_entity_sim_obj_name
 
-      ## Set up the map to the DynamicalEntity's force.
+      # Set up the map to the DynamicalEntity's force.
       trick_data_name = str( entity_instance_name ) + '.de_packing_data.force'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'force',
                                            trick_name    = trick_data_name,
@@ -94,7 +92,7 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the DynamicalEntity's torque.
+      # Set up the map to the DynamicalEntity's torque.
       trick_data_name = str( entity_instance_name ) + '.de_packing_data.torque'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'torque',
                                            trick_name    = trick_data_name,
@@ -105,7 +103,7 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the DynamicalEntity's mass.
+      # Set up the map to the DynamicalEntity's mass.
       trick_data_name = str( entity_instance_name ) + '.de_packing_data.mass'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'mass',
                                            trick_name    = trick_data_name,
@@ -116,7 +114,7 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the DynamicalEntity's mass rate.
+      # Set up the map to the DynamicalEntity's mass rate.
       trick_data_name = str( entity_instance_name ) + '.de_packing_data.mass_rate'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'mass_rate',
                                            trick_name    = trick_data_name,
@@ -127,7 +125,7 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the DynamicalEntity's inertia tensor.
+      # Set up the map to the DynamicalEntity's inertia tensor.
       trick_data_name = str( entity_instance_name ) + '.de_packing_data.inertia'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'inertia',
                                            trick_name    = trick_data_name,
@@ -138,7 +136,7 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the DynamicalEntity's inertia rate.
+      # Set up the map to the DynamicalEntity's inertia rate.
       trick_data_name = str( entity_instance_name ) + '.de_packing_data.inertia_rate'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'inertia_rate',
                                            trick_name    = trick_data_name,
@@ -150,4 +148,3 @@ class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
       self.add_attribute( attribute )
 
       return
-

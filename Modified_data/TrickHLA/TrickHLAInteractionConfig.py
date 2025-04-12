@@ -15,6 +15,7 @@
 import sys
 import trick
 
+
 class TrickHLAInteractionConfig( object ):
 
    # Ties to TrickHLA from simulation.
@@ -25,7 +26,6 @@ class TrickHLAInteractionConfig( object ):
    hla_handler_instance      = None
    hla_handler_instance_name = None
    hla_manager_interaction   = None
-   
 
    # List of TrickHLA object attributes.
    parameters = None
@@ -51,7 +51,7 @@ class TrickHLAInteractionConfig( object ):
          self.set_FOM_name( thla_FOM_name )
 
       # Specify if this interaction is published or subscribed.
-      self.hla_publish   = thla_publish
+      self.hla_publish = thla_publish
       self.hla_subscribe = thla_subscribe
 
       # Set interaction handler if specified and not None.
@@ -63,7 +63,6 @@ class TrickHLAInteractionConfig( object ):
 
       return
 
-
    def initialize( self, thla_manager_interaction = None ):
 
       # Assign the associated TrickHLA object if specified.
@@ -71,8 +70,8 @@ class TrickHLAInteractionConfig( object ):
          self.hla_manager_interaction = thla_manager_interaction
       elif self.hla_manager_interaction == None:
          trick.exec_terminate_with_return( -1,
-                                           sys._getframe(0).f_code.co_filename,
-                                           sys._getframe(0).f_lineno,
+                                           sys._getframe( 0 ).f_code.co_filename,
+                                           sys._getframe( 0 ).f_lineno,
                                            'TrickHLAInteraction reference not set.' )
 
       # Now make sure that the TrickHLAInteraction data is set.
@@ -82,10 +81,10 @@ class TrickHLAInteractionConfig( object ):
       self.set_handler_instance( self.hla_handler_instance )
 
       # Allocate the federate object's attribute list.
-      self.hla_manager_interaction.param_count = len(self.parameters)
+      self.hla_manager_interaction.param_count = len( self.parameters )
       self.hla_manager_interaction.parameters = \
          trick.alloc_type( self.hla_manager_interaction.param_count,
-                           'TrickHLA::Parameter'                     )
+                           'TrickHLA::Parameter' )
 
       # Loop through the federation interaction parameters and initialize them.
       for indx in range( 0, self.hla_manager_interaction.param_count ):
@@ -93,67 +92,57 @@ class TrickHLAInteractionConfig( object ):
 
       return
 
-
    def set_FOM_name( self, name ):
 
-      self.hla_FOM_name = str(name)
+      self.hla_FOM_name = str( name )
       if self.hla_manager_interaction != None:
-         self.hla_manager_interaction.FOM_name = str(name)
+         self.hla_manager_interaction.FOM_name = str( name )
 
       return
-
 
    def get_FOM_name( self ):
 
       return str( self.hla_FOM_name )
 
-
    def set_publish( self, publish ):
- 
+
       self.hla_publish = publish
       if self.hla_manager_interaction != None:
          self.hla_manager_interaction.publish = self.hla_publish
 
       return
 
-
    def get_publish( self ):
 
       return hla_publish
 
-
    def set_subscribe( self, subscribe ):
- 
+
       self.hla_subscribe = subscribe
       if self.hla_manager_interaction != None:
          self.hla_manager_interaction.subscribe = self.hla_subscribe
 
       return
 
-
    def get_subscribe( self ):
 
       return hla_subscribe
 
-
    def set_handler_instance( self, inter_hndlr ):
- 
+
       self.hla_handler_instance = inter_hndlr
       if self.hla_manager_interaction != None:
          self.hla_manager_interaction.handler = inter_hndlr
 
       return
 
-
    def get_handler_instance( self ):
 
       return self.hla_handler_instance
-
 
    def add_parameter( self, param ):
 
       self.parameters.append( param )
 
       return
-
 

@@ -203,57 +203,57 @@ def main():
          source_dirs.extend( ['./models/DistIf/src/'] )
       if os.path.isdir( './models/DistIf/include' ):
          include_dirs.extend( ['-I./models/DistIf/include'] )
-      
+
       if os.path.isdir( './models/EntityDynamics/src' ):
          source_dirs.extend( ['./models/EntityDynamics/src/'] )
       if os.path.isdir( './models/EntityDynamics/include' ):
          include_dirs.extend( ['-I./models/EntityDynamics/include'] )
-      
+
       if os.path.isdir( './models/FrameDynamics/src' ):
          source_dirs.extend( ['./models/FrameDynamics/src/'] )
       if os.path.isdir( './models/FrameDynamics/include' ):
          include_dirs.extend( ['-I./models/FrameDynamics/include'] )
-      
+
       if os.path.isdir( './models/SAIntegrator/src' ):
          source_dirs.extend( ['./models/SAIntegrator/src/'] )
       if os.path.isdir( './models/SAIntegrator/include' ):
          include_dirs.extend( ['-I./models/SAIntegrator/include'] )
-      
+
       if os.path.isdir( './models/simconfig/src' ):
          source_dirs.extend ( ['./models/simconfig/src/'] )
       if os.path.isdir( './models/simconfig/include' ):
          include_dirs.extend( ['-I./models/simconfig/include'] )
-      
+
       if os.path.isdir( './models/sine/src' ):
          source_dirs.extend ( ['./models/sine/src/'] )
       if os.path.isdir( './models/sine/include' ):
          include_dirs.extend( ['-I./models/sine/include'] )
-      
+
       if os.path.isdir( './models/Wheelbot/Battery/src' ):
          source_dirs.extend( ['./models/Wheelbot/Battery/src/'] )
       if os.path.isdir( './models/Wheelbot/Battery/include' ):
          include_dirs.extend( ['-I./models/Wheelbot/Battery/include'] )
-      
+
       if os.path.isdir( './models/Wheelbot/Control/src' ):
          source_dirs.extend( ['./models/Wheelbot/Control/src/'] )
       if os.path.isdir( './models/Wheelbot/Control/include' ):
          include_dirs.extend( ['-I./models/Wheelbot/Control/include'] )
-      
+
       if os.path.isdir( './models/Wheelbot/Electrical/src' ):
          source_dirs.extend( ['./models/Wheelbot/Electrical/src/'] )
       if os.path.isdir( './models/Wheelbot/Electrical/include' ):
          include_dirs.extend( ['-I./models/Wheelbot/Electrical/include'] )
-      
+
       if os.path.isdir( './models/Wheelbot/Guidance/src' ):
          source_dirs.extend( ['./models/Wheelbot/Guidance/src/'] )
       if os.path.isdir( './models/Wheelbot/Guidance/include' ):
          include_dirs.extend( ['-I./models/Wheelbot/Guidance/include'] )
-      
+
       if os.path.isdir( './models/Wheelbot/Motor/src' ):
          source_dirs.extend( ['./models/Wheelbot/Motor/src/'] )
       if os.path.isdir( './models/Wheelbot/Motor/include' ):
          include_dirs.extend( ['-I./models/Wheelbot/Motor/include'] )
-      
+
       if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
          source_dirs.extend( ['./models/Wheelbot/Vehicle/src/'] )
       if os.path.isdir( './models/Wheelbot/Vehicle/include' ):
@@ -313,7 +313,7 @@ def main():
    for src_dir in source_dirs:
       for dir_path, dir_names, filenames in os.walk( src_dir ):
          for filename in filenames:
-            if filename.endswith(".cpp") or filename.endswith(".cxx") or filename.endswith(".cc") or filename.endswith(".c"):
+            if filename.endswith( ".cpp" ) or filename.endswith( ".cxx" ) or filename.endswith( ".cc" ) or filename.endswith( ".c" ):
                file_path = os.path.join( dir_path, filename )
                source_files.append( file_path )
 
@@ -335,7 +335,7 @@ def main():
       # Execute the clang-tidy command.
       try:
 
-         clang_tidy_proc = subprocess.Popen( clang_tidy_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True )
+         clang_tidy_proc = subprocess.Popen( clang_tidy_command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True )
 
          if ( True ):
             # Print files summary as they are processed.
@@ -350,7 +350,7 @@ def main():
             # Use spinner to indicate activity.
             count = 0
             while clang_tidy_proc.poll() is None:
-   
+
                # Spinner.
                if count % 4 == 0:
                   sys.stdout.write( '\b' )
@@ -369,10 +369,10 @@ def main():
                   sys.stdout.write( '\\' )
                   sys.stdout.flush()
                count += 1
-   
+
                # Check process activity 10 times a second.
                time.sleep( 0.1 )
-   
+
             # Clear the spinner line.
             sys.stdout.write( '\b' )
             sys.stdout.write( ' ' )
@@ -385,7 +385,7 @@ def main():
 
       except subprocess.CalledProcessError:
          TrickHLAMessage.failure( '\'clang-tidy\' command failed! '
-                                  + subprocess.CalledProcessError.message )
+                                  +subprocess.CalledProcessError.message )
 
    # Let the user know that we are done.
    TrickHLAMessage.success( 'Finished checking TrickHLA source code.' )
@@ -453,7 +453,7 @@ def find_clang_tidy( clang_tidy_bin, verbose = True ):
    else:
       if not os.path.isfile( clang_tidy_command ):
          TrickHLAMessage.failure( 'Could not find the clang-tidy command!: '
-                                  + clang_tidy_command )
+                                  +clang_tidy_command )
       else:
          if verbose:
             TrickHLAMessage.status( 'Using clang-tidy command: ' + clang_tidy_command )
@@ -463,19 +463,19 @@ def find_clang_tidy( clang_tidy_bin, verbose = True ):
    #
    try:
       tidy_ver_cmd = [clang_tidy_command, '--version']
-      grep_cmd     = ['grep', '-i', 'version']
+      grep_cmd = ['grep', '-i', 'version']
 
-      tidy_ver_process = subprocess.Popen( tidy_ver_cmd, stdout=subprocess.PIPE )
-      grep_process     = subprocess.Popen( grep_cmd, stdin=tidy_ver_process.stdout, stdout=subprocess.PIPE )
+      tidy_ver_process = subprocess.Popen( tidy_ver_cmd, stdout = subprocess.PIPE )
+      grep_process = subprocess.Popen( grep_cmd, stdin = tidy_ver_process.stdout, stdout = subprocess.PIPE )
       tidy_ver_process.stdout.close()
 
-      output, _          = grep_process.communicate()
+      output, _ = grep_process.communicate()
       clang_tidy_version = output.decode().rstrip()
 
    except subprocess.CalledProcessError:
       TrickHLAMessage.failure( '\'clang-tidy --version\' command failed!: '
-                               + clang_tidy_command + ', '
-                               + subprocess.CalledProcessError.message )
+                               +clang_tidy_command + ', '
+                               +subprocess.CalledProcessError.message )
 
    return clang_tidy_command, clang_tidy_version
 
@@ -519,12 +519,12 @@ def find_trick( trick_path = None, verbose = True ):
          # Capture the output from the 'trick-gte TRICK_HOME' command.
          trick_gte_cmd = ['trick-gte', 'TRICK_HOME']
          try:
-            trick_home = subprocess.check_output( trick_gte_cmd ).decode('utf8', errors='strict').strip()
+            trick_home = subprocess.check_output( trick_gte_cmd ).decode( 'utf8', errors = 'strict' ).strip()
 
          except subprocess.CalledProcessError:
             TrickHLAMessage.failure( '\'trick-gte\' command failed!: '
-                                     + trick_gte_cmd + ', '
-                                     + subprocess.CalledProcessError.message )
+                                     +trick_gte_cmd + ', '
+                                     +subprocess.CalledProcessError.message )
 
          # Look in other possible locations.
          if trick_home == '':
@@ -542,7 +542,7 @@ def find_trick( trick_path = None, verbose = True ):
    else:
       if os.path.isdir( trick_home ) is False:
          TrickHLAMessage.failure( 'Could not find the Trick home directory: '
-                                  + trick_home )
+                                  +trick_home )
          trick_home = None
       else:
          if verbose:
@@ -555,25 +555,25 @@ def find_trick( trick_path = None, verbose = True ):
    trick_version_cmd = trick_home + '/bin/trick-version'
    if os.path.isfile( trick_version_cmd ) is False:
       TrickHLAMessage.failure( 'The \'trick-version\' command not found!: '
-                               + trick_version_cmd )
+                               +trick_version_cmd )
 
    # Capture the output from the 'trick-version -version' command.
    trick_ver_number_cmd = [trick_version_cmd, '-version']
    try:
-      trick_version = subprocess.check_output( trick_ver_number_cmd ).decode('utf8', errors='strict').strip()
+      trick_version = subprocess.check_output( trick_ver_number_cmd ).decode( 'utf8', errors = 'strict' ).strip()
    except subprocess.CalledProcessError:
       TrickHLAMessage.failure( '\'trick-version -version\' command failed!: '
-                               + trick_ver_number_cmd + ', '
-                               + subprocess.CalledProcessError.message )
+                               +trick_ver_number_cmd + ', '
+                               +subprocess.CalledProcessError.message )
 
    # Capture the output from the 'trick-version -year' command.
    trick_ver_yr_cmd = [trick_version_cmd, '-year']
    try:
-      trick_version_year = subprocess.check_output( trick_ver_yr_cmd ).decode('utf8', errors='strict').strip()
+      trick_version_year = subprocess.check_output( trick_ver_yr_cmd ).decode( 'utf8', errors = 'strict' ).strip()
    except subprocess.CalledProcessError:
       TrickHLAMessage.failure( '\'trick-version -year\' command failed!: '
-                               + trick_ver_yr_cmd + ', '
-                               + subprocess.CalledProcessError.message )
+                               +trick_ver_yr_cmd + ', '
+                               +subprocess.CalledProcessError.message )
 
    # Return what we found.
    return trick_home, trick_version, trick_version_year
