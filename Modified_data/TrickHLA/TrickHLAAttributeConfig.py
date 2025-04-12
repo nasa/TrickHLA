@@ -14,6 +14,7 @@
 ##############################################################################
 import trick
 
+
 class TrickHLAAttributeConfig( object ):
 
    FOM_name      = None
@@ -23,7 +24,6 @@ class TrickHLAAttributeConfig( object ):
    locally_owned = True
    config        = trick.TrickHLA.CONFIG_CYCLIC
    rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING
-   
 
    def __init__( self,
                  FOM_name,
@@ -34,26 +34,25 @@ class TrickHLAAttributeConfig( object ):
                  config        = trick.TrickHLA.CONFIG_CYCLIC,
                  rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING ):
 
-      self.FOM_name      = FOM_name
-      self.trick_name    = trick_name
-      self.publish       = publish
-      self.subscribe     = subscribe
+      self.FOM_name = FOM_name
+      self.trick_name = trick_name
+      self.publish = publish
+      self.subscribe = subscribe
       self.locally_owned = locally_owned
-      self.config        = config
-      self.rti_encoding  = rti_encoding
+      self.config = config
+      self.rti_encoding = rti_encoding
 
       return
 
-
    def initialize( self, attribute ):
 
-      attribute.FOM_name      = self.FOM_name
-      attribute.trick_name    = self.trick_name
-      attribute.publish       = self.publish
-      attribute.subscribe     = self.subscribe
+      attribute.FOM_name = self.FOM_name
+      attribute.trick_name = self.trick_name
+      attribute.publish = self.publish
+      attribute.subscribe = self.subscribe
       attribute.locally_owned = self.locally_owned
-      attribute.config        = self.config
-      attribute.rti_encoding  = self.rti_encoding
+      attribute.config = self.config
+      attribute.rti_encoding = self.rti_encoding
 
       return
 

@@ -16,6 +16,7 @@
 import sys
 import trick
 
+
 class TrickHLAObjectConfig( object ):
 
    # Ties to TrickHLA from simulation.
@@ -128,7 +129,6 @@ class TrickHLAObjectConfig( object ):
 
       return
 
-
    def initialize( self, thla_object = None ):
 
       # Assign the associated TrickHLA object if specified.
@@ -136,8 +136,8 @@ class TrickHLAObjectConfig( object ):
          self.hla_object = thla_object
       elif self.hla_object == None:
          trick.exec_terminate_with_return( -1,
-                                           sys._getframe(0).f_code.co_filename,
-                                           sys._getframe(0).f_lineno,
+                                           sys._getframe( 0 ).f_code.co_filename,
+                                           sys._getframe( 0 ).f_lineno,
                                            'TrickHLA::Object reference not set.' )
 
       # Now make sure that the TrickHLAObject data is set.
@@ -157,7 +157,7 @@ class TrickHLAObjectConfig( object ):
 
       # Allocate the federate object's attribute list.
       self.hla_object.attr_count = len( self.attributes )
-      self.hla_object.attributes = trick.TMM_declare_var_1d( 'TrickHLA::Attribute', 
+      self.hla_object.attributes = trick.TMM_declare_var_1d( 'TrickHLA::Attribute',
                                                              self.hla_object.attr_count )
 
       # Loop through the federation object attributes and initialize them.
@@ -166,73 +166,63 @@ class TrickHLAObjectConfig( object ):
 
       return
 
-
    def set_create( self, create_obj ):
- 
+
       self.hla_create = create_obj
       if self.hla_object != None:
          self.hla_object.create_HLA_instance = self.hla_create
 
       return
 
-
    def get_create( self ):
 
       return self.hla_create
 
-
    def set_instance_name( self, name ):
 
-      self.hla_instance_name = str(name)
+      self.hla_instance_name = str( name )
       if self.hla_object != None:
-         self.hla_object.name = str(name)
+         self.hla_object.name = str( name )
 
       return
-
 
    def get_instance_name( self ):
 
       return str( self.hla_instance_name )
 
-
    def set_FOM_name( self, name ):
 
-      self.hla_FOM_name = str(name)
+      self.hla_FOM_name = str( name )
       if self.hla_object != None:
-         self.hla_object.FOM_name = str(name)
+         self.hla_object.FOM_name = str( name )
 
       return
-
 
    def get_FOM_name( self ):
 
       return str( self.hla_FOM_name )
 
-
    def set_thread_IDs( self, threadIDs ):
 
-      self.hla_thread_IDs = str(threadIDs)
+      self.hla_thread_IDs = str( threadIDs )
       if self.hla_object != None:
-         self.hla_object.thread_ids = str(threadIDs)
+         self.hla_object.thread_ids = str( threadIDs )
 
       return
-
 
    def get_thread_IDs( self ):
 
       return str( self.hla_thread_IDs )
 
+   def set_lag_comp_instance( self, obj_lag_comp ):
 
-   def set_lag_comp_instance( self, obj_lag_comp):
- 
       self.hla_lag_comp_instance = obj_lag_comp
       if self.hla_object != None:
          self.hla_object.lag_comp = obj_lag_comp
-         self.hla_object.lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE 
+         self.hla_object.lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE
 
       return
-   
-   
+
    def set_lag_comp_type( self, lag_comp_type ):
 
       self.hla_lag_comp_type = lag_comp_type
@@ -241,47 +231,41 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+   def set_deleted_instance( self, obj_deleted ):
 
-   def set_deleted_instance( self, obj_deleted):
- 
       self.hla_deleted_instance = obj_deleted
       if self.hla_object != None:
          self.hla_object.deleted = obj_deleted
 
       return
 
-
    def set_ownership_instance( self, obj_ownership_handler ):
- 
+
       self.hla_ownership_instance = obj_ownership_handler
       if self.hla_object != None:
          self.hla_object.ownership = obj_ownership_handler
 
       return
 
-
    def set_conditional_instance( self, obj_conditional ):
- 
+
       self.hla_conditional_instance = obj_conditional
       if self.hla_object != None:
          self.hla_object.conditional = obj_conditional
 
       return
 
-
    def set_packing_instance( self, obj_packing ):
- 
+
       self.hla_packing_instance = obj_packing
       if self.hla_object != None:
          self.hla_object.packing = obj_packing
 
       return
 
-
    def get_packing_instance( self ):
 
       return self.hla_packing_instance
-
 
    def add_attribute( self, attribute ):
 
@@ -289,18 +273,15 @@ class TrickHLAObjectConfig( object ):
 
       return
 
-
    def set_attribute_publish( self, publish ):
 
       self.hla_attribute_publish = publish
 
       return
 
-
    def get_attribute_publish( self ):
 
       return self.hla_attribute_publish
-
 
    def set_attribute_subscribe( self, subscribe ):
 
@@ -308,11 +289,9 @@ class TrickHLAObjectConfig( object ):
 
       return
 
-
    def get_attribute_subscribe( self ):
 
       return self.hla_attribute_subscribe
-
 
    def set_attribute_config( self, attribute_config ):
 
@@ -320,11 +299,9 @@ class TrickHLAObjectConfig( object ):
 
       return
 
-
    def get_attribute_config( self ):
 
       return self.hla_attribute_config
-
 
    def set_blocking_cyclic_read( self, blocking_cyclic_read ):
 
@@ -333,7 +310,6 @@ class TrickHLAObjectConfig( object ):
          self.hla_object.blocking_cyclic_read = self.hla_blocking_cyclic_read
 
       return
-
 
    def get_blocking_cyclic_read( self ):
 

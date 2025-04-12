@@ -20,6 +20,7 @@ import sys
 from ..TrickHLA.TrickHLAInteractionConfig import *
 from ..TrickHLA.TrickHLAParameterConfig import *
 
+
 class SpaceFOMMTRInteraction( TrickHLAInteractionConfig ):
 
    trick_sim_obj_name = None
@@ -29,7 +30,7 @@ class SpaceFOMMTRInteraction( TrickHLAInteractionConfig ):
                  S_define_instance,
                  S_define_instance_name,
                  manger_interaction = None ):
-      
+
       # Set the name of the interaction.
       S_define_instance.name = 'ModeTransitionRequest'
 
@@ -59,7 +60,6 @@ class SpaceFOMMTRInteraction( TrickHLAInteractionConfig ):
 
       return
 
-
    def initialize( self, thla_interaction ):
 
       # Call the base class initialization utility function.
@@ -67,14 +67,12 @@ class SpaceFOMMTRInteraction( TrickHLAInteractionConfig ):
 
       return
 
-
    def add_parameters( self ):
 
       # Set up the map to the MTR interaction execution mode.
       parameter = TrickHLAParameterConfig( FOM_name     = 'execution_mode',
-                                           trick_name   = str(self.trick_sim_obj_name) + '.mtr_mode_int',
+                                           trick_name   = str( self.trick_sim_obj_name ) + '.mtr_mode_int',
                                            rti_encoding = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_parameter( parameter )
 
       return
-
