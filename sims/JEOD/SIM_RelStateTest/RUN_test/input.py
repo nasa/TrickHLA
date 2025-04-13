@@ -397,9 +397,9 @@ else:
    print_usage_message()
 
 pe_object = SpaceFOMPhysicalEntityObject( 
-   create_entity_object = True,
-   entity_instance_name = vehicle_name,
-   entity_S_define_instance = veh_physical_entity.entity_packing,
+   create_entity_object          = True,
+   entity_instance_name          = vehicle_name,
+   entity_S_define_instance      = veh_physical_entity.entity_packing,
    entity_S_define_instance_name = 'veh_physical_entity.entity_packing' )
 
 # Set the debug flag for the active vehicle.
