@@ -213,13 +213,14 @@ Federate_name = "FED_1"
 
 # THLA configuration
 from Modified_data.TrickHLA.TrickHLAFederateConfig import *
-federate = TrickHLAFederateConfig( thla_federate = THLA.federate,
-                                   thla_manager = THLA.manager,
-                                   thla_control = THLA.execution_control,
-                                   thla_config = THLA.simple_sim_config,
-                                   thla_federation_name = Federation_name,
-                                   thla_federate_name = Federate_name,
-                                   thla_enabled = True )
+federate = TrickHLAFederateConfig(
+   thla_federate        = THLA.federate,
+   thla_manager         = THLA.manager,
+   thla_control         = THLA.execution_control,
+   thla_config          = THLA.simple_sim_config,
+   thla_federation_name = Federation_name,
+   thla_federate_name   = Federate_name,
+   thla_enabled         = True )
 
 # Add required federates.
 federate.add_known_federate( True, "FED_1" )
@@ -242,75 +243,75 @@ from Modified_data.DistIf.FluidDistIfObjectConfig import *
 # Interfaces between modelA in this federate (FED_1) to modelB in the other FED_2:
 data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_Vestibule_1A_to_2B',
-   bus_name = 'cabinAtmo.modelA.mVestibule.mIf',
-   isBusA = True,
-   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name           = 'cabinAtmo.modelA.mVestibule.mIf',
+   isBusA             = True,
+   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_Vestibule_2B_to_1A',
-   bus_name = 'cabinAtmo.modelA.mVestibule.mIf',
-   isBusA = False,
-   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name           = 'cabinAtmo.modelA.mVestibule.mIf',
+   isBusA             = False,
+   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_IMV_1A_to_2B',
-   bus_name = 'cabinAtmo.modelA.mImvDuct.mIf',
-   isBusA = True,
-   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name           = 'cabinAtmo.modelA.mImvDuct.mIf',
+   isBusA             = True,
+   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_IMV_2B_to_1A',
-   bus_name = 'cabinAtmo.modelA.mImvDuct.mIf',
-   isBusA = False,
-   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name           = 'cabinAtmo.modelA.mImvDuct.mIf',
+   isBusA             = False,
+   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 # Interfaces between modelB in this federate (FED_1) to modelA in the other FED_2:
 data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_Vestibule_2A_to_1B',
-   bus_name = 'cabinAtmo.modelB.mVestibule.mIf',
-   isBusA = True,
-   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name           = 'cabinAtmo.modelB.mVestibule.mIf',
+   isBusA             = True,
+   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_Vestibule_1B_to_2A',
-   bus_name = 'cabinAtmo.modelB.mVestibule.mIf',
-   isBusA = False,
-   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name           = 'cabinAtmo.modelB.mVestibule.mIf',
+   isBusA             = False,
+   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_IMV_2A_to_1B',
-   bus_name = 'cabinAtmo.modelB.mImvDuct.mIf',
-   isBusA = True,
-   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name           = 'cabinAtmo.modelB.mImvDuct.mIf',
+   isBusA             = True,
+   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 data_obj = FluidDistIfAToBObjectConfig( 
    thla_federate_name = 'FluidDistIf_IMV_1B_to_2A',
-   bus_name = 'cabinAtmo.modelB.mImvDuct.mIf',
-   isBusA = False,
-   FOM_type = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
+   bus_name           = 'cabinAtmo.modelB.mImvDuct.mIf',
+   isBusA             = False,
+   FOM_type           = 'FluidDistIfDataBase.FluidDistIfData_6_4' )
 federate.add_fed_object( data_obj )
 
 # Configure the Conservation parameters HLA data messages
 from Modified_data.DistIf.ConserveParamsObjectConfig import *
 data_obj = ConserveParamsObjectConfig( 
    thla_federate_name = 'ConservationData_1_to_2',
-   model_name = 'cabinAtmo.modelB.mConserveParams',
-   isOwner = True,
-   FOM_type = 'ConservationParams' )
+   model_name         = 'cabinAtmo.modelB.mConserveParams',
+   isOwner            = True,
+   FOM_type           = 'ConservationParams' )
 federate.add_fed_object( data_obj )
 
 data_obj = ConserveParamsObjectConfig( 
    thla_federate_name = 'ConservationData_2_to_1',
-   model_name = 'cabinAtmo.conservation.modelBConserveParams',
-   isOwner = False,
-   FOM_type = 'ConservationParams' )
+   model_name         = 'cabinAtmo.conservation.modelBConserveParams',
+   isOwner            = False,
+   FOM_type           = 'ConservationParams' )
 federate.add_fed_object( data_obj )
 
 # After all configuration is defined, initialize the federate

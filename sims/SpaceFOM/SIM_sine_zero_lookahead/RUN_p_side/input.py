@@ -167,13 +167,14 @@ log_sine_states( 'PC', 0.250 )
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( thla_federate = THLA.federate,
-                                   thla_manager = THLA.manager,
-                                   thla_control = THLA.execution_control,
-                                   thla_config = THLA.ExCO,
-                                   thla_federation_name = federation_name,
-                                   thla_federate_name = federate_name,
-                                   thla_enabled = True )
+federate = SpaceFOMFederateConfig(
+   thla_federate        = THLA.federate,
+   thla_manager         = THLA.manager,
+   thla_control         = THLA.execution_control,
+   thla_config          = THLA.ExCO,
+   thla_federation_name = federation_name,
+   thla_federate_name   = federate_name,
+   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -191,7 +192,7 @@ else:
 #--------------------------------------------------------------------------
 federate.set_master_role( False )  # This is NOT the Master federate.
 federate.set_pacing_role( False )  # This is NOT the Pacing federate.
-federate.set_RRFP_role( False )  # This is NOT the Root Reference Frame Publisher.
+federate.set_RRFP_role( False )    # This is NOT the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
@@ -269,36 +270,40 @@ PC.sim_data.name = 'PC.sim_data.name.P-side.cyclic'
 # Set up for Sine data.
 #---------------------------------------------------------------------------
 
-sine_AZ = SineObject( sine_create_object = False,
-                      sine_obj_instance_name = 'A-side-Federate.Sine.zero',
-                      sine_trick_sim_obj_name = 'AZ',
-                      sine_packing = AZ.packing,
-                      sine_attribute_config = trick.CONFIG_ZERO_LOOKAHEAD )
+sine_AZ = SineObject(
+   sine_create_object      = False,
+   sine_obj_instance_name  = 'A-side-Federate.Sine.zero',
+   sine_trick_sim_obj_name = 'AZ',
+   sine_packing            = AZ.packing,
+   sine_attribute_config   = trick.CONFIG_ZERO_LOOKAHEAD )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_AZ )
 
-sine_PZ = SineObject( sine_create_object = True,
-                      sine_obj_instance_name = 'P-side-Federate.Sine.zero',
-                      sine_trick_sim_obj_name = 'PZ',
-                      sine_packing = PZ.packing,
-                      sine_attribute_config = trick.CONFIG_ZERO_LOOKAHEAD )
+sine_PZ = SineObject(
+   sine_create_object      = True,
+   sine_obj_instance_name  = 'P-side-Federate.Sine.zero',
+   sine_trick_sim_obj_name = 'PZ',
+   sine_packing            = PZ.packing,
+   sine_attribute_config   = trick.CONFIG_ZERO_LOOKAHEAD )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_PZ )
 
-sine_AC = SineObject( sine_create_object = False,
-                      sine_obj_instance_name = 'A-side-Federate.Sine.cyclic',
-                      sine_trick_sim_obj_name = 'AC',
-                      sine_packing = AC.packing )
+sine_AC = SineObject(
+   sine_create_object      = False,
+   sine_obj_instance_name  = 'A-side-Federate.Sine.cyclic',
+   sine_trick_sim_obj_name = 'AC',
+   sine_packing            = AC.packing )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_AC )
 
-sine_PC = SineObject( sine_create_object = True,
-                      sine_obj_instance_name = 'P-side-Federate.Sine.cyclic',
-                      sine_trick_sim_obj_name = 'PC',
-                      sine_packing = PC.packing )
+sine_PC = SineObject(
+   sine_create_object      = True,
+   sine_obj_instance_name  = 'P-side-Federate.Sine.cyclic',
+   sine_trick_sim_obj_name = 'PC',
+   sine_packing            = PC.packing )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_PC )
@@ -309,11 +314,11 @@ federate.add_fed_object( sine_PC )
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject( 
-   create_frame_object = federate.is_RRFP,
-   frame_instance_name = 'RootFrame',
-   frame_S_define_instance = root_ref_frame.frame_packing,
+   create_frame_object          = federate.is_RRFP,
+   frame_instance_name          = 'RootFrame',
+   frame_S_define_instance      = root_ref_frame.frame_packing,
    frame_S_define_instance_name = 'root_ref_frame.frame_packing',
-   frame_conditional = root_ref_frame.conditional )
+   frame_conditional            = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -328,16 +333,16 @@ federate.set_root_frame( root_frame )
 # Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( 
-   create_frame_object = False,
-   frame_instance_name = 'FrameA',
-   frame_S_define_instance = ref_frame_A.frame_packing,
+   create_frame_object          = False,
+   frame_instance_name          = 'FrameA',
+   frame_S_define_instance      = ref_frame_A.frame_packing,
    frame_S_define_instance_name = 'ref_frame_A.frame_packing',
-   parent_S_define_instance = root_ref_frame.frame_packing,
-   parent_name = 'RootFrame',
-   frame_conditional = ref_frame_A.conditional,
-   frame_lag_comp = ref_frame_A.lag_compensation,
-   frame_ownership = ref_frame_A.ownership_handler,
-   frame_deleted = ref_frame_A.deleted_callback )
+   parent_S_define_instance     = root_ref_frame.frame_packing,
+   parent_name                  = 'RootFrame',
+   frame_conditional            = ref_frame_A.conditional,
+   frame_lag_comp               = ref_frame_A.lag_compensation,
+   frame_ownership              = ref_frame_A.ownership_handler,
+   frame_deleted                = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
@@ -384,5 +389,5 @@ if run_duration:
 # Send a timed MTR request to the Master federate.
 #---------------------------------------------------------------------------
 # Send an interaction.
-# trick.add_read(3.0 , """THLA.manager.send_MTR_interation( trick.SpaceFOM.MTR_GOTO_SHUTDOWN )""")
-# trick.add_read(3.0 , """THLA.manager.send_MTR_interation( trick.SpaceFOM.MTR_GOTO_FREEZE )""")
+#trick.add_read( 3.0 , """THLA.execution_control.send_MTR_interaction( trick.SpaceFOM.MTR_GOTO_FREEZE )""" )
+#trick.add_read( 5.0 , """THLA.execution_control.send_MTR_interaction( trick.SpaceFOM.MTR_GOTO_SHUTDOWN )""" )
