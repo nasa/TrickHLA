@@ -148,13 +148,14 @@ if hla:
    trick.exec_set_stack_trace( True )
 
    # Instantiate the Python SpaceFOM configuration object.
-   federate = SpaceFOMFederateConfig( thla_federate = THLA.federate,
-                                      thla_manager = THLA.manager,
-                                      thla_control = THLA.execution_control,
-                                      thla_config = THLA.ExCO,
-                                      thla_federation_name = 'Wheelbot_Test',
-                                      thla_federate_name = 'Wheelbot-2',
-                                      thla_enabled = True )
+   federate = SpaceFOMFederateConfig(
+      thla_federate = THLA.federate,
+      thla_manager = THLA.manager,
+      thla_control = THLA.execution_control,
+      thla_config = THLA.ExCO,
+      thla_federation_name = 'Wheelbot_Test',
+      thla_federate_name = 'Wheelbot-2',
+      thla_enabled = True )
 
    # Set the name of the ExCO S_define instance.
    # We do not need to do this since we're using the ExCO default_data job
@@ -172,7 +173,7 @@ if hla:
    #--------------------------------------------------------------------------
    federate.set_master_role( True )  # This is the Master federate.
    federate.set_pacing_role( True )  # This is the Pacing federate.
-   federate.set_RRFP_role( True )  # This is the Root Reference Frame Publisher.
+   federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 
    #--------------------------------------------------------------------------
    # Add in known required federates.
@@ -216,17 +217,19 @@ if hla:
    # Configure the Object and Attribute.
    #--------------------------------------------------------------------------
    # Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
-   obj = TrickHLAObjectConfig( thla_create = True,
-                               thla_instance_name = 'Wheelbot_hla_entity',
-                               thla_FOM_name = 'PhysicalEntity' )
+   obj = TrickHLAObjectConfig(
+      thla_create = True,
+      thla_instance_name = 'Wheelbot_hla_entity',
+      thla_FOM_name = 'PhysicalEntity' )
 
-   att0 = TrickHLAAttributeConfig( FOM_name = 'state',
-                                   trick_name = 'veh.vehicle.position',
-                                   publish = True,
-                                   subscribe = False,
-                                   locally_owned = True,
-                                   config = trick.CONFIG_CYCLIC,
-                                   rti_encoding = trick.ENCODING_LITTLE_ENDIAN )
+   att0 = TrickHLAAttributeConfig(
+      FOM_name = 'state',
+      trick_name = 'veh.vehicle.position',
+      publish = True,
+      subscribe = False,
+      locally_owned = True,
+      config = trick.CONFIG_CYCLIC,
+      rti_encoding = trick.ENCODING_LITTLE_ENDIAN )
 
    obj.add_attribute( att0 )
 

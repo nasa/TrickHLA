@@ -265,13 +265,14 @@ dynamics.dyn_manager.deriv_ephem_update = True
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   'SpaceFOM_JEOD_Test',
-                                   'JEODRefFrames',
-                                   True )
+federate = SpaceFOMFederateConfig(
+   THLA.federate,
+   THLA.manager,
+   THLA.execution_control,
+   THLA.ExCO,
+   'SpaceFOM_JEOD_Test',
+   'JEODRefFrames',
+   True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -293,7 +294,7 @@ else:
 #--------------------------------------------------------------------------
 federate.set_master_role( True )  # This is the Master federate.
 federate.set_pacing_role( True )  # This is the Pacing federate.
-federate.set_RRFP_role( True )  # This is the Root Reference Frame Publisher.
+federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
@@ -364,10 +365,10 @@ if not express_frame in frames_dict.keys():
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
 frame_tree = JEODRefFrameTreeObject( 
-   federate_instance = federate,
-   tree_instance = ref_frame_tree,
+   federate_instance    = federate,
+   tree_instance        = ref_frame_tree,
    create_frame_objects = True,
-   lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+   lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose

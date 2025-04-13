@@ -165,13 +165,14 @@ log_sine_states( 'P', 0.250 )
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
-                                   thla_manager         = THLA.manager,
-                                   thla_control         = THLA.execution_control,
-                                   thla_config          = THLA.ExCO,
-                                   thla_federation_name = federation_name,
-                                   thla_federate_name   = federate_name,
-                                   thla_enabled         = True )
+federate = SpaceFOMFederateConfig(
+   thla_federate        = THLA.federate,
+   thla_manager         = THLA.manager,
+   thla_control         = THLA.execution_control,
+   thla_config          = THLA.ExCO,
+   thla_federation_name = federation_name,
+   thla_federate_name   = federate_name,
+   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -189,7 +190,7 @@ else:
 #--------------------------------------------------------------------------
 federate.set_master_role( False )  # This is NOT the Master federate.
 federate.set_pacing_role( False )  # This is NOT the Pacing federate.
-federate.set_RRFP_role( False )  # This is NOT the Root Reference Frame Publisher.
+federate.set_RRFP_role( False )    # This is NOT the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
@@ -271,28 +272,30 @@ P.interaction_handler.message = 'P-side: P.interaction_hdlr.message'
 
 # Even though we don't create the object instance, set the attributes to
 # publish so that we can take ownership of this object.
-sine_A = SineObject( sine_create_object      = False,
-                     sine_obj_instance_name  = 'A-side-Federate.Sine',
-                     sine_trick_sim_obj_name = 'A',
-                     sine_packing            = A.packing,
-                     sine_conditional        = A.conditional,
-                     sine_lag_comp           = A.lag_compensation,
-                     sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-                     sine_ownership          = A.ownership_handler,
-                     sine_deleted            = A.obj_deleted,
-                     sine_attribute_publish  = True )
+sine_A = SineObject(
+   sine_create_object      = False,
+   sine_obj_instance_name  = 'A-side-Federate.Sine',
+   sine_trick_sim_obj_name = 'A',
+   sine_packing            = A.packing,
+   sine_conditional        = A.conditional,
+   sine_lag_comp           = A.lag_compensation,
+   sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_ownership          = A.ownership_handler,
+   sine_deleted            = A.obj_deleted,
+   sine_attribute_publish  = True )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_A )
 
-sine_P = SineObject( sine_create_object      = True,
-                     sine_obj_instance_name  = 'P-side-Federate.Sine',
-                     sine_trick_sim_obj_name = 'P',
-                     sine_packing            = P.packing,
-                     sine_conditional        = P.conditional,
-                     sine_lag_comp           = P.lag_compensation,
-                     sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-                     sine_deleted            = P.obj_deleted )
+sine_P = SineObject(
+   sine_create_object      = True,
+   sine_obj_instance_name  = 'P-side-Federate.Sine',
+   sine_trick_sim_obj_name = 'P',
+   sine_packing            = P.packing,
+   sine_conditional        = P.conditional,
+   sine_lag_comp           = P.lag_compensation,
+   sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_deleted            = P.obj_deleted )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_P )

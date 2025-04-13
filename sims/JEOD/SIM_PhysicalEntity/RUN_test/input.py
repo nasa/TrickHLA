@@ -447,13 +447,14 @@ dynamics.dyn_manager.add_body_action( passive_vehicle.lvlh_init )
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( thla_federate = THLA.federate,
-                                   thla_manager = THLA.manager,
-                                   thla_control = THLA.execution_control,
-                                   thla_config = THLA.ExCO,
-                                   thla_federation_name = federation_name,
-                                   thla_federate_name = federate_name,
-                                   thla_enabled = True )
+federate = SpaceFOMFederateConfig(
+   thla_federate        = THLA.federate,
+   thla_manager         = THLA.manager,
+   thla_control         = THLA.execution_control,
+   thla_config          = THLA.ExCO,
+   thla_federation_name = federation_name,
+   thla_federate_name   = federate_name,
+   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -475,7 +476,7 @@ else:
 #--------------------------------------------------------------------------
 federate.set_master_role( False )  # This is NOT the Master federate.
 federate.set_pacing_role( False )  # This is NOT the Pacing federate.
-federate.set_RRFP_role( False )  # This is NOT the Root Reference Frame Publisher.
+federate.set_RRFP_role( False )    # This is NOT the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
@@ -518,10 +519,10 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
 frame_tree = JEODRefFrameTreeObject( 
-   federate_instance = federate,
-   tree_instance = ref_frame_tree,
+   federate_instance    = federate,
+   tree_instance        = ref_frame_tree,
    create_frame_objects = False,
-   lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+   lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose
@@ -538,9 +539,9 @@ mars_centered_fixed.frame_packing.debug = verbose
 # Set up the lander PhysicalEntity object.
 #---------------------------------------------------------------------------
 lander = SpaceFOMPhysicalEntityObject( 
-   create_entity_object = True,
-   entity_instance_name = active_entity_name,
-   entity_S_define_instance = active_physical_entity.entity_packing,
+   create_entity_object          = True,
+   entity_instance_name          = active_entity_name,
+   entity_S_define_instance      = active_physical_entity.entity_packing,
    entity_S_define_instance_name = 'active_physical_entity.entity_packing' )
 
 # Set the debug flag for the active vehicle.
@@ -558,9 +559,9 @@ active_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 # Set up the lander PhysicalInterface object.
 #---------------------------------------------------------------------------
 lander_dockport = SpaceFOMPhysicalInterfaceObject( 
-   create_interface_object = True,
-   interface_instance_name = active_interface_name,
-   interface_S_define_instance = active_physical_interface.interface_packing,
+   create_interface_object          = True,
+   interface_instance_name          = active_interface_name,
+   interface_S_define_instance      = active_physical_interface.interface_packing,
    interface_S_define_instance_name = 'active_physical_interface.interface_packing' )
 
 # Set the JEOD vehicle point ID associated with this interface.
@@ -579,9 +580,9 @@ active_physical_interface.interface_packing.set_parent( active_entity_name )
 # Set up the station PhysicalEntity object.
 #---------------------------------------------------------------------------
 station = SpaceFOMPhysicalEntityObject( 
-   create_entity_object = True,
-   entity_instance_name = passive_entity_name,
-   entity_S_define_instance = passive_physical_entity.entity_packing,
+   create_entity_object          = True,
+   entity_instance_name          = passive_entity_name,
+   entity_S_define_instance      = passive_physical_entity.entity_packing,
    entity_S_define_instance_name = 'passive_physical_entity.entity_packing' )
 
 # Set the debug flag for the passive vehicle.
@@ -599,9 +600,9 @@ passive_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 # Set up the station PhysicalInterface object.
 #---------------------------------------------------------------------------
 station_dockport = SpaceFOMPhysicalInterfaceObject( 
-   create_interface_object = True,
-   interface_instance_name = passive_interface_name,
-   interface_S_define_instance = passive_physical_interface.interface_packing,
+   create_interface_object          = True,
+   interface_instance_name          = passive_interface_name,
+   interface_S_define_instance      = passive_physical_interface.interface_packing,
    interface_S_define_instance_name = 'passive_physical_interface.interface_packing' )
 
 # Set the JEOD vehicle point ID associated with this interface.

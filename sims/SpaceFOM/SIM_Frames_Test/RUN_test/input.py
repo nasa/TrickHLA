@@ -232,13 +232,14 @@ trick.exec_set_stack_trace( False )
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( thla_federate = THLA.federate,
-                                   thla_manager = THLA.manager,
-                                   thla_control = THLA.execution_control,
-                                   thla_config = THLA.ExCO,
-                                   thla_federation_name = 'SpaceFOM_Frames_Test',
-                                   thla_federate_name = 'SpaceFOMRefFrames',
-                                   thla_enabled = True )
+federate = SpaceFOMFederateConfig(
+   thla_federate        = THLA.federate,
+   thla_manager         = THLA.manager,
+   thla_control         = THLA.execution_control,
+   thla_config          = THLA.ExCO,
+   thla_federation_name = 'SpaceFOM_Frames_Test',
+   thla_federate_name   = 'SpaceFOMRefFrames',
+   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -260,7 +261,7 @@ else:
 #--------------------------------------------------------------------------
 federate.set_master_role( True )  # This is the Master federate.
 federate.set_pacing_role( True )  # This is the Pacing federate.
-federate.set_RRFP_role( True )  # This is the Root Reference Frame Publisher.
+federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
@@ -444,4 +445,3 @@ if run_duration != None:
       trick.stop( 0.0 )
    else:
       trick.sim_services.exec_set_terminate_time( run_duration )
-
