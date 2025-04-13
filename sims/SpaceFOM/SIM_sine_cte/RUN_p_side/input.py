@@ -386,5 +386,5 @@ if run_duration:
 # Send a timed MTR request to the Master federate.
 #---------------------------------------------------------------------------
 # Send an interaction.
-# trick.add_read(3.0 , """THLA.manager.send_MTR_interation( trick.SpaceFOM.MTR_GOTO_SHUTDOWN )""")
-# trick.add_read(3.0 , """THLA.manager.send_MTR_interation( trick.SpaceFOM.MTR_GOTO_FREEZE )""")
+#trick.add_read( 3.0 , """THLA.execution_control.send_MTR_interaction( trick.SpaceFOM.MTR_GOTO_FREEZE )""" )
+#trick.add_read( 5.0 , """THLA.execution_control.send_MTR_interaction( trick.SpaceFOM.MTR_GOTO_SHUTDOWN )""" )
