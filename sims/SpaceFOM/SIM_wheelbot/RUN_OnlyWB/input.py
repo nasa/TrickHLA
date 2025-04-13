@@ -139,13 +139,13 @@ trick.exec_set_stack_trace( True )
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-   thla_federate = THLA.federate,
-   thla_manager = THLA.manager,
-   thla_control = THLA.execution_control,
-   thla_config = THLA.ExCO,
+   thla_federate        = THLA.federate,
+   thla_manager         = THLA.manager,
+   thla_control         = THLA.execution_control,
+   thla_config          = THLA.ExCO,
    thla_federation_name = 'Wheelbot_Test',
-   thla_federate_name = 'Wheelbot-1',
-   thla_enabled = True )
+   thla_federate_name   = 'Wheelbot-1',
+   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -272,9 +272,9 @@ ref_frame_tree.frame_A_data.state.time = 0.0
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject( 
-   create_frame_object = federate.is_RRFP,
-   frame_instance_name = 'RootFrame',
-   frame_S_define_instance = root_ref_frame.frame_packing,
+   create_frame_object          = federate.is_RRFP,
+   frame_instance_name          = 'RootFrame',
+   frame_S_define_instance      = root_ref_frame.frame_packing,
    frame_S_define_instance_name = 'root_ref_frame.frame_packing' )
 
 # Set the debug flag for the root reference frame.
@@ -289,9 +289,9 @@ federate.set_root_frame( root_frame )
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( 
-   create_frame_object = True,
-   frame_instance_name = 'FrameA',
-   frame_S_define_instance = ref_frame_A.frame_packing,
+   create_frame_object          = True,
+   frame_instance_name          = 'FrameA',
+   frame_S_define_instance      = ref_frame_A.frame_packing,
    frame_S_define_instance_name = 'ref_frame_A.frame_packing' )
 
 # Set the debug flag for the root reference frame.

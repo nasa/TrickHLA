@@ -149,13 +149,13 @@ if hla:
 
    # Instantiate the Python SpaceFOM configuration object.
    federate = SpaceFOMFederateConfig(
-      thla_federate = THLA.federate,
-      thla_manager = THLA.manager,
-      thla_control = THLA.execution_control,
-      thla_config = THLA.ExCO,
+      thla_federate        = THLA.federate,
+      thla_manager         = THLA.manager,
+      thla_control         = THLA.execution_control,
+      thla_config          = THLA.ExCO,
       thla_federation_name = 'Wheelbot_Test',
-      thla_federate_name = 'Wheelbot-2',
-      thla_enabled = True )
+      thla_federate_name   = 'Wheelbot-2',
+      thla_enabled         = True )
 
    # Set the name of the ExCO S_define instance.
    # We do not need to do this since we're using the ExCO default_data job
@@ -218,18 +218,18 @@ if hla:
    #--------------------------------------------------------------------------
    # Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
    obj = TrickHLAObjectConfig(
-      thla_create = True,
+      thla_create        = True,
       thla_instance_name = 'Wheelbot_hla_entity',
-      thla_FOM_name = 'PhysicalEntity' )
+      thla_FOM_name      = 'PhysicalEntity' )
 
    att0 = TrickHLAAttributeConfig(
-      FOM_name = 'state',
-      trick_name = 'veh.vehicle.position',
-      publish = True,
-      subscribe = False,
+      FOM_name      = 'state',
+      trick_name    = 'veh.vehicle.position',
+      publish       = True,
+      subscribe     = False,
       locally_owned = True,
-      config = trick.CONFIG_CYCLIC,
-      rti_encoding = trick.ENCODING_LITTLE_ENDIAN )
+      config        = trick.CONFIG_CYCLIC,
+      rti_encoding  = trick.ENCODING_LITTLE_ENDIAN )
 
    obj.add_attribute( att0 )
 
@@ -283,9 +283,9 @@ if hla:
    # If it is NOT the RRFP, it will subscribe to the frame.
    #---------------------------------------------------------------------------
    root_frame = SpaceFOMRefFrameObject( 
-      create_frame_object = federate.is_RRFP,
-      frame_instance_name = 'RootFrame',
-      frame_S_define_instance = root_ref_frame.frame_packing,
+      create_frame_object          = federate.is_RRFP,
+      frame_instance_name          = 'RootFrame',
+      frame_S_define_instance      = root_ref_frame.frame_packing,
       frame_S_define_instance_name = 'root_ref_frame.frame_packing' )
 
    # Set the debug flag for the root reference frame.
@@ -300,9 +300,9 @@ if hla:
    # If it is NOT the RRFP, it will subscribe to the frame.
    #---------------------------------------------------------------------------
    frame_A = SpaceFOMRefFrameObject( 
-      create_frame_object = True,
-      frame_instance_name = 'FrameA',
-      frame_S_define_instance = ref_frame_A.frame_packing,
+      create_frame_object          = True,
+      frame_instance_name          = 'FrameA',
+      frame_S_define_instance      = ref_frame_A.frame_packing,
       frame_S_define_instance_name = 'ref_frame_A.frame_packing' )
 
    # Set the debug flag for the root reference frame.

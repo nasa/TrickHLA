@@ -140,13 +140,13 @@ trick.exec_set_stack_trace( True )
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-   thla_federate = THLA.federate,
-   thla_manager = THLA.manager,
-   thla_control = THLA.execution_control,
-   thla_config = THLA.ExCO,
+   thla_federate        = THLA.federate,
+   thla_manager         = THLA.manager,
+   thla_control         = THLA.execution_control,
+   thla_config          = THLA.ExCO,
    thla_federation_name = 'Wheelbot_Test',
-   thla_federate_name = 'Wheelbot-2',
-   thla_enabled = True )
+   thla_federate_name   = 'Wheelbot-2',
+   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -205,18 +205,18 @@ veh.vehicle.wheel_speed_limit = 8.0
 
 # Subscribe to TrickHLA Object 'Wheelbot_hla_entity' attribute 'state.'
 obj = TrickHLAObjectConfig(
-   thla_create = False,
+   thla_create        = False,
    thla_instance_name = 'Wheelbot_hla_entity',
-   thla_FOM_name = 'PhysicalEntity' )
+   thla_FOM_name      = 'PhysicalEntity' )
 
 att0 = TrickHLAAttributeConfig(
-   FOM_name = 'state',
-   trick_name = 'veh.vehicle.stcs',
-   publish = False,
-   subscribe = True,
+   FOM_name      = 'state',
+   trick_name    = 'veh.vehicle.stcs',
+   publish       = False,
+   subscribe     = True,
    locally_owned = False,
-   config = trick.CONFIG_CYCLIC,
-   rti_encoding = trick.ENCODING_LITTLE_ENDIAN )
+   config        = trick.CONFIG_CYCLIC,
+   rti_encoding  = trick.ENCODING_LITTLE_ENDIAN )
 
 obj.add_attribute( att0 )
 
