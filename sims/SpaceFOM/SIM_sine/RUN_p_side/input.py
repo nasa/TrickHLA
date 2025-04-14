@@ -149,10 +149,12 @@ trick.exec_set_trap_sigfpe( True )
 # trick.add_read( 0.0 , '''trick.checkpoint('chkpnt_point')''' )
 # trick.checkpoint_end( 1 )
 
+trick.exec_set_stack_trace( False )
+
 trick.exec_set_enable_freeze( False )
 trick.exec_set_freeze_command( False )
 trick.sim_control_panel_set_enabled( False )
-trick.exec_set_stack_trace( False )
+
 
 #---------------------------------------------
 # Set up data to record.
