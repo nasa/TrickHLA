@@ -92,19 +92,17 @@ PDF_DIR  = .
 # Platform specific behavior. #
 ###############################
 ifeq ($(shell uname -s), Darwin)
-LATEX_HOME = /usr/local/texlive/2020
-LATEX_HOST = x86_64-darwin
-BIN_DIR    = $(LATEX_HOME)/bin/$(LATEX_HOST)/
+LATEX_BIN ?= /usr/local/texlive/2024/bin/universal-darwin/
 else
-BIN_DIR    =
+LATEX_BIN ?= /usr/local/bin/
 endif
 
 
 ######################################
 # Define commands and command paths. #
 ######################################
-PDFLATEX = $(BIN_DIR)pdflatex
-BIBTEX   = $(BIN_DIR)bibtex
+PDFLATEX = $(LATEX_BIN)pdflatex
+BIBTEX   = $(LATEX_BIN)bibtex
 
 
 ###########################################
@@ -306,7 +304,7 @@ $(SRC_XML_FILES) : $(XML_DIR)/%.xml : $(SRC_DIR)/%.c
 #
 links: $(TRICKHLAENV_LATEX_FILES)
 $(TRICKHLAENV_LATEX_FILES):
-	ln -s $(TEMPLATE_DIR)/$@ $@
+	ln -sf $(TEMPLATE_DIR)/$@ $@
 
 
 ################################

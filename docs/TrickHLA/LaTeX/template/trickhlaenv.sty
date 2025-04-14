@@ -106,12 +106,12 @@
 \newcounter{requirement}
 \def\reqt@tocprefix{Requirement\ }
 \renewcommand\therequirement {\modelprefix\_\@arabic\c@requirement}
-\newcommand\theHrequirement {\@arabic\c@requirement}
+\renewcommand\theHrequirement {\@arabic\c@requirement}
 
 \newcounter{subrequirement}[requirement]
 \renewcommand\thesubrequirement {%
   \@arabic\c@requirement.\@arabic\c@subrequirement}
-\newcommand\theHsubrequirement {%
+\renewcommand\theHsubrequirement {%
   \@arabic\c@requirement.\@arabic\c@subrequirement}
 
 \def\requirementlabel#1{%
@@ -174,7 +174,7 @@
 \newcounter{inspection}
 \def\insp@tocprefix{Inspection\ }
 \renewcommand\theinspection {\modelprefix\_\@arabic\c@inspection}
-\newcommand\theHinspection {\@arabic\c@inspection}
+\renewcommand\theHinspection {\@arabic\c@inspection}
 
 \def\inspectionlabel#1{%
    {\normalfont\itshape {Inspection \theinspection:\ \ #1}}}
@@ -213,7 +213,7 @@
 \newcounter{test}
 \def\test@tocprefix{Test\ }
 \renewcommand\thetest {\modelprefix\_\@arabic\c@test}
-\newcommand\theHtest {\@arabic\c@test}
+\renewcommand\theHtest {\@arabic\c@test}
 
 \def\testlabel#1{%
    {\normalfont\itshape {Test \thetest:\ \ #1}}}

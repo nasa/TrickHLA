@@ -1,0 +1,9 @@
+/**
+ * @defgroup Ball Ball
+ * A simple dynamic bouncing ball model based off the classic Trick tutorial 'ball' simulation.
+ * @details These are models based off the simple Trick 'ball' tutorial.  We are using these
+ * models to demonstrate the fundamentals of how to use TrickHLA to enable HLA-based
+ * distributed simulation capabilities to a Trick-based simulation.  Here, we start with
+ * SIM_ball_L3 since we know we want more than one ball in the federation execution.
+ * @ingroup TrickHLAModels
+ */
