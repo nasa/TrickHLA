@@ -22,6 +22,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef JEOD_HLA_INIT_SIM_OBJECT
+#define JEOD_HLA_INIT_SIM_OBJECT
+
 // TrickHLA include files.
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
@@ -153,3 +156,5 @@ class JEODHLAInitSimObject : public Trick::SimObject {
    // Do not allow the default constructor.
    JEODHLAInitSimObject();
 };
+
+#endif // JEOD_HLA_INIT_SIM_OBJECT

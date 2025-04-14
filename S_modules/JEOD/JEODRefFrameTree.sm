@@ -22,6 +22,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef JEOD_REF_FRAME_TREE_SIM_OBJECT
+#define JEOD_REF_FRAME_TREE_SIM_OBJECT
+
 ##include <iostream>
 ##include "utils/ref_frames/include/ref_frame_state.hh"
 
@@ -276,3 +279,5 @@ JEODRefFrameSimObject mars_centered_inertial( jeod_time.time_tt, ref_frame_tree.
 JEODRefFrameSimObject earth_centered_fixed( jeod_time.time_tt, ref_frame_tree.frame_tree, P_HLA_INIT, 40 );
 JEODRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, ref_frame_tree.frame_tree, P_HLA_INIT, 40 );
 JEODRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, ref_frame_tree.frame_tree, P_HLA_INIT, 40 );
+
+#endif // JEOD_REF_FRAME_TREE_SIM_OBJECT

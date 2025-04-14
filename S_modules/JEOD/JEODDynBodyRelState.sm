@@ -23,6 +23,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef JEOD_DYN_BODY_REL_STATE_SIM_OBJECT
+#define JEOD_DYN_BODY_REL_STATE_SIM_OBJECT
+
 // Include headers for classes that this class contains:
 ##include <math.h>
 ##include "utils/orientation/include/orientation.hh"
@@ -331,3 +334,5 @@ class EntityRelStateSimObject: public Trick::SimObject
   EntityRelStateSimObject & operator=(const EntityRelStateSimObject &) = delete;
   
 };
+
+#endif // JEOD_DYN_BODY_REL_STATE_SIM_OBJECT

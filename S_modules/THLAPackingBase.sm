@@ -21,7 +21,7 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
+
 #ifndef TRICKHLA_PACKING_BASE_SIM_OBJECT
 #define TRICKHLA_PACKING_BASE_SIM_OBJECT
 
@@ -44,8 +44,8 @@
 //==========================================================================
 class TrickHLAPackingBaseSimObject : public Trick::SimObject {
 
-  public:
-   
+ public:
+
    /* Associated TrickHLA base Packing object reference. */
    TrickHLA::Packing * packing_base_ptr;
 
@@ -73,14 +73,14 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       // Desfault data jobs
       //
       ("default_data") default_config();
-      
+
       //
       // Initialization jobs
       //
       P_INIT ("initialization") initialize();
    }
-   
-  protected:
+
+ protected:
    virtual int default_config()
    {
       if ( packing_base_ptr == NULL ){
@@ -90,27 +90,27 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
-      
+
       // Get the associated TrickHLA manager object.
       TrickHLA::Object * mngr_obj_ptr = packing_base_ptr->get_object();
-      
+
       // If the manager object is set, then configure the auxiliary services.
       // This will probably only be true for configuring with defualt data.
       if ( mngr_obj_ptr != NULL ) {
-      
+
          // Setup lag compensation.
          mngr_obj_ptr->lag_comp      = lag_comp_base_ptr;
          mngr_obj_ptr->lag_comp_type = TrickHLA::LAG_COMPENSATION_NONE;
-      
+
          // Setup the auxiliary object management services.
          mngr_obj_ptr->conditional = conditional_base_ptr;
          mngr_obj_ptr->ownership   = ownership_base_ptr;
          mngr_obj_ptr->deleted     = deleted_base_ptr;
       }
-      
+
       return( 0 );
    }
-   
+
    virtual int initialize()
    {
       // We must have a Packing object.
@@ -128,16 +128,16 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       if ( lag_comp_base_ptr != NULL ){
          lag_comp_base_ptr->initialize();
       }
-      
+
       // Check for a Conditional object.
       if ( conditional_base_ptr != NULL ){
          conditional_base_ptr->initialize();
       }
-      
+
       return( 0 );
    }
 
-  private:
+ private:
    // This object is not copyable
    TrickHLAPackingBaseSimObject( TrickHLAPackingBaseSimObject const & );
    TrickHLAPackingBaseSimObject & operator=( TrickHLAPackingBaseSimObject const & );

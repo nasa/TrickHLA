@@ -9,6 +9,9 @@
  *     (../source/TrickHLA/Manager.cpp))
  ****************************************************************************/
 
+#ifndef WHEELBOT_HLA_SIM_OBJECT
+#define WHEELBOT_HLA_SIM_OBJECT
+
 //==========================================================================
 // Define the Trick HLA job cycle times.
 //==========================================================================
@@ -149,3 +152,5 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
    SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
 };
+
+#endif // WHEELBOT_HLA_SIM_OBJECT

@@ -22,6 +22,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef SPACEFOM_DYNAMICAL_ENTITY_SIM_OBJECT
+#define SPACEFOM_DYNAMICAL_ENTITY_SIM_OBJECT
+
 // SpaceFOM include files.
 ##include "SpaceFOM/DynamicalEntity.hh"
 ##include "SpaceFOM/DynamicalEntityConditionalBase.hh"
@@ -85,3 +88,5 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOMDynamicalEntitySimObject( SpaceFOMDynamicalEntitySimObject const & );
    SpaceFOMDynamicalEntitySimObject & operator=( SpaceFOMDynamicalEntitySimObject const & );
 };
+
+#endif // SPACEFOM_DYNAMICAL_ENTITY_SIM_OBJECT

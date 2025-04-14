@@ -29,6 +29,9 @@
  *              requires the main thread data cycle time to be specified.
  ****************************************************************************/
 
+#ifndef TRICKHLA_THREAD_SIM_OBJECT
+#define TRICKHLA_THREAD_SIM_OBJECT
+
 // Trick include files.
 ##include "trick/exec_proto.h"
 
@@ -85,9 +88,9 @@ class THLAThreadSimObject : public Trick::SimObject {
    TrickHLA::Federate & federate;
  
  protected:
-   double               data_cycle_time;
-   double               data_send_time;
-   unsigned int         thread_id;
+   double         data_cycle_time;
+   double         data_send_time;
+   unsigned int   thread_id;
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
@@ -97,3 +100,5 @@ class THLAThreadSimObject : public Trick::SimObject {
    // Do not allow the default constructor.
    THLAThreadSimObject();
 };
+
+#endif // TRICKHLA_THREAD_SIM_OBJECT

@@ -22,6 +22,9 @@
  *              Trick child threads.
  ****************************************************************************/
 
+#ifndef TRICKHLA_FED_SIM_OBJECT
+#define TRICKHLA_FED_SIM_OBJECT
+
 // Trick include files.
 ##include "trick/exec_proto.h"
 
@@ -55,3 +58,5 @@ class THLAFedSimObject : public Trick::SimObject {
    // Do not allow the default constructor.
    THLAFedSimObject();
 };
+
+#endif // TRICKHLA_FED_SIM_OBJECT
