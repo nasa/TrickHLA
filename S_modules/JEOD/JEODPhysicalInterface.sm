@@ -21,7 +21,10 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
- 
+
+#ifndef JEOD_PHYSICAL_INTERFACE_SIM_OBJECT
+#define JEOD_PHYSICAL_INTERFACE_SIM_OBJECT
+
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
@@ -73,3 +76,5 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
    JEODPhysicalInterfaceSimObject( JEODPhysicalInterfaceSimObject const & );
    JEODPhysicalInterfaceSimObject & operator=( JEODPhysicalInterfaceSimObject const & );
 };
+
+#endif // JEOD_PHYSICAL_INTERFACE_SIM_OBJECT

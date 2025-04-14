@@ -22,6 +22,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef JEOD_PHYSICAL_ENTITY_SIM_OBJECT
+#define JEOD_PHYSICAL_ENTITY_SIM_OBJECT
+
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
@@ -83,3 +86,5 @@ class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
    JEODPhysicalEntiySimObject( JEODPhysicalEntiySimObject const & );
    JEODPhysicalEntiySimObject & operator=( JEODPhysicalEntiySimObject const & );
 };
+
+#endif // JEOD_PHYSICAL_ENTITY_SIM_OBJECT

@@ -23,6 +23,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef SPACEFOM_REF_FRAME_TREE_BASE_SIM_OBJECT
+#define SPACEFOM_REF_FRAME_TREE_BASE_SIM_OBJECT
+
 // TrickHLA include files.
 ##include "TrickHLA/Manager.hh"
 
@@ -79,3 +82,5 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
    SpaceFOMRefFrameTreeBaseSimObject( const SpaceFOMRefFrameTreeBaseSimObject & );
    SpaceFOMRefFrameTreeBaseSimObject & operator=( const SpaceFOMRefFrameTreeBaseSimObject & );
 };
+
+#endif // SPACEFOM_REF_FRAME_TREE_BASE_SIM_OBJECT

@@ -22,6 +22,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef SPACEFOM_REF_FRAME_SIM_OBJECT
+#define SPACEFOM_REF_FRAME_SIM_OBJECT
+
 // SpaceFOM include files.
 ##include "SpaceFOM/RefFrameConditionalBase.hh"
 ##include "SpaceFOM/RefFrameData.hh"
@@ -89,3 +92,5 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
    SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
 };
+
+#endif // SPACEFOM_REF_FRAME_SIM_OBJECT

@@ -27,6 +27,9 @@
 // simulation object definition.
 //==========================================================================
 
+#ifndef SPACEFOM_TEST_REF_FRAME_TREE_SIM_OBJECT
+#define SPACEFOM_TEST_REF_FRAME_TREE_SIM_OBJECT
+
 // TrickHLA include files.
 ##include "TrickHLA/DebugHandler.hh"
 ##include "TrickHLA/Manager.hh"
@@ -130,3 +133,5 @@ void create_connections() {
    ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
    ref_frame_tree.vehicle_frame_ptr = &ref_frame_A.frame_packing;
 }
+
+#endif // SPACEFOM_TEST_REF_FRAME_TREE_SIM_OBJECT

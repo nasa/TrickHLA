@@ -22,6 +22,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef SPACEFOM_EMM_REF_FRAME_TREE_SIM_OBJECT
+#define SPACEFOM_EMM_REF_FRAME_TREE_SIM_OBJECT
+
 ##include <iostream>
 ##include <map>
 
@@ -191,3 +194,5 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
 // SimObject used for root reference frame discovery.
 SpaceFOMEMMRefFrameTreeSimObject ref_frame_tree( THLA.manager,
                                                  THLA.execution_control );
+
+#endif // SPACEFOM_EMM_REF_FRAME_TREE_SIM_OBJECT

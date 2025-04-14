@@ -22,6 +22,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef JEOD_REF_FRAME_SIM_OBJECT
+#define JEOD_REF_FRAME_SIM_OBJECT
+
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
@@ -160,3 +163,5 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    JEODRefFrameSimObject( const JEODRefFrameSimObject & );
    JEODRefFrameSimObject & operator=( const JEODRefFrameSimObject & );
 };
+
+#endif // JEOD_REF_FRAME_SIM_OBJECT

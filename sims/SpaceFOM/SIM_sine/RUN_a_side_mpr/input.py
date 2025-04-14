@@ -15,6 +15,8 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
 ##############################################################################
+import socket
+import subprocess 
 import sys
 sys.path.append( '../../../' )
 
@@ -131,18 +133,23 @@ def parse_command_line():
 
 
 def fix_var_server_source_address():
-   # The Trick variable server uses the host name without verifying the IP
-   # address it resolves to is actually used by the host computer or not.
+   # The Trick variable server uses the local host name without verifying the
+   # IP address it resolves to is actually used by the local host computer.
    # Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
    # Otherwise the simulation control panel will not successfully connect.
-   import socket
    try:
-      host_ip_addr = socket.gethostbyname( trick.var_server_get_hostname() )
-      hostname, aliases, ipaddrs = socket.gethostbyaddr( host_ip_addr )
-      if ( host_ip_addr not in ipaddrs ):
-         trick.var_server_set_source_address( "127.0.0.1" )
-   except ( socket.gaierror, socket.herror ):
-      trick.var_server_set_source_address( "127.0.0.1" )
+      if ( trick.var_server_get_hostname() == socket.gethostname() ):
+         host_ip_addr = socket.gethostbyname( socket.gethostname() )
+         try:
+            ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode() 
+            if ( ifconfig_out.find( host_ip_addr ) < 0 ):
+               trick.var_server_set_source_address( '127.0.0.1' )
+               print( 'WARNING: Setting the variable server source address to 127.0.0.1!' )
+         except:
+            return  # Use host source address as is.
+   except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
+      trick.var_server_set_source_address( '127.0.0.1' )
+      print( 'WARNING: Setting the variable server source address to 127.0.0.1!' )
    return
 
 

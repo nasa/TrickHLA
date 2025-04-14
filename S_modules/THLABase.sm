@@ -28,6 +28,9 @@
  *              Trick child threads.
  ****************************************************************************/
 
+#ifndef TRICKHLA_BASE_SIM_OBJECT
+#define TRICKHLA_BASE_SIM_OBJECT
+
 // Trick include files.
 ##include "trick/exec_proto.h"
 
@@ -52,7 +55,7 @@
 ##include "TrickHLA/ParameterItem.hh"
 
 //=========================================================================
-// SIM_OBJECT: THLABase - Generalized TrickHLA interface routines.
+// SIM_OBJECT: THLABaseSimObject - Generalized TrickHLA interface routines.
 //=========================================================================
 class THLABaseSimObject : public Trick::SimObject {
 
@@ -62,13 +65,17 @@ class THLABaseSimObject : public Trick::SimObject {
    TrickHLA::Federate federate;
    TrickHLA::FedAmb   federate_amb;
    TrickHLA::Manager  manager;
+   
+   double data_cycle_time;
+   double interaction_cycle_time;
 
    THLABaseSimObject( double data_cycle,
                       double interaction_cycle,
                       unsigned short _1ST  = 1,
                       unsigned short _INIT = 60,
                       unsigned short _LAST = 65534 )
-      : data_cycle_time( data_cycle )
+      : data_cycle_time( data_cycle ),
+        interaction_cycle_time( interaction_cycle )
    {
       // Validate the data and interaction cycle times.
       if ( data_cycle <= 0.0 ) {
@@ -184,9 +191,6 @@ class THLABaseSimObject : public Trick::SimObject {
    // It must be extended with a specific ExecutionControl implementation.
    virtual ~THLABaseSimObject() = 0;
 
- protected:
-   double data_cycle_time;
-
  private:
    // Do not allow the implicit copy constructor or assignment operator.
    THLABaseSimObject( THLABaseSimObject const & rhs );
@@ -200,3 +204,5 @@ class THLABaseSimObject : public Trick::SimObject {
 %{
    THLABaseSimObject::~THLABaseSimObject(){}
 %}
+
+#endif // TRICKHLA_BASE_SIM_OBJECT

@@ -22,6 +22,9 @@
  * Description: Extended THLABase.sm to support SpaceFOM.
  ****************************************************************************/
 
+#ifndef SPACEFOM_SIM_OBJECT
+#define SPACEFOM_SIM_OBJECT
+
 // TrickHLA SimObject base class.
 #include "THLABase.sm"
 
@@ -54,14 +57,15 @@ class SpaceFOMSimObject : public THLABaseSimObject {
                       double main_thread_interaction_cycle,
                       unsigned short _1ST  = 1,
                       unsigned short _INIT = 60,
-                      unsigned short _LAST = 65534 )
-     : THLABaseSimObject( main_thread_data_cycle,
-                          main_thread_interaction_cycle,
-                          _1ST,
-                          _INIT,
-                          _LAST ),
-       ExCO( "THLA.ExCO" ),
-       execution_control( ExCO )
+                      unsigned short _LAST = 65534,
+                      char const * exco_s_define_name = "THLA.ExCO" )
+      : THLABaseSimObject( main_thread_data_cycle,
+                           main_thread_interaction_cycle,
+                           _1ST,
+                           _INIT,
+                           _LAST ),
+        ExCO( exco_s_define_name ),
+        execution_control( ExCO )
    {
       //-----------------------
       //-- DEFAULT DATA JOBS --
@@ -79,3 +83,5 @@ class SpaceFOMSimObject : public THLABaseSimObject {
    // Do not allow the default constructor.
    SpaceFOMSimObject();
 };
+
+#endif // SPACEFOM_SIM_OBJECT

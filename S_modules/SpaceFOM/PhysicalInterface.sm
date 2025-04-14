@@ -22,6 +22,9 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef SPACEFOM_PHYSICAL_INTERFACE_SIM_OBJECT
+#define SPACEFOM_PHYSICAL_INTERFACE_SIM_OBJECT
+
 // SpaceFOM include files.
 ##include "SpaceFOM/PhysicalInterface.hh"
 ##include "SpaceFOM/PhysicalInterfaceConditionalBase.hh"
@@ -71,3 +74,5 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOMPhysicalInterfaceSimObject( SpaceFOMPhysicalInterfaceSimObject const & );
    SpaceFOMPhysicalInterfaceSimObject & operator=( SpaceFOMPhysicalInterfaceSimObject const & );
 };
+
+#endif // SPACEFOM_PHYSICAL_ENTITY_REL_STATE_SIM_OBJECT

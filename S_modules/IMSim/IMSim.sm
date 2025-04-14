@@ -22,6 +22,9 @@
  *              ExecutionControl extensions.
  ****************************************************************************/
 
+#ifndef IMSIM_SIM_OBJECT
+#define IMSIM_SIM_OBJECT
+
 // Trick include files.
 ##include "trick/exec_proto.h"
 
@@ -201,3 +204,5 @@ class IMSimSimObject : public Trick::SimObject {
    // Do not allow the default constructor.
    IMSimSimObject();
 };
+
+#endif // IMSIM_SIM_OBJECT

@@ -24,7 +24,11 @@
  * Description: 
  ****************************************************************************/
 
+#ifndef SPACEFOM_PHYSICAL_ENTITY_REL_STATE_SIM_OBJECT
+#define SPACEFOM_PHYSICAL_ENTITY_REL_STATE_SIM_OBJECT
+
 ##include "SpaceFOM/RelStateBase.hh"
+
 class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
 
   public:
@@ -146,3 +150,5 @@ class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
    // Don't allow the default constructor
    SpaceFOMPhysicalEntityRelState();
 };
+
+#endif // SPACEFOM_PHYSICAL_ENTITY_REL_STATE_SIM_OBJECT
