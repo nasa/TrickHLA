@@ -22,6 +22,9 @@
  * THLABaseSimObject extension design.
  ****************************************************************************/
 
+#ifndef IMSIM_V3_SIM_OBJECT
+#define IMSIM_V3_SIM_OBJECT
+
 // TrickHLA SimObject base class.
 #include "THLABase.sm"
 
@@ -54,17 +57,17 @@ class IMSimSimObject : public THLABaseSimObject {
                    double main_thread_interaction_cycle,
                    unsigned short _1ST  = 1,
                    unsigned short _INIT = 60,
-                   unsigned short _LAST = 65534 ) 
+                   unsigned short _LAST = 65534,
+                   char const * exco_s_define_name = "THLA.imsim_config" ) 
       : THLABaseSimObject( main_thread_data_cycle,
                            main_thread_interaction_cycle,
                            _1ST,
                            _INIT,
                            _LAST ),
-        imsim_config( "THLA.imsim_config" ),
+        imsim_config( exco_s_define_name ),
         imsim_exec_control( imsim_config ),
         CHECK_PAUSE_DELTA( 0.000001 )
    {
-
       // Calculate and validate the check-pause job offset time.
       if ( main_thread_data_cycle <= CHECK_PAUSE_DELTA ) {
          exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > CHECK_PAUSE_DELTA!" );
@@ -123,3 +126,5 @@ class IMSimSimObject : public THLABaseSimObject {
    // Do not allow the default constructor.
    IMSimSimObject();
 };
+
+#endif // IMSIM_V3_SIM_OBJECT

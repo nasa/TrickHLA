@@ -21,6 +21,9 @@
  * Description: Extended THLABase.sm to support TrickHLA Simple Init Scheme.
  ****************************************************************************/
 
+#ifndef TRICKHLA_SIM_OBJECT
+#define TRICKHLA_SIM_OBJECT
+
 // TrickHLA SimObject base class.
 #include "THLABase.sm"
 
@@ -31,7 +34,7 @@
 ##include "TrickHLA/ExecutionConfiguration.hh"
 
 //=========================================================================
-// SIM_OBJECT: THLA - Extend the TrickHLA Base SimObject.
+// SIM_OBJECT: THLASimObject - Extend the TrickHLA Base SimObject.
 //=========================================================================
 class THLASimObject : public THLABaseSimObject {
 
@@ -47,14 +50,15 @@ class THLASimObject : public THLABaseSimObject {
                   double main_thread_interaction_cycle,
                   unsigned short _1ST  = 1,
                   unsigned short _INIT = 60,
-                  unsigned short _LAST = 65534 )
-     : THLABaseSimObject( main_thread_data_cycle,
-                          main_thread_interaction_cycle,
-                          _1ST,
-                          _INIT,
-                          _LAST ),
-       simple_sim_config( "THLA.simple_sim_config" ),
-       execution_control( simple_sim_config )
+                  unsigned short _LAST = 65534,
+                  char const * exco_s_define_name = "THLA.simple_sim_config" )
+      : THLABaseSimObject( main_thread_data_cycle,
+                           main_thread_interaction_cycle,
+                           _1ST,
+                           _INIT,
+                           _LAST ),
+        simple_sim_config( exco_s_define_name ),
+        execution_control( simple_sim_config )
    {
       //-----------------------
       //-- DEFAULT DATA JOBS --
@@ -72,3 +76,5 @@ class THLASimObject : public THLABaseSimObject {
    // Do not allow the default constructor.
    THLASimObject();
 };
+
+#endif // TRICKHLA_SIM_OBJECT
