@@ -1,0 +1,155 @@
+/*!
+@ingroup Ball
+@file sims/TrickHLA/SIM_Ball/S_define
+@brief Simple rework of the Trick tutorial Ball simulation.
+
+\par<b>ASSUMPTIONS AND LIMITATIONS:</b>
+- 2 dimensional space\n
+- Positive X is horizontal to the right\n
+- Positive Y is vertical and up
+
+@copyright Copyright 2025 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@trick_parse{everything}
+
+@python_module{TrickHLAModel}
+
+@tldh
+@trick_link_dependency{Ball/src/ball_ensemble_collision.c}
+@trick_link_dependency{Ball/src/ball_ensemble_integ.c}
+@trick_link_dependency{Ball/src/ball_force_default_data.c}
+@trick_link_dependency{Ball/src/ball_force_field.c}
+@trick_link_dependency{Ball/src/ball_print.c}
+@trick_link_dependency{Ball/src/ball_state_default_data.c}
+@trick_link_dependency{Ball/src/ball_state_deriv.c}
+@trick_link_dependency{Ball/src/ball_state_init.c}
+@trick_link_dependency{Ball/src/ball_walls.c}
+@trick_link_dependency{Ball/src/ball_walls_default_data.c}
+
+@revs_begin
+@rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, April 2025, --, TrickHLA Tutorial. }
+@revs_end
+
+*/
+
+#include "sim_objects/default_trick_sys.sm"
+
+##include "Ball/include/ball_proto.h"
+
+//=============================================================================
+// SIM_OBJECT: ball
+// This sim object models a ball.
+//=============================================================================
+class ballSimObject : public Trick::SimObject {
+
+  public:
+   BallState state;
+   BallForce force;
+
+   ballSimObject()
+   {
+      // DATA STRUCTURE DECLARATIONS
+      ("default_data") ball_state_default_data( &state );
+      ("default_data") ball_force_default_data( &force );
+
+      // INITIALIZATION JOBS
+      ("initialization") ball_state_init( &state );
+
+      // EOM DERIVATIVE AND STATE INTEGRATION JOBS
+      ("derivative") ball_force_field( &force, &state );
+      ("derivative") ball_state_deriv( &state );
+
+      // SCHEDULED JOBS
+      (0.1 , "scheduled") ball_print( &state ) ;
+   }
+   
+};
+
+#define NUM_BALLS 3
+
+class ensembleSimObject : public Trick::SimObject {
+
+  public:
+   
+   BallWalls            walls;
+   const unsigned int   num_balls;
+   BallState          * states[NUM_BALLS];
+   
+   ensembleSimObject ()
+   : num_balls( NUM_BALLS )
+   {
+      
+      // DATA STRUCTURE DECLARATIONS
+      ("default_data") ball_walls_default_data( &walls );
+      
+      // INIALIZATION JOBS
+      ("initialization") ensemble_init();
+      
+      // EOM DERIVATIVE, STATE INTEGRATION, AND DYNAMIC EVENT JOBS
+      ("integration") trick_ret = ball_ensemble_integ( num_balls, states );
+      ("dynamic_event") ball_ensemble_collision( &walls, num_balls, states );
+      
+   }
+   
+   void ensemble_init()
+   {
+      std::ostringstream errmsg;
+      bool error = false;
+
+      // Perform a quick consistency check.
+      if ( num_balls != NUM_BALLS ){
+         errmsg << "ensembleSimObject:ensemble_init(): ERROR!\n";
+         errmsg << "\tNumber of balls at initialization (" << num_balls
+                << ") do not match number allocated (" << NUM_BALLS << "!\n";
+         error = true;  
+      }
+
+      if ( error ) {
+         exec_terminate( __FILE__, errmsg.str().c_str() );
+      }
+      
+      return;
+   }
+   
+};
+
+// Instantiations
+ballSimObject ball1;
+ballSimObject ball2;
+ballSimObject ball3;
+
+// Instantiation
+ensembleSimObject ensemble;
+
+// Collect the forces on the balls.
+collect ball1.state.work.external_force = { ball1.force.output.force[0] };
+collect ball2.state.work.external_force = { ball2.force.output.force[0] };
+collect ball3.state.work.external_force = { ball3.force.output.force[0] };
+
+IntegLoop my_integ_loop (0.01) ball1, ball2, ball3, ensemble;
+
+
+// Connect objects
+void create_connections() {
+   
+   // Place the balls in the ensemble integration array.
+   ensemble.states[0] = &(ball1.state);
+   ensemble.states[1] = &(ball2.state);
+   ensemble.states[2] = &(ball3.state);
+
+   /* We are integrating the ensemble; that is, all the balls at the same time. */
+   my_integ_loop.getIntegrator( Runge_Kutta_4, ensemble.num_balls * 4 );
+
+   exec_set_freeze_frame(0.10);
+
+}
+
