@@ -143,13 +143,16 @@ def fix_var_server_source_address():
          try:
             ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode() 
             if ( ifconfig_out.find( host_ip_addr ) < 0 ):
+               print( 'WARNING: Invalid IP address ' + host_ip_addr
+                      + ' resolved for host \'' + trick.var_server_get_hostname() 
+                      + '\', setting the variable server source address to 127.0.0.1!' )
                trick.var_server_set_source_address( '127.0.0.1' )
-               print( 'WARNING: Setting the variable server source address to 127.0.0.1!' )
          except:
             return  # Use host source address as is.
    except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
+      print( 'WARNING: Problem resolving host name \'' + trick.var_server_get_hostname()
+             + '\' to an address, setting the variable server source address to 127.0.0.1!' )
       trick.var_server_set_source_address( '127.0.0.1' )
-      print( 'WARNING: Setting the variable server source address to 127.0.0.1!' )
    return
 
 
