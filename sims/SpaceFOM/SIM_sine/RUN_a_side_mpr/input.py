@@ -150,8 +150,8 @@ def fix_var_server_source_address():
          except:
             return  # Use host source address as is.
    except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
-      print( 'WARNING: Problem resolving host name \'' + trick.var_server_get_hostname()
-             + '\' to an address, setting the variable server source address to 127.0.0.1!' )
+      print( 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
+             + '\' host name to an address, setting the variable server source address to 127.0.0.1!' )
       trick.var_server_set_source_address( '127.0.0.1' )
    return
 
