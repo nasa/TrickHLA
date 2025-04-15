@@ -1489,8 +1489,9 @@ string Federate::wait_for_required_federates_to_join()
    int i, req_fed_cnt;
    int joined_fed_cnt = 0;
 
-   bool          print_summary                = false;
-   bool          found_an_unrequired_federate = false;
+   bool print_summary                = false;
+   bool found_an_unrequired_federate = false;
+
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
    int64_t      wallclock_time;
