@@ -399,11 +399,6 @@ IMSim_A.interaction_handler.message = 'P-side: IMSim_A.interaction_hdlr.message'
 IMSim_A.interaction_handler.message = 'P-side: IMSim_A.interaction_hdlr.message'
 
 
-# Show or hide the TrickHLA debug messages.
-# Use Level-3 to show the ownership transfer debug messages.
-IMSim_THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
-#IMSim_THLA.federate.debug_level = trick.DEBUG_LEVEL_9_TRACE
-
 # Configure the CRC.
 # Pitch specific local settings designator:
 IMSim_THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
