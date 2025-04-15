@@ -161,7 +161,7 @@ class PropagatedSineSimObj : public Trick::SimObject {
 
 
 //=============================================================================
-// SIM_OBJECT: THLA_INIT  (TrickHLA multi-phase initialization sim-object)
+// SIM_OBJECT: THLAInitSimObj (TrickHLA multi-phase initialization sim-object)
 //=============================================================================
 class THLAInitSimObj : public Trick::SimObject {
 

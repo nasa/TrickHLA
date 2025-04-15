@@ -298,7 +298,7 @@ exec( open( "Modified_data/sine_init.py" ).read() )
 
 # Example of a 1-dimensional dynamic array.
 A.packing.buff_size = 10
-A.packing.buff = trick.sim_services.alloc_type( A.packing.buff_size, 'unsigned char' )
+A.packing.buff = trick.sim_services.alloc_type( IMSim_A.packing.buff_size, 'unsigned char' )
 P.packing.buff_size = 10
 P.packing.buff = trick.sim_services.alloc_type( P.packing.buff_size, 'unsigned char' )
 
@@ -309,10 +309,10 @@ P.sim_data.name = 'P.sim_data.name.A-side'
 
 # We are taking advantage of the input file to specify a unique name and
 # message for the A-side federate interaction handler.
-A.interaction_handler.name = 'A-side: A.interaction_handler.name'
+A.interaction_handler.name = 'A-side: IMSim_A.interaction_handler.name'
 P.interaction_handler.name = 'A-side: P.interaction_handler.name'
 
-A.interaction_handler.message = 'A-side: A.interaction_handler.message'
+A.interaction_handler.message = 'A-side: IMSim_A.interaction_handler.message'
 P.interaction_handler.message = 'A-side: P.interaction_handler.message'
 
 #---------------------------------------------------------------------------
@@ -323,12 +323,12 @@ sine_A = SineObject(
    sine_create_object      = True,
    sine_obj_instance_name  = 'A-side-Federate.Sine',
    sine_trick_sim_obj_name = 'A',
-   sine_packing            = A.packing,
-   sine_conditional        = A.conditional,
-   sine_lag_comp           = A.lag_compensation,
+   sine_packing            = IMSim_A.packing,
+   sine_conditional        = IMSim_A.conditional,
+   sine_lag_comp           = IMSim_A.lag_compensation,
    sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_ownership          = A.ownership_handler,
-   sine_deleted            = A.obj_deleted )
+   sine_ownership          = IMSim_A.ownership_handler,
+   sine_deleted            = IMSim_A.obj_deleted )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_A )
@@ -447,12 +447,262 @@ federate.add_sim_object( root_ref_frame )
 federate.add_sim_object( ref_frame_A )
 federate.add_sim_object( A )
 federate.add_sim_object( P )
+federate.add_sim_object( IMSim_THLA )
+federate.add_sim_object( IMSim_THLA_INIT )
+federate.add_sim_object( IMSim_A )
+federate.add_sim_object( IMSim_P )
 
 #---------------------------------------------------------------------------
 # Make sure that the Python federate configuration object is initialized.
 #---------------------------------------------------------------------------
 # federate.disable()
 federate.initialize()
+
+
+
+# =========================================================================
+# Set up IMSim HLA interoperability.
+# =========================================================================
+# Example of a 1-dimensional dynamic array.
+IMSim_A.packing.buff_size = 10
+IMSim_A.packing.buff = trick.sim_services.alloc_type( IMSim_A.packing.buff_size, 'unsigned char' )
+IMSim_P.packing.buff_size = 10
+IMSim_P.packing.buff = trick.sim_services.alloc_type( IMSim_P.packing.buff_size, 'unsigned char' )
+
+# We are taking advantage of the input file to specify a unique name for the
+# sim-data name field for the A-side federate.
+IMSim_A.sim_data.name = 'IMSim_A.sim_data.name.A-side'
+IMSim_P.sim_data.name = 'IMSim_P.sim_data.name.A-side'
+
+# We are taking advantage of the input file to specify a unique name and
+# message for the A-side federate interaction handler.
+IMSim_A.interaction_handler.name = 'A-side: IMSim_A.interaction_handler.name'
+IMSim_P.interaction_handler.name = 'A-side: IMSim_P.interaction_handler.name'
+
+IMSim_A.interaction_handler.message = 'A-side: IMSim_A.interaction_handler.message'
+IMSim_P.interaction_handler.message = 'A-side: IMSim_P.interaction_handler.message'
+
+
+# Show or hide the TrickHLA debug messages.
+# Use Level-3 to show the ownership transfer debug messages.
+IMSim_THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
+#IMSim_THLA.federate.debug_level = trick.DEBUG_LEVEL_9_TRACE
+
+# Configure the CRC.
+# Pitch specific local settings designator:
+IMSim_THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+# MAK specific local settings designator, which is anything from the rid.mtl file:
+#IMSim_THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
+IMSim_THLA.federate.lookahead_time = 0.250
+
+# Configure the federate.
+IMSim_THLA.federate.name             = 'IMSim-A-side-Federate'
+IMSim_THLA.federate.FOM_modules      = 'FOMs/IMSim/IMSim_management.xml,FOMs/SineWave.xml'
+IMSim_THLA.federate.federation_name  = 'IMSim_sine'
+IMSim_THLA.federate.time_regulating  = True
+IMSim_THLA.federate.time_constrained = True
+
+# Configure ExecutionControl.
+# Set the multiphase initialization synchronization points.
+IMSim_THLA.imsim_exec_control.multiphase_init_sync_points = 'Phase1, Phase2'
+# Set the simulation timeline to be used for time computations.
+IMSim_THLA.imsim_exec_control.sim_timeline = IMSim_THLA_INIT.sim_timeline
+# Set the scenario timeline to be used for configuring federation freeze times.
+IMSim_THLA.imsim_exec_control.scenario_timeline = IMSim_THLA_INIT.scenario_timeline
+
+# FIXME: This should not be required.
+# Set this as the 'pre-set' master.
+#IMSim_THLA.imsim_exec_control.master = True
+
+# The list of Federates known to be in our Federation. The simulation will
+# wait for all Federates marked as required to join the Federation before
+# continuing on.
+IMSim_THLA.federate.enable_known_feds      = True
+IMSim_THLA.federate.known_feds_count       = 2
+IMSim_THLA.federate.known_feds             = trick.sim_services.alloc_type( IMSim_THLA.federate.known_feds_count, 'TrickHLA::KnownFederate' )
+IMSim_THLA.federate.known_feds[0].name     = 'IMSim-A-side-Federate'
+IMSim_THLA.federate.known_feds[0].required = True
+IMSim_THLA.federate.known_feds[1].name     = 'IMSim-P-side-Federate'
+IMSim_THLA.federate.known_feds[1].required = True
+
+
+#---------------------------------------------
+# Set up for simulation configuration.
+#---------------------------------------------
+IMSim_THLA.imsim_config.owner        = 'IMSim-A-side-Federate'
+IMSim_THLA.imsim_config.run_duration = run_duration
+
+
+# TrickHLA Interactions and Parameters.
+IMSim_THLA.manager.inter_count  = 1
+IMSim_THLA.manager.interactions = trick.sim_services.alloc_type( IMSim_THLA.manager.inter_count, 'TrickHLA::Interaction' )
+
+IMSim_THLA.manager.interactions[0].FOM_name    = 'Communication'
+IMSim_THLA.manager.interactions[0].publish     = True
+IMSim_THLA.manager.interactions[0].subscribe   = False
+IMSim_THLA.manager.interactions[0].handler     = IMSim_A.interaction_handler
+IMSim_THLA.manager.interactions[0].param_count = 3
+IMSim_THLA.manager.interactions[0].parameters  = trick.sim_services.alloc_type( IMSim_THLA.manager.interactions[0].param_count, 'TrickHLA::Parameter' )
+
+IMSim_THLA.manager.interactions[0].parameters[0].FOM_name     = 'Message'
+IMSim_THLA.manager.interactions[0].parameters[0].trick_name   = 'IMSim_A.interaction_handler.message'
+IMSim_THLA.manager.interactions[0].parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
+
+IMSim_THLA.manager.interactions[0].parameters[1].FOM_name     = 'time'
+IMSim_THLA.manager.interactions[0].parameters[1].trick_name   = 'IMSim_A.interaction_handler.time'
+IMSim_THLA.manager.interactions[0].parameters[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.interactions[0].parameters[2].FOM_name     = 'year'
+IMSim_THLA.manager.interactions[0].parameters[2].trick_name   = 'IMSim_A.interaction_handler.year'
+IMSim_THLA.manager.interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+
+
+# The Federate has two objects, it publishes one and subscribes to another.
+IMSim_THLA.manager.obj_count = 2
+IMSim_THLA.manager.objects   = trick.sim_services.alloc_type( IMSim_THLA.manager.obj_count, 'TrickHLA::Object' )
+
+# Configure the object this federate will create an HLA instance and
+# publish data for.
+IMSim_THLA.manager.objects[0].FOM_name            = 'SineParameters'
+IMSim_THLA.manager.objects[0].name                = 'IMSim-A-side-Federate.Sine'
+IMSim_THLA.manager.objects[0].create_HLA_instance = True
+IMSim_THLA.manager.objects[0].packing             = IMSim_A.packing
+IMSim_THLA.manager.objects[0].lag_comp            = IMSim_A.lag_compensation
+IMSim_THLA.manager.objects[0].lag_comp_type       = trick.LAG_COMPENSATION_NONE
+IMSim_THLA.manager.objects[0].ownership           = IMSim_A.ownership_handler
+IMSim_THLA.manager.objects[0].conditional         = IMSim_A.conditional
+IMSim_THLA.manager.objects[0].deleted             = IMSim_A.obj_deleted
+IMSim_THLA.manager.objects[0].attr_count          = 8
+IMSim_THLA.manager.objects[0].attributes          = trick.sim_services.alloc_type( IMSim_THLA.manager.objects[0].attr_count, 'TrickHLA::Attribute' )
+
+IMSim_THLA.manager.objects[0].attributes[0].FOM_name        = 'Time'
+IMSim_THLA.manager.objects[0].attributes[0].trick_name      = 'IMSim_A.packing.time'
+IMSim_THLA.manager.objects[0].attributes[0].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[0].attributes[0].publish         = True
+IMSim_THLA.manager.objects[0].attributes[0].locally_owned   = True
+IMSim_THLA.manager.objects[0].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[0].attributes[1].FOM_name        = 'Value'
+IMSim_THLA.manager.objects[0].attributes[1].trick_name      = 'IMSim_A.packing.value'
+IMSim_THLA.manager.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[0].attributes[1].publish         = True
+IMSim_THLA.manager.objects[0].attributes[1].subscribe       = True
+IMSim_THLA.manager.objects[0].attributes[1].locally_owned   = True
+IMSim_THLA.manager.objects[0].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[0].attributes[2].FOM_name        = 'dvdt'
+IMSim_THLA.manager.objects[0].attributes[2].trick_name      = 'IMSim_A.packing.dvdt'
+IMSim_THLA.manager.objects[0].attributes[2].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[0].attributes[2].publish         = True
+IMSim_THLA.manager.objects[0].attributes[2].locally_owned   = True
+IMSim_THLA.manager.objects[0].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[0].attributes[3].FOM_name        = 'Phase'
+IMSim_THLA.manager.objects[0].attributes[3].trick_name      = 'IMSim_A.packing.phase_deg' # using packed data instead of 'A.sim_data.phase'
+IMSim_THLA.manager.objects[0].attributes[3].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[0].attributes[3].publish         = True
+IMSim_THLA.manager.objects[0].attributes[3].locally_owned   = True
+IMSim_THLA.manager.objects[0].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[0].attributes[4].FOM_name        = 'Frequency'
+IMSim_THLA.manager.objects[0].attributes[4].trick_name      = 'IMSim_A.packing.freq'
+IMSim_THLA.manager.objects[0].attributes[4].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[0].attributes[4].publish         = True
+IMSim_THLA.manager.objects[0].attributes[4].locally_owned   = True
+IMSim_THLA.manager.objects[0].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[0].attributes[5].FOM_name        = 'Amplitude'
+IMSim_THLA.manager.objects[0].attributes[5].trick_name      = 'A.packing.amp'
+IMSim_THLA.manager.objects[0].attributes[5].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[0].attributes[5].publish         = True
+IMSim_THLA.manager.objects[0].attributes[5].locally_owned   = True
+IMSim_THLA.manager.objects[0].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[0].attributes[6].FOM_name        = 'Tolerance'
+IMSim_THLA.manager.objects[0].attributes[6].trick_name      = 'IMSim_A.packing.tol'
+IMSim_THLA.manager.objects[0].attributes[6].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[0].attributes[6].publish         = True
+IMSim_THLA.manager.objects[0].attributes[6].locally_owned   = True
+IMSim_THLA.manager.objects[0].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[0].attributes[7].FOM_name        = 'Name'
+IMSim_THLA.manager.objects[0].attributes[7].trick_name      = 'IMSim_A.packing.name'
+IMSim_THLA.manager.objects[0].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[0].attributes[7].publish         = True
+IMSim_THLA.manager.objects[0].attributes[7].locally_owned   = True
+IMSim_THLA.manager.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+
+# Configure the object this federate subscribes to but will not create an
+# HLA instance for.
+IMSim_THLA.manager.objects[1].FOM_name            = 'SineParameters'
+IMSim_THLA.manager.objects[1].name                = 'IMSim-P-side-Federate.Sine'
+IMSim_THLA.manager.objects[1].create_HLA_instance = False
+IMSim_THLA.manager.objects[1].packing             = IMSim_P.packing
+IMSim_THLA.manager.objects[1].lag_comp            = IMSim_P.lag_compensation
+IMSim_THLA.manager.objects[1].lag_comp_type       = trick.LAG_COMPENSATION_NONE
+IMSim_THLA.manager.objects[1].conditional         = IMSim_P.conditional
+IMSim_THLA.manager.objects[1].deleted             = IMSim_P.obj_deleted
+IMSim_THLA.manager.objects[1].attr_count          = 8
+IMSim_THLA.manager.objects[1].attributes          = trick.sim_services.alloc_type( IMSim_THLA.manager.objects[1].attr_count, 'TrickHLA::Attribute' )
+
+IMSim_THLA.manager.objects[1].attributes[0].FOM_name        = 'Time'
+IMSim_THLA.manager.objects[1].attributes[0].trick_name      = 'IMSim_P.packing.time'
+IMSim_THLA.manager.objects[1].attributes[0].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[1].attributes[0].subscribe       = True
+IMSim_THLA.manager.objects[1].attributes[0].locally_owned   = False
+IMSim_THLA.manager.objects[1].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[1].attributes[1].FOM_name        = 'Value'
+IMSim_THLA.manager.objects[1].attributes[1].trick_name      = 'IMSim_P.packing.value'
+IMSim_THLA.manager.objects[1].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[1].attributes[1].publish         = True
+IMSim_THLA.manager.objects[1].attributes[1].subscribe       = True
+IMSim_THLA.manager.objects[1].attributes[1].locally_owned   = False
+IMSim_THLA.manager.objects[1].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[1].attributes[2].FOM_name        = 'dvdt'
+IMSim_THLA.manager.objects[1].attributes[2].trick_name      = 'IMSim_P.packing.dvdt'
+IMSim_THLA.manager.objects[1].attributes[2].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[1].attributes[2].publish         = True
+IMSim_THLA.manager.objects[1].attributes[2].subscribe       = True
+IMSim_THLA.manager.objects[1].attributes[2].locally_owned   = False
+IMSim_THLA.manager.objects[1].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[1].attributes[3].FOM_name        = 'Phase'
+IMSim_THLA.manager.objects[1].attributes[3].trick_name      = 'IMSim_P.packing.phase_deg' # using packed data instead of 'IMSim_P.sim_data.phase'
+IMSim_THLA.manager.objects[1].attributes[3].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[1].attributes[3].subscribe       = True
+IMSim_THLA.manager.objects[1].attributes[3].locally_owned   = False
+IMSim_THLA.manager.objects[1].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[1].attributes[4].FOM_name        = 'Frequency'
+IMSim_THLA.manager.objects[1].attributes[4].trick_name      = 'IMSim_P.packing.freq'
+IMSim_THLA.manager.objects[1].attributes[4].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[1].attributes[4].subscribe       = True
+IMSim_THLA.manager.objects[1].attributes[4].locally_owned   = False
+IMSim_THLA.manager.objects[1].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[1].attributes[5].FOM_name        = 'Amplitude'
+IMSim_THLA.manager.objects[1].attributes[5].trick_name      = 'IMSim_P.packing.amp'
+IMSim_THLA.manager.objects[1].attributes[5].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[1].attributes[5].subscribe       = True
+IMSim_THLA.manager.objects[1].attributes[5].locally_owned   = False
+IMSim_THLA.manager.objects[1].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[1].attributes[6].FOM_name        = 'Tolerance'
+IMSim_THLA.manager.objects[1].attributes[6].trick_name      = 'IMSim_P.packing.tol'
+IMSim_THLA.manager.objects[1].attributes[6].config          = trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[1].attributes[6].subscribe       = True
+IMSim_THLA.manager.objects[1].attributes[6].locally_owned   = False
+IMSim_THLA.manager.objects[1].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+
+IMSim_THLA.manager.objects[1].attributes[7].FOM_name        = 'Name'
+IMSim_THLA.manager.objects[1].attributes[7].trick_name      = 'IMSim_P.packing.name'
+IMSim_THLA.manager.objects[1].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+IMSim_THLA.manager.objects[1].attributes[7].subscribe       = True
+IMSim_THLA.manager.objects[1].attributes[7].locally_owned   = False
+IMSim_THLA.manager.objects[1].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+
 
 #---------------------------------------------------------------------------
 # Set up simulation termination time.

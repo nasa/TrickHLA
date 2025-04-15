@@ -51,7 +51,7 @@ class IMSimSimObject : public THLABaseSimObject {
    char const * checkpoint_label;
 
    double       check_pause_job_offset;
-   double const CHECK_PAUSE_DELTA;
+   double const check_pause_delta;
 
    IMSimSimObject( double main_thread_data_cycle,
                    double main_thread_interaction_cycle,
@@ -66,13 +66,13 @@ class IMSimSimObject : public THLABaseSimObject {
                            _LAST ),
         imsim_config( exco_s_define_name ),
         imsim_exec_control( imsim_config ),
-        CHECK_PAUSE_DELTA( 0.000001 )
+        check_pause_delta( 0.000001 )
    {
       // Calculate and validate the check-pause job offset time.
-      if ( main_thread_data_cycle <= CHECK_PAUSE_DELTA ) {
-         exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > CHECK_PAUSE_DELTA!" );
+      if ( main_thread_data_cycle <= check_pause_delta ) {
+         exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > check_pause_delta!" );
       }
-      check_pause_job_offset = main_thread_data_cycle - CHECK_PAUSE_DELTA;
+      check_pause_job_offset = main_thread_data_cycle - check_pause_delta;
 
 
       //-----------------------
@@ -88,7 +88,7 @@ class IMSimSimObject : public THLABaseSimObject {
 
       // FIXME: This is for IMSim and DIS only. Needs to be moved into ExecutionControl.
       // Check to see if fed master started in freeze mode.
-      //P_LAST ("initialization") federate.check_pause_at_init( CHECK_PAUSE_DELTA );
+      //P_LAST ("initialization") federate.check_pause_at_init( check_pause_delta );
 
       // Coordinate Central Timing Equipment (CTE) go to run.
       //P_LAST ("initialization") federate.coordinate_CTE_go_to_run();
@@ -109,7 +109,7 @@ class IMSimSimObject : public THLABaseSimObject {
 
       // FIXME: This is for DIS only. Needs to be moved into ExecutionControl.
       // For DIS, check to see if federate master clicked freeze
-      //P_LAST (main_thread_data_cycle, check_pause_job_offset, "logging") federate.check_pause( CHECK_PAUSE_DELTA );
+      //P_LAST (main_thread_data_cycle, check_pause_job_offset, "logging") federate.check_pause( check_pause_delta );
 
 
       //-------------------
