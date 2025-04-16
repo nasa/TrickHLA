@@ -200,36 +200,43 @@ void ExecutionConfiguration::configure_attributes()
    this->attributes[0].FOM_name     = trick_MM->mm_strdup( "root_frame_name" );
    trick_name_str                   = exco_name_str + string( ".root_frame_name" );
    this->attributes[0].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[1].FOM_name     = trick_MM->mm_strdup( "scenario_time_epoch" );
    trick_name_str                   = exco_name_str + string( ".scenario_time_epoch" );
    this->attributes[1].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[2].FOM_name     = trick_MM->mm_strdup( "next_mode_scenario_time" );
    trick_name_str                   = exco_name_str + string( ".next_mode_scenario_time" );
    this->attributes[2].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[3].FOM_name     = trick_MM->mm_strdup( "next_mode_cte_time" );
    trick_name_str                   = exco_name_str + string( ".next_mode_cte_time" );
    this->attributes[3].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[3].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[4].FOM_name     = trick_MM->mm_strdup( "current_execution_mode" );
    trick_name_str                   = exco_name_str + string( ".current_execution_mode" );
    this->attributes[4].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[4].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[4].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[5].FOM_name     = trick_MM->mm_strdup( "next_execution_mode" );
    trick_name_str                   = exco_name_str + string( ".next_execution_mode" );
    this->attributes[5].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[5].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[5].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[6].FOM_name     = trick_MM->mm_strdup( "least_common_time_step" );
    trick_name_str                   = exco_name_str + string( ".least_common_time_step" );
    this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[6].rti_encoding = ENCODING_LITTLE_ENDIAN;
 }
 

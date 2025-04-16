@@ -23,6 +23,7 @@ def HLA_ball_config( THLA_object,
    THLA_object.attributes[0].trick_name      = sim_obj_name + '.packing.name'
    THLA_object.attributes[0].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
    THLA_object.attributes[0].publish         = True
+   THLA_object.attributes[0].subscribe       = True
    THLA_object.attributes[0].locally_owned   = True
    THLA_object.attributes[0].rti_encoding    = trick.ENCODING_UNICODE_STRING
 
