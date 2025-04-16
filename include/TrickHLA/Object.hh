@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_OBJECT_HH
 
 // System include files.
+#include <cstdint>
 #include <pthread.h>
 #include <string>
 
@@ -873,8 +874,10 @@ class Object : public CheckpointConversionBase
    AttributeMap thla_attribute_map; ///< @trick_io{**} Map of the Attribute's, key is the AttributeHandle.
 
   public:
-   unsigned long long send_count;    ///< @trick_units{--} Number of times data from this object was sent.
-   unsigned long long receive_count; ///< @trick_units{--} Number of times data for this object was received.
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+   uint64_t send_count;    ///< @trick_units{--} Number of times data from this object was sent.
+   uint64_t receive_count; ///< @trick_units{--} Number of times data for this object was received.
+#endif
 
    ElapsedTimeStats elapsed_time_stats; ///< @trick_units{--} Statistics of elapsed times between cyclic data reads.
 

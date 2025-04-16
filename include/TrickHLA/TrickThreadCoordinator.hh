@@ -137,10 +137,10 @@ class TrickThreadCoordinator
       int64_t const      sim_time_in_base_time ) const
    {
       // On boundary if main thread sim-time is an integer multiple of a valid cycle-time.
-      return ( ( this->any_child_thread_associated
-                 && ( thread_id < this->thread_cnt )
-                 && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
-                  ? ( ( sim_time_in_base_time % this->data_cycle_base_time_per_thread[thread_id] ) == 0LL )
+      return ( ( any_child_thread_associated
+                 && ( thread_id < thread_cnt )
+                 && ( data_cycle_base_time_per_thread[thread_id] > 0LL ) )
+                  ? ( ( sim_time_in_base_time % data_cycle_base_time_per_thread[thread_id] ) == 0LL )
                   : true );
    }
 
@@ -160,11 +160,11 @@ class TrickThreadCoordinator
       //                   ^-- Check for child thread sending in main thread frame here.
       //                 ^-- (child_cycle - main_cycle) = ( 3 - 1 )
       //
-      return ( ( this->any_child_thread_associated
-                 && ( thread_id < this->thread_cnt )
-                 && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
-                  ? ( ( ( sim_time_in_base_time - ( this->data_cycle_base_time_per_thread[thread_id] - this->main_thread_data_cycle_base_time ) )
-                        % this->data_cycle_base_time_per_thread[thread_id] )
+      return ( ( any_child_thread_associated
+                 && ( thread_id < thread_cnt )
+                 && ( data_cycle_base_time_per_thread[thread_id] > 0LL ) )
+                  ? ( ( ( sim_time_in_base_time - ( data_cycle_base_time_per_thread[thread_id] - main_thread_data_cycle_base_time ) )
+                        % data_cycle_base_time_per_thread[thread_id] )
                       == 0LL )
                   : true );
    }
@@ -179,10 +179,10 @@ class TrickThreadCoordinator
    bool const is_enabled_child_thread_association(
       unsigned int const thread_id ) const
    {
-      return ( this->any_child_thread_associated
-               && ( thread_id < this->thread_cnt )
-               && ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
-               && ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_NOT_ASSOCIATED ) );
+      return ( any_child_thread_associated
+               && ( thread_id < thread_cnt )
+               && ( thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
+               && ( thread_state[thread_id] != TrickHLA::THREAD_STATE_NOT_ASSOCIATED ) );
    }
 
   protected:

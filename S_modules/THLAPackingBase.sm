@@ -86,7 +86,7 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       if ( packing_base_ptr == NULL ){
          std::ostringstream errmsg;
          errmsg << "TrickHLAPackingBaseSimObject::default_config():" << __LINE__
-                << " ERROR: Unexpected NULL Packing obbject!\n";
+                << " ERROR: Unexpected NULL Packing object!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -116,8 +116,8 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       // We must have a Packing object.
       if ( packing_base_ptr == NULL ){
          std::ostringstream errmsg;
-         errmsg << "TrickHLAPackingBaseSimObject::default_config():" << __LINE__
-                << " ERROR: Unexpected NULL Packing obbject!\n";
+         errmsg << "TrickHLAPackingBaseSimObject::initialize():" << __LINE__
+                << " ERROR: Unexpected NULL Packing object!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       } else {

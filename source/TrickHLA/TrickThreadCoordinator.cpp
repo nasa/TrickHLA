@@ -199,7 +199,7 @@ void TrickThreadCoordinator::initialize(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   if ( this->thread_state != NULL ) {
+   if ( thread_state != NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
              << " ERROR: This function can only be called once. Detected the"
@@ -209,10 +209,10 @@ void TrickThreadCoordinator::initialize(
    }
 
    // Set the Trick main thread data cycle time.
-   this->main_thread_data_cycle_base_time = Int64BaseTime::to_base_time( main_thread_data_cycle_time );
+   main_thread_data_cycle_base_time = Int64BaseTime::to_base_time( main_thread_data_cycle_time );
 
    // Verify the thread state data cycle time.
-   if ( this->main_thread_data_cycle_base_time <= 0 ) {
+   if ( main_thread_data_cycle_base_time <= 0 ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
              << " ERROR: main_thread_data_cycle_time time ("
@@ -222,37 +222,37 @@ void TrickThreadCoordinator::initialize(
    }
 
    // Determine the total number of Trick threads (main + child).
-   this->thread_cnt = exec_get_num_threads();
+   thread_cnt = exec_get_num_threads();
 
    // Protect against the thread count being unexpectedly zero and should be
    // at least 1 for the Trick main thread.
-   if ( this->thread_cnt == 0 ) {
-      this->thread_cnt = 1;
+   if ( thread_cnt == 0 ) {
+      thread_cnt = 1;
    }
 
    // Allocate the thread state array for all the Trick threads (main + child).
-   this->thread_state = static_cast< unsigned int * >( TMM_declare_var_1d( "unsigned int", this->thread_cnt ) );
-   if ( this->thread_state == NULL ) {
+   thread_state = static_cast< unsigned int * >( TMM_declare_var_1d( "unsigned int", thread_cnt ) );
+   if ( thread_state == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
              << " ERROR: Could not allocate memory for 'thread_state'"
-             << " for requested size " << this->thread_cnt
+             << " for requested size " << thread_cnt
              << "!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // We don't know if the Child threads are running TrickHLA jobs yet so
    // mark them all as not associated.
-   for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
-      this->thread_state[thread_id] = TrickHLA::THREAD_STATE_NOT_ASSOCIATED;
+   for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
+      thread_state[thread_id] = TrickHLA::THREAD_STATE_NOT_ASSOCIATED;
    }
 
    // Disable Trick thread ID associations as configured in the input file.
    // This will override the compile-time associations in the S_define file.
-   if ( this->disable_thread_ids != NULL ) {
+   if ( disable_thread_ids != NULL ) {
       // Break up the comma separated thread-IDs list into a vector.
       std::vector< std::string > thread_id_vec;
-      StringUtilities::tokenize( this->disable_thread_ids, thread_id_vec, "," );
+      StringUtilities::tokenize( disable_thread_ids, thread_id_vec, "," );
 
       // Process each of the thread-ID's and convert from a string to an integer.
       for ( unsigned int k = 0; k < thread_id_vec.size(); ++k ) {
@@ -263,10 +263,10 @@ void TrickThreadCoordinator::initialize(
          long long thread_id;
          sstream >> thread_id;
 
-         if ( ( thread_id >= 1 ) && ( thread_id < this->thread_cnt ) ) {
+         if ( ( thread_id >= 1 ) && ( thread_id < thread_cnt ) ) {
             // Disable any Trick child thread associations for this ID
             // and including any API's for this child thread.
-            this->thread_state[thread_id] = TrickHLA::THREAD_STATE_DISABLED;
+            thread_state[thread_id] = TrickHLA::THREAD_STATE_DISABLED;
 
             if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
                message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize():%d Disabled Trick child thread association (thread-id:%d).\n",
@@ -287,7 +287,7 @@ void TrickThreadCoordinator::initialize(
                    << "' specified in the input file for 'federate.disable_associated_thread_ids'"
                    << " is not valid because this Trick child thread does not"
                    << " exist in the S_define file! Valid Trick child thread-ID"
-                   << " range is 1 to " << ( this->thread_cnt - 1 )
+                   << " range is 1 to " << ( thread_cnt - 1 )
                    << "!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -295,23 +295,23 @@ void TrickThreadCoordinator::initialize(
    }
 
    // Allocate memory for the data cycle times per each thread.
-   this->data_cycle_base_time_per_thread = static_cast< long long * >( TMM_declare_var_1d( "long long", this->thread_cnt ) );
-   if ( this->data_cycle_base_time_per_thread == NULL ) {
+   data_cycle_base_time_per_thread = static_cast< long long * >( TMM_declare_var_1d( "long long", thread_cnt ) );
+   if ( data_cycle_base_time_per_thread == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
              << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_thread'"
-             << " for requested size " << this->thread_cnt
+             << " for requested size " << thread_cnt
              << "!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
-      this->data_cycle_base_time_per_thread[thread_id] = 0LL;
+   for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
+      data_cycle_base_time_per_thread[thread_id] = 0LL;
    }
 
    // Allocate memory for the data cycle times per each object instance.
    if ( manager->obj_count > 0 ) {
-      this->data_cycle_base_time_per_obj = static_cast< long long * >( TMM_declare_var_1d( "long long", manager->obj_count ) );
-      if ( this->data_cycle_base_time_per_obj == NULL ) {
+      data_cycle_base_time_per_obj = static_cast< long long * >( TMM_declare_var_1d( "long long", manager->obj_count ) );
+      if ( data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
                 << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_obj'"
@@ -320,7 +320,7 @@ void TrickThreadCoordinator::initialize(
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
-         this->data_cycle_base_time_per_obj[obj_index] = 0LL;
+         data_cycle_base_time_per_obj[obj_index] = 0LL;
       }
    }
 
@@ -334,7 +334,7 @@ void TrickThreadCoordinator::initialize(
    // cycle time specified.
    associate_to_trick_child_thread( 0, main_thread_data_cycle_time );
 
-   if ( !verify_time_constraints( 0, this->main_thread_data_cycle_base_time ) ) {
+   if ( !verify_time_constraints( 0, main_thread_data_cycle_base_time ) ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
              << " ERROR: Invalid HLA cycle time ("
@@ -350,13 +350,13 @@ void TrickThreadCoordinator::initialize(
 void TrickThreadCoordinator::disable_trick_thread_associations(
    char const *thread_ids )
 {
-   if ( this->disable_thread_ids != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {
+   if ( disable_thread_ids != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( disable_thread_ids ) ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::disable_trick_thread_associations():%d WARNING failed to delete Trick Memory for 'this->disable_thread_ids'\n",
                           __LINE__ );
       }
    }
-   this->disable_thread_ids = ( thread_ids != NULL ) ? trick_MM->mm_strdup( thread_ids ) : NULL;
+   disable_thread_ids = ( thread_ids != NULL ) ? trick_MM->mm_strdup( thread_ids ) : NULL;
 }
 
 /*!
@@ -373,7 +373,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    // Verify the TrickThreadCoordinator::initialize() function was called as
    // required before this function is called by checking if the thread count
    // was initialized.
-   if ( ( this->thread_cnt == 0 ) || ( this->thread_state == NULL ) ) {
+   if ( ( thread_cnt == 0 ) || ( thread_state == NULL ) ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: Federate::initialize_thread_state() must be called"
@@ -382,22 +382,22 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    }
 
    // Verify the total Trick thread count (main + child).
-   if ( this->thread_cnt != exec_get_num_threads() ) {
+   if ( thread_cnt != exec_get_num_threads() ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The total number of Trick threads "
              << exec_get_num_threads() << " (main + child threads) does"
-             << " not match the number (" << this->thread_cnt
+             << " not match the number (" << thread_cnt
              << ") we initialized to in TrickThreadCoordinator::initialize()"
              << " for the specified thread-id:" << thread_id << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Verify the child thread-id specified is in range.
-   if ( thread_id >= this->thread_cnt ) {
+   if ( thread_id >= thread_cnt ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Total Trick thread count " << this->thread_cnt
+             << " ERROR: Total Trick thread count " << thread_cnt
              << " (main + child threads), Invalid specified "
              << ( ( thread_id == 0 ) ? "main" : "child" )
              << " thread-id:" << thread_id << '\n';
@@ -405,7 +405,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    }
 
    // Just return if this trick child thread association has been disabled.
-   if ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
+   if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          message_publish( MSG_NORMAL, "TrickThreadCoordinator::associate_to_trick_child_thread():%d Disabled thread_id:%d.\n",
                           __LINE__, thread_id );
@@ -414,7 +414,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    }
 
    // We do not support more than one thread association to the same thread-id.
-   if ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_NOT_ASSOCIATED ) {
+   if ( thread_state[thread_id] != TrickHLA::THREAD_STATE_NOT_ASSOCIATED ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: You can not associate the same Trick "
@@ -491,8 +491,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       // Is this thread associated to this object.
       if ( manager->objects[obj_index].is_thread_associated( thread_id ) ) {
 
-         if ( ( this->data_cycle_base_time_per_thread[thread_id] > 0LL )
-              && ( this->data_cycle_base_time_per_thread[thread_id] != data_cycle_base_time ) ) {
+         if ( ( data_cycle_base_time_per_thread[thread_id] > 0LL )
+              && ( data_cycle_base_time_per_thread[thread_id] != data_cycle_base_time ) ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
                    << " ERROR: For the object instance name '"
@@ -500,7 +500,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                    << ( ( thread_id == 0 ) ? "main" : "child" )
                    << " thread (thread-id:" << thread_id << ", data_cycle:"
                    << setprecision( 18 )
-                   << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
+                   << Int64BaseTime::to_seconds( data_cycle_base_time_per_thread[thread_id] )
                    << ") does not match the data cycle time specified:"
                    << setprecision( 18 ) << data_cycle << ". A Trick "
                    << ( ( thread_id == 0 ) ? "" : "child" )
@@ -509,8 +509,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                    << " ensure data coherency.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
 
-         } else if ( ( this->data_cycle_base_time_per_obj[obj_index] > 0LL )
-                     && ( this->data_cycle_base_time_per_obj[obj_index] != data_cycle_base_time ) ) {
+         } else if ( ( data_cycle_base_time_per_obj[obj_index] > 0LL )
+                     && ( data_cycle_base_time_per_obj[obj_index] != data_cycle_base_time ) ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
                    << " ERROR: For the object instance name '"
@@ -518,7 +518,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                    << "', an existing entry for this"
                    << " object (thread-id:" << thread_id << ", data_cycle:"
                    << setprecision( 18 )
-                   << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
+                   << Int64BaseTime::to_seconds( data_cycle_base_time_per_thread[thread_id] )
                    << ") has a data cycle time that does not match the"
                    << " data cycle time specified:" << data_cycle
                    << ". An object instance must use the same data cycle"
@@ -534,8 +534,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
             any_valid_thread_id_found = true;
 
-            this->data_cycle_base_time_per_thread[thread_id] = data_cycle_base_time;
-            this->data_cycle_base_time_per_obj[obj_index]    = data_cycle_base_time;
+            data_cycle_base_time_per_thread[thread_id] = data_cycle_base_time;
+            data_cycle_base_time_per_obj[obj_index]    = data_cycle_base_time;
          }
       }
    }
@@ -551,7 +551,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    // If the data cycle time for this child thread does not match the
    // main thread data cycle time then the user must specify all the valid
    // HLA object instance names associated to this child thread.
-   if ( ( data_cycle_base_time != this->main_thread_data_cycle_base_time )
+   if ( ( data_cycle_base_time != main_thread_data_cycle_base_time )
         && !any_valid_thread_id_found ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
@@ -562,7 +562,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << ") that differs from the Trick main thread data"
              << " cycle time ("
              << setprecision( 18 )
-             << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
+             << Int64BaseTime::to_seconds( main_thread_data_cycle_base_time )
              << "). This requires you to specify all the HLA object instance"
              << " names associated with this Trick "
              << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread so that TrickHLA"
@@ -571,15 +571,15 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    }
 
    // Make sure we mark the thread state as reset now that we associated to it.
-   this->thread_state[thread_id] = TrickHLA::THREAD_STATE_RESET;
+   thread_state[thread_id] = TrickHLA::THREAD_STATE_RESET;
 
    if ( thread_id == 0 ) {
       // Ensure we set the data cycle time for the main thread even if no
       // object instance names were specified.
-      this->data_cycle_base_time_per_thread[0] = this->main_thread_data_cycle_base_time;
+      data_cycle_base_time_per_thread[0] = main_thread_data_cycle_base_time;
    } else {
       // We now have at least one Trick child thread associated to TrickHLA.
-      this->any_child_thread_associated = true;
+      any_child_thread_associated = true;
 
       Trick::Threads const *child_thread = exec_get_exec_cpp()->get_thread( thread_id );
 
@@ -668,10 +668,10 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
       summary << "TrickThreadCoordinator::verify_trick_thread_associations():"
               << __LINE__;
 
-      if ( !this->any_child_thread_associated ) {
+      if ( !any_child_thread_associated ) {
          // This status message only makes sense only if we have simulation
          // with Trick child threads.
-         if ( this->thread_cnt > 1 ) {
+         if ( thread_cnt > 1 ) {
             summary << " Detected no Trick child threads associated to any"
                     << " object instances configured in the input file.";
          }
@@ -682,10 +682,10 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
          // Summary of the Object-instances per thread-ID.
          summary << "ThreadID  Cycle  Object-Instances\n";
-         for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
+         for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
             summary << thread_id << "\t  ";
 
-            switch ( this->thread_state[thread_id] ) {
+            switch ( thread_state[thread_id] ) {
                case TrickHLA::THREAD_STATE_DISABLED: {
                   summary << "(Disabled thread associated to TrickHLA)";
                   break;
@@ -696,7 +696,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
                }
                default: {
                   summary << setprecision( 18 )
-                          << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
+                          << Int64BaseTime::to_seconds( data_cycle_base_time_per_thread[thread_id] )
                           << "\t ";
                   for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
                      if ( manager->objects[obj_index].is_thread_associated( thread_id ) ) {
@@ -734,9 +734,9 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
    for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
       for ( unsigned int thread_id = 0; thread_id < manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
 
-         if ( ( this->thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
+         if ( ( thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
               && manager->objects[obj_index].thread_ids_array[thread_id]
-              && ( this->data_cycle_base_time_per_thread[thread_id] == 0LL ) ) {
+              && ( data_cycle_base_time_per_thread[thread_id] == 0LL ) ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::verify_trick_thread_associations():"
                    << __LINE__ << " ERROR: Object instance '"
@@ -760,7 +760,7 @@ void TrickThreadCoordinator::announce_data_available()
    }
 
    // Process Trick child thread states associated to TrickHLA.
-   if ( this->any_child_thread_associated ) {
+   if ( any_child_thread_associated ) {
 
       int64_t const sim_time_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
 
@@ -770,16 +770,16 @@ void TrickThreadCoordinator::announce_data_available()
 
       // Process all the Trick child threads associated to TrickHLA first
       // and only for threads on the data cycle time boundary.
-      for ( unsigned int thread_id = 1; thread_id < this->thread_cnt; ++thread_id ) {
+      for ( unsigned int thread_id = 1; thread_id < thread_cnt; ++thread_id ) {
          if ( is_enabled_child_thread_association( thread_id )
               && on_receive_data_cycle_boundary_for_thread( thread_id, sim_time_base_time ) ) {
 
-            this->thread_state[thread_id] = TrickHLA::THREAD_STATE_READY_TO_RECEIVE;
+            thread_state[thread_id] = TrickHLA::THREAD_STATE_READY_TO_RECEIVE;
          }
       }
 
       // Set the state of the Trick main thread last.
-      this->thread_state[0] = TrickHLA::THREAD_STATE_READY_TO_RECEIVE;
+      thread_state[0] = TrickHLA::THREAD_STATE_READY_TO_RECEIVE;
    }
 }
 
@@ -794,14 +794,14 @@ void TrickThreadCoordinator::announce_data_sent()
    }
 
    // Process Trick child thread states associated to TrickHLA.
-   if ( this->any_child_thread_associated ) {
+   if ( any_child_thread_associated ) {
 
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Set the state of the main thread as ready to send.
-      this->thread_state[0] = TrickHLA::THREAD_STATE_READY_TO_SEND;
+      thread_state[0] = TrickHLA::THREAD_STATE_READY_TO_SEND;
    }
 }
 
@@ -812,14 +812,13 @@ void TrickThreadCoordinator::announce_data_sent()
  */
 void TrickThreadCoordinator::wait_to_send_data()
 {
-
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data():%d\n",
                        __LINE__ );
    }
 
    // Only wait to send data for child threads if any are associated.
-   if ( this->any_child_thread_associated ) {
+   if ( any_child_thread_associated ) {
 
       // Get the ID of the thread that called this function.
       unsigned int const thread_id = exec_get_process_id();
@@ -868,7 +867,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Check all the associated thread-id's.
-      while ( ( thread_id < this->thread_cnt ) && all_ready_to_send ) {
+      while ( ( thread_id < thread_cnt ) && all_ready_to_send ) {
 
          // If the state is THREAD_STATE_DISABLED or
          // THREAD_STATE_NOT_ASSOCIATED then there are no TrickHLA jobs on this
@@ -878,9 +877,9 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
          // from the current thread-id. Skip this child thread if it is not
          // scheduled to run at the same time as the main thread for this job.
          // Also skip if this thread is not on a data cycle boundary.
-         if ( ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_READY_TO_SEND )
-              || ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED )
-              || ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_NOT_ASSOCIATED )
+         if ( ( thread_state[thread_id] == TrickHLA::THREAD_STATE_READY_TO_SEND )
+              || ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED )
+              || ( thread_state[thread_id] == TrickHLA::THREAD_STATE_NOT_ASSOCIATED )
               || !on_send_data_cycle_boundary_for_thread( thread_id, sim_time_in_base_time ) ) {
 
             // Move to the next thread-id because the current ID is
@@ -918,7 +917,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
             MutexProtection auto_unlock_mutex( &mutex );
 
             // Check all the associated thread-id's.
-            while ( ( thread_id < this->thread_cnt ) && all_ready_to_send ) {
+            while ( ( thread_id < thread_cnt ) && all_ready_to_send ) {
 
                // If the state is THREAD_STATE_DISABLED or
                // THREAD_STATE_NOT_ASSOCIATED then there are no TrickHLA jobs
@@ -929,9 +928,9 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
                // thread if it is not scheduled to run at the same time as the
                // main thread for this job.
                // Also skip if this thread is not on a data cycle boundary.
-               if ( ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_READY_TO_SEND )
-                    || ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED )
-                    || ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_NOT_ASSOCIATED )
+               if ( ( thread_state[thread_id] == TrickHLA::THREAD_STATE_READY_TO_SEND )
+                    || ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED )
+                    || ( thread_state[thread_id] == TrickHLA::THREAD_STATE_NOT_ASSOCIATED )
                     || !on_send_data_cycle_boundary_for_thread( thread_id, sim_time_in_base_time ) ) {
 
                   // Move to the next thread-id because the current ID is
@@ -985,7 +984,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
    unsigned int const thread_id )
 {
    // Just return if this thread association is disabled.
-   if ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
+   if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Disabled, Done\n",
                           __LINE__, thread_id );
@@ -1010,10 +1009,10 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Mark this child thread as ready to send.
-      this->thread_state[thread_id] = TrickHLA::THREAD_STATE_READY_TO_SEND;
+      thread_state[thread_id] = TrickHLA::THREAD_STATE_READY_TO_SEND;
 
       // Determine if all the data has been sent by the main thread.
-      sent_data = ( this->thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_SEND );
+      sent_data = ( thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_SEND );
    }
 
    // If the quick look to see if the main thread has announced it has sent
@@ -1037,7 +1036,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
             // unlocks the mutex even if there is an exception.
             MutexProtection auto_unlock_mutex( &mutex );
 
-            sent_data = ( this->thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_SEND );
+            sent_data = ( thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_SEND );
          }
 
          if ( !sent_data ) {
@@ -1078,7 +1077,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
 void TrickThreadCoordinator::wait_to_receive_data()
 {
    // Don't process Trick child thread states associated to TrickHLA if none exist.
-   if ( !this->any_child_thread_associated ) {
+   if ( !any_child_thread_associated ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d Done\n",
                           __LINE__ );
@@ -1090,7 +1089,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
    unsigned int const thread_id = exec_get_process_id();
 
    // Just return if this thread association is disabled.
-   if ( this->thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
+   if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Disabled, Done\n",
                           __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
@@ -1111,7 +1110,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
       // the mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
-      ready_to_receive = ( this->thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_RECEIVE );
+      ready_to_receive = ( thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_RECEIVE );
    }
 
    // See if the main thread has announced it has received data.
@@ -1133,7 +1132,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
             // unlocks the mutex even if there is an exception.
             MutexProtection auto_unlock_mutex( &mutex );
 
-            ready_to_receive = ( this->thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_RECEIVE );
+            ready_to_receive = ( thread_state[0] == TrickHLA::THREAD_STATE_READY_TO_RECEIVE );
          }
 
          if ( !ready_to_receive ) {
@@ -1178,10 +1177,10 @@ bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
    int64_t const sim_time_in_base_time ) const
 {
    // On boundary if sim-time is an integer multiple of a valid cycle-time.
-   return ( ( this->any_child_thread_associated
+   return ( ( any_child_thread_associated
               && ( obj_index < manager->obj_count )
-              && ( this->data_cycle_base_time_per_obj[obj_index] > 0LL ) )
-               ? ( ( sim_time_in_base_time % this->data_cycle_base_time_per_obj[obj_index] ) == 0LL )
+              && ( data_cycle_base_time_per_obj[obj_index] > 0LL ) )
+               ? ( ( sim_time_in_base_time % data_cycle_base_time_per_obj[obj_index] ) == 0LL )
                : true );
 }
 
@@ -1191,18 +1190,18 @@ int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
    int const     obj_index,
    int64_t const default_data_cycle_base_time ) const
 {
-   return ( this->any_child_thread_associated
+   return ( any_child_thread_associated
             && ( obj_index < manager->obj_count )
-            && ( this->data_cycle_base_time_per_obj[obj_index] > default_data_cycle_base_time ) )
-             ? this->data_cycle_base_time_per_obj[obj_index]
+            && ( data_cycle_base_time_per_obj[obj_index] > default_data_cycle_base_time ) )
+             ? data_cycle_base_time_per_obj[obj_index]
              : default_data_cycle_base_time;
 }
 
 bool const TrickThreadCoordinator::verify_time_constraints()
 {
    bool verified = true;
-   for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
-      if ( !verify_time_constraints( thread_id, this->data_cycle_base_time_per_thread[thread_id] ) ) {
+   for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
+      if ( !verify_time_constraints( thread_id, data_cycle_base_time_per_thread[thread_id] ) ) {
          verified = false;
       }
    }
@@ -1224,10 +1223,10 @@ bool const TrickThreadCoordinator::verify_time_constraints(
    int64_t const      data_cycle_base_time )
 {
    // Verify the child thread-id specified is in range.
-   if ( thread_id >= this->thread_cnt ) {
+   if ( thread_id >= thread_cnt ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-             << " ERROR: Total Trick thread count " << this->thread_cnt
+             << " ERROR: Total Trick thread count " << thread_cnt
              << " (main + child threads), Invalid specified "
              << ( ( thread_id == 0 ) ? "main" : "child" )
              << " thread-id:" << thread_id << '\n';
@@ -1284,7 +1283,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
 
       // The child thread data cycle time cannot be less than (i.e. faster)
       // than the main thread cycle time.
-      if ( data_cycle_base_time < this->main_thread_data_cycle_base_time ) {
+      if ( data_cycle_base_time < main_thread_data_cycle_base_time ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                 << " ERROR: The data cycle time for the Trick "
@@ -1293,7 +1292,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                 << Int64BaseTime::to_seconds( data_cycle_base_time )
                 << " seconds) cannot be less than the Trick main thread data cycle"
                 << " time (data_cycle:" << setprecision( 18 )
-                << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
+                << Int64BaseTime::to_seconds( main_thread_data_cycle_base_time )
                 << " seconds)!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
@@ -1301,7 +1300,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
 
       // Only allow child threads with a data cycle time that is an integer
       // multiple of the Trick main thread cycle time.
-      if ( data_cycle_base_time % this->main_thread_data_cycle_base_time != 0 ) {
+      if ( data_cycle_base_time % main_thread_data_cycle_base_time != 0 ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                 << " ERROR: The data cycle time for the Trick "
@@ -1310,7 +1309,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                 << Int64BaseTime::to_seconds( data_cycle_base_time )
                 << " seconds) must be an integer multiple of the Trick main"
                 << " thread data cycle time (data_cycle:" << setprecision( 18 )
-                << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
+                << Int64BaseTime::to_seconds( main_thread_data_cycle_base_time )
                 << " seconds)!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
