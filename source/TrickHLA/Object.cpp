@@ -156,10 +156,13 @@ Object::Object()
      rti_ambassador( NULL ),
      thla_reflected_attributes_queue(),
      thla_attribute_map(),
-     send_count( 0LL ),
-     receive_count( 0LL ),
      elapsed_time_stats()
 {
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+   this->send_count    = 0;
+   this->receive_count = 0;
+#endif
+
    // Make sure we allocate the map.
    this->attribute_values_map = new AttributeHandleValueMap();
 }
