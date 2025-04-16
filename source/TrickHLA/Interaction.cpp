@@ -110,8 +110,13 @@ Interaction::Interaction()
  */
 Interaction::~Interaction()
 {
-   // Remove this interaction from the federation execution.
-   remove();
+   // NOTE: Do not do HLA clean up (i.e. call remove()) from within the
+   // destructor. Because restoring a Trick checkpoint will result in the
+   // destructor being called on the old data. The result would be the
+   // Interaction Class will be unsubscribed from the federation, provided
+   // the HLA restore completes before the Trick memory manager calls the
+   // destructor. Meaning after a checkpoint restore, the federate would no
+   // longer get that interaction.
 
    if ( user_supplied_tag != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {

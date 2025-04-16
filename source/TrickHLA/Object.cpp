@@ -156,10 +156,13 @@ Object::Object()
      rti_ambassador( NULL ),
      thla_reflected_attributes_queue(),
      thla_attribute_map(),
-     send_count( 0LL ),
-     receive_count( 0LL ),
      elapsed_time_stats()
 {
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+   this->send_count    = 0;
+   this->receive_count = 0;
+#endif
+
    // Make sure we allocate the map.
    this->attribute_values_map = new AttributeHandleValueMap();
 }
@@ -172,12 +175,15 @@ Object::Object()
 Object::~Object()
 {
    if ( !removed_instance ) {
+      // NOTE: Do not do HLA clean up (i.e. call remove()) from within the
+      // destructor. Because restoring a Trick checkpoint will result in the
+      // destructor being called on the old data. The result would be the
+      // object instance will be removed from the federation, provided the HLA
+      // restore completes before the Trick memory manager calls the destructor.
+
       // Make sure we switch to unblocking cyclic reads so that we let any
       // blocking threads go.
       set_to_unblocking_cyclic_reads();
-
-      // Remove this object from the federation execution.
-      remove();
 
       if ( name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
