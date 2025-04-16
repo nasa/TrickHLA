@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>New Module</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2025-04-16</modificationDate>
+        <securityClassification>unclassified</securityClassification>
+        <purpose>Simple TrickHLA Simulation Configuration Object</purpose>
+        <applicationDomain>Training</applicationDomain>
+        <description>This FOM module defines the attributes of a simplified simulation configuration object used byt TrickHLA.  This is used for the simple example ExecutionControl object definition used in TrickHLA.  This is replaced in more complicated simulations for IMSim and SpaceFOM.</description>
+        <useLimitation></useLimitation>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Edwin Z. Crues</pocName>
+            <pocOrg>NASA JSC ER7</pocOrg>
+            <pocTelephone>281.483.2902</pocTelephone>
+            <pocEmail>edwin.z.crues@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Daniel E. Dexter</pocName>
+            <pocOrg>NASA JSC ER6</pocOrg>
+            <pocTelephone>281.483.1142</pocTelephone>
+            <pocEmail>dan.e.dexter@nasa.gov</pocEmail>
+        </poc>
+        <other></other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>SimulationConfiguration</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>This defines the attributes used for the simple simulation configuration data used in the SimpleSimConfig object.  This is used in the simple examples for TrickHLA.</semantics>
+                <attribute>
+                    <name>owner</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>A name string used to identify the 'owner' of the SimulationConfiguration object in the current Federation Execution.</semantics>
+                </attribute>
+                <attribute>
+                    <name>run_duration</name>
+                    <dataType>HLAinteger64LE</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Planned run duration of the Federation Execution in microseconds.</semantics>
+                </attribute>
+                <attribute>
+                    <name>number_of_federates</name>
+                    <dataType>HLAinteger32LE</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Number of required federates for this Federation Execution.</semantics>
+                </attribute>
+                <attribute>
+                    <name>required_federates</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Comma-separated list of required federates.</semantics>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <interactions>
+        <interactionClass>
+            <name>HLAinteractionRoot</name>
+        </interactionClass>
+    </interactions>
+    <switches>
+        <autoProvide isEnabled="true"/>
+        <conveyRegionDesignatorSets isEnabled="false"/>
+        <conveyProducingFederate isEnabled="false"/>
+        <attributeScopeAdvisory isEnabled="false"/>
+        <attributeRelevanceAdvisory isEnabled="false"/>
+        <objectClassRelevanceAdvisory isEnabled="false"/>
+        <interactionRelevanceAdvisory isEnabled="false"/>
+        <serviceReporting isEnabled="false"/>
+        <exceptionReporting isEnabled="false"/>
+        <delaySubscriptionEvaluation isEnabled="false"/>
+        <automaticResignAction resignAction="CancelThenDeleteThenDivest"/>
+    </switches>
+    <dataTypes>
+        <simpleDataTypes/>
+        <enumeratedDataTypes/>
+        <arrayDataTypes/>
+        <fixedRecordDataTypes/>
+        <variantRecordDataTypes/>
+    </dataTypes>
+    <notes/>
+</objectModel>

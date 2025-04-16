@@ -44,7 +44,7 @@ class SpaceFOMPhysicalEntitySimObject : public TrickHLAPackingBaseSimObject {
 
   public:
 
-   /* HLA associated reference frames packing object. */
+   /* HLA associated PhysicalEntity packing object. */
    SpaceFOM::PhysicalEntity entity_packing;
 
    /* HLA lag compensation object. */

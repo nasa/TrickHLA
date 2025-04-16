@@ -1,0 +1,320 @@
+/*!
+@ingroup Ball
+@file sims/TrickHLA/SIM_Ball_HLA/S_define
+@brief Simple rework of the Trick tutorial Ball simulation that is HLA enabled.
+
+\par<b>ASSUMPTIONS AND LIMITATIONS:</b>
+- 2 dimensional space\n
+- Positive X is horizontal to the right\n
+- Positive Y is vertical and up
+
+@copyright Copyright 2025 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@trick_parse{everything}
+
+@python_module{TrickHLAModel}
+
+@tldh
+@trick_link_dependency{Ball/src/ball_ensemble_collision.c}
+@trick_link_dependency{Ball/src/ball_ensemble_integ.c}
+@trick_link_dependency{Ball/src/ball_force_default_data.c}
+@trick_link_dependency{Ball/src/ball_force_field.c}
+@trick_link_dependency{Ball/src/ball_print.c}
+@trick_link_dependency{Ball/src/ball_state_default_data.c}
+@trick_link_dependency{Ball/src/ball_state_deriv.c}
+@trick_link_dependency{Ball/src/ball_state_init.c}
+@trick_link_dependency{Ball/src/ball_walls.c}
+@trick_link_dependency{Ball/src/ball_walls_default_data.c}
+
+@revs_begin
+@rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, April 2025, --, TrickHLA Tutorial. }
+@revs_end
+
+*/
+
+#include "sim_objects/default_trick_sys.sm"
+
+//=============================================================================
+// Define the job calling intervals.
+//=============================================================================
+#define DYN_RATE  0.010    // The Ball state dynamics propagation rate.
+#define FREEZE_FRAME 0.100 // The freeze frame rate.
+#define LOG_CYCLE 0.100    // Data Logging Rate.
+
+//=============================================================================
+// Define the HLA job cycle times.
+//=============================================================================
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
+
+//=============================================================================
+// Define the HLA phase initialization priorities.
+//=============================================================================
+#define P_HLA_INIT   60    // HLA initialization phase.
+#define P_HLA_EARLY  1     // HLA early job phase.
+#define P_HLA_LATE   65534 // HLA late job phase.
+
+##include "Ball/include/ball_proto.h"
+
+//=============================================================================
+// SIM_OBJECT: ball
+// This sim object models a ball.
+//=============================================================================
+class ballSimObject : public Trick::SimObject {
+
+  public:
+   BallState state;
+   BallForce force;
+
+   ballSimObject()
+   {
+      // DATA STRUCTURE DECLARATIONS
+      ("default_data") ball_state_default_data( &state );
+      ("default_data") ball_force_default_data( &force );
+
+      // INITIALIZATION JOBS
+      ("initialization") ball_state_init( &state );
+
+      // EOM DERIVATIVE AND STATE INTEGRATION JOBS
+      ("derivative") ball_force_field( &force, &state );
+      ("derivative") ball_state_deriv( &state );
+
+      // SCHEDULED JOBS
+      (0.1 , "scheduled") ball_print( &state ) ;
+   }
+   
+};
+
+#define NUM_BALLS 3
+
+class ensembleSimObject : public Trick::SimObject {
+
+  public:
+   
+   BallWalls            walls;
+   const unsigned int   num_balls;
+   BallState          * states[NUM_BALLS];
+   
+   ensembleSimObject ()
+   : num_balls( NUM_BALLS )
+   {
+      
+      // DATA STRUCTURE DECLARATIONS
+      ("default_data") ball_walls_default_data( &walls );
+      
+      // INIALIZATION JOBS
+      ("initialization") ensemble_init();
+      
+      // EOM DERIVATIVE, STATE INTEGRATION, AND DYNAMIC EVENT JOBS
+      ("integration") trick_ret = ball_ensemble_integ( num_balls, states );
+      ("dynamic_event") ball_ensemble_collision( &walls, num_balls, states );
+      
+   }
+   
+   void ensemble_init()
+   {
+      std::ostringstream errmsg;
+      bool error = false;
+
+      // Perform a quick consistency check.
+      if ( num_balls != NUM_BALLS ){
+         errmsg << "ensembleSimObject:ensemble_init(): ERROR!\n";
+         errmsg << "\tNumber of balls at initialization (" << num_balls
+                << ") do not match number allocated (" << NUM_BALLS << "!\n";
+         error = true;  
+      }
+
+      if ( error ) {
+         exec_terminate( __FILE__, errmsg.str().c_str() );
+      }
+      
+      return;
+   }
+   
+};
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "THLA.sm"
+
+
+//=============================================================================
+// SIM_OBJECT: THLA_INIT  (TrickHLA multi-phase initialization sim-object)
+//=============================================================================
+class THLAInitSimObj : public Trick::SimObject {
+
+ public:
+
+   TrickHLA::SimTimeline      sim_timeline;
+   TrickHLA::ScenarioTimeline scenario_timeline;
+
+   THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
+                   TrickHLA::Federate & thla_fed )
+      : sim_timeline(),
+        scenario_timeline( sim_timeline, 0.0, 0.0 ),
+        thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P100 ("initialization") thla_manager.send_init_data();
+
+      // Wait to receive all the initialization data.
+      P100 ("initialization") thla_manager.receive_init_data();
+
+      // Do some processing here if needed...
+
+      // Clear remaining initialization sync-points.
+      P100 ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObj( THLAInitSimObj const & rhs );
+   THLAInitSimObj & operator=( THLAInitSimObj const & rhs );
+
+   // Do not allow the default constructor.
+   THLAInitSimObj();
+   
+};
+
+// Ball include files.
+##include "Ball/include/BallPacking.hh"
+//##include "Ball/include/BallLagComp.hh"
+//##include "Ball/include/BallConditionalBase.hh"
+//##include "Ball/include/BallDeleted.hh"
+//##include "Ball/include/BallOwnershipHandler.hh"
+
+// Include TrickHLA Packing object base simulation definition module.
+#include "THLAPackingBase.sm"
+
+
+//=============================================================================
+// SIM_OBJECT: BallHLASimObject
+// Sim-object for tying the ball dynamic state to HLA publish/subscribe.
+//=============================================================================
+class BallHLASimObject : public Trick::SimObject {
+
+  public:
+
+   /* HLA associated Ball packing object. */
+   TrickHLAModel::BallPacking packing;
+
+   /* HLA lag compensation object. */
+   //Ball::BallLagComp lag_compensation;
+
+   /* HLA conditional object. */
+   //Ball::BallConditionalBase conditional;
+
+   /* HLA Ownership Handler object. */
+   //Ball::BallOwnershipHandler ownership_handler;
+
+   /* HLA Deleted object. */
+   //Ball::BallDeleted deleted_callback;
+
+   /* HLA Interaction Handler object. */
+   //Ball::BallInteractionHandler interaction_handler;
+
+   // SimObject constructor.
+   BallHLASimObject( BallState      & ball_state,
+                     unsigned short   _INIT = P_HLA_INIT  )
+   : packing( ball_state )
+   {
+      //
+      // Default data jobs.
+      //
+
+      //
+      // Initialization jobs.
+      //
+      // Note: Make sure to initialize the data before it gets sent in
+      // the THLA_INIT simulation object.
+      //
+      // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
+      // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
+      //P_INIT ("initialization") lag_compensation.configure( &packing );
+      //P_INIT ("initialization") lag_compensation.initialize();
+
+      //P_INIT ("initialization") packing.configure( &lag_compensation );
+      P_INIT ("initialization") packing.initialize();
+
+      //P_INIT ("initialization") conditional.configure( &packing );
+      //P_INIT ("initialization") conditional.initialize();
+
+   }
+
+  private:
+   // This object is not copyable
+   BallHLASimObject( BallHLASimObject const & );
+   BallHLASimObject & operator=( BallHLASimObject const & );
+};
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// THLA - Generalized TrickHLA interface routines.
+THLASimObject THLA( THLA_DATA_CYCLE_TIME,
+                    THLA_INTERACTION_CYCLE_TIME,
+                    P_HLA_EARLY,
+                    P_HLA_INIT,
+                    P_HLA_LATE );
+
+// Simulation specific multiphase initialization SimObject instance.
+THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
+
+
+// Ball dynamics object instantiations
+ballSimObject ball1;
+ballSimObject ball2;
+ballSimObject ball3;
+
+// Multi-ball state propagation instantiation
+ensembleSimObject ensemble;
+
+// Collect the forces on the balls.
+collect ball1.state.work.external_force = { ball1.force.output.force[0] };
+collect ball2.state.work.external_force = { ball2.force.output.force[0] };
+collect ball3.state.work.external_force = { ball3.force.output.force[0] };
+
+// Instantiate the Ball HLA simulation objects.
+BallHLASimObject ball1_hla( ball1.state );
+BallHLASimObject ball2_hla( ball2.state );
+BallHLASimObject ball3_hla( ball3.state );
+
+
+// Define the simulation objects in the ensemble integration loop.
+IntegLoop my_integ_loop (DYN_RATE) ball1, ball2, ball3, ensemble;
+
+
+// Connect objects
+void create_connections() {
+   
+   // Place the balls in the ensemble integration array.
+   ensemble.states[0] = &(ball1.state);
+   ensemble.states[1] = &(ball2.state);
+   ensemble.states[2] = &(ball3.state);
+
+   /* We are integrating the ensemble; that is, all the balls at the same time. */
+   my_integ_loop.getIntegrator( Runge_Kutta_4, ensemble.num_balls * 4 );
+
+   exec_set_freeze_frame(0.10);
+
+}
+
