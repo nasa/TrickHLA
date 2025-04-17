@@ -490,11 +490,11 @@ federate so this call will be ignored.\n",
                ostringstream msg;
                msg << "Manager::send_init_data():" << __LINE__
                    << " '" << objects[n].name << "'"
-                   << " This call will be ignored because the Simulation"
-                   << " Initialization Scheme (Type:'"
+                   << " WARNING: This call will be ignored because the"
+                   << " Simulation Initialization Scheme (Type:'"
                    << execution_control->get_type()
                    << "') does not support it.\n";
-               message_publish( MSG_NORMAL, msg.str().c_str() );
+               message_publish( MSG_WARNING, msg.str().c_str() );
             }
          }
       } else {
