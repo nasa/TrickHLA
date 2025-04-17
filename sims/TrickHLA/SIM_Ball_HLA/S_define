@@ -167,7 +167,10 @@ class THLAInitSimObj : public Trick::SimObject {
         thla_federate( thla_fed )
    {
 
-      // Alternative method: Send and receive all the initialization data.
+      // We aren't using synchronization points here to gate initialization.
+      // We're just going to send and receive all the initialization data
+      // and assume that is enough to initialize the sims.  We'll wait on
+      // the required federates list to insure the other federates participate.
 
       // Send all the initialization data.
       P100 ("initialization") thla_manager.send_init_data();
