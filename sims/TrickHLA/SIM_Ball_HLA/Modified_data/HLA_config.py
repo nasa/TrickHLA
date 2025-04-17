@@ -3,7 +3,7 @@
 # =========================================================================
 # Show or hide the TrickHLA debug messages.
 # Use Level-3 to show the ownership transfer debug messages.
-THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
+THLA.federate.debug_level = trick.DEBUG_LEVEL_3_TRACE
 
 
 # Configure the CRC.

@@ -66,6 +66,16 @@ add_dr_group( 'ball3', 'Ball3' )
 # Load in the HLA configuration
 exec(open("Modified_data/HLA_config.py").read())
 
+# Allocate the federate HLA objects: Walls + number of Balls.
+THLA.manager.obj_count = ensemble.num_balls + 1
+THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 'TrickHLA::Object' )
+
+#
+# Read in the Walls HLA Object configuration function.
+#
+exec(open("Modified_data/HLA_walls_config.py").read())
+HLA_walls_config( THLA.manager.objects[0], 'walls_hla', 'walls', walls_hla.packing, True )
+
 #
 # Read in the Ball HLA Object configuration function.
 #
@@ -74,13 +84,10 @@ exec(open("Modified_data/HLA_ball_config.py").read())
 #
 # Create the Ball <-> HLA connections.
 #
-# The Federate has two objects, it publishes one and subscribes to another.
-THLA.manager.obj_count = ensemble.num_balls
-THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 'TrickHLA::Object' )
 
-HLA_ball_config( THLA.manager.objects[0], 'ball1_hla', ball1.state.name, ball1_hla.packing, True )
-HLA_ball_config( THLA.manager.objects[1], 'ball2_hla', ball2.state.name, ball2_hla.packing, True )
-HLA_ball_config( THLA.manager.objects[2], 'ball3_hla', ball3.state.name, ball3_hla.packing, True )
+HLA_ball_config( THLA.manager.objects[1], 'ball1_hla', ball1.state.name, ball1_hla.packing, True )
+HLA_ball_config( THLA.manager.objects[2], 'ball2_hla', ball2.state.name, ball2_hla.packing, True )
+HLA_ball_config( THLA.manager.objects[3], 'ball3_hla', ball3.state.name, ball3_hla.packing, True )
 
 
 #---------------------------------------------------------------------------
