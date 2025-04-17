@@ -2132,13 +2132,18 @@ bool ExecutionControl::check_freeze_exit()
 
 void ExecutionControl::exit_freeze()
 {
-   if ( is_freeze_announced() ) {                              // DANNY2.7
-      if ( is_freeze_pending() && ( get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
+   if ( is_freeze_announced() ) {
+      if ( is_freeze_pending() && ( get_sim_time() > 0.0 ) ) {
+         // Coming out of freeze due to freeze interaction
 
-         // TODO: remove federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT ); // this tells federates to go to run
+         // This tells federates to go to run
+         // federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );
       }
-      if ( is_freeze_pending() ) {      // coming out of freeze due to interaction OR sync point at init time
-         set_freeze_announced( false ); // reset for the next time we freeze
+
+      // Coming out of freeze due to interaction OR sync point at init time
+      if ( is_freeze_pending() ) {
+         // reset for the next time we freeze
+         set_freeze_announced( false );
       }
    }
 }

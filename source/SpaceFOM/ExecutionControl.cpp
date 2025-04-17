@@ -2235,10 +2235,10 @@ bool ExecutionControl::run_mode_transition()
          go_to_run_time = ExCO->get_next_mode_cte_time();
       }
 
-      double cte_time, cte_time_diff;
+      double cte_time_diff;
 
       // Wait for the CTE go-to-run time.
-      cte_time = get_cte_time();
+      double cte_time = get_cte_time();
       while ( cte_time < go_to_run_time ) {
 
          // Always check for shutdown in wait loops.
