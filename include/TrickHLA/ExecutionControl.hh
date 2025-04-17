@@ -143,8 +143,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Test to see if ExecutionControl needs to wait for the initialization
     *  synchronization point.
     *  @details Most ExecutionControl approaches require that we wait for
-    *  specific initialization synchronization points in sprecific orders.
-    *  Currently, only the 'Simple' and 'DIS' scheme do not.
+    *  specific initialization synchronization points in specific orders.
     *  @return True if ExecutionControl needs to wait on the initialization synchronization points. */
    bool is_wait_for_init_sync_point_supported()
    {
