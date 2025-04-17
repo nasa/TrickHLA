@@ -65,16 +65,17 @@
  using namespace SpaceFOM;
 %}
 
-//=============================================================================
-// SIM_OBJECT: IMSimSimObject - Generalized TrickHLA interface routines.
-//=============================================================================
-#include "IMSim/IMSimV3.sm"
-
 
 //==========================================================================
 // SIM_OBJECT: SpaceFOMSimObject - Generalized TrickHLA interface routines.
 //==========================================================================
 #include "SpaceFOM/SpaceFOM.sm"
+
+
+//=============================================================================
+// SIM_OBJECT: IMSimSimObject - Generalized TrickHLA interface routines.
+//=============================================================================
+#include "IMSim/IMSimV3.sm"
 
 
 //==========================================================================
@@ -385,7 +386,7 @@ AnalyticSineSimObj   IMSim_A;
 PropagatedSineSimObj IMSim_P;
 
 // Define the simulation objects that have routines involved in integration.
-IntegLoop sim_integ_loop (DYN_RATE)   P;
+IntegLoop sim_integ_loop   (DYN_RATE) P;
 IntegLoop IMSim_integ_loop (DYN_RATE) IMSim_P;
 
 // All code listed in the create_connections routine is copied into S_source.cpp
