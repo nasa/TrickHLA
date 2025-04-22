@@ -182,21 +182,33 @@ void ExecutionConfiguration::configure_attributes()
    this->attributes[0].FOM_name     = trick_MM->mm_strdup( "owner" );
    trick_name_str                   = exco_name_str + string( ".owner" );
    this->attributes[0].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[0].publish      = true;
+   this->attributes[0].subscribe    = true;
+   this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[1].FOM_name     = trick_MM->mm_strdup( "run_duration" );
    trick_name_str                   = exco_name_str + string( ".run_duration_base_time" );
    this->attributes[1].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[1].publish      = true;
+   this->attributes[1].subscribe    = true;
+   this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[2].FOM_name     = trick_MM->mm_strdup( "number_of_federates" );
    trick_name_str                   = exco_name_str + string( ".num_federates" );
    this->attributes[2].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[2].publish      = true;
+   this->attributes[2].subscribe    = true;
+   this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[3].FOM_name     = trick_MM->mm_strdup( "required_federates" );
    trick_name_str                   = exco_name_str + string( ".required_federates" );
    this->attributes[3].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[3].publish      = true;
+   this->attributes[3].subscribe    = true;
+   this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[3].rti_encoding = ENCODING_UNICODE_STRING;
 }
 

@@ -175,7 +175,7 @@ void PhysicalEntityBase::base_config(
       pe_packing_data.name = trick_MM->mm_strdup( entity_name );
    } else {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::default_data():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::base_config():" << __LINE__
              << " ERROR: Unexpected NULL federation instance PhysicalEntity name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -287,7 +287,7 @@ void PhysicalEntityBase::configure()
    // Must have federation instance name.
    if ( pe_packing_data.name == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
              << " Setting frame name to empty string.\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -297,7 +297,7 @@ void PhysicalEntityBase::configure()
    // Must have federation instance type.
    if ( pe_packing_data.type == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
              << " Setting type to empty string.\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -307,7 +307,7 @@ void PhysicalEntityBase::configure()
    // Must have federation instance status.
    if ( pe_packing_data.status == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
              << " Setting status to empty string.\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -317,7 +317,7 @@ void PhysicalEntityBase::configure()
    // Must have federation instance parent_ref_frame.
    if ( pe_packing_data.parent_frame == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
              << " Setting parent_ref_frame to empty string.\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );

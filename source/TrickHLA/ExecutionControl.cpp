@@ -232,6 +232,14 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Reserve the RTI object instance names with the RTI, but only for
    // the objects that are locally owned.
+   if ( is_master() ) {
+
+      // Reserve ExCO object instance name.
+      execution_configuration->reserve_object_name_with_RTI();
+
+      // Wait for success or failure for the ExCO name reservation.
+      execution_configuration->wait_for_object_name_reservation();
+   }
    get_manager()->reserve_object_names_with_RTI();
 
    // Waits on the reservation of the RTI object instance names for the
@@ -367,6 +375,11 @@ void ExecutionControl::sync_point_announced(
 
 void ExecutionControl::publish()
 {
+   // Check to see if we are the Master federate.
+   if ( is_master() ) {
+      // Publish the execution configuration if we are the master federate.
+      execution_configuration->publish_object_attributes();
+   }
    return;
 }
 
