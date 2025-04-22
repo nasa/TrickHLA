@@ -167,7 +167,10 @@ class THLAInitSimObj : public Trick::SimObject {
         thla_federate( thla_fed )
    {
 
-      // Alternative method: Send and receive all the initialization data.
+      // We aren't using synchronization points here to gate initialization.
+      // We're just going to send and receive all the initialization data
+      // and assume that is enough to initialize the sims.  We'll wait on
+      // the required federates list to insure the other federates participate.
 
       // Send all the initialization data.
       P100 ("initialization") thla_manager.send_init_data();
@@ -265,6 +268,73 @@ class BallHLASimObject : public Trick::SimObject {
    BallHLASimObject & operator=( BallHLASimObject const & );
 };
 
+// Ball include files.
+##include "Ball/include/WallsPacking.hh"
+//##include "Ball/include/WallsConditionalBase.hh"
+//##include "Ball/include/WallsDeleted.hh"
+//##include "Ball/include/WallOwnershipHandler.hh"
+
+// Include TrickHLA Packing object base simulation definition module.
+#include "THLAPackingBase.sm"
+
+
+//=============================================================================
+// SIM_OBJECT: BallHLASimObject
+// Sim-object for tying the ball dynamic state to HLA publish/subscribe.
+//=============================================================================
+class WallsHLASimObject : public Trick::SimObject {
+
+  public:
+
+   /* HLA associated Ball packing object. */
+   TrickHLAModel::WallsPacking packing;
+
+   /* HLA conditional object. */
+   //Ball::WallsConditionalBase conditional;
+
+   /* HLA Ownership Handler object. */
+   //Ball::WallsOwnershipHandler ownership_handler;
+
+   /* HLA Deleted object. */
+   //Ball::WallsDeleted deleted_callback;
+
+   /* HLA Interaction Handler object. */
+   //Ball::WallsInteractionHandler interaction_handler;
+
+   // SimObject constructor.
+   WallsHLASimObject( BallWalls      & walls_ref,
+                      unsigned short   _INIT = P_HLA_INIT  )
+   : packing( walls_ref )
+   {
+      //
+      // Default data jobs.
+      //
+
+      //
+      // Initialization jobs.
+      //
+      // Note: Make sure to initialize the data before it gets sent in
+      // the THLA_INIT simulation object.
+      //
+      // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
+      // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
+      //P_INIT ("initialization") lag_compensation.configure( &packing );
+      //P_INIT ("initialization") lag_compensation.initialize();
+
+      //P_INIT ("initialization") packing.configure( &lag_compensation );
+      P_INIT ("initialization") packing.initialize();
+
+      //P_INIT ("initialization") conditional.configure( &packing );
+      //P_INIT ("initialization") conditional.initialize();
+
+   }
+
+  private:
+   // This object is not copyable
+   WallsHLASimObject( WallsHLASimObject const & );
+   WallsHLASimObject & operator=( WallsHLASimObject const & );
+};
+
 
 //==========================================================================
 // SimObject instantiations.
@@ -297,6 +367,9 @@ collect ball3.state.work.external_force = { ball3.force.output.force[0] };
 BallHLASimObject ball1_hla( ball1.state );
 BallHLASimObject ball2_hla( ball2.state );
 BallHLASimObject ball3_hla( ball3.state );
+
+// Instantiate the Walls HLA simulation object.
+WallsHLASimObject walls_hla( ensemble.walls );
 
 
 // Define the simulation objects in the ensemble integration loop.

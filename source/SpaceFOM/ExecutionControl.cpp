@@ -777,15 +777,12 @@ initialization process described in section 7.2 and figure 7-5.
 */
 void ExecutionControl::early_joiner_hla_init_process()
 {
-   ExecutionConfigurationBase *ExCO = get_execution_configuration();
-
    // Wait for the SpaceFOM initialization ExecutionConrtol synchronization
    // points for Early Joiner: INIT_STARTED_SYNC_POINT,
    // OBJECTS_DISCOVERED_SYNC_POINT, and ROOT_FRAME_DISCOVERED_SYNC_POINT.
    // and "startup" sync-points to be registered (i.e. announced).
    // Note: Do NOT register the INIT_COMPLETED_SYNC_POINT synchronization
    // point yet. That marks the successful completion of initialization.
-
    wait_for_sync_point_announced( SpaceFOM::INIT_STARTED_SYNC_POINT );
    wait_for_sync_point_announced( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
    wait_for_sync_point_announced( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
@@ -800,6 +797,8 @@ void ExecutionControl::early_joiner_hla_init_process()
 
    // If this is the Master federate, then setup the ExCO.
    if ( is_master() ) {
+      ExecutionConfigurationBase *ExCO = get_execution_configuration();
+
       // Reserve ExCO object instance name.
       ExCO->reserve_object_name_with_RTI();
 
@@ -2236,10 +2235,10 @@ bool ExecutionControl::run_mode_transition()
          go_to_run_time = ExCO->get_next_mode_cte_time();
       }
 
-      double cte_time, cte_time_diff;
+      double cte_time_diff;
 
       // Wait for the CTE go-to-run time.
-      cte_time = get_cte_time();
+      double cte_time = get_cte_time();
       while ( cte_time < go_to_run_time ) {
 
          // Always check for shutdown in wait loops.

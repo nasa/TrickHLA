@@ -187,7 +187,7 @@ void BallPacking::base_config(
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
    trick_name_str                      = entity_name_str + string( ".name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
+   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC);
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
@@ -196,7 +196,7 @@ void BallPacking::base_config(
    object->attributes[1].FOM_name      = allocate_input_string( "time" );
    trick_name_str                      = entity_name_str + string( ".time" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
+   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
@@ -205,7 +205,7 @@ void BallPacking::base_config(
    object->attributes[2].FOM_name      = allocate_input_string( "position" );
    trick_name_str                      = entity_name_str + string( ".position" );
    object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
+   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
@@ -214,7 +214,7 @@ void BallPacking::base_config(
    object->attributes[3].FOM_name      = allocate_input_string( "velocity" );
    trick_name_str                      = entity_name_str + string( ".velocity" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
+   object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[3].publish       = publishes;
    object->attributes[3].subscribe     = !publishes;
    object->attributes[3].locally_owned = publishes;
@@ -223,7 +223,7 @@ void BallPacking::base_config(
    object->attributes[4].FOM_name      = allocate_input_string( "acceleration" );
    trick_name_str                      = entity_name_str + string( ".acceleration" );
    object->attributes[4].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[4].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
+   object->attributes[4].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[4].publish       = publishes;
    object->attributes[4].subscribe     = !publishes;
    object->attributes[4].locally_owned = publishes;
@@ -232,7 +232,7 @@ void BallPacking::base_config(
    object->attributes[5].FOM_name      = allocate_input_string( "force" );
    trick_name_str                      = entity_name_str + string( ".external_force" );
    object->attributes[5].trick_name    = allocate_input_string( trick_name_str );
-   object->attributes[5].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
+   object->attributes[5].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[5].publish       = publishes;
    object->attributes[5].subscribe     = !publishes;
    object->attributes[5].locally_owned = publishes;
@@ -541,11 +541,11 @@ void BallPacking::debug_print( std::ostream &stream ) const
 
    stream << "\tObject-Name: '" << object->get_name() << "'\n"
           << "\tname:          '" << ( name != NULL ? name : "" ) << "'\n"
-          << "\ttime:          '" << time << "'\n"
-          << "\tposition:      '" << position[0] << ", " << position[1] << "'\n"
-          << "\tvelocity:      '" << velocity[0] << ", " << velocity[1] << "'\n"
-          << "\tacceleration:  '" << acceleration[0] << ", " << acceleration[1] << "'\n"
-          << "\external force: '" << external_force[0] << ", " << external_force[1] << "'\n";
+          << "\ttime:          " << time << "\n"
+          << "\tposition:      " << position[0] << ", " << position[1] << "\n"
+          << "\tvelocity:      " << velocity[0] << ", " << velocity[1] << "\n"
+          << "\tacceleration:  " << acceleration[0] << ", " << acceleration[1] << "\n"
+          << "\external force: " << external_force[0] << ", " << external_force[1] << "\n";
 
    return;
 }

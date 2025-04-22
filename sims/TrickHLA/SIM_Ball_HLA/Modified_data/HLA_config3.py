@@ -35,12 +35,14 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 # wait for all Federates marked as required to join the Federation before
 # continuing on.
 THLA.federate.enable_known_feds      = True
-THLA.federate.known_feds_count       = 1
+THLA.federate.known_feds_count       = 3
 THLA.federate.known_feds             = trick.sim_services.alloc_type( THLA.federate.known_feds_count, 'TrickHLA::KnownFederate' )
 THLA.federate.known_feds[0].name     = 'Ball1-Federate'
 THLA.federate.known_feds[0].required = True
-#THLA.federate.known_feds[1].name     = 'Ball2-Federate'
-#THLA.federate.known_feds[1].required = True
+THLA.federate.known_feds[1].name     = 'Ball2-Federate'
+THLA.federate.known_feds[1].required = True
+THLA.federate.known_feds[2].name     = 'Ball2-Federate'
+THLA.federate.known_feds[2].required = True
 
 
 #---------------------------------------------

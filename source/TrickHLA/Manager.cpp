@@ -490,11 +490,11 @@ federate so this call will be ignored.\n",
                ostringstream msg;
                msg << "Manager::send_init_data():" << __LINE__
                    << " '" << objects[n].name << "'"
-                   << " This call will be ignored because the Simulation"
-                   << " Initialization Scheme (Type:'"
+                   << " WARNING: This call will be ignored because the"
+                   << " Simulation Initialization Scheme (Type:'"
                    << execution_control->get_type()
                    << "') does not support it.\n";
-               message_publish( MSG_NORMAL, msg.str().c_str() );
+               message_publish( MSG_WARNING, msg.str().c_str() );
             }
          }
       } else {
@@ -564,11 +564,11 @@ federate so the data will not be sent for '%s'.\n",
             ostringstream msg;
             msg << "Manager::send_init_data():" << __LINE__
                 << " '" << instance_name << "'"
-                << " This call will be ignored because the Simulation"
-                << " Initialization Scheme (Type:'"
+                << " WARNING: This call will be ignored because the"
+                << " Simulation Initialization Scheme (Type:'"
                 << execution_control->get_type()
                 << "') does not support it.\n";
-            message_publish( MSG_NORMAL, msg.str().c_str() );
+            message_publish( MSG_WARNING, msg.str().c_str() );
          }
       }
    } else {
@@ -817,11 +817,11 @@ void Manager::wait_for_init_sync_point(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          ostringstream errmsg;
          errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
-                << " This call will be ignored because the Simulation"
-                << " Initialization Scheme (Type:'"
+                << " WARNING: This call will be ignored because the"
+                << " Simulation Initialization Scheme (Type:'"
                 << execution_control->get_type()
                 << "') does not support it.\n";
-         message_publish( MSG_NORMAL, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
    }

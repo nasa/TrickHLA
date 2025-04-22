@@ -42,6 +42,7 @@ _init_log*.csv
 chkpnt_*_init
 chkpnt_end
 chkpnt_point
+/sims/**/chkpnt*
 /sims/**/*checkpoint
 /sims/**/*.running_feds
 /sims/**/makefile

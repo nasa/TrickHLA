@@ -64,7 +64,8 @@ add_dr_group( 'ball3', 'Ball3' )
 # Set the HLA information.
 #---------------------------------------------------------------------------
 # Load in the HLA configuration
-exec(open("Modified_data/HLA_config.py").read())
+exec(open("Modified_data/HLA_config3.py").read())
+THLA.federate.name = 'Ball1-Federate'
 
 # Allocate the federate HLA objects: Walls + number of Balls.
 THLA.manager.obj_count = ensemble.num_balls + 1
@@ -86,8 +87,8 @@ exec(open("Modified_data/HLA_ball_config.py").read())
 #
 
 HLA_ball_config( THLA.manager.objects[1], 'ball1_hla', ball1.state.name, ball1_hla.packing, True )
-HLA_ball_config( THLA.manager.objects[2], 'ball2_hla', ball2.state.name, ball2_hla.packing, True )
-HLA_ball_config( THLA.manager.objects[3], 'ball3_hla', ball3.state.name, ball3_hla.packing, True )
+HLA_ball_config( THLA.manager.objects[2], 'ball2_hla', ball2.state.name, ball2_hla.packing, False )
+HLA_ball_config( THLA.manager.objects[3], 'ball3_hla', ball3.state.name, ball3_hla.packing, False )
 
 
 #---------------------------------------------------------------------------

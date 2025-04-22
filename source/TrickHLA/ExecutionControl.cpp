@@ -165,7 +165,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
-   get_manager()->setup_all_ref_attributes();
+   manager->setup_all_ref_attributes();
 
    // Create the RTI Ambassador and connect.
    federate->create_RTI_ambassador_and_connect();
@@ -177,14 +177,18 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // Create and join the federation.
    federate->create_and_join_federation();
 
+   // Enable asynchronous delivery of messages.
+   federate->enable_async_delivery();
+
    // We are the master if we successfully created the federation and the
    // user has not preset a master value.
    if ( !is_master_preset() ) {
       set_master( federate->is_federation_created_by_federate() );
    }
 
-   // Don't forget to enable asynchronous delivery of messages.
-   federate->enable_async_delivery();
+   // Setup the simulation configuration object now that we know if we are
+   // the "Master" federate or not.
+   execution_configuration->set_master( is_master() );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
@@ -195,10 +199,6 @@ void ExecutionControl::pre_multi_phase_init_processes()
                           __LINE__ );
       }
    }
-
-   // Setup the simulation configuration object now that we know if we are
-   // the "Master" federate or not.
-   execution_configuration->set_master( is_master() );
 
    // The Master federate must have a padding time set.
    if ( is_master() && ( get_time_padding() <= 0.0 ) ) {
@@ -224,14 +224,13 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
-   get_manager()->setup_all_RTI_handles();
+   manager->setup_all_RTI_handles();
 
    // Call publish_and_subscribe AFTER we've initialized the manager,
    // federate, and FedAmb.
-   get_manager()->publish_and_subscribe();
+   manager->publish_and_subscribe();
 
-   // Reserve the RTI object instance names with the RTI, but only for
-   // the objects that are locally owned.
+   // If this is the Master federate, then setup the ExCO.
    if ( is_master() ) {
 
       // Reserve ExCO object instance name.
@@ -240,20 +239,23 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // Wait for success or failure for the ExCO name reservation.
       execution_configuration->wait_for_object_name_reservation();
    }
-   get_manager()->reserve_object_names_with_RTI();
+
+   // Reserve the RTI object instance names with the RTI, but only for
+   // the objects that are locally owned.
+   manager->reserve_object_names_with_RTI();
 
    // Waits on the reservation of the RTI object instance names for the
    // locally owned objects. Calling this function will block until all
    // the object instances names for the locally owned objects have been
    // reserved.
-   get_manager()->wait_for_reservation_of_object_names();
+   manager->wait_for_reservation_of_object_names();
 
    // Creates an RTI object instance and registers it with the RTI, but
    // only for the objects that are locally owned.
-   get_manager()->register_objects_with_RTI();
+   manager->register_objects_with_RTI();
 
    // Setup the preferred order for all object attributes and interactions.
-   get_manager()->setup_preferred_order_with_RTI();
+   manager->setup_preferred_order_with_RTI();
 }
 
 /*!

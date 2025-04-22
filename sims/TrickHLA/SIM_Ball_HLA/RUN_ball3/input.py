@@ -4,6 +4,8 @@ exec(open("Modified_data/data_record.py").read())
 
 # Load in the Trick realtime parameter setting.
 exec(open("Modified_data/realtime.py").read())
+trick.exec_set_freeze_command(False)
+trick.sim_control_panel_set_enabled( False )
 
 # Load in the graphics definition and startup functions.
 exec(open("Modified_data/graphics.py").read())
@@ -64,7 +66,9 @@ add_dr_group( 'ball3', 'Ball3' )
 # Set the HLA information.
 #---------------------------------------------------------------------------
 # Load in the HLA configuration
-exec(open("Modified_data/HLA_config.py").read())
+exec(open("Modified_data/HLA_config3.py").read())
+THLA.federate.name = 'Ball3-Federate'
+
 
 # Allocate the federate HLA objects: Walls + number of Balls.
 THLA.manager.obj_count = ensemble.num_balls + 1
@@ -74,7 +78,7 @@ THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 
 # Read in the Walls HLA Object configuration function.
 #
 exec(open("Modified_data/HLA_walls_config.py").read())
-HLA_walls_config( THLA.manager.objects[0], 'walls_hla', 'walls', walls_hla.packing, True )
+HLA_walls_config( THLA.manager.objects[0], 'walls_hla', 'walls', walls_hla.packing, False )
 
 #
 # Read in the Ball HLA Object configuration function.
@@ -85,8 +89,8 @@ exec(open("Modified_data/HLA_ball_config.py").read())
 # Create the Ball <-> HLA connections.
 #
 
-HLA_ball_config( THLA.manager.objects[1], 'ball1_hla', ball1.state.name, ball1_hla.packing, True )
-HLA_ball_config( THLA.manager.objects[2], 'ball2_hla', ball2.state.name, ball2_hla.packing, True )
+HLA_ball_config( THLA.manager.objects[1], 'ball1_hla', ball1.state.name, ball1_hla.packing, False )
+HLA_ball_config( THLA.manager.objects[2], 'ball2_hla', ball2.state.name, ball2_hla.packing, False )
 HLA_ball_config( THLA.manager.objects[3], 'ball3_hla', ball3.state.name, ball3_hla.packing, True )
 
 
