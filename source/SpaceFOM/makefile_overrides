@@ -1,0 +1,5 @@
+#=============================================================================
+# Compile the SpaceFOM source code with additional compiler settings.
+#=============================================================================
+objects: TRICK_CFLAGS   += -O2
+objects: TRICK_CXXFLAGS += -O2
