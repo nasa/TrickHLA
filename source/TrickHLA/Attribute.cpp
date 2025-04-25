@@ -697,7 +697,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
          // The byte counts must match between the received attribute and
          // the Trick simulation variable for ENCODING_NONE since this
          // RTI encoding only supports a fixed length array of characters.
-         if ( attr_size != expected_byte_count ) {
+         if ( size_is_static && ( attr_size != expected_byte_count ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::extract_data():" << __LINE__
                    << " WARNING: For Attribute '" << FOM_name << "' with Trick name '"
