@@ -302,7 +302,7 @@ void Attribute::initialize(
                    << " ENCODING_LITTLE_ENDIAN, ENCODING_NONE, ENCODING_UNICODE_STRING,"
                    << " ENCODING_OPAQUE_DATA, or ENCODING_UNKNOWN value for the"
                    << " 'rti_encoding' when the attribute represents a 'char' or"
-                   << " 'unsigned char' type. Please check  your input or"
+                   << " 'unsigned char' type. Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -311,14 +311,72 @@ void Attribute::initialize(
          // For the ENCODING_UNICODE_STRING encoding, we only support a 1-D dynamic
          // array of characters.
          if ( ( rti_encoding == ENCODING_UNICODE_STRING )
-              && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+              && ( ( ref2->attr->num_index != 1 )
+                   || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_UNICODE_STRING must"
-                   << " represent a one-dimensional array of characters (i.e."
-                   << " 'char *' or 'unsigned char *'). Please check your input or"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_UNICODE_STRING"
+                   << " must represent a one-dimensional array of characters (i.e."
+                   << " 'char *' or 'unsigned char *'). Please check your input"
+                   << " or modified-data files to make sure the value for the"
+                   << " 'rti_encoding' is correctly specified.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+
+         // For the ENCODING_OPAQUE_DATA encoding, we only support a
+         // 1-D dynamic array of characters.
+         if ( ( rti_encoding == ENCODING_OPAQUE_DATA )
+              && ( ( ref2->attr->num_index != 1 )
+                   || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+            ostringstream errmsg;
+            errmsg << "Attribute::initialize():" << __LINE__
+                   << " ERROR: FOM Object Attribute '"
+                   << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_OPAQUE_DATA"
+                   << " must represent a one-dimensional array of characters (i.e."
+                   << " 'char *' or 'unsigned char *'). Please check your input"
+                   << " or modified-data files to make sure the value for the"
+                   << " 'rti_encoding' is correctly specified.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+         break;
+      }
+
+      case TRICK_WCHAR: {
+         if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
+              && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+              && ( rti_encoding != ENCODING_NONE )
+              && ( rti_encoding != ENCODING_UNICODE_STRING )
+              && ( rti_encoding != ENCODING_OPAQUE_DATA )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+            ostringstream errmsg;
+            errmsg << "Attribute::initialize():" << __LINE__
+                   << " ERROR: FOM Object Attribute '"
+                   << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
+                   << trick_name << "' must use either the ENCODING_BIG_ENDIAN,"
+                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NONE, ENCODING_UNICODE_STRING,"
+                   << " ENCODING_OPAQUE_DATA, or ENCODING_UNKNOWN value for the"
+                   << " 'rti_encoding' when the attribute represents a 'wchar_t'"
+                   << " type. Please check your input or"
+                   << " modified-data files to make sure the value for the"
+                   << " 'rti_encoding' is correctly specified.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+
+         // For the ENCODING_UNICODE_STRING encoding, we only support a 1-D dynamic
+         // array of characters.
+         if ( ( rti_encoding == ENCODING_UNICODE_STRING )
+              && ( ( ref2->attr->num_index != 1 )
+                   || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+            ostringstream errmsg;
+            errmsg << "Attribute::initialize():" << __LINE__
+                   << " ERROR: FOM Object Attribute '"
+                   << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_UNICODE_STRING"
+                   << " must represent a one-dimensional array of wide characters"
+                   << " (i.e. 'wchar_t *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -327,14 +385,15 @@ void Attribute::initialize(
          // For the ENCODING_OPAQUE_DATA encoding, we only support a
          // 1-D dynamic array of characters.
          if ( ( rti_encoding == ENCODING_OPAQUE_DATA )
-              && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+              && ( ( ref2->attr->num_index != 1 )
+                   || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_OPAQUE_DATA must"
-                   << " represent a one-dimensional array of characters (i.e."
-                   << " 'char *' or 'unsigned char *'). Please check your input or"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_OPAQUE_DATA"
+                   << " must represent a one-dimensional array of wide characters"
+                   << " (i.e. 'wchar_t *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -394,7 +453,8 @@ void Attribute::initialize(
          }
 
          // Only support an array of characters (i.e. char *) for ENCODING_NONE.
-         if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
+         if ( ( rti_encoding == ENCODING_NONE )
+              && ( ref2->attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
@@ -419,7 +479,8 @@ void Attribute::initialize(
       // For now, we do not support more than a 1-D array that is dynamic
       // (i.e. a pointer such as char *). If the size of the last indexed
       // attribute is zero then it is a pointer.
-      if ( ( ref2->attr->num_index > 1 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
+      if ( ( ref2->attr->num_index > 1 )
+           && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
          ostringstream errmsg;
          errmsg << "Attribute::initialize():" << __LINE__
                 << " ERROR: FOM Object Attribute '"
@@ -466,7 +527,8 @@ void Attribute::initialize(
 
    // We do not support an array of primitive types for the logical
    // time encoding, otherwise we support everything else.
-   if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( ref2->attr->num_index > 0 ) ) {
+   if ( ( rti_encoding == ENCODING_LOGICAL_TIME )
+        && ( ref2->attr->num_index > 0 ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
@@ -479,7 +541,8 @@ void Attribute::initialize(
    }
 
    // The units must be in seconds if the ENCODING_LOGICAL_TIME is used.
-   if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( strcmp( "s", ref2->attr->units ) != 0 ) ) {
+   if ( ( rti_encoding == ENCODING_LOGICAL_TIME )
+        && ( strcmp( "s", ref2->attr->units ) != 0 ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
@@ -513,7 +576,8 @@ void Attribute::initialize(
    // to a null string.
    if ( ( size == 0 )
         && ( ref2->attr->type != TRICK_STRING )
-        && !( ( ref2->attr->type == TRICK_CHARACTER ) && ( ref2->attr->num_index > 0 ) ) ) {
+        && !( ( ref2->attr->type == TRICK_CHARACTER ) && ( ref2->attr->num_index > 0 ) )
+        && !( ( ref2->attr->type == TRICK_WCHAR ) && ( ref2->attr->num_index > 0 ) ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::initialize():" << __LINE__
@@ -555,7 +619,8 @@ void Attribute::initialize(
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
       if ( ( ref2->attr->type == TRICK_STRING )
-           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+           || ( ( ( ref2->attr->type == TRICK_CHARACTER )
+                  || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
@@ -661,7 +726,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
    int attr_size = attr_value->size();
 
    // Determine the number of bytes we expect to receive.
-   int expected_byte_count = get_attribute_size();
+   int const expected_byte_count = get_attribute_size();
 
    switch ( rti_encoding ) {
       case ENCODING_BOOLEAN: {
@@ -836,7 +901,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
 }
 
 void Attribute::ensure_buffer_capacity(
-   int capacity )
+   int const capacity )
 {
    if ( capacity > buffer_capacity ) {
       buffer_capacity = capacity;
@@ -871,7 +936,8 @@ void Attribute::calculate_size_and_number_of_items()
 
    // Handle Strings differently since we need to know the length of each string.
    if ( ( ref2->attr->type == TRICK_STRING )
-        || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+        || ( ( ( ref2->attr->type == TRICK_CHARACTER )
+               || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
              && ( ref2->attr->num_index > 0 )
              && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
 
@@ -1149,7 +1215,9 @@ void Attribute::pack_attribute_buffer()
       default: {
          // Must handle the string as a special case because of special encodings.
          if ( ( ref2->attr->type == TRICK_STRING )
-              || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+              || ( ( ( ref2->attr->type == TRICK_CHARACTER )
+                     || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER )
+                     || ( ref2->attr->type == TRICK_WCHAR ) )
                    && ( ref2->attr->num_index > 0 )
                    && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
             // NOTE: For now we must calculate size every time because on a
@@ -1320,10 +1388,50 @@ void Attribute::unpack_attribute_buffer()
          }
          break;
       }
+      case ENCODING_NONE: {
+         // Determine the number of items this attribute has (i.e. is it an array).
+         if ( !size_is_static ) {
+            calculate_size_and_number_of_items();
+         }
+
+         // Determine if the users variable is a pointer.
+         if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
+            // It's a pointer
+
+            // Byteswap if needed and copy the buffer over to the attribute.
+            byteswap_buffer_copy( *static_cast< char ** >( ref2->address ),
+                                  buffer,
+                                  ref2->attr->type,
+                                  num_items,
+                                  size );
+         } else {
+            // It's either a primitive type or a static array.
+
+            // Byteswap if needed and copy the buffer over to the attribute.
+            byteswap_buffer_copy( ref2->address,
+                                  buffer,
+                                  ref2->attr->type,
+                                  num_items,
+                                  size );
+
+            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+               ostringstream msg;
+               msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+                   << "================== ATTRIBUTE DECODE ==================================\n"
+                   << " attribute '" << FOM_name << "' (trick name '" << trick_name
+                   << "')\n";
+               message_publish( MSG_NORMAL, msg.str().c_str() );
+               print_buffer();
+            }
+         }
+         break;
+      }
       default: {
          // Must handle the string as a special case because of special encodings.
          if ( ( ref2->attr->type == TRICK_STRING )
-              || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+              || ( ( ( ref2->attr->type == TRICK_CHARACTER )
+                     || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER )
+                     || ( ref2->attr->type == TRICK_WCHAR ) )
                    && ( ref2->attr->num_index > 0 )
                    && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
             // The size is the received size but recalculate the number of items.
@@ -1341,8 +1449,11 @@ void Attribute::unpack_attribute_buffer()
                ostringstream msg;
                msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
                    << "================== ATTRIBUTE DECODE ==================================\n"
-                   << " attribute '" << FOM_name << "' (trick name '" << trick_name << "')"
-                   << " value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
+                   << " attribute '" << FOM_name << "' (trick name '" << trick_name << "')";
+               if ( ref2->attr->type != TRICK_WCHAR ) {
+                  msg << " value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"";
+               }
+               msg << "\n";
                message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
@@ -1776,7 +1887,8 @@ size %d, will use the data buffer size instead.\n",
          output = *( static_cast< unsigned char ** >( ref2->address ) );
 
          if ( output != NULL ) {
-            // The output array size must exactly match the incoming data size for opaque data.
+            // The output array size must exactly match the incoming data size
+            // for opaque data.
             if ( decoded_length != get_size( output ) ) {
                *( static_cast< char ** >( ref2->address ) ) =
                   static_cast< char * >( TMM_resize_array_1d_a(
@@ -3294,7 +3406,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
 
    // Determine if we can just copy the data between the two buffers since
    // we don't need to byteswap or do any special encoding.
-   if ( ( !byteswap ) || ( rti_encoding == ENCODING_NONE ) ) {
+   if ( !byteswap || ( rti_encoding == ENCODING_NONE ) ) {
 
       // Copy the source into the destination since there is no byteswaping
       // or any special encoding.
@@ -3335,6 +3447,18 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
          case TRICK_BOOLEAN: {
             // No byteswap needed.
             memcpy( dest, src, num_bytes );
+            break;
+         }
+         case TRICK_WCHAR: {
+            wchar_t const *s_src  = static_cast< wchar_t const * >( src );
+            wchar_t       *s_dest = static_cast< wchar_t * >( dest );
+            if ( length == 1 ) {
+               s_dest[0] = (wchar_t)Utilities::byteswap_short( (uint16_t)s_src[0] );
+            } else {
+               for ( int k = 0; k < length; ++k ) {
+                  s_dest[k] = (wchar_t)Utilities::byteswap_short( (uint16_t)s_src[k] );
+               }
+            }
             break;
          }
          case TRICK_SHORT: {
@@ -3486,7 +3610,8 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_CHARACTER:
-      case TRICK_UNSIGNED_CHARACTER: {
+      case TRICK_UNSIGNED_CHARACTER:
+      case TRICK_WCHAR: {
          return ( ( rti_encoding == ENCODING_BIG_ENDIAN )
                   || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
                   || ( rti_encoding == ENCODING_UNKNOWN )

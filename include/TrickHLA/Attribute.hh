@@ -202,7 +202,7 @@ class Attribute
 
    /*! @brief Set the attribute publish flag.
     *  @param enable Flag to set the publish state. */
-   void set_publish( bool enable )
+   void set_publish( bool const enable )
    {
       this->publish = enable;
    }
@@ -216,7 +216,7 @@ class Attribute
 
    /*! @brief Set the attribute is subscribed flag.
     *  @param enable Flag to set the subscribe state. */
-   void set_subscribe( bool enable )
+   void set_subscribe( bool const enable )
    {
       this->subscribe = enable;
    }
@@ -435,7 +435,7 @@ class Attribute
 
    /*! @brief Ensure the attribute buffer has at least the specified capacity.
     *  @param capacity Desired capacity of the buffer in bytes. */
-   void ensure_buffer_capacity( int capacity );
+   void ensure_buffer_capacity( int const capacity );
 
    /*! @brief Determines if the HLA object attribute type is supported given
     *         the RTI encoding.
