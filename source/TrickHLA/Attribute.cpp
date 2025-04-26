@@ -958,12 +958,10 @@ void Attribute::calculate_size_and_number_of_items()
             // Determine total number of bytes used by the Trick simulation
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
-            int   length;
-            char *s;
             for ( int i = 0; i < num_items; ++i ) {
-               s = *( static_cast< char ** >( ref2->address ) + i );
+               char *s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
-                  length = get_size( s );
+                  int length = get_size( s );
                   if ( length > 0 ) {
                      num_bytes += length;
                   }
@@ -976,9 +974,8 @@ void Attribute::calculate_size_and_number_of_items()
             // and ENCODING_ASCII_STRING encodings assume the string is
             // terminated with a null character and determine the number of
             // characters using strlen().
-            char *s;
             for ( int i = 0; i < num_items; ++i ) {
-               s = *( static_cast< char ** >( ref2->address ) + i );
+               char const *s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
                }
