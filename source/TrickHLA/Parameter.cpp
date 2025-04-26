@@ -82,6 +82,7 @@ Parameter::Parameter()
      rti_encoding( ENCODING_UNKNOWN ),
      buffer( NULL ),
      buffer_capacity( 0 ),
+     buffer_size( 0 ),
      size_is_static( true ),
      size( 0 ),
      num_items( 0 ),
@@ -109,6 +110,7 @@ Parameter::~Parameter()
       }
       buffer          = NULL;
       buffer_capacity = 0;
+      buffer_size     = 0;
    }
 
    if ( interaction_FOM_name != NULL ) {
@@ -511,13 +513,12 @@ void Parameter::complete_initialization()
           << "  attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
           << "  num_items:" << num_items << '\n'
-          // TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //<< "  get_size_from_attributes():" << get_size_from_attributes(attr, attr->name) << endl
           << "  attr->size:" << attr->size << '\n'
           << "  attr->num_index:" << attr->num_index << '\n'
           << "  attr->index[0].size:" << ( attr->num_index >= 1 ? attr->index[0].size : 0 ) << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -586,13 +587,16 @@ bool Parameter::extract_data(
          //
          // Copy the RTI parameter value into the buffer.
          memcpy( buffer, param_data, param_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->buffer_size = param_size;
          break;
       }
       case ENCODING_NONE: {
          // The byte counts must match between the received attribute and
          // the Trick simulation variable for ENCODING_NONE since this
          // RTI encoding only supports a fixed length array of characters.
-         if ( param_size != expected_byte_count ) {
+         if ( size_is_static && ( param_size != expected_byte_count ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::extract_data():"
                    << __LINE__ << " WARNING: For Parameter '" << interaction_FOM_name
@@ -617,11 +621,12 @@ bool Parameter::extract_data(
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( param_size );
 
-         // Make sure the buffer size matches how much data we are putting in it.
-         this->size = param_size;
-
          // Copy the RTI parameter value into the buffer.
-         memcpy( buffer, param_data, size );
+         memcpy( buffer, param_data, param_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->size        = param_size;
+         this->buffer_size = param_size;
          break;
       }
       case ENCODING_LOGICAL_TIME: {
@@ -645,14 +650,16 @@ bool Parameter::extract_data(
                    << " the correct size or type.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
+
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( param_size );
 
-         // Make sure the buffer size matches how much data we are putting in it.
-         this->size = param_size;
-
          // Copy the RTI parameter value into the buffer.
-         memcpy( buffer, param_data, size );
+         memcpy( buffer, param_data, param_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->size        = param_size;
+         this->buffer_size = param_size;
          break;
       }
       case ENCODING_OPAQUE_DATA: {
@@ -678,11 +685,12 @@ bool Parameter::extract_data(
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( param_size );
 
-         // Make sure the buffer size matches how much data we are putting in it.
-         this->size = param_size;
-
          // Copy the RTI parameter value into the buffer.
-         memcpy( buffer, param_data, size );
+         memcpy( buffer, param_data, param_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->size        = param_size;
+         this->buffer_size = param_size;
          break;
       }
       default: {
@@ -708,11 +716,12 @@ bool Parameter::extract_data(
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( param_size );
 
-         // Make sure the buffer size matches how much data we are putting in it.
-         this->size = param_size;
-
          // Copy the RTI parameter value into the buffer.
-         memcpy( buffer, param_data, size );
+         memcpy( buffer, param_data, param_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->size        = param_size;
+         this->buffer_size = param_size;
          break;
       }
    }
@@ -780,10 +789,12 @@ void Parameter::calculate_size_and_number_of_items()
             // Determine total number of bytes used by the Trick simulation
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
+            int   length;
+            char *s;
             for ( int i = 0; i < num_items; ++i ) {
-               char *s = *( static_cast< char ** >( address ) + i );
+               s = *( static_cast< char ** >( address ) + i );
                if ( s != NULL ) {
-                  int length = get_size( s );
+                  length = get_size( s );
                   if ( length > 0 ) {
                      num_bytes += length;
                   }
@@ -795,8 +806,9 @@ void Parameter::calculate_size_and_number_of_items()
             // For the ENCODING_C_STRING, ENCODING_UNICODE_STRING, and ENCODING_ASCII_STRING
             // encodings assume the string is NULL terminated and determine the
             // number of characters using strlen().
+            char *s;
             for ( int i = 0; i < num_items; ++i ) {
-               char const *s = *( static_cast< char ** >( address ) + i );
+               s = *( static_cast< char ** >( address ) + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
                }
@@ -855,13 +867,13 @@ void Parameter::calculate_size_and_number_of_items()
           << "  ref2->attr->type:" << attr->type << '\n'
           << "  ref2->attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
-          << "  num_items:" << num_items << '\n';
-      // TODO: Figure out get_size_from_attributes() API in Trick 10.
-      msg << "  ref2->attr->size:" << attr->size << '\n'
+          << "  num_items:" << num_items << '\n'
+          << "  ref2->attr->size:" << attr->size << '\n'
           << "  ref2->attr->num_index:" << attr->num_index << '\n'
           << "  ref2->attr->index[0].size:" << ( attr->num_index >= 1 ? attr->index[0].size : 0 ) << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -945,13 +957,12 @@ void Parameter::pack_parameter_buffer()
           << "  ref2->attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
           << "  num_items:" << num_items << '\n'
-          // TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //<< "  get_size_from_attributes():" << get_size_from_attributes(attr, attr->name) << endl
           << "  ref2->attr->size:" << attr->size << '\n'
           << "  ref2->attr->num_index:" << attr->num_index << '\n'
           << "  ref2->attr->index[0].size:" << ( attr->num_index >= 1 ? attr->index[0].size : 0 ) << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -964,17 +975,15 @@ void Parameter::pack_parameter_buffer()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   // TODO: Use a transcoder for each type to encode and decode depending on
-   // the type specified in the FOM instead of the code below. Dan Dexter
-
    switch ( rti_encoding ) {
       case ENCODING_LOGICAL_TIME: {
-         num_items = 1;
-         size      = 8;
+         num_items   = 1;
+         size        = 8;
+         buffer_size = size;
 
          // Ensure enough capacity in the buffer for the parameter and all its
          // items if it was an array.
-         ensure_buffer_capacity( size );
+         ensure_buffer_capacity( buffer_size );
 
          // Encode the logical time.
          encode_logical_time();
@@ -992,8 +1001,9 @@ void Parameter::pack_parameter_buffer()
             ostringstream msg;
             msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
                 << "================== PARAMETER ENCODE ==================================\n"
-                << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                << "')\n";
+                << " Parameter:'" << FOM_name << "', trick_name:'"
+                << trick_name << "', ENCODING_BOOLEAN, buffer_size:"
+                << buffer_size << "\n";
             message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
@@ -1013,8 +1023,9 @@ void Parameter::pack_parameter_buffer()
             ostringstream msg;
             msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
                 << "================== PARAMETER ENCODE ==================================\n"
-                << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                << "')\n";
+                << " Parameter:'" << FOM_name << "', trick_name:'"
+                << trick_name << "', ENCODING_OPAQUE_DATA, buffer_size:"
+                << buffer_size << "\n";
             message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
@@ -1040,8 +1051,9 @@ void Parameter::pack_parameter_buffer()
                ostringstream msg;
                msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
                    << "================== PARAMETER ENCODE ==================================\n"
-                   << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                   << "')\n";
+                   << " Parameter:'" << FOM_name << "', trick_name:'"
+                   << trick_name << "', rti_encoding:" << rti_encoding
+                   << ", buffer_size:" << buffer_size << "\n";
                message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
@@ -1053,7 +1065,8 @@ void Parameter::pack_parameter_buffer()
 
             // Ensure enough capacity in the buffer for the parameter and all its
             // items if it was an array.
-            ensure_buffer_capacity( size );
+            buffer_size = size;
+            ensure_buffer_capacity( buffer_size );
 
             // Determine if the users variable is a pointer.
             if ( ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) {
@@ -1064,7 +1077,7 @@ void Parameter::pack_parameter_buffer()
                                      *static_cast< char ** >( address ),
                                      attr->type,
                                      num_items,
-                                     size );
+                                     buffer_size );
             } else {
                // It's either a primitive type or a static array.
 
@@ -1080,8 +1093,9 @@ void Parameter::pack_parameter_buffer()
                ostringstream msg;
                msg << "Parameter::pack_parameter_buffer():" << __LINE__ << '\n'
                    << "================== PARAMETER ENCODE ==================================\n"
-                   << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                   << "')\n";
+                   << " Parameter:'" << FOM_name << "', trick_name:'"
+                   << trick_name << "', rti_encoding:" << rti_encoding
+                   << ", buffer_size:" << buffer_size << "\n";
                message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
@@ -1105,13 +1119,12 @@ void Parameter::pack_parameter_buffer()
           << "  ref2->attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
           << "  num_items:" << num_items << '\n'
-          // TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //<< "  get_size_from_attributes():" << get_size_from_attributes(attr, attr->name) << endl
           << "  ref2->attr->size:" << attr->size << '\n'
           << "  ref2->attr->num_index:" << attr->num_index << '\n'
           << "  ref2->attr->index[0].size:" << ( attr->num_index >= 1 ? attr->index[0].size : 0 ) << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -1127,9 +1140,6 @@ void Parameter::pack_parameter_buffer()
 
 void Parameter::unpack_parameter_buffer()
 {
-   // TODO: Use a transcoder for each type to encode and decode depending on
-   // the type specified in the FOM instead of the code below. Dan Dexter
-
    switch ( rti_encoding ) {
       case ENCODING_LOGICAL_TIME: {
          num_items = 1;
@@ -1151,8 +1161,9 @@ void Parameter::unpack_parameter_buffer()
             ostringstream msg;
             msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
                 << "================== PARAMETER DECODE ==================================\n"
-                << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                << "')\n";
+                << " Parameter:'" << FOM_name << "', trick name:'"
+                << trick_name << "', ENCODING_BOOLEAN"
+                << ", buffer_size:" << buffer_size << "\n";
             message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
@@ -1170,8 +1181,50 @@ void Parameter::unpack_parameter_buffer()
             ostringstream msg;
             msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
                 << "================== PARAMETER DECODE ==================================\n"
-                << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                << "')\n";
+                << " Parameter:'" << FOM_name << "', trick name:'"
+                << trick_name << "', ENCODING_OPAQUE_DATA"
+                << ", buffer_size:" << buffer_size << "\n";
+            message_publish( MSG_NORMAL, msg.str().c_str() );
+            print_buffer();
+         }
+         break;
+      }
+      case ENCODING_NONE: {
+         // Determine the number of items this parameter has (i.e. is it an array).
+         if ( !size_is_static ) {
+            calculate_size_and_number_of_items();
+         }
+
+         if ( buffer_size > 0 ) {
+            // Determine if the users variable is a pointer.
+            if ( ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) {
+               // It's a pointer
+
+               // Byteswap if needed and copy the buffer over to the parameter.
+               byteswap_buffer_copy( *static_cast< char ** >( address ),
+                                     buffer,
+                                     attr->type,
+                                     num_items,
+                                     buffer_size );
+            } else {
+               // It's either a primitive type or a static array.
+
+               // Byteswap if needed and copy the buffer over to the parameter.
+               byteswap_buffer_copy( address,
+                                     buffer,
+                                     attr->type,
+                                     num_items,
+                                     buffer_size );
+            }
+         }
+
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+            ostringstream msg;
+            msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
+                << "================== PARAMETER DECODE ================================\n"
+                << " Parameter:'" << FOM_name << "', trick name:'"
+                << trick_name << "', ENCODING_NONE"
+                << ", buffer_size:" << buffer_size << "\n";
             message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
@@ -1195,15 +1248,6 @@ void Parameter::unpack_parameter_buffer()
 
             decode_string_from_buffer();
 
-            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
-               ostringstream msg;
-               msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
-                   << "================ PARAMETER DECODE ================================\n"
-                   << " parameter '" << FOM_name << "' (trick name '" << trick_name << "')"
-                   << " value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
-               message_publish( MSG_NORMAL, msg.str().c_str() );
-               print_buffer();
-            }
          } else {
 
             // Determine the number of items this parameter has (i.e. is it an array).
@@ -1211,36 +1255,38 @@ void Parameter::unpack_parameter_buffer()
                calculate_size_and_number_of_items();
             }
 
-            // Determine if the users variable is a pointer.
-            if ( ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) {
-               // It's a pointer
+            if ( buffer_size > 0 ) {
+               // Determine if the users variable is a pointer.
+               if ( ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) {
+                  // It's a pointer
 
-               // Byteswap if needed and copy the buffer over to the parameter.
-               byteswap_buffer_copy( *static_cast< char ** >( address ),
-                                     buffer,
-                                     attr->type,
-                                     num_items,
-                                     size );
-            } else {
-               // It's either a primitive type or a static array.
+                  // Byteswap if needed and copy the buffer over to the parameter.
+                  byteswap_buffer_copy( *static_cast< char ** >( address ),
+                                        buffer,
+                                        attr->type,
+                                        num_items,
+                                        buffer_size );
+               } else {
+                  // It's either a primitive type or a static array.
 
-               // Byteswap if needed and copy the buffer over to the parameter.
-               byteswap_buffer_copy( address,
-                                     buffer,
-                                     attr->type,
-                                     num_items,
-                                     size );
-
-               if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
-                  ostringstream msg;
-                  msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
-                      << "================== PARAMETER DECODE ================================\n"
-                      << " parameter '" << FOM_name << "' (trick name '" << trick_name
-                      << "')\n";
-                  message_publish( MSG_NORMAL, msg.str().c_str() );
-                  print_buffer();
+                  // Byteswap if needed and copy the buffer over to the parameter.
+                  byteswap_buffer_copy( address,
+                                        buffer,
+                                        attr->type,
+                                        num_items,
+                                        buffer_size );
                }
             }
+         }
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+            ostringstream msg;
+            msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << '\n'
+                << "================== PARAMETER DECODE ================================\n"
+                << " Parameter:'" << FOM_name << "', trick name:'"
+                << trick_name << "', rti_encoding:" << rti_encoding
+                << ", buffer_size:" << buffer_size << "\n";
+            message_publish( MSG_NORMAL, msg.str().c_str() );
+            print_buffer();
          }
          break;
       }
@@ -1261,13 +1307,12 @@ void Parameter::unpack_parameter_buffer()
           << "  ref2->attr->units:" << attr->units << '\n'
           << "  size:" << size << '\n'
           << "  num_items:" << num_items << '\n'
-          // TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //<< "  get_size_from_attributes():" << get_size_from_attributes(attr, attr->name) << endl
           << "  ref2->attr->size:" << attr->size << '\n'
           << "  ref2->attr->num_index:" << attr->num_index << '\n'
           << "  ref2->attr->index[0].size:" << ( attr->num_index >= 1 ? attr->index[0].size : 0 ) << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -1296,7 +1341,8 @@ void Parameter::encode_boolean_to_buffer()
    }
 
    // Encoded size is the number of (32 bit Big Endian) elements.
-   ensure_buffer_capacity( 4 * num_items );
+   buffer_size = 4 * num_items;
+   ensure_buffer_capacity( buffer_size );
 
    unsigned int *int_dest = reinterpret_cast< unsigned int * >( buffer );
 
@@ -1333,7 +1379,7 @@ void Parameter::decode_boolean_from_buffer() const
    }
 }
 
-void Parameter::encode_logical_time() const
+void Parameter::encode_logical_time()
 {
    // Integer representing time in the base HLA Logical Time representation.
    int64_t logical_time = 0;
@@ -1399,6 +1445,8 @@ void Parameter::encode_logical_time() const
          break;
       }
    }
+
+   buffer_size = 8;
 
    // Now that the buffer has been possibly resized, cast it to
    // something a little easier to use.
@@ -1567,7 +1615,8 @@ void Parameter::encode_opaque_data_to_buffer()
       }
 
       // The amount of data in the buffer (i.e. size) is the encoded size.
-      size = byte_count;
+      size        = byte_count;
+      buffer_size = byte_count;
    }
 }
 
@@ -1756,7 +1805,8 @@ void Parameter::encode_string_to_buffer()
             }
 
             // The amount of data in the buffer (i.e. size) is the encoded size.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
 
          } else if ( num_items > 1 ) {
             // We have more than one string to encode.
@@ -1779,7 +1829,7 @@ void Parameter::encode_string_to_buffer()
             // 6 * num_items: 2 pad and 4 bytes for character count per element
             // encoded_size = 4 + 2 * (size + num_items) + 6 * num_items;
             // Make sure we can hold the encoded data.
-            ensure_buffer_capacity( 4 + 2 * size + 8 * num_items );
+            ensure_buffer_capacity( 4 + ( 2 * size ) + ( 8 * num_items ) );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
@@ -1848,7 +1898,8 @@ void Parameter::encode_string_to_buffer()
 
             // The amount of data in the buffer (i.e. size) is the number of
             // bytes we placed in it.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
          }
          break;
       }
@@ -1903,7 +1954,8 @@ void Parameter::encode_string_to_buffer()
             }
 
             // The amount of data in the buffer (i.e. size) is the encoded size.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
 
          } else if ( num_items > 1 ) {
             // We have more than one string to encode.
@@ -1926,7 +1978,7 @@ void Parameter::encode_string_to_buffer()
             // 7 * num_items: 3 pad + 4 bytes for character count per element
             // encoded_size = 4 + (size + num_items) + 7 * num_items;
             // Make sure we can hold the encoded data.
-            ensure_buffer_capacity( 4 + size + 8 * num_items );
+            ensure_buffer_capacity( 4 + size + ( 8 * num_items ) );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
@@ -1995,7 +2047,8 @@ void Parameter::encode_string_to_buffer()
 
             // The amount of data in the buffer (i.e. size) is the number of
             // bytes we placed in it.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
          }
          break;
       }
@@ -2051,7 +2104,8 @@ void Parameter::encode_string_to_buffer()
             }
 
             // The amount of data in the buffer (i.e. size) is the encoded size.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
 
          } else if ( num_items > 1 ) {
             // We have more than one string to encode.
@@ -2086,7 +2140,7 @@ void Parameter::encode_string_to_buffer()
             // 7 * num_items: 3 pad + 4 bytes for character count per element
             // encoded_size = 4 + (num_elements + num_items) + 7 * num_items
             // Make sure we can hold the encoded data.
-            ensure_buffer_capacity( 4 + num_elements + 8 * num_items );
+            ensure_buffer_capacity( 4 + num_elements + ( 8 * num_items ) );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
@@ -2157,7 +2211,8 @@ void Parameter::encode_string_to_buffer()
 
             // The amount of data in the buffer (i.e. size) is the number of
             // bytes we placed in it.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
          }
          break;
       }
@@ -2201,7 +2256,8 @@ void Parameter::encode_string_to_buffer()
 
          // The amount of data in the buffer (i.e. size) is the number of
          // bytes we placed in it.
-         size = byte_count;
+         size        = byte_count;
+         buffer_size = byte_count;
          break;
       }
       case ENCODING_C_STRING:
@@ -2238,7 +2294,8 @@ void Parameter::encode_string_to_buffer()
 
          // The amount of data in the buffer (i.e. size) is the number of
          // bytes we placed in it.
-         size = byte_count;
+         size        = byte_count;
+         buffer_size = byte_count;
          break;
       }
    }
@@ -3400,15 +3457,17 @@ void Parameter::print_buffer() const
        << " byteswap:" << ( is_byteswap() ? "Yes" : "No" )
        << " num_items:" << num_items
        << " size:" << size
+       << " buffer_size:" << buffer_size
        << '\n';
 
    // For now we only support an parameter of type double for printing. DDexter
    if ( attr->type == TRICK_DOUBLE ) {
 
-      double const *dbl_array = reinterpret_cast< double const * >( buffer ); // cppcheck-suppress [invalidPointerCast]
+      double const *dbl_array  = reinterpret_cast< double const * >( buffer ); // cppcheck-suppress [invalidPointerCast]
+      int const     array_size = buffer_size / sizeof( double );
 
       if ( is_byteswap() ) {
-         for ( int i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < array_size; ++i ) {
             // undo the byteswap for display
             double b_value = Utilities::byteswap_double( dbl_array[i] );
             msg << "\ti:" << i
@@ -3416,7 +3475,7 @@ void Parameter::print_buffer() const
                 << " byteswap-value:" << dbl_array[i] << '\n';
          }
       } else {
-         for ( int i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < array_size; ++i ) {
             msg << " i:" << i << " " << dbl_array[i] << '\n';
          }
       }
@@ -3425,10 +3484,10 @@ void Parameter::print_buffer() const
       // Else just treat the buffer as an array of characters.
       char const *char_array = reinterpret_cast< char * >( buffer );
 
-      msg << "\tAttribute size:" << size << '\n'
+      msg << "\tAttribute size:" << buffer_size << '\n'
           << "\tIndex\tValue\tCharacter\n";
 
-      for ( int i = 0; i < size; ++i ) {
+      for ( int i = 0; i < buffer_size; ++i ) {
          int char_value = char_array[i];
          msg << "\t" << i << "\t" << char_value;
          if ( isgraph( char_array[i] ) ) {

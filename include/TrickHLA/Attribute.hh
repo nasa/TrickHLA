@@ -452,7 +452,7 @@ class Attribute
 
    /*! @brief Encode the object attribute using the HLAlogicalTime 64-bit
     * integer encoding. */
-   void encode_logical_time() const;
+   void encode_logical_time();
 
    /*! @brief Decode the object attribute that is using the HLAlogicalTime
     * 64-bit integer encoding. */
@@ -488,6 +488,7 @@ class Attribute
 
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
    int            buffer_capacity; ///< @trick_units{count} The capacity of the buffer.
+   int            buffer_size;     ///< @trick_units{count} The size of the encoded attribute in the buffer.
 
    bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
 

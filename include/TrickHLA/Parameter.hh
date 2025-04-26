@@ -240,6 +240,7 @@ class Parameter
   private:
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
    int            buffer_capacity; ///< @trick_units{--} The capacity of the buffer.
+   int            buffer_size;     ///< @trick_units{--} The size of the data in the buffer.
 
    bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
 
@@ -291,7 +292,7 @@ class Parameter
 
    /*! @brief Encode the interaction parameter using the HLAlogicalTime 64-bit
     * integer encoding. */
-   void encode_logical_time() const;
+   void encode_logical_time();
 
    /*! @brief Decode the interaction parameter that is using the HLAlogicalTime
     * 64-bit integer encoding. */
