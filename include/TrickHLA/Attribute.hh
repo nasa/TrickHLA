@@ -464,6 +464,9 @@ class Attribute
    /*! @brief Decode the opaque data in the buffer. */
    void decode_opaque_data_from_buffer();
 
+   /*! @brief Decode the raw data in the buffer. */
+   void decode_raw_data_from_buffer();
+
    /*! @brief Encode a string attribute into the buffer using the appropriate
     * encoding. */
    void encode_string_to_buffer();
@@ -477,13 +480,11 @@ class Attribute
     *  @param dest      Destination to copy data to.
     *  @param src       Source of the data to byteswap and copy from.
     *  @param type      The type of the data.
-    *  @param length    The length/number of entries in the source array.
     *  @param num_bytes The number of bytes in the source array.
     *  */
    void byteswap_buffer_copy( void       *dest,
                               void const *src,
                               int const   type,
-                              int const   length,
                               int const   num_bytes ) const;
 
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.

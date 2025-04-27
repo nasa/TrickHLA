@@ -1264,7 +1264,6 @@ void Attribute::pack_attribute_buffer()
                byteswap_buffer_copy( buffer,
                                      *static_cast< char ** >( ref2->address ),
                                      ref2->attr->type,
-                                     num_items,
                                      buffer_size );
             } else {
                // It's either a primitive type or a static array.
@@ -1273,7 +1272,6 @@ void Attribute::pack_attribute_buffer()
                byteswap_buffer_copy( buffer,
                                      ref2->address,
                                      ref2->attr->type,
-                                     num_items,
                                      buffer_size );
             }
 
@@ -1346,10 +1344,6 @@ void Attribute::unpack_attribute_buffer()
 
    switch ( rti_encoding ) {
       case ENCODING_LOGICAL_TIME: {
-         num_items = 1;
-         size      = 8;
-
-         // Decode the logical time.
          decode_logical_time();
          break;
       }
@@ -1374,11 +1368,6 @@ void Attribute::unpack_attribute_buffer()
          break;
       }
       case ENCODING_OPAQUE_DATA: {
-         // The size is the received size but recalculate the number of items.
-         if ( !size_is_static ) {
-            calculate_static_number_of_items();
-         }
-
          decode_opaque_data_from_buffer();
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
@@ -1394,33 +1383,7 @@ void Attribute::unpack_attribute_buffer()
          break;
       }
       case ENCODING_NONE: {
-         // Determine the number of items this attribute has (i.e. is it an array).
-         if ( !size_is_static ) {
-            calculate_size_and_number_of_items();
-         }
-
-         if ( buffer_size > 0 ) {
-            // Determine if the users variable is a pointer.
-            if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
-               // It's a pointer
-
-               // Byteswap if needed and copy the buffer over to the attribute.
-               byteswap_buffer_copy( *static_cast< char ** >( ref2->address ),
-                                     buffer,
-                                     ref2->attr->type,
-                                     num_items,
-                                     buffer_size );
-            } else {
-               // It's either a primitive type or a static array.
-
-               // Byteswap if needed and copy the buffer over to the attribute.
-               byteswap_buffer_copy( ref2->address,
-                                     buffer,
-                                     ref2->attr->type,
-                                     num_items,
-                                     buffer_size );
-            }
-         }
+         decode_raw_data_from_buffer();
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
@@ -1454,33 +1417,31 @@ void Attribute::unpack_attribute_buffer()
             decode_string_from_buffer();
 
          } else {
-
-            // Determine the number of items this attribute has (i.e. is it an array).
             if ( !size_is_static ) {
                calculate_size_and_number_of_items();
             }
 
-            if ( buffer_size > 0 ) {
-               // Determine if the users variable is a pointer.
-               if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
-                  // It's a pointer
+            // Limit the number of data bytes to the size of the allocated
+            // user Trick variable.
+            int const num_bytes = ( buffer_size > size ) ? size : buffer_size;
 
-                  // Byteswap if needed and copy the buffer over to the attribute.
-                  byteswap_buffer_copy( *static_cast< char ** >( ref2->address ),
-                                        buffer,
-                                        ref2->attr->type,
-                                        num_items,
-                                        buffer_size );
-               } else {
-                  // It's either a primitive type or a static array.
+            // Determine if the users variable is a pointer.
+            if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
+               // It's a pointer
 
-                  // Byteswap if needed and copy the buffer over to the attribute.
-                  byteswap_buffer_copy( ref2->address,
-                                        buffer,
-                                        ref2->attr->type,
-                                        num_items,
-                                        buffer_size );
-               }
+               // Byteswap if needed and copy the buffer over to the attribute.
+               byteswap_buffer_copy( *static_cast< char ** >( ref2->address ),
+                                     buffer,
+                                     ref2->attr->type,
+                                     num_bytes );
+            } else {
+               // It's either a primitive type or a static array.
+
+               // Byteswap if needed and copy the buffer over to the attribute.
+               byteswap_buffer_copy( ref2->address,
+                                     buffer,
+                                     ref2->attr->type,
+                                     num_bytes );
             }
          }
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
@@ -1565,20 +1526,20 @@ void Attribute::encode_boolean_to_buffer() // RETURN: -- None.
 
 void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
 {
-   if ( buffer_size != num_items ) {
+   int expected_bytes = num_items * sizeof( unsigned int );
+   if ( buffer_size != expected_bytes ) {
       ostringstream msg;
       msg << "Attribute::decode_boolean_from_buffer():" << __LINE__
           << " WARNING: For Attribute '" << FOM_name << "' with Trick name '"
           << trick_name << "' the number of bytes in the buffer ("
-          << buffer_size << ") is not the expected " << num_items
+          << buffer_size << ") is not the expected " << expected_bytes
           << "! Skipping...\n";
       message_publish( MSG_WARNING, msg.str().c_str() );
       return;
    }
 
-   bool *bool_dest;
-
    // Determine if the users variable is a pointer.
+   bool *bool_dest;
    if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
       // It's a pointer
       bool_dest = reinterpret_cast< bool * >( ( *static_cast< char ** >( ref2->address ) ) );
@@ -1589,12 +1550,8 @@ void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
 
    unsigned int const *int_src = reinterpret_cast< unsigned int * >( buffer );
 
-   if ( num_items == 1 ) {
-      bool_dest[0] = ( int_src[0] != 0 );
-   } else {
-      for ( int k = 0; k < num_items; ++k ) {
-         bool_dest[k] = ( int_src[k] != 0 );
-      }
+   for ( int k = 0; k < num_items; ++k ) {
+      bool_dest[k] = ( int_src[k] != 0 );
    }
 }
 
@@ -1931,9 +1888,6 @@ size %d, will use the data buffer size instead.\n",
             // The output array size must exactly match the incoming data
             // size for opaque data.
             if ( decoded_length != get_size( output ) ) {
-               // WORKAROUND: Trick 10 can't handle a length of zero so to
-               // workaround the memory manager problem use a size of 1 in
-               // the allocation.
                ref2->address = static_cast< char * >(
                   TMM_resize_array_1d_a( static_cast< char * >( ref2->address ),
                                          ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
@@ -1941,9 +1895,6 @@ size %d, will use the data buffer size instead.\n",
             }
          } else {
             // Allocate memory for the output array.
-            // WORKAROUND: Trick 10 can't handle a length of zero so to
-            // workaround the memory manager problem use a size of 1 in
-            // the allocation.
             ref2->address = static_cast< char * >( TMM_declare_var_1d( "char", ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
             output        = static_cast< unsigned char * >( ref2->address );
          }
@@ -1963,6 +1914,70 @@ size %d, will use the data buffer size instead.\n",
          memcpy( output, input, decoded_length );
       }
    }
+}
+
+void Attribute::decode_raw_data_from_buffer() // RETURN: -- None.
+{
+   if ( buffer_size <= 0 ) {
+      return;
+   }
+
+   // Verify the variable pointed to by ref2->address can be resized.
+   int num_bytes;
+
+   // Handle the raw data as bytes.
+   unsigned char *output;
+
+   // Determine if the users variable is a pointer.
+   if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
+      // It's a pointer
+      output = *( static_cast< unsigned char ** >( ref2->address ) );
+
+      num_bytes = buffer_size;
+
+      if ( output != NULL ) {
+         // The output array size must exactly match the incoming data size
+         // for raw data.
+         if ( num_bytes != get_size( output ) ) {
+            *( static_cast< char ** >( ref2->address ) ) =
+               static_cast< char * >( TMM_resize_array_1d_a(
+                  *( static_cast< char ** >( ref2->address ) ), num_bytes ) );
+
+            output = *( static_cast< unsigned char ** >( ref2->address ) );
+         }
+      } else {
+         // Allocate memory for the output array.
+         *( static_cast< char ** >( ref2->address ) ) =
+            static_cast< char * >( TMM_declare_var_1d( "char", num_bytes ) );
+
+         output = *( static_cast< unsigned char ** >( ref2->address ) );
+      }
+   } else {
+      // It's either a primitive type or a static array.
+      output = static_cast< unsigned char * >( ref2->address );
+
+      int curr_size = get_size( output );
+      num_bytes     = ( buffer_size > curr_size ) ? curr_size : buffer_size;
+
+      if ( output == NULL ) {
+         // Allocate memory for the output array.
+         ref2->address = static_cast< char * >( TMM_declare_var_1d( "char", num_bytes ) );
+         output        = static_cast< unsigned char * >( ref2->address );
+      }
+   }
+
+   if ( output == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Attribute::decode_raw_data_from_buffer():" << __LINE__
+             << " ERROR: Could not allocate memory for ENCODING_NONE Attribute '"
+             << FOM_name << "' with Trick name '" << trick_name
+             << "' and length " << num_bytes << "!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // Copy the data over.
+   memcpy( output, buffer, num_bytes );
 }
 
 void Attribute::encode_string_to_buffer() // RETURN: -- None.
@@ -3127,9 +3142,6 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
                // The output array size must exactly match the incoming data
                // size for opaque data.
                if ( length != get_size( output ) ) {
-                  // WORKAROUND: Trick 10 can't handle a length of zero so to
-                  // workaround the memory manager problem use a size of 1 in
-                  // the allocation.
                   *( static_cast< char ** >( ref2->address ) ) =
                      static_cast< char * >( TMM_resize_array_1d_a( *( static_cast< char ** >( ref2->address ) ),
                                                                    ( ( length > 0 ) ? length : 1 ) ) );
@@ -3138,9 +3150,6 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
                }
             } else {
                // Allocate memory for the output array.
-               // WORKAROUND: Trick 10 can't handle a length of zero so to
-               // workaround the memory manager problem use a size of 1 in
-               // the allocation.
                *( static_cast< char ** >( ref2->address ) ) =
                   static_cast< char * >( TMM_declare_var_1d( "char", ( ( length > 0 ) ? length : 1 ) ) );
 
@@ -3258,9 +3267,6 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                   // The output array size must exactly match the incoming data
                   // size for opaque data.
                   if ( length != get_size( output ) ) {
-                     // WORKAROUND: Trick 10 can't handle a length of zero so to
-                     // workaround the memory manager problem use a size of 1 in
-                     // the allocation.
                      *( static_cast< char ** >( ref2->address ) + i ) =
                         static_cast< char * >( TMM_resize_array_1d_a(
                            *( static_cast< char ** >( ref2->address ) + i ),
@@ -3270,9 +3276,6 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                   }
                } else {
                   // Allocate memory for the output array.
-                  // WORKAROUND: Trick 10 can't handle a length of zero so to
-                  // workaround the memory manager problem use a size of 1 in
-                  // the allocation.
                   *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >(
                      TMM_declare_var_1d( "char", ( ( length > 0 ) ? length : 1 ) ) );
 
@@ -3417,10 +3420,9 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
    void       *dest,                  // IN: -- Destination to copy data to.
    void const *src,                   // IN: -- Source of the data to byteswap and copy from.
    int const   type,                  // IN: -- The type of the data.
-   int const   length,                // IN: -- The length/number of entries in the source array.
    int const   num_bytes ) const        // IN: -- The number of bytes in the source array.
 {
-   if ( num_bytes == 0 ) {
+   if ( num_bytes <= 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::byteswap_buffer_copy():" << __LINE__
@@ -3446,28 +3448,22 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double const *d_src = static_cast< double const * >( src );
+            double const *d_src  = static_cast< double const * >( src );
+            double       *d_dest = static_cast< double * >( dest );
 
-            double *d_dest = static_cast< double * >( dest );
-            if ( length == 1 ) {
-               d_dest[0] = Utilities::byteswap_double( d_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  d_dest[k] = Utilities::byteswap_double( d_src[k] );
-               }
+            int const length = num_bytes / sizeof( double );
+            for ( int k = 0; k < length; ++k ) {
+               d_dest[k] = Utilities::byteswap_double( d_src[k] );
             }
             break;
          }
          case TRICK_FLOAT: {
-            float const *f_src = static_cast< float const * >( src );
+            float const *f_src  = static_cast< float const * >( src );
+            float       *f_dest = static_cast< float * >( dest );
 
-            float *f_dest = static_cast< float * >( dest );
-            if ( length == 1 ) {
-               f_dest[0] = Utilities::byteswap_float( f_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  f_dest[k] = Utilities::byteswap_float( f_src[k] );
-               }
+            int const length = num_bytes / sizeof( float );
+            for ( int k = 0; k < length; ++k ) {
+               f_dest[k] = Utilities::byteswap_float( f_src[k] );
             }
             break;
          }
@@ -3481,108 +3477,91 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
          case TRICK_WCHAR: {
             wchar_t const *s_src  = static_cast< wchar_t const * >( src );
             wchar_t       *s_dest = static_cast< wchar_t * >( dest );
-            if ( length == 1 ) {
-               s_dest[0] = (wchar_t)Utilities::byteswap_short( (uint16_t)s_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  s_dest[k] = (wchar_t)Utilities::byteswap_short( (uint16_t)s_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( wchar_t );
+            ;
+            for ( int k = 0; k < length; ++k ) {
+               s_dest[k] = (wchar_t)Utilities::byteswap_short( (uint16_t)s_src[k] );
             }
             break;
          }
          case TRICK_SHORT: {
             short const *s_src  = static_cast< short const * >( src );
             short       *s_dest = static_cast< short * >( dest );
-            if ( length == 1 ) {
-               s_dest[0] = Utilities::byteswap_short( s_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  s_dest[k] = Utilities::byteswap_short( s_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( short );
+            for ( int k = 0; k < length; ++k ) {
+               s_dest[k] = Utilities::byteswap_short( s_src[k] );
             }
             break;
          }
          case TRICK_UNSIGNED_SHORT: {
             unsigned short const *us_src  = static_cast< unsigned short const * >( src );
             unsigned short       *us_dest = static_cast< unsigned short * >( dest );
-            if ( length == 1 ) {
-               us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  us_dest[k] = Utilities::byteswap_unsigned_short( us_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( unsigned short );
+            for ( int k = 0; k < length; ++k ) {
+               us_dest[k] = Utilities::byteswap_unsigned_short( us_src[k] );
             }
             break;
          }
          case TRICK_INTEGER: {
             int const *i_src  = static_cast< int const * >( src );
             int       *i_dest = static_cast< int * >( dest );
-            if ( length == 1 ) {
-               i_dest[0] = Utilities::byteswap_int( i_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  i_dest[k] = Utilities::byteswap_int( i_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( int );
+            for ( int k = 0; k < length; ++k ) {
+               i_dest[k] = Utilities::byteswap_int( i_src[k] );
             }
             break;
          }
          case TRICK_UNSIGNED_INTEGER: {
             unsigned int const *ui_src  = static_cast< unsigned int const * >( src );
             unsigned int       *ui_dest = static_cast< unsigned int * >( dest );
-            if ( length == 1 ) {
-               ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  ui_dest[k] = Utilities::byteswap_unsigned_int( ui_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( unsigned int );
+            for ( int k = 0; k < length; ++k ) {
+               ui_dest[k] = Utilities::byteswap_unsigned_int( ui_src[k] );
             }
             break;
          }
          case TRICK_LONG: {
             long const *l_src  = static_cast< long const * >( src );
             long       *l_dest = static_cast< long * >( dest );
-            if ( length == 1 ) {
-               l_dest[0] = Utilities::byteswap_long( l_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  l_dest[k] = Utilities::byteswap_long( l_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( long );
+            for ( int k = 0; k < length; ++k ) {
+               l_dest[k] = Utilities::byteswap_long( l_src[k] );
             }
             break;
          }
          case TRICK_UNSIGNED_LONG: {
             unsigned long const *ul_src  = static_cast< unsigned long const * >( src );
             unsigned long       *ul_dest = static_cast< unsigned long * >( dest );
-            if ( length == 1 ) {
-               ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  ul_dest[k] = Utilities::byteswap_unsigned_long( ul_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( unsigned long );
+            for ( int k = 0; k < length; ++k ) {
+               ul_dest[k] = Utilities::byteswap_unsigned_long( ul_src[k] );
             }
             break;
          }
          case TRICK_LONG_LONG: {
             long long const *ll_src  = static_cast< long long const * >( src );
             long long       *ll_dest = static_cast< long long * >( dest );
-            if ( length == 1 ) {
-               ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  ll_dest[k] = Utilities::byteswap_long_long( ll_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( long long );
+            for ( int k = 0; k < length; ++k ) {
+               ll_dest[k] = Utilities::byteswap_long_long( ll_src[k] );
             }
             break;
          }
          case TRICK_UNSIGNED_LONG_LONG: {
             unsigned long long const *ull_src  = static_cast< unsigned long long const * >( src );
             unsigned long long       *ull_dest = static_cast< unsigned long long * >( dest );
-            if ( length == 1 ) {
-               ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  ull_dest[k] = Utilities::byteswap_unsigned_long_long( ull_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( unsigned long long );
+            for ( int k = 0; k < length; ++k ) {
+               ull_dest[k] = Utilities::byteswap_unsigned_long_long( ull_src[k] );
             }
             break;
          }
