@@ -1,0 +1,147 @@
+/*!
+@ingroup TrickHLA
+@file sims/SIM_Encoders/S_define
+@brief A simulation to aide in the development and testing of TrickHLA FOM encoders.
+
+@copyright Copyright 2025 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@trick_parse{everything}
+
+@python_module{TrickHLAModel}
+
+@tldh
+@trick_link_dependency{models/src/SpaceTimeCoordinatePacking.cpp}
+
+@revs_begin
+@rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, April 2025, --, TrickHLA Encoder Tests. }
+@revs_end
+
+*/
+
+#include "sim_objects/default_trick_sys.sm"
+
+//=============================================================================
+// Define the job calling intervals.
+//=============================================================================
+#define DYN_RATE     0.010 // The Ball state dynamics propagation rate.
+#define FREEZE_FRAME 0.100 // The freeze frame rate.
+#define LOG_CYCLE    0.100 // Data Logging Rate.
+
+//=============================================================================
+// Define the HLA job cycle times.
+//=============================================================================
+#define THLA_DATA_CYCLE_TIME        0.100 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.100 // HLA Interaction cycle time.
+
+//=============================================================================
+// Define the HLA phase initialization priorities.
+//=============================================================================
+#define P_HLA_INIT   60    // HLA initialization phase.
+#define P_HLA_EARLY  1     // HLA early job phase.
+#define P_HLA_LATE   65534 // HLA late job phase.
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "THLA.sm"
+
+
+//=============================================================================
+// SIM_OBJECT: THLA_INIT  (TrickHLA multi-phase initialization sim-object)
+//=============================================================================
+class THLAInitSimObj : public Trick::SimObject {
+
+ public:
+
+   TrickHLA::SimTimeline      sim_timeline;
+   TrickHLA::ScenarioTimeline scenario_timeline;
+
+   THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
+                   TrickHLA::Federate & thla_fed )
+      : sim_timeline(),
+        scenario_timeline( sim_timeline, 0.0, 0.0 ),
+        thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+
+      // We aren't using synchronization points here to gate initialization.
+      // We're just going to send and receive all the initialization data
+      // and assume that is enough to initialize the sims.  We'll wait on
+      // the required federates list to insure the other federates participate.
+
+      // Send all the initialization data.
+      P100 ("initialization") thla_manager.send_init_data();
+
+      // Wait to receive all the initialization data.
+      P100 ("initialization") thla_manager.receive_init_data();
+
+      // Do some processing here if needed...
+
+      // Clear remaining initialization sync-points.
+      P100 ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObj( THLAInitSimObj const & rhs );
+   THLAInitSimObj & operator=( THLAInitSimObj const & rhs );
+
+   // Do not allow the default constructor.
+   THLAInitSimObj();
+   
+};
+
+//=============================================================================
+// SIM_OBJECT: SpaceTimeCoordinateSimObject
+// Sim-object for for testing SpaceFOM data types in HLA publish/subscribe.
+//=============================================================================
+#include "S_modules/SpaceTimeCoordinateState.sm"
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// THLA - Generalized TrickHLA interface routines.
+THLASimObject THLA( THLA_DATA_CYCLE_TIME,
+                    THLA_INTERACTION_CYCLE_TIME,
+                    P_HLA_EARLY,
+                    P_HLA_INIT,
+                    P_HLA_LATE );
+
+// Simulation specific multiphase initialization SimObject instance.
+THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
+
+
+// Instantiate the SpaceTimeCoordinate encoder test object.
+SpaceTimeCoordinateSimObject stc_encoder_test( true,
+                                               "stc_encoder_test" );
+
+
+// Connect objects
+void create_connections() {
+   
+   //
+   // This code will only be executed when we want to configure using default
+   // data instead of in the input file.
+   //
+   // Allocate the HLA objects.
+   THLA.manager.obj_count = 1;
+   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                    THLA.manager.obj_count );
+   stc_encoder_test.thla_object = &(THLA.manager.objects[0]);
+   
+}
+
