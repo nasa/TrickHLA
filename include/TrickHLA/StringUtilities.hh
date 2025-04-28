@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdlib>
 #include <cstring>
+#include <cwchar>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -45,6 +46,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 
 // TrickHLA Model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -95,6 +97,21 @@ class StringUtilities
    };
 
   public:
+   /*! @brief Wide character string (i.e. wchar_t *) duplication in Trick memory.
+    *  @param s The input wide string.
+    *  @rreturn The duplicate wide string.*/
+   static wchar_t *tmm_wstrdup( wchar_t const *s )
+   {
+      int size = wcslen( s ) + 1;
+
+      /** @li Allocate the duplicate character string */
+      wchar_t *addr = static_cast< wchar_t * >( TMM_declare_var( TRICK_WCHAR, "", 0, "", 1, &size ) );
+
+      /** @li Copy the contents of the original character string to the duplicate. */
+      /** @li Return the address of the new allocation.*/
+      return ( wcscpy( addr, s ) );
+   }
+
    /*! @brief C (char *) string to C++ wide string conversion routine.
     *  @param output The output wide string.
     *  @param input  The input C string. */

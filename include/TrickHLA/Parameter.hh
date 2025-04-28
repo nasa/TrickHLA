@@ -240,6 +240,7 @@ class Parameter
   private:
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
    int            buffer_capacity; ///< @trick_units{--} The capacity of the buffer.
+   int            buffer_size;     ///< @trick_units{--} The size of the data in the buffer.
 
    bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
 
@@ -291,7 +292,7 @@ class Parameter
 
    /*! @brief Encode the interaction parameter using the HLAlogicalTime 64-bit
     * integer encoding. */
-   void encode_logical_time() const;
+   void encode_logical_time();
 
    /*! @brief Decode the interaction parameter that is using the HLAlogicalTime
     * 64-bit integer encoding. */
@@ -303,6 +304,9 @@ class Parameter
    /*! @brief Decode the opaque data in the buffer. */
    void decode_opaque_data_from_buffer();
 
+   /*! @brief Decode the raw data in the buffer. */
+   void decode_raw_data_from_buffer();
+
    /*! @brief Encode a string parameter into the buffer using the appropriate encoding. */
    void encode_string_to_buffer();
 
@@ -313,12 +317,10 @@ class Parameter
     *  @param dest      Destination to copy data to.
     *  @param src       Source of the data to byteswap and copy from.
     *  @param type      The type of the data.
-    *  @param length    The length/number of entries in the source array.
     *  @param num_bytes The number of bytes in the source array. */
    void byteswap_buffer_copy( void       *dest,
                               void const *src,
                               int const   type,
-                              int const   length,
                               int const   num_bytes ) const;
 
   private:
