@@ -82,11 +82,12 @@ using namespace TrickHLA;
  */
 WstringEncoder::WstringEncoder(
    std::string const &trick_variable_name,
-   std::string const &fom_variable_name )
+   std::string const &fom_variable_name,
+   EncodingEnum variable_encoding )
    : trick_name( trick_variable_name ),
      fom_name( fom_variable_name ),
+     rti_encoding( variable_encoding ),
      ref2( NULL ),
-     rti_encoding( ENCODING_UNKNOWN ),
      is_array( false ),
      is_1d_array( false ),
      is_static_array( false ),
@@ -142,7 +143,7 @@ void WstringEncoder::initialize()
    is_1d_array     = ( ref2->attr->num_index == 1 );
    is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
-   if ( ref2->attr->type != TRICK_WCHAR ) {
+   if ( ref2->attr->type != TRICK_WSTRING ) {
       ostringstream errmsg;
       errmsg << "WstringEncoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name
@@ -150,7 +151,7 @@ void WstringEncoder::initialize()
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '"
-             << Utilities::get_trick_type_string( TRICK_WCHAR )
+             << Utilities::get_trick_type_string( TRICK_WSTRING )
              << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
