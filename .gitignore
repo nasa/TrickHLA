@@ -85,6 +85,9 @@ jeod_chkpnt_post_init
 # Visual Studio Code
 .vscode
 
+# Visual OMT files
+VisualOMTLog
+
 # Eclipse specific files
 Debug
 .cproject

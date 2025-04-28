@@ -1,0 +1,70 @@
+
+
+// Include TrickHLA Packing object base simulation definition module.
+#include "THLAPackingBase.sm"
+
+// SpaceFOM include files.
+##include "SpaceFOM/SpaceTimeCoordinateData.hh"
+##include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+
+// SpaceFOM include files.
+##include "models/include/SpaceTimeCoordinatePacking.hh"
+
+#ifndef SPACEFOM_STC_ENCODER_SM
+#define SPACEFOM_STC_ENCODER_SM
+
+//=============================================================================
+// SIM_OBJECT: SpaceTimeCoordinateSimObject
+// Sim-object for for testing SpaceFOM data types in HLA publish/subscribe.
+//=============================================================================
+class SpaceTimeCoordinateSimObject : public Trick::SimObject {
+
+  public:
+
+   /* HLA associated SpaceTimeCoordinate packing object. */
+   SpaceFOM::SpaceTimeCoordinateData data;
+
+   /* HLA associated SpaceTimeCoordinate packing object. */
+   SpaceFOM::SpaceTimeCoordinatePacking packing;
+
+   // SimObject constructor.
+   SpaceTimeCoordinateSimObject( bool               create_object,
+                                 char const       * sim_obj_name,
+                                 unsigned short     _INIT = P_HLA_INIT )
+   : create( create_object ),
+     sim_object_name( sim_obj_name ),
+     packing_name( "packing" )
+   {
+      //
+      // Default data jobs.
+      //
+      P_INIT ("default_data") packing.base_config( create,
+                                                   sim_object_name,
+                                                   packing_name,
+                                                   &(this->data),
+                                                   thla_object );
+
+      //
+      // Initialization jobs.
+      //
+      P_INIT ("initialization") packing.configure();
+      P_INIT ("initialization") packing.initialize();
+
+   }
+   
+  public:
+   TrickHLA::Object * thla_object;
+   
+  protected:
+   bool         create;
+   char const * sim_object_name;
+   char const * packing_name;
+
+  private:
+   // This object is not copyable
+   SpaceTimeCoordinateSimObject( SpaceTimeCoordinateSimObject const & );
+   SpaceTimeCoordinateSimObject & operator=( SpaceTimeCoordinateSimObject const & );
+   
+};
+
+#endif // End SPACEFOM_STC_ENCODER_SM

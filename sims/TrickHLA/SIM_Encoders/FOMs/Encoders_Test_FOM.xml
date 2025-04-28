@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>Encoder_Test</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2025-04-28</modificationDate>
+        <securityClassification>unclassified</securityClassification>
+        <purpose>FOM for testing TrickHLA encoders/decoders</purpose>
+        <applicationDomain>Test and Evaluation</applicationDomain>
+        <description>This is a FOM module used to build up encapulating HLA Object Classes used to develop and test encoders and decoders for aggregate types in TrickHLA.</description>
+        <useLimitation></useLimitation>
+        <other></other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>STCTest</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>An object used to test the encoding and decoding of a SpaceFOM SpaceTimeCoordinateState type.  Since it also contains a quaternion, it also tests the SpaceFOM::Quaternion type.</semantics>
+                <attribute>
+                    <name>state</name>
+                    <dataType>SpaceTimeCoordinateState</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>An attribute to test the encoding and decding of the SpaceFOM SpaceTimeCoordinateState data type.</semantics>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <interactions>
+        <interactionClass>
+            <name>HLAinteractionRoot</name>
+        </interactionClass>
+    </interactions>
+    <switches>
+        <autoProvide isEnabled="true"/>
+        <conveyRegionDesignatorSets isEnabled="false"/>
+        <conveyProducingFederate isEnabled="false"/>
+        <attributeScopeAdvisory isEnabled="false"/>
+        <attributeRelevanceAdvisory isEnabled="false"/>
+        <objectClassRelevanceAdvisory isEnabled="false"/>
+        <interactionRelevanceAdvisory isEnabled="false"/>
+        <serviceReporting isEnabled="false"/>
+        <exceptionReporting isEnabled="false"/>
+        <delaySubscriptionEvaluation isEnabled="false"/>
+        <automaticResignAction resignAction="CancelThenDeleteThenDivest"/>
+    </switches>
+    <dataTypes>
+        <simpleDataTypes/>
+        <enumeratedDataTypes/>
+        <arrayDataTypes/>
+        <fixedRecordDataTypes/>
+        <variantRecordDataTypes/>
+    </dataTypes>
+    <notes/>
+</objectModel>
