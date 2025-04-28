@@ -119,7 +119,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
 
    // Make sure the requested capacity is a multiple of the byte alignment.
    if ( alignment > 1 ) {
-      size_t pad_size = requested_size % alignment;
+      size_t const pad_size = requested_size % alignment;
       if ( pad_size > 0 ) {
          requested_size += pad_size;
       }

@@ -91,6 +91,7 @@ Attribute::Attribute()
      cycle_time( -std::numeric_limits< double >::max() ),
      buffer( NULL ),
      buffer_capacity( 0 ),
+     buffer_size( 0 ),
      size_is_static( true ),
      size( 0 ),
      num_items( 0 ),
@@ -123,6 +124,7 @@ Attribute::~Attribute()
       }
       buffer          = NULL;
       buffer_capacity = 0;
+      buffer_size     = 0;
    }
 
    if ( ref2 != NULL ) {
@@ -302,7 +304,7 @@ void Attribute::initialize(
                    << " ENCODING_LITTLE_ENDIAN, ENCODING_NONE, ENCODING_UNICODE_STRING,"
                    << " ENCODING_OPAQUE_DATA, or ENCODING_UNKNOWN value for the"
                    << " 'rti_encoding' when the attribute represents a 'char' or"
-                   << " 'unsigned char' type. Please check  your input or"
+                   << " 'unsigned char' type. Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -311,14 +313,72 @@ void Attribute::initialize(
          // For the ENCODING_UNICODE_STRING encoding, we only support a 1-D dynamic
          // array of characters.
          if ( ( rti_encoding == ENCODING_UNICODE_STRING )
-              && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+              && ( ( ref2->attr->num_index != 1 )
+                   || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_UNICODE_STRING must"
-                   << " represent a one-dimensional array of characters (i.e."
-                   << " 'char *' or 'unsigned char *'). Please check your input or"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_UNICODE_STRING"
+                   << " must represent a one-dimensional array of characters (i.e."
+                   << " 'char *' or 'unsigned char *'). Please check your input"
+                   << " or modified-data files to make sure the value for the"
+                   << " 'rti_encoding' is correctly specified.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+
+         // For the ENCODING_OPAQUE_DATA encoding, we only support a
+         // 1-D dynamic array of characters.
+         if ( ( rti_encoding == ENCODING_OPAQUE_DATA )
+              && ( ( ref2->attr->num_index != 1 )
+                   || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+            ostringstream errmsg;
+            errmsg << "Attribute::initialize():" << __LINE__
+                   << " ERROR: FOM Object Attribute '"
+                   << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_OPAQUE_DATA"
+                   << " must represent a one-dimensional array of characters (i.e."
+                   << " 'char *' or 'unsigned char *'). Please check your input"
+                   << " or modified-data files to make sure the value for the"
+                   << " 'rti_encoding' is correctly specified.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+         break;
+      }
+
+      case TRICK_WCHAR: {
+         if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
+              && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+              && ( rti_encoding != ENCODING_NONE )
+              && ( rti_encoding != ENCODING_UNICODE_STRING )
+              && ( rti_encoding != ENCODING_OPAQUE_DATA )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+            ostringstream errmsg;
+            errmsg << "Attribute::initialize():" << __LINE__
+                   << " ERROR: FOM Object Attribute '"
+                   << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
+                   << trick_name << "' must use either the ENCODING_BIG_ENDIAN,"
+                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NONE, ENCODING_UNICODE_STRING,"
+                   << " ENCODING_OPAQUE_DATA, or ENCODING_UNKNOWN value for the"
+                   << " 'rti_encoding' when the attribute represents a 'wchar_t'"
+                   << " type. Please check your input or"
+                   << " modified-data files to make sure the value for the"
+                   << " 'rti_encoding' is correctly specified.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+
+         // For the ENCODING_UNICODE_STRING encoding, we only support a 1-D dynamic
+         // array of characters.
+         if ( ( rti_encoding == ENCODING_UNICODE_STRING )
+              && ( ( ref2->attr->num_index != 1 )
+                   || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+            ostringstream errmsg;
+            errmsg << "Attribute::initialize():" << __LINE__
+                   << " ERROR: FOM Object Attribute '"
+                   << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_UNICODE_STRING"
+                   << " must represent a one-dimensional array of wide characters"
+                   << " (i.e. 'wchar_t *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -327,14 +387,15 @@ void Attribute::initialize(
          // For the ENCODING_OPAQUE_DATA encoding, we only support a
          // 1-D dynamic array of characters.
          if ( ( rti_encoding == ENCODING_OPAQUE_DATA )
-              && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+              && ( ( ref2->attr->num_index != 1 )
+                   || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_OPAQUE_DATA must"
-                   << " represent a one-dimensional array of characters (i.e."
-                   << " 'char *' or 'unsigned char *'). Please check your input or"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_OPAQUE_DATA"
+                   << " must represent a one-dimensional array of wide characters"
+                   << " (i.e. 'wchar_t *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -394,7 +455,8 @@ void Attribute::initialize(
          }
 
          // Only support an array of characters (i.e. char *) for ENCODING_NONE.
-         if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
+         if ( ( rti_encoding == ENCODING_NONE )
+              && ( ref2->attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
@@ -419,7 +481,8 @@ void Attribute::initialize(
       // For now, we do not support more than a 1-D array that is dynamic
       // (i.e. a pointer such as char *). If the size of the last indexed
       // attribute is zero then it is a pointer.
-      if ( ( ref2->attr->num_index > 1 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
+      if ( ( ref2->attr->num_index > 1 )
+           && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
          ostringstream errmsg;
          errmsg << "Attribute::initialize():" << __LINE__
                 << " ERROR: FOM Object Attribute '"
@@ -466,7 +529,8 @@ void Attribute::initialize(
 
    // We do not support an array of primitive types for the logical
    // time encoding, otherwise we support everything else.
-   if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( ref2->attr->num_index > 0 ) ) {
+   if ( ( rti_encoding == ENCODING_LOGICAL_TIME )
+        && ( ref2->attr->num_index > 0 ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
@@ -479,7 +543,8 @@ void Attribute::initialize(
    }
 
    // The units must be in seconds if the ENCODING_LOGICAL_TIME is used.
-   if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( strcmp( "s", ref2->attr->units ) != 0 ) ) {
+   if ( ( rti_encoding == ENCODING_LOGICAL_TIME )
+        && ( strcmp( "s", ref2->attr->units ) != 0 ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
@@ -513,7 +578,8 @@ void Attribute::initialize(
    // to a null string.
    if ( ( size == 0 )
         && ( ref2->attr->type != TRICK_STRING )
-        && !( ( ref2->attr->type == TRICK_CHARACTER ) && ( ref2->attr->num_index > 0 ) ) ) {
+        && !( ( ref2->attr->type == TRICK_CHARACTER ) && ( ref2->attr->num_index > 0 ) )
+        && !( ( ref2->attr->type == TRICK_WCHAR ) && ( ref2->attr->num_index > 0 ) ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::initialize():" << __LINE__
@@ -540,10 +606,8 @@ void Attribute::initialize(
           << "  ref2->attr->type:" << ref2->attr->type << '\n'
           << "  ref2->attr->units:" << ref2->attr->units << '\n'
           << "  size:" << size << '\n'
-          << "  num_items:" << num_items << '\n';
-      // TODO: Figure out get_size_from_attributes() API in Trick 10.
-      //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
-      msg << "  ref2->attr->size:" << ref2->attr->size << '\n'
+          << "  num_items:" << num_items << '\n'
+          << "  ref2->attr->size:" << ref2->attr->size << '\n'
           << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
           << "  publish:" << publish << '\n'
@@ -551,11 +615,13 @@ void Attribute::initialize(
           << "  locally_owned:" << locally_owned << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
       if ( ( ref2->attr->type == TRICK_STRING )
-           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+           || ( ( ( ref2->attr->type == TRICK_CHARACTER )
+                  || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
@@ -661,7 +727,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
    int attr_size = attr_value->size();
 
    // Determine the number of bytes we expect to receive.
-   int expected_byte_count = get_attribute_size();
+   int const expected_byte_count = get_attribute_size();
 
    switch ( rti_encoding ) {
       case ENCODING_BOOLEAN: {
@@ -691,6 +757,9 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
          //
          // Copy the RTI attribute value into the buffer.
          memcpy( buffer, attr_value->data(), attr_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->buffer_size = attr_size;
          break;
       }
       case ENCODING_NONE: {
@@ -721,11 +790,12 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( attr_size );
 
-         // Make sure the buffer size matches how much data we are putting in it.
-         this->size = attr_size;
-
          // Copy the RTI attribute value into the buffer.
-         memcpy( buffer, attr_value->data(), size );
+         memcpy( buffer, attr_value->data(), attr_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->size        = attr_size;
+         this->buffer_size = attr_size;
          break;
       }
       case ENCODING_LOGICAL_TIME: {
@@ -748,14 +818,16 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << " variables are not the correct size or type.\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
+
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( attr_size );
 
-         // Make sure the buffer size matches how much data we are putting in it.
-         this->size = attr_size;
-
          // Copy the RTI attribute value into the buffer.
-         memcpy( buffer, attr_value->data(), size );
+         memcpy( buffer, attr_value->data(), attr_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->size        = attr_size;
+         this->buffer_size = attr_size;
          break;
       }
       case ENCODING_OPAQUE_DATA: {
@@ -781,11 +853,12 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( attr_size );
 
-         // Make sure the buffer size matches how much data we are putting in it.
-         this->size = attr_size;
-
          // Copy the RTI attribute value into the buffer.
-         memcpy( buffer, attr_value->data(), size );
+         memcpy( buffer, attr_value->data(), attr_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->size        = attr_size;
+         this->buffer_size = attr_size;
          break;
       }
       default: {
@@ -812,11 +885,12 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( attr_size );
 
-         // Make sure the buffer size matches how much data we are putting in it.
-         this->size = attr_size;
-
          // Copy the RTI attribute value into the buffer.
-         memcpy( buffer, attr_value->data(), size );
+         memcpy( buffer, attr_value->data(), attr_size );
+
+         // Make sure the buffer size matches how much data we are putting in it.
+         this->size        = attr_size;
+         this->buffer_size = attr_size;
          break;
       }
    }
@@ -836,7 +910,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
 }
 
 void Attribute::ensure_buffer_capacity(
-   int capacity )
+   int const capacity )
 {
    if ( capacity > buffer_capacity ) {
       buffer_capacity = capacity;
@@ -871,7 +945,8 @@ void Attribute::calculate_size_and_number_of_items()
 
    // Handle Strings differently since we need to know the length of each string.
    if ( ( ref2->attr->type == TRICK_STRING )
-        || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+        || ( ( ( ref2->attr->type == TRICK_CHARACTER )
+               || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
              && ( ref2->attr->num_index > 0 )
              && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
 
@@ -961,8 +1036,6 @@ void Attribute::calculate_size_and_number_of_items()
           << "  ref2->attr->units:" << ref2->attr->units << '\n'
           << "  size:" << size << '\n'
           << "  num_items:" << num_items << '\n'
-          // TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
           << "  ref2->attr->size:" << ref2->attr->size << '\n'
           << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
@@ -971,6 +1044,7 @@ void Attribute::calculate_size_and_number_of_items()
           << "  locally_owned:" << locally_owned << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -1054,8 +1128,6 @@ void Attribute::pack_attribute_buffer()
           << "  ref2->attr->units:" << ref2->attr->units << '\n'
           << "  size:" << size << '\n'
           << "  num_items:" << num_items << '\n'
-          // TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
           << "  ref2->attr->size:" << ref2->attr->size << '\n'
           << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
@@ -1064,6 +1136,7 @@ void Attribute::pack_attribute_buffer()
           << "  locally_owned:" << locally_owned << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -1090,17 +1163,15 @@ void Attribute::pack_attribute_buffer()
       return;
    }
 
-   // TODO: Use a transcoder for each type to encode and decode depending on
-   // the type specified in the FOM instead of the code below. Dan Dexter
-
    switch ( rti_encoding ) {
       case ENCODING_LOGICAL_TIME: {
-         num_items = 1;
-         size      = 8;
+         num_items   = 1;
+         size        = 8;
+         buffer_size = size;
 
          // Ensure enough capacity in the buffer for the attribute and all its
          // items if it was an array.
-         ensure_buffer_capacity( size );
+         ensure_buffer_capacity( buffer_size );
 
          // Encode the logical time.
          encode_logical_time();
@@ -1118,8 +1189,8 @@ void Attribute::pack_attribute_buffer()
             ostringstream msg;
             msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
                 << "================== ATTRIBUTE ENCODE ==================================\n"
-                << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                << "')\n";
+                << " Attribute:'" << FOM_name << "', trick_name:'" << trick_name
+                << "', ENCODING_BOOLEAN, buffer_size:" << buffer_size << "\n";
             message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
@@ -1139,8 +1210,8 @@ void Attribute::pack_attribute_buffer()
             ostringstream msg;
             msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
                 << "================== ATTRIBUTE ENCODE ==================================\n"
-                << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                << "')\n";
+                << " Attribute:'" << FOM_name << "', trick_name:'" << trick_name
+                << "', ENCODING_OPAQUE_DATA, buffer_size:" << buffer_size << "\n";
             message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
@@ -1149,7 +1220,9 @@ void Attribute::pack_attribute_buffer()
       default: {
          // Must handle the string as a special case because of special encodings.
          if ( ( ref2->attr->type == TRICK_STRING )
-              || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+              || ( ( ( ref2->attr->type == TRICK_CHARACTER )
+                     || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER )
+                     || ( ref2->attr->type == TRICK_WCHAR ) )
                    && ( ref2->attr->num_index > 0 )
                    && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
             // NOTE: For now we must calculate size every time because on a
@@ -1165,8 +1238,9 @@ void Attribute::pack_attribute_buffer()
                ostringstream msg;
                msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
                    << "================== ATTRIBUTE ENCODE ==================================\n"
-                   << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                   << "')\n";
+                   << " Attribute:'" << FOM_name << "', trick_name:'" << trick_name
+                   << "', rti_encoding:" << rti_encoding
+                   << ", buffer_size:" << buffer_size << "\n";
                message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
@@ -1178,7 +1252,8 @@ void Attribute::pack_attribute_buffer()
 
             // Ensure enough capacity in the buffer for the attribute and all its
             // items if it was an array.
-            ensure_buffer_capacity( size );
+            buffer_size = size;
+            ensure_buffer_capacity( buffer_size );
 
             // Determine if the users variable is a pointer.
             if ( ( ref2->attr->num_index > 0 )
@@ -1189,8 +1264,7 @@ void Attribute::pack_attribute_buffer()
                byteswap_buffer_copy( buffer,
                                      *static_cast< char ** >( ref2->address ),
                                      ref2->attr->type,
-                                     num_items,
-                                     size );
+                                     buffer_size );
             } else {
                // It's either a primitive type or a static array.
 
@@ -1198,16 +1272,16 @@ void Attribute::pack_attribute_buffer()
                byteswap_buffer_copy( buffer,
                                      ref2->address,
                                      ref2->attr->type,
-                                     num_items,
-                                     size );
+                                     buffer_size );
             }
 
             if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                ostringstream msg;
                msg << "Attribute::pack_attribute_buffer():" << __LINE__ << '\n'
                    << "================== ATTRIBUTE ENCODE ==================================\n"
-                   << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                   << "')\n";
+                   << " Attribute:'" << FOM_name << "', trick_name:'" << trick_name
+                   << "', rti_encoding:" << rti_encoding
+                   << ", buffer_size:" << buffer_size << "\n";
                message_publish( MSG_NORMAL, msg.str().c_str() );
                print_buffer();
             }
@@ -1231,8 +1305,6 @@ void Attribute::pack_attribute_buffer()
            << "  ref2->attr->units:" << ref2->attr->units << '\n'
            << "  size:" << size << '\n'
            << "  num_items:" << num_items << '\n'
-           // TODO: Figure out get_size_from_attributes() API in Trick 10.
-           //    << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
            << "  ref2->attr->size:" << ref2->attr->size << '\n'
            << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
            << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
@@ -1270,15 +1342,8 @@ void Attribute::unpack_attribute_buffer()
       return;
    }
 
-   // TODO: Use a transcoder for each type to encode and decode depending on
-   // the type specified in the FOM instead of the code below. Dan Dexter
-
    switch ( rti_encoding ) {
       case ENCODING_LOGICAL_TIME: {
-         num_items = 1;
-         size      = 8;
-
-         // Decode the logical time.
          decode_logical_time();
          break;
       }
@@ -1294,27 +1359,39 @@ void Attribute::unpack_attribute_buffer()
             ostringstream msg;
             msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
                 << "================== ATTRIBUTE DECODE ==================================\n"
-                << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                << "')\n";
+                << " Attribute:'" << FOM_name << "', trick_name:'"
+                << trick_name << "', ENCODING_BOOLEAN, buffer_size:"
+                << buffer_size << "\n";
             message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
          break;
       }
       case ENCODING_OPAQUE_DATA: {
-         // The size is the received size but recalculate the number of items.
-         if ( !size_is_static ) {
-            calculate_static_number_of_items();
-         }
-
          decode_opaque_data_from_buffer();
 
          if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
             msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
                 << "================== ATTRIBUTE DECODE =============================\n"
-                << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                << "')\n";
+                << " Attribute:'" << FOM_name << "', trick_name:'"
+                << trick_name << "', ENCODING_OPAQUE_DATA, buffer_size:"
+                << buffer_size << "\n";
+            message_publish( MSG_NORMAL, msg.str().c_str() );
+            print_buffer();
+         }
+         break;
+      }
+      case ENCODING_NONE: {
+         decode_raw_data_from_buffer();
+
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+            ostringstream msg;
+            msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+                << "================== ATTRIBUTE DECODE ==================================\n"
+                << " Attribute:'" << FOM_name << "', trick name:'"
+                << trick_name << "', ENCODING_NONE, buffer_size:"
+                << buffer_size << "\n";
             message_publish( MSG_NORMAL, msg.str().c_str() );
             print_buffer();
          }
@@ -1323,7 +1400,9 @@ void Attribute::unpack_attribute_buffer()
       default: {
          // Must handle the string as a special case because of special encodings.
          if ( ( ref2->attr->type == TRICK_STRING )
-              || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+              || ( ( ( ref2->attr->type == TRICK_CHARACTER )
+                     || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER )
+                     || ( ref2->attr->type == TRICK_WCHAR ) )
                    && ( ref2->attr->num_index > 0 )
                    && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
             // The size is the received size but recalculate the number of items.
@@ -1337,22 +1416,14 @@ void Attribute::unpack_attribute_buffer()
 
             decode_string_from_buffer();
 
-            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-               ostringstream msg;
-               msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
-                   << "================== ATTRIBUTE DECODE ==================================\n"
-                   << " attribute '" << FOM_name << "' (trick name '" << trick_name << "')"
-                   << " value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
-               message_publish( MSG_NORMAL, msg.str().c_str() );
-               print_buffer();
-            }
-
          } else {
-
-            // Determine the number of items this attribute has (i.e. is it an array).
             if ( !size_is_static ) {
                calculate_size_and_number_of_items();
             }
+
+            // Limit the number of data bytes to the size of the allocated
+            // user Trick variable.
+            int const num_bytes = ( buffer_size > size ) ? size : buffer_size;
 
             // Determine if the users variable is a pointer.
             if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
@@ -1362,8 +1433,7 @@ void Attribute::unpack_attribute_buffer()
                byteswap_buffer_copy( *static_cast< char ** >( ref2->address ),
                                      buffer,
                                      ref2->attr->type,
-                                     num_items,
-                                     size );
+                                     num_bytes );
             } else {
                // It's either a primitive type or a static array.
 
@@ -1371,19 +1441,18 @@ void Attribute::unpack_attribute_buffer()
                byteswap_buffer_copy( ref2->address,
                                      buffer,
                                      ref2->attr->type,
-                                     num_items,
-                                     size );
-
-               if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-                  ostringstream msg;
-                  msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
-                      << "================== ATTRIBUTE DECODE ==================================\n"
-                      << " attribute '" << FOM_name << "' (trick name '" << trick_name
-                      << "')\n";
-                  message_publish( MSG_NORMAL, msg.str().c_str() );
-                  print_buffer();
-               }
+                                     num_bytes );
             }
+         }
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+            ostringstream msg;
+            msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << '\n'
+                << "================== ATTRIBUTE DECODE ==================================\n"
+                << " Attribute:'" << FOM_name << "', trick name:'"
+                << trick_name << "', rti_encoding:" << rti_encoding
+                << ", buffer_size:" << buffer_size << "\n";
+            message_publish( MSG_NORMAL, msg.str().c_str() );
+            print_buffer();
          }
          break;
       }
@@ -1404,8 +1473,6 @@ void Attribute::unpack_attribute_buffer()
           << "  ref2->attr->units:" << ref2->attr->units << '\n'
           << "  size:" << size << '\n'
           << "  num_items:" << num_items << '\n'
-          // TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
           << "  ref2->attr->size:" << ref2->attr->size << '\n'
           << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
@@ -1414,6 +1481,7 @@ void Attribute::unpack_attribute_buffer()
           << "  locally_owned:" << locally_owned << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
           << "  buffer_capacity:" << buffer_capacity << '\n'
+          << "  buffer_size:" << buffer_size << '\n'
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -1442,7 +1510,8 @@ void Attribute::encode_boolean_to_buffer() // RETURN: -- None.
    }
 
    // Encoded size is the number of (32 bit Big Endian) elements.
-   ensure_buffer_capacity( 4 * num_items );
+   buffer_size = 4 * num_items;
+   ensure_buffer_capacity( buffer_size );
 
    unsigned int *int_dest = reinterpret_cast< unsigned int * >( buffer );
 
@@ -1457,9 +1526,20 @@ void Attribute::encode_boolean_to_buffer() // RETURN: -- None.
 
 void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
 {
-   bool *bool_dest;
+   int expected_bytes = num_items * sizeof( unsigned int );
+   if ( buffer_size != expected_bytes ) {
+      ostringstream msg;
+      msg << "Attribute::decode_boolean_from_buffer():" << __LINE__
+          << " WARNING: For Attribute '" << FOM_name << "' with Trick name '"
+          << trick_name << "' the number of bytes in the buffer ("
+          << buffer_size << ") is not the expected " << expected_bytes
+          << "! Skipping...\n";
+      message_publish( MSG_WARNING, msg.str().c_str() );
+      return;
+   }
 
    // Determine if the users variable is a pointer.
+   bool *bool_dest;
    if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
       // It's a pointer
       bool_dest = reinterpret_cast< bool * >( ( *static_cast< char ** >( ref2->address ) ) );
@@ -1470,16 +1550,12 @@ void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
 
    unsigned int const *int_src = reinterpret_cast< unsigned int * >( buffer );
 
-   if ( num_items == 1 ) {
-      bool_dest[0] = ( int_src[0] != 0 );
-   } else {
-      for ( int k = 0; k < num_items; ++k ) {
-         bool_dest[k] = ( int_src[k] != 0 );
-      }
+   for ( int k = 0; k < num_items; ++k ) {
+      bool_dest[k] = ( int_src[k] != 0 );
    }
 }
 
-void Attribute::encode_logical_time() const // RETURN: -- None.
+void Attribute::encode_logical_time() // RETURN: -- None.
 {
    // Integer representing time in the HLA Logical Time base.
    int64_t logical_time = 0;
@@ -1550,6 +1626,8 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
    // something a little easier to use.
    unsigned char *output = buffer;
 
+   buffer_size = 8;
+
    output[0] = (unsigned char)( ( logical_time >> 56 ) & 0xFF );
    output[1] = (unsigned char)( ( logical_time >> 48 ) & 0xFF );
    output[2] = (unsigned char)( ( logical_time >> 40 ) & 0xFF );
@@ -1562,9 +1640,20 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
 
 void Attribute::decode_logical_time() // RETURN: -- None.
 {
+   if ( buffer_size != 8 ) {
+      ostringstream msg;
+      msg << "Attribute::decode_logical_time():" << __LINE__
+          << " WARNING: For Attribute '" << FOM_name << "' with Trick name '"
+          << trick_name << "' the number of bytes in the buffer ("
+          << buffer_size << ") is not the expected 8! Skipping...\n";
+      message_publish( MSG_WARNING, msg.str().c_str() );
+      return;
+   }
+
    // Integer representing time in the HLA Logical Time base.
-   int64_t              logical_time = 0;
-   unsigned char const *src          = buffer;
+   int64_t logical_time = 0;
+
+   unsigned char const *src = buffer;
 
    logical_time = ( logical_time << 8 ) | src[0]; // cppcheck-suppress [badBitmaskCheck]
    logical_time = ( logical_time << 8 ) | src[1];
@@ -1714,7 +1803,8 @@ void Attribute::encode_opaque_data_to_buffer() // RETURN: -- None.
       }
 
       // The amount of data in the buffer (i.e. size) is the encoded size.
-      size = byte_count;
+      size        = byte_count;
+      buffer_size = byte_count;
    }
 }
 
@@ -1754,14 +1844,10 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
          decoded_length = 0;
       }
 
-      // Do a sanity check on the decoded length as compared to how much
-      // data is in the buffer, i.e. data_buff_size = size - 4.
-      int data_buff_size;
-      if ( size > 4 ) {
-         data_buff_size = size - 4;
-      } else {
-         data_buff_size = 0;
-      }
+      // Do a sanity check on the decoded length as compared to how much data
+      // is in the buffer. Data part is after 4 byte count at head of buffer.
+      int data_buff_size = ( buffer_size > 4 ) ? ( buffer_size - 4 ) : 0;
+
       if ( decoded_length > data_buff_size ) {
          message_publish( MSG_WARNING, "Attribute::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer \
@@ -1776,7 +1862,8 @@ size %d, will use the data buffer size instead.\n",
          output = *( static_cast< unsigned char ** >( ref2->address ) );
 
          if ( output != NULL ) {
-            // The output array size must exactly match the incoming data size for opaque data.
+            // The output array size must exactly match the incoming data size
+            // for opaque data.
             if ( decoded_length != get_size( output ) ) {
                *( static_cast< char ** >( ref2->address ) ) =
                   static_cast< char * >( TMM_resize_array_1d_a(
@@ -1801,19 +1888,13 @@ size %d, will use the data buffer size instead.\n",
             // The output array size must exactly match the incoming data
             // size for opaque data.
             if ( decoded_length != get_size( output ) ) {
-               // WORKAROUND: Trick 10 can't handle a length of zero so to
-               // workaround the memory manager problem use a size of 1 in
-               // the allocation.
-               ref2->address = static_cast< char * >( TMM_resize_array_1d_a(
-                  static_cast< char * >( ref2->address ),
-                  ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
-               output        = static_cast< unsigned char * >( ref2->address );
+               ref2->address = static_cast< char * >(
+                  TMM_resize_array_1d_a( static_cast< char * >( ref2->address ),
+                                         ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
+               output = static_cast< unsigned char * >( ref2->address );
             }
          } else {
             // Allocate memory for the output array.
-            // WORKAROUND: Trick 10 can't handle a length of zero so to
-            // workaround the memory manager problem use a size of 1 in
-            // the allocation.
             ref2->address = static_cast< char * >( TMM_declare_var_1d( "char", ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
             output        = static_cast< unsigned char * >( ref2->address );
          }
@@ -1833,6 +1914,70 @@ size %d, will use the data buffer size instead.\n",
          memcpy( output, input, decoded_length );
       }
    }
+}
+
+void Attribute::decode_raw_data_from_buffer() // RETURN: -- None.
+{
+   if ( buffer_size <= 0 ) {
+      return;
+   }
+
+   // Verify the variable pointed to by ref2->address can be resized.
+   int num_bytes;
+
+   // Handle the raw data as bytes.
+   unsigned char *output;
+
+   // Determine if the users variable is a pointer.
+   if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
+      // It's a pointer
+      output = *( static_cast< unsigned char ** >( ref2->address ) );
+
+      num_bytes = buffer_size;
+
+      if ( output != NULL ) {
+         // The output array size must exactly match the incoming data size
+         // for raw data.
+         if ( num_bytes != get_size( output ) ) {
+            *( static_cast< char ** >( ref2->address ) ) =
+               static_cast< char * >( TMM_resize_array_1d_a(
+                  *( static_cast< char ** >( ref2->address ) ), num_bytes ) );
+
+            output = *( static_cast< unsigned char ** >( ref2->address ) );
+         }
+      } else {
+         // Allocate memory for the output array.
+         *( static_cast< char ** >( ref2->address ) ) =
+            static_cast< char * >( TMM_declare_var_1d( "char", num_bytes ) );
+
+         output = *( static_cast< unsigned char ** >( ref2->address ) );
+      }
+   } else {
+      // It's either a primitive type or a static array.
+      output = static_cast< unsigned char * >( ref2->address );
+
+      int curr_size = get_size( output );
+      num_bytes     = ( buffer_size > curr_size ) ? curr_size : buffer_size;
+
+      if ( output == NULL ) {
+         // Allocate memory for the output array.
+         ref2->address = static_cast< char * >( TMM_declare_var_1d( "char", num_bytes ) );
+         output        = static_cast< unsigned char * >( ref2->address );
+      }
+   }
+
+   if ( output == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Attribute::decode_raw_data_from_buffer():" << __LINE__
+             << " ERROR: Could not allocate memory for ENCODING_NONE Attribute '"
+             << FOM_name << "' with Trick name '" << trick_name
+             << "' and length " << num_bytes << "!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // Copy the data over.
+   memcpy( output, buffer, num_bytes );
 }
 
 void Attribute::encode_string_to_buffer() // RETURN: -- None.
@@ -1894,7 +2039,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             }
 
             // The amount of data in the buffer (i.e. size) is the encoded size.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
 
          } else if ( num_items > 1 ) {
             // We have more than one string to encode.
@@ -1917,7 +2063,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // 6 * num_items: 2 pad and 4 bytes for character count per element
             // encoded_size = 4 + 2 * (size + num_items) + 6 * num_items;
             // Make sure we can hold the encoded data.
-            ensure_buffer_capacity( 4 + 2 * size + 8 * num_items );
+            ensure_buffer_capacity( 4 + ( 2 * size ) + ( 8 * num_items ) );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
@@ -1986,7 +2132,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // The amount of data in the buffer (i.e. size) is the number of
             // bytes we placed in it.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
          }
          break;
       }
@@ -2041,7 +2188,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             }
 
             // The amount of data in the buffer (i.e. size) is the encoded size.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
 
          } else if ( num_items > 1 ) {
             // We have more than one string to encode.
@@ -2064,7 +2212,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // 7 * num_items: 3 pad + 4 bytes for character count per element
             // encoded_size = 4 + (size + num_items) + 7 * num_items;
             // Make sure we can hold the encoded data.
-            ensure_buffer_capacity( 4 + size + 8 * num_items );
+            ensure_buffer_capacity( 4 + size + ( 8 * num_items ) );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
@@ -2133,7 +2281,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // The amount of data in the buffer (i.e. size) is the number of
             // bytes we placed in it.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
          }
          break;
       }
@@ -2188,7 +2337,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             }
 
             // The amount of data in the buffer (i.e. size) is the encoded size.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
 
          } else if ( num_items > 1 ) {
             // We have more than one string to encode.
@@ -2223,7 +2373,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // 7 * num_items: 3 pad + 4 bytes for character count per element
             // encoded_size = 4 + (num_elements + num_items) + 7 * num_items
             // Make sure we can hold the encoded data.
-            ensure_buffer_capacity( 4 + num_elements + 8 * num_items );
+            ensure_buffer_capacity( 4 + num_elements + ( 8 * num_items ) );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
@@ -2293,7 +2443,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // The amount of data in the buffer (i.e. size) is the number of
             // bytes we placed in it.
-            size = byte_count;
+            size        = byte_count;
+            buffer_size = byte_count;
          }
          break;
       }
@@ -2337,7 +2488,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
          // The amount of data in the buffer (i.e. size) is the number of
          // bytes we placed in it.
-         size = byte_count;
+         size        = byte_count;
+         buffer_size = byte_count;
          break;
       }
       case ENCODING_C_STRING:
@@ -2376,7 +2528,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
          // The amount of data in the buffer (i.e. size) is the number of
          // bytes we placed in it.
-         size = byte_count;
+         size        = byte_count;
+         buffer_size = byte_count;
          break;
       }
    }
@@ -2467,8 +2620,10 @@ size %d, will use the data buffer size instead.\n",
                   int array_size = Utilities::next_positive_multiple_of_8( length );
 
                   *( static_cast< char ** >( ref2->address ) ) =
-                     static_cast< char * >( TMM_resize_array_1d_a(
-                        *( static_cast< char ** >( ref2->address ) ), array_size ) );
+                     static_cast< char * >(
+                        TMM_resize_array_1d_a( *( static_cast< char ** >(
+                                                  ref2->address ) ),
+                                               array_size ) );
 
                   output = *( static_cast< unsigned char ** >( ref2->address ) );
                }
@@ -2541,7 +2696,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
 
             // Calculate the number of UTF-16 characters which is the number of
             // bytes in the buffer minus the encoded length fields divided by 2.
-            // data_buff_size = (size - 4 - 4 * num_elements)/2
+            // data_buff_size = (size - 4 - (4 * num_elements))/2
             int data_buff_size;
             if ( ref2->attr->type == TRICK_STRING ) {
                if ( size > ( 4 * ( num_elements + 1 ) ) ) {
@@ -2987,9 +3142,6 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
                // The output array size must exactly match the incoming data
                // size for opaque data.
                if ( length != get_size( output ) ) {
-                  // WORKAROUND: Trick 10 can't handle a length of zero so to
-                  // workaround the memory manager problem use a size of 1 in
-                  // the allocation.
                   *( static_cast< char ** >( ref2->address ) ) =
                      static_cast< char * >( TMM_resize_array_1d_a( *( static_cast< char ** >( ref2->address ) ),
                                                                    ( ( length > 0 ) ? length : 1 ) ) );
@@ -2998,9 +3150,6 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
                }
             } else {
                // Allocate memory for the output array.
-               // WORKAROUND: Trick 10 can't handle a length of zero so to
-               // workaround the memory manager problem use a size of 1 in
-               // the allocation.
                *( static_cast< char ** >( ref2->address ) ) =
                   static_cast< char * >( TMM_declare_var_1d( "char", ( ( length > 0 ) ? length : 1 ) ) );
 
@@ -3118,9 +3267,6 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                   // The output array size must exactly match the incoming data
                   // size for opaque data.
                   if ( length != get_size( output ) ) {
-                     // WORKAROUND: Trick 10 can't handle a length of zero so to
-                     // workaround the memory manager problem use a size of 1 in
-                     // the allocation.
                      *( static_cast< char ** >( ref2->address ) + i ) =
                         static_cast< char * >( TMM_resize_array_1d_a(
                            *( static_cast< char ** >( ref2->address ) + i ),
@@ -3130,9 +3276,6 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                   }
                } else {
                   // Allocate memory for the output array.
-                  // WORKAROUND: Trick 10 can't handle a length of zero so to
-                  // workaround the memory manager problem use a size of 1 in
-                  // the allocation.
                   *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >(
                      TMM_declare_var_1d( "char", ( ( length > 0 ) ? length : 1 ) ) );
 
@@ -3231,8 +3374,8 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                if ( length >= get_size( output ) ) {
                   int array_size = Utilities::next_positive_multiple_of_8( length );
 
-                  *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >( TMM_resize_array_1d_a(
-                     *( static_cast< char ** >( ref2->address ) + i ), array_size ) );
+                  *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >(
+                     TMM_resize_array_1d_a( *( static_cast< char ** >( ref2->address ) + i ), array_size ) );
 
                   output = *( static_cast< unsigned char ** >( ref2->address ) + i );
                }
@@ -3240,7 +3383,8 @@ length %d > data buffer size %d, will use the data buffer size instead.\n",
                // Allocate memory for the sim string.
                int array_size = Utilities::next_positive_multiple_of_8( length );
 
-               *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >( TMM_declare_var_1d( "char", array_size ) );
+               *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >(
+                  TMM_declare_var_1d( "char", array_size ) );
 
                output = *( static_cast< unsigned char ** >( ref2->address ) + i );
             }
@@ -3276,10 +3420,9 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
    void       *dest,                  // IN: -- Destination to copy data to.
    void const *src,                   // IN: -- Source of the data to byteswap and copy from.
    int const   type,                  // IN: -- The type of the data.
-   int const   length,                // IN: -- The length/number of entries in the source array.
    int const   num_bytes ) const        // IN: -- The number of bytes in the source array.
 {
-   if ( num_bytes == 0 ) {
+   if ( num_bytes <= 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::byteswap_buffer_copy():" << __LINE__
@@ -3294,7 +3437,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
 
    // Determine if we can just copy the data between the two buffers since
    // we don't need to byteswap or do any special encoding.
-   if ( ( !byteswap ) || ( rti_encoding == ENCODING_NONE ) ) {
+   if ( !byteswap || ( rti_encoding == ENCODING_NONE ) ) {
 
       // Copy the source into the destination since there is no byteswaping
       // or any special encoding.
@@ -3305,28 +3448,22 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double const *d_src = static_cast< double const * >( src );
+            double const *d_src  = static_cast< double const * >( src );
+            double       *d_dest = static_cast< double * >( dest );
 
-            double *d_dest = static_cast< double * >( dest );
-            if ( length == 1 ) {
-               d_dest[0] = Utilities::byteswap_double( d_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  d_dest[k] = Utilities::byteswap_double( d_src[k] );
-               }
+            int const length = num_bytes / sizeof( double );
+            for ( int k = 0; k < length; ++k ) {
+               d_dest[k] = Utilities::byteswap_double( d_src[k] );
             }
             break;
          }
          case TRICK_FLOAT: {
-            float const *f_src = static_cast< float const * >( src );
+            float const *f_src  = static_cast< float const * >( src );
+            float       *f_dest = static_cast< float * >( dest );
 
-            float *f_dest = static_cast< float * >( dest );
-            if ( length == 1 ) {
-               f_dest[0] = Utilities::byteswap_float( f_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  f_dest[k] = Utilities::byteswap_float( f_src[k] );
-               }
+            int const length = num_bytes / sizeof( float );
+            for ( int k = 0; k < length; ++k ) {
+               f_dest[k] = Utilities::byteswap_float( f_src[k] );
             }
             break;
          }
@@ -3337,99 +3474,94 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             memcpy( dest, src, num_bytes );
             break;
          }
+         case TRICK_WCHAR: {
+            wchar_t const *s_src  = static_cast< wchar_t const * >( src );
+            wchar_t       *s_dest = static_cast< wchar_t * >( dest );
+
+            int const length = num_bytes / sizeof( wchar_t );
+            ;
+            for ( int k = 0; k < length; ++k ) {
+               s_dest[k] = (wchar_t)Utilities::byteswap_short( (uint16_t)s_src[k] );
+            }
+            break;
+         }
          case TRICK_SHORT: {
             short const *s_src  = static_cast< short const * >( src );
             short       *s_dest = static_cast< short * >( dest );
-            if ( length == 1 ) {
-               s_dest[0] = Utilities::byteswap_short( s_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  s_dest[k] = Utilities::byteswap_short( s_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( short );
+            for ( int k = 0; k < length; ++k ) {
+               s_dest[k] = Utilities::byteswap_short( s_src[k] );
             }
             break;
          }
          case TRICK_UNSIGNED_SHORT: {
             unsigned short const *us_src  = static_cast< unsigned short const * >( src );
             unsigned short       *us_dest = static_cast< unsigned short * >( dest );
-            if ( length == 1 ) {
-               us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  us_dest[k] = Utilities::byteswap_unsigned_short( us_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( unsigned short );
+            for ( int k = 0; k < length; ++k ) {
+               us_dest[k] = Utilities::byteswap_unsigned_short( us_src[k] );
             }
             break;
          }
          case TRICK_INTEGER: {
             int const *i_src  = static_cast< int const * >( src );
             int       *i_dest = static_cast< int * >( dest );
-            if ( length == 1 ) {
-               i_dest[0] = Utilities::byteswap_int( i_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  i_dest[k] = Utilities::byteswap_int( i_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( int );
+            for ( int k = 0; k < length; ++k ) {
+               i_dest[k] = Utilities::byteswap_int( i_src[k] );
             }
             break;
          }
          case TRICK_UNSIGNED_INTEGER: {
             unsigned int const *ui_src  = static_cast< unsigned int const * >( src );
             unsigned int       *ui_dest = static_cast< unsigned int * >( dest );
-            if ( length == 1 ) {
-               ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  ui_dest[k] = Utilities::byteswap_unsigned_int( ui_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( unsigned int );
+            for ( int k = 0; k < length; ++k ) {
+               ui_dest[k] = Utilities::byteswap_unsigned_int( ui_src[k] );
             }
             break;
          }
          case TRICK_LONG: {
             long const *l_src  = static_cast< long const * >( src );
             long       *l_dest = static_cast< long * >( dest );
-            if ( length == 1 ) {
-               l_dest[0] = Utilities::byteswap_long( l_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  l_dest[k] = Utilities::byteswap_long( l_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( long );
+            for ( int k = 0; k < length; ++k ) {
+               l_dest[k] = Utilities::byteswap_long( l_src[k] );
             }
             break;
          }
          case TRICK_UNSIGNED_LONG: {
             unsigned long const *ul_src  = static_cast< unsigned long const * >( src );
             unsigned long       *ul_dest = static_cast< unsigned long * >( dest );
-            if ( length == 1 ) {
-               ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  ul_dest[k] = Utilities::byteswap_unsigned_long( ul_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( unsigned long );
+            for ( int k = 0; k < length; ++k ) {
+               ul_dest[k] = Utilities::byteswap_unsigned_long( ul_src[k] );
             }
             break;
          }
          case TRICK_LONG_LONG: {
             long long const *ll_src  = static_cast< long long const * >( src );
             long long       *ll_dest = static_cast< long long * >( dest );
-            if ( length == 1 ) {
-               ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  ll_dest[k] = Utilities::byteswap_long_long( ll_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( long long );
+            for ( int k = 0; k < length; ++k ) {
+               ll_dest[k] = Utilities::byteswap_long_long( ll_src[k] );
             }
             break;
          }
          case TRICK_UNSIGNED_LONG_LONG: {
             unsigned long long const *ull_src  = static_cast< unsigned long long const * >( src );
             unsigned long long       *ull_dest = static_cast< unsigned long long * >( dest );
-            if ( length == 1 ) {
-               ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
-            } else {
-               for ( int k = 0; k < length; ++k ) {
-                  ull_dest[k] = Utilities::byteswap_unsigned_long_long( ull_src[k] );
-               }
+
+            int const length = num_bytes / sizeof( unsigned long long );
+            for ( int k = 0; k < length; ++k ) {
+               ull_dest[k] = Utilities::byteswap_unsigned_long_long( ull_src[k] );
             }
             break;
          }
@@ -3486,7 +3618,8 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_CHARACTER:
-      case TRICK_UNSIGNED_CHARACTER: {
+      case TRICK_UNSIGNED_CHARACTER:
+      case TRICK_WCHAR: {
          return ( ( rti_encoding == ENCODING_BIG_ENDIAN )
                   || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
                   || ( rti_encoding == ENCODING_UNKNOWN )
@@ -3543,15 +3676,17 @@ void Attribute::print_buffer() const
        << " byteswap:" << ( is_byteswap() ? "Yes" : "No" )
        << " num_items:" << num_items
        << " size:" << size
+       << " buffer_size:" << buffer_size
        << '\n';
 
    // For now we only support an attribute of type double for printing. DDexter
    if ( ref2->attr->type == TRICK_DOUBLE ) {
 
-      double const *dbl_array = reinterpret_cast< double const * >( buffer ); // cppcheck-suppress [invalidPointerCast]
+      double const *dbl_array  = reinterpret_cast< double const * >( buffer ); // cppcheck-suppress [invalidPointerCast]
+      int const     array_size = buffer_size / sizeof( double );
 
       if ( is_byteswap() ) {
-         for ( int i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < array_size; ++i ) {
             // Undo the byteswap for display
             double b_value = Utilities::byteswap_double( dbl_array[i] );
             msg << "\ti:" << i
@@ -3559,7 +3694,7 @@ void Attribute::print_buffer() const
                 << " byteswap-value:" << dbl_array[i] << '\n';
          }
       } else {
-         for ( int i = 0; i < num_items; ++i ) {
+         for ( int i = 0; i < array_size; ++i ) {
             msg << " i:" << i << " " << dbl_array[i] << '\n';
          }
       }
@@ -3568,10 +3703,10 @@ void Attribute::print_buffer() const
       // Else just treat the buffer as an array of characters.
       char const *char_array = reinterpret_cast< char * >( buffer );
 
-      msg << "\tAttribute size:" << size << '\n'
+      msg << "\tAttribute size:" << buffer_size << '\n'
           << "\tIndex\tValue\tCharacter\n";
 
-      for ( int i = 0; i < size; ++i ) {
+      for ( int i = 0; i < buffer_size; ++i ) {
          int char_value = char_array[i];
          msg << "\t" << i << "\t" << char_value;
          if ( isgraph( char_array[i] ) ) {

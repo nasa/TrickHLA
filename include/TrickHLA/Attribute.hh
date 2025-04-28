@@ -202,7 +202,7 @@ class Attribute
 
    /*! @brief Set the attribute publish flag.
     *  @param enable Flag to set the publish state. */
-   void set_publish( bool enable )
+   void set_publish( bool const enable )
    {
       this->publish = enable;
    }
@@ -216,7 +216,7 @@ class Attribute
 
    /*! @brief Set the attribute is subscribed flag.
     *  @param enable Flag to set the subscribe state. */
-   void set_subscribe( bool enable )
+   void set_subscribe( bool const enable )
    {
       this->subscribe = enable;
    }
@@ -435,7 +435,7 @@ class Attribute
 
    /*! @brief Ensure the attribute buffer has at least the specified capacity.
     *  @param capacity Desired capacity of the buffer in bytes. */
-   void ensure_buffer_capacity( int capacity );
+   void ensure_buffer_capacity( int const capacity );
 
    /*! @brief Determines if the HLA object attribute type is supported given
     *         the RTI encoding.
@@ -452,7 +452,7 @@ class Attribute
 
    /*! @brief Encode the object attribute using the HLAlogicalTime 64-bit
     * integer encoding. */
-   void encode_logical_time() const;
+   void encode_logical_time();
 
    /*! @brief Decode the object attribute that is using the HLAlogicalTime
     * 64-bit integer encoding. */
@@ -463,6 +463,9 @@ class Attribute
 
    /*! @brief Decode the opaque data in the buffer. */
    void decode_opaque_data_from_buffer();
+
+   /*! @brief Decode the raw data in the buffer. */
+   void decode_raw_data_from_buffer();
 
    /*! @brief Encode a string attribute into the buffer using the appropriate
     * encoding. */
@@ -477,17 +480,16 @@ class Attribute
     *  @param dest      Destination to copy data to.
     *  @param src       Source of the data to byteswap and copy from.
     *  @param type      The type of the data.
-    *  @param length    The length/number of entries in the source array.
     *  @param num_bytes The number of bytes in the source array.
     *  */
    void byteswap_buffer_copy( void       *dest,
                               void const *src,
                               int const   type,
-                              int const   length,
                               int const   num_bytes ) const;
 
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
    int            buffer_capacity; ///< @trick_units{count} The capacity of the buffer.
+   int            buffer_size;     ///< @trick_units{count} The size of the encoded attribute in the buffer.
 
    bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
 
