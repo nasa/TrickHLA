@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/parameter_types.h"
 #include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
@@ -238,6 +239,10 @@ class Utilities
     *  @return Error code, where a value of 0 is for no error.
     *  @param usec Time to sleep in microseconds. */
    static int micro_sleep( long const usec );
+
+   /*! @brief Returns the Trick type as a string.
+    *  @return Trick type as a string. */
+   static std::string const get_trick_type_string( TRICK_TYPE type );
 
    /*! @brief Return the current TrickHLA version string from the Version.hh
     *  header file.
