@@ -82,11 +82,14 @@ using namespace TrickHLA;
  */
 WstringEncoder::WstringEncoder(
    std::string const &trick_variable_name,
-   std::string const &fom_vriable_name)
+   std::string const &fom_variable_name )
    : trick_name( trick_variable_name ),
-     fom_name( fom_vriable_name ),
+     fom_name( fom_variable_name ),
      ref2( NULL ),
      rti_encoding( ENCODING_UNKNOWN ),
+     is_array( false ),
+     is_1d_array( false ),
+     is_static_array( false ),
      encoder( NULL ),
      initialized( false )
 {
@@ -99,11 +102,14 @@ WstringEncoder::WstringEncoder(
  */
 WstringEncoder::~WstringEncoder()
 {
-   this->encoder = NULL;
-
    if ( ref2 != NULL ) {
       free( ref2 );
       ref2 = NULL;
+   }
+
+   if ( encoder != NULL ) {
+      delete encoder;
+      encoder = NULL;
    }
 }
 
@@ -126,7 +132,15 @@ void WstringEncoder::initialize()
              << " sure the base class uses either the 'public' or 'protected'"
              << " access level for the variable.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
+
+   // For now, we do not support more than a 1-D array that is dynamic
+   // (i.e. a pointer such as char *). If the size of the last indexed
+   // attribute is zero then it is a pointer and not static.
+   is_array        = ( ref2->attr->num_index > 0 );
+   is_1d_array     = ( ref2->attr->num_index == 1 );
+   is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    if ( ref2->attr->type != TRICK_WCHAR ) {
       ostringstream errmsg;
@@ -135,18 +149,11 @@ void WstringEncoder::initialize()
              << "', the Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
-             << ") is not a wchar_t (type:"
+             << ") is not the expected type '"
              << Utilities::get_trick_type_string( TRICK_WCHAR )
-             << ").\n";
+             << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-
-   // For now, we do not support more than a 1-D array that is dynamic
-   // (i.e. a pointer such as char *). If the size of the last indexed
-   // attribute is zero then it is a pointer and not static.
-   bool is_array        = ( ref2->attr->num_index > 0 );
-   bool is_1d_array     = ( ref2->attr->num_index == 1 );
-   bool is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    // Cases:
    // 1) wchar_t     !is_array
@@ -157,7 +164,7 @@ void WstringEncoder::initialize()
    switch ( rti_encoding ) {
       case ENCODING_OPAQUE_DATA: {
          int num_bytes = get_size( ref2->address );
-         this->encoder = new HLAopaqueData( (Octet *)ref2->address, num_bytes );
+         this->encoder = new HLAopaqueData( static_cast< Octet * >( ref2->address ), num_bytes );
          break;
       }
       case ENCODING_UNICODE_STRING: {

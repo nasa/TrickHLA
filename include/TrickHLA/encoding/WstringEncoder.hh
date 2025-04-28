@@ -101,6 +101,10 @@ class WstringEncoder
 
    EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
 
+   bool is_array;          ///< @trick_units{--} Is the user data an array.
+   bool is_1d_array;       ///< @trick_units{--} Is the user data a 1-D array.
+   bool is_static_array;   ///< @trick_units{--} Is the user data a static array.
+
    RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_io{**} The RTI encoder data element.
 
    bool initialized; ///< @trick_units{--} Has this attribute been initialized?
