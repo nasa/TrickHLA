@@ -8,7 +8,7 @@ trick.exec_set_freeze_command(False)
 trick.sim_control_panel_set_enabled( False )
 
 # Load in the graphics definition and startup functions.
-exec(open("Modified_data/graphics.py").read())
+#exec(open("Modified_data/graphics.py").read())
 
 #---------------------------------------------------------------------------
 # Set up simulation termination time.

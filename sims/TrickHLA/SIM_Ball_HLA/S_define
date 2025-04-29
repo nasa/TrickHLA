@@ -46,15 +46,15 @@ NASA, Johnson Space Center\n
 //=============================================================================
 // Define the job calling intervals.
 //=============================================================================
-#define DYN_RATE  0.010    // The Ball state dynamics propagation rate.
+#define DYN_RATE     0.010 // The Ball state dynamics propagation rate.
 #define FREEZE_FRAME 0.100 // The freeze frame rate.
-#define LOG_CYCLE 0.100    // Data Logging Rate.
+#define LOG_CYCLE    0.100 // Data Logging Rate.
 
 //=============================================================================
 // Define the HLA job cycle times.
 //=============================================================================
-#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
-#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
+#define THLA_DATA_CYCLE_TIME        0.100 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.100 // HLA Interaction cycle time.
 
 //=============================================================================
 // Define the HLA phase initialization priorities.
