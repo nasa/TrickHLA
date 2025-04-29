@@ -105,6 +105,12 @@ class THLAInitSimObj : public Trick::SimObject {
 };
 
 //=============================================================================
+// SIM_OBJECT: QuaternionSimObject
+// Sim-object for for testing SpaceFOM data types in HLA publish/subscribe.
+//=============================================================================
+#include "S_modules/Quaternion.sm"
+
+//=============================================================================
 // SIM_OBJECT: SpaceTimeCoordinateSimObject
 // Sim-object for for testing SpaceFOM data types in HLA publish/subscribe.
 //=============================================================================
@@ -126,6 +132,11 @@ THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
 
 
 // Instantiate the SpaceTimeCoordinate encoder test object.
+QuaternionSimObject quat_encoder_test( true,
+                                       "quat_encoder_test" );
+
+
+// Instantiate the SpaceTimeCoordinate encoder test object.
 SpaceTimeCoordinateSimObject stc_encoder_test( true,
                                                "stc_encoder_test" );
 
@@ -138,10 +149,11 @@ void create_connections() {
    // data instead of in the input file.
    //
    // Allocate the HLA objects.
-   THLA.manager.obj_count = 1;
+   THLA.manager.obj_count = 2;
    THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
                                                                     THLA.manager.obj_count );
-   stc_encoder_test.thla_object = &(THLA.manager.objects[0]);
+   quat_encoder_test.thla_object = &(THLA.manager.objects[1]);
+   stc_encoder_test.thla_object  = &(THLA.manager.objects[0]);
    
 }
 

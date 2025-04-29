@@ -72,6 +72,15 @@ THLA.simple_sim_config.run_duration = run_duration
 
 
 #---------------------------------------------------------------------------
+# Set the Quaternion test information.
+#---------------------------------------------------------------------------
+quat_encoder_test.packing.debug = True
+quat_encoder_test.packing.publish()
+
+quat_encoder_test.data.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [45.0, 30.0, 10.0] )
+
+
+#---------------------------------------------------------------------------
 # Set the SpaceTimeCoordinateState test information.
 #---------------------------------------------------------------------------
 stc_encoder_test.packing.debug = True
