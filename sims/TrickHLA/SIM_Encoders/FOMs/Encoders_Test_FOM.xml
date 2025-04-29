@@ -31,6 +31,22 @@
                     <semantics>An attribute to test the encoding and decding of the SpaceFOM SpaceTimeCoordinateState data type.</semantics>
                 </attribute>
             </objectClass>
+            <objectClass>
+                <name>QuatTest</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics></semantics>
+                <attribute>
+                    <name>quaternion</name>
+                    <dataType>AttitudeQuaternion</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>An attribute to test the encoding and decding of the SpaceFOM AttitudeQuaternion data type.</semantics>
+                </attribute>
+            </objectClass>
         </objectClass>
     </objects>
     <interactions>
