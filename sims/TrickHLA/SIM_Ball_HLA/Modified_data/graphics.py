@@ -2,7 +2,7 @@
 # Start the display VarServer Client
 #==========================================
 varServerPort = trick.var_server_get_port();
-BallDisplay_path = "../models/graphics/dist/BallDisplay.jar"
+BallDisplay_path = "../../../models/Ball/graphics/dist/BallDisplay.jar"
 
 if (os.path.isfile(BallDisplay_path)) :
     BallDisplay_cmd = "java -jar " \
