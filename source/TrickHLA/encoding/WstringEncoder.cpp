@@ -83,10 +83,10 @@ using namespace TrickHLA;
 WstringEncoder::WstringEncoder(
    std::string const &trick_variable_name,
    std::string const &fom_variable_name,
-   EncodingEnum variable_encoding )
+   EncodingEnum hla_encoding )
    : trick_name( trick_variable_name ),
      fom_name( fom_variable_name ),
-     rti_encoding( variable_encoding ),
+     rti_encoding( hla_encoding ),
      ref2( NULL ),
      is_array( false ),
      is_1d_array( false ),
