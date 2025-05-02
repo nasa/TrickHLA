@@ -169,7 +169,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[3].FOM_name      = allocate_input_string( "parent_reference_frame" );
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.parent_ref_frame" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.parent_frame" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
@@ -178,7 +178,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[4].FOM_name      = allocate_input_string( "state" );
-   trick_name_str                      = entity_name_str + string( "stc_encoder.buffer" );
+   trick_name_str                      = entity_name_str + string( ".stc_encoder.buffer" );
    object->attributes[4].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[4].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[4].publish       = publishes;
