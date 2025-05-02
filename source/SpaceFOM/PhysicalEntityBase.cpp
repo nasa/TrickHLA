@@ -525,13 +525,9 @@ void PhysicalEntityBase::debug_print( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'\n"
-          << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'\n"
-          << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'\n"
-          << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'\n"
-          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'\n";
+   stream << "\tObject-Name: '" << object->get_name() << "'\n";
 
-   pe_packing_data.print_data();
+   pe_packing_data.print_data( stream );
 
    return;
 }

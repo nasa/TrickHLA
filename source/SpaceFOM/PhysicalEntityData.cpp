@@ -273,7 +273,7 @@ void PhysicalEntityData::print_data( std::ostream &stream ) const
           << "\t\t" << cm[2] << '\n';
 
    stream << "\tBody frame orientation:\n";
-   body_wrt_struct.print_data();
+   body_wrt_struct.print_data( stream );
 
    return;
 }
