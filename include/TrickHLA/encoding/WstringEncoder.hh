@@ -87,7 +87,7 @@ class WstringEncoder
    /*! @brief Default constructor for the TrickHLA WstringEncoder class. */
    WstringEncoder( std::string const &trick_variable_name,
                    std::string const &fom_variable_name,
-                   EncodingEnum hla_encoding);
+                   EncodingEnum       hla_encoding );
 
    /*! @brief Destructor for the TrickHLA WstringEncoder class. */
    virtual ~WstringEncoder();
@@ -104,9 +104,9 @@ class WstringEncoder
 
    REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.
 
-   bool is_array;          ///< @trick_units{--} Is the user data an array.
-   bool is_1d_array;       ///< @trick_units{--} Is the user data a 1-D array.
-   bool is_static_array;   ///< @trick_units{--} Is the user data a static array.
+   bool is_array;        ///< @trick_units{--} Is the user data an array.
+   bool is_1d_array;     ///< @trick_units{--} Is the user data a 1-D array.
+   bool is_static_array; ///< @trick_units{--} Is the user data a static array.
 
    RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_io{**} The RTI encoder data element.
 

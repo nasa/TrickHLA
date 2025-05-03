@@ -1930,6 +1930,41 @@ void Attribute::decode_raw_data_from_buffer() // RETURN: -- None.
    // Handle the raw data as bytes.
    unsigned char *output;
 
+#if 0 // TEMP
+   if ( ref2->address == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Attribute::decode_raw_data_from_buffer():" << __LINE__
+             << "NULL ref2->address \n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   ALLOC_INFO* alloc_info = get_alloc_info_at( ref2->address );
+   if ( alloc_info->start != ref2->address ) {
+      ostringstream errmsg;
+      errmsg << "Attribute::decode_raw_data_from_buffer():" << __LINE__
+             << "alloc_info->name:" << alloc_info->name
+             << "\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( !TMM_var_exists( ref2->reference ) ) { //TEMP
+      ostringstream errmsg;
+      errmsg << "Attribute::decode_raw_data_from_buffer():" << __LINE__
+             << " ERROR: Failed finding variable for FOM Object Attribute '"
+             << FOM_name << "', Error retrieving Trick"
+             << " ref-attributes for '" << trick_name << "'.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( ref_var( ref2, trick_name ) == MM_UNDEFINED_REFERENCE ) { //TEMP
+      ostringstream errmsg;
+      errmsg << "Attribute::decode_raw_data_from_buffer():" << __LINE__
+             << " ERROR: Failed ref_var for FOM Object Attribute '"
+             << FOM_name << "', Error retrieving Trick"
+             << " ref-attributes for '" << trick_name << "'.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+#endif
+
    // Determine if the users variable is a pointer.
    if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
       // It's a pointer
@@ -1967,6 +2002,19 @@ void Attribute::decode_raw_data_from_buffer() // RETURN: -- None.
          output        = static_cast< unsigned char * >( ref2->address );
       }
    }
+
+#if 0  // TEMP
+   cout << "ref2->reference:" << ref2->reference << "\n"; //TEMP
+   cout << "ref2->attr->name:" << ref2->attr->name << "\n"; //TEMP
+   cout << "curr_size:" << get_size( output ) << "\n"; //TEMP
+   if ( ref_var( ref2, trick_name ) == MM_UNDEFINED_REFERENCE ) { //TEMP
+      ostringstream errmsg;
+      errmsg << "Attribute::decode_raw_data_from_buffer():" << __LINE__
+             << " ERROR: FOM_name:'" << FOM_name << "', trick_name:'"
+             << trick_name << "'.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+#endif // TEMP
 
    if ( output == NULL ) {
       ostringstream errmsg;
