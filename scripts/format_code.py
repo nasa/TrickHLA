@@ -81,8 +81,18 @@ def main():
 
    # Add all the top level source code directories to format.
    trickhla_src_paths = []
+   # Files and one-level of sub-directories under include.
    trickhla_src_paths.append( os.path.join( trickhla_home, 'include' ) )
+   
+   # Sub-directories under include/TrickHLA (i.e. include/TrickHLA/encoding).
+   trickhla_src_paths.append( os.path.join( trickhla_home, 'include/TrickHLA' ) )
+   
+   # Files and one-level of sub-directories under source.
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source' ) )
+   
+   # Sub-directories under source/TrickHLA (i.e. source/TrickHLA/encoding).
+   trickhla_src_paths.append( os.path.join( trickhla_home, 'source/TrickHLA' ) )
+   
    if os.path.isdir( os.path.join( trickhla_home, 'models/DistIf' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/DistIf' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/EntityDynamics' ) ):
