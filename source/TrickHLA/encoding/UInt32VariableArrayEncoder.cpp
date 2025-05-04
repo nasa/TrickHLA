@@ -127,11 +127,11 @@ void UInt32VariableArrayEncoder::initialize()
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";
       if ( sizeof( int ) == 4 ) {
-         errormsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER );
+         errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER );
       } else if ( sizeof( long ) == 4 ) {
-         errormsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_LONG );
+         errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_LONG );
       }
-      errormsg << "'.\n";
+      errmsg << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

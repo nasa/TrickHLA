@@ -126,11 +126,11 @@ void UInt16Encoder::initialize()
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";
       if ( sizeof( short ) == 2 ) {
-         errormsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_SHORT );
+         errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_SHORT );
       } else if ( sizeof( int ) == 2 ) {
-         errormsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER );
+         errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER );
       }
-      errormsg << "'.\n";
+      errmsg << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
