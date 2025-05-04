@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/UInt16LFixedArrayEncoder.cpp
+@file TrickHLA/UInt16FixedArrayEncoder.cpp
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{EncoderBase.cpp}
-@trick_link_dependency{UInt16LFixedArrayEncoder.cpp}
+@trick_link_dependency{UInt16FixedArrayEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
-#include "TrickHLA/encoding/UInt16LFixedArrayEncoder.hh"
+#include "TrickHLA/encoding/UInt16FixedArrayEncoder.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -74,10 +74,10 @@ using namespace TrickHLA;
 
 /*!
  * @details The endianess of the computer is determined as part of the
- * UInt16LFixedArrayEncoder construction process.
+ * UInt16FixedArrayEncoder construction process.
  * @job_class{initialization}
  */
-UInt16LFixedArrayEncoder::UInt16LFixedArrayEncoder(
+UInt16FixedArrayEncoder::UInt16FixedArrayEncoder(
    std::string const &trick_variable_name,
    std::string const &fom_variable_name,
    EncodingEnum       hla_encoding,
@@ -94,24 +94,25 @@ UInt16LFixedArrayEncoder::UInt16LFixedArrayEncoder(
  * @details The buffer and ref2 values are freed and nulled.
  * @job_class{shutdown}
  */
-UInt16LFixedArrayEncoder::~UInt16LFixedArrayEncoder()
+UInt16FixedArrayEncoder::~UInt16FixedArrayEncoder()
 {
    return;
 }
 
-void UInt16LFixedArrayEncoder::initialize()
+void UInt16FixedArrayEncoder::initialize()
 {
    if ( ref2 == NULL ) {
       EncoderBase::initialize();
    }
 
-   if ( rti_encoding != ENCODING_LITTLE_ENDIAN ) {
+   if ( ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+        && ( rti_encoding != ENCODING_BIG_ENDIAN ) ) {
       ostringstream errmsg;
-      errmsg << "UInt16LFixedArrayEncoder::initialize():" << __LINE__
+      errmsg << "UInt16FixedArrayEncoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name << "' and Trick"
              << " Trick ref-attributes for '" << trick_name << "' the HLA"
              << " encoding specified (" << rti_encoding
-             << ") must be ENCODING_LITTLE_ENDIAN!\n";
+             << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -120,7 +121,7 @@ void UInt16LFixedArrayEncoder::initialize()
                            || ( ( ref2->attr->type == TRICK_UNSIGNED_INTEGER ) && ( sizeof( long ) == 2 ) );
    if ( !valid_type ) {
       ostringstream errmsg;
-      errmsg << "UInt16LFixedArrayEncoder::initialize():" << __LINE__
+      errmsg << "UInt16FixedArrayEncoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name
              << "', the Trick type for the '" << trick_name
              << "' simulation variable (type:"
@@ -139,7 +140,7 @@ void UInt16LFixedArrayEncoder::initialize()
    // This encoder is only for a primitive type.
    if ( is_array ) {
       ostringstream errmsg;
-      errmsg << "UInt16LFixedArrayEncoder::initialize():" << __LINE__
+      errmsg << "UInt16FixedArrayEncoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name << "' and Trick"
              << " Trick ref-attributes for '" << trick_name << "' the variable"
              << " must be a primitive and not an array!\n";

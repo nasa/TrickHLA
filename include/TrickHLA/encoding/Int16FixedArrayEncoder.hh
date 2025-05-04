@@ -84,9 +84,9 @@ class Int16FixedArrayEncoder : public EncoderBase
    //
    /*! @brief Default constructor for the TrickHLA Int16FixedArrayEncoder class. */
    Int16FixedArrayEncoder( std::string const &trick_variable_name,
-                   std::string const &fom_variable_name,
-                   EncodingEnum       hla_encoding,
-                   REF2              *r2 );
+                           std::string const &fom_variable_name,
+                           EncodingEnum       hla_encoding,
+                           REF2              *r2 );
 
    /*! @brief Destructor for the TrickHLA Int16FixedArrayEncoder class. */
    virtual ~Int16FixedArrayEncoder();

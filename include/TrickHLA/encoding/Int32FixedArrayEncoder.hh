@@ -84,9 +84,9 @@ class Int32FixedArrayEncoder : public EncoderBase
    //
    /*! @brief Default constructor for the TrickHLA Int32FixedArrayEncoder class. */
    Int32FixedArrayEncoder( std::string const &trick_variable_name,
-                   std::string const &fom_variable_name,
-                   EncodingEnum       hla_encoding,
-                   REF2              *r2 );
+                           std::string const &fom_variable_name,
+                           EncodingEnum       hla_encoding,
+                           REF2              *r2 );
 
    /*! @brief Destructor for the TrickHLA Int32FixedArrayEncoder class. */
    virtual ~Int32FixedArrayEncoder();

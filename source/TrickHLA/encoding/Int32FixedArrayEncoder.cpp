@@ -105,13 +105,14 @@ void Int32FixedArrayEncoder::initialize()
       EncoderBase::initialize();
    }
 
-   if ( rti_encoding != ENCODING_LITTLE_ENDIAN ) {
+   if ( ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+        && ( rti_encoding != ENCODING_BIG_ENDIAN ) ) {
       ostringstream errmsg;
       errmsg << "Int32FixedArrayEncoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name << "' and Trick"
              << " Trick ref-attributes for '" << trick_name << "' the HLA"
              << " encoding specified (" << rti_encoding
-             << ") must be ENCODING_LITTLE_ENDIAN!\n";
+             << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

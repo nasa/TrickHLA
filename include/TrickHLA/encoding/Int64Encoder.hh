@@ -84,9 +84,9 @@ class Int64Encoder : public EncoderBase
    //
    /*! @brief Default constructor for the TrickHLA Int64Encoder class. */
    Int64Encoder( std::string const &trick_variable_name,
-                   std::string const &fom_variable_name,
-                   EncodingEnum       hla_encoding,
-                   REF2              *r2 );
+                 std::string const &fom_variable_name,
+                 EncodingEnum       hla_encoding,
+                 REF2              *r2 );
 
    /*! @brief Destructor for the TrickHLA Int64Encoder class. */
    virtual ~Int64Encoder();

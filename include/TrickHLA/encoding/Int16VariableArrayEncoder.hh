@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Int16VariableArraryEncoder.hh
+@file TrickHLA/Int16VariableArrayEncoder.hh
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int16VariableArraryEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int16VariableArrayEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
@@ -63,7 +63,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class Int16VariableArraryEncoder : public EncoderBase
+class Int16VariableArrayEncoder : public EncoderBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -73,7 +73,7 @@ class Int16VariableArraryEncoder : public EncoderBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__Int16VariableArraryEncoder();
+   friend void init_attrTrickHLA__Int16VariableArrayEncoder();
 
    //--------------------------------------------------------------------------
    // Public member functions.
@@ -82,27 +82,27 @@ class Int16VariableArraryEncoder : public EncoderBase
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA Int16VariableArraryEncoder class. */
-   Int16VariableArraryEncoder( std::string const &trick_variable_name,
-                   std::string const &fom_variable_name,
-                   EncodingEnum       hla_encoding,
-                   REF2              *r2 );
+   /*! @brief Default constructor for the TrickHLA Int16VariableArrayEncoder class. */
+   Int16VariableArrayEncoder( std::string const &trick_variable_name,
+                              std::string const &fom_variable_name,
+                              EncodingEnum       hla_encoding,
+                              REF2              *r2 );
 
-   /*! @brief Destructor for the TrickHLA Int16VariableArraryEncoder class. */
-   virtual ~Int16VariableArraryEncoder();
+   /*! @brief Destructor for the TrickHLA Int16VariableArrayEncoder class. */
+   virtual ~Int16VariableArrayEncoder();
 
   protected:
-   /*! @brief Initializes the TrickHLA Int16VariableArraryEncoder. */
+   /*! @brief Initializes the TrickHLA Int16VariableArrayEncoder. */
    virtual void initialize();
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for Int16VariableArraryEncoder class.
+   /*! @brief Copy constructor for Int16VariableArrayEncoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Int16VariableArraryEncoder( Int16VariableArraryEncoder const &rhs );
-   /*! @brief Assignment operator for Int16VariableArraryEncoder class.
+   Int16VariableArrayEncoder( Int16VariableArrayEncoder const &rhs );
+   /*! @brief Assignment operator for Int16VariableArrayEncoder class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Int16VariableArraryEncoder &operator=( Int16VariableArraryEncoder const &rhs );
+   Int16VariableArrayEncoder &operator=( Int16VariableArrayEncoder const &rhs );
 };
 
 } // namespace TrickHLA

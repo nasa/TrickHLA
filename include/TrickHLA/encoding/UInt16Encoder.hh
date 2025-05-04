@@ -84,9 +84,9 @@ class UInt16Encoder : public EncoderBase
    //
    /*! @brief Default constructor for the TrickHLA UInt16Encoder class. */
    UInt16Encoder( std::string const &trick_variable_name,
-                    std::string const &fom_variable_name,
-                    EncodingEnum       hla_encoding,
-                    REF2              *r2 );
+                  std::string const &fom_variable_name,
+                  EncodingEnum       hla_encoding,
+                  REF2              *r2 );
 
    /*! @brief Destructor for the TrickHLA UInt16Encoder class. */
    virtual ~UInt16Encoder();
