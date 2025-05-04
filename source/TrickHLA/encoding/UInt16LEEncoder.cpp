@@ -116,10 +116,8 @@ void UInt16LEEncoder::initialize()
       return;
    }
 
-   bool const valid_short = ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( short ) == 2 );
-   bool const valid_int   = ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == 2 );
-   bool const valid_type  = valid_short || valid_int;
-
+   bool const valid_type = ( ( ref2->attr->type == TRICK_UNSIGNED_SHORT ) && ( sizeof( int ) == 2 ) )
+                           || ( ( ref2->attr->type == TRICK_UNSIGNED_INTEGER ) && ( sizeof( long ) == 2 ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "UInt16LEEncoder::initialize():" << __LINE__
@@ -128,10 +126,10 @@ void UInt16LEEncoder::initialize()
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";
-      if ( valid_short ) {
-         errormsg << Utilities::get_trick_type_string( TRICK_SHORT );
-      } else if ( valid_int ) {
-         errormsg << Utilities::get_trick_type_string( TRICK_INTEGER );
+      if ( sizeof( short ) == 2 ) {
+         errormsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_SHORT );
+      } else if ( sizeof( int ) == 2 ) {
+         errormsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER );
       }
       errormsg << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );

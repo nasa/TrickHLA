@@ -116,10 +116,8 @@ void Int16BEEncoder::initialize()
       return;
    }
 
-   bool const valid_short = ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( short ) == 2 );
-   bool const valid_int   = ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == 2 );
-   bool const valid_type  = valid_short || valid_int;
-
+   bool const valid_type = ( ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( int ) == 2 ) )
+                           || ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( long ) == 2 ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int16BEEncoder::initialize():" << __LINE__
@@ -128,9 +126,9 @@ void Int16BEEncoder::initialize()
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";
-      if ( valid_short ) {
+      if ( sizeof( short ) == 2 ) {
          errormsg << Utilities::get_trick_type_string( TRICK_SHORT );
-      } else if ( valid_int ) {
+      } else if ( sizeof( int ) == 2 ) {
          errormsg << Utilities::get_trick_type_string( TRICK_INTEGER );
       }
       errormsg << "'.\n";
