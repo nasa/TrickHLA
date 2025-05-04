@@ -80,16 +80,12 @@ using namespace TrickHLA;
 Int16LEEncoder::Int16LEEncoder(
    std::string const &trick_variable_name,
    std::string const &fom_variable_name,
-   EncodingEnum       hla_encoding )
-   : trick_name( trick_variable_name ),
-     fom_name( fom_variable_name ),
-     rti_encoding( hla_encoding ),
-     ref2( NULL ),
-     is_array( false ),
-     is_1d_array( false ),
-     is_static_array( false ),
-     encoder( NULL ),
-     initialized( false )
+   EncodingEnum       hla_encoding,
+   REF2              *r2 )
+   : EncoderBase( trick_variable_name,
+                  fom_variable_name,
+                  hla_encoding,
+                  r2 )
 {
    initialize();
 }
@@ -100,84 +96,56 @@ Int16LEEncoder::Int16LEEncoder(
  */
 Int16LEEncoder::~Int16LEEncoder()
 {
-   if ( ref2 != NULL ) {
-      free( ref2 );
-      ref2 = NULL;
-   }
-
-   if ( encoder != NULL ) {
-      delete encoder;
-      encoder = NULL;
-   }
+   return;
 }
 
 void Int16LEEncoder::initialize()
 {
-   if ( ref2 != NULL ) {
-      free( ref2 );
-   }
-   ref2 = ref_attributes( trick_name.c_str() );
-
-   // Determine if we had an error getting the ref-attributes.
    if ( ref2 == NULL ) {
+      EncoderBase::initialize();
+   }
+
+   if ( rti_encoding != ENCODING_LITTLE_ENDIAN ) {
       ostringstream errmsg;
-      errmsg << "Int16LEEncoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "', Error retrieving"
-             << " Trick ref-attributes for '" << trick_name << "'. Please check"
-             << " your input or modified-data files to make sure the object"
-             << " attribute Trick name is correctly specified. If '"
-             << trick_name << "' is an inherited variable then make"
-             << " sure the base class uses either the 'public' or 'protected'"
-             << " access level for the variable.\n";
+      errmsg << "Int16LEEncoder::create():" << __LINE__
+             << " ERROR: For FOM name '" << fom_name << "' and Trick"
+             << " Trick ref-attributes for '" << trick_name << "' the HLA"
+             << " encoding specified (" << rti_encoding
+             << ") must be ENCODING_LITTLE_ENDIAN!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
-   // For now, we do not support more than a 1-D array that is dynamic
-   // (i.e. a pointer such as char *). If the size of the last indexed
-   // attribute is zero then it is a pointer and not static.
-   is_array        = ( ref2->attr->num_index > 0 );
-   is_1d_array     = ( ref2->attr->num_index == 1 );
-   is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+   bool const valid_short = ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( short ) == 2 );
+   bool const valid_int   = ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == 2 );
+   bool const valid_type  = valid_short || valid_int;
 
-   if ( ref2->attr->type != TRICK_WSTRING ) {
+   if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int16LEEncoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name
              << "', the Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
-             << ") is not the expected type '"
-             << Utilities::get_trick_type_string( TRICK_WSTRING )
-             << "'.\n";
+             << ") is not the expected type '";
+      if ( valid_short ) {
+         errormsg << Utilities::get_trick_type_string( TRICK_SHORT );
+      } else if ( valid_int ) {
+         errormsg << Utilities::get_trick_type_string( TRICK_INTEGER );
+      }
+      errormsg << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
-   // Cases:
-   // 1) wchar_t     !is_array
-   // 2) wchar_t*    is_1d_array
-   // 3) wchar_t[10] is_static_array
-   // 4) wstring     is_1d_array
-
-   switch ( rti_encoding ) {
-      case ENCODING_OPAQUE_DATA: {
-         int num_bytes = get_size( ref2->address );
-         this->encoder = new HLAopaqueData( static_cast< Octet * >( ref2->address ), num_bytes );
-         break;
-      }
-      case ENCODING_UNICODE_STRING: {
-         if ( !is_array ) {
-            this->encoder = new HLAunicodeChar();
-         } else {
-            this->encoder = new HLAunicodeString();
-         }
-         break;
-      }
-      default: {
-         // ERROR
-         break;
-      }
+   // This encoder is only for a primitive type.
+   if ( is_array ) {
+      ostringstream errmsg;
+      errmsg << "Int16LEEncoder::create():" << __LINE__
+             << " ERROR: For FOM name '" << fom_name << "' and Trick"
+             << " Trick ref-attributes for '" << trick_name << "' the variable"
+             << " must be a primitive and not an array!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
-
-   this->initialized = true;
 }

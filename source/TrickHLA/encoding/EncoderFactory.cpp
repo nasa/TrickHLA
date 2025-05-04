@@ -376,8 +376,9 @@ EncoderBase *EncoderFactory::create(
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: For FOM name '" << fom_name << "', and Trick"
                 << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of unknown type (" << ref2->attr->type
-                << "), and is not supported.\n";
+                << " is of unknown type ("
+                << Utilities::get_trick_type_string( ref2->attr->type )
+                << " = " << ref2->attr->type << "), and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -399,24 +400,24 @@ EncoderBase *EncoderFactory::create_int16(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int16BEFixedArrayEncoder( ref2 );
+               return new Int16BEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int16BEVariableArrayEncoder( ref2 );
+               return new Int16BEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int16BEEncoder( ref2 );
+            return new Int16BEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int16LEFixedArrayEncoder( ref2 );
+               return new Int16LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int16LEVariableArrayEncoder( ref2 );
+               return new Int16LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int16LEEncoder( ref2 );
+            return new Int16LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -447,24 +448,24 @@ EncoderBase *EncoderFactory::create_uint16(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt16BEFixedArrayEncoder( ref2 );
+               return new UInt16BEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt16BEVariableArrayEncoder( ref2 );
+               return new UInt16BEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt16BEEncoder( ref2 );
+            return new UInt16BEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt16LEFixedArrayEncoder( ref2 );
+               return new UInt16LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt16LEVariableArrayEncoder( ref2 );
+               return new UInt16LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt16LEEncoder( ref2 );
+            return new UInt16LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -495,24 +496,24 @@ EncoderBase *EncoderFactory::create_int32(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int32BEFixedArrayEncoder( ref2 );
+               return new Int32BEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int32BEVariableArrayEncoder( ref2 );
+               return new Int32BEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int32BEEncoder( ref2 );
+            return new Int32BEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int32LEFixedArrayEncoder( ref2 );
+               return new Int32LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int32LEVariableArrayEncoder( ref2 );
+               return new Int32LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int32LEEncoder( ref2 );
+            return new Int32LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -543,24 +544,24 @@ EncoderBase *EncoderFactory::create_uint32(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt32BEFixedArrayEncoder( ref2 );
+               return new UInt32BEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt32BEVariableArrayEncoder( ref2 );
+               return new UInt32BEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt32BEEncoder( ref2 );
+            return new UInt32BEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt32LEFixedArrayEncoder( ref2 );
+               return new UInt32LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt32LEVariableArrayEncoder( ref2 );
+               return new UInt32LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt32LEEncoder( ref2 );
+            return new UInt32LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -591,24 +592,24 @@ EncoderBase *EncoderFactory::create_int64(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int64BEFixedArrayEncoder( ref2 );
+               return new Int64BEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int64BEVariableArrayEncoder( ref2 );
+               return new Int64BEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int64BEEncoder( ref2 );
+            return new Int64BEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int64LEFixedArrayEncoder( ref2 );
+               return new Int64LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int64LEVariableArrayEncoder( ref2 );
+               return new Int64LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int64LEEncoder( ref2 );
+            return new Int64LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -639,24 +640,24 @@ EncoderBase *EncoderFactory::create_uint64(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt64BEFixedArrayEncoder( ref2 );
+               return new UInt64BEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt64BEVariableArrayEncoder( ref2 );
+               return new UInt64BEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt64BEEncoder( ref2 );
+            return new UInt64BEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt64LEFixedArrayEncoder( ref2 );
+               return new UInt64LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt64LEVariableArrayEncoder( ref2 );
+               return new UInt64LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt64LEEncoder( ref2 );
+            return new UInt64LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }

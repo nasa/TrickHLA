@@ -78,16 +78,15 @@ using namespace TrickHLA;
 EncoderBase::EncoderBase(
    std::string const &trick_variable_name,
    std::string const &fom_variable_name,
-   EncodingEnum       hla_encoding )
+   EncodingEnum       hla_encoding,
+   REF2              *r2 )
    : trick_name( trick_variable_name ),
      fom_name( fom_variable_name ),
      rti_encoding( hla_encoding ),
-     ref2( NULL ),
+     ref2( r2 ),
      is_array( false ),
      is_1d_array( false ),
-     is_static_array( false ),
-     encoder( NULL ),
-     initialized( false )
+     is_static_array( false )
 {
    initialize();
 }
@@ -102,19 +101,13 @@ EncoderBase::~EncoderBase()
       free( ref2 );
       ref2 = NULL;
    }
-
-   if ( encoder != NULL ) {
-      delete encoder;
-      encoder = NULL;
-   }
 }
 
 void EncoderBase::initialize()
 {
-   if ( ref2 != NULL ) {
-      free( ref2 );
+   if ( ref2 == NULL ) {
+      ref2 = ref_attributes( trick_name.c_str() );
    }
-   ref2 = ref_attributes( trick_name.c_str() );
 
    // Determine if we had an error getting the ref-attributes.
    if ( ref2 == NULL ) {
@@ -137,45 +130,4 @@ void EncoderBase::initialize()
    is_array        = ( ref2->attr->num_index > 0 );
    is_1d_array     = ( ref2->attr->num_index == 1 );
    is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
-
-   if ( ref2->attr->type != TRICK_WSTRING ) {
-      ostringstream errmsg;
-      errmsg << "EncoderBase::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name
-             << "', the Trick type for the '" << trick_name
-             << "' simulation variable (type:"
-             << Utilities::get_trick_type_string( ref2->attr->type )
-             << ") is not the expected type '"
-             << Utilities::get_trick_type_string( TRICK_WSTRING )
-             << "'.\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Cases:
-   // 1) wchar_t     !is_array
-   // 2) wchar_t*    is_1d_array
-   // 3) wchar_t[10] is_static_array
-   // 4) wstring     is_1d_array
-
-   switch ( rti_encoding ) {
-      case ENCODING_OPAQUE_DATA: {
-         int num_bytes = get_size( ref2->address );
-         this->encoder = new HLAopaqueData( static_cast< Octet * >( ref2->address ), num_bytes );
-         break;
-      }
-      case ENCODING_UNICODE_STRING: {
-         if ( !is_array ) {
-            this->encoder = new HLAunicodeChar();
-         } else {
-            this->encoder = new HLAunicodeString();
-         }
-         break;
-      }
-      default: {
-         // ERROR
-         break;
-      }
-   }
-
-   this->initialized = true;
 }

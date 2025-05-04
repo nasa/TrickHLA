@@ -83,14 +83,15 @@ class EncoderBase
    /*! @brief Default constructor for the TrickHLA EncoderBase class. */
    EncoderBase( std::string const &trick_variable_name,
                 std::string const &fom_variable_name,
-                EncodingEnum       hla_encoding );
+                EncodingEnum       hla_encoding,
+                REF               *r2 );
 
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
    virtual ~EncoderBase();
 
   protected:
    /*! @brief Initializes the TrickHLA EncoderBase. */
-   void initialize();
+   virtual void initialize();
 
   protected:
    std::string trick_name; ///< @trick_units{--} Trick variable name.
@@ -103,10 +104,6 @@ class EncoderBase
    bool is_array;        ///< @trick_units{--} Is the user data an array.
    bool is_1d_array;     ///< @trick_units{--} Is the user data a 1-D array.
    bool is_static_array; ///< @trick_units{--} Is the user data a static array.
-
-   RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_io{**} The RTI encoder data element.
-
-   bool initialized; ///< @trick_units{--} Has this attribute been initialized?
 
   private:
    // Do not allow the copy constructor or assignment operator.
