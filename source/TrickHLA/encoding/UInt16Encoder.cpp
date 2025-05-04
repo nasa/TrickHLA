@@ -85,7 +85,7 @@ UInt16Encoder::UInt16Encoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   UInt16Encoder::initialize();
 }
 
 /*!

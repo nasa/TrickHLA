@@ -85,7 +85,7 @@ UInt64Encoder::UInt64Encoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   UInt64Encoder::initialize();
 }
 
 /*!

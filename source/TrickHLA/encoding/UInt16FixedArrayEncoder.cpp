@@ -86,7 +86,7 @@ UInt16FixedArrayEncoder::UInt16FixedArrayEncoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   UInt16FixedArrayEncoder::initialize();
 }
 
 /*!

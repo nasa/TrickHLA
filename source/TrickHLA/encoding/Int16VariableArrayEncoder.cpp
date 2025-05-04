@@ -86,7 +86,7 @@ Int16VariableArrayEncoder::Int16VariableArrayEncoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   Int16VariableArrayEncoder::initialize();
 }
 
 /*!

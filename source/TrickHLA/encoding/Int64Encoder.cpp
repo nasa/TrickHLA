@@ -85,7 +85,7 @@ Int64Encoder::Int64Encoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   Int64Encoder::initialize();
 }
 
 /*!

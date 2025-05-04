@@ -86,7 +86,7 @@ UInt64FixedArrayEncoder::UInt64FixedArrayEncoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   UInt64FixedArrayEncoder::initialize();
 }
 
 /*!

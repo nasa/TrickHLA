@@ -85,7 +85,7 @@ Int32Encoder::Int32Encoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   Int32Encoder::initialize();
 }
 
 /*!

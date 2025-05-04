@@ -86,7 +86,7 @@ UInt16VariableArrayEncoder::UInt16VariableArrayEncoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   UInt16VariableArrayEncoder::initialize();
 }
 
 /*!

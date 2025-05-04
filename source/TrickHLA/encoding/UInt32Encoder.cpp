@@ -85,7 +85,7 @@ UInt32Encoder::UInt32Encoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   UInt32Encoder::initialize();
 }
 
 /*!

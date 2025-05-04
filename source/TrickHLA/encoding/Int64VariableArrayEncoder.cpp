@@ -86,7 +86,7 @@ Int64VariableArrayEncoder::Int64VariableArrayEncoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   Int64VariableArrayEncoder::initialize();
 }
 
 /*!

@@ -73,10 +73,10 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 EncoderBase::EncoderBase(
-   std::string const &trick_variable_name,
-   std::string const &fom_variable_name,
-   EncodingEnum       hla_encoding,
-   REF2              *r2 )
+   string const &trick_variable_name,
+   string const &fom_variable_name,
+   EncodingEnum  hla_encoding,
+   REF2         *r2 )
    : trick_name( trick_variable_name ),
      fom_name( fom_variable_name ),
      rti_encoding( hla_encoding ),
@@ -86,7 +86,7 @@ EncoderBase::EncoderBase(
      is_static_array( false ),
      encoder( NULL )
 {
-   initialize();
+   EncoderBase::initialize();
 }
 
 /*!

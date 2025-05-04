@@ -85,7 +85,7 @@ Int16Encoder::Int16Encoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   Int16Encoder::initialize();
 }
 
 /*!

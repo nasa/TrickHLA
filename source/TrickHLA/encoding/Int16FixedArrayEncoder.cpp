@@ -86,7 +86,7 @@ Int16FixedArrayEncoder::Int16FixedArrayEncoder(
                   hla_encoding,
                   r2 )
 {
-   initialize();
+   Int16FixedArrayEncoder::initialize();
 }
 
 /*!
