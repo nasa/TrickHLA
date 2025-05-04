@@ -20,6 +20,19 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{EncoderFactory.cpp}
 @trick_link_dependency{EncoderBase.cpp}
+@trick_link_dependency{Int16BEEncoder.cpp}
+@trick_link_dependency{Int16LEEncoder.cpp}
+@trick_link_dependency{Int32BEEncoder.cpp}
+@trick_link_dependency{Int32LEEncoder.cpp}
+@trick_link_dependency{Int64BEEncoder.cpp}
+@trick_link_dependency{Int64LEEncoder.cpp}
+@trick_link_dependency{UInt16BEEncoder.cpp}
+@trick_link_dependency{UInt16LEEncoder.cpp}
+@trick_link_dependency{UInt32BEEncoder.cpp}
+@trick_link_dependency{UInt32LEEncoder.cpp}
+@trick_link_dependency{UInt64BEEncoder.cpp}
+@trick_link_dependency{UInt64LEEncoder.cpp}
+@trick_link_dependency{WstringEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -54,6 +67,19 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
+#include "TrickHLA/encoding/Int16BEEncoder.hh"
+#include "TrickHLA/encoding/Int16LEEncoder.hh"
+#include "TrickHLA/encoding/Int32BEEncoder.hh"
+#include "TrickHLA/encoding/Int32LEEncoder.hh"
+#include "TrickHLA/encoding/Int64BEEncoder.hh"
+#include "TrickHLA/encoding/Int64LEEncoder.hh"
+#include "TrickHLA/encoding/UInt16BEEncoder.hh"
+#include "TrickHLA/encoding/UInt16LEEncoder.hh"
+#include "TrickHLA/encoding/UInt32BEEncoder.hh"
+#include "TrickHLA/encoding/UInt32LEEncoder.hh"
+#include "TrickHLA/encoding/UInt64BEEncoder.hh"
+#include "TrickHLA/encoding/UInt64LEEncoder.hh"
+#include "TrickHLA/encoding/WstringEncoder.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

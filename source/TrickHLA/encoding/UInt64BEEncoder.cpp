@@ -116,7 +116,8 @@ void UInt64BEEncoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ref2->attr->type == TRICK_UNSIGNED_LONG_LONG ) && ( sizeof( long long ) == 8 );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_UNSIGNED_LONG_LONG ) && ( sizeof( int ) == 8 ) )
+                           || ( ( ref2->attr->type == TRICK_UNSIGNED_LONG ) && ( sizeof( long ) == 8 ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "UInt64BEEncoder::initialize():" << __LINE__
