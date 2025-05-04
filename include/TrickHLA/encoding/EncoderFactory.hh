@@ -21,6 +21,19 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderFactory.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int16BEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int16LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int32BEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int32LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int64BEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int64LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/UInt16BEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/UInt16LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/UInt32BEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/UInt32LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/UInt64BEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/UInt64LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/WstringEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
