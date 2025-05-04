@@ -64,8 +64,6 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
-#include "RTI/encoding/HLAfixedArray.h"
-#include "RTI/encoding/HLAopaqueData.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
@@ -146,5 +144,17 @@ void Int16Encoder::initialize()
              << " must be a primitive and not an array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
+   }
+
+   switch ( rti_encoding ) {
+      case ENCODING_LITTLE_ENDIAN: {
+         encoder = new HLAinteger16LE();
+         break;
+      }
+      case ENCODING_BIG_ENDIAN:
+      default: {
+         encoder = new HLAinteger16BE();
+         break;
+      }
    }
 }

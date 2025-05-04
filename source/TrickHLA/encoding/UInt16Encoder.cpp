@@ -64,8 +64,6 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
-#include "RTI/encoding/HLAfixedArray.h"
-#include "RTI/encoding/HLAopaqueData.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

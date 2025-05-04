@@ -60,10 +60,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
-#include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
-#include "RTI/encoding/HLAfixedArray.h"
-#include "RTI/encoding/HLAopaqueData.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
@@ -86,7 +83,8 @@ EncoderBase::EncoderBase(
      ref2( r2 ),
      is_array( false ),
      is_1d_array( false ),
-     is_static_array( false )
+     is_static_array( false ),
+     encoder( NULL )
 {
    initialize();
 }

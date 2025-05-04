@@ -105,6 +105,8 @@ class EncoderBase
    bool is_1d_array;     ///< @trick_units{--} Is the user data a 1-D array.
    bool is_static_array; ///< @trick_units{--} Is the user data a static array.
 
+   RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_units{--} HLA data element encoder.
+
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for EncoderBase class.
