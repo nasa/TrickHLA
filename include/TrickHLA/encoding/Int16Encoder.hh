@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Int16LEEncoder.hh
+@file TrickHLA/Int16Encoder.hh
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int16LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int16Encoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
@@ -63,7 +63,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class Int16LEEncoder : public EncoderBase
+class Int16Encoder : public EncoderBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -73,7 +73,7 @@ class Int16LEEncoder : public EncoderBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__Int16LEEncoder();
+   friend void init_attrTrickHLA__Int16Encoder();
 
    //--------------------------------------------------------------------------
    // Public member functions.
@@ -82,27 +82,27 @@ class Int16LEEncoder : public EncoderBase
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA Int16LEEncoder class. */
-   Int16LEEncoder( std::string const &trick_variable_name,
+   /*! @brief Default constructor for the TrickHLA Int16Encoder class. */
+   Int16Encoder( std::string const &trick_variable_name,
                    std::string const &fom_variable_name,
                    EncodingEnum       hla_encoding,
                    REF2              *r2 );
 
-   /*! @brief Destructor for the TrickHLA Int16LEEncoder class. */
-   virtual ~Int16LEEncoder();
+   /*! @brief Destructor for the TrickHLA Int16Encoder class. */
+   virtual ~Int16Encoder();
 
   protected:
-   /*! @brief Initializes the TrickHLA Int16LEEncoder. */
+   /*! @brief Initializes the TrickHLA Int16Encoder. */
    virtual void initialize();
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for Int16LEEncoder class.
+   /*! @brief Copy constructor for Int16Encoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Int16LEEncoder( Int16LEEncoder const &rhs );
-   /*! @brief Assignment operator for Int16LEEncoder class.
+   Int16Encoder( Int16Encoder const &rhs );
+   /*! @brief Assignment operator for Int16Encoder class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Int16LEEncoder &operator=( Int16LEEncoder const &rhs );
+   Int16Encoder &operator=( Int16Encoder const &rhs );
 };
 
 } // namespace TrickHLA

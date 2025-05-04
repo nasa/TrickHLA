@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/UInt16LEEncoder.cpp
+@file TrickHLA/UInt16Encoder.cpp
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{EncoderBase.cpp}
-@trick_link_dependency{UInt16LEEncoder.cpp}
+@trick_link_dependency{UInt16Encoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
-#include "TrickHLA/encoding/UInt16LEEncoder.hh"
+#include "TrickHLA/encoding/UInt16Encoder.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -74,10 +74,10 @@ using namespace TrickHLA;
 
 /*!
  * @details The endianess of the computer is determined as part of the
- * UInt16LEEncoder construction process.
+ * UInt16Encoder construction process.
  * @job_class{initialization}
  */
-UInt16LEEncoder::UInt16LEEncoder(
+UInt16Encoder::UInt16Encoder(
    std::string const &trick_variable_name,
    std::string const &fom_variable_name,
    EncodingEnum       hla_encoding,
@@ -94,12 +94,12 @@ UInt16LEEncoder::UInt16LEEncoder(
  * @details The buffer and ref2 values are freed and nulled.
  * @job_class{shutdown}
  */
-UInt16LEEncoder::~UInt16LEEncoder()
+UInt16Encoder::~UInt16Encoder()
 {
    return;
 }
 
-void UInt16LEEncoder::initialize()
+void UInt16Encoder::initialize()
 {
    if ( ref2 == NULL ) {
       EncoderBase::initialize();
@@ -107,7 +107,7 @@ void UInt16LEEncoder::initialize()
 
    if ( rti_encoding != ENCODING_LITTLE_ENDIAN ) {
       ostringstream errmsg;
-      errmsg << "UInt16LEEncoder::create():" << __LINE__
+      errmsg << "UInt16Encoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name << "' and Trick"
              << " Trick ref-attributes for '" << trick_name << "' the HLA"
              << " encoding specified (" << rti_encoding
@@ -120,7 +120,7 @@ void UInt16LEEncoder::initialize()
                            || ( ( ref2->attr->type == TRICK_UNSIGNED_INTEGER ) && ( sizeof( long ) == 2 ) );
    if ( !valid_type ) {
       ostringstream errmsg;
-      errmsg << "UInt16LEEncoder::initialize():" << __LINE__
+      errmsg << "UInt16Encoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name
              << "', the Trick type for the '" << trick_name
              << "' simulation variable (type:"
@@ -139,7 +139,7 @@ void UInt16LEEncoder::initialize()
    // This encoder is only for a primitive type.
    if ( is_array ) {
       ostringstream errmsg;
-      errmsg << "UInt16LEEncoder::create():" << __LINE__
+      errmsg << "UInt16Encoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name << "' and Trick"
              << " Trick ref-attributes for '" << trick_name << "' the variable"
              << " must be a primitive and not an array!\n";

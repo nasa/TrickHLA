@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Int64LEEncoder.cpp
+@file TrickHLA/Int64Encoder.cpp
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{EncoderBase.cpp}
-@trick_link_dependency{Int64LEEncoder.cpp}
+@trick_link_dependency{Int64Encoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
-#include "TrickHLA/encoding/Int64LEEncoder.hh"
+#include "TrickHLA/encoding/Int64Encoder.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -74,10 +74,10 @@ using namespace TrickHLA;
 
 /*!
  * @details The endianess of the computer is determined as part of the
- * Int64LEEncoder construction process.
+ * Int64Encoder construction process.
  * @job_class{initialization}
  */
-Int64LEEncoder::Int64LEEncoder(
+Int64Encoder::Int64Encoder(
    std::string const &trick_variable_name,
    std::string const &fom_variable_name,
    EncodingEnum       hla_encoding,
@@ -94,12 +94,12 @@ Int64LEEncoder::Int64LEEncoder(
  * @details The buffer and ref2 values are freed and nulled.
  * @job_class{shutdown}
  */
-Int64LEEncoder::~Int64LEEncoder()
+Int64Encoder::~Int64Encoder()
 {
    return;
 }
 
-void Int64LEEncoder::initialize()
+void Int64Encoder::initialize()
 {
    if ( ref2 == NULL ) {
       EncoderBase::initialize();
@@ -107,7 +107,7 @@ void Int64LEEncoder::initialize()
 
    if ( rti_encoding != ENCODING_LITTLE_ENDIAN ) {
       ostringstream errmsg;
-      errmsg << "Int64LEEncoder::create():" << __LINE__
+      errmsg << "Int64Encoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name << "' and Trick"
              << " Trick ref-attributes for '" << trick_name << "' the HLA"
              << " encoding specified (" << rti_encoding
@@ -120,7 +120,7 @@ void Int64LEEncoder::initialize()
                            || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == 8 ) );
    if ( !valid_type ) {
       ostringstream errmsg;
-      errmsg << "Int64LEEncoder::initialize():" << __LINE__
+      errmsg << "Int64Encoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name
              << "', the Trick type for the '" << trick_name
              << "' simulation variable (type:"
@@ -135,7 +135,7 @@ void Int64LEEncoder::initialize()
    // This encoder is only for a primitive type.
    if ( is_array ) {
       ostringstream errmsg;
-      errmsg << "Int64LEEncoder::create():" << __LINE__
+      errmsg << "Int64Encoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name << "' and Trick"
              << " Trick ref-attributes for '" << trick_name << "' the variable"
              << " must be a primitive and not an array!\n";

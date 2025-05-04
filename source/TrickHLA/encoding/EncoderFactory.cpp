@@ -20,18 +20,24 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{EncoderFactory.cpp}
 @trick_link_dependency{EncoderBase.cpp}
-@trick_link_dependency{Int16BEEncoder.cpp}
-@trick_link_dependency{Int16LEEncoder.cpp}
-@trick_link_dependency{Int32BEEncoder.cpp}
-@trick_link_dependency{Int32LEEncoder.cpp}
-@trick_link_dependency{Int64BEEncoder.cpp}
-@trick_link_dependency{Int64LEEncoder.cpp}
-@trick_link_dependency{UInt16BEEncoder.cpp}
-@trick_link_dependency{UInt16LEEncoder.cpp}
-@trick_link_dependency{UInt32BEEncoder.cpp}
-@trick_link_dependency{UInt32LEEncoder.cpp}
-@trick_link_dependency{UInt64BEEncoder.cpp}
-@trick_link_dependency{UInt64LEEncoder.cpp}
+@trick_link_dependency{Int16Encoder.cpp}
+@trick_link_dependency{Int16FixedArrayEncoder.cpp}
+@trick_link_dependency{Int16VariableArrayEncoder.cpp}
+@trick_link_dependency{Int32Encoder.cpp}
+@trick_link_dependency{Int32FixedArrayEncoder.cpp}
+@trick_link_dependency{Int32VariableArrayEncoder.cpp}
+@trick_link_dependency{Int64Encoder.cpp}
+@trick_link_dependency{Int64FixedArrayEncoder.cpp}
+@trick_link_dependency{Int64VariableArrayEncoder.cpp}
+@trick_link_dependency{UInt16Encoder.cpp}
+@trick_link_dependency{UInt16FixedArrayEncoder.cpp}
+@trick_link_dependency{UInt16VariableArrayEncoder.cpp}
+@trick_link_dependency{UInt32Encoder.cpp}
+@trick_link_dependency{UInt32FixedArrayEncoder.cpp}
+@trick_link_dependency{UInt32VariableArrayEncoder.cpp}
+@trick_link_dependency{UInt64Encoder.cpp}
+@trick_link_dependency{UInt64FixedArrayEncoder.cpp}
+@trick_link_dependency{UInt64VariableArrayEncoder.cpp}
 @trick_link_dependency{WstringEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
@@ -67,18 +73,24 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
-#include "TrickHLA/encoding/Int16BEEncoder.hh"
-#include "TrickHLA/encoding/Int16LEEncoder.hh"
-#include "TrickHLA/encoding/Int32BEEncoder.hh"
-#include "TrickHLA/encoding/Int32LEEncoder.hh"
-#include "TrickHLA/encoding/Int64BEEncoder.hh"
-#include "TrickHLA/encoding/Int64LEEncoder.hh"
-#include "TrickHLA/encoding/UInt16BEEncoder.hh"
-#include "TrickHLA/encoding/UInt16LEEncoder.hh"
-#include "TrickHLA/encoding/UInt32BEEncoder.hh"
-#include "TrickHLA/encoding/UInt32LEEncoder.hh"
-#include "TrickHLA/encoding/UInt64BEEncoder.hh"
-#include "TrickHLA/encoding/UInt64LEEncoder.hh"
+#include "TrickHLA/encoding/Int16Encoder.hh"
+#include "TrickHLA/encoding/Int16FixedArrayEncoder.hh"
+#include "TrickHLA/encoding/Int16VariableArrayEncoder.hh"
+#include "TrickHLA/encoding/Int32Encoder.hh"
+#include "TrickHLA/encoding/Int32FixedArrayEncoder.hh"
+#include "TrickHLA/encoding/Int32VariableArrayEncoder.hh"
+#include "TrickHLA/encoding/Int64Encoder.hh"
+#include "TrickHLA/encoding/Int64FixedArrayEncoder.hh"
+#include "TrickHLA/encoding/Int64VariableArrayEncoder.hh"
+#include "TrickHLA/encoding/UInt16Encoder.hh"
+#include "TrickHLA/encoding/UInt16FixedArrayEncoder.hh"
+#include "TrickHLA/encoding/UInt16VariableArrayEncoder.hh"
+#include "TrickHLA/encoding/UInt32Encoder.hh"
+#include "TrickHLA/encoding/UInt32FixedArrayEncoder.hh"
+#include "TrickHLA/encoding/UInt32VariableArrayEncoder.hh"
+#include "TrickHLA/encoding/UInt64Encoder.hh"
+#include "TrickHLA/encoding/UInt64FixedArrayEncoder.hh"
+#include "TrickHLA/encoding/UInt64VariableArrayEncoder.hh"
 #include "TrickHLA/encoding/WstringEncoder.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -438,12 +450,12 @@ EncoderBase *EncoderFactory::create_int16(
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int16LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int16FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int16LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int16VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int16LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int16Encoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -486,12 +498,12 @@ EncoderBase *EncoderFactory::create_uint16(
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt16LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt16FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt16LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt16VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt16LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt16Encoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -534,12 +546,12 @@ EncoderBase *EncoderFactory::create_int32(
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int32LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int32FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int32LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int32VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int32LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int32Encoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -582,12 +594,12 @@ EncoderBase *EncoderFactory::create_uint32(
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt32LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt32FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt32LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt32VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt32LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt32Encoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -630,12 +642,12 @@ EncoderBase *EncoderFactory::create_int64(
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int64LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int64FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new Int64LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int64VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int64LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int64Encoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -678,12 +690,12 @@ EncoderBase *EncoderFactory::create_uint64(
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt64LEFixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt64FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             } else {
-               return new UInt64LEVariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt64VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt64LEEncoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt64Encoder( trick_name, fom_name, hla_encoding, ref2 );
          }
          break;
       }

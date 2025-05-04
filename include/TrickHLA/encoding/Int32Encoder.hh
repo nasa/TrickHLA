@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Int32LEEncoder.hh
+@file TrickHLA/Int32Encoder.hh
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int32LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/Int32Encoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_INT32LE_ENCODER_HH
-#define TRICKHLA_INT32LE_ENCODER_HH
+#ifndef TRICKHLA_INT32_ENCODER_HH
+#define TRICKHLA_INT32_ENCODER_HH
 
 // System includes.
 #include <cstdint>
@@ -63,7 +63,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class Int32LEEncoder : public EncoderBase
+class Int32Encoder : public EncoderBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -73,7 +73,7 @@ class Int32LEEncoder : public EncoderBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__Int32LEEncoder();
+   friend void init_attrTrickHLA__Int32Encoder();
 
    //--------------------------------------------------------------------------
    // Public member functions.
@@ -82,29 +82,29 @@ class Int32LEEncoder : public EncoderBase
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA Int32LEEncoder class. */
-   Int32LEEncoder( std::string const &trick_variable_name,
+   /*! @brief Default constructor for the TrickHLA Int32Encoder class. */
+   Int32Encoder( std::string const &trick_variable_name,
                    std::string const &fom_variable_name,
                    EncodingEnum       hla_encoding,
                    REF2              *r2 );
 
-   /*! @brief Destructor for the TrickHLA Int32LEEncoder class. */
-   virtual ~Int32LEEncoder();
+   /*! @brief Destructor for the TrickHLA Int32Encoder class. */
+   virtual ~Int32Encoder();
 
   protected:
-   /*! @brief Initializes the TrickHLA Int32LEEncoder. */
+   /*! @brief Initializes the TrickHLA Int32Encoder. */
    virtual void initialize();
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for Int32LEEncoder class.
+   /*! @brief Copy constructor for Int32Encoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Int32LEEncoder( Int32LEEncoder const &rhs );
-   /*! @brief Assignment operator for Int32LEEncoder class.
+   Int32Encoder( Int32Encoder const &rhs );
+   /*! @brief Assignment operator for Int32Encoder class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Int32LEEncoder &operator=( Int32LEEncoder const &rhs );
+   Int32Encoder &operator=( Int32Encoder const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_INT32LE_ENCODER_HH
+#endif // TRICKHLA_INT32_ENCODER_HH

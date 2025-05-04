@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/UInt16LEEncoder.hh
+@file TrickHLA/UInt16Encoder.hh
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt16LEEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/UInt16Encoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_UINT16LE_ENCODER_HH
-#define TRICKHLA_UINT16LE_ENCODER_HH
+#ifndef TRICKHLA_UINT16_ENCODER_HH
+#define TRICKHLA_UINT16_ENCODER_HH
 
 // System includes.
 #include <cstdint>
@@ -63,7 +63,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class UInt16LEEncoder : public EncoderBase
+class UInt16Encoder : public EncoderBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -73,7 +73,7 @@ class UInt16LEEncoder : public EncoderBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__UInt16LEEncoder();
+   friend void init_attrTrickHLA__UInt16Encoder();
 
    //--------------------------------------------------------------------------
    // Public member functions.
@@ -82,29 +82,29 @@ class UInt16LEEncoder : public EncoderBase
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA UInt16LEEncoder class. */
-   UInt16LEEncoder( std::string const &trick_variable_name,
+   /*! @brief Default constructor for the TrickHLA UInt16Encoder class. */
+   UInt16Encoder( std::string const &trick_variable_name,
                     std::string const &fom_variable_name,
                     EncodingEnum       hla_encoding,
                     REF2              *r2 );
 
-   /*! @brief Destructor for the TrickHLA UInt16LEEncoder class. */
-   virtual ~UInt16LEEncoder();
+   /*! @brief Destructor for the TrickHLA UInt16Encoder class. */
+   virtual ~UInt16Encoder();
 
   protected:
-   /*! @brief Initializes the TrickHLA UInt16LEEncoder. */
+   /*! @brief Initializes the TrickHLA UInt16Encoder. */
    virtual void initialize();
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for UInt16LEEncoder class.
+   /*! @brief Copy constructor for UInt16Encoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   UInt16LEEncoder( UInt16LEEncoder const &rhs );
-   /*! @brief Assignment operator for UInt16LEEncoder class.
+   UInt16Encoder( UInt16Encoder const &rhs );
+   /*! @brief Assignment operator for UInt16Encoder class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   UInt16LEEncoder &operator=( UInt16LEEncoder const &rhs );
+   UInt16Encoder &operator=( UInt16Encoder const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_UINT16LE_ENCODER_HH
+#endif // TRICKHLA_UINT16_ENCODER_HH
