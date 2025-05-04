@@ -77,10 +77,10 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Int32VariableArrayEncoder::Int32VariableArrayEncoder(
-   std::string const &trick_variable_name,
-   std::string const &fom_variable_name,
-   EncodingEnum       hla_encoding,
-   REF2              *r2 )
+   string const &trick_variable_name,
+   string const &fom_variable_name,
+   EncodingEnum  hla_encoding,
+   REF2         *r2 )
    : EncoderBase( trick_variable_name,
                   fom_variable_name,
                   hla_encoding,

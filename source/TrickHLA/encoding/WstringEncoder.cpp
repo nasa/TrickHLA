@@ -81,9 +81,9 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 WstringEncoder::WstringEncoder(
-   std::string const &trick_variable_name,
-   std::string const &fom_variable_name,
-   EncodingEnum       hla_encoding )
+   string const &trick_variable_name,
+   string const &fom_variable_name,
+   EncodingEnum  hla_encoding )
    : trick_name( trick_variable_name ),
      fom_name( fom_variable_name ),
      rti_encoding( hla_encoding ),
