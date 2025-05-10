@@ -148,12 +148,12 @@ void Int16Encoder::initialize()
 
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
-         encoder = new HLAinteger16LE();
+         this->encoder = new HLAinteger16LE();
          break;
       }
       case ENCODING_BIG_ENDIAN:
       default: {
-         encoder = new HLAinteger16BE();
+         this->encoder = new HLAinteger16BE();
          break;
       }
    }

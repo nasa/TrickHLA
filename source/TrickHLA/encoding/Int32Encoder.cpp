@@ -103,18 +103,6 @@ void Int32Encoder::initialize()
       EncoderBase::initialize();
    }
 
-   if ( ( rti_encoding != ENCODING_LITTLE_ENDIAN )
-        && ( rti_encoding != ENCODING_BIG_ENDIAN ) ) {
-      ostringstream errmsg;
-      errmsg << "Int32Encoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "' and Trick"
-             << " Trick ref-attributes for '" << trick_name << "' the HLA"
-             << " encoding specified (" << rti_encoding
-             << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
    bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == 4 ) )
                            || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == 4 ) );
    if ( !valid_type ) {
@@ -140,9 +128,30 @@ void Int32Encoder::initialize()
       ostringstream errmsg;
       errmsg << "Int32Encoder::initialize():" << __LINE__
              << " ERROR: For FOM name '" << fom_name << "' and Trick"
-             << " Trick ref-attributes for '" << trick_name << "' the variable"
-             << " must be a primitive and not an array!\n";
+             << " Trick ref-attributes for '" << trick_name
+             << "' the variable must be a primitive and not an array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
+   }
+
+   switch ( rti_encoding ) {
+      case ENCODING_LITTLE_ENDIAN: {
+         this->encoder = new HLAinteger32LE();
+         break;
+      }
+      case ENCODING_BIG_ENDIAN: {
+         this->encoder = new HLAinteger32BE();
+         break;
+      }
+      default: {
+         ostringstream errmsg;
+         errmsg << "Int32Encoder::initialize():" << __LINE__
+                << " ERROR: For FOM name '" << fom_name << "' and Trick"
+                << " Trick ref-attributes for '" << trick_name << "' the HLA"
+                << " encoding specified (" << rti_encoding
+                << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
+      }
    }
 }
