@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/DataElement.h"
 #pragma GCC diagnostic pop
 
@@ -88,6 +89,10 @@ class EncoderBase
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
    virtual ~EncoderBase();
 
+   virtual RTI1516_NAMESPACE::VariableLengthData &encode() const;
+
+   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+
    /*! @brief Ensure the attribute buffer has at least the specified capacity.
     *  @param capacity Desired capacity of the buffer in bytes. */
    void ensure_buffer_capacity( int const capacity );
@@ -116,6 +121,8 @@ class EncoderBase
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
    int            buffer_capacity; ///< @trick_units{count} The capacity of the buffer.
    int            buffer_size;     ///< @trick_units{count} The size of the encoded attribute in the buffer.
+
+   RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_units{--} Holds HLA encoded data.
 
    RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_units{--} HLA data element encoder.
 

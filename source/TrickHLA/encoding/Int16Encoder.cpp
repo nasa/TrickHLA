@@ -112,8 +112,8 @@ void Int16Encoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( int ) == 2 ) )
-                           || ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( long ) == 2 ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( short ) == sizeof( Integer16 ) ) )
+                           || ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer16 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int16Encoder::initialize():" << __LINE__
@@ -143,12 +143,20 @@ void Int16Encoder::initialize()
 
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
-         this->encoder = new HLAinteger16LE();
+         this->encoder = new HLAinteger16LE( static_cast< Integer16 * >( ref2->address ) );
          break;
       }
-      case ENCODING_BIG_ENDIAN:
+      case ENCODING_BIG_ENDIAN: {
+         this->encoder = new HLAinteger16BE( static_cast< Integer16 * >( ref2->address ) );
+         break;
+      }
       default: {
-         this->encoder = new HLAinteger16BE();
+         ostringstream errmsg;
+         errmsg << "Int16Encoder::initialize():" << __LINE__
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the HLA encoding specified (" << rti_encoding
+                << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
    }

@@ -112,8 +112,8 @@ void Int64Encoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_LONG_LONG ) && ( sizeof( int ) == 8 ) )
-                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == 8 ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_LONG_LONG ) && ( sizeof( long long ) == sizeof( Integer64 ) ) )
+                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == sizeof( Integer64 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int64Encoder::initialize():" << __LINE__

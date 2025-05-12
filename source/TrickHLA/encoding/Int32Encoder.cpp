@@ -101,8 +101,8 @@ void Int32Encoder::initialize()
       EncoderBase::initialize();
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == 4 ) )
-                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == 4 ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer32 ) ) )
+                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == sizeof( Integer32 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int32Encoder::initialize():" << __LINE__
@@ -132,11 +132,11 @@ void Int32Encoder::initialize()
 
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
-         this->encoder = new HLAinteger32LE();
+         this->encoder = new HLAinteger32LE( static_cast< Integer32 * >( ref2->address ) );
          break;
       }
       case ENCODING_BIG_ENDIAN: {
-         this->encoder = new HLAinteger32BE();
+         this->encoder = new HLAinteger32BE( static_cast< Integer32 * >( ref2->address ) );
          break;
       }
       default: {

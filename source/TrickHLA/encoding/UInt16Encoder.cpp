@@ -112,8 +112,8 @@ void UInt16Encoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_UNSIGNED_SHORT ) && ( sizeof( int ) == 2 ) )
-                           || ( ( ref2->attr->type == TRICK_UNSIGNED_INTEGER ) && ( sizeof( long ) == 2 ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_UNSIGNED_SHORT ) && ( sizeof( short ) == sizeof( Integer16 ) ) )
+                           || ( ( ref2->attr->type == TRICK_UNSIGNED_INTEGER ) && ( sizeof( int ) == sizeof( Integer16 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "UInt16Encoder::initialize():" << __LINE__

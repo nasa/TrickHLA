@@ -112,8 +112,8 @@ void UInt32Encoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_UNSIGNED_INTEGER ) && ( sizeof( int ) == 4 ) )
-                           || ( ( ref2->attr->type == TRICK_UNSIGNED_LONG ) && ( sizeof( long ) == 4 ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_UNSIGNED_INTEGER ) && ( sizeof( int ) == sizeof( Integer32 ) ) )
+                           || ( ( ref2->attr->type == TRICK_UNSIGNED_LONG ) && ( sizeof( long ) == sizeof( Integer32 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "UInt32Encoder::initialize():" << __LINE__

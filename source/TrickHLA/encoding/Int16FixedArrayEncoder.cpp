@@ -113,8 +113,8 @@ void Int16FixedArrayEncoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( int ) == 2 ) )
-                           || ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( long ) == 2 ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( short ) == sizeof( Integer16 ) ) )
+                           || ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer16 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int16FixedArrayEncoder::initialize():" << __LINE__

@@ -60,7 +60,9 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/EncodingExceptions.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
@@ -139,6 +141,34 @@ void EncoderBase::initialize()
    ensure_buffer_capacity( ref2_byte_count );
 }
 
+VariableLengthData &EncoderBase::encode() const
+{
+   try {
+      return encoder->encode( &data );
+   } catch ( EncoderException &e ) {
+      ostringstream errmsg;
+      errmsg << "EncoderBase::encode():" << __LINE__
+             << " ERROR: Unexpected error encoding HLA data for Trick variable '"
+             << trick_name << "'!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   return &data;
+}
+
+void EncoderBase::decode(
+   VariableLengthData const &encoded_data )
+{
+   try {
+      encoder->decode( encoded_data );
+   } catch ( EncoderException &e ) {
+      ostringstream errmsg;
+      errmsg << "EncoderBase::decode():" << __LINE__
+             << " ERROR: Unexpected error decoding HLA data for Trick variable '"
+             << trick_name << "'!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+}
+
 /*!
  * @brief Ensure the attribute buffer has at least the specified capacity.
  *  @param capacity Desired capacity of the buffer in bytes.
@@ -159,7 +189,7 @@ void EncoderBase::ensure_buffer_capacity(
          ostringstream errmsg;
          errmsg << "EncoderBase::ensure_buffer_capacity():" << __LINE__
                 << " ERROR: Could not allocate memory for buffer for requested"
-                << " capacity " << capacity << " for Trick name '"
+                << " capacity " << capacity << " for Trick variable name '"
                 << trick_name << "'!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -173,7 +203,7 @@ void EncoderBase::ensure_buffer_capacity(
          ostringstream errmsg;
          errmsg << "EncoderBase::ensure_buffer_capacity():" << __LINE__
                 << " ERROR: Could not resize memory for buffer for requested"
-                << " capacity " << capacity << " for Trick name '"
+                << " capacity " << capacity << " for Trick variable name '"
                 << trick_name << "'!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }

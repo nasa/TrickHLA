@@ -113,8 +113,8 @@ void Int32FixedArrayEncoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == 4 ) )
-                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == 4 ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer32 ) ) )
+                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == sizeof( Integer32 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int32FixedArrayEncoder::initialize():" << __LINE__
