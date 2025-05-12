@@ -1036,12 +1036,19 @@ void Attribute::calculate_size_and_number_of_items()
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'\n"
           << "  ref2->attr->type:" << ref2->attr->type << '\n'
           << "  ref2->attr->units:" << ref2->attr->units << '\n'
-          << "  size:" << size << '\n'
-          << "  num_items:" << num_items << '\n'
+          << "  size:" << size << '\n';
+      if ( ref2->attr->num_index > 0 ) {
+         msg << "  get_size(*(void **)ref2->address):" << get_size( *static_cast< void ** >( ref2->address ) ) << '\n';
+      } else {
+         msg << "  get_size(ref2->address):" << get_size( ref2->address ) << '\n';
+      }
+      msg << "  num_items:" << num_items << '\n'
           << "  ref2->attr->size:" << ref2->attr->size << '\n'
-          << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n'
-          << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << '\n'
-          << "  publish:" << publish << '\n'
+          << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n';
+      for ( int i = 0; i < ref2->attr->num_index; ++i ) {
+         msg << "  ref2->attr->index[" << i << "].size:" << ref2->attr->index[i].size << '\n';
+      }
+      msg << "  publish:" << publish << '\n'
           << "  subscribe:" << subscribe << '\n'
           << "  locally_owned:" << locally_owned << '\n'
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << '\n'
@@ -1050,12 +1057,19 @@ void Attribute::calculate_size_and_number_of_items()
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
-      if ( ( ref2->attr->type == TRICK_STRING )
-           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
-                && ( ref2->attr->num_index > 0 )
-                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+           && ( ref2->attr->num_index > 0 )
+           && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
       }
+      /*
+         if ( trick_MM->ref_name( ref2, (char *)ref2->attr->name ) != 0 ) {
+            msg << " Error getting updated REF2 for '" << ref2->attr->name << "'\n";
+         }
+         if ( ref2 == NULL ) {
+            msg << " ref2 == NULL \n";
+         }
+      */
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
