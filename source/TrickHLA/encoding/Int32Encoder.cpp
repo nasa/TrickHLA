@@ -106,8 +106,7 @@ void Int32Encoder::initialize()
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int32Encoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name
-             << "', the Trick type for the '" << trick_name
+             << " ERROR: Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";

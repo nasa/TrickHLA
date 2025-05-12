@@ -159,8 +159,8 @@ void EncoderBase::ensure_buffer_capacity(
          ostringstream errmsg;
          errmsg << "EncoderBase::ensure_buffer_capacity():" << __LINE__
                 << " ERROR: Could not allocate memory for buffer for requested"
-                << " capacity " << capacity << " for FOM-name '" << FOM_name
-                << "' with Trick name '" << trick_name << "'!\n";
+                << " capacity " << capacity << " for Trick name '"
+                << trick_name << "'!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    } else if ( capacity > buffer_capacity ) {
@@ -173,8 +173,8 @@ void EncoderBase::ensure_buffer_capacity(
          ostringstream errmsg;
          errmsg << "EncoderBase::ensure_buffer_capacity():" << __LINE__
                 << " ERROR: Could not resize memory for buffer for requested"
-                << " capacity " << capacity << " for FOM-name '" << FOM_name
-                << "' with Trick name '" << trick_name << "'!\n";
+                << " capacity " << capacity << " for Trick name '"
+                << trick_name << "'!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -287,7 +287,6 @@ size_t const EncoderBase::calculate_size_in_bytes()
       ostringstream msg;
       msg << "EncoderBase::calculate_size_in_bytes():" << __LINE__ << '\n'
           << "========================================================\n"
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
           << "  trick_name:'" << trick_name << "'\n"
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  ref2->attr->name:'" << ref2->attr->name << "'\n"
