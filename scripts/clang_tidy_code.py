@@ -53,6 +53,9 @@ def main():
    parser.add_argument( '--TrickHLA', \
                         help = 'Process the core TrickHLA source code.', \
                         action = 'store_true', dest = 'process_TrickHLA' )
+   parser.add_argument( '--Encoding', \
+                        help = 'Process the core TrickHLA Encoding source code.', \
+                        action = 'store_true', dest = 'process_TrickHLA_encoding' )
    parser.add_argument( '--SpaceFOM', \
                         help = 'Process the SpaceFOM source code.', \
                         action = 'store_true', dest = 'process_SpaceFOM' )
@@ -100,6 +103,9 @@ def main():
       required_arg_cnt += 1
    if args.process_TrickHLA:
       # --TrickHLA
+      required_arg_cnt += 1
+   if args.process_TrickHLA_encoding:
+      # --Encoding
       required_arg_cnt += 1
    if args.process_SpaceFOM:
       # --SpaceFOM
@@ -277,6 +283,10 @@ def main():
    if args.process_all or args.process_TrickHLA:
       source_dirs.extend ( ['./source/TrickHLA/'] )
 
+   # TrickHLA Encoding
+   if args.process_all or args.process_TrickHLA_encoding:
+      source_dirs.extend ( ['./source/TrickHLA/encoding'] )
+   
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
       include_dirs.extend( ['-I/usr/local/include'] )
