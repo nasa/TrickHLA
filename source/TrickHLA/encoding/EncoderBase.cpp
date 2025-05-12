@@ -109,21 +109,21 @@ void EncoderBase::initialize()
 {
    if ( ref2 == NULL ) {
       ref2 = ref_attributes( trick_name.c_str() );
-   }
 
-   // Determine if we had an error getting the ref-attributes.
-   if ( ref2 == NULL ) {
-      ostringstream errmsg;
-      errmsg << "EncoderBase::initialize():" << __LINE__
-             << " ERROR: Error retrieving Trick ref-attributes for '"
-             << trick_name << "'. Please check your input or modified-data"
-             << " files to make sure the object attribute Trick name is"
-             << " correctly specified. If '" << trick_name
-             << "' is an inherited variable then make sure the base class"
-             << " uses either the 'public' or 'protected' access level for"
-             << " the variable.\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
+      // Determine if we had an error getting the ref-attributes.
+      if ( ref2 == NULL ) {
+         ostringstream errmsg;
+         errmsg << "EncoderBase::initialize():" << __LINE__
+                << " ERROR: Error retrieving Trick ref-attributes for '"
+                << trick_name << "'. Please check your input or modified-data"
+                << " files to make sure the object attribute Trick name is"
+                << " correctly specified. If '" << trick_name
+                << "' is an inherited variable then make sure the base class"
+                << " uses either the 'public' or 'protected' access level for"
+                << " the variable.\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
    }
 
    // For now, we do not support more than a 1-D array that is dynamic
@@ -244,8 +244,8 @@ size_t const EncoderBase::calculate_size_in_bytes()
             // Handle other dynamic arrays for non-character types.
 #if 1
             // get_size returns the number of elements in the dynamic array.
-            int num_items = get_size( *static_cast< void ** >( ref2->address ) );
-            byte_count    = ( num_items > 0 ) ? ( ref2->attr->size * num_items ) : 0;
+            int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
+            byte_count          = ( num_items > 0 ) ? ( ref2->attr->size * num_items ) : 0;
 #else
             size_t num_items = 1;
             for ( int i = 0; i < ref2->attr->num_index; ++i ) {
