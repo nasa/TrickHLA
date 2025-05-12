@@ -81,11 +81,9 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 WstringEncoder::WstringEncoder(
-   string const &trick_variable_name,
-   string const &fom_variable_name,
-   EncodingEnum  hla_encoding )
+   string const      &trick_variable_name,
+   EncodingEnum const hla_encoding )
    : trick_name( trick_variable_name ),
-     fom_name( fom_variable_name ),
      rti_encoding( hla_encoding ),
      ref2( NULL ),
      is_array( false ),
@@ -125,13 +123,13 @@ void WstringEncoder::initialize()
    if ( ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "WstringEncoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "', Error retrieving"
-             << " Trick ref-attributes for '" << trick_name << "'. Please check"
-             << " your input or modified-data files to make sure the object"
-             << " attribute Trick name is correctly specified. If '"
-             << trick_name << "' is an inherited variable then make"
-             << " sure the base class uses either the 'public' or 'protected'"
-             << " access level for the variable.\n";
+             << " ERROR: Error retrieving Trick ref-attributes for '"
+             << trick_name << "'. Please check your input or modified-data"
+             << " files to make sure the object attribute Trick name is"
+             << " correctly specified. If '" << trick_name
+             << "' is an inherited variable then make sure the base class"
+             << " uses either the 'public' or 'protected' access level for"
+             << " the variable.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -146,8 +144,7 @@ void WstringEncoder::initialize()
    if ( ref2->attr->type != TRICK_WSTRING ) {
       ostringstream errmsg;
       errmsg << "WstringEncoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name
-             << "', the Trick type for the '" << trick_name
+             << " ERROR: Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '"

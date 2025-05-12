@@ -126,9 +126,8 @@ EncoderFactory::~EncoderFactory()
 }
 
 EncoderBase *EncoderFactory::create(
-   string const &trick_name,
-   string const &fom_name,
-   EncodingEnum  hla_encoding )
+   string const      &trick_name,
+   EncodingEnum const hla_encoding )
 {
    REF2 *ref2 = ref_attributes( trick_name.c_str() );
 
@@ -136,13 +135,13 @@ EncoderBase *EncoderFactory::create(
    if ( ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "EncoderFactory::create():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "', Error retrieving"
-             << " Trick ref-attributes for '" << trick_name << "'. Please check"
-             << " your input or modified-data files to make sure the object"
-             << " attribute Trick name is correctly specified. If '"
-             << trick_name << "' is an inherited variable then make"
-             << " sure the base class uses either the 'public' or 'protected'"
-             << " access level for the variable.\n";
+             << " ERROR: Error retrieving Trick ref-attributes for '"
+             << trick_name << "'. Please check your input or modified-data"
+             << " files to make sure the object attribute Trick name is"
+             << " correctly specified. If '" << trick_name
+             << "' is an inherited variable then make sure the base class"
+             << " uses either the 'public' or 'protected' access level for"
+             << " the variable.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return NULL;
    }
@@ -157,10 +156,9 @@ EncoderBase *EncoderFactory::create(
    if ( is_array && !is_1d_array ) {
       ostringstream errmsg;
       errmsg << "EncoderFactory::create():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "' and Trick"
-             << " Trick ref-attributes for '" << trick_name << "' the variable"
-             << " is a multidimensional array and only 1-dimensional arrays"
-             << " are supported for now!\n";
+             << " ERROR: Trick ref-attributes for '" << trick_name
+             << "' the variable is a multidimensional array and only"
+             << " 1-dimensional arrays are supported for now!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return NULL;
    }
@@ -172,9 +170,8 @@ EncoderBase *EncoderFactory::create(
          // No type, not supported.
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'void', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'void', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -187,12 +184,11 @@ EncoderBase *EncoderFactory::create(
          break;
       }
       case TRICK_STRING: {
-         // std::string
+         // string
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'std::string', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'string', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -200,12 +196,12 @@ EncoderBase *EncoderFactory::create(
          // (short)
          switch ( sizeof( short ) ) {
             case 2: {
-               encoder = create_int16( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_int16( trick_name, hla_encoding, ref2 );
                break;
             }
             case 4:
             default: {
-               encoder = create_int32( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_int32( trick_name, hla_encoding, ref2 );
                break;
             }
          }
@@ -215,12 +211,12 @@ EncoderBase *EncoderFactory::create(
          // (unsigned short)
          switch ( sizeof( unsigned short ) ) {
             case 2: {
-               encoder = create_uint16( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_uint16( trick_name, hla_encoding, ref2 );
                break;
             }
             case 4:
             default: {
-               encoder = create_uint32( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_uint32( trick_name, hla_encoding, ref2 );
                break;
             }
          }
@@ -230,12 +226,12 @@ EncoderBase *EncoderFactory::create(
          // (int)
          switch ( sizeof( int ) ) {
             case 2: {
-               encoder = create_int16( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_int16( trick_name, hla_encoding, ref2 );
                break;
             }
             case 4:
             default: {
-               encoder = create_int32( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_int32( trick_name, hla_encoding, ref2 );
                break;
             }
          }
@@ -245,12 +241,12 @@ EncoderBase *EncoderFactory::create(
          // (unsigned int)
          switch ( sizeof( unsigned int ) ) {
             case 2: {
-               encoder = create_uint16( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_uint16( trick_name, hla_encoding, ref2 );
                break;
             }
             case 4:
             default: {
-               encoder = create_uint32( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_uint32( trick_name, hla_encoding, ref2 );
                break;
             }
          }
@@ -260,12 +256,12 @@ EncoderBase *EncoderFactory::create(
          // (long)
          switch ( sizeof( long ) ) {
             case 4: {
-               encoder = create_int32( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_int32( trick_name, hla_encoding, ref2 );
                break;
             }
             case 8:
             default: {
-               encoder = create_int64( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_int64( trick_name, hla_encoding, ref2 );
                break;
             }
          }
@@ -275,12 +271,12 @@ EncoderBase *EncoderFactory::create(
          // (unsigned long)
          switch ( sizeof( unsigned long ) ) {
             case 4: {
-               encoder = create_uint32( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_uint32( trick_name, hla_encoding, ref2 );
                break;
             }
             case 8:
             default: {
-               encoder = create_uint64( trick_name, fom_name, hla_encoding, ref2 );
+               encoder = create_uint64( trick_name, hla_encoding, ref2 );
                break;
             }
          }
@@ -298,9 +294,9 @@ EncoderBase *EncoderFactory::create(
          // (signed int : 1), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type bit-field 'int : 1', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type bit-field 'int : 1', and is"
+                << " not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -308,29 +304,28 @@ EncoderBase *EncoderFactory::create(
          // (unsigned int : 1), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type bit-field 'unsigned int : 1', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type bit-field 'unsigned int : 1',"
+                << " and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
       case TRICK_LONG_LONG: {
          // (long long)
-         encoder = create_int64( trick_name, fom_name, hla_encoding, ref2 );
+         encoder = create_int64( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          // (unsigned long long)
-         encoder = create_uint64( trick_name, fom_name, hla_encoding, ref2 );
+         encoder = create_uint64( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_FILE_PTR: {
          // (file *), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'file *', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'file *', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -342,9 +337,8 @@ EncoderBase *EncoderFactory::create(
          // (wchar_t)
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and"
-                << " Trick ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'wchar_t', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'wchar_t', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -352,9 +346,8 @@ EncoderBase *EncoderFactory::create(
          // std::wstring
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'std::wstring', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'std::wstring', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -362,9 +355,8 @@ EncoderBase *EncoderFactory::create(
          // An arbitrary address (void *), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'void *', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'void *', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -372,9 +364,8 @@ EncoderBase *EncoderFactory::create(
          // User defined type (enumeration), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'enum', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'enum', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -382,9 +373,8 @@ EncoderBase *EncoderFactory::create(
          // User defined type (struct/class), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'struct' or class, and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'struct' or class, and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -392,9 +382,8 @@ EncoderBase *EncoderFactory::create(
          // User defined type (where type details are as yet unknown)
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'opaque', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'opaque', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -402,9 +391,8 @@ EncoderBase *EncoderFactory::create(
          // stl::type, Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'stl::type', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'stl::type', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -412,9 +400,8 @@ EncoderBase *EncoderFactory::create(
          // Unrecognized types are not supported.
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "', and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of unknown type ("
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of unknown type ("
                 << Utilities::get_trick_type_string( ref2->attr->type )
                 << " = " << ref2->attr->type << "), and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -426,10 +413,9 @@ EncoderBase *EncoderFactory::create(
 }
 
 EncoderBase *EncoderFactory::create_int16(
-   string const &trick_name,
-   string const &fom_name,
-   EncodingEnum  hla_encoding,
-   REF2         *ref2 )
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
+   REF2              *ref2 )
 {
    bool const is_array        = ( ref2->attr->num_index > 0 );
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
@@ -438,33 +424,32 @@ EncoderBase *EncoderFactory::create_int16(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int16FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int16FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new Int16VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int16VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int16Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int16Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int16FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int16FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new Int16VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int16VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int16Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int16Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int16():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "' and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'int16', the specified hla_endoding ("
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'int16', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -474,10 +459,9 @@ EncoderBase *EncoderFactory::create_int16(
 }
 
 EncoderBase *EncoderFactory::create_uint16(
-   string const &trick_name,
-   string const &fom_name,
-   EncodingEnum  hla_encoding,
-   REF2         *ref2 )
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
+   REF2              *ref2 )
 {
    bool const is_array        = ( ref2->attr->num_index > 0 );
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
@@ -486,33 +470,32 @@ EncoderBase *EncoderFactory::create_uint16(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt16FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt16FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new UInt16VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt16VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt16Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt16Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt16FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt16FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new UInt16VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt16VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt16Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt16Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint16():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "' and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'unsigned int16', the specified hla_endoding ("
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'unsigned int16', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -522,9 +505,8 @@ EncoderBase *EncoderFactory::create_uint16(
 }
 
 EncoderBase *EncoderFactory::create_int32(
-   std::string const &trick_name,
-   std::string const &fom_name,
-   EncodingEnum       hla_encoding,
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
    REF2              *ref2 )
 {
    bool const is_array        = ( ref2->attr->num_index > 0 );
@@ -534,33 +516,32 @@ EncoderBase *EncoderFactory::create_int32(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int32FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int32FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new Int32VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int32VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int32Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int32Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int32FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int32FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new Int32VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int32VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int32Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int32Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int32():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "' and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'int32', the specified hla_endoding ("
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'int32', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -570,9 +551,8 @@ EncoderBase *EncoderFactory::create_int32(
 }
 
 EncoderBase *EncoderFactory::create_uint32(
-   std::string const &trick_name,
-   std::string const &fom_name,
-   EncodingEnum       hla_encoding,
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
    REF2              *ref2 )
 {
    bool const is_array        = ( ref2->attr->num_index > 0 );
@@ -582,33 +562,32 @@ EncoderBase *EncoderFactory::create_uint32(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt32FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt32FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new UInt32VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt32VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt32Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt32Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt32FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt32FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new UInt32VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt32VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt32Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt32Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint32():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "' and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'unsigned int32', the specified hla_endoding ("
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'unsigned int32', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -618,9 +597,8 @@ EncoderBase *EncoderFactory::create_uint32(
 }
 
 EncoderBase *EncoderFactory::create_int64(
-   std::string const &trick_name,
-   std::string const &fom_name,
-   EncodingEnum       hla_encoding,
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
    REF2              *ref2 )
 {
    bool const is_array        = ( ref2->attr->num_index > 0 );
@@ -630,33 +608,32 @@ EncoderBase *EncoderFactory::create_int64(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int64FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int64FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new Int64VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int64VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int64Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int64Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int64FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int64FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new Int64VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new Int64VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new Int64Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new Int64Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int16():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "' and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'int64', the specified hla_endoding ("
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'int64', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -666,9 +643,8 @@ EncoderBase *EncoderFactory::create_int64(
 }
 
 EncoderBase *EncoderFactory::create_uint64(
-   std::string const &trick_name,
-   std::string const &fom_name,
-   EncodingEnum       hla_encoding,
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
    REF2              *ref2 )
 {
    bool const is_array        = ( ref2->attr->num_index > 0 );
@@ -678,34 +654,33 @@ EncoderBase *EncoderFactory::create_uint64(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt64FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt64FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new UInt64VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt64VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt64Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt64Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt64FixedArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt64FixedArrayEncoder( trick_name, hla_encoding, ref2 );
             } else {
-               return new UInt64VariableArrayEncoder( trick_name, fom_name, hla_encoding, ref2 );
+               return new UInt64VariableArrayEncoder( trick_name, hla_encoding, ref2 );
             }
          } else {
-            return new UInt64Encoder( trick_name, fom_name, hla_encoding, ref2 );
+            return new UInt64Encoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint16():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "' and Trick"
-                << " ref-attributes for '" << trick_name << "' the variable"
-                << " is of type 'unsigned int64', the specified hla_endoding ("
-                << hla_encoding << ") is not supported.\n";
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'unsigned int64', the specified"
+                << " hla_endoding (" << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }

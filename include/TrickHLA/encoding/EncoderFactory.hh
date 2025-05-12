@@ -108,39 +108,32 @@ class EncoderFactory
 
    static TrickHLA::EncoderBase *create(
       std::string const &trick_name,
-      std::string const &fom_name,
-      EncodingEnum       hla_encoding );
+      EncodingEnum const hla_encoding );
 
   protected:
    static TrickHLA::EncoderBase *create_int16(
       std::string const &trick_name,
-      std::string const &fom_name,
-      EncodingEnum       hla_encoding,
+      EncodingEnum const hla_encoding,
       REF2              *ref2 );
    static TrickHLA::EncoderBase *create_uint16(
       std::string const &trick_name,
-      std::string const &fom_name,
-      EncodingEnum       hla_encoding,
+      EncodingEnum const hla_encoding,
       REF2              *ref2 );
    static TrickHLA::EncoderBase *create_int32(
       std::string const &trick_name,
-      std::string const &fom_name,
-      EncodingEnum       hla_encoding,
+      EncodingEnum const hla_encoding,
       REF2              *ref2 );
    static TrickHLA::EncoderBase *create_uint32(
       std::string const &trick_name,
-      std::string const &fom_name,
-      EncodingEnum       hla_encoding,
+      EncodingEnum const hla_encoding,
       REF2              *ref2 );
    static TrickHLA::EncoderBase *create_int64(
       std::string const &trick_name,
-      std::string const &fom_name,
-      EncodingEnum       hla_encoding,
+      EncodingEnum const hla_encoding,
       REF2              *ref2 );
    static TrickHLA::EncoderBase *create_uint64(
       std::string const &trick_name,
-      std::string const &fom_name,
-      EncodingEnum       hla_encoding,
+      EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
   private:

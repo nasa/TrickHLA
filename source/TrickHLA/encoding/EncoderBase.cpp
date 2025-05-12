@@ -73,12 +73,10 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 EncoderBase::EncoderBase(
-   string const &trick_variable_name,
-   string const &fom_variable_name,
-   EncodingEnum  hla_encoding,
-   REF2         *r2 )
+   string const      &trick_variable_name,
+   EncodingEnum const hla_encoding,
+   REF2              *r2 )
    : trick_name( trick_variable_name ),
-     fom_name( fom_variable_name ),
      rti_encoding( hla_encoding ),
      ref2( r2 ),
      ref2_byte_count( 0 ),
@@ -117,13 +115,13 @@ void EncoderBase::initialize()
    if ( ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "EncoderBase::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "', Error retrieving"
-             << " Trick ref-attributes for '" << trick_name << "'. Please check"
-             << " your input or modified-data files to make sure the object"
-             << " attribute Trick name is correctly specified. If '"
-             << trick_name << "' is an inherited variable then make"
-             << " sure the base class uses either the 'public' or 'protected'"
-             << " access level for the variable.\n";
+             << " ERROR: Error retrieving Trick ref-attributes for '"
+             << trick_name << "'. Please check your input or modified-data"
+             << " files to make sure the object attribute Trick name is"
+             << " correctly specified. If '" << trick_name
+             << "' is an inherited variable then make sure the base class"
+             << " uses either the 'public' or 'protected' access level for"
+             << " the variable.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

@@ -86,8 +86,7 @@ class WstringEncoder
    //
    /*! @brief Default constructor for the TrickHLA WstringEncoder class. */
    WstringEncoder( std::string const &trick_variable_name,
-                   std::string const &fom_variable_name,
-                   EncodingEnum       hla_encoding );
+                   EncodingEnum const hla_encoding );
 
    /*! @brief Destructor for the TrickHLA WstringEncoder class. */
    virtual ~WstringEncoder();

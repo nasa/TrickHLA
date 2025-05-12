@@ -82,8 +82,7 @@ class EncoderBase
    //
    /*! @brief Default constructor for the TrickHLA EncoderBase class. */
    EncoderBase( std::string const &trick_variable_name,
-                std::string const &fom_variable_name,
-                EncodingEnum       hla_encoding,
+                EncodingEnum const hla_encoding,
                 REF2              *r2 );
 
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
@@ -101,7 +100,6 @@ class EncoderBase
 
   protected:
    std::string trick_name; ///< @trick_units{--} Trick variable name.
-   std::string fom_name;   ///< @trick_units{--} FOM variable name.
 
    EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
 

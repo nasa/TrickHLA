@@ -76,12 +76,10 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 UInt32Encoder::UInt32Encoder(
-   string const &trick_variable_name,
-   string const &fom_variable_name,
-   EncodingEnum  hla_encoding,
-   REF2         *r2 )
+   string const      &trick_variable_name,
+   EncodingEnum const hla_encoding,
+   REF2              *r2 )
    : EncoderBase( trick_variable_name,
-                  fom_variable_name,
                   hla_encoding,
                   r2 )
 {
@@ -107,9 +105,8 @@ void UInt32Encoder::initialize()
         && ( rti_encoding != ENCODING_BIG_ENDIAN ) ) {
       ostringstream errmsg;
       errmsg << "UInt32Encoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "' and Trick"
-             << " Trick ref-attributes for '" << trick_name << "' the HLA"
-             << " encoding specified (" << rti_encoding
+             << " ERROR: Trick ref-attributes for '" << trick_name
+             << "' the HLA encoding specified (" << rti_encoding
              << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -120,8 +117,7 @@ void UInt32Encoder::initialize()
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "UInt32Encoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name
-             << "', the Trick type for the '" << trick_name
+             << " ERROR: Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";
@@ -139,9 +135,8 @@ void UInt32Encoder::initialize()
    if ( is_array ) {
       ostringstream errmsg;
       errmsg << "UInt32Encoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "' and Trick"
-             << " Trick ref-attributes for '" << trick_name << "' the variable"
-             << " must be a primitive and not an array!\n";
+             << " ERROR: Trick ref-attributes for '" << trick_name
+             << "' the variable must be a primitive and not an array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

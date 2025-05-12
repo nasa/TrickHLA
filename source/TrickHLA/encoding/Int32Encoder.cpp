@@ -76,12 +76,10 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Int32Encoder::Int32Encoder(
-   string const &trick_variable_name,
-   string const &fom_variable_name,
-   EncodingEnum  hla_encoding,
-   REF2         *r2 )
+   string const      &trick_variable_name,
+   EncodingEnum const hla_encoding,
+   REF2              *r2 )
    : EncoderBase( trick_variable_name,
-                  fom_variable_name,
                   hla_encoding,
                   r2 )
 {
@@ -127,8 +125,7 @@ void Int32Encoder::initialize()
    if ( is_array ) {
       ostringstream errmsg;
       errmsg << "Int32Encoder::initialize():" << __LINE__
-             << " ERROR: For FOM name '" << fom_name << "' and Trick"
-             << " Trick ref-attributes for '" << trick_name
+             << " ERROR: Trick ref-attributes for '" << trick_name
              << "' the variable must be a primitive and not an array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -146,9 +143,8 @@ void Int32Encoder::initialize()
       default: {
          ostringstream errmsg;
          errmsg << "Int32Encoder::initialize():" << __LINE__
-                << " ERROR: For FOM name '" << fom_name << "' and Trick"
-                << " Trick ref-attributes for '" << trick_name << "' the HLA"
-                << " encoding specified (" << rti_encoding
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the HLA encoding specified (" << rti_encoding
                 << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;

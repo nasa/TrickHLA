@@ -84,8 +84,7 @@ class UInt64Encoder : public EncoderBase
    //
    /*! @brief Default constructor for the TrickHLA UInt64Encoder class. */
    UInt64Encoder( std::string const &trick_variable_name,
-                  std::string const &fom_variable_name,
-                  EncodingEnum       hla_encoding,
+                  EncodingEnum const hla_encoding,
                   REF2              *r2 );
 
    /*! @brief Destructor for the TrickHLA UInt64Encoder class. */
