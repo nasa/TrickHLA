@@ -421,18 +421,7 @@ EncoderBase *EncoderFactory::create_int16(
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_BIG_ENDIAN: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new Int16FixedArrayEncoder( trick_name, hla_encoding, ref2 );
-            } else {
-               return new Int16VariableArrayEncoder( trick_name, hla_encoding, ref2 );
-            }
-         } else {
-            return new Int16Encoder( trick_name, hla_encoding, ref2 );
-         }
-         break;
-      }
+      case ENCODING_BIG_ENDIAN:
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -449,7 +438,7 @@ EncoderBase *EncoderFactory::create_int16(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int16():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'int16', the specified hla_endoding ("
+                << "' the variable is of type 'short', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -467,18 +456,7 @@ EncoderBase *EncoderFactory::create_uint16(
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_BIG_ENDIAN: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new UInt16FixedArrayEncoder( trick_name, hla_encoding, ref2 );
-            } else {
-               return new UInt16VariableArrayEncoder( trick_name, hla_encoding, ref2 );
-            }
-         } else {
-            return new UInt16Encoder( trick_name, hla_encoding, ref2 );
-         }
-         break;
-      }
+      case ENCODING_BIG_ENDIAN:
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -495,7 +473,7 @@ EncoderBase *EncoderFactory::create_uint16(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint16():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned int16', the specified hla_endoding ("
+                << "' the variable is of type 'unsigned short', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -513,18 +491,7 @@ EncoderBase *EncoderFactory::create_int32(
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_BIG_ENDIAN: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new Int32FixedArrayEncoder( trick_name, hla_encoding, ref2 );
-            } else {
-               return new Int32VariableArrayEncoder( trick_name, hla_encoding, ref2 );
-            }
-         } else {
-            return new Int32Encoder( trick_name, hla_encoding, ref2 );
-         }
-         break;
-      }
+      case ENCODING_BIG_ENDIAN:
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -541,7 +508,7 @@ EncoderBase *EncoderFactory::create_int32(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int32():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'int32', the specified hla_endoding ("
+                << "' the variable is of type 'int', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -559,18 +526,7 @@ EncoderBase *EncoderFactory::create_uint32(
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_BIG_ENDIAN: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new UInt32FixedArrayEncoder( trick_name, hla_encoding, ref2 );
-            } else {
-               return new UInt32VariableArrayEncoder( trick_name, hla_encoding, ref2 );
-            }
-         } else {
-            return new UInt32Encoder( trick_name, hla_encoding, ref2 );
-         }
-         break;
-      }
+      case ENCODING_BIG_ENDIAN:
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -587,7 +543,7 @@ EncoderBase *EncoderFactory::create_uint32(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint32():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned int32', the specified hla_endoding ("
+                << "' the variable is of type 'unsigned int', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -605,18 +561,7 @@ EncoderBase *EncoderFactory::create_int64(
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_BIG_ENDIAN: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new Int64FixedArrayEncoder( trick_name, hla_encoding, ref2 );
-            } else {
-               return new Int64VariableArrayEncoder( trick_name, hla_encoding, ref2 );
-            }
-         } else {
-            return new Int64Encoder( trick_name, hla_encoding, ref2 );
-         }
-         break;
-      }
+      case ENCODING_BIG_ENDIAN:
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -631,9 +576,9 @@ EncoderBase *EncoderFactory::create_int64(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_int16():" << __LINE__
+         errmsg << "EncoderFactory::create_int64():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'int64', the specified hla_endoding ("
+                << "' the variable is of type 'long long', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -651,18 +596,7 @@ EncoderBase *EncoderFactory::create_uint64(
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_BIG_ENDIAN: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new UInt64FixedArrayEncoder( trick_name, hla_encoding, ref2 );
-            } else {
-               return new UInt64VariableArrayEncoder( trick_name, hla_encoding, ref2 );
-            }
-         } else {
-            return new UInt64Encoder( trick_name, hla_encoding, ref2 );
-         }
-         break;
-      }
+      case ENCODING_BIG_ENDIAN:
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -677,9 +611,9 @@ EncoderBase *EncoderFactory::create_uint64(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_uint16():" << __LINE__
+         errmsg << "EncoderFactory::create_uint64():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned int64', the specified"
+                << "' the variable is of type 'unsigned long long', the specified"
                 << " hla_endoding (" << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
