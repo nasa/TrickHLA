@@ -3996,12 +3996,12 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
    // Determine if we have any attributes to pull ownership of.
    if ( attr_hdl_set.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d No locally owned attributes to push ownership for object '%s'.\n",
+         message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d No locally owned attributes to pull ownership for object '%s'.\n",
                           __LINE__, get_name() );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d Pushing ownership for Attributes of object '%s'.\n",
+         message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d Pulling ownership for Attributes of object '%s'.\n",
                           __LINE__, get_name() );
       }
 
