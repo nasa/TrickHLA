@@ -130,8 +130,8 @@ void Int64Encoder::initialize()
    if ( is_array ) {
       ostringstream errmsg;
       errmsg << "Int64Encoder::initialize():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << trick_name
-             << "' the variable must be a primitive and not an array!\n";
+             << " ERROR: Trick ref-attributes for the '" << trick_name
+             << "' variable must be a primitive and not an array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
