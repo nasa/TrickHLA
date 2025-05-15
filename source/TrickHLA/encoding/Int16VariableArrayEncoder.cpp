@@ -122,9 +122,9 @@ void Int16VariableArrayEncoder::initialize()
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";
-      if ( sizeof( short ) == 2 ) {
+      if ( sizeof( short ) == sizeof( Integer16 ) ) {
          errmsg << Utilities::get_trick_type_string( TRICK_SHORT );
-      } else if ( sizeof( int ) == 2 ) {
+      } else if ( sizeof( int ) == sizeof( Integer16 ) ) {
          errmsg << Utilities::get_trick_type_string( TRICK_INTEGER );
       }
       errmsg << "'.\n";

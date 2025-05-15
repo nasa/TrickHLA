@@ -110,9 +110,9 @@ void Int32Encoder::initialize()
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";
-      if ( sizeof( int ) == 4 ) {
+      if ( sizeof( int ) == sizeof( Integer32 ) ) {
          errmsg << Utilities::get_trick_type_string( TRICK_INTEGER );
-      } else if ( sizeof( long ) == 4 ) {
+      } else if ( sizeof( long ) == sizeof( Integer32 ) ) {
          errmsg << Utilities::get_trick_type_string( TRICK_LONG );
       }
       errmsg << "'.\n";

@@ -98,6 +98,15 @@ UInt16VariableArrayEncoder::~UInt16VariableArrayEncoder()
 
 void UInt16VariableArrayEncoder::initialize()
 {
+#if defined( IEEE_1516_2010 )
+   ostringstream errmsg;
+   errmsg << "UInt16VariableArrayEncoder::initialize():" << __LINE__
+          << " WARNING: IEEE 1516-2010 standard does not support unsigned"
+          << " integer encoders! For Trick simulation variable '"
+          << trick_name << "' with HLA encoding (" << rti_encoding << ").\n";
+   message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
+
    if ( ref2 == NULL ) {
       EncoderBase::initialize();
    }
@@ -122,9 +131,9 @@ void UInt16VariableArrayEncoder::initialize()
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '";
-      if ( sizeof( short ) == 2 ) {
+      if ( sizeof( short ) == sizeof( Integer16 ) ) {
          errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_SHORT );
-      } else if ( sizeof( int ) == 2 ) {
+      } else if ( sizeof( int ) == sizeof( Integer16 ) ) {
          errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER );
       }
       errmsg << "'.\n";
