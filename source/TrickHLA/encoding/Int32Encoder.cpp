@@ -109,13 +109,8 @@ void Int32Encoder::initialize()
              << " ERROR: Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
-             << ") is not the expected type '";
-      if ( sizeof( int ) == sizeof( Integer32 ) ) {
-         errmsg << Utilities::get_trick_type_string( TRICK_INTEGER );
-      } else if ( sizeof( long ) == sizeof( Integer32 ) ) {
-         errmsg << Utilities::get_trick_type_string( TRICK_LONG );
-      }
-      errmsg << "'.\n";
+             << ") is not the expected type '"
+             << Utilities::get_trick_type_string( TRICK_INTEGER ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

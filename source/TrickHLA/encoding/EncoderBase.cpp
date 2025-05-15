@@ -152,7 +152,7 @@ VariableLengthData &EncoderBase::encode() const
              << trick_name << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   return &data;
+   return data;
 }
 
 void EncoderBase::decode(

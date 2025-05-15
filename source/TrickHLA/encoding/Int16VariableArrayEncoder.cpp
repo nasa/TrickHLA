@@ -113,21 +113,15 @@ void Int16VariableArrayEncoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( short ) == sizeof( Integer16 ) ) )
-                           || ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer16 ) ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_SHORT ) && ( sizeof( short ) == sizeof( Integer16 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int16VariableArrayEncoder::initialize():" << __LINE__
              << " ERROR: Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
-             << ") is not the expected type '";
-      if ( sizeof( short ) == sizeof( Integer16 ) ) {
-         errmsg << Utilities::get_trick_type_string( TRICK_SHORT );
-      } else if ( sizeof( int ) == sizeof( Integer16 ) ) {
-         errmsg << Utilities::get_trick_type_string( TRICK_INTEGER );
-      }
-      errmsg << "'.\n";
+             << ") is not the expected type '"
+             << Utilities::get_trick_type_string( TRICK_SHORT ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

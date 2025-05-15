@@ -98,12 +98,12 @@ UInt16Encoder::~UInt16Encoder()
 void UInt16Encoder::initialize()
 {
 #if defined( IEEE_1516_2010 )
-   ostringstream errmsg;
-   errmsg << "UInt16Encoder::initialize():" << __LINE__
-          << " WARNING: IEEE 1516-2010 standard does not support unsigned"
-          << " integer encoders! For Trick simulation variable '"
-          << trick_name << "' with HLA encoding (" << rti_encoding << ").\n";
-   message_publish( MSG_WARNING, errmsg.str().c_str() );
+   ostringstream msg;
+   msg << "UInt16Encoder::initialize():" << __LINE__
+       << " WARNING: IEEE 1516-2010 standard does not support unsigned"
+       << " integer encoders! For Trick simulation variable '"
+       << trick_name << "' with HLA encoding (" << rti_encoding << ").\n";
+   message_publish( MSG_WARNING, msg.str().c_str() );
 #endif
 
    if ( ref2 == NULL ) {
@@ -121,21 +121,16 @@ void UInt16Encoder::initialize()
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_UNSIGNED_SHORT ) && ( sizeof( short ) == sizeof( Integer16 ) ) )
-                           || ( ( ref2->attr->type == TRICK_UNSIGNED_INTEGER ) && ( sizeof( int ) == sizeof( Integer16 ) ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_UNSIGNED_SHORT ) && ( sizeof( short ) == sizeof( Integer16 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "UInt16Encoder::initialize():" << __LINE__
              << " ERROR: Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
-             << ") is not the expected type '";
-      if ( sizeof( short ) == sizeof( Integer16 ) ) {
-         errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_SHORT );
-      } else if ( sizeof( int ) == sizeof( Integer16 ) ) {
-         errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER );
-      }
-      errmsg << "'.\n";
+             << ") is not the expected type '"
+             << Utilities::get_trick_type_string( TRICK_UNSIGNED_SHORT )
+             << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

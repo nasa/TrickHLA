@@ -122,8 +122,7 @@ void Int64VariableArrayEncoder::initialize()
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '"
-             << Utilities::get_trick_type_string( TRICK_LONG_LONG )
-             << "'.\n";
+             << Utilities::get_trick_type_string( TRICK_LONG_LONG ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

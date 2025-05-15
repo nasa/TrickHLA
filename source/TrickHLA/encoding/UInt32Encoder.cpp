@@ -98,12 +98,12 @@ UInt32Encoder::~UInt32Encoder()
 void UInt32Encoder::initialize()
 {
 #if defined( IEEE_1516_2010 )
-   ostringstream errmsg;
-   errmsg << "UInt32Encoder::initialize():" << __LINE__
-          << " WARNING: IEEE 1516-2010 standard does not support unsigned"
-          << " integer encoders! For Trick simulation variable '"
-          << trick_name << "' with HLA encoding (" << rti_encoding << ").\n";
-   message_publish( MSG_WARNING, errmsg.str().c_str() );
+   ostringstream msg;
+   msg << "UInt32Encoder::initialize():" << __LINE__
+       << " WARNING: IEEE 1516-2010 standard does not support unsigned"
+       << " integer encoders! For Trick simulation variable '"
+       << trick_name << "' with HLA encoding (" << rti_encoding << ").\n";
+   message_publish( MSG_WARNING, msg.str().c_str() );
 #endif
 
    if ( ref2 == NULL ) {
@@ -129,13 +129,9 @@ void UInt32Encoder::initialize()
              << " ERROR: Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
-             << ") is not the expected type '";
-      if ( sizeof( int ) == sizeof( Integer32 ) ) {
-         errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER );
-      } else if ( sizeof( long ) == sizeof( Integer32 ) ) {
-         errmsg << Utilities::get_trick_type_string( TRICK_UNSIGNED_LONG );
-      }
-      errmsg << "'.\n";
+             << ") is not the expected type '"
+             << Utilities::get_trick_type_string( TRICK_UNSIGNED_INTEGER )
+             << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
