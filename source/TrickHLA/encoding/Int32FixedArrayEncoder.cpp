@@ -82,7 +82,8 @@ Int32FixedArrayEncoder::Int32FixedArrayEncoder(
    REF2              *r2 )
    : EncoderBase( trick_variable_name,
                   hla_encoding,
-                  r2 )
+                  r2 ),
+     encoder_elements()
 {
    Int32FixedArrayEncoder::initialize();
 }
@@ -93,7 +94,18 @@ Int32FixedArrayEncoder::Int32FixedArrayEncoder(
  */
 Int32FixedArrayEncoder::~Int32FixedArrayEncoder()
 {
-   return;
+   while ( !encoder_elements.empty() ) {
+      if ( *encoder_elements.begin() != NULL ) {
+         delete ( *encoder_elements.begin() );
+         encoder_elements.erase( encoder_elements.begin() );
+      }
+   }
+   encoder_elements.clear();
+
+   if ( encoder != NULL ) {
+      delete encoder;
+      encoder = NULL;
+   }
 }
 
 void Int32FixedArrayEncoder::initialize()
@@ -102,19 +114,10 @@ void Int32FixedArrayEncoder::initialize()
       EncoderBase::initialize();
    }
 
-   if ( ( rti_encoding != ENCODING_LITTLE_ENDIAN )
-        && ( rti_encoding != ENCODING_BIG_ENDIAN ) ) {
-      ostringstream errmsg;
-      errmsg << "Int32FixedArrayEncoder::initialize():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << trick_name
-             << "' the HLA encoding specified (" << rti_encoding
-             << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
-   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer32 ) ) )
-                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == sizeof( Integer32 ) ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER )
+                             && ( sizeof( int ) == sizeof( Integer32 ) ) )
+                           || ( ( ref2->attr->type == TRICK_LONG )
+                                && ( sizeof( long ) == sizeof( Integer32 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int32FixedArrayEncoder::initialize():" << __LINE__
@@ -127,13 +130,53 @@ void Int32FixedArrayEncoder::initialize()
       return;
    }
 
-   // This encoder is only for a primitive type.
-   if ( is_array ) {
+   // This encoder is only for a static array.
+   if ( !is_static_array ) {
       ostringstream errmsg;
       errmsg << "Int32FixedArrayEncoder::initialize():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << trick_name
-             << "' the variable must be a primitive and not an array!\n";
+             << "' the variable must be a static array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
+   }
+
+   switch ( rti_encoding ) {
+      case ENCODING_LITTLE_ENDIAN: {
+         Integer32     *array_data    = static_cast< Integer32 * >( ref2->address );
+         HLAfixedArray *array_encoder = new HLAfixedArray( HLAinteger32LE(), ref2_element_count );
+
+         // Connect the users array data to the encoder array elements.
+         for ( int i = 0; i < ref2_element_count; ++i ) {
+            HLAinteger32LE *element = new HLAinteger32LE( &array_data[i] );
+            encoder_elements.push_back( element );
+            array_encoder->setElementPointer( i, element );
+         }
+
+         this->encoder = array_encoder;
+         break;
+      }
+      case ENCODING_BIG_ENDIAN: {
+         Integer32     *array_data    = static_cast< Integer32 * >( ref2->address );
+         HLAfixedArray *array_encoder = new HLAfixedArray( HLAinteger32BE(), ref2_element_count );
+
+         // Connect the users array data to the encoder array elements.
+         for ( int i = 0; i < ref2_element_count; ++i ) {
+            HLAinteger32BE *element = new HLAinteger32BE( &array_data[i] );
+            encoder_elements.push_back( element );
+            array_encoder->setElementPointer( i, element );
+         }
+
+         this->encoder = array_encoder;
+         break;
+      }
+      default: {
+         ostringstream errmsg;
+         errmsg << "Int32Encoder::initialize():" << __LINE__
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' and HLA encoding specified (" << rti_encoding
+                << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
+      }
    }
 }

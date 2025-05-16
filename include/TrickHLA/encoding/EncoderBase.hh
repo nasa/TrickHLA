@@ -89,7 +89,7 @@ class EncoderBase
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
    virtual ~EncoderBase();
 
-   virtual RTI1516_NAMESPACE::VariableLengthData &encode() const;
+   virtual RTI1516_NAMESPACE::VariableLengthData &encode();
 
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
@@ -97,7 +97,17 @@ class EncoderBase
     *  @param capacity Desired capacity of the buffer in bytes. */
    void ensure_buffer_capacity( int const capacity );
 
-   std::size_t const calculate_size_in_bytes();
+   void calculate_trick_variable_sizes();
+
+   std::size_t const get_trick_variable_byte_count()
+   {
+      return ref2_byte_count;
+   }
+
+   std::size_t const get_trick_variable_element_count()
+   {
+      return ref2_element_count;
+   }
 
   protected:
    /*! @brief Initializes the TrickHLA EncoderBase. */
@@ -110,7 +120,8 @@ class EncoderBase
 
    REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.
 
-   std::size_t ref2_byte_count; ///< @trick_units{--} Number of bytes of trick simulation variable.
+   std::size_t ref2_byte_count;    ///< @trick_units{--} Number of bytes of trick simulation variable.
+   std::size_t ref2_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick simulation variable.
 
    bool is_array;          ///< @trick_units{--} Is the user data an array.
    bool is_1d_array;       ///< @trick_units{--} Is the user data a 1-D array.

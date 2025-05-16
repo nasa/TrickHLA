@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 #include <map>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 
 // Trick include files.
 #include "trick/reference.h"
@@ -93,6 +94,8 @@ class Int32FixedArrayEncoder : public EncoderBase
   protected:
    /*! @brief Initializes the TrickHLA Int32FixedArrayEncoder. */
    virtual void initialize();
+
+   std::vector< RTI1516_NAMESPACE::DataElement * > encoder_elements;
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -82,6 +82,7 @@ EncoderBase::EncoderBase(
      rti_encoding( hla_encoding ),
      ref2( r2 ),
      ref2_byte_count( 0 ),
+     ref2_element_count( 0 ),
      is_array( false ),
      is_1d_array( false ),
      is_static_array( false ),
@@ -137,14 +138,13 @@ void EncoderBase::initialize()
    is_dynamic_array  = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 );
    is_static_in_size = !is_array || is_static_array;
 
-   ref2_byte_count = calculate_size_in_bytes();
-   ensure_buffer_capacity( ref2_byte_count );
+   calculate_trick_variable_sizes();
 }
 
-VariableLengthData &EncoderBase::encode() const
+VariableLengthData &EncoderBase::encode()
 {
    try {
-      return encoder->encode( &data );
+      encoder->encode( data );
    } catch ( EncoderException &e ) {
       ostringstream errmsg;
       errmsg << "EncoderBase::encode():" << __LINE__
@@ -210,13 +210,9 @@ void EncoderBase::ensure_buffer_capacity(
    }
 }
 
-size_t const EncoderBase::calculate_size_in_bytes()
+void EncoderBase::calculate_trick_variable_sizes()
 {
-   size_t byte_count;
-
-   if ( is_static_in_size && ( ref2_byte_count > 0 ) ) {
-      byte_count = ref2_byte_count;
-   } else {
+   if ( !is_static_in_size || ( ref2_byte_count == 0 ) ) {
 
       if ( is_dynamic_array ) {
          // We have a multi-dimension array that is a pointer and the
@@ -229,7 +225,7 @@ size_t const EncoderBase::calculate_size_in_bytes()
          if ( ( ref2->attr->type == TRICK_CHARACTER )
               || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) {
 
-            byte_count = 0;
+            size_t byte_count = 0;
 
             switch ( rti_encoding ) {
                case ENCODING_OPAQUE_DATA:
@@ -270,35 +266,16 @@ size_t const EncoderBase::calculate_size_in_bytes()
                   break;
                }
             }
+
+            ref2_element_count = byte_count / ref2->attr->size;
+            ref2_byte_count    = byte_count;
          } else {
             // Handle other dynamic arrays for non-character types.
-#if 1
+            //
             // get_size returns the number of elements in the dynamic array.
             int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
-            byte_count          = ( num_items > 0 ) ? ( ref2->attr->size * num_items ) : 0;
-#else
-            size_t num_items = 1;
-            for ( int i = 0; i < ref2->attr->num_index; ++i ) {
-               if ( ref2->attr->index[i].size > 0 ) {
-                  num_items *= ref2->attr->index[i].size;
-               } else {
-                  void *ptr;
-                  if ( num_items == 1 ) {
-                     ptr = *static_cast< void ** >( ref2->address );
-                  } else {
-                     ptr = *( static_cast< void ** >( ref2->address )
-                              + ( num_items * ref2->attr->size ) );
-                  }
-                  if ( ptr != NULL ) {
-                     int length = get_size( ptr );
-                     if ( length > 0 ) {
-                        num_items *= length;
-                     }
-                  }
-               }
-            }
-            byte_count = ref2->attr->size * num_items;
-#endif
+            ref2_element_count  = ( num_items > 0 ) ? num_items : 0;
+            ref2_byte_count     = ref2->attr->size * ref2_element_count;
          }
       } else {
          // The user variable is either a primitive type or a static
@@ -309,13 +286,14 @@ size_t const EncoderBase::calculate_size_in_bytes()
                num_items *= ref2->attr->index[i].size;
             }
          }
-         byte_count = ref2->attr->size * num_items;
+         ref2_element_count = num_items;
+         ref2_byte_count    = ref2->attr->size * ref2_element_count;
       }
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
-      msg << "EncoderBase::calculate_size_in_bytes():" << __LINE__ << '\n'
+      msg << "EncoderBase::calculate_trick_variable_sizes():" << __LINE__ << '\n'
           << "========================================================\n"
           << "  trick_name:'" << trick_name << "'\n"
           << "  rti_encoding:" << rti_encoding << '\n'
@@ -323,8 +301,8 @@ size_t const EncoderBase::calculate_size_in_bytes()
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'\n"
           << "  ref2->attr->type:" << ref2->attr->type << '\n'
           << "  ref2->attr->units:" << ref2->attr->units << '\n'
-          << "  ref2_byte_count:" << ref2_byte_count << '\n'
-          << "  byte_count:" << byte_count << '\n';
+          << "  ref2_element_count:" << ref2_element_count << '\n'
+          << "  ref2_byte_count:" << ref2_byte_count << '\n';
       if ( is_array ) {
          msg << "  get_size(*(void **)ref2->address):" << get_size( *static_cast< void ** >( ref2->address ) ) << '\n';
       } else {
@@ -346,6 +324,4 @@ size_t const EncoderBase::calculate_size_in_bytes()
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
-
-   return byte_count;
 }
