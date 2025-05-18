@@ -113,7 +113,8 @@ class EncoderBase
    /*! @brief Initializes the TrickHLA EncoderBase. */
    virtual void initialize();
 
-  protected:
+   void update_ref2();
+
    std::string trick_name; ///< @trick_units{--} Trick variable name.
 
    EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
@@ -122,6 +123,7 @@ class EncoderBase
 
    std::size_t ref2_byte_count;    ///< @trick_units{--} Number of bytes of trick simulation variable.
    std::size_t ref2_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick simulation variable.
+   bool        ref2_initialized;
 
    bool is_array;          ///< @trick_units{--} Is the user data an array.
    bool is_1d_array;       ///< @trick_units{--} Is the user data a 1-D array.
@@ -134,6 +136,8 @@ class EncoderBase
    int            buffer_size;     ///< @trick_units{count} The size of the encoded attribute in the buffer.
 
    RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_units{--} Holds HLA encoded data.
+
+   std::vector< RTI1516_NAMESPACE::DataElement * > data_elements;
 
    RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_units{--} HLA data element encoder.
 

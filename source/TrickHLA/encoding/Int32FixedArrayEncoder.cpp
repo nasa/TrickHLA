@@ -82,8 +82,7 @@ Int32FixedArrayEncoder::Int32FixedArrayEncoder(
    REF2              *r2 )
    : EncoderBase( trick_variable_name,
                   hla_encoding,
-                  r2 ),
-     encoder_elements()
+                  r2 )
 {
    Int32FixedArrayEncoder::initialize();
 }
@@ -94,14 +93,6 @@ Int32FixedArrayEncoder::Int32FixedArrayEncoder(
  */
 Int32FixedArrayEncoder::~Int32FixedArrayEncoder()
 {
-   while ( !encoder_elements.empty() ) {
-      if ( *encoder_elements.begin() != NULL ) {
-         delete ( *encoder_elements.begin() );
-         encoder_elements.erase( encoder_elements.begin() );
-      }
-   }
-   encoder_elements.clear();
-
    if ( encoder != NULL ) {
       delete encoder;
       encoder = NULL;
@@ -145,10 +136,12 @@ void Int32FixedArrayEncoder::initialize()
          Integer32     *array_data    = static_cast< Integer32 * >( ref2->address );
          HLAfixedArray *array_encoder = new HLAfixedArray( HLAinteger32LE(), ref2_element_count );
 
+         data_elements.reserve( ref2_element_count );
+
          // Connect the users array data to the encoder array elements.
-         for ( int i = 0; i < ref2_element_count; ++i ) {
+         for ( size_t i = 0; i < ref2_element_count; ++i ) {
             HLAinteger32LE *element = new HLAinteger32LE( &array_data[i] );
-            encoder_elements.push_back( element );
+            data_elements.push_back( element );
             array_encoder->setElementPointer( i, element );
          }
 
@@ -159,10 +152,12 @@ void Int32FixedArrayEncoder::initialize()
          Integer32     *array_data    = static_cast< Integer32 * >( ref2->address );
          HLAfixedArray *array_encoder = new HLAfixedArray( HLAinteger32BE(), ref2_element_count );
 
+         data_elements.reserve( ref2_element_count );
+
          // Connect the users array data to the encoder array elements.
-         for ( int i = 0; i < ref2_element_count; ++i ) {
+         for ( size_t i = 0; i < ref2_element_count; ++i ) {
             HLAinteger32BE *element = new HLAinteger32BE( &array_data[i] );
-            encoder_elements.push_back( element );
+            data_elements.push_back( element );
             array_encoder->setElementPointer( i, element );
          }
 

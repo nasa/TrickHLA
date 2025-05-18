@@ -199,6 +199,26 @@ void SyncPointList::clear()
       list       = NULL;
    }
 #else
+
+#   if 1
+#      if 0
+   // Clear/remove everything from the list.
+   for ( size_t i = 0; i < list.size(); ++i ) {
+      delete list[i];
+      list[i] = NULL;
+   }
+   list.clear();
+#      else
+
+   // Clear/remove everything from the list.
+   while ( !list.empty() ) {
+      delete list.back();
+      list.back() = NULL;
+      list.pop_back();
+   }
+#      endif
+#   else
+
    // Clear/remove everything from the list.
    while ( !list.empty() ) {
       if ( *list.begin() != NULL ) {
@@ -207,6 +227,8 @@ void SyncPointList::clear()
       }
    }
    list.clear();
+#   endif
+
 #endif
 }
 

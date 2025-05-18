@@ -90,6 +90,10 @@ class Int32VariableArrayEncoder : public EncoderBase
    /*! @brief Destructor for the TrickHLA Int32VariableArrayEncoder class. */
    virtual ~Int32VariableArrayEncoder();
 
+   virtual RTI1516_NAMESPACE::VariableLengthData &encode();
+
+   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+
   protected:
    /*! @brief Initializes the TrickHLA Int32VariableArrayEncoder. */
    virtual void initialize();

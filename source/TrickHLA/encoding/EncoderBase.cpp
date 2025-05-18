@@ -83,6 +83,7 @@ EncoderBase::EncoderBase(
      ref2( r2 ),
      ref2_byte_count( 0 ),
      ref2_element_count( 0 ),
+     ref2_initialized( false ),
      is_array( false ),
      is_1d_array( false ),
      is_static_array( false ),
@@ -91,6 +92,8 @@ EncoderBase::EncoderBase(
      buffer( NULL ),
      buffer_capacity( 0 ),
      buffer_size( 0 ),
+     data(),
+     data_elements(),
      encoder( NULL )
 {
    EncoderBase::initialize();
@@ -102,6 +105,20 @@ EncoderBase::EncoderBase(
  */
 EncoderBase::~EncoderBase()
 {
+#if 0
+   for ( size_t i = 0; i < data_elements.size(); ++i ) {
+      delete data_elements[i];
+      data_elements[i] = NULL;
+   }
+   data_elements.clear();
+#else
+   while ( !data_elements.empty() ) {
+      delete data_elements.back();
+      data_elements.back() = NULL;
+      data_elements.pop_back();
+   }
+#endif
+
    if ( ref2 != NULL ) {
       free( ref2 );
       ref2 = NULL;
@@ -110,13 +127,21 @@ EncoderBase::~EncoderBase()
 
 void EncoderBase::initialize()
 {
-   if ( ref2 == NULL ) {
+   update_ref2();
+}
+
+void EncoderBase::update_ref2()
+{
+   if ( is_dynamic_array || ( ref2 == NULL ) ) {
+      if ( ref2 != NULL ) {
+         delete ref2;
+      }
       ref2 = ref_attributes( trick_name.c_str() );
 
       // Determine if we had an error getting the ref-attributes.
       if ( ref2 == NULL ) {
          ostringstream errmsg;
-         errmsg << "EncoderBase::initialize():" << __LINE__
+         errmsg << "EncoderBase::update_ref2():" << __LINE__
                 << " ERROR: Error retrieving Trick ref-attributes for '"
                 << trick_name << "'. Please check your input or modified-data"
                 << " files to make sure the object attribute Trick name is"
@@ -129,14 +154,18 @@ void EncoderBase::initialize()
       }
    }
 
-   // For now, we do not support more than a 1-D array that is dynamic
-   // (i.e. a pointer such as char *). If the size of the last indexed
-   // attribute is zero then it is a pointer and not static.
-   is_array          = ( ref2->attr->num_index > 0 );
-   is_1d_array       = ( ref2->attr->num_index == 1 );
-   is_static_array   = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
-   is_dynamic_array  = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 );
-   is_static_in_size = !is_array || is_static_array;
+   if ( !ref2_initialized ) {
+      // For now, we do not support more than a 1-D array that is dynamic
+      // (i.e. a pointer such as char *). If the size of the last indexed
+      // attribute is zero then it is a pointer and not static.
+      is_array          = ( ref2->attr->num_index > 0 );
+      is_1d_array       = ( ref2->attr->num_index == 1 );
+      is_static_array   = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+      is_dynamic_array  = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 );
+      is_static_in_size = !is_array || is_static_array;
+
+      ref2_initialized = true;
+   }
 
    calculate_trick_variable_sizes();
 }

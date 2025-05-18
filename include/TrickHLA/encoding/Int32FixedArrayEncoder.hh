@@ -95,8 +95,6 @@ class Int32FixedArrayEncoder : public EncoderBase
    /*! @brief Initializes the TrickHLA Int32FixedArrayEncoder. */
    virtual void initialize();
 
-   std::vector< RTI1516_NAMESPACE::DataElement * > encoder_elements;
-
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Int32FixedArrayEncoder class.
