@@ -81,7 +81,6 @@ EncoderBase::EncoderBase(
    : trick_name( trick_variable_name ),
      rti_encoding( hla_encoding ),
      ref2( r2 ),
-     ref2_byte_count( 0 ),
      ref2_element_count( 0 ),
      ref2_initialized( false ),
      is_array( false ),
@@ -89,9 +88,6 @@ EncoderBase::EncoderBase(
      is_static_array( false ),
      is_dynamic_array( false ),
      is_static_in_size( false ),
-     buffer( NULL ),
-     buffer_capacity( 0 ),
-     buffer_size( 0 ),
      data(),
      data_elements(),
      encoder( NULL )
@@ -100,7 +96,7 @@ EncoderBase::EncoderBase(
 }
 
 /*!
- * @details The buffer and ref2 values are freed and nulled.
+ * @details The values are freed and nulled.
  * @job_class{shutdown}
  */
 EncoderBase::~EncoderBase()
@@ -167,7 +163,7 @@ void EncoderBase::update_ref2()
       ref2_initialized = true;
    }
 
-   calculate_trick_variable_sizes();
+   calculate_ref2_element_count();
 }
 
 VariableLengthData &EncoderBase::encode()
@@ -198,50 +194,9 @@ void EncoderBase::decode(
    }
 }
 
-/*!
- * @brief Ensure the attribute buffer has at least the specified capacity.
- *  @param capacity Desired capacity of the buffer in bytes.
- */
-void EncoderBase::ensure_buffer_capacity(
-   int const capacity )
+void EncoderBase::calculate_ref2_element_count()
 {
-   if ( buffer == NULL ) {
-      // Handle the case where the buffer has not been created yet and we
-      // might have an invalid capacity specified.
-
-      // Make sure the capacity is at least 1.
-      buffer_capacity = ( capacity > 0 ) ? capacity : 1;
-
-      buffer = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", buffer_capacity ) );
-
-      if ( buffer == NULL ) {
-         ostringstream errmsg;
-         errmsg << "EncoderBase::ensure_buffer_capacity():" << __LINE__
-                << " ERROR: Could not allocate memory for buffer for requested"
-                << " capacity " << capacity << " for Trick variable name '"
-                << trick_name << "'!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-   } else if ( capacity > buffer_capacity ) {
-      // Only resize to a larger capacity.
-      buffer_capacity = capacity;
-
-      buffer = static_cast< unsigned char * >( TMM_resize_array_1d_a( buffer, buffer_capacity ) );
-
-      if ( buffer == NULL ) {
-         ostringstream errmsg;
-         errmsg << "EncoderBase::ensure_buffer_capacity():" << __LINE__
-                << " ERROR: Could not resize memory for buffer for requested"
-                << " capacity " << capacity << " for Trick variable name '"
-                << trick_name << "'!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-   }
-}
-
-void EncoderBase::calculate_trick_variable_sizes()
-{
-   if ( !is_static_in_size || ( ref2_byte_count == 0 ) ) {
+   if ( !is_static_in_size || ( ref2_element_count == 0 ) ) {
 
       if ( is_dynamic_array ) {
          // We have a multi-dimension array that is a pointer and the
@@ -297,14 +252,12 @@ void EncoderBase::calculate_trick_variable_sizes()
             }
 
             ref2_element_count = byte_count / ref2->attr->size;
-            ref2_byte_count    = byte_count;
          } else {
             // Handle other dynamic arrays for non-character types.
             //
             // get_size returns the number of elements in the dynamic array.
             int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
             ref2_element_count  = ( num_items > 0 ) ? num_items : 0;
-            ref2_byte_count     = ref2->attr->size * ref2_element_count;
          }
       } else {
          // The user variable is either a primitive type or a static
@@ -316,7 +269,6 @@ void EncoderBase::calculate_trick_variable_sizes()
             }
          }
          ref2_element_count = num_items;
-         ref2_byte_count    = ref2->attr->size * ref2_element_count;
       }
    }
 
@@ -330,8 +282,7 @@ void EncoderBase::calculate_trick_variable_sizes()
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'\n"
           << "  ref2->attr->type:" << ref2->attr->type << '\n'
           << "  ref2->attr->units:" << ref2->attr->units << '\n'
-          << "  ref2_element_count:" << ref2_element_count << '\n'
-          << "  ref2_byte_count:" << ref2_byte_count << '\n';
+          << "  ref2_element_count:" << ref2_element_count << '\n';
       if ( is_array ) {
          msg << "  get_size(*(void **)ref2->address):" << get_size( *static_cast< void ** >( ref2->address ) ) << '\n';
       } else {
@@ -342,9 +293,7 @@ void EncoderBase::calculate_trick_variable_sizes()
       for ( int i = 0; i < ref2->attr->num_index; ++i ) {
          msg << "  ref2->attr->index[" << i << "].size:" << ref2->attr->index[i].size << '\n';
       }
-      msg << "  buffer_capacity:" << buffer_capacity << '\n'
-          << "  buffer_size:" << buffer_size << '\n'
-          << "  is_array:" << ( is_array ? "Yes" : "No" ) << '\n'
+      msg << "  is_array:" << ( is_array ? "Yes" : "No" ) << '\n'
           << "  is_1d_array:" << ( is_1d_array ? "Yes" : "No" ) << '\n'
           << "  is_static_array:" << ( is_static_array ? "Yes" : "No" ) << '\n'
           << "  is_dynamic_array:" << ( is_dynamic_array ? "Yes" : "No" ) << '\n';

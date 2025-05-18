@@ -93,21 +93,7 @@ class EncoderBase
 
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
-   /*! @brief Ensure the attribute buffer has at least the specified capacity.
-    *  @param capacity Desired capacity of the buffer in bytes. */
-   void ensure_buffer_capacity( int const capacity );
-
-   void calculate_trick_variable_sizes();
-
-   std::size_t const get_trick_variable_byte_count()
-   {
-      return ref2_byte_count;
-   }
-
-   std::size_t const get_trick_variable_element_count()
-   {
-      return ref2_element_count;
-   }
+   void calculate_ref2_element_count();
 
   protected:
    /*! @brief Initializes the TrickHLA EncoderBase. */
@@ -121,7 +107,6 @@ class EncoderBase
 
    REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.
 
-   std::size_t ref2_byte_count;    ///< @trick_units{--} Number of bytes of trick simulation variable.
    std::size_t ref2_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick simulation variable.
    bool        ref2_initialized;
 
@@ -130,10 +115,6 @@ class EncoderBase
    bool is_static_array;   ///< @trick_units{--} Is the user data a static array.
    bool is_dynamic_array;  ///< @trick_units{--} Is the user data a dynamic array.
    bool is_static_in_size; ///< @trick_units{--} Static is size.
-
-   unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
-   int            buffer_capacity; ///< @trick_units{count} The capacity of the buffer.
-   int            buffer_size;     ///< @trick_units{count} The size of the encoded attribute in the buffer.
 
    RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_units{--} Holds HLA encoded data.
 

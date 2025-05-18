@@ -102,7 +102,7 @@ Int32VariableArrayEncoder::~Int32VariableArrayEncoder()
 void Int32VariableArrayEncoder::initialize()
 {
    if ( ref2 == NULL ) {
-      EncoderBase::initialize();
+      update_ref2();
    }
 
    if ( ( rti_encoding != ENCODING_LITTLE_ENDIAN )
@@ -142,12 +142,10 @@ void Int32VariableArrayEncoder::initialize()
 
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
-         data_elements.reserve( ref2_element_count );
          this->encoder = new HLAvariableArray( HLAinteger32LE() );
          break;
       }
       case ENCODING_BIG_ENDIAN: {
-         data_elements.reserve( ref2_element_count );
          this->encoder = new HLAvariableArray( HLAinteger32BE() );
          break;
       }
@@ -168,35 +166,29 @@ VariableLengthData &Int32VariableArrayEncoder::encode()
    // Since the Trick variable is dynamic (i.e. a pointer) its size can
    // change at any point so we need to refresh ref2.
    update_ref2();
+   Integer32 *array_data = *static_cast< Integer32 ** >( ref2->address );
 
-   Integer32   *array_data    = *static_cast< Integer32 ** >( ref2->address );
-   size_t const element_count = data_elements.size();
+   HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( this->encoder );
+   size_t const      element_count = array_encoder->size();
 
    if ( element_count > ref2_element_count ) {
       // Encoder has more elements than the Trick variable array size so
       // we need to create a new encoder because we can't resize it smaller.
-      HLAvariableArray *array_encoder;
-
-      // Resize to truncate excess elements.
-      data_elements.resize( ref2_element_count );
+      HLAvariableArray *new_array_encoder;
 
       switch ( rti_encoding ) {
          case ENCODING_LITTLE_ENDIAN: {
-            array_encoder = new HLAvariableArray( HLAinteger32LE() );
+            new_array_encoder = new HLAvariableArray( HLAinteger32LE() );
             for ( size_t i = 0; i < ref2_element_count; ++i ) {
-               HLAinteger32LE *element = static_cast< HLAinteger32LE * >( data_elements[i] );
-               element->set( array_data[i] );
-               array_encoder->addElementPointer( element );
+               new_array_encoder->addElement( HLAinteger32LE( array_data[i] ) );
             }
             break;
          }
          case ENCODING_BIG_ENDIAN:
          default: {
-            array_encoder = new HLAvariableArray( HLAinteger32BE() );
+            new_array_encoder = new HLAvariableArray( HLAinteger32BE() );
             for ( size_t i = 0; i < ref2_element_count; ++i ) {
-               HLAinteger32BE *element = static_cast< HLAinteger32BE * >( data_elements[i] );
-               element->set( array_data[i] );
-               array_encoder->addElementPointer( element );
+               new_array_encoder->addElement( HLAinteger32BE( array_data[i] ) );
             }
             break;
          }
@@ -205,38 +197,27 @@ VariableLengthData &Int32VariableArrayEncoder::encode()
       if ( encoder != NULL ) {
          delete encoder;
       }
-      this->encoder = array_encoder;
+      this->encoder = new_array_encoder;
 
    } else if ( element_count < ref2_element_count ) {
       // Add elements to the encoder.
-      HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( this->encoder );
-
-      // Ensure capacity for the data elements.
-      data_elements.reserve( ref2_element_count );
-
       switch ( rti_encoding ) {
          case ENCODING_LITTLE_ENDIAN: {
             for ( size_t i = 0; i < element_count; ++i ) {
-               HLAinteger32LE *element = static_cast< HLAinteger32LE * >( data_elements[i] );
-               element->set( array_data[i] );
+               array_encoder->set( i, HLAinteger32LE( array_data[i] ) );
             }
             for ( size_t i = element_count; i < ref2_element_count; ++i ) {
-               HLAinteger32LE *element = new HLAinteger32LE( array_data[i] );
-               data_elements.push_back( element );
-               array_encoder->addElementPointer( element );
+               array_encoder->addElement( HLAinteger32LE( array_data[i] ) );
             }
             break;
          }
          case ENCODING_BIG_ENDIAN:
          default: {
             for ( size_t i = 0; i < element_count; ++i ) {
-               HLAinteger32BE *element = static_cast< HLAinteger32BE * >( data_elements[i] );
-               element->set( array_data[i] );
+               array_encoder->set( i, HLAinteger32BE( array_data[i] ) );
             }
             for ( size_t i = element_count; i < ref2_element_count; ++i ) {
-               HLAinteger32BE *element = new HLAinteger32BE( array_data[i] );
-               data_elements.push_back( element );
-               array_encoder->addElementPointer( element );
+               array_encoder->addElement( HLAinteger32BE( array_data[i] ) );
             }
             break;
          }
@@ -248,16 +229,14 @@ VariableLengthData &Int32VariableArrayEncoder::encode()
       switch ( rti_encoding ) {
          case ENCODING_LITTLE_ENDIAN: {
             for ( size_t i = 0; i < ref2_element_count; ++i ) {
-               HLAinteger32LE *element = static_cast< HLAinteger32LE * >( data_elements[i] );
-               element->set( array_data[i] );
+               array_encoder->set( i, HLAinteger32LE( array_data[i] ) );
             }
             break;
          }
          case ENCODING_BIG_ENDIAN:
          default: {
             for ( size_t i = 0; i < ref2_element_count; ++i ) {
-               HLAinteger32BE *element = static_cast< HLAinteger32BE * >( data_elements[i] );
-               element->set( array_data[i] );
+               array_encoder->set( i, HLAinteger32BE( array_data[i] ) );
             }
             break;
          }
@@ -273,19 +252,45 @@ void Int32VariableArrayEncoder::decode(
    EncoderBase::decode( encoded_data );
 
    HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( this->encoder );
-   size_t const      encoder_size  = array_encoder->size();
 
    update_ref2();
 
-   if ( encoder_size != ref2_element_count ) {
+   if ( ref2_element_count != array_encoder->size() ) {
       // Reallocate the Trick variable array to match the number of
       // decoded elements.
-   } else {
-      // Equal
+      ref2_element_count  = array_encoder->size();
+      int const num_bytes = ref2_element_count * ref2->attr->size;
+
+      *( static_cast< char ** >( ref2->address ) ) =
+         static_cast< char * >( TMM_resize_array_1d_a(
+            *( static_cast< char ** >( ref2->address ) ), num_bytes ) );
+
+      if ( *static_cast< char ** >( ref2->address ) == NULL ) {
+         ostringstream errmsg;
+         errmsg << "Int32VariableArrayEncoder::decode():" << __LINE__
+                << " ERROR: Could not allocate memory for Trick variable with name '"
+                << trick_name << "' with number of bytes " << num_bytes << "!\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
+   Integer32 *array_data = *static_cast< Integer32 ** >( ref2->address );
 
-
-   Integer32   *array_data    = *static_cast< Integer32 ** >( ref2->address );
-   size_t const element_count = data_elements.size();
-
+   // Update the Trick variable data values.
+   switch ( rti_encoding ) {
+      case ENCODING_LITTLE_ENDIAN: {
+         for ( size_t i = 0; i < ref2_element_count; ++i ) {
+            HLAinteger32LE element = array_encoder->get( i );
+            array_data[i]          = element.get();
+         }
+         break;
+      }
+      case ENCODING_BIG_ENDIAN:
+      default: {
+         for ( size_t i = 0; i < ref2_element_count; ++i ) {
+            HLAinteger32BE element = array_encoder->get( i );
+            array_data[i]          = element.get();
+         }
+         break;
+      }
+   }
 }
