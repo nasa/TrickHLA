@@ -227,7 +227,7 @@ bool Int32VariableArrayEncoder::resize(
       data_elements.reserve( new_size );
    }
 
-   HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( this->encoder );
+   HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( encoder );
    Integer32        *array_data    = *static_cast< Integer32 ** >( ref2->address );
 
    switch ( rti_encoding ) {
@@ -235,8 +235,8 @@ bool Int32VariableArrayEncoder::resize(
          // Because we can't resize the encoder to a smaller size we have to
          // create a new one.
          if ( new_size < array_encoder->size() ) {
-            if ( this->encoder != NULL ) {
-               delete this->encoder;
+            if ( encoder != NULL ) {
+               delete encoder;
             }
             array_encoder = new HLAvariableArray( HLAinteger32LE() );
             this->encoder = array_encoder;
@@ -266,8 +266,8 @@ bool Int32VariableArrayEncoder::resize(
          // Because we can't resize the encoder to a smaller size we have to
          // create a new one.
          if ( new_size < array_encoder->size() ) {
-            if ( this->encoder != NULL ) {
-               delete this->encoder;
+            if ( encoder != NULL ) {
+               delete encoder;
             }
             array_encoder = new HLAvariableArray( HLAinteger32BE() );
             this->encoder = array_encoder;
@@ -299,7 +299,7 @@ bool Int32VariableArrayEncoder::resize(
 
 void Int32VariableArrayEncoder::refresh_data_elements()
 {
-   HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( this->encoder );
+   HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( encoder );
 
    if ( ( data_elements.size() != ref2_element_count )
         || ( data_elements.size() != array_encoder->size() ) ) {
@@ -317,7 +317,9 @@ void Int32VariableArrayEncoder::refresh_data_elements()
          for ( size_t i = 0; i < data_elements.size(); ++i ) {
             HLAinteger32LE *element = static_cast< HLAinteger32LE * >( data_elements[i] );
             element->setDataPointer( &array_data[i] );
-            array_encoder->setElementPointer( i, element );
+            if ( static_cast< void * >( element ) != static_cast< void * >( &array_encoder[i] ) ) {
+               array_encoder->setElementPointer( i, element );
+            }
          }
          break;
       }
@@ -326,7 +328,9 @@ void Int32VariableArrayEncoder::refresh_data_elements()
          for ( size_t i = 0; i < data_elements.size(); ++i ) {
             HLAinteger32BE *element = static_cast< HLAinteger32BE * >( data_elements[i] );
             element->setDataPointer( &array_data[i] );
-            array_encoder->setElementPointer( i, element );
+            if ( static_cast< void * >( element ) != static_cast< void * >( &array_encoder[i] ) ) {
+               array_encoder->setElementPointer( i, element );
+            }
          }
          break;
       }
@@ -361,7 +365,7 @@ void Int32VariableArrayEncoder::decode(
 
    EncoderBase::decode( encoded_data );
 
-   HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( this->encoder );
+   HLAvariableArray const *array_encoder = static_cast< HLAvariableArray * >( encoder );
 
    // If the size of the decoded data does not match the simulation array
    // variable size, then resize and try decoding again.
