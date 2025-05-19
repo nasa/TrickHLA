@@ -142,35 +142,19 @@ void Int32VariableArrayEncoder::initialize()
 
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
-         Integer32        *array_data    = static_cast< Integer32 * >( ref2->address );
-         HLAvariableArray *array_encoder = new HLAvariableArray( HLAinteger32LE() );
+         this->encoder = new HLAvariableArray( HLAinteger32LE() );
 
-         data_elements.reserve( ref2_element_count );
-
-         // Connect the users array data to the encoder array elements.
-         for ( size_t i = 0; i < ref2_element_count; ++i ) {
-            HLAinteger32LE *element = new HLAinteger32LE( &array_data[i] );
-            data_elements.push_back( element );
-            array_encoder->setElementPointer( i, element );
+         if ( !Int32VariableArrayEncoder::resize( ref2_element_count ) ) {
+            refresh_data_elements();
          }
-
-         this->encoder = array_encoder;
          break;
       }
       case ENCODING_BIG_ENDIAN: {
-         Integer32        *array_data    = static_cast< Integer32 * >( ref2->address );
-         HLAvariableArray *array_encoder = new HLAvariableArray( HLAinteger32BE() );
+         this->encoder = new HLAvariableArray( HLAinteger32BE() );
 
-         data_elements.reserve( ref2_element_count );
-
-         // Connect the users array data to the encoder array elements.
-         for ( size_t i = 0; i < ref2_element_count; ++i ) {
-            HLAinteger32BE *element = new HLAinteger32BE( &array_data[i] );
-            data_elements.push_back( element );
-            array_encoder->setElementPointer( i, element );
+         if ( !Int32VariableArrayEncoder::resize( ref2_element_count ) ) {
+            refresh_data_elements();
          }
-
-         this->encoder = array_encoder;
          break;
       }
       default: {

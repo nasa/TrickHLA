@@ -133,10 +133,11 @@ void Int32FixedArrayEncoder::initialize()
 
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
-         Integer32     *array_data    = static_cast< Integer32 * >( ref2->address );
          HLAfixedArray *array_encoder = new HLAfixedArray( HLAinteger32LE(), ref2_element_count );
+         this->encoder                = array_encoder;
 
          data_elements.reserve( ref2_element_count );
+         Integer32 *array_data = static_cast< Integer32 * >( ref2->address );
 
          // Connect the users array data to the encoder array elements.
          for ( size_t i = 0; i < ref2_element_count; ++i ) {
@@ -144,15 +145,14 @@ void Int32FixedArrayEncoder::initialize()
             data_elements.push_back( element );
             array_encoder->setElementPointer( i, element );
          }
-
-         this->encoder = array_encoder;
          break;
       }
       case ENCODING_BIG_ENDIAN: {
-         Integer32     *array_data    = static_cast< Integer32 * >( ref2->address );
          HLAfixedArray *array_encoder = new HLAfixedArray( HLAinteger32BE(), ref2_element_count );
+         this->encoder                = array_encoder;
 
          data_elements.reserve( ref2_element_count );
+         Integer32 *array_data = static_cast< Integer32 * >( ref2->address );
 
          // Connect the users array data to the encoder array elements.
          for ( size_t i = 0; i < ref2_element_count; ++i ) {
@@ -160,8 +160,6 @@ void Int32FixedArrayEncoder::initialize()
             data_elements.push_back( element );
             array_encoder->setElementPointer( i, element );
          }
-
-         this->encoder = array_encoder;
          break;
       }
       default: {
