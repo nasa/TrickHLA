@@ -180,20 +180,19 @@ bool Int32VariableArrayEncoder::resize(
    // Trick variable array size does not match the new size.
    if ( ref2_element_count != new_size ) {
 
-      // Reallocate the Trick variable array to the new size.
-      ref2_element_count  = new_size;
-      int const num_bytes = ref2_element_count * ref2->attr->size;
-
       // Resize the Trick array variable to match the incoming data size.
       *( static_cast< char ** >( ref2->address ) ) =
          static_cast< char * >( TMM_resize_array_1d_a(
-            *( static_cast< char ** >( ref2->address ) ), num_bytes ) );
+            *( static_cast< char ** >( ref2->address ) ), new_size ) );
+
+      // Update the element count to the new size.
+      ref2_element_count = new_size;
 
       if ( *static_cast< Integer32 ** >( ref2->address ) == NULL ) {
          ostringstream errmsg;
          errmsg << "Int32VariableArrayEncoder::resize():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable with name '"
-                << trick_name << "' with number of bytes " << num_bytes << "!\n";
+                << trick_name << "' with " << new_size << " elements!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
