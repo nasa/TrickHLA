@@ -99,6 +99,8 @@ class EncoderBase
    /*! @brief Initializes the TrickHLA EncoderBase. */
    virtual void initialize();
 
+   virtual bool resize( std::size_t const new_size );
+
    void update_ref2();
 
    std::string trick_name; ///< @trick_units{--} Trick variable name.

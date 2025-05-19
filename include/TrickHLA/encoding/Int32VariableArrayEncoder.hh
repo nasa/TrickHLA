@@ -98,6 +98,10 @@ class Int32VariableArrayEncoder : public EncoderBase
    /*! @brief Initializes the TrickHLA Int32VariableArrayEncoder. */
    virtual void initialize();
 
+   virtual bool resize( std::size_t const size );
+
+   void refresh_data_elements();
+
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Int32VariableArrayEncoder class.

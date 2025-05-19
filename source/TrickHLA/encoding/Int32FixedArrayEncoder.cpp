@@ -102,7 +102,7 @@ Int32FixedArrayEncoder::~Int32FixedArrayEncoder()
 void Int32FixedArrayEncoder::initialize()
 {
    if ( ref2 == NULL ) {
-      EncoderBase::initialize();
+      update_ref2();
    }
 
    bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER )

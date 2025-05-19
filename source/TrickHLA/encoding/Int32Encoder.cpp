@@ -98,7 +98,7 @@ Int32Encoder::~Int32Encoder()
 void Int32Encoder::initialize()
 {
    if ( ref2 == NULL ) {
-      EncoderBase::initialize();
+      update_ref2();
    }
 
    bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer32 ) ) )
