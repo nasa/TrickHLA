@@ -1,0 +1,47 @@
+
+#include "sim_objects/default_trick_sys.sm"
+
+##include "TrickHLA/Manager.hh"
+
+##include "TrickHLA/encoding/EncoderFactory.hh"
+##include "TrickHLA/encoding/EncoderBase.hh"
+##include "TrickHLA/encoding/Int32Encoder.hh"
+##include "TrickHLA/encoding/Int32FixedArrayEncoder.hh"
+##include "TrickHLA/encoding/Int32VariableArrayEncoder.hh"
+
+##include "encoding/include/EncodingTest.hh"
+##include "encoding/include/BasicData.hh"
+
+%header{
+ using namespace TrickHLA;
+ using namespace TrickHLAModel;
+%}
+
+
+//=============================================================================
+// SIM_OBJECT: TestSimObj
+// Sim-object for testing basic data type encoders.
+//=============================================================================
+class TestSimObj : public Trick::SimObject {
+
+ public:
+   BasicData data1 = BasicData( 0 );
+   BasicData data2 = BasicData( 10 );
+
+   EncodingTest encoder_test;
+
+   TestSimObj()
+   {
+      ("initialization") encoder_test.test( "T.data1", data1,
+                                            "T.data2", data2 );
+
+      ("initialization") exec_terminate( __FILE__, "Done" );
+   }
+
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   TestSimObj( TestSimObj const & rhs );
+   TestSimObj & operator=( TestSimObj const & rhs );
+};
+
+TestSimObj T;
