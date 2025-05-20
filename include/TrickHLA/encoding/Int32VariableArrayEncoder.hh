@@ -36,8 +36,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <map>
-#include <stdlib.h>
 #include <string>
 
 // Trick include files.
@@ -57,6 +55,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/DataElement.h"
 #pragma GCC diagnostic pop
 
@@ -93,6 +92,8 @@ class Int32VariableArrayEncoder : public EncoderBase
    virtual RTI1516_NAMESPACE::VariableLengthData &encode();
 
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+
+   virtual std::string to_string();
 
   protected:
    /*! @brief Initializes the TrickHLA Int32VariableArrayEncoder. */

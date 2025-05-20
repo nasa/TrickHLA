@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
@@ -97,6 +96,14 @@ Int32FixedArrayEncoder::~Int32FixedArrayEncoder()
       delete encoder;
       encoder = NULL;
    }
+}
+
+string Int32FixedArrayEncoder::to_string()
+{
+   ostringstream msg;
+   msg << "Int32FixedArrayEncoder[trick_name:'" << trick_name
+       << "' rti_encoding:" << rti_encoding << "]";
+   return msg.str();
 }
 
 void Int32FixedArrayEncoder::initialize()

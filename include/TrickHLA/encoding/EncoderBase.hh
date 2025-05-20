@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #include <map>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 
 // Trick include files.
 #include "trick/reference.h"
@@ -92,6 +93,8 @@ class EncoderBase
    virtual RTI1516_NAMESPACE::VariableLengthData &encode();
 
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+
+   virtual std::string to_string();
 
    void calculate_ref2_element_count();
 

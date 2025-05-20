@@ -210,6 +210,11 @@ def main():
       if os.path.isdir( './models/DistIf/include' ):
          include_dirs.extend( ['-I./models/DistIf/include'] )
 
+      if os.path.isdir( './models/encoding/src' ):
+         source_dirs.extend( ['./models/encoding/src/'] )
+      if os.path.isdir( './models/encoding/include' ):
+         include_dirs.extend( ['-I./models/encoding/include'] )
+
       if os.path.isdir( './models/EntityDynamics/src' ):
          source_dirs.extend( ['./models/EntityDynamics/src/'] )
       if os.path.isdir( './models/EntityDynamics/include' ):

@@ -36,8 +36,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <map>
-#include <stdlib.h>
 #include <string>
 
 // Trick include files.
@@ -89,6 +87,8 @@ class Int32Encoder : public EncoderBase
 
    /*! @brief Destructor for the TrickHLA Int32Encoder class. */
    virtual ~Int32Encoder();
+
+   virtual std::string to_string();
 
   protected:
    /*! @brief Initializes the TrickHLA Int32Encoder. */

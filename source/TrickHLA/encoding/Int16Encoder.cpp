@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"

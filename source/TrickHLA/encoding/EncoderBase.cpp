@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 #include <limits>
 #include <sstream>
 #include <string>
+#include <vector>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -198,6 +199,14 @@ void EncoderBase::decode(
              << trick_name << "'!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
+}
+
+string EncoderBase::to_string()
+{
+   ostringstream msg;
+   msg << "EncoderBase[trick_name:'" << trick_name
+       << "' rti_encoding:" << rti_encoding << "]";
+   return msg.str();
 }
 
 void EncoderBase::calculate_ref2_element_count()

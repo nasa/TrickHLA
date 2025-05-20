@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
@@ -62,6 +61,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/HLAvariableArray.h"
@@ -167,6 +167,14 @@ void Int32VariableArrayEncoder::initialize()
          break;
       }
    }
+}
+
+string Int32VariableArrayEncoder::to_string()
+{
+   ostringstream msg;
+   msg << "Int32VariableArrayEncoder[trick_name:'" << trick_name
+       << "' rti_encoding:" << rti_encoding << "]";
+   return msg.str();
 }
 
 bool Int32VariableArrayEncoder::resize(

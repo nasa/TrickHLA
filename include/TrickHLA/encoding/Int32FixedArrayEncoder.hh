@@ -36,10 +36,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <map>
-#include <stdlib.h>
 #include <string>
-#include <vector>
 
 // Trick include files.
 #include "trick/reference.h"
@@ -90,6 +87,8 @@ class Int32FixedArrayEncoder : public EncoderBase
 
    /*! @brief Destructor for the TrickHLA Int32FixedArrayEncoder class. */
    virtual ~Int32FixedArrayEncoder();
+
+   virtual std::string to_string();
 
   protected:
    /*! @brief Initializes the TrickHLA Int32FixedArrayEncoder. */

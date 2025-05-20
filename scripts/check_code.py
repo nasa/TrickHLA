@@ -262,6 +262,8 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
    if os.path.isdir( './models/DistIf/include' ):
       trickhla_include_dirs.extend( ['-I', './models/DistIf/include'] )
+   if os.path.isdir( './models/encoding/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/encoding/include'] )
    if os.path.isdir( './models/EntityDynamics/include' ):
       trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
    if os.path.isdir( './models/FrameDynamics/include' ):
@@ -289,6 +291,8 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    trickhla_source_dirs.extend ( ['./source'] )
    if os.path.isdir( './models/DistIf/src' ):
       trickhla_source_dirs.extend( ['./models/DistIf/src'] )
+   if os.path.isdir( './models/encoding/src' ):
+      trickhla_source_dirs.extend( ['./models/encoding/src'] )
    if os.path.isdir( './models/EntityDynamics/src' ):
       trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
    if os.path.isdir( './models/FrameDynamics/src' ):

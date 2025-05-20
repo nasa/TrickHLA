@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
@@ -93,6 +92,14 @@ Int32Encoder::Int32Encoder(
 Int32Encoder::~Int32Encoder()
 {
    return;
+}
+
+string Int32Encoder::to_string()
+{
+   ostringstream msg;
+   msg << "Int32Encoder[trick_name:'" << trick_name
+       << "' rti_encoding:" << rti_encoding << "]";
+   return msg.str();
 }
 
 void Int32Encoder::initialize()

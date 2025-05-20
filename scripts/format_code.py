@@ -95,6 +95,8 @@ def main():
    
    if os.path.isdir( os.path.join( trickhla_home, 'models/DistIf' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/DistIf' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/encoding' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/encoding' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/EntityDynamics' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/EntityDynamics' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/FrameDynamics' ) ):

@@ -135,7 +135,7 @@ EncoderBase *EncoderFactory::create(
    if ( ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "EncoderFactory::create():" << __LINE__
-             << " ERROR: Error retrieving Trick ref-attributes for '"
+             << " ERROR: Could not retrieve Trick ref-attributes for '"
              << trick_name << "'. Please check your input or modified-data"
              << " files to make sure the object attribute Trick name is"
              << " correctly specified. If '" << trick_name
@@ -146,6 +146,7 @@ EncoderBase *EncoderFactory::create(
       return NULL;
    }
 
+#if 0
    // For now, we do not support more than a 1-D array that is dynamic
    // (i.e. a pointer such as char *). If the size of the last indexed
    // attribute is zero then it is a pointer and not static.
@@ -162,6 +163,7 @@ EncoderBase *EncoderFactory::create(
       DebugHandler::terminate_with_message( errmsg.str() );
       return NULL;
    }
+#endif
 
    EncoderBase *encoder = NULL;
 
@@ -180,7 +182,7 @@ EncoderBase *EncoderFactory::create(
          break;
       }
       case TRICK_UNSIGNED_CHARACTER: {
-         // (unsigned char) */
+         // (unsigned char)
          break;
       }
       case TRICK_STRING: {
