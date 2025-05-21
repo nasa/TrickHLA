@@ -99,6 +99,60 @@ Int32VariableArrayEncoder::~Int32VariableArrayEncoder()
    }
 }
 
+VariableLengthData &Int32VariableArrayEncoder::encode()
+{
+   // Since the Trick variable is dynamic (i.e. a pointer) its size can
+   // change at any point so we need to refresh ref2.
+   update_ref2();
+
+   // Resize data elements and the array if needed which will also update
+   // the data elements. Otherwise, update the data elements before we encode.
+   if ( !resize( ref2_element_count ) ) {
+      refresh_data_elements();
+   }
+
+   return EncoderBase::encode();
+}
+
+void Int32VariableArrayEncoder::decode(
+   VariableLengthData const &encoded_data )
+{
+   update_ref2();
+
+   // Resize data elements and the array if needed which will also update
+   // the data elements. Otherwise, update the data elements before we decode.
+   if ( !resize( ref2_element_count ) ) {
+      refresh_data_elements();
+   }
+
+   EncoderBase::decode( encoded_data );
+
+   HLAvariableArray const *array_encoder = static_cast< HLAvariableArray * >( encoder );
+
+   // If the size of the decoded data does not match the simulation array
+   // variable size, then resize and try decoding again.
+   if ( ref2_element_count != array_encoder->size() ) {
+
+      // Resize data elements and the array if needed which will also update
+      // the data elements. Otherwise, update the data elements before we decode.
+      if ( !resize( array_encoder->size() ) ) {
+         refresh_data_elements();
+      }
+
+      // Decode again now that we have the proper elements connected to
+      // the Trick array data elements.
+      EncoderBase::decode( encoded_data );
+   }
+}
+
+string Int32VariableArrayEncoder::to_string()
+{
+   ostringstream msg;
+   msg << "Int32VariableArrayEncoder[trick_name:'" << trick_name
+       << "' rti_encoding:" << rti_encoding << "]";
+   return msg.str();
+}
+
 void Int32VariableArrayEncoder::initialize()
 {
    if ( ref2 == NULL ) {
@@ -167,14 +221,6 @@ void Int32VariableArrayEncoder::initialize()
          break;
       }
    }
-}
-
-string Int32VariableArrayEncoder::to_string()
-{
-   ostringstream msg;
-   msg << "Int32VariableArrayEncoder[trick_name:'" << trick_name
-       << "' rti_encoding:" << rti_encoding << "]";
-   return msg.str();
 }
 
 bool Int32VariableArrayEncoder::resize(
@@ -325,51 +371,5 @@ void Int32VariableArrayEncoder::refresh_data_elements()
          }
          break;
       }
-   }
-}
-
-VariableLengthData &Int32VariableArrayEncoder::encode()
-{
-   // Since the Trick variable is dynamic (i.e. a pointer) its size can
-   // change at any point so we need to refresh ref2.
-   update_ref2();
-
-   // Resize data elements and the array if needed which will also update
-   // the data elements. Otherwise, update the data elements before we encode.
-   if ( !resize( ref2_element_count ) ) {
-      refresh_data_elements();
-   }
-
-   return EncoderBase::encode();
-}
-
-void Int32VariableArrayEncoder::decode(
-   VariableLengthData const &encoded_data )
-{
-   update_ref2();
-
-   // Resize data elements and the array if needed which will also update
-   // the data elements. Otherwise, update the data elements before we decode.
-   if ( !resize( ref2_element_count ) ) {
-      refresh_data_elements();
-   }
-
-   EncoderBase::decode( encoded_data );
-
-   HLAvariableArray const *array_encoder = static_cast< HLAvariableArray * >( encoder );
-
-   // If the size of the decoded data does not match the simulation array
-   // variable size, then resize and try decoding again.
-   if ( ref2_element_count != array_encoder->size() ) {
-
-      // Resize data elements and the array if needed which will also update
-      // the data elements. Otherwise, update the data elements before we decode.
-      if ( !resize( array_encoder->size() ) ) {
-         refresh_data_elements();
-      }
-
-      // Decode again now that we have the proper elements connected to
-      // the Trick array data elements.
-      EncoderBase::decode( encoded_data );
    }
 }
