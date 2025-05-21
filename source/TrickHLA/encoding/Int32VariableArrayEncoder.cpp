@@ -235,9 +235,9 @@ bool Int32VariableArrayEncoder::resize(
    if ( ref2_element_count != new_size ) {
 
       // Resize the Trick array variable to match the incoming data size.
-      *( static_cast< char ** >( ref2->address ) ) =
-         static_cast< char * >( TMM_resize_array_1d_a(
-            *( static_cast< char ** >( ref2->address ) ), new_size ) );
+      *( static_cast< void ** >( ref2->address ) ) =
+         static_cast< void * >( TMM_resize_array_1d_a(
+            *( static_cast< void ** >( ref2->address ) ), new_size ) );
 
       // Update the element count to the new size.
       ref2_element_count = new_size;
