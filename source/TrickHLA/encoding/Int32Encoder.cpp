@@ -54,8 +54,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/Int32Encoder.hh"
 
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
+// C++11 deprecated dynamic exception specifications for a function so we
+// need to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
@@ -108,8 +108,10 @@ void Int32Encoder::initialize()
       update_ref2();
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer32 ) ) )
-                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == sizeof( Integer32 ) ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER )
+                             && ( sizeof( int ) == sizeof( Integer32 ) ) )
+                           || ( ( ref2->attr->type == TRICK_LONG )
+                                && ( sizeof( long ) == sizeof( Integer32 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int32Encoder::initialize():" << __LINE__
@@ -134,11 +136,13 @@ void Int32Encoder::initialize()
 
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
-         this->encoder = new HLAinteger32LE( static_cast< Integer32 * >( ref2->address ) );
+         this->encoder = new HLAinteger32LE(
+            static_cast< Integer32 * >( ref2->address ) );
          break;
       }
       case ENCODING_BIG_ENDIAN: {
-         this->encoder = new HLAinteger32BE( static_cast< Integer32 * >( ref2->address ) );
+         this->encoder = new HLAinteger32BE(
+            static_cast< Integer32 * >( ref2->address ) );
          break;
       }
       default: {
@@ -146,7 +150,8 @@ void Int32Encoder::initialize()
          errmsg << "Int32Encoder::initialize():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the HLA encoding specified (" << rti_encoding
-                << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
+                << ") must be either ENCODING_LITTLE_ENDIAN or"
+                << " ENCODING_BIG_ENDIAN!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }

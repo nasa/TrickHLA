@@ -54,8 +54,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/Int32VariableArrayEncoder.hh"
 
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
+// C++11 deprecated dynamic exception specifications for a function so we
+// need to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
@@ -127,14 +127,15 @@ void Int32VariableArrayEncoder::decode(
 
    EncoderBase::decode( encoded_data );
 
-   HLAvariableArray const *array_encoder = static_cast< HLAvariableArray * >( encoder );
+   HLAvariableArray const *array_encoder =
+      static_cast< HLAvariableArray * >( encoder );
 
    // If the size of the decoded data does not match the simulation array
    // variable size, then resize and try decoding again.
    if ( ref2_element_count != array_encoder->size() ) {
 
       // Resize data elements and the array if needed which will also update
-      // the data elements. Otherwise, update the data elements before we decode.
+      // the data elements. Otherwise, refresh data elements before we decode.
       if ( !resize( array_encoder->size() ) ) {
          refresh_data_elements();
       }
@@ -165,13 +166,16 @@ void Int32VariableArrayEncoder::initialize()
       errmsg << "Int32VariableArrayEncoder::initialize():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << trick_name
              << "' the HLA encoding specified (" << rti_encoding
-             << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
+             << ") must be either ENCODING_LITTLE_ENDIAN or"
+             << " ENCODING_BIG_ENDIAN!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
-   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER ) && ( sizeof( int ) == sizeof( Integer32 ) ) )
-                           || ( ( ref2->attr->type == TRICK_LONG ) && ( sizeof( long ) == sizeof( Integer32 ) ) );
+   bool const valid_type = ( ( ref2->attr->type == TRICK_INTEGER )
+                             && ( sizeof( int ) == sizeof( Integer32 ) ) )
+                           || ( ( ref2->attr->type == TRICK_LONG )
+                                && ( sizeof( long ) == sizeof( Integer32 ) ) );
    if ( !valid_type ) {
       ostringstream errmsg;
       errmsg << "Int32VariableArrayEncoder::initialize():" << __LINE__
@@ -216,7 +220,8 @@ void Int32VariableArrayEncoder::initialize()
          errmsg << "Int32Encoder::initialize():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' and HLA encoding specified (" << rti_encoding
-                << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
+                << ") must be either ENCODING_LITTLE_ENDIAN or"
+                << " ENCODING_BIG_ENDIAN!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -245,8 +250,9 @@ bool Int32VariableArrayEncoder::resize(
       if ( *static_cast< Integer32 ** >( ref2->address ) == NULL ) {
          ostringstream errmsg;
          errmsg << "Int32VariableArrayEncoder::resize():" << __LINE__
-                << " ERROR: Could not allocate memory for Trick variable with name '"
-                << trick_name << "' with " << new_size << " elements!\n";
+                << " ERROR: Could not allocate memory for Trick variable"
+                << " with name '" << trick_name << "' with " << new_size
+                << " elements!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -352,9 +358,11 @@ void Int32VariableArrayEncoder::refresh_data_elements()
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
          for ( size_t i = 0; i < data_elements.size(); ++i ) {
-            HLAinteger32LE *element = static_cast< HLAinteger32LE * >( data_elements[i] );
+            HLAinteger32LE *element =
+               static_cast< HLAinteger32LE * >( data_elements[i] );
             element->setDataPointer( &array_data[i] );
-            if ( static_cast< void * >( element ) != static_cast< void * >( &array_encoder[i] ) ) {
+            if ( static_cast< void * >( element )
+                 != static_cast< void * >( &array_encoder[i] ) ) {
                array_encoder->setElementPointer( i, element );
             }
          }
@@ -363,9 +371,11 @@ void Int32VariableArrayEncoder::refresh_data_elements()
       case ENCODING_BIG_ENDIAN:
       default: {
          for ( size_t i = 0; i < data_elements.size(); ++i ) {
-            HLAinteger32BE *element = static_cast< HLAinteger32BE * >( data_elements[i] );
+            HLAinteger32BE *element =
+               static_cast< HLAinteger32BE * >( data_elements[i] );
             element->setDataPointer( &array_data[i] );
-            if ( static_cast< void * >( element ) != static_cast< void * >( &array_encoder[i] ) ) {
+            if ( static_cast< void * >( element )
+                 != static_cast< void * >( &array_encoder[i] ) ) {
                array_encoder->setElementPointer( i, element );
             }
          }

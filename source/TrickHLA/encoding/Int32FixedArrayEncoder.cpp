@@ -54,8 +54,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/Int32FixedArrayEncoder.hh"
 
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
+// C++11 deprecated dynamic exception specifications for a function so we
+// need to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
@@ -140,7 +140,8 @@ void Int32FixedArrayEncoder::initialize()
 
    switch ( rti_encoding ) {
       case ENCODING_LITTLE_ENDIAN: {
-         HLAfixedArray *array_encoder = new HLAfixedArray( HLAinteger32LE(), ref2_element_count );
+         HLAfixedArray *array_encoder =
+            new HLAfixedArray( HLAinteger32LE(), ref2_element_count );
 
          this->encoder = array_encoder;
 
@@ -156,7 +157,8 @@ void Int32FixedArrayEncoder::initialize()
          break;
       }
       case ENCODING_BIG_ENDIAN: {
-         HLAfixedArray *array_encoder = new HLAfixedArray( HLAinteger32BE(), ref2_element_count );
+         HLAfixedArray *array_encoder =
+            new HLAfixedArray( HLAinteger32BE(), ref2_element_count );
 
          this->encoder = array_encoder;
 
@@ -176,7 +178,9 @@ void Int32FixedArrayEncoder::initialize()
          errmsg << "Int32Encoder::initialize():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' and HLA encoding specified (" << rti_encoding
-                << ") must be either ENCODING_LITTLE_ENDIAN or ENCODING_BIG_ENDIAN!\n";
+                << ") must be either ENCODING_LITTLE_ENDIAN or"
+                << " ENCODING_BIG_ENDIAN!\n";
+
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }

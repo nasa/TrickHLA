@@ -69,7 +69,7 @@ BasicData::BasicData(
    }
 
    int const p_i32_size = 5 + offset;
-   p_i32 = static_cast< int * >( TMM_declare_var_1d( "int", p_i32_size ) );
+   p_i32                = static_cast< int * >( TMM_declare_var_1d( "int", p_i32_size ) );
    for ( int i = 0; i < p_i32_size; ++i ) {
       p_i32[i] = i + 1 + offset;
    }
