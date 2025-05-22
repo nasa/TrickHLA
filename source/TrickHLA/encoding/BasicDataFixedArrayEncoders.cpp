@@ -106,8 +106,8 @@ using namespace TrickHLA;
          return;                                                                                                      \
       }                                                                                                               \
                                                                                                                       \
-      HLAfixedArray *array_encoder =                                                                                  \
-         new HLAfixedArray( EncodableDataType(), ref2_element_count );                                                \
+      EncodableDataType data_prototype;                                                                               \
+      HLAfixedArray    *array_encoder = new HLAfixedArray( data_prototype, ref2_element_count );                      \
                                                                                                                       \
       this->encoder = array_encoder;                                                                                  \
                                                                                                                       \

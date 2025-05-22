@@ -119,7 +119,8 @@ using namespace TrickHLA;
          return;                                                                                                         \
       }                                                                                                                  \
                                                                                                                          \
-      this->encoder = new HLAvariableArray( EncodableDataType() );                                                       \
+      EncodableDataType data_prototype;                                                                                  \
+      this->encoder = new HLAvariableArray( data_prototype );                                                            \
                                                                                                                          \
       if ( !EncoderClassName::resize( ref2_element_count ) ) {                                                           \
          refresh_data_elements();                                                                                        \
@@ -245,7 +246,8 @@ using namespace TrickHLA;
          if ( encoder != NULL ) {                                                                                        \
             delete encoder;                                                                                              \
          }                                                                                                               \
-         array_encoder = new HLAvariableArray( EncodableDataType() );                                                    \
+         EncodableDataType data_prototype;                                                                               \
+         array_encoder = new HLAvariableArray( data_prototype );                                                         \
          this->encoder = array_encoder;                                                                                  \
       }                                                                                                                  \
                                                                                                                          \
