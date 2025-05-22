@@ -21,9 +21,9 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderFactory.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int32Encoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int32FixedArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int32VariableArrayEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataFixedArrayEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataVariableArrayEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 

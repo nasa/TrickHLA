@@ -11,6 +11,7 @@
 ##include "encoding/include/Float64Data.hh"
 ##include "encoding/include/Int32Data.hh"
 ##include "encoding/include/Int64Data.hh"
+##include "encoding/include/LongData.hh"
 
 %header{
  using namespace TrickHLA;
@@ -31,6 +32,9 @@ class TestSimObj : public Trick::SimObject {
    Int64Data int64_data1 = Int64Data( 10 );
    Int64Data int64_data2 = Int64Data( 0 );
 
+   LongData long_data1 = LongData( 10 );
+   LongData long_data2 = LongData( 0 );
+
    Float32Data float32_data1 = Float32Data( 0 );
    Float32Data float32_data2 = Float32Data( 10 );
 
@@ -49,6 +53,10 @@ class TestSimObj : public Trick::SimObject {
 
       ("initialization") encoder_test.int64_test( "T.int64_data1", int64_data1,
                                                   "T.int64_data2", int64_data2,
+                                                  verbose );
+
+      ("initialization") encoder_test.long_test( "T.long_data1", long_data1,
+                                                 "T.long_data2", long_data2,
                                                   verbose );
 
       ("initialization") encoder_test.float32_test( "T.float32_data1", float32_data1,

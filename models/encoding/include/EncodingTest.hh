@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{encoding/src/Float64Data.cpp}
 @trick_link_dependency{encoding/src/Int32Data.cpp}
 @trick_link_dependency{encoding/src/Int64Data.cpp}
+@trick_link_dependency{encoding/src/LongData.cpp}
 
 @revs_title
 @revs_begin
@@ -46,6 +47,7 @@ NASA, Johnson Space Center\n
 #include "Float64Data.hh"
 #include "Int32Data.hh"
 #include "Int64Data.hh"
+#include "LongData.hh"
 
 namespace TrickHLAModel
 {
@@ -82,6 +84,12 @@ class EncodingTest
                     std::string const &data2_trick_base_name,
                     Int64Data         &data2,
                     bool const         verbose );
+
+   void long_test( std::string const &data1_trick_base_name,
+                   LongData          &data1,
+                   std::string const &data2_trick_base_name,
+                   LongData          &data2,
+                   bool const         verbose );
 
    void float32_test( std::string const &data1_trick_base_name,
                       Float32Data       &data1,
