@@ -1,0 +1,183 @@
+/*!
+@ingroup encoding
+@file models/encoding/src/Float64Data.cpp
+@brief This is a container class for general encoder test data.
+
+@copyright Copyright 2025 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{encoding/src/Float64Data.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, May 2025, --, Initial implementation.}
+@revs_end
+
+*/
+
+// System include files.
+#include <sstream>
+#include <string>
+
+// Trick include files.
+#include "trick/MemoryManager.hh"
+#include "trick/exec_proto.h"
+#include "trick/integrator_c_intf.h"
+#include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h"
+#include "trick/trick_math.h"
+
+// Model include files.
+#include "../include/Float64Data.hh"
+
+using namespace std;
+using namespace TrickHLAModel;
+
+/*!
+ * @job_class{initialization}
+ */
+Float64Data::Float64Data()
+   : Float64Data( 0 )
+{
+   return;
+}
+
+Float64Data::Float64Data(
+   int const offset )
+{
+   f64 = 1.0 + offset;
+
+   for ( int i = 0; i < 3; ++i ) {
+      vec3_f64[i] = i + 1.0 + offset;
+   }
+
+   double value = 1.0;
+   for ( int row = 0; row < 3; ++row ) {
+      for ( int col = 0; col < 3; ++col ) {
+         m3x3_f64[row][col] = value + offset;
+         value += 1.0;
+      }
+   }
+
+   double const ptr_f64_size = 5 + offset;
+
+   ptr_f64 = static_cast< double * >( TMM_declare_var_1d( "double", ptr_f64_size ) );
+   for ( int i = 0; i < ptr_f64_size; ++i ) {
+      ptr_f64[i] = i + 1.0 + offset;
+   }
+}
+
+/*!
+ * @job_class{shutdown}
+ */
+Float64Data::~Float64Data()
+{
+   return;
+}
+
+bool Float64Data::compare(
+   Float64Data &data )
+{
+   bool equal_values = true;
+
+   ostringstream msg;
+   msg << "Float64Data::compare():" << __LINE__ << "\n";
+
+   if ( this->f64 == data.f64 ) {
+      msg << "this->f64 (" << this->f64 << ") == (" << data.f64 << ") data.f64\n";
+   } else {
+      msg << "this->f64 (" << this->f64 << ") != (" << data.f64 << ") data.f64\n";
+      equal_values = false;
+   }
+
+   for ( int i = 0; i < 3; ++i ) {
+      if ( this->vec3_f64[i] == data.vec3_f64[i] ) {
+         msg << "this->vec3_f64[" << i << "] (" << this->vec3_f64[i]
+             << ") == (" << data.vec3_f64[i] << ") data.vec3_f64[" << i << "]\n";
+      } else {
+         msg << "this->vec3_f64[" << i << "] (" << this->vec3_f64[i]
+             << ") != (" << data.vec3_f64[i] << ") data.vec3_f64[" << i << "]\n";
+         equal_values = false;
+      }
+   }
+
+   for ( int row = 0; row < 3; ++row ) {
+      for ( int col = 0; col < 3; ++col ) {
+         if ( this->m3x3_f64[row][col] == data.m3x3_f64[row][col] ) {
+            msg << "this->m3x3_f64[" << row << "][" << col << "] (" << this->m3x3_f64[row][col]
+                << ") == (" << data.m3x3_f64[row][col] << ") data.m3x3_f64[" << row << "][" << col << "]\n";
+         } else {
+            msg << "this->m3x3_f64[" << row << "][" << col << "] (" << this->m3x3_f64[row][col]
+                << ") != (" << data.m3x3_f64[row][col] << ") data.m3x3_f64[" << row << "][" << col << "]\n";
+            equal_values = false;
+         }
+      }
+   }
+
+   int data1_ptr_f64_size = get_size( this->ptr_f64 );
+   int data2_ptr_f64_size = get_size( data.ptr_f64 );
+   if ( data1_ptr_f64_size != data2_ptr_f64_size ) {
+      msg << "this->ptr_f64 size (" << data1_ptr_f64_size
+          << ") != (" << data2_ptr_f64_size << ") data.ptr_f64 size\n";
+      equal_values = false;
+   } else {
+      msg << "this->ptr_f64 size (" << data1_ptr_f64_size
+          << ") == (" << data2_ptr_f64_size << ") data.ptr_f64 size\n";
+
+      for ( int i = 0; i < data1_ptr_f64_size; ++i ) {
+         if ( this->ptr_f64[i] == data.ptr_f64[i] ) {
+            msg << "this->ptr_f64[" << i << "] (" << this->ptr_f64[i]
+                << ") == (" << data.ptr_f64[i] << ") data.ptr_f64[" << i << "]\n";
+         } else {
+            msg << "this->ptr_f64[" << i << "] (" << this->ptr_f64[i]
+                << ") != (" << data.ptr_f64[i] << ") data.ptr_f64[" << i << "]\n";
+            equal_values = false;
+         }
+      }
+   }
+
+   if ( equal_values ) {
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   } else {
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   }
+
+   return equal_values;
+}
+
+string Float64Data::to_string()
+{
+   ostringstream msg;
+   msg << "Float64Data::to_string():" << __LINE__ << "\n"
+       << "f64:" << f64 << "\n";
+
+   for ( int i = 0; i < 3; ++i ) {
+      msg << "vec3_f64[" << i << "]:" << vec3_f64[i] << " ";
+   }
+   msg << "\n";
+
+   for ( int row = 0; row < 3; ++row ) {
+      for ( int col = 0; col < 3; ++col ) {
+         msg << "m3x3_f64[" << row << "][" << col << "]:" << m3x3_f64[row][col] << " ";
+      }
+   }
+   msg << "\n";
+
+   int ptr_f64_size = get_size( ptr_f64 );
+   msg << "ptr_f64 size:" << ptr_f64_size << "\n";
+   for ( int i = 0; i < ptr_f64_size; ++i ) {
+      msg << "ptr_f64[" << i << "]:" << ptr_f64[i] << " ";
+   }
+   msg << "\n";
+
+   return msg.str();
+}

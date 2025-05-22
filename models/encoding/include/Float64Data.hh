@@ -1,6 +1,6 @@
 /*!
 @ingroup encoding
-@file models/encoding/include/BasicData.hh
+@file models/encoding/include/Float64Data.hh
 @brief This is a container class for general encoder test data.
 
 @copyright Copyright 2025 United States Government as represented by the
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{encoding/src/BasicData.cpp}
+@trick_link_dependency{encoding/src/Float64Data.cpp}
 
 @revs_title
 @revs_begin
@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_MODEL_BASIC_DATA_HH
-#define TRICKHLA_MODEL_BASIC_DATA_HH
+#ifndef TRICKHLA_MODEL_FLOAT64_DATA_HH
+#define TRICKHLA_MODEL_FLOAT64_DATA_HH
 
 // System includes.
 #include <string>
@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLAModel
 {
 
-class BasicData
+class Float64Data
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -51,31 +51,31 @@ class BasicData
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLAModel__BasicData();
+   friend void init_attrTrickHLAModel__Float64Data();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLAModel BasicData class. */
-   BasicData();
+   /*! @brief Default constructor for the TrickHLAModel Float64Data class. */
+   Float64Data();
 
-   explicit BasicData( int const offset );
+   explicit Float64Data( int const offset );
 
-   /*! @brief Destructor for the TrickHLAModel BasicData class. */
-   virtual ~BasicData();
+   /*! @brief Destructor for the TrickHLAModel Float64Data class. */
+   virtual ~Float64Data();
 
-   bool compare( BasicData &data );
+   bool compare( Float64Data &data );
 
    std::string to_string();
 
   public:
-   int  i32;
-   int  vec3_i32[3];
-   int  m3x3_i32[3][3];
-   int *p_i32;
+   double  f64;
+   double  vec3_f64[3];
+   double  m3x3_f64[3][3];
+   double *ptr_f64;
 };
 
 } // namespace TrickHLAModel
 
-#endif // TRICKHLA_MODEL_BASIC_DATA_HH: Do NOT put anything after this line!
+#endif // TRICKHLA_MODEL_FLOAT64_DATA_HH: Do NOT put anything after this line!

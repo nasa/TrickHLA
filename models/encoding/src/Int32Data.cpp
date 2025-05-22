@@ -1,6 +1,6 @@
 /*!
 @ingroup encoding
-@file models/encoding/src/BasicData.cpp
+@file models/encoding/src/Int32Data.cpp
 @brief This is a container class for general encoder test data.
 
 @copyright Copyright 2025 United States Government as represented by the
@@ -15,7 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{encoding/src/BasicData.cpp}
+@trick_link_dependency{encoding/src/Int32Data.cpp}
 
 @revs_title
 @revs_begin
@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math.h"
 
 // Model include files.
-#include "../include/BasicData.hh"
+#include "../include/Int32Data.hh"
 
 using namespace std;
 using namespace TrickHLAModel;
@@ -45,13 +45,13 @@ using namespace TrickHLAModel;
 /*!
  * @job_class{initialization}
  */
-BasicData::BasicData()
-   : BasicData( 0 )
+Int32Data::Int32Data()
+   : Int32Data( 0 )
 {
    return;
 }
 
-BasicData::BasicData(
+Int32Data::Int32Data(
    int const offset )
 {
    i32 = 1 + offset;
@@ -68,28 +68,29 @@ BasicData::BasicData(
       }
    }
 
-   int const p_i32_size = 5 + offset;
-   p_i32                = static_cast< int * >( TMM_declare_var_1d( "int", p_i32_size ) );
-   for ( int i = 0; i < p_i32_size; ++i ) {
-      p_i32[i] = i + 1 + offset;
+   int const ptr_i32_size = 5 + offset;
+
+   ptr_i32 = static_cast< int * >( TMM_declare_var_1d( "int", ptr_i32_size ) );
+   for ( int i = 0; i < ptr_i32_size; ++i ) {
+      ptr_i32[i] = i + 1 + offset;
    }
 }
 
 /*!
  * @job_class{shutdown}
  */
-BasicData::~BasicData()
+Int32Data::~Int32Data()
 {
    return;
 }
 
-bool BasicData::compare(
-   BasicData &data )
+bool Int32Data::compare(
+   Int32Data &data )
 {
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "BasicData::compare():" << __LINE__ << "\n";
+   msg << "Int32Data::compare():" << __LINE__ << "\n";
 
    if ( this->i32 == data.i32 ) {
       msg << "this->i32 (" << this->i32 << ") == (" << data.i32 << ") data.i32\n";
@@ -122,23 +123,23 @@ bool BasicData::compare(
       }
    }
 
-   int data1_p_i32_size = get_size( this->p_i32 );
-   int data2_p_i32_size = get_size( data.p_i32 );
-   if ( data1_p_i32_size != data2_p_i32_size ) {
-      msg << "this->p_i32 size (" << data1_p_i32_size
-          << ") != (" << data2_p_i32_size << ") data.p_i32 size\n";
+   int data1_ptr_i32_size = get_size( this->ptr_i32 );
+   int data2_ptr_i32_size = get_size( data.ptr_i32 );
+   if ( data1_ptr_i32_size != data2_ptr_i32_size ) {
+      msg << "this->ptr_i32 size (" << data1_ptr_i32_size
+          << ") != (" << data2_ptr_i32_size << ") data.ptr_i32 size\n";
       equal_values = false;
    } else {
-      msg << "this->p_i32 size (" << data1_p_i32_size
-          << ") == (" << data2_p_i32_size << ") data.p_i32 size\n";
+      msg << "this->ptr_i32 size (" << data1_ptr_i32_size
+          << ") == (" << data2_ptr_i32_size << ") data.ptr_i32 size\n";
 
-      for ( int i = 0; i < data1_p_i32_size; ++i ) {
-         if ( this->p_i32[i] == data.p_i32[i] ) {
-            msg << "this->p_i32[" << i << "] (" << this->p_i32[i]
-                << ") == (" << data.p_i32[i] << ") data.p_i32[" << i << "]\n";
+      for ( int i = 0; i < data1_ptr_i32_size; ++i ) {
+         if ( this->ptr_i32[i] == data.ptr_i32[i] ) {
+            msg << "this->ptr_i32[" << i << "] (" << this->ptr_i32[i]
+                << ") == (" << data.ptr_i32[i] << ") data.ptr_i32[" << i << "]\n";
          } else {
-            msg << "this->p_i32[" << i << "] (" << this->p_i32[i]
-                << ") != (" << data.p_i32[i] << ") data.p_i32[" << i << "]\n";
+            msg << "this->ptr_i32[" << i << "] (" << this->ptr_i32[i]
+                << ") != (" << data.ptr_i32[i] << ") data.ptr_i32[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -153,10 +154,10 @@ bool BasicData::compare(
    return equal_values;
 }
 
-string BasicData::to_string()
+string Int32Data::to_string()
 {
    ostringstream msg;
-   msg << "BasicData::print():" << __LINE__ << "\n"
+   msg << "Int32Data::to_string():" << __LINE__ << "\n"
        << "i32:" << i32 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
@@ -171,10 +172,10 @@ string BasicData::to_string()
    }
    msg << "\n";
 
-   int p_i32_size = get_size( p_i32 );
-   msg << "p_i32 size:" << p_i32_size << "\n";
-   for ( int i = 0; i < p_i32_size; ++i ) {
-      msg << "p_i32[" << i << "]:" << p_i32[i] << " ";
+   int ptr_i32_size = get_size( ptr_i32 );
+   msg << "ptr_i32 size:" << ptr_i32_size << "\n";
+   for ( int i = 0; i < ptr_i32_size; ++i ) {
+      msg << "ptr_i32[" << i << "]:" << ptr_i32[i] << " ";
    }
    msg << "\n";
 

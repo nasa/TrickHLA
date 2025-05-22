@@ -5,12 +5,12 @@
 
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
-##include "TrickHLA/encoding/BasicDataEncoders.hh"
-//##include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
-//##include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 
 ##include "encoding/include/EncodingTest.hh"
-##include "encoding/include/BasicData.hh"
+##include "encoding/include/Float32Data.hh"
+##include "encoding/include/Float64Data.hh"
+##include "encoding/include/Int32Data.hh"
+##include "encoding/include/Int64Data.hh"
 
 %header{
  using namespace TrickHLA;
@@ -25,15 +25,39 @@
 class TestSimObj : public Trick::SimObject {
 
  public:
-   BasicData data1 = BasicData( 0 );
-   BasicData data2 = BasicData( 10 );
+   Int32Data int32_data1 = Int32Data( 0 );
+   Int32Data int32_data2 = Int32Data( 10 );
+
+   Int64Data int64_data1 = Int64Data( 10 );
+   Int64Data int64_data2 = Int64Data( 0 );
+
+   Float32Data float32_data1 = Float32Data( 0 );
+   Float32Data float32_data2 = Float32Data( 10 );
+
+   Float64Data float64_data1 = Float64Data( 10 );
+   Float64Data float64_data2 = Float64Data( 0 );
 
    EncodingTest encoder_test;
 
+   bool const verbose = false;
+
    TestSimObj()
    {
-      ("initialization") encoder_test.test( "T.data1", data1,
-                                            "T.data2", data2 );
+      ("initialization") encoder_test.int32_test( "T.int32_data1", int32_data1,
+                                                  "T.int32_data2", int32_data2,
+                                                  verbose );
+
+      ("initialization") encoder_test.int64_test( "T.int64_data1", int64_data1,
+                                                  "T.int64_data2", int64_data2,
+                                                  verbose );
+
+      ("initialization") encoder_test.float32_test( "T.float32_data1", float32_data1,
+                                                    "T.float32_data2", float32_data2,
+                                                    verbose );
+
+      ("initialization") encoder_test.float64_test( "T.float64_data1", float64_data1,
+                                                    "T.float64_data2", float64_data2,
+                                                    verbose );
 
       ("initialization") exec_terminate( __FILE__, "Done" );
    }

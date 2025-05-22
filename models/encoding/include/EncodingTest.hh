@@ -20,7 +20,10 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{encoding/src/EncodingTest.cpp}
-@trick_link_dependency{encoding/src/BasicData.cpp}
+@trick_link_dependency{encoding/src/Float32Data.cpp}
+@trick_link_dependency{encoding/src/Float64Data.cpp}
+@trick_link_dependency{encoding/src/Int32Data.cpp}
+@trick_link_dependency{encoding/src/Int64Data.cpp}
 
 @revs_title
 @revs_begin
@@ -39,7 +42,10 @@ NASA, Johnson Space Center\n
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 
-#include "BasicData.hh"
+#include "Float32Data.hh"
+#include "Float64Data.hh"
+#include "Int32Data.hh"
+#include "Int64Data.hh"
 
 namespace TrickHLAModel
 {
@@ -65,10 +71,29 @@ class EncodingTest
    /*! @brief Destructor for the TrickHLAModel EncodingTest class. */
    virtual ~EncodingTest();
 
-   void test( std::string const &data1_trick_base_name,
-              BasicData         &data1,
-              std::string const &data2_trick_base_name,
-              BasicData         &data2 );
+   void int32_test( std::string const &data1_trick_base_name,
+                    Int32Data         &data1,
+                    std::string const &data2_trick_base_name,
+                    Int32Data         &data2,
+                    bool const         verbose );
+
+   void int64_test( std::string const &data1_trick_base_name,
+                    Int64Data         &data1,
+                    std::string const &data2_trick_base_name,
+                    Int64Data         &data2,
+                    bool const         verbose );
+
+   void float32_test( std::string const &data1_trick_base_name,
+                      Float32Data       &data1,
+                      std::string const &data2_trick_base_name,
+                      Float32Data       &data2,
+                      bool const         verbose );
+
+   void float64_test( std::string const &data1_trick_base_name,
+                      Float64Data       &data1,
+                      std::string const &data2_trick_base_name,
+                      Float64Data       &data2,
+                      bool const         verbose );
 };
 
 } // namespace TrickHLAModel
