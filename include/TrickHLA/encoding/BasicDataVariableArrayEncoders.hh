@@ -94,9 +94,9 @@ namespace TrickHLA
          virtual std::string to_string();                                                  \
                                                                                            \
         protected:                                                                         \
-         virtual bool resize( std::size_t const new_size );                                \
+         void resize_trick_var( std::size_t const new_size );                              \
                                                                                            \
-         void refresh_data_elements();                                                     \
+         void resize_data_elements( std::size_t const new_size );                          \
                                                                                            \
         private:                                                                           \
          /* Do not allow the default, copy constructor or assignment operator. */          \

@@ -109,7 +109,6 @@ using namespace TrickHLA;
          return;                                                                                                         \
       }                                                                                                                  \
                                                                                                                          \
-      /* This encoder is only for a dynamic variable array. */                                                           \
       if ( !is_dynamic_array ) {                                                                                         \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
@@ -122,9 +121,7 @@ using namespace TrickHLA;
       EncodableDataType data_prototype;                                                                                  \
       this->encoder = new HLAvariableArray( data_prototype );                                                            \
                                                                                                                          \
-      if ( !EncoderClassName::resize( ref2_element_count ) ) {                                                           \
-         refresh_data_elements();                                                                                        \
-      }                                                                                                                  \
+      resize_data_elements( ref2_element_count );                                                                        \
    }                                                                                                                     \
                                                                                                                          \
    EncoderClassName::~EncoderClassName()                                                                                 \
@@ -141,11 +138,18 @@ using namespace TrickHLA;
       /* size can change at any point so we need to refresh ref2. */                                                     \
       update_ref2();                                                                                                     \
                                                                                                                          \
-      /* Resize data elements and the array if needed which will also  */                                                \
-      /* update the data elements. Otherwise, update the data elements */                                                \
-      /* before we encode.                                             */                                                \
-      if ( !resize( ref2_element_count ) ) {                                                                             \
-         refresh_data_elements();                                                                                        \
+      /* Ensure the number of data elements matches the Trick variable */                                                \
+      resize_data_elements( ref2_element_count );                                                                        \
+                                                                                                                         \
+      HLAvariableArray const *array_encoder = static_cast< HLAvariableArray * >( encoder );                              \
+      SimpleDataType         *array_data    = *static_cast< SimpleDataType ** >( ref2->address );                        \
+                                                                                                                         \
+      /* Copy the Trick array values to the data elements to be encoded. */                                              \
+      for ( size_t i = 0; i < ref2_element_count; ++i ) {                                                                \
+         const_cast< EncodableDataType & >(                                                                              \
+            dynamic_cast< EncodableDataType const & >(                                                                   \
+               array_encoder->get( i ) ) )                                                                               \
+            .set( array_data[i] );                                                                                       \
       }                                                                                                                  \
                                                                                                                          \
       return EncoderBase::encode();                                                                                      \
@@ -154,59 +158,38 @@ using namespace TrickHLA;
    void EncoderClassName::decode(                                                                                        \
       VariableLengthData const &encoded_data )                                                                           \
    {                                                                                                                     \
-      update_ref2();                                                                                                     \
-                                                                                                                         \
-      /* Resize data elements and the array if needed which will also  */                                                \
-      /* update the data elements. Otherwise, update the data elements */                                                \
-      /* before we decode.                                             */                                                \
-      if ( !resize( ref2_element_count ) ) {                                                                             \
-         refresh_data_elements();                                                                                        \
-      }                                                                                                                  \
-                                                                                                                         \
       EncoderBase::decode( encoded_data );                                                                               \
                                                                                                                          \
-      HLAvariableArray const *array_encoder =                                                                            \
-         static_cast< HLAvariableArray * >( encoder );                                                                   \
+      HLAvariableArray const *array_encoder = static_cast< HLAvariableArray * >( encoder );                              \
                                                                                                                          \
-      /* If the size of the decoded data does not match the simulation */                                                \
-      /* array variable size, then resize and try decoding again.      */                                                \
-      if ( ref2_element_count != array_encoder->size() ) {                                                               \
+      /* Trick variable is dynamic (i.e. a pointer) so we need to refresh ref2. */                                       \
+      update_ref2();                                                                                                     \
                                                                                                                          \
-         /* Resize data elements and the array if needed which will also */                                              \
-         /* update the data elements. Otherwise, refresh data elements   */                                              \
-         /* before we decode.                                            */                                              \
-         if ( !resize( array_encoder->size() ) ) {                                                                       \
-            refresh_data_elements();                                                                                     \
-         }                                                                                                               \
+      /* Resize Trick array variable to match the decoded data size. */                                                  \
+      resize_trick_var( array_encoder->size() );                                                                         \
                                                                                                                          \
-         /* Decode again now that we have the proper elements connected */                                               \
-         /* to the Trick array data elements.                           */                                               \
-         EncoderBase::decode( encoded_data );                                                                            \
+      SimpleDataType *array_data = *static_cast< SimpleDataType ** >( ref2->address );                                   \
+                                                                                                                         \
+      /* Copy the decoded data element values to the Trick array. */                                                     \
+      for ( size_t i = 0; i < ref2_element_count; ++i ) {                                                                \
+         array_data[i] = dynamic_cast< EncodableDataType const & >( array_encoder->get( i ) ).get();                     \
       }                                                                                                                  \
    }                                                                                                                     \
                                                                                                                          \
    string EncoderClassName::to_string()                                                                                  \
    {                                                                                                                     \
       ostringstream msg;                                                                                                 \
-      msg << #EncoderClassName                                                                                           \
-          << "[trick_name:'" << trick_name                                                                               \
+      msg << #EncoderClassName << "[trick_name:'" << trick_name                                                          \
           << "' rti_encoding:" << rti_encoding << "]";                                                                   \
       return msg.str();                                                                                                  \
    }                                                                                                                     \
                                                                                                                          \
-   bool EncoderClassName::resize(                                                                                        \
+   void EncoderClassName::resize_trick_var(                                                                              \
       size_t const new_size )                                                                                            \
    {                                                                                                                     \
-      /* Determine if we need to resize the Trick array variable */                                                      \
-      /* and data elements.                                      */                                                      \
-      if ( ( new_size == ref2_element_count ) && ( new_size == data_elements.size() ) ) {                                \
-         return false;                                                                                                   \
-      }                                                                                                                  \
-                                                                                                                         \
-      /* Trick variable array size does not match the new size. */                                                       \
+      /* Trick array variable size does not match the new size. */                                                       \
       if ( ref2_element_count != new_size ) {                                                                            \
                                                                                                                          \
-         /* Resize the Trick array variable to match the incoming data size. */                                          \
          *( static_cast< void ** >( ref2->address ) ) =                                                                  \
             static_cast< void * >( TMM_resize_array_1d_a(                                                                \
                *( static_cast< void ** >( ref2->address ) ), new_size ) );                                               \
@@ -223,75 +206,26 @@ using namespace TrickHLA;
             DebugHandler::terminate_with_message( errmsg.str() );                                                        \
          }                                                                                                               \
       }                                                                                                                  \
-                                                                                                                         \
-      /* Remove the extra elements if the new_size reduces the element count. */                                         \
-      size_t const orig_element_count = data_elements.size();                                                            \
-      if ( orig_element_count > new_size ) {                                                                             \
-         for ( size_t i = new_size; i < orig_element_count; ++i ) {                                                      \
-            delete data_elements[i];                                                                                     \
-         }                                                                                                               \
-         data_elements.resize( new_size );                                                                               \
-                                                                                                                         \
-      } else if ( orig_element_count < new_size ) {                                                                      \
-         /* Reserve enough capacity for the new elements for the larger size. */                                         \
-         data_elements.reserve( new_size );                                                                              \
-      }                                                                                                                  \
-                                                                                                                         \
-      HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( encoder );                                    \
-      SimpleDataType   *array_data    = *static_cast< SimpleDataType ** >( ref2->address );                              \
-                                                                                                                         \
-      /* Because we can't resize the encoder to a smaller size we */                                                     \
-      /* have to create a new one.                                */                                                     \
-      if ( new_size < array_encoder->size() ) {                                                                          \
-         if ( encoder != NULL ) {                                                                                        \
-            delete encoder;                                                                                              \
-         }                                                                                                               \
-         EncodableDataType data_prototype;                                                                               \
-         array_encoder = new HLAvariableArray( data_prototype );                                                         \
-         this->encoder = array_encoder;                                                                                  \
-      }                                                                                                                  \
-                                                                                                                         \
-      /* Connect the array data to the encoder array elements. */                                                        \
-      EncodableDataType *element;                                                                                        \
-      for ( size_t i = 0; i < new_size; ++i ) {                                                                          \
-         if ( i < orig_element_count ) {                                                                                 \
-            element = static_cast< EncodableDataType * >( data_elements[i] );                                            \
-            element->setDataPointer( &array_data[i] );                                                                   \
-         } else {                                                                                                        \
-            element = new EncodableDataType( &array_data[i] );                                                           \
-            data_elements.push_back( element );                                                                          \
-         }                                                                                                               \
-                                                                                                                         \
-         if ( i < array_encoder->size() ) {                                                                              \
-            array_encoder->setElementPointer( i, element );                                                              \
-         } else {                                                                                                        \
-            array_encoder->addElementPointer( element );                                                                 \
-         }                                                                                                               \
-      }                                                                                                                  \
-      return true;                                                                                                       \
    }                                                                                                                     \
                                                                                                                          \
-   void EncoderClassName::refresh_data_elements()                                                                        \
+   void EncoderClassName::resize_data_elements(                                                                          \
+      size_t const new_size )                                                                                            \
    {                                                                                                                     \
       HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( encoder );                                    \
                                                                                                                          \
-      if ( ( data_elements.size() != ref2_element_count )                                                                \
-           || ( data_elements.size() != array_encoder->size() ) ) {                                                      \
-         ostringstream errmsg;                                                                                           \
-         errmsg << #EncoderClassName << "::refresh_data_elements():" << __LINE__                                         \
-                << " ERROR: For Trick variable with name '" << trick_name                                                \
-                << "' the number of elements don't agree with the encoder!\n";                                           \
-         DebugHandler::terminate_with_message( errmsg.str() );                                                           \
-      }                                                                                                                  \
+      if ( array_encoder->size() != new_size ) {                                                                         \
+         EncodableDataType data_prototype;                                                                               \
                                                                                                                          \
-      SimpleDataType *array_data = *static_cast< SimpleDataType ** >( ref2->address );                                   \
+         if ( new_size < array_encoder->size() ) {                                                                       \
+            /* Because we can't resize the encoder to a smaller */                                                       \
+            /* size we have to create a new one.                */                                                       \
+            delete encoder;                                                                                              \
+            array_encoder = new HLAvariableArray( data_prototype );                                                      \
+            this->encoder = array_encoder;                                                                               \
+         }                                                                                                               \
                                                                                                                          \
-      for ( size_t i = 0; i < data_elements.size(); ++i ) {                                                              \
-         EncodableDataType *element = static_cast< EncodableDataType * >( data_elements[i] );                            \
-         element->setDataPointer( &array_data[i] );                                                                      \
-         if ( static_cast< void * >( element )                                                                           \
-              != static_cast< void * >( &array_encoder[i] ) ) {                                                          \
-            array_encoder->setElementPointer( i, element );                                                              \
+         while ( array_encoder->size() < new_size ) {                                                                    \
+            array_encoder->addElement( data_prototype );                                                                 \
          }                                                                                                               \
       }                                                                                                                  \
    }

@@ -122,12 +122,6 @@ EncoderBase::~EncoderBase()
    }
 }
 
-bool EncoderBase::resize(
-   std::size_t const new_size )
-{
-   return false;
-}
-
 void EncoderBase::update_ref2()
 {
    if ( is_dynamic_array || ( ref2 == NULL ) ) {

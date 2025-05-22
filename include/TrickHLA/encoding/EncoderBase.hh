@@ -99,8 +99,6 @@ class EncoderBase
    void calculate_ref2_element_count();
 
   protected:
-   virtual bool resize( std::size_t const new_size );
-
    void update_ref2();
 
    std::string trick_name; ///< @trick_units{--} Trick variable name.
