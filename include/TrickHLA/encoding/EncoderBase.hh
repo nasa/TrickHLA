@@ -99,9 +99,6 @@ class EncoderBase
    void calculate_ref2_element_count();
 
   protected:
-   /*! @brief Initializes the TrickHLA EncoderBase. */
-   virtual void initialize();
-
    virtual bool resize( std::size_t const new_size );
 
    void update_ref2();
@@ -129,6 +126,7 @@ class EncoderBase
 
   private:
    // Do not allow the copy constructor or assignment operator.
+   EncoderBase();
    /*! @brief Copy constructor for EncoderBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
    EncoderBase( EncoderBase const &rhs );

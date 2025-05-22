@@ -21,25 +21,9 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderFactory.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int16Encoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int16FixedArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int16VariableArrayEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/Int32Encoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/Int32FixedArrayEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/Int32VariableArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int64Encoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int64FixedArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int64VariableArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt16Encoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt16FixedArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt16VariableArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt32Encoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt32FixedArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt32VariableArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt64Encoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt64FixedArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/UInt64VariableArrayEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/WstringEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
@@ -115,23 +99,40 @@ class EncoderFactory
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
-   static TrickHLA::EncoderBase *create_uint16(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+
    static TrickHLA::EncoderBase *create_int32(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
-   static TrickHLA::EncoderBase *create_uint32(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+
    static TrickHLA::EncoderBase *create_int64(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
+
+#if defined( IEEE_1516_2025 )
+   static TrickHLA::EncoderBase *create_uint16(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+
+   static TrickHLA::EncoderBase *create_uint32(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+
    static TrickHLA::EncoderBase *create_uint64(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+#endif
+
+   static TrickHLA::EncoderBase *create_float32(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+
+   static TrickHLA::EncoderBase *create_float64(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );

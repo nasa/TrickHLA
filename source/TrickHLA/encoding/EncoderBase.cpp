@@ -93,7 +93,7 @@ EncoderBase::EncoderBase(
      data_elements(),
      encoder( NULL )
 {
-   EncoderBase::initialize();
+   update_ref2();
 }
 
 /*!
@@ -120,11 +120,6 @@ EncoderBase::~EncoderBase()
       free( ref2 );
       ref2 = NULL;
    }
-}
-
-void EncoderBase::initialize()
-{
-   update_ref2();
 }
 
 bool EncoderBase::resize(

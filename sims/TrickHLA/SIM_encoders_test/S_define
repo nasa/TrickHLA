@@ -5,9 +5,9 @@
 
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
-##include "TrickHLA/encoding/Int32Encoder.hh"
-##include "TrickHLA/encoding/Int32FixedArrayEncoder.hh"
-##include "TrickHLA/encoding/Int32VariableArrayEncoder.hh"
+##include "TrickHLA/encoding/BasicDataEncoders.hh"
+//##include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
+//##include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 
 ##include "encoding/include/EncodingTest.hh"
 ##include "encoding/include/BasicData.hh"

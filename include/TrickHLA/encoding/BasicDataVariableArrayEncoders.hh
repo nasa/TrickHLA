@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Int32VariableArrayEncoder.hh
+@file TrickHLA/BasicDataVariableArrayEncoders.hh
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/Int32VariableArrayEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataVariableArrayEncoders.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_INT32_VARIABLE_ARRAY_ENCODER_HH
-#define TRICKHLA_INT32_VARIABLE_ARRAY_ENCODER_HH
+#ifndef TRICKHLA_BASIC_DATA_VARIABLE_ARRAY_ENCODERS_HH
+#define TRICKHLA_BASIC_DATA_VARIABLE_ARRAY_ENCODERS_HH
 
 // System includes.
 #include <cstdint>
@@ -59,60 +59,82 @@ NASA, Johnson Space Center\n
 #include "RTI/encoding/DataElement.h"
 #pragma GCC diagnostic pop
 
+#if !defined( SWIG )
+
 namespace TrickHLA
 {
 
-class Int32VariableArrayEncoder : public EncoderBase
-{
-   // Let the Trick input processor access protected and private data.
-   // InputProcessor is really just a marker class (does not really
-   // exists - at least yet). This friend statement just tells Trick
-   // to go ahead and process the protected and private data as well
-   // as the usual public data.
-   friend class InputProcessor;
-   // IMPORTANT Note: you must have the following line too.
-   // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__Int32VariableArrayEncoder();
+#   define DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName )                   \
+                                                                                           \
+      class EncoderClassName : public EncoderBase                                          \
+      {                                                                                    \
+         /* Let the Trick input processor access protected and private data. */            \
+         /* InputProcessor is really just a marker class (does not really    */            \
+         /* exists - at least yet). This friend statement just tells Trick   */            \
+         /* to go ahead and process the protected and private data as well   */            \
+         /* as the usual public data.                                        */            \
+         friend class InputProcessor;                                                      \
+         /* IMPORTANT Note: you must have the following line too.            */            \
+         /* Syntax: friend void init_attr<namespace>__<class name>();        */            \
+         friend void init_attrTrickHLA__EncoderClassName();                                \
+                                                                                           \
+        public:                                                                            \
+         /*! @brief Default constructor. */                                                \
+         EncoderClassName( std::string const &trick_variable_name,                         \
+                           EncodingEnum const hla_encoding,                                \
+                           REF2              *r2 );                                                     \
+                                                                                           \
+         /*! @brief Destructor for the TrickHLA EncoderClassName class. */                 \
+         virtual ~EncoderClassName();                                                      \
+                                                                                           \
+         virtual RTI1516_NAMESPACE::VariableLengthData &encode();                          \
+                                                                                           \
+         virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data ); \
+                                                                                           \
+         virtual std::string to_string();                                                  \
+                                                                                           \
+        protected:                                                                         \
+         virtual bool resize( std::size_t const new_size );                                \
+                                                                                           \
+         void refresh_data_elements();                                                     \
+                                                                                           \
+        private:                                                                           \
+         /* Do not allow the default, copy constructor or assignment operator. */          \
+         EncoderClassName();                                                               \
+         /*! @brief Copy constructor for EncoderClassName class.                 */        \
+         /*  @details This constructor is private to prevent inadvertent copies. */        \
+         EncoderClassName( EncoderClassName const &rhs );                                  \
+         /*! @brief Assignment operator for EncoderClassName class.                 */     \
+         /*  @details Assignment operator is private to prevent inadvertent copies. */     \
+         EncoderClassName &operator=( EncoderClassName const &rhs );                       \
+      };
 
-   //--------------------------------------------------------------------------
-   // Public member functions.
-   //--------------------------------------------------------------------------
-  public:
-   //
-   // Public constructors and destructor.
-   //
-   /*! @brief Default constructor for the TrickHLA Int32VariableArrayEncoder class. */
-   Int32VariableArrayEncoder( std::string const &trick_variable_name,
-                              EncodingEnum const hla_encoding,
-                              REF2              *r2 );
-
-   /*! @brief Destructor for the TrickHLA Int32VariableArrayEncoder class. */
-   virtual ~Int32VariableArrayEncoder();
-
-   virtual RTI1516_NAMESPACE::VariableLengthData &encode();
-
-   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
-
-   virtual std::string to_string();
-
-  protected:
-   /*! @brief Initializes the TrickHLA Int32VariableArrayEncoder. */
-   virtual void initialize();
-
-   virtual bool resize( std::size_t const new_size );
-
-   void refresh_data_elements();
-
-  private:
-   // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for Int32VariableArrayEncoder class.
-    *  @details This constructor is private to prevent inadvertent copies. */
-   Int32VariableArrayEncoder( Int32VariableArrayEncoder const &rhs );
-   /*! @brief Assignment operator for Int32VariableArrayEncoder class.
-    *  @details This assignment operator is private to prevent inadvertent copies. */
-   Int32VariableArrayEncoder &operator=( Int32VariableArrayEncoder const &rhs );
-};
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ASCIICharVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ASCIIStringVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( BoolVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ByteVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float32BEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float32LEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float64BEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float64LEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int16BEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int16LEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int32BEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int32LEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int64BEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int64LEVariableArrayEncoder )
+#   if defined( IEEE_1516_2025 )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt16BEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt16LEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt32BEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt32LEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt64BEVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt64LEVariableArrayEncoder )
+#   endif
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeCharVariableArrayEncoder )
+DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeStringVariableArrayEncoder )
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_INT32_VARIABLE_ARRAY_ENCODER_HH
+#endif // SWIG
+#endif // TRICKHLA_BASIC_DATA_VARIABLE_ARRAY_ENCODERS_HH
