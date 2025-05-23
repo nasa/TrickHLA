@@ -57,7 +57,7 @@ class TestSimObj : public Trick::SimObject {
 
       ("initialization") encoder_test.long_test( "T.long_data1", long_data1,
                                                  "T.long_data2", long_data2,
-                                                  verbose );
+                                                 verbose );
 
       ("initialization") encoder_test.float32_test( "T.float32_data1", float32_data1,
                                                     "T.float32_data2", float32_data2,
