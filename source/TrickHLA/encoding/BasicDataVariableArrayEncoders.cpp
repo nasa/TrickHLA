@@ -220,7 +220,7 @@ using namespace TrickHLA;
          if ( new_size < array_encoder->size() ) {                                                                       \
             /* Because we can't resize the encoder to a smaller */                                                       \
             /* size we have to create a new one.                */                                                       \
-            delete encoder;                                                                                              \
+            delete this->encoder;                                                                                        \
             array_encoder = new HLAvariableArray( data_prototype );                                                      \
             this->encoder = array_encoder;                                                                               \
          }                                                                                                               \
