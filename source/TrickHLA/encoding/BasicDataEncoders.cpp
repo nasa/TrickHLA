@@ -1,7 +1,7 @@
 /*!
 @file TrickHLA/BasicDataEncoders.cpp
 @ingroup TrickHLA
-@brief This class represents the base encoder implementation.
+@brief This class represents the basic data encoder implementation.
 
 \par<b>Assumptions and Limitations:</b>
 - Only primitive types and static arrays of primitive type are supported for now.

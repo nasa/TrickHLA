@@ -1,7 +1,7 @@
 /*!
 @file TrickHLA/BasicDataVariableArrayEncoders.hh
 @ingroup TrickHLA
-@brief This class represents the base encoder implementation.
+@brief This class represents the basic data variable array encoder implementation.
 
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
