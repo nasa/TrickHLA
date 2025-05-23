@@ -90,6 +90,11 @@ class EncoderFactory
       EncodingEnum const hla_encoding );
 
   protected:
+   static TrickHLA::EncoderBase *create_char(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+
    static TrickHLA::EncoderBase *create_int16(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,

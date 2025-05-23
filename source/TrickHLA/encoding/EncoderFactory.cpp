@@ -124,6 +124,7 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_CHARACTER: {
          // (char)
+         encoder = create_char( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_UNSIGNED_CHARACTER: {
@@ -356,6 +357,42 @@ EncoderBase *EncoderFactory::create(
    }
 
    return encoder;
+}
+
+EncoderBase *EncoderFactory::create_char(
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
+   REF2              *ref2 )
+{
+   bool const is_array        = ( ref2->attr->num_index > 0 );
+   bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+
+   switch ( hla_encoding ) {
+      case ENCODING_BIG_ENDIAN:
+      case ENCODING_LITTLE_ENDIAN:
+      case ENCODING_NONE: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new ByteFixedArrayEncoder( trick_name, hla_encoding, ref2 );
+            } else {
+               return new ByteVariableArrayEncoder( trick_name, hla_encoding, ref2 );
+            }
+         } else {
+            return new ByteEncoder( trick_name, hla_encoding, ref2 );
+         }
+         break;
+      }
+      default: {
+         ostringstream errmsg;
+         errmsg << "EncoderFactory::create_int16():" << __LINE__
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'short', the specified hla_endoding ("
+                << hla_encoding << ") is not supported.\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
+      }
+   }
+   return NULL;
 }
 
 EncoderBase *EncoderFactory::create_int16(

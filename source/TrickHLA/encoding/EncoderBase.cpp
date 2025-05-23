@@ -204,6 +204,14 @@ void EncoderBase::calculate_ref2_element_count()
 
          // TODO: Need to refresh ref2 since the variable is dynamic.
 
+#if 1
+         // Handle dynamic arrays.
+         //
+         // get_size returns the number of elements in the dynamic array.
+         int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
+         ref2_element_count  = ( num_items > 0 ) ? num_items : 0;
+
+#else
          // Handle dynamic arrays of characters differently since we need to know the
          // length of each string.
          if ( ( ref2->attr->type == TRICK_CHARACTER )
@@ -212,6 +220,8 @@ void EncoderBase::calculate_ref2_element_count()
             size_t byte_count = 0;
 
             switch ( rti_encoding ) {
+               case ENCODING_BIG_ENDIAN:
+               case ENCODING_LITTLE_ENDIAN:
                case ENCODING_OPAQUE_DATA:
                case ENCODING_NONE: {
                   // Determine total number of bytes used by the Trick simulation
@@ -259,6 +269,7 @@ void EncoderBase::calculate_ref2_element_count()
             int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
             ref2_element_count  = ( num_items > 0 ) ? num_items : 0;
          }
+#endif
       } else {
          // The user variable is either a primitive type or a static
          // multi-dimension array.

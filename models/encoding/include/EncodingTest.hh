@@ -22,6 +22,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{encoding/src/EncodingTest.cpp}
 @trick_link_dependency{encoding/src/Float32Data.cpp}
 @trick_link_dependency{encoding/src/Float64Data.cpp}
+@trick_link_dependency{encoding/src/CharData.cpp}
+@trick_link_dependency{encoding/src/Int16Data.cpp}
 @trick_link_dependency{encoding/src/Int32Data.cpp}
 @trick_link_dependency{encoding/src/Int64Data.cpp}
 @trick_link_dependency{encoding/src/LongData.cpp}
@@ -43,8 +45,10 @@ NASA, Johnson Space Center\n
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 
+#include "CharData.hh"
 #include "Float32Data.hh"
 #include "Float64Data.hh"
+#include "Int16Data.hh"
 #include "Int32Data.hh"
 #include "Int64Data.hh"
 #include "LongData.hh"
@@ -72,6 +76,18 @@ class EncodingTest
    EncodingTest();
    /*! @brief Destructor for the TrickHLAModel EncodingTest class. */
    virtual ~EncodingTest();
+
+   void char_test( std::string const &data1_trick_base_name,
+                   CharData          &data1,
+                   std::string const &data2_trick_base_name,
+                   CharData          &data2,
+                   bool const         verbose );
+
+   void int16_test( std::string const &data1_trick_base_name,
+                    Int16Data         &data1,
+                    std::string const &data2_trick_base_name,
+                    Int16Data         &data2,
+                    bool const         verbose );
 
    void int32_test( std::string const &data1_trick_base_name,
                     Int32Data         &data1,
