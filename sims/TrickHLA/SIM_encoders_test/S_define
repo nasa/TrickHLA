@@ -32,7 +32,7 @@ class TestSimObj : public Trick::SimObject {
    Int64Data int64_data1 = Int64Data( 10 );
    Int64Data int64_data2 = Int64Data( 0 );
 
-   LongData long_data1 = LongData( 10 );
+   LongData long_data1 = LongData( 0 );
    LongData long_data2 = LongData( 0 );
 
    Float32Data float32_data1 = Float32Data( 0 );

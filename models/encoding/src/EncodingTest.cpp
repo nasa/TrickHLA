@@ -299,9 +299,9 @@ void EncodingTest::long_test(
    data2_ptr_long_encoder->decode( data1_ptr_long_encoder->encode() );
 
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "int32_data1 == int32_data2\n" );
+      message_publish( MSG_INFO, "long_data1 == long_data2\n" );
    } else {
-      message_publish( MSG_ERROR, "int32_data1 != int32_data2\n" );
+      message_publish( MSG_ERROR, "long_data1 != long_data2\n" );
    }
 
    if ( verbose ) {

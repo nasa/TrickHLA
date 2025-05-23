@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_BASIC_DATA_ENCODERS_HH
 
 // System includes.
-#include <cstdint>
+#include <cstddef>
 #include <string>
 
 // Trick include files.
@@ -58,44 +58,42 @@ NASA, Johnson Space Center\n
 #include "RTI/encoding/DataElement.h"
 #pragma GCC diagnostic pop
 
-#if !defined( SWIG )
-
 namespace TrickHLA
 {
 
-#   define DEFINE_BASIC_ENCODER_CLASS( EncoderClassName )                              \
-                                                                                       \
-      class EncoderClassName : public EncoderBase                                      \
-      {                                                                                \
-         /* Let the Trick input processor access protected and private data.  */       \
-         /* InputProcessor is really just a marker class (does not really     */       \
-         /* exists - at least yet). This friend statement just tells Trick    */       \
-         /* to go ahead and process the protected and private data as well    */       \
-         /* as the usual public data.                                         */       \
-         friend class InputProcessor;                                                  \
-         /* IMPORTANT Note: you must have the following line too.             */       \
-         /* Syntax: friend void init_attr<namespace>__<class name>();         */       \
-         friend void init_attrTrickHLA__EncoderClassName();                            \
-                                                                                       \
-        public:                                                                        \
-         EncoderClassName( std::string const &trick_variable_name,                     \
-                           EncodingEnum const hla_encoding,                            \
-                           REF2              *r2 );                                                 \
-                                                                                       \
-         virtual ~EncoderClassName();                                                  \
-                                                                                       \
-         virtual std::string to_string();                                              \
-                                                                                       \
-        private:                                                                       \
-         /* Do not allow the default, copy constructor or assignment operator.      */ \
-         EncoderClassName();                                                           \
-         /*! @brief Copy constructor for EncoderClassName class.                    */ \
-         /*  @details This constructor is private to prevent inadvertent copies.    */ \
-         EncoderClassName( EncoderClassName const &rhs );                              \
-         /*! @brief Assignment operator for EncoderClassName class.                 */ \
-         /*  @details Assignment operator is private to prevent inadvertent copies. */ \
-         EncoderClassName &operator=( EncoderClassName const &rhs );                   \
-      };
+#define DEFINE_BASIC_ENCODER_CLASS( EncoderClassName )                              \
+                                                                                    \
+   class EncoderClassName : public EncoderBase                                      \
+   {                                                                                \
+      /* Let the Trick input processor access protected and private data.  */       \
+      /* InputProcessor is really just a marker class (does not really     */       \
+      /* exists - at least yet). This friend statement just tells Trick    */       \
+      /* to go ahead and process the protected and private data as well    */       \
+      /* as the usual public data.                                         */       \
+      friend class InputProcessor;                                                  \
+      /* IMPORTANT Note: you must have the following line too.             */       \
+      /* Syntax: friend void init_attr<namespace>__<class name>();         */       \
+      friend void init_attrTrickHLA__EncoderClassName();                            \
+                                                                                    \
+     public:                                                                        \
+      EncoderClassName( std::string const &trick_variable_name,                     \
+                        EncodingEnum const hla_encoding,                            \
+                        REF2              *r2 );                                                 \
+                                                                                    \
+      virtual ~EncoderClassName();                                                  \
+                                                                                    \
+      virtual std::string to_string();                                              \
+                                                                                    \
+     private:                                                                       \
+      /* Do not allow the default, copy constructor or assignment operator.      */ \
+      EncoderClassName();                                                           \
+      /*! @brief Copy constructor for EncoderClassName class.                    */ \
+      /*  @details This constructor is private to prevent inadvertent copies.    */ \
+      EncoderClassName( EncoderClassName const &rhs );                              \
+      /*! @brief Assignment operator for EncoderClassName class.                 */ \
+      /*  @details Assignment operator is private to prevent inadvertent copies. */ \
+      EncoderClassName &operator=( EncoderClassName const &rhs );                   \
+   };
 
 DEFINE_BASIC_ENCODER_CLASS( ASCIICharEncoder )
 DEFINE_BASIC_ENCODER_CLASS( ASCIIStringEncoder )
@@ -111,18 +109,17 @@ DEFINE_BASIC_ENCODER_CLASS( Int32BEEncoder )
 DEFINE_BASIC_ENCODER_CLASS( Int32LEEncoder )
 DEFINE_BASIC_ENCODER_CLASS( Int64BEEncoder )
 DEFINE_BASIC_ENCODER_CLASS( Int64LEEncoder )
-#   if defined( IEEE_1516_2025 )
+#if defined( IEEE_1516_2025 )
 DEFINE_BASIC_ENCODER_CLASS( UInt16BEEncoder )
 DEFINE_BASIC_ENCODER_CLASS( UInt16LEEncoder )
 DEFINE_BASIC_ENCODER_CLASS( UInt32BEEncoder )
 DEFINE_BASIC_ENCODER_CLASS( UInt32LEEncoder )
 DEFINE_BASIC_ENCODER_CLASS( UInt64BEEncoder )
 DEFINE_BASIC_ENCODER_CLASS( UInt64LEEncoder )
-#   endif
+#endif
 DEFINE_BASIC_ENCODER_CLASS( UnicodeCharEncoder )
 DEFINE_BASIC_ENCODER_CLASS( UnicodeStringEncoder )
 
 } // namespace TrickHLA
 
-#endif // SWIG
 #endif // TRICKHLA_BASIC_DATA_ENCODERS_HH

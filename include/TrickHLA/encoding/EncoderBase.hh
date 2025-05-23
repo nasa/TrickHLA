@@ -34,9 +34,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_ENCODER_BASE_HH
 
 // System includes.
-#include <cstdint>
-#include <map>
-#include <stdlib.h>
+#include <cstddef>
 #include <string>
 #include <vector>
 

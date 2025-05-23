@@ -32,10 +32,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cmath>
-#include <cstdint>
-#include <cstring>
-#include <limits>
+#include <cstddef>
 #include <sstream>
 #include <string>
 
@@ -83,7 +80,11 @@ using namespace TrickHLA;
          update_ref2();                                                                                   \
       }                                                                                                   \
                                                                                                           \
-      if ( ref2->attr->type != TrickTypeEnum ) {                                                          \
+      bool valid = ( ref2->attr->type == TrickTypeEnum )                                                  \
+                   || ( ( ( ref2->attr->type == TRICK_LONG )                                              \
+                          || ( ref2->attr->type == TRICK_UNSIGNED_LONG ) )                                \
+                        && ( sizeof( long ) == sizeof( SimpleDataType ) ) );                              \
+      if ( !valid ) {                                                                                     \
          ostringstream errmsg;                                                                            \
          errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                    \
                 << " ERROR: Trick type for the '" << trick_name                                           \
