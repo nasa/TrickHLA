@@ -124,30 +124,30 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_CHARACTER: {
          // (char)
-         encoder = create_char( trick_name, hla_encoding, ref2 );
+         encoder = create_char_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_UNSIGNED_CHARACTER: {
          // (unsigned char)
+#if defined( IEEE_1516_2025 )
+         encoder = create_uchar( trick_name, hla_encoding, ref2 );
+#else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'unsigned char', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
+#endif
          break;
       }
       case TRICK_STRING: {
          // string
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'string', and is not supported.\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
+         encoder = create_string_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_SHORT: {
          // (short)
-         encoder = create_int16( trick_name, hla_encoding, ref2 );
+         encoder = create_int16_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
@@ -165,7 +165,7 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_INTEGER: {
          // (int)
-         encoder = create_int32( trick_name, hla_encoding, ref2 );
+         encoder = create_int32_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
@@ -185,12 +185,12 @@ EncoderBase *EncoderFactory::create(
          // (long)
          switch ( sizeof( long ) ) {
             case 4: {
-               encoder = create_int32( trick_name, hla_encoding, ref2 );
+               encoder = create_int32_encoder( trick_name, hla_encoding, ref2 );
                break;
             }
             case 8:
             default: {
-               encoder = create_int64( trick_name, hla_encoding, ref2 );
+               encoder = create_int64_encoder( trick_name, hla_encoding, ref2 );
                break;
             }
          }
@@ -221,12 +221,12 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_FLOAT: {
          // (float)
-         encoder = create_float32( trick_name, hla_encoding, ref2 );
+         encoder = create_float32_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_DOUBLE: {
          // (double)
-         encoder = create_float64( trick_name, hla_encoding, ref2 );
+         encoder = create_float64_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_BITFIELD: {
@@ -251,7 +251,7 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_LONG_LONG: {
          // (long long)
-         encoder = create_int64( trick_name, hla_encoding, ref2 );
+         encoder = create_int64_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
@@ -359,7 +359,7 @@ EncoderBase *EncoderFactory::create(
    return encoder;
 }
 
-EncoderBase *EncoderFactory::create_char(
+EncoderBase *EncoderFactory::create_char_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -384,7 +384,7 @@ EncoderBase *EncoderFactory::create_char(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_int16():" << __LINE__
+         errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'short', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
@@ -395,7 +395,41 @@ EncoderBase *EncoderFactory::create_char(
    return NULL;
 }
 
-EncoderBase *EncoderFactory::create_int16(
+EncoderBase *EncoderFactory::create_string_encoder(
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
+   REF2              *ref2 )
+{
+   bool const is_array        = ( ref2->attr->num_index > 0 );
+   bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+
+   switch ( hla_encoding ) {
+      case ENCODING_ASCII_STRING: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new ASCIIStringFixedArrayEncoder( trick_name, hla_encoding, ref2 );
+            } else {
+               return new ASCIIStringVariableArrayEncoder( trick_name, hla_encoding, ref2 );
+            }
+         } else {
+            return new ASCIIStringEncoder( trick_name, hla_encoding, ref2 );
+         }
+         break;
+      }
+      default: {
+         ostringstream errmsg;
+         errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'short', the specified hla_endoding ("
+                << hla_encoding << ") is not supported.\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
+      }
+   }
+   return NULL;
+}
+
+EncoderBase *EncoderFactory::create_int16_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -430,7 +464,7 @@ EncoderBase *EncoderFactory::create_int16(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_int16():" << __LINE__
+         errmsg << "EncoderFactory::create_int16_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'short', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
@@ -441,7 +475,7 @@ EncoderBase *EncoderFactory::create_int16(
    return NULL;
 }
 
-EncoderBase *EncoderFactory::create_int32(
+EncoderBase *EncoderFactory::create_int32_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -476,7 +510,7 @@ EncoderBase *EncoderFactory::create_int32(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_int32():" << __LINE__
+         errmsg << "EncoderFactory::create_int32_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'int', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
@@ -487,7 +521,7 @@ EncoderBase *EncoderFactory::create_int32(
    return NULL;
 }
 
-EncoderBase *EncoderFactory::create_int64(
+EncoderBase *EncoderFactory::create_int64_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -522,7 +556,7 @@ EncoderBase *EncoderFactory::create_int64(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_int64():" << __LINE__
+         errmsg << "EncoderFactory::create_int64_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'long long', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
@@ -534,7 +568,7 @@ EncoderBase *EncoderFactory::create_int64(
 }
 
 #if defined( IEEE_1516_2025 )
-EncoderBase *EncoderFactory::create_uint16(
+EncoderBase *EncoderFactory::create_uint16_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -569,7 +603,7 @@ EncoderBase *EncoderFactory::create_uint16(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_uint16():" << __LINE__
+         errmsg << "EncoderFactory::create_uint16_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'unsigned short', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
@@ -580,7 +614,7 @@ EncoderBase *EncoderFactory::create_uint16(
    return NULL;
 }
 
-EncoderBase *EncoderFactory::create_uint32(
+EncoderBase *EncoderFactory::create_uint32_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -615,7 +649,7 @@ EncoderBase *EncoderFactory::create_uint32(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_uint32():" << __LINE__
+         errmsg << "EncoderFactory::create_uint32_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'unsigned int', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
@@ -626,7 +660,7 @@ EncoderBase *EncoderFactory::create_uint32(
    return NULL;
 }
 
-EncoderBase *EncoderFactory::create_uint64(
+EncoderBase *EncoderFactory::create_uint64_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -661,7 +695,7 @@ EncoderBase *EncoderFactory::create_uint64(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_uint64():" << __LINE__
+         errmsg << "EncoderFactory::create_uint64_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'unsigned long long', the specified"
                 << " hla_endoding (" << hla_encoding << ") is not supported.\n";
@@ -673,7 +707,7 @@ EncoderBase *EncoderFactory::create_uint64(
 }
 #endif
 
-EncoderBase *EncoderFactory::create_float32(
+EncoderBase *EncoderFactory::create_float32_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -708,7 +742,7 @@ EncoderBase *EncoderFactory::create_float32(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_float32():" << __LINE__
+         errmsg << "EncoderFactory::create_float32_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'int', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
@@ -719,7 +753,7 @@ EncoderBase *EncoderFactory::create_float32(
    return NULL;
 }
 
-EncoderBase *EncoderFactory::create_float64(
+EncoderBase *EncoderFactory::create_float64_encoder(
    string const      &trick_name,
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
@@ -754,7 +788,7 @@ EncoderBase *EncoderFactory::create_float64(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_float64():" << __LINE__
+         errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'int', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";

@@ -14,6 +14,7 @@
 ##include "encoding/include/Int32Data.hh"
 ##include "encoding/include/Int64Data.hh"
 ##include "encoding/include/LongData.hh"
+##include "encoding/include/StringData.hh"
 
 %header{
  using namespace TrickHLA;
@@ -30,6 +31,9 @@ class TestSimObj : public Trick::SimObject {
  public:
    CharData char_data1 = CharData( 0 );
    CharData char_data2 = CharData( 10 );
+
+   StringData string_data1 = StringData( 0 );
+   StringData string_data2 = StringData( 10 );
 
    Int16Data int16_data1 = Int16Data( 0 );
    Int16Data int16_data2 = Int16Data( 0 );
@@ -58,7 +62,11 @@ class TestSimObj : public Trick::SimObject {
       ("initialization") encoder_test.char_test( "T.char_data1", char_data1,
                                                  "T.char_data2", char_data2,
                                                  verbose );
-
+#if 0
+      ("initialization") encoder_test.string_test( "T.string_data1", string_data1,
+                                                   "T.string_data2", string_data2,
+                                                    true );
+#endif
       ("initialization") encoder_test.int16_test( "T.int16_data1", int16_data1,
                                                   "T.int16_data2", int16_data2,
                                                   verbose );

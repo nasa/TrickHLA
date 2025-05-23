@@ -90,49 +90,54 @@ class EncoderFactory
       EncodingEnum const hla_encoding );
 
   protected:
-   static TrickHLA::EncoderBase *create_char(
+   static TrickHLA::EncoderBase *create_char_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
-   static TrickHLA::EncoderBase *create_int16(
+   static TrickHLA::EncoderBase *create_string_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
-   static TrickHLA::EncoderBase *create_int32(
+   static TrickHLA::EncoderBase *create_int16_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
-   static TrickHLA::EncoderBase *create_int64(
+   static TrickHLA::EncoderBase *create_int32_encoder(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+
+   static TrickHLA::EncoderBase *create_int64_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
 #if defined( IEEE_1516_2025 )
-   static TrickHLA::EncoderBase *create_uint16(
+   static TrickHLA::EncoderBase *create_uint16_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
-   static TrickHLA::EncoderBase *create_uint32(
+   static TrickHLA::EncoderBase *create_uint32_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
-   static TrickHLA::EncoderBase *create_uint64(
+   static TrickHLA::EncoderBase *create_uint64_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 #endif
 
-   static TrickHLA::EncoderBase *create_float32(
+   static TrickHLA::EncoderBase *create_float32_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
-   static TrickHLA::EncoderBase *create_float64(
+   static TrickHLA::EncoderBase *create_float64_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
