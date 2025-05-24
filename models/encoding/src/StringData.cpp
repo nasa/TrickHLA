@@ -55,17 +55,17 @@ StringData::StringData(
    int const offset )
 {
    int value = 1 + offset;
-   _string = "s-" + std::to_string( value );
+   _string   = "s-" + std::to_string( value );
 
    for ( int i = 0; i < 3; ++i ) {
-      value = i + 1 + offset;
+      value          = i + 1 + offset;
       vec3_string[i] = "s-" + std::to_string( value );
    }
 
    int cnt = 1;
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
-         value = cnt + offset;
+         value                 = cnt + offset;
          m3x3_string[row][col] = "s-" + std::to_string( value );
          ++cnt;
       }
@@ -75,7 +75,7 @@ StringData::StringData(
 
    ptr_string = static_cast< string * >( TMM_declare_var_1d( "std::string", ptr_string_size ) );
    for ( int i = 0; i < ptr_string_size; ++i ) {
-      value = i + 1 + offset;
+      value         = i + 1 + offset;
       ptr_string[i] = "s-" + std::to_string( value );
    }
 }
@@ -130,8 +130,8 @@ bool StringData::compare(
    int data1_ptr_string_size = get_size( this->ptr_string );
    int data2_ptr_string_size = get_size( data.ptr_string );
    int min_ptr_string_size   = ( data1_ptr_string_size <= data2_ptr_string_size )
-                                ? data1_ptr_string_size
-                                : data2_ptr_string_size;
+                                  ? data1_ptr_string_size
+                                  : data2_ptr_string_size;
    if ( data1_ptr_string_size != data2_ptr_string_size ) {
       msg << "this->ptr_string size (" << data1_ptr_string_size
           << ") != (" << data2_ptr_string_size << ") data.ptr_string size\n";

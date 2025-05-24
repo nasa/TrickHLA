@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/parameter_types.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
@@ -313,4 +314,95 @@ void EncoderBase::calculate_ref2_element_count()
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
+}
+
+bool EncoderBase::is_valid_encoding_for_type(
+   TrickHLA::EncodingEnum const hla_encoding,
+   TRICK_TYPE const             trick_type )
+{
+   bool valid = false;
+
+   switch ( trick_type ) {
+      case TRICK_CHARACTER: {
+         // (char)
+         valid = ( hla_encoding == ENCODING_BIG_ENDIAN )
+                 || ( hla_encoding == ENCODING_LITTLE_ENDIAN )
+                 || ( hla_encoding == ENCODING_UNICODE_STRING )
+                 || ( hla_encoding == ENCODING_ASCII_STRING )
+                 || ( hla_encoding == ENCODING_OPAQUE_DATA )
+                 || ( hla_encoding == ENCODING_NONE );
+         break;
+      }
+      case TRICK_UNSIGNED_CHARACTER: {
+         // (unsigned char)
+#if defined( IEEE_1516_2025 )
+         valid = ( hla_encoding == ENCODING_BIG_ENDIAN )
+                 || ( hla_encoding == ENCODING_LITTLE_ENDIAN )
+                 || ( hla_encoding == ENCODING_OPAQUE_DATA )
+                 || ( hla_encoding == ENCODING_NONE );
+#else
+         valid = false;
+#endif
+         break;
+      }
+      case TRICK_STRING: {
+         // (std::string)
+         valid = ( hla_encoding == ENCODING_ASCII_STRING );
+         break;
+      }
+      case TRICK_SHORT:
+      case TRICK_INTEGER:
+      case TRICK_LONG:
+      case TRICK_FLOAT:
+      case TRICK_DOUBLE:
+      case TRICK_LONG_LONG: {
+         valid = ( hla_encoding == ENCODING_BIG_ENDIAN )
+                 || ( hla_encoding == ENCODING_LITTLE_ENDIAN );
+         break;
+      }
+      case TRICK_UNSIGNED_SHORT:
+      case TRICK_UNSIGNED_INTEGER:
+      case TRICK_UNSIGNED_LONG:
+      case TRICK_UNSIGNED_LONG_LONG: {
+#if defined( IEEE_1516_2025 )
+         valid = ( hla_encoding == ENCODING_BIG_ENDIAN )
+                 || ( hla_encoding == ENCODING_LITTLE_ENDIAN );
+#else
+         valid = false;
+#endif
+         break;
+      }
+      case TRICK_BOOLEAN: {
+         // (bool)
+         valid = ( hla_encoding == ENCODING_BOOLEAN );
+         break;
+      }
+      case TRICK_WCHAR: {
+         // (wchar_t)
+         valid = ( hla_encoding == ENCODING_UNICODE_STRING )
+                 || ( hla_encoding == ENCODING_BIG_ENDIAN )
+                 || ( hla_encoding == ENCODING_LITTLE_ENDIAN );
+         break;
+      }
+      case TRICK_WSTRING: {
+         // (std::wstring)
+         valid = ( hla_encoding == ENCODING_UNICODE_STRING );
+         break;
+      }
+      case TRICK_VOID:
+      case TRICK_BITFIELD:
+      case TRICK_UNSIGNED_BITFIELD:
+      case TRICK_FILE_PTR:
+      case TRICK_VOID_PTR:
+      case TRICK_ENUMERATED:
+      case TRICK_STRUCTURED:
+      case TRICK_OPAQUE_TYPE:
+      case TRICK_STL:
+      default: {
+         valid = false;
+         break;
+      }
+   }
+
+   return valid;
 }

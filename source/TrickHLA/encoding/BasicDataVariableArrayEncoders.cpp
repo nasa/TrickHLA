@@ -82,18 +82,6 @@ using namespace TrickHLA;
          update_ref2();                                                                                                  \
       }                                                                                                                  \
                                                                                                                          \
-      if ( ( rti_encoding != ENCODING_LITTLE_ENDIAN )                                                                    \
-           && ( rti_encoding != ENCODING_BIG_ENDIAN ) ) {                                                                \
-         ostringstream errmsg;                                                                                           \
-         errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
-                << " ERROR: Trick ref-attributes for '" << trick_name                                                    \
-                << "' the HLA encoding specified (" << rti_encoding                                                      \
-                << ") must be either ENCODING_LITTLE_ENDIAN or"                                                          \
-                << " ENCODING_BIG_ENDIAN!\n";                                                                            \
-         DebugHandler::terminate_with_message( errmsg.str() );                                                           \
-         return;                                                                                                         \
-      }                                                                                                                  \
-                                                                                                                         \
       bool valid = ( ref2->attr->type == TrickTypeEnum )                                                                 \
                    || ( ( ( ref2->attr->type == TRICK_LONG )                                                             \
                           || ( ref2->attr->type == TRICK_UNSIGNED_LONG ) )                                               \
@@ -106,6 +94,18 @@ using namespace TrickHLA;
                 << Utilities::get_trick_type_string( ref2->attr->type )                                                  \
                 << ") is not the expected type '"                                                                        \
                 << Utilities::get_trick_type_string( TrickTypeEnum ) << "'.\n";                                          \
+         DebugHandler::terminate_with_message( errmsg.str() );                                                           \
+         return;                                                                                                         \
+      }                                                                                                                  \
+                                                                                                                         \
+      if ( !is_valid_encoding_for_type( hla_encoding, ref2->attr->type ) ) {                                             \
+         ostringstream errmsg;                                                                                           \
+         errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
+                << " ERROR: Trick type for the '" << trick_name                                                          \
+                << "' simulation variable (type:"                                                                        \
+                << Utilities::get_trick_type_string( ref2->attr->type )                                                  \
+                << ") does not support the specified HLA encoding ("                                                     \
+                << rti_encoding << ")!\n";                                                                               \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
          return;                                                                                                         \
       }                                                                                                                  \
@@ -189,7 +189,7 @@ using namespace TrickHLA;
       size_t const new_size )                                                                                            \
    {                                                                                                                     \
       /* Trick array variable size does not match the new size. */                                                       \
-      if (( ref2_element_count != new_size ) && ( ref2->attr->type != TRICK_STRING )) {                                  \
+      if ( ( ref2_element_count != new_size ) && ( ref2->attr->type != TRICK_STRING ) ) {                                \
                                                                                                                          \
          *( static_cast< void ** >( ref2->address ) ) =                                                                  \
             static_cast< void * >( TMM_resize_array_1d_a(                                                                \
