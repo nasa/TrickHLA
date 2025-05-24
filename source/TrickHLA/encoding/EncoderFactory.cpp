@@ -278,6 +278,7 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_BOOLEAN: {
          // (bool)
+         encoder = create_bool_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_WCHAR: {
@@ -386,7 +387,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'short', the specified hla_endoding ("
+                << "' the variable is of type 'char', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -420,7 +421,7 @@ EncoderBase *EncoderFactory::create_string_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'short', the specified hla_endoding ("
+                << "' the variable is of type 'std::string', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -744,7 +745,7 @@ EncoderBase *EncoderFactory::create_float32_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_float32_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'int', the specified hla_endoding ("
+                << "' the variable is of type 'float', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -790,7 +791,41 @@ EncoderBase *EncoderFactory::create_float64_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'int', the specified hla_endoding ("
+                << "' the variable is of type 'double', the specified hla_endoding ("
+                << hla_encoding << ") is not supported.\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
+      }
+   }
+   return NULL;
+}
+
+EncoderBase *EncoderFactory::create_bool_encoder(
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
+   REF2              *ref2 )
+{
+   bool const is_array        = ( ref2->attr->num_index > 0 );
+   bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+
+   switch ( hla_encoding ) {
+      case ENCODING_BOOLEAN: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new BoolFixedArrayEncoder( trick_name, hla_encoding, ref2 );
+            } else {
+               return new BoolVariableArrayEncoder( trick_name, hla_encoding, ref2 );
+            }
+         } else {
+            return new BoolEncoder( trick_name, hla_encoding, ref2 );
+         }
+         break;
+      }
+      default: {
+         ostringstream errmsg;
+         errmsg << "EncoderFactory::create_bool_encoder():" << __LINE__
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'bool', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;

@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{encoding/src/EncodingTest.cpp}
+@trick_link_dependency{encoding/src/BoolData.cpp}
 @trick_link_dependency{encoding/src/Float32Data.cpp}
 @trick_link_dependency{encoding/src/Float64Data.cpp}
 @trick_link_dependency{encoding/src/CharData.cpp}
@@ -46,6 +47,7 @@ NASA, Johnson Space Center\n
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 
+#include "BoolData.hh"
 #include "CharData.hh"
 #include "Float32Data.hh"
 #include "Float64Data.hh"
@@ -126,6 +128,12 @@ class EncodingTest
                       std::string const &data2_trick_base_name,
                       Float64Data       &data2,
                       bool const         verbose );
+
+   void bool_test( std::string const &data1_trick_base_name,
+                   BoolData          &data1,
+                   std::string const &data2_trick_base_name,
+                   BoolData          &data2,
+                   bool const         verbose );
 };
 
 } // namespace TrickHLAModel

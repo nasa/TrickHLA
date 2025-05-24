@@ -142,6 +142,11 @@ class EncoderFactory
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
+   static TrickHLA::EncoderBase *create_bool_encoder(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for EncoderFactory class.

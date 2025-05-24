@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderFactory.cpp}
 @trick_link_dependency{encoding/src/EncodingTest.cpp}
+@trick_link_dependency{encoding/src/BoolData.cpp}
 @trick_link_dependency{encoding/src/Float32Data.cpp}
 @trick_link_dependency{encoding/src/Float64Data.cpp}
 @trick_link_dependency{encoding/src/CharData.cpp}
@@ -51,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/EncoderFactory.hh"
 
 // Model include files.
+#include "../include/BoolData.hh"
 #include "../include/CharData.hh"
 #include "../include/EncodingTest.hh"
 #include "../include/Float32Data.hh"
@@ -225,9 +227,9 @@ void EncodingTest::string_test(
    data2_ptr_string_encoder->decode( data1_ptr_string_encoder->encode() );
 
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "char_data1 == char_data2\n" );
+      message_publish( MSG_INFO, "string_data1 == string_data2\n" );
    } else {
-      message_publish( MSG_ERROR, "char_data1 != char_data2\n" );
+      message_publish( MSG_ERROR, "string_data1 != string_data2\n" );
    }
 
    if ( verbose ) {
@@ -713,6 +715,86 @@ void EncodingTest::float64_test(
    if ( verbose ) {
       ostringstream msg3;
       msg3 << "EncodingTest::float64_test():" << __LINE__ << "\n"
+           << "AFTER encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg3.str().c_str() );
+   }
+}
+
+void EncodingTest::bool_test(
+   string const &data1_trick_base_name,
+   BoolData     &data1,
+   string const &data2_trick_base_name,
+   BoolData     &data2,
+   bool const    verbose )
+{
+   if ( verbose ) {
+      ostringstream msg1;
+      msg1 << "========================================\n"
+           << "EncodingTest::bool_test():" << __LINE__ << "\n"
+           << "BEFORE encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------" << "\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg1.str().c_str() );
+   }
+
+   EncodingEnum const rti_encoding = TrickHLA::ENCODING_BOOLEAN;
+
+   EncoderBase *data1_bool_encoder = EncoderFactory::create(
+      data1_trick_base_name + "._bool", rti_encoding );
+
+   EncoderBase *data1_vec3_bool_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".vec3_bool", rti_encoding );
+
+   EncoderBase *data1_m3x3_bool_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".m3x3_bool", rti_encoding );
+
+   EncoderBase *data1_ptr_bool_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".ptr_bool", rti_encoding );
+
+   EncoderBase *data2_bool_encoder = EncoderFactory::create(
+      data2_trick_base_name + "._bool", rti_encoding );
+
+   EncoderBase *data2_vec3_bool_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".vec3_bool", rti_encoding );
+
+   EncoderBase *data2_m3x3_bool_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".m3x3_bool", rti_encoding );
+
+   EncoderBase *data2_ptr_bool_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".ptr_bool", rti_encoding );
+
+   if ( verbose ) {
+      ostringstream msg2;
+      msg2 << "EncodingTest::bool_test():" << __LINE__ << "\n"
+           << "     data1_bool_encoder: " << data1_bool_encoder->to_string() << "\n"
+           << "data1_vec3_bool_encoder: " << data1_vec3_bool_encoder->to_string() << "\n"
+           << "data1_m3x3_bool_encoder: " << data1_m3x3_bool_encoder->to_string() << "\n"
+           << " data1_ptr_bool_encoder: " << data1_ptr_bool_encoder->to_string() << "\n"
+           << "     data2_bool_encoder: " << data2_bool_encoder->to_string() << "\n"
+           << "data2_vec3_bool_encoder: " << data2_vec3_bool_encoder->to_string() << "\n"
+           << "data2_m3x3_bool_encoder: " << data2_m3x3_bool_encoder->to_string() << "\n"
+           << " data2_ptr_bool_encoder: " << data2_ptr_bool_encoder->to_string() << "\n";
+      message_publish( MSG_NORMAL, msg2.str().c_str() );
+   }
+
+   data2_bool_encoder->decode( data1_bool_encoder->encode() );
+   data2_vec3_bool_encoder->decode( data1_vec3_bool_encoder->encode() );
+   data2_m3x3_bool_encoder->decode( data1_m3x3_bool_encoder->encode() );
+   data2_ptr_bool_encoder->decode( data1_ptr_bool_encoder->encode() );
+
+   if ( data1.compare( data2 ) ) {
+      message_publish( MSG_INFO, "bool_data1 == bool_data2\n" );
+   } else {
+      message_publish( MSG_ERROR, "bool_data1 != bool_data2\n" );
+   }
+
+   if ( verbose ) {
+      ostringstream msg3;
+      msg3 << "EncodingTest::bool_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
            << "Data1: " << data1.to_string()
            << "-----------------------------\n"

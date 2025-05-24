@@ -7,6 +7,7 @@
 ##include "TrickHLA/encoding/EncoderBase.hh"
 
 ##include "encoding/include/EncodingTest.hh"
+##include "encoding/include/BoolData.hh"
 ##include "encoding/include/Float32Data.hh"
 ##include "encoding/include/Float64Data.hh"
 ##include "encoding/include/CharData.hh"
@@ -53,6 +54,9 @@ class TestSimObj : public Trick::SimObject {
    Float64Data float64_data1 = Float64Data( 10 );
    Float64Data float64_data2 = Float64Data( 0 );
 
+   BoolData bool_data1 = BoolData( 0 );
+   BoolData bool_data2 = BoolData( 1 );
+
    EncodingTest encoder_test;
 
    bool const verbose = false;
@@ -90,6 +94,10 @@ class TestSimObj : public Trick::SimObject {
       ("initialization") encoder_test.float64_test( "T.float64_data1", float64_data1,
                                                     "T.float64_data2", float64_data2,
                                                     verbose );
+
+      ("initialization") encoder_test.bool_test( "T.bool_data1", bool_data1,
+                                                 "T.bool_data2", bool_data2,
+                                                 verbose );
 
       ("initialization") exec_terminate( __FILE__, "Done" );
    }
