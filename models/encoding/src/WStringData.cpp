@@ -1,0 +1,206 @@
+/*!
+@ingroup encoding
+@file models/encoding/src/WStringData.cpp
+@brief This is a container class for general encoder test data.
+
+@copyright Copyright 2025 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{encoding/src/WStringData.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, May 2025, --, Initial implementation.}
+@revs_end
+
+*/
+
+// System include files.
+#include <sstream>
+#include <string>
+
+// Trick include files.
+#include "trick/MemoryManager.hh"
+#include "trick/exec_proto.h"
+#include "trick/integrator_c_intf.h"
+#include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h"
+#include "trick/trick_math.h"
+
+// TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StringUtilities.hh"
+
+// Model include files.
+#include "../include/WStringData.hh"
+
+using namespace std;
+using namespace TrickHLA;
+using namespace TrickHLAModel;
+
+/*!
+ * @job_class{initialization}
+ */
+WStringData::WStringData()
+   : WStringData( 0 )
+{
+   return;
+}
+
+WStringData::WStringData(
+   int const offset )
+{
+   int value = 1 + offset;
+   _wstring  = L"s-" + std::to_wstring( value );
+
+   for ( int i = 0; i < 3; ++i ) {
+      value           = i + 1 + offset;
+      vec3_wstring[i] = L"s-" + std::to_wstring( value );
+   }
+
+   int cnt = 1;
+   for ( int row = 0; row < 3; ++row ) {
+      for ( int col = 0; col < 3; ++col ) {
+         value                  = cnt + offset;
+         m3x3_wstring[row][col] = L"s-" + std::to_wstring( value );
+         ++cnt;
+      }
+   }
+
+   int const ptr_wstring_size = 5 + offset;
+
+   ptr_wstring = static_cast< wstring * >( TMM_declare_var_1d( "std::wstring", ptr_wstring_size ) );
+   for ( int i = 0; i < ptr_wstring_size; ++i ) {
+      value          = i + 1 + offset;
+      ptr_wstring[i] = L"s-" + std::to_wstring( value );
+   }
+}
+
+/*!
+ * @job_class{shutdown}
+ */
+WStringData::~WStringData()
+{
+   return;
+}
+
+bool WStringData::compare(
+   WStringData &data )
+{
+   bool equal_values = true;
+
+   wstringstream msg;
+   msg << "WStringData::compare():" << __LINE__ << "\n";
+
+   if ( this->_wstring == data._wstring ) {
+      msg << "this->string (" << this->_wstring << ") == (" << data._wstring << ") data.string\n";
+   } else {
+      msg << "this->string (" << this->_wstring << ") != (" << data._wstring << ") data.string\n";
+      equal_values = false;
+   }
+
+   for ( int i = 0; i < 3; ++i ) {
+      if ( this->vec3_wstring[i] == data.vec3_wstring[i] ) {
+         msg << "this->vec3_wstring[" << i << "] (" << this->vec3_wstring[i]
+             << ") == (" << data.vec3_wstring[i] << ") data.vec3_wstring[" << i << "]\n";
+      } else {
+         msg << "this->vec3_wstring[" << i << "] (" << this->vec3_wstring[i]
+             << ") != (" << data.vec3_wstring[i] << ") data.vec3_wstring[" << i << "]\n";
+         equal_values = false;
+      }
+   }
+
+   for ( int row = 0; row < 3; ++row ) {
+      for ( int col = 0; col < 3; ++col ) {
+         if ( this->m3x3_wstring[row][col] == data.m3x3_wstring[row][col] ) {
+            msg << "this->m3x3_wstring[" << row << "][" << col << "] (" << this->m3x3_wstring[row][col]
+                << ") == (" << data.m3x3_wstring[row][col] << ") data.m3x3_wstring[" << row << "][" << col << "]\n";
+         } else {
+            msg << "this->m3x3_wstring[" << row << "][" << col << "] (" << this->m3x3_wstring[row][col]
+                << ") != (" << data.m3x3_wstring[row][col] << ") data.m3x3_wstring[" << row << "][" << col << "]\n";
+            equal_values = false;
+         }
+      }
+   }
+
+   int data1_ptr_wstring_size = get_size( this->ptr_wstring );
+   int data2_ptr_wstring_size = get_size( data.ptr_wstring );
+   int min_ptr_wstring_size   = ( data1_ptr_wstring_size <= data2_ptr_wstring_size )
+                                   ? data1_ptr_wstring_size
+                                   : data2_ptr_wstring_size;
+   if ( data1_ptr_wstring_size != data2_ptr_wstring_size ) {
+      msg << "this->ptr_wstring size (" << data1_ptr_wstring_size
+          << ") != (" << data2_ptr_wstring_size << ") data.ptr_wstring size\n";
+      equal_values = false;
+   } else {
+      msg << "this->ptr_wstring size (" << data1_ptr_wstring_size
+          << ") == (" << data2_ptr_wstring_size << ") data.ptr_wstring size\n";
+   }
+   for ( int i = 0; i < min_ptr_wstring_size; ++i ) {
+      if ( this->ptr_wstring[i] == data.ptr_wstring[i] ) {
+         msg << "this->ptr_wstring[" << i << "] (" << this->ptr_wstring[i]
+             << ") == (" << data.ptr_wstring[i] << ") data.ptr_wstring[" << i << "]\n";
+      } else {
+         msg << "this->ptr_wstring[" << i << "] (" << this->ptr_wstring[i]
+             << ") != (" << data.ptr_wstring[i] << ") data.ptr_wstring[" << i << "]\n";
+         equal_values = false;
+      }
+   }
+
+   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+      string msg_str;
+      StringUtilities::to_string( msg_str, msg.str() );
+      if ( equal_values ) {
+         message_publish( MSG_NORMAL, msg_str.c_str() );
+      } else {
+         message_publish( MSG_ERROR, msg_str.c_str() );
+      }
+   }
+
+   return equal_values;
+}
+
+string WStringData::to_string()
+{
+   string msg;
+   StringUtilities::to_string( msg, this->to_wstring() );
+   return msg;
+}
+
+wstring WStringData::to_wstring()
+{
+   wstringstream msg;
+   msg << "WStringData::to_wstring():" << __LINE__ << "\n"
+       << "string:" << _wstring << "\n";
+
+   for ( int i = 0; i < 3; ++i ) {
+      msg << "vec3_wstring[" << i << "]:" << vec3_wstring[i] << " ";
+   }
+   msg << "\n";
+
+   for ( int row = 0; row < 3; ++row ) {
+      for ( int col = 0; col < 3; ++col ) {
+         msg << "m3x3_wstring[" << row << "][" << col << "]:" << m3x3_wstring[row][col] << " ";
+      }
+   }
+   msg << "\n";
+
+   int ptr_wstring_size = get_size( ptr_wstring );
+   msg << "ptr_wstring size:" << ptr_wstring_size << "\n";
+   for ( int i = 0; i < ptr_wstring_size; ++i ) {
+      msg << "ptr_wstring[" << i << "]:" << ptr_wstring[i] << " ";
+   }
+   msg << "\n";
+
+   return msg.str();
+}

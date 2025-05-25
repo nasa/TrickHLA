@@ -283,20 +283,12 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_WCHAR: {
          // (wchar_t)
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'wchar_t', and is not supported.\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
+         encoder = create_wchar_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_WSTRING: {
          // std::wstring
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'std::wstring', and is not supported.\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
+         encoder = create_wstring_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
       case TRICK_VOID_PTR: {
@@ -369,8 +361,6 @@ EncoderBase *EncoderFactory::create_char_encoder(
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_BIG_ENDIAN:
-      case ENCODING_LITTLE_ENDIAN:
       case ENCODING_NONE: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -380,6 +370,18 @@ EncoderBase *EncoderFactory::create_char_encoder(
             }
          } else {
             return new ByteEncoder( trick_name, hla_encoding, ref2 );
+         }
+         break;
+      }
+      case ENCODING_ASCII_CHAR: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new ASCIICharFixedArrayEncoder( trick_name, hla_encoding, ref2 );
+            } else {
+               return new ASCIICharVariableArrayEncoder( trick_name, hla_encoding, ref2 );
+            }
+         } else {
+            return new ASCIICharEncoder( trick_name, hla_encoding, ref2 );
          }
          break;
       }
@@ -422,6 +424,74 @@ EncoderBase *EncoderFactory::create_string_encoder(
          errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'std::string', the specified hla_endoding ("
+                << hla_encoding << ") is not supported.\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
+      }
+   }
+   return NULL;
+}
+
+EncoderBase *EncoderFactory::create_wchar_encoder(
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
+   REF2              *ref2 )
+{
+   bool const is_array        = ( ref2->attr->num_index > 0 );
+   bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+
+   switch ( hla_encoding ) {
+      case ENCODING_UNICODE_CHAR: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new UnicodeCharFixedArrayEncoder( trick_name, hla_encoding, ref2 );
+            } else {
+               return new UnicodeCharVariableArrayEncoder( trick_name, hla_encoding, ref2 );
+            }
+         } else {
+            return new UnicodeCharEncoder( trick_name, hla_encoding, ref2 );
+         }
+         break;
+      }
+      default: {
+         ostringstream errmsg;
+         errmsg << "EncoderFactory::create_wchar_encoder():" << __LINE__
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'wchar', the specified hla_endoding ("
+                << hla_encoding << ") is not supported.\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
+      }
+   }
+   return NULL;
+}
+
+EncoderBase *EncoderFactory::create_wstring_encoder(
+   string const      &trick_name,
+   EncodingEnum const hla_encoding,
+   REF2              *ref2 )
+{
+   bool const is_array        = ( ref2->attr->num_index > 0 );
+   bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+
+   switch ( hla_encoding ) {
+      case ENCODING_UNICODE_STRING: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new UnicodeStringFixedArrayEncoder( trick_name, hla_encoding, ref2 );
+            } else {
+               return new UnicodeStringVariableArrayEncoder( trick_name, hla_encoding, ref2 );
+            }
+         } else {
+            return new UnicodeStringEncoder( trick_name, hla_encoding, ref2 );
+         }
+         break;
+      }
+      default: {
+         ostringstream errmsg;
+         errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
+                << " ERROR: Trick ref-attributes for '" << trick_name
+                << "' the variable is of type 'std::wstring', the specified hla_endoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;

@@ -97,9 +97,6 @@ class EncoderBase
 
    void calculate_ref2_element_count();
 
-   bool is_valid_encoding_for_type( TrickHLA::EncodingEnum const hla_encoding,
-                                    TRICK_TYPE const             trick_type );
-
   protected:
    void update_ref2();
 

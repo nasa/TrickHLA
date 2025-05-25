@@ -100,6 +100,16 @@ class EncoderFactory
       EncodingEnum const hla_encoding,
       REF2              *ref2 );
 
+   static TrickHLA::EncoderBase *create_wchar_encoder(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+
+   static TrickHLA::EncoderBase *create_wstring_encoder(
+      std::string const &trick_name,
+      EncodingEnum const hla_encoding,
+      REF2              *ref2 );
+
    static TrickHLA::EncoderBase *create_int16_encoder(
       std::string const &trick_name,
       EncodingEnum const hla_encoding,

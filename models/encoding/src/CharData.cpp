@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{encoding/src/CharData.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 
 @revs_title
 @revs_begin
@@ -36,10 +37,14 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 #include "trick/trick_math.h"
 
+// TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
+
 // Model include files.
 #include "../include/CharData.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace TrickHLAModel;
 
 /*!
@@ -147,10 +152,12 @@ bool CharData::compare(
       }
    }
 
-   if ( equal_values ) {
-      message_publish( MSG_NORMAL, msg.str().c_str() );
-   } else {
-      message_publish( MSG_ERROR, msg.str().c_str() );
+   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( equal_values ) {
+         message_publish( MSG_NORMAL, msg.str().c_str() );
+      } else {
+         message_publish( MSG_ERROR, msg.str().c_str() );
+      }
    }
 
    return equal_values;

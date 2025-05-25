@@ -29,6 +29,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{encoding/src/Int64Data.cpp}
 @trick_link_dependency{encoding/src/LongData.cpp}
 @trick_link_dependency{encoding/src/StringData.cpp}
+@trick_link_dependency{encoding/src/WCharData.cpp}
+@trick_link_dependency{encoding/src/WStringData.cpp}
 
 @revs_title
 @revs_begin
@@ -56,6 +58,8 @@ NASA, Johnson Space Center\n
 #include "Int64Data.hh"
 #include "LongData.hh"
 #include "StringData.hh"
+#include "WCharData.hh"
+#include "WStringData.hh"
 
 namespace TrickHLAModel
 {
@@ -84,56 +88,57 @@ class EncodingTest
    void char_test( std::string const &data1_trick_base_name,
                    CharData          &data1,
                    std::string const &data2_trick_base_name,
-                   CharData          &data2,
-                   bool const         verbose );
+                   CharData          &data2 );
 
    void string_test( std::string const &data1_trick_base_name,
                      StringData        &data1,
                      std::string const &data2_trick_base_name,
-                     StringData        &data2,
-                     bool const         verbose );
+                     StringData        &data2 );
+
+   void wchar_test( std::string const &data1_trick_base_name,
+                    WCharData         &data1,
+                    std::string const &data2_trick_base_name,
+                    WCharData         &data2 );
+
+   void wstring_test( std::string const &data1_trick_base_name,
+                      WStringData       &data1,
+                      std::string const &data2_trick_base_name,
+                      WStringData       &data2 );
 
    void int16_test( std::string const &data1_trick_base_name,
                     Int16Data         &data1,
                     std::string const &data2_trick_base_name,
-                    Int16Data         &data2,
-                    bool const         verbose );
+                    Int16Data         &data2 );
 
    void int32_test( std::string const &data1_trick_base_name,
                     Int32Data         &data1,
                     std::string const &data2_trick_base_name,
-                    Int32Data         &data2,
-                    bool const         verbose );
+                    Int32Data         &data2 );
 
    void int64_test( std::string const &data1_trick_base_name,
                     Int64Data         &data1,
                     std::string const &data2_trick_base_name,
-                    Int64Data         &data2,
-                    bool const         verbose );
+                    Int64Data         &data2 );
 
    void long_test( std::string const &data1_trick_base_name,
                    LongData          &data1,
                    std::string const &data2_trick_base_name,
-                   LongData          &data2,
-                   bool const         verbose );
+                   LongData          &data2 );
 
    void float32_test( std::string const &data1_trick_base_name,
                       Float32Data       &data1,
                       std::string const &data2_trick_base_name,
-                      Float32Data       &data2,
-                      bool const         verbose );
+                      Float32Data       &data2 );
 
    void float64_test( std::string const &data1_trick_base_name,
                       Float64Data       &data1,
                       std::string const &data2_trick_base_name,
-                      Float64Data       &data2,
-                      bool const         verbose );
+                      Float64Data       &data2 );
 
    void bool_test( std::string const &data1_trick_base_name,
                    BoolData          &data1,
                    std::string const &data2_trick_base_name,
-                   BoolData          &data2,
-                   bool const         verbose );
+                   BoolData          &data2 );
 };
 
 } // namespace TrickHLAModel

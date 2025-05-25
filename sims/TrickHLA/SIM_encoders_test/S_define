@@ -1,8 +1,8 @@
 
 #include "sim_objects/default_trick_sys.sm"
 
+##include "TrickHLA/DebugHandler.hh"
 ##include "TrickHLA/Manager.hh"
-
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
 
@@ -16,6 +16,8 @@
 ##include "encoding/include/Int64Data.hh"
 ##include "encoding/include/LongData.hh"
 ##include "encoding/include/StringData.hh"
+##include "encoding/include/WCharData.hh"
+##include "encoding/include/WStringData.hh"
 
 %header{
  using namespace TrickHLA;
@@ -35,6 +37,14 @@ class TestSimObj : public Trick::SimObject {
 
    StringData string_data1 = StringData( 0 );
    StringData string_data2 = StringData( 10 );
+
+   WCharData wchar_data1 = WCharData( 0 );
+   WCharData wchar_data2 = WCharData( 10 );
+
+#if WSTRING_TEST
+   WStringData wstring_data1 = WStringData( 0 );
+   WStringData wstring_data2 = WStringData( 10 );
+#endif
 
    Int16Data int16_data1 = Int16Data( 0 );
    Int16Data int16_data2 = Int16Data( 0 );
@@ -59,45 +69,46 @@ class TestSimObj : public Trick::SimObject {
 
    EncodingTest encoder_test;
 
-   bool const verbose = false;
-
    TestSimObj()
    {
+      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_1_TRACE,
+                                            TrickHLA::DEBUG_SOURCE_ALL_MODULES );
+
       ("initialization") encoder_test.char_test( "T.char_data1", char_data1,
-                                                 "T.char_data2", char_data2,
-                                                 verbose );
+                                                 "T.char_data2", char_data2 );
 #if 0
       ("initialization") encoder_test.string_test( "T.string_data1", string_data1,
-                                                   "T.string_data2", string_data2,
-                                                    true );
+                                                   "T.string_data2", string_data2 );
 #endif
+
+      ("initialization") encoder_test.wchar_test( "T.wchar_data1", wchar_data1,
+                                                  "T.wchar_data2", wchar_data2 );
+
+#if WSTRING_TEST
+      ("initialization") encoder_test.wstring_test( "T.wstring_data1", wstring_data1,
+                                                    "T.wstring_data2", wstring_data2 );
+#endif
+
       ("initialization") encoder_test.int16_test( "T.int16_data1", int16_data1,
-                                                  "T.int16_data2", int16_data2,
-                                                  verbose );
+                                                  "T.int16_data2", int16_data2 );
 
       ("initialization") encoder_test.int32_test( "T.int32_data1", int32_data1,
-                                                  "T.int32_data2", int32_data2,
-                                                  verbose );
+                                                  "T.int32_data2", int32_data2 );
 
       ("initialization") encoder_test.int64_test( "T.int64_data1", int64_data1,
-                                                  "T.int64_data2", int64_data2,
-                                                  verbose );
+                                                  "T.int64_data2", int64_data2 );
 
       ("initialization") encoder_test.long_test( "T.long_data1", long_data1,
-                                                 "T.long_data2", long_data2,
-                                                 verbose );
+                                                 "T.long_data2", long_data2 );
 
       ("initialization") encoder_test.float32_test( "T.float32_data1", float32_data1,
-                                                    "T.float32_data2", float32_data2,
-                                                    verbose );
+                                                    "T.float32_data2", float32_data2 );
 
       ("initialization") encoder_test.float64_test( "T.float64_data1", float64_data1,
-                                                    "T.float64_data2", float64_data2,
-                                                    verbose );
+                                                    "T.float64_data2", float64_data2 );
 
       ("initialization") encoder_test.bool_test( "T.bool_data1", bool_data1,
-                                                 "T.bool_data2", bool_data2,
-                                                 verbose );
+                                                 "T.bool_data2", bool_data2 );
 
       ("initialization") exec_terminate( __FILE__, "Done" );
    }

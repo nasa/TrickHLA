@@ -98,18 +98,6 @@ using namespace TrickHLA;
          return;                                                                                                         \
       }                                                                                                                  \
                                                                                                                          \
-      if ( !is_valid_encoding_for_type( hla_encoding, ref2->attr->type ) ) {                                             \
-         ostringstream errmsg;                                                                                           \
-         errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
-                << " ERROR: Trick type for the '" << trick_name                                                          \
-                << "' simulation variable (type:"                                                                        \
-                << Utilities::get_trick_type_string( ref2->attr->type )                                                  \
-                << ") does not support the specified HLA encoding ("                                                     \
-                << rti_encoding << ")!\n";                                                                               \
-         DebugHandler::terminate_with_message( errmsg.str() );                                                           \
-         return;                                                                                                         \
-      }                                                                                                                  \
-                                                                                                                         \
       if ( !is_dynamic_array ) {                                                                                         \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
