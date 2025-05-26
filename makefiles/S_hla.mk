@@ -100,11 +100,18 @@ endif
 ifeq ($(TRICK_HOST_TYPE),Darwin)
    # macOS
 
-   # C++17 removed the dynamic exception specification so fallback to C++14 for
-   # ICG because the IEEE 1516-2010 APIs use dynamic exception specifications.
-   # Otherwise this will result in compile time errors.
-   TRICK_ICGFLAGS += --icg-std=c++14
-   $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+   TRICK_HOST_ARCH = $(shell uname -m)
+   ifeq ($(and $(filter Pitch_HLA_Evolved,$(RTI_VENDOR)),$(filter arm64,$(TRICK_HOST_ARCH))),arm64)
+      # Run with C++11 for compatibility
+      TRICK_ICGFLAGS += --icg-std=c++11
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++11 for Trick ICG code.${RESET_TXT})
+   else
+      # C++17 removed the dynamic exception specification so fallback to C++14 for
+      # ICG because the IEEE 1516-2010 APIs use dynamic exception specifications.
+      # Otherwise this will result in compile time errors.
+      TRICK_ICGFLAGS += --icg-std=c++14
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+   endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
