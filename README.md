@@ -26,15 +26,16 @@ Some exports to put in your .zshrc (exact values will depend on paths to repos o
 
 ```
 export PYTHON_VERSION=3
-export RTI_HOME="$HOME/Developer/openrti-0.11.0"
-export RTI_VENDOR="OpenRTI_HLA"
-export TRICK_CXXFLAGS="-fsanitize=address -g -I/opt/homebrew/include -L/opt/homebrew/lib -Wno-unused-command-line-argument"
-export TRICK_CFLAGS="-g -I/opt/homebrew/include -L/opt/homebrew/lib -Wno-unused-command-line-argument"
-export TRICK_LDFLAGS="-fsanitize=address -g -L/opt/homebrew/lib"
+export RTI_HOME="$HOME/Developer/rtihome/prti1516e"
+export RTI_VENDOR="Pitch_HLA_Evolved"
+export TRICK_CXXFLAGS="-g -std=c++11 -fsanitize=address -I/opt/homebrew/include -L/opt/homebrew/lib -Wno-unused-command-line-argument"
+export TRICK_CFLAGS="-g -fsanitize=address -I/opt/homebrew/include -L/opt/homebrew/lib -Wno-unused-command-line-argument"
+export TRICK_LDFLAGS="-g -std=c++11 -fsanitize=address -L/opt/homebrew/lib"
+export TRICK_ICGFLAGS=""
+export TRICK_SWIG_FLAGS=""
 export TRICK_EXCLUDE="/opt/homebrew"
 export TRICK_HOME="$HOME/Developer/trick"
 export TRICKHLA_HOME="$HOME/Developer/TrickHLA"
-export PATH="$TRICK_HOME/bin:$PATH"
 ```
 
 ### Dependencies
