@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/BasicDataFixedArrayEncoders.cpp
+@file TrickHLA/encoding/BasicDataFixedArrayEncoders.cpp
 @ingroup TrickHLA
 @brief This class represents the basic data fixed array encoder implementation.
 

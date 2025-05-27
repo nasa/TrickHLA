@@ -157,7 +157,7 @@ bool WStringData::compare(
       }
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       string msg_str;
       StringUtilities::to_string( msg_str, msg.str() );
       if ( equal_values ) {

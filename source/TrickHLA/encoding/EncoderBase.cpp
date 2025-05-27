@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/EncoderBase.cpp
+@file TrickHLA/encoding/EncoderBase.cpp
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 

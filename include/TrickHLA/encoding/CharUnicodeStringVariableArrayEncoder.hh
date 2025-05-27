@@ -1,0 +1,114 @@
+/*!
+@file TrickHLA/encoding/BasicDataVariableArrayEncoders.hh
+@ingroup TrickHLA
+@brief This class represents the char Unicode string encoder implementation.
+
+@copyright Copyright 2025 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@trick_parse{everything}
+
+@python_module{TrickHLA}
+
+@tldh
+@trick_link_dependency{../../../source/TrickHLA/encoding/CharUnicodeStringVariableArrayEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataVariableArrayEncoders.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, May 2025, --, Initial implementation.}
+@revs_end
+
+*/
+
+#ifndef TRICKHLA_CHAR_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH
+#define TRICKHLA_CHAR_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH
+
+// System includes.
+#include <cstddef>
+#include <string>
+
+// Trick include files.
+#include "trick/reference.h"
+
+// TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/Utilities.hh"
+#include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
+#include "RTI/encoding/DataElement.h"
+#pragma GCC diagnostic pop
+
+namespace TrickHLA
+{
+
+class CharUnicodeStringVariableArrayEncoder : public EncoderBase
+{
+   /* Let the Trick input processor access protected and private data. */
+   /* InputProcessor is really just a marker class (does not really    */
+   /* exists - at least yet). This friend statement just tells Trick   */
+   /* to go ahead and process the protected and private data as well   */
+   /* as the usual public data.                                        */
+   friend class InputProcessor;
+   /* IMPORTANT Note: you must have the following line too.            */
+   /* Syntax: friend void init_attr<namespace>__<class name>();        */
+   friend void init_attrTrickHLA__CharUnicodeStringVariableArrayEncoder();
+
+  public:
+   /*! @brief Default constructor. */
+   CharUnicodeStringVariableArrayEncoder( std::string const &trick_variable_name,
+                                          EncodingEnum const hla_encoding,
+                                          REF2              *r2 );
+
+   /*! @brief Destructor for the TrickHLA CharUnicodeStringVariableArrayEncoder class. */
+   virtual ~CharUnicodeStringVariableArrayEncoder();
+
+   virtual RTI1516_NAMESPACE::VariableLengthData &encode();
+
+   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+
+   virtual std::string to_string();
+
+  protected:
+   void resize_trick_var( std::size_t const new_size );
+
+   void resize_data_elements( std::size_t const new_size );
+
+   std::wstring wide_string;
+
+  private:
+   /* Do not allow the default, copy constructor or assignment operator. */
+   CharUnicodeStringVariableArrayEncoder();
+   /*! @brief Copy constructor for CharUnicodeStringVariableArrayEncoder class. */
+   /*  @details This constructor is private to prevent inadvertent copies.      */
+   CharUnicodeStringVariableArrayEncoder( CharUnicodeStringVariableArrayEncoder const &rhs );
+   /*! @brief Assignment operator for CharUnicodeStringVariableArrayEncoder class. */
+   /*  @details Assignment operator is private to prevent inadvertent copies.      */
+   CharUnicodeStringVariableArrayEncoder &operator=( CharUnicodeStringVariableArrayEncoder const &rhs );
+};
+
+} // namespace TrickHLA
+
+#endif // TRICKHLA_CHAR_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH

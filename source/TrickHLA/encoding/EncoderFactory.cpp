@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/EncoderFactory.cpp
+@file TrickHLA/encoding/EncoderFactory.cpp
 @ingroup TrickHLA
 @brief This class represents the encoder factory implementation.
 
@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{BasicDataEncoders.cpp}
 @trick_link_dependency{BasicDataFixedArrayEncoders.cpp}
 @trick_link_dependency{BasicDataVariableArrayEncoders.cpp}
+@trick_link_dependency{CharUnicodeStringVariableArrayEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -54,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
+#include "TrickHLA/encoding/CharUnicodeStringVariableArrayEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 
@@ -357,8 +359,9 @@ EncoderBase *EncoderFactory::create_char_encoder(
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
 {
-   bool const is_array        = ( ref2->attr->num_index > 0 );
-   bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+   bool const is_array         = ( ref2->attr->num_index > 0 );
+   bool const is_static_array  = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
+   bool const is_dynamic_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 );
 
    switch ( hla_encoding ) {
       case ENCODING_NONE: {
@@ -382,6 +385,20 @@ EncoderBase *EncoderFactory::create_char_encoder(
             }
          } else {
             return new ASCIICharEncoder( trick_name, hla_encoding, ref2 );
+         }
+         break;
+      }
+      case ENCODING_UNICODE_STRING: {
+         if ( is_dynamic_array ) {
+            return new CharUnicodeStringVariableArrayEncoder( trick_name, hla_encoding, ref2 );
+         } else {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
+                   << " ERROR: Trick ref-attributes for '" << trick_name
+                   << "' the Trick variable is of type 'char' for the specififed"
+                   << " ENCODING_UNICODE_STRING encoding and only a dynamic"
+                   << " array of characters (i.e. char *) is supported!\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }

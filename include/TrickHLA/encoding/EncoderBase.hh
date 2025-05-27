@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/EncoderBase.hh
+@file TrickHLA/encoding/EncoderBase.hh
 @ingroup TrickHLA
 @brief This class represents the base encoder implementation.
 

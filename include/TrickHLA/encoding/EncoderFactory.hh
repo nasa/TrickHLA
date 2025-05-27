@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/EncoderFactory.hh
+@file TrickHLA/encoding/EncoderFactory.hh
 @ingroup TrickHLA
 @brief This class represents the encoder factory implementation.
 

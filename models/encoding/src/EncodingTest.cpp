@@ -95,7 +95,7 @@ void EncodingTest::char_test(
    string const &data2_trick_base_name,
    CharData     &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::char_test():" << __LINE__ << "\n"
@@ -132,7 +132,7 @@ void EncodingTest::char_test(
    EncoderBase *data2_ptr_char_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_char", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::char_test():" << __LINE__ << "\n"
            << "     data1_char_encoder: " << data1_char_encoder->to_string() << "\n"
@@ -157,7 +157,7 @@ void EncodingTest::char_test(
       message_publish( MSG_ERROR, "char_data1 != char_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::char_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -174,7 +174,7 @@ void EncodingTest::string_test(
    string const &data2_trick_base_name,
    StringData   &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::string_test():" << __LINE__ << "\n"
@@ -211,7 +211,7 @@ void EncodingTest::string_test(
    EncoderBase *data2_ptr_string_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_string", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::string_test():" << __LINE__ << "\n"
            << "     data1_string_encoder: " << data1_string_encoder->to_string() << "\n"
@@ -236,7 +236,7 @@ void EncodingTest::string_test(
       message_publish( MSG_ERROR, "string_data1 != string_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::string_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -253,7 +253,7 @@ void EncodingTest::wchar_test(
    string const &data2_trick_base_name,
    WCharData    &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::wchar_test():" << __LINE__ << "\n"
@@ -290,7 +290,7 @@ void EncodingTest::wchar_test(
    EncoderBase *data2_ptr_wchar_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_wchar", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::wchar_test():" << __LINE__ << "\n"
            << "     data1_wchar_encoder: " << data1_wchar_encoder->to_string() << "\n"
@@ -315,7 +315,7 @@ void EncodingTest::wchar_test(
       message_publish( MSG_ERROR, "wchar_data1 != wchar_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::wchar_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -332,7 +332,7 @@ void EncodingTest::wstring_test(
    string const &data2_trick_base_name,
    WStringData  &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::wstring_test():" << __LINE__ << "\n"
@@ -369,7 +369,7 @@ void EncodingTest::wstring_test(
    EncoderBase *data2_ptr_wstring_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_wstring", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::wstring_test():" << __LINE__ << "\n"
            << "     data1_wstring_encoder: " << data1_wstring_encoder->to_string() << "\n"
@@ -394,7 +394,7 @@ void EncodingTest::wstring_test(
       message_publish( MSG_ERROR, "wstring_data1 != wstring_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::wstring_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -411,7 +411,7 @@ void EncodingTest::int16_test(
    string const &data2_trick_base_name,
    Int16Data    &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::int16_test():" << __LINE__ << "\n"
@@ -448,7 +448,7 @@ void EncodingTest::int16_test(
    EncoderBase *data2_ptr_i16_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_i16", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int16_test():" << __LINE__ << "\n"
            << "     data1_i16_encoder: " << data1_i16_encoder->to_string() << "\n"
@@ -473,7 +473,7 @@ void EncodingTest::int16_test(
       message_publish( MSG_ERROR, "int16_data1 != int16_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::int16_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -490,7 +490,7 @@ void EncodingTest::int32_test(
    string const &data2_trick_base_name,
    Int32Data    &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::int32_test():" << __LINE__ << "\n"
@@ -527,7 +527,7 @@ void EncodingTest::int32_test(
    EncoderBase *data2_ptr_i32_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_i32", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int32_test():" << __LINE__ << "\n"
            << "     data1_i32_encoder: " << data1_i32_encoder->to_string() << "\n"
@@ -552,7 +552,7 @@ void EncodingTest::int32_test(
       message_publish( MSG_ERROR, "int32_data1 != int32_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::int32_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -569,7 +569,7 @@ void EncodingTest::int64_test(
    string const &data2_trick_base_name,
    Int64Data    &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::int64_test():" << __LINE__ << "\n"
@@ -606,7 +606,7 @@ void EncodingTest::int64_test(
    EncoderBase *data2_ptr_i64_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_i64", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int64_test():" << __LINE__ << "\n"
            << "     data1_i64_encoder: " << data1_i64_encoder->to_string() << "\n"
@@ -631,7 +631,7 @@ void EncodingTest::int64_test(
       message_publish( MSG_ERROR, "int64_data1 != int64_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::int64_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -648,7 +648,7 @@ void EncodingTest::long_test(
    string const &data2_trick_base_name,
    LongData     &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::long_test():" << __LINE__ << "\n"
@@ -685,7 +685,7 @@ void EncodingTest::long_test(
    EncoderBase *data2_ptr_long_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_long", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::long_test():" << __LINE__ << "\n"
            << "     data1_long_encoder: " << data1_long_encoder->to_string() << "\n"
@@ -710,7 +710,7 @@ void EncodingTest::long_test(
       message_publish( MSG_ERROR, "long_data1 != long_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::long_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -727,7 +727,7 @@ void EncodingTest::float32_test(
    string const &data2_trick_base_name,
    Float32Data  &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::float32_test():" << __LINE__ << "\n"
@@ -764,7 +764,7 @@ void EncodingTest::float32_test(
    EncoderBase *data2_ptr_f32_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_f32", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::float32_test():" << __LINE__ << "\n"
            << "     data1_f32_encoder: " << data1_f32_encoder->to_string() << "\n"
@@ -789,7 +789,7 @@ void EncodingTest::float32_test(
       message_publish( MSG_ERROR, "float32_data1 != float32_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::float32_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -806,7 +806,7 @@ void EncodingTest::float64_test(
    string const &data2_trick_base_name,
    Float64Data  &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::float64_test():" << __LINE__ << "\n"
@@ -843,7 +843,7 @@ void EncodingTest::float64_test(
    EncoderBase *data2_ptr_f64_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_f64", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::float64_test():" << __LINE__ << "\n"
            << "     data1_f64_encoder: " << data1_f64_encoder->to_string() << "\n"
@@ -868,7 +868,7 @@ void EncodingTest::float64_test(
       message_publish( MSG_ERROR, "float64_data1 != float64_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::float64_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -885,7 +885,7 @@ void EncodingTest::bool_test(
    string const &data2_trick_base_name,
    BoolData     &data2 )
 {
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::bool_test():" << __LINE__ << "\n"
@@ -922,7 +922,7 @@ void EncodingTest::bool_test(
    EncoderBase *data2_ptr_bool_encoder = EncoderFactory::create(
       data2_trick_base_name + ".ptr_bool", rti_encoding );
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::bool_test():" << __LINE__ << "\n"
            << "     data1_bool_encoder: " << data1_bool_encoder->to_string() << "\n"
@@ -947,7 +947,7 @@ void EncodingTest::bool_test(
       message_publish( MSG_ERROR, "bool_data1 != bool_data2\n" );
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::bool_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"

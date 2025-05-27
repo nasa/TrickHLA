@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/BasicDataVariableArrayEncoders.hh
+@file TrickHLA/encoding/BasicDataVariableArrayEncoders.hh
 @ingroup TrickHLA
 @brief This class represents the basic data variable array encoder implementation.
 

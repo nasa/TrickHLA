@@ -156,7 +156,7 @@ bool StringData::compare(
       }
    }
 
-   if ( DebugHandler::show(TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       if ( equal_values ) {
          message_publish( MSG_NORMAL, msg.str().c_str() );
       } else {

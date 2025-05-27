@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/BasicDataVariableArrayEncoders.cpp
+@file TrickHLA/encoding/BasicDataVariableArrayEncoders.cpp
 @ingroup TrickHLA
 @brief This class represents the basic data variable array encoder implementation.
 
