@@ -132,7 +132,7 @@ EncoderBase *EncoderFactory::create(
       case TRICK_UNSIGNED_CHARACTER: {
          // (unsigned char)
 #if defined( IEEE_1516_2025 )
-         encoder = create_uchar( trick_name, hla_encoding, ref2 );
+         encoder = create_uchar_encoder( trick_name, hla_encoding, ref2 );
 #else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
@@ -143,7 +143,7 @@ EncoderBase *EncoderFactory::create(
          break;
       }
       case TRICK_STRING: {
-         // string
+         // (std::string)
          encoder = create_string_encoder( trick_name, hla_encoding, ref2 );
          break;
       }
@@ -155,7 +155,7 @@ EncoderBase *EncoderFactory::create(
       case TRICK_UNSIGNED_SHORT: {
          // (unsigned short)
 #if defined( IEEE_1516_2025 )
-         encoder = create_uint16( trick_name, hla_encoding, ref2 );
+         encoder = create_uint16_encoder( trick_name, hla_encoding, ref2 );
 #else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
@@ -173,7 +173,7 @@ EncoderBase *EncoderFactory::create(
       case TRICK_UNSIGNED_INTEGER: {
          // (unsigned int)
 #if defined( IEEE_1516_2025 )
-         encoder = create_uint32( trick_name, hla_encoding, ref2 );
+         encoder = create_uint32_encoder( trick_name, hla_encoding, ref2 );
 #else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
@@ -203,12 +203,12 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
          switch ( sizeof( unsigned long ) ) {
             case 4: {
-               encoder = create_uint32( trick_name, hla_encoding, ref2 );
+               encoder = create_uint32_encoder( trick_name, hla_encoding, ref2 );
                break;
             }
             case 8:
             default: {
-               encoder = create_uint64( trick_name, hla_encoding, ref2 );
+               encoder = create_uint64_encoder( trick_name, hla_encoding, ref2 );
                break;
             }
          }
@@ -259,7 +259,7 @@ EncoderBase *EncoderFactory::create(
       case TRICK_UNSIGNED_LONG_LONG: {
          // (unsigned long long)
 #if defined( IEEE_1516_2025 )
-         encoder = create_uint64( trick_name, hla_encoding, ref2 );
+         encoder = create_uint64_encoder( trick_name, hla_encoding, ref2 );
 #else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__

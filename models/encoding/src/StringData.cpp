@@ -101,19 +101,19 @@ bool StringData::compare(
    msg << "StringData::compare():" << __LINE__ << "\n";
 
    if ( this->_string == data._string ) {
-      msg << "this->string (" << this->_string << ") == (" << data._string << ") data.string\n";
+      msg << "this->string '" << this->_string << "' == '" << data._string << "' data.string\n";
    } else {
-      msg << "this->string (" << this->_string << ") != (" << data._string << ") data.string\n";
+      msg << "this->string '" << this->_string << "' != '" << data._string << "' data.string\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_string[i] == data.vec3_string[i] ) {
-         msg << "this->vec3_string[" << i << "] (" << this->vec3_string[i]
-             << ") == (" << data.vec3_string[i] << ") data.vec3_string[" << i << "]\n";
+         msg << "this->vec3_string[" << i << "] '" << this->vec3_string[i]
+             << "' == '" << data.vec3_string[i] << "' data.vec3_string[" << i << "]\n";
       } else {
-         msg << "this->vec3_string[" << i << "] (" << this->vec3_string[i]
-             << ") != (" << data.vec3_string[i] << ") data.vec3_string[" << i << "]\n";
+         msg << "this->vec3_string[" << i << "] '" << this->vec3_string[i]
+             << "' != '" << data.vec3_string[i] << "' data.vec3_string[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -121,11 +121,11 @@ bool StringData::compare(
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_string[row][col] == data.m3x3_string[row][col] ) {
-            msg << "this->m3x3_string[" << row << "][" << col << "] (" << this->m3x3_string[row][col]
-                << ") == (" << data.m3x3_string[row][col] << ") data.m3x3_string[" << row << "][" << col << "]\n";
+            msg << "this->m3x3_string[" << row << "][" << col << "] '" << this->m3x3_string[row][col]
+                << "' == '" << data.m3x3_string[row][col] << "' data.m3x3_string[" << row << "][" << col << "]\n";
          } else {
-            msg << "this->m3x3_string[" << row << "][" << col << "] (" << this->m3x3_string[row][col]
-                << ") != (" << data.m3x3_string[row][col] << ") data.m3x3_string[" << row << "][" << col << "]\n";
+            msg << "this->m3x3_string[" << row << "][" << col << "] '" << this->m3x3_string[row][col]
+                << "' != '" << data.m3x3_string[row][col] << "' data.m3x3_string[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
