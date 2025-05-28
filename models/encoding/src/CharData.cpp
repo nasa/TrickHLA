@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StringUtilities.hh"
 
 // Model include files.
 #include "../include/CharData.hh"
@@ -73,12 +74,18 @@ CharData::CharData(
       }
    }
 
-   int const ptr_char_size = 5 + offset;
+   string str = "str-" + std::to_string( 1 + offset );
+#if 1
+   ptr_char = StringUtilities::ip_strdup_string( str );
+#else
+   int const ptr_char_size = str.size() + 1;
 
    ptr_char = static_cast< char * >( TMM_declare_var_1d( "char", ptr_char_size ) );
-   for ( int i = 0; i < ptr_char_size; ++i ) {
-      ptr_char[i] = i + 1 + offset;
+   for ( int i = 0; i < str.size(); ++i ) {
+      ptr_char[i] = str.at( i );
    }
+   ptr_char[ptr_char_size - 1] = '\0'; // Must be NULL terminated
+#endif
 }
 
 /*!

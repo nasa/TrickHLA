@@ -1,7 +1,7 @@
 /*!
-@file TrickHLA/encoding/BasicDataVariableArrayEncoders.hh
+@file TrickHLA/encoding/CharUnicodeStringEncoder.hh
 @ingroup TrickHLA
-@brief This class represents the char Unicode string encoder implementation.
+@brief This class represents the char array Unicode string encoder implementation.
 
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -19,11 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/encoding/CharUnicodeStringVariableArrayEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/CharUnicodeStringEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataVariableArrayEncoders.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -32,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_CHAR_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH
-#define TRICKHLA_CHAR_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH
+#ifndef TRICKHLA_CHAR_UNICODE_STRING_ENCODER_HH
+#define TRICKHLA_CHAR_UNICODE_STRING_ENCODER_HH
 
 // System includes.
 #include <cstddef>
@@ -46,7 +45,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
@@ -64,7 +62,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class CharUnicodeStringVariableArrayEncoder : public EncoderBase
+class CharUnicodeStringEncoder : public EncoderBase
 {
    /* Let the Trick input processor access protected and private data. */
    /* InputProcessor is really just a marker class (does not really    */
@@ -78,12 +76,12 @@ class CharUnicodeStringVariableArrayEncoder : public EncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharUnicodeStringVariableArrayEncoder( std::string const &trick_variable_name,
-                                          EncodingEnum const hla_encoding,
-                                          REF2              *r2 );
+   CharUnicodeStringEncoder( std::string const &trick_variable_name,
+                             EncodingEnum const hla_encoding,
+                             REF2              *r2 );
 
-   /*! @brief Destructor for the TrickHLA CharUnicodeStringVariableArrayEncoder class. */
-   virtual ~CharUnicodeStringVariableArrayEncoder();
+   /*! @brief Destructor for the TrickHLA CharUnicodeStringEncoder class. */
+   virtual ~CharUnicodeStringEncoder();
 
    virtual RTI1516_NAMESPACE::VariableLengthData &encode();
 
@@ -91,24 +89,17 @@ class CharUnicodeStringVariableArrayEncoder : public EncoderBase
 
    virtual std::string to_string();
 
-  protected:
-   void resize_trick_var( std::size_t const new_size );
-
-   void resize_data_elements( std::size_t const new_size );
-
-   std::wstring wide_string;
-
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
-   CharUnicodeStringVariableArrayEncoder();
-   /*! @brief Copy constructor for CharUnicodeStringVariableArrayEncoder class. */
+   CharUnicodeStringEncoder();
+   /*! @brief Copy constructor for CharUnicodeStringEncoder class. */
    /*  @details This constructor is private to prevent inadvertent copies.      */
-   CharUnicodeStringVariableArrayEncoder( CharUnicodeStringVariableArrayEncoder const &rhs );
-   /*! @brief Assignment operator for CharUnicodeStringVariableArrayEncoder class. */
+   CharUnicodeStringEncoder( CharUnicodeStringEncoder const &rhs );
+   /*! @brief Assignment operator for CharUnicodeStringEncoder class. */
    /*  @details Assignment operator is private to prevent inadvertent copies.      */
-   CharUnicodeStringVariableArrayEncoder &operator=( CharUnicodeStringVariableArrayEncoder const &rhs );
+   CharUnicodeStringEncoder &operator=( CharUnicodeStringEncoder const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_CHAR_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH
+#endif // TRICKHLA_CHAR_UNICODE_STRING_ENCODER_HH

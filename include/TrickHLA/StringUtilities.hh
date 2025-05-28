@@ -99,7 +99,7 @@ class StringUtilities
   public:
    /*! @brief Wide character string (i.e. wchar_t *) duplication in Trick memory.
     *  @param s The input wide string.
-    *  @rreturn The duplicate wide string.*/
+    *  @return The duplicate wide string.*/
    static wchar_t *tmm_wstrdup( wchar_t const *s )
    {
       int size = wcslen( s ) + 1;
