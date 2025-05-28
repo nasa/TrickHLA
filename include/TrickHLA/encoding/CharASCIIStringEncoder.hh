@@ -1,7 +1,7 @@
 /*!
-@file TrickHLA/encoding/CharUnicodeStringEncoder.hh
+@file TrickHLA/encoding/CharASCIIStringEncoder.hh
 @ingroup TrickHLA
-@brief This class represents the char array Unicode string encoder implementation.
+@brief This class represents the char array ASCII string encoder implementation.
 
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -19,8 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/encoding/CharUnicodeStringEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/CharASCIIStringEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataVariableArrayEncoders.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -30,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_CHAR_UNICODE_STRING_ENCODER_HH
-#define TRICKHLA_CHAR_UNICODE_STRING_ENCODER_HH
+#ifndef TRICKHLA_CHAR_ASCII_STRING_ENCODER_HH
+#define TRICKHLA_CHAR_ASCII_STRING_ENCODER_HH
 
 // System includes.
 #include <cstddef>
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -60,7 +62,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class CharUnicodeStringEncoder : public EncoderBase
+class CharASCIIStringEncoder : public EncoderBase
 {
    /* Let the Trick input processor access protected and private data. */
    /* InputProcessor is really just a marker class (does not really    */
@@ -74,12 +76,12 @@ class CharUnicodeStringEncoder : public EncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharUnicodeStringEncoder( std::string const &trick_variable_name,
-                             EncodingEnum const hla_encoding,
-                             REF2              *r2 );
+   CharASCIIStringEncoder( std::string const &trick_variable_name,
+                           EncodingEnum const hla_encoding,
+                           REF2              *r2 );
 
-   /*! @brief Destructor for the TrickHLA CharUnicodeStringEncoder class. */
-   virtual ~CharUnicodeStringEncoder();
+   /*! @brief Destructor for the TrickHLA CharASCIIStringEncoder class. */
+   virtual ~CharASCIIStringEncoder();
 
    virtual RTI1516_NAMESPACE::VariableLengthData &encode();
 
@@ -89,15 +91,15 @@ class CharUnicodeStringEncoder : public EncoderBase
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
-   CharUnicodeStringEncoder();
-   /*! @brief Copy constructor for CharUnicodeStringEncoder class. */
+   CharASCIIStringEncoder();
+   /*! @brief Copy constructor for CharASCIIStringEncoder class. */
    /*  @details This constructor is private to prevent inadvertent copies.      */
-   CharUnicodeStringEncoder( CharUnicodeStringEncoder const &rhs );
-   /*! @brief Assignment operator for CharUnicodeStringEncoder class. */
+   CharASCIIStringEncoder( CharASCIIStringEncoder const &rhs );
+   /*! @brief Assignment operator for CharASCIIStringEncoder class. */
    /*  @details Assignment operator is private to prevent inadvertent copies.      */
-   CharUnicodeStringEncoder &operator=( CharUnicodeStringEncoder const &rhs );
+   CharASCIIStringEncoder &operator=( CharASCIIStringEncoder const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_CHAR_UNICODE_STRING_ENCODER_HH
+#endif // TRICKHLA_CHAR_ASCII_STRING_ENCODER_HH

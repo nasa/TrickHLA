@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{BasicDataEncoders.cpp}
 @trick_link_dependency{BasicDataFixedArrayEncoders.cpp}
 @trick_link_dependency{BasicDataVariableArrayEncoders.cpp}
+@trick_link_dependency{CharASCIIStringEncoder.cpp}
 @trick_link_dependency{CharUnicodeStringEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
@@ -48,7 +49,6 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
-#include "../../../include/TrickHLA/encoding/CharUnicodeStringEncoder.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
@@ -56,6 +56,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
+#include "TrickHLA/encoding/CharASCIIStringEncoder.hh"
+#include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 
@@ -388,6 +390,20 @@ EncoderBase *EncoderFactory::create_char_encoder(
          }
          break;
       }
+      case ENCODING_ASCII_STRING: {
+         if ( is_dynamic_array ) {
+            return new CharASCIIStringEncoder( trick_name, hla_encoding, ref2 );
+         } else {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
+                   << " ERROR: Trick ref-attributes for '" << trick_name
+                   << "' the Trick variable is of type 'char' for the specified"
+                   << " ENCODING_ASCII_STRING encoding and only a dynamic"
+                   << " array of characters (i.e. char *) is supported!\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+         break;
+      }
       case ENCODING_UNICODE_STRING: {
          if ( is_dynamic_array ) {
             return new CharUnicodeStringEncoder( trick_name, hla_encoding, ref2 );
@@ -395,7 +411,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
             ostringstream errmsg;
             errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
                    << " ERROR: Trick ref-attributes for '" << trick_name
-                   << "' the Trick variable is of type 'char' for the specififed"
+                   << "' the Trick variable is of type 'char' for the specified"
                    << " ENCODING_UNICODE_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
             DebugHandler::terminate_with_message( errmsg.str() );

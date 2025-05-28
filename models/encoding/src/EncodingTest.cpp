@@ -118,7 +118,7 @@ void EncodingTest::char_test(
       data1_trick_base_name + ".m3x3_char", rti_encoding );
 
    EncoderBase *data1_ptr_char_encoder = EncoderFactory::create(
-      data1_trick_base_name + ".ptr_char", TrickHLA::ENCODING_UNICODE_STRING );
+      data1_trick_base_name + ".ptr_char", TrickHLA::ENCODING_ASCII_STRING );
 
    EncoderBase *data2_char_encoder = EncoderFactory::create(
       data2_trick_base_name + "._char", rti_encoding );
@@ -130,7 +130,7 @@ void EncodingTest::char_test(
       data2_trick_base_name + ".m3x3_char", rti_encoding );
 
    EncoderBase *data2_ptr_char_encoder = EncoderFactory::create(
-      data2_trick_base_name + ".ptr_char", TrickHLA::ENCODING_UNICODE_STRING );
+      data2_trick_base_name + ".ptr_char", TrickHLA::ENCODING_ASCII_STRING );
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
