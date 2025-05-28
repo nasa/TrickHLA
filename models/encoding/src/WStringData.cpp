@@ -60,19 +60,21 @@ WStringData::WStringData()
 WStringData::WStringData(
    int const offset )
 {
+   // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
+
    int value = 1 + offset;
-   _wstring  = L"s-" + std::to_wstring( value ); // cppcheck-suppress [useInitializationList]
+   _wstring  = L"wstring-" + std::to_wstring( value ); // cppcheck-suppress [useInitializationList]
 
    for ( int i = 0; i < 3; ++i ) {
       value           = i + 1 + offset;
-      vec3_wstring[i] = L"s-" + std::to_wstring( value );
+      vec3_wstring[i] = L"wstring-" + std::to_wstring( value );
    }
 
    int cnt = 1;
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          value                  = cnt + offset;
-         m3x3_wstring[row][col] = L"s-" + std::to_wstring( value );
+         m3x3_wstring[row][col] = L"wstring-" + std::to_wstring( value );
          ++cnt;
       }
    }
@@ -82,7 +84,7 @@ WStringData::WStringData(
    ptr_wstring = static_cast< wstring * >( TMM_declare_var_1d( "std::wstring", ptr_wstring_size ) );
    for ( int i = 0; i < ptr_wstring_size; ++i ) {
       value          = i + 1 + offset;
-      ptr_wstring[i] = L"s-" + std::to_wstring( value );
+      ptr_wstring[i] = L"wstring-" + std::to_wstring( value );
    }
 }
 

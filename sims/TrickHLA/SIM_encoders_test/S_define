@@ -27,6 +27,7 @@
 
 #define NO_WSTRING_TEST
 
+
 //=============================================================================
 // SIM_OBJECT: TestSimObj
 // Sim-object for testing basic data type encoders.
@@ -43,7 +44,8 @@ class TestSimObj : public Trick::SimObject {
    WCharData wchar_data1 = WCharData( 0 );
    WCharData wchar_data2 = WCharData( 10 );
 
-#if WSTRING_TEST
+#ifdef WSTRING_TEST
+   // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
    WStringData wstring_data1 = WStringData( 0 );
    WStringData wstring_data2 = WStringData( 10 );
 #endif
@@ -85,7 +87,7 @@ class TestSimObj : public Trick::SimObject {
       ("initialization") encoder_test.wchar_test( "T.wchar_data1", wchar_data1,
                                                   "T.wchar_data2", wchar_data2 );
 
-#if WSTRING_TEST
+#ifdef WSTRING_TEST
       ("initialization") encoder_test.wstring_test( "T.wstring_data1", wstring_data1,
                                                     "T.wstring_data2", wstring_data2 );
 #endif

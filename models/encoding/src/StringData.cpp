@@ -60,7 +60,7 @@ StringData::StringData(
    int const offset )
 {
    int value = 1 + offset;
-   _string   = "s-" + std::to_string( value ); // cppcheck-suppress [useInitializationList]
+   _string   = "string-" + std::to_string( value ); // cppcheck-suppress [useInitializationList]
 
    for ( int i = 0; i < 3; ++i ) {
       value          = i + 1 + offset;
