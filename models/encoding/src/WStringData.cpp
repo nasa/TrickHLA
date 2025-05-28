@@ -61,7 +61,7 @@ WStringData::WStringData(
    int const offset )
 {
    int value = 1 + offset;
-   _wstring  = L"s-" + std::to_wstring( value );
+   _wstring  = L"s-" + std::to_wstring( value ); // cppcheck-suppress [useInitializationList]
 
    for ( int i = 0; i < 3; ++i ) {
       value           = i + 1 + offset;

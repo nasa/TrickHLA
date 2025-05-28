@@ -60,28 +60,27 @@ StringData::StringData(
    int const offset )
 {
    int value = 1 + offset;
-   _string   = "s-" + std::to_string( value );
+   _string   = "s-" + std::to_string( value ); // cppcheck-suppress [useInitializationList]
 
    for ( int i = 0; i < 3; ++i ) {
       value          = i + 1 + offset;
-      vec3_string[i] = "s-" + std::to_string( value );
+      vec3_string[i] = "string-" + std::to_string( value );
    }
 
    int cnt = 1;
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          value                 = cnt + offset;
-         m3x3_string[row][col] = "s-" + std::to_string( value );
+         m3x3_string[row][col] = "string-" + std::to_string( value );
          ++cnt;
       }
    }
 
-   int const ptr_string_size = 5 + offset;
-
-   ptr_string = static_cast< string * >( TMM_declare_var_1d( "std::string", ptr_string_size ) );
-   for ( int i = 0; i < ptr_string_size; ++i ) {
+   int num_items = 1 + offset; // Number of std::string in array.
+   ptr_string    = static_cast< std::string * >( TMM_declare_var_1d( "std::string", num_items ) );
+   for ( int i = 0; i < num_items; ++i ) {
       value         = i + 1 + offset;
-      ptr_string[i] = "s-" + std::to_string( value );
+      ptr_string[i] = "string-" + std::to_string( value );
    }
 }
 
@@ -132,26 +131,27 @@ bool StringData::compare(
       }
    }
 
-   int data1_ptr_string_size = get_size( this->ptr_string );
-   int data2_ptr_string_size = get_size( data.ptr_string );
-   int min_ptr_string_size   = ( data1_ptr_string_size <= data2_ptr_string_size )
-                                  ? data1_ptr_string_size
-                                  : data2_ptr_string_size;
-   if ( data1_ptr_string_size != data2_ptr_string_size ) {
-      msg << "this->ptr_string size (" << data1_ptr_string_size
-          << ") != (" << data2_ptr_string_size << ") data.ptr_string size\n";
+   int const data1_num_items = get_size( this->ptr_string );
+   int const data2_num_items = get_size( data.ptr_string );
+   int const min_num_items   = ( data1_num_items <= data2_num_items )
+                                  ? data1_num_items
+                                  : data2_num_items;
+
+   if ( data1_num_items != data2_num_items ) {
+      msg << "this->ptr_string num-items (" << data1_num_items
+          << ") != (" << data2_num_items << ") data.ptr_string num-items\n";
       equal_values = false;
    } else {
-      msg << "this->ptr_string size (" << data1_ptr_string_size
-          << ") == (" << data2_ptr_string_size << ") data.ptr_string size\n";
+      msg << "this->ptr_string num-items (" << data1_num_items
+          << ") == (" << data2_num_items << ") data.ptr_string num-items\n";
    }
-   for ( int i = 0; i < min_ptr_string_size; ++i ) {
-      if ( this->ptr_string[i] == data.ptr_string[i] ) {
-         msg << "this->ptr_string[" << i << "] (" << this->ptr_string[i]
-             << ") == (" << data.ptr_string[i] << ") data.ptr_string[" << i << "]\n";
+   for ( int i = 0; i < min_num_items; ++i ) {
+      if ( this->ptr_string[i].compare( data.ptr_string[i] ) == 0 ) {
+         msg << "this->ptr_string[" << i << "]:'" << this->ptr_string[i]
+             << "' == '" << data.ptr_string[i] << "':data.ptr_string[" << i << "]\n";
       } else {
-         msg << "this->ptr_string[" << i << "] (" << this->ptr_string[i]
-             << ") != (" << data.ptr_string[i] << ") data.ptr_string[" << i << "]\n";
+         msg << "*this->ptr_string[" << i << "]:'" << this->ptr_string[i]
+             << "' != '" << data.ptr_string[i] << "':data.ptr_string[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -185,12 +185,16 @@ string StringData::to_string()
    }
    msg << "\n";
 
-   int ptr_string_size = get_size( ptr_string );
-   msg << "ptr_string size:" << ptr_string_size << "\n";
-   for ( int i = 0; i < ptr_string_size; ++i ) {
-      msg << "ptr_string[" << i << "]:" << ptr_string[i] << " ";
+   int string_size = ptr_string->size();
+   msg << "ptr_string size:" << string_size << "\n";
+#if 1
+   msg << "*ptr_string:'" << ( *ptr_string ) << "'\n";
+#else
+   for ( int i = 0; i < string_size; ++i ) {
+      msg << "(*ptr_string)[" << i << "]:" << ( *ptr_string )[i] << " ";
    }
    msg << "\n";
+#endif
 
    return msg.str();
 }

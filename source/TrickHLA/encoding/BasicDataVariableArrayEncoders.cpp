@@ -130,7 +130,7 @@ using namespace TrickHLA;
       /* Ensure the number of data elements matches the Trick variable */                                                \
       resize_data_elements( ref2_element_count );                                                                        \
                                                                                                                          \
-      HLAvariableArray const *array_encoder = static_cast< HLAvariableArray * >( encoder );                              \
+      HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                             \
       SimpleDataType         *array_data    = *static_cast< SimpleDataType ** >( ref2->address );                        \
                                                                                                                          \
       /* Copy the Trick array values to the data elements to be encoded. */                                              \
@@ -149,7 +149,7 @@ using namespace TrickHLA;
    {                                                                                                                     \
       EncoderBase::decode( encoded_data );                                                                               \
                                                                                                                          \
-      HLAvariableArray const *array_encoder = static_cast< HLAvariableArray * >( encoder );                              \
+      HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                             \
                                                                                                                          \
       /* Trick variable is dynamic (i.e. a pointer) so we need to refresh ref2. */                                       \
       update_ref2();                                                                                                     \
@@ -177,11 +177,17 @@ using namespace TrickHLA;
       size_t const new_size )                                                                                            \
    {                                                                                                                     \
       /* Trick array variable size does not match the new size. */                                                       \
-      if ( ( ref2_element_count != new_size ) && ( ref2->attr->type != TRICK_STRING ) ) {                                \
-                                                                                                                         \
-         *( static_cast< void ** >( ref2->address ) ) =                                                                  \
-            static_cast< void * >( TMM_resize_array_1d_a(                                                                \
-               *( static_cast< void ** >( ref2->address ) ), new_size ) );                                               \
+      if ( ref2_element_count != new_size ) {                                                                            \
+         if ( ref2->attr->type == TRICK_STRING ) {                                                                       \
+            /* TMM_resize_array_1d_a does not support STL strings. */                                                    \
+            TMM_delete_var_a( *( static_cast< void ** >( ref2->address ) ) );                                            \
+            *( static_cast< void ** >( ref2->address ) ) =                                                               \
+               static_cast< void * >( TMM_declare_var_1d( "std::string", new_size ) );                                   \
+         } else {                                                                                                        \
+            *( static_cast< void ** >( ref2->address ) ) =                                                               \
+               static_cast< void * >( TMM_resize_array_1d_a(                                                             \
+                  *( static_cast< void ** >( ref2->address ) ), new_size ) );                                            \
+         }                                                                                                               \
                                                                                                                          \
          /* Update the element count to the new size. */                                                                 \
          ref2_element_count = new_size;                                                                                  \
@@ -200,7 +206,7 @@ using namespace TrickHLA;
    void EncoderClassName::resize_data_elements(                                                                          \
       size_t const new_size )                                                                                            \
    {                                                                                                                     \
-      HLAvariableArray *array_encoder = static_cast< HLAvariableArray * >( encoder );                                    \
+      HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                                   \
                                                                                                                          \
       if ( array_encoder->size() != new_size ) {                                                                         \
          EncodableDataType data_prototype;                                                                               \
