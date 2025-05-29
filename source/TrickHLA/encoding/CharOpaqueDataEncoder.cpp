@@ -1,7 +1,7 @@
 /*!
-@file TrickHLA/encoding/CharUnicodeStringEncoder.cpp
+@file TrickHLA/encoding/CharOpaqueDataEncoder.cpp
 @ingroup TrickHLA
-@brief This class represents the char array Unicode string encoder implementation.
+@brief This class represents the char array Opaque data encoder implementation.
 
 \par<b>Assumptions and Limitations:</b>
 - Only primitive types and static arrays of primitive type are supported for now.
@@ -48,7 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
-#include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
+#include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
@@ -61,14 +61,14 @@ NASA, Johnson Space Center\n
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
-#include "RTI/encoding/HLAvariableArray.h"
+#include "RTI/encoding/HLAopaqueData.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-CharUnicodeStringEncoder::CharUnicodeStringEncoder(
+CharOpaqueDataEncoder::CharOpaqueDataEncoder(
    string const      &trick_variable_name,
    EncodingEnum const hla_encoding,
    REF2              *r2 )
@@ -82,7 +82,7 @@ CharUnicodeStringEncoder::CharUnicodeStringEncoder(
 
    if ( ref2->attr->type != TRICK_CHARACTER ) {
       ostringstream errmsg;
-      errmsg << "CharUnicodeStringEncoder::CharUnicodeStringEncoder():" << __LINE__
+      errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << trick_name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
@@ -94,21 +94,19 @@ CharUnicodeStringEncoder::CharUnicodeStringEncoder(
 
    if ( !is_dynamic_array ) {
       ostringstream errmsg;
-      errmsg << "CharUnicodeStringEncoder::CharUnicodeStringEncoder():" << __LINE__
+      errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << trick_name
              << "' the variable must be a dynamic variable array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
-   HLAunicodeString  data_prototype;
-   HLAvariableArray *array_encoder = new HLAvariableArray( data_prototype );
-   array_encoder->addElement( data_prototype );
+   HLAopaqueData *opaque_encoder = new HLAopaqueData();
 
-   this->encoder = array_encoder;
+   this->encoder = opaque_encoder;
 }
 
-CharUnicodeStringEncoder::~CharUnicodeStringEncoder()
+CharOpaqueDataEncoder::~CharOpaqueDataEncoder()
 {
    if ( encoder != NULL ) {
       delete encoder;
@@ -116,45 +114,68 @@ CharUnicodeStringEncoder::~CharUnicodeStringEncoder()
    }
 }
 
-VariableLengthData &CharUnicodeStringEncoder::encode()
+VariableLengthData &CharOpaqueDataEncoder::encode()
 {
    /* Since the Trick variable is dynamic (i.e. a pointer) its */
    /* size can change at any point so we need to refresh ref2. */
    update_ref2();
+   Octet *data = *static_cast< Octet ** >( ref2->address );
 
-   /* Convert the char * string into a wide string. */
-   wstring wide_string;
-   StringUtilities::to_wstring( wide_string, *static_cast< char ** >( ref2->address ) );
+   HLAopaqueData *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
 
-   HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
-
-   const_cast< HLAunicodeString & >(
-      dynamic_cast< HLAunicodeString const & >(
-         array_encoder->get( 0 ) ) )
-      .set( wide_string );
+   opaque_encoder->set( const_cast< Octet const * >( data ), get_size( data ) );
 
    return EncoderBase::encode();
 }
 
-void CharUnicodeStringEncoder::decode(
+void CharOpaqueDataEncoder::decode(
    VariableLengthData const &encoded_data )
 {
    EncoderBase::decode( encoded_data );
 
-   HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
+   HLAopaqueData const *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
 
    /* Trick variable is dynamic (i.e. a pointer) so we need to refresh ref2. */
    update_ref2();
+   resize_trick_var( opaque_encoder->dataLength() );
 
-   /* Convert from the wide-string to a char * string. */
-   *static_cast< char ** >( ref2->address ) = StringUtilities::ip_strdup_wstring(
-      dynamic_cast< HLAunicodeString const & >( array_encoder->get( 0 ) ).get() );
+   memcpy( *static_cast< Octet ** >( ref2->address ),
+           opaque_encoder->get(),
+           opaque_encoder->dataLength() );
 }
 
-string CharUnicodeStringEncoder::to_string()
+string CharOpaqueDataEncoder::to_string()
 {
    ostringstream msg;
-   msg << "CharUnicodeStringEncoder[trick_name:'" << trick_name
+   msg << "CharOpaqueDataEncoder[trick_name:'" << trick_name
        << "' rti_encoding:" << rti_encoding << "]";
    return msg.str();
+}
+
+void CharOpaqueDataEncoder::resize_trick_var(
+   size_t const new_size )
+{
+   /* Trick array variable size does not match the new size. */
+   if ( ref2_element_count != new_size ) {
+      if ( *( static_cast< void ** >( ref2->address ) ) == NULL ) {
+         *( static_cast< void ** >( ref2->address ) ) =
+            static_cast< void * >( TMM_declare_var_1d( "char", new_size ) );
+      } else {
+         *( static_cast< void ** >( ref2->address ) ) =
+            static_cast< void * >( TMM_resize_array_1d_a(
+               *( static_cast< void ** >( ref2->address ) ), new_size ) );
+      }
+
+      /* Update the element count to the new size. */
+      ref2_element_count = new_size;
+
+      if ( *static_cast< void ** >( ref2->address ) == NULL ) {
+         ostringstream errmsg;
+         errmsg << "CharOpaqueDataEncoder::resize_trick_var():" << __LINE__
+                << " ERROR: Could not allocate memory for Trick variable"
+                << " with name '" << trick_name << "' with " << new_size
+                << " elements!\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+   }
 }

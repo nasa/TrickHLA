@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{BasicDataFixedArrayEncoders.cpp}
 @trick_link_dependency{BasicDataVariableArrayEncoders.cpp}
 @trick_link_dependency{CharASCIIStringEncoder.cpp}
+@trick_link_dependency{CharOpaqueDataEncoder.cpp}
 @trick_link_dependency{CharUnicodeStringEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
@@ -58,6 +59,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 #include "TrickHLA/encoding/CharASCIIStringEncoder.hh"
+#include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
@@ -421,7 +423,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
       }
       case ENCODING_OPAQUE_DATA: {
          if ( is_dynamic_array ) {
-            return new CharUnicodeStringEncoder( trick_name, hla_encoding, ref2 );
+            return new CharOpaqueDataEncoder( trick_name, hla_encoding, ref2 );
          } else {
             ostringstream errmsg;
             errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
@@ -519,11 +521,11 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
    EncodingEnum const hla_encoding,
    REF2              *ref2 )
 {
+#if defined( TRICK_WSTRING_MM_SUPPORT )
    bool const is_array        = ( ref2->attr->num_index > 0 );
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
-#if defined( TRICK_WSTRING_MM_SUPPORT )
       case ENCODING_UNICODE_STRING: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -536,7 +538,6 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
          }
          break;
       }
-#endif // TRICK_WSTRING_MM_SUPPORT
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
@@ -547,6 +548,15 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
          break;
       }
    }
+#else
+   ostringstream errmsg;
+   errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
+          << " ERROR: Trick ref-attributes for '" << trick_name
+          << "' the variable is of type 'std::wstring', the specified hla_endoding ("
+          << hla_encoding << ") is not supported.\n";
+   DebugHandler::terminate_with_message( errmsg.str() );
+#endif // TRICK_WSTRING_MM_SUPPORT
+
    return NULL;
 }
 

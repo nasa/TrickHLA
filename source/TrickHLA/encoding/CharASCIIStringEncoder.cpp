@@ -87,7 +87,7 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( ref2->attr->type )
              << ") is not the expected type '"
-             << Utilities::get_trick_type_string( TRICK_WSTRING ) << "'.\n";
+             << Utilities::get_trick_type_string( TRICK_CHARACTER ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

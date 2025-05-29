@@ -1,7 +1,7 @@
 
 #include "sim_objects/default_trick_sys.sm"
 
-##include "TrickHLA/CompileConfig.hh" // defines TRICK_WSTRING_MM_SUPPORT
+##include "TrickHLA/CompileConfig.hh" // for TRICK_WSTRING_MM_SUPPORT
 ##include "TrickHLA/DebugHandler.hh"
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/encoding/EncoderFactory.hh"
