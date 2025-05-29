@@ -178,7 +178,9 @@ using namespace TrickHLA;
       size_t const new_size )                                                                                            \
    {                                                                                                                     \
       /* Trick array variable size does not match the new size. */                                                       \
-      if ( ref2_element_count != new_size ) {                                                                            \
+      if ( ( ref2_element_count != new_size )                                                                            \
+           || ( *( static_cast< void ** >( ref2->address ) ) == NULL ) ) {                                               \
+                                                                                                                         \
          if ( ref2->attr->type == TRICK_STRING ) {                                                                       \
             /* TMM_resize_array_1d_a does not support STL strings. */                                                    \
             if ( *( static_cast< void ** >( ref2->address ) ) != NULL ) {                                                \

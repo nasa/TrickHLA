@@ -139,7 +139,7 @@ void CharOpaqueDataEncoder::decode(
    update_ref2();
    resize_trick_var( opaque_encoder->dataLength() );
 
-   Octet * data = *static_cast< Octet ** >( ref2->address );
+   Octet *data = *static_cast< Octet ** >( ref2->address );
    if ( data != NULL ) {
       memcpy( data, opaque_encoder->get(), opaque_encoder->dataLength() );
    }
@@ -157,7 +157,9 @@ void CharOpaqueDataEncoder::resize_trick_var(
    size_t const new_size )
 {
    /* Trick array variable size does not match the new size. */
-   if ( ref2_element_count != new_size ) {
+   if ( ( ref2_element_count != new_size )
+        || ( *( static_cast< void ** >( ref2->address ) ) == NULL ) ) {
+
       if ( *( static_cast< void ** >( ref2->address ) ) == NULL ) {
          *( static_cast< void ** >( ref2->address ) ) =
             static_cast< void * >( TMM_declare_var_1d( "char", new_size ) );
