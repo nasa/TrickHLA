@@ -164,10 +164,12 @@ VariableLengthData &EncoderBase::encode()
    try {
       encoder->encode( data );
    } catch ( EncoderException &e ) {
+      string err_details;
+      StringUtilities::to_string( err_details, e.what() );
       ostringstream errmsg;
       errmsg << "EncoderBase::encode():" << __LINE__
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
-             << trick_name << "'!\n";
+             << trick_name << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return data;
@@ -179,10 +181,12 @@ void EncoderBase::decode(
    try {
       encoder->decode( encoded_data );
    } catch ( EncoderException &e ) {
+      string err_details;
+      StringUtilities::to_string( err_details, e.what() );
       ostringstream errmsg;
       errmsg << "EncoderBase::decode():" << __LINE__
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
-             << trick_name << "'!\n";
+             << trick_name << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -205,72 +209,10 @@ void EncoderBase::calculate_ref2_element_count()
 
          // TODO: Need to refresh ref2 since the variable is dynamic.
 
-#if 1
-         // Handle dynamic arrays.
-         //
          // get_size returns the number of elements in the dynamic array.
          int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
          ref2_element_count  = ( num_items > 0 ) ? num_items : 0;
 
-#else
-         // Handle dynamic arrays of characters differently since we need to know the
-         // length of each string.
-         if ( ( ref2->attr->type == TRICK_CHARACTER )
-              || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) {
-
-            size_t byte_count = 0;
-
-            switch ( rti_encoding ) {
-               case ENCODING_BIG_ENDIAN:
-               case ENCODING_LITTLE_ENDIAN:
-               case ENCODING_OPAQUE_DATA:
-               case ENCODING_NONE: {
-                  // Determine total number of bytes used by the Trick simulation
-                  // variable, and the data can be binary and not just the printable
-                  // ASCII characters.
-                  size_t index = 0;
-                  for ( int i = 0; i < ref2->attr->num_index; ++i ) {
-                     for ( int k = 0; k < ref2->attr->index[i].size; ++k ) {
-                        char *s = *( static_cast< char ** >( ref2->address ) + index );
-                        ++index;
-                        if ( s != NULL ) {
-                           int size = get_size( s );
-                           if ( size > 0 ) {
-                              byte_count += size;
-                           }
-                        }
-                     }
-                  }
-                  break;
-               }
-               default: {
-                  // For the ENCODING_C_STRING, ENCODING_UNICODE_STRING,
-                  // and ENCODING_ASCII_STRING encodings assume the string is
-                  // terminated with a null character and determine the number of
-                  // characters using strlen().
-                  size_t index = 0;
-                  for ( int i = 0; i < ref2->attr->num_index; ++i ) {
-                     for ( int k = 0; k < ref2->attr->index[i].size; ++k ) {
-                        char const *s = *( static_cast< char ** >( ref2->address ) + index );
-                        if ( s != NULL ) {
-                           byte_count += strlen( s );
-                        }
-                        ++index;
-                     }
-                  }
-                  break;
-               }
-            }
-
-            ref2_element_count = byte_count / ref2->attr->size;
-         } else {
-            // Handle other dynamic arrays for non-character types.
-            //
-            // get_size returns the number of elements in the dynamic array.
-            int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
-            ref2_element_count  = ( num_items > 0 ) ? num_items : 0;
-         }
-#endif
       } else {
          // The user variable is either a primitive type or a static
          // multi-dimension array.
