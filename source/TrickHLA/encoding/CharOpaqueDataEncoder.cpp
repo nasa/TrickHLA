@@ -139,9 +139,10 @@ void CharOpaqueDataEncoder::decode(
    update_ref2();
    resize_trick_var( opaque_encoder->dataLength() );
 
-   memcpy( *static_cast< Octet ** >( ref2->address ),
-           opaque_encoder->get(),
-           opaque_encoder->dataLength() );
+   Octet * data = *static_cast< Octet ** >( ref2->address );
+   if ( data != NULL ) {
+      memcpy( data, opaque_encoder->get(), opaque_encoder->dataLength() );
+   }
 }
 
 string CharOpaqueDataEncoder::to_string()
