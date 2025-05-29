@@ -99,19 +99,11 @@ EncoderBase::EncoderBase(
  */
 EncoderBase::~EncoderBase()
 {
-#if 0
-   for ( size_t i = 0; i < data_elements.size(); ++i ) {
-      delete data_elements[i];
-      data_elements[i] = NULL;
-   }
-   data_elements.clear();
-#else
    while ( !data_elements.empty() ) {
       delete data_elements.back();
       data_elements.back() = NULL;
       data_elements.pop_back();
    }
-#endif
 
    if ( ref2 != NULL ) {
       free( ref2 );
@@ -205,9 +197,8 @@ void EncoderBase::calculate_ref2_element_count()
 
       if ( is_dynamic_array ) {
          // We have a multi-dimension array that is a pointer and the
-         // number of dimensions is ref2->attr->num_index
-
-         // TODO: Need to refresh ref2 since the variable is dynamic.
+         // number of dimensions is ref2->attr->num_index. Note: Make sure
+         // to refresh ref2 before this call because it is dynamic array.
 
          // get_size returns the number of elements in the dynamic array.
          int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
