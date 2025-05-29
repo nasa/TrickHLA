@@ -440,7 +440,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'char', the specified hla_endoding ("
+                << "' the variable is of type 'char', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -474,7 +474,7 @@ EncoderBase *EncoderFactory::create_string_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'std::string', the specified hla_endoding ("
+                << "' the variable is of type 'std::string', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -508,7 +508,7 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_wchar_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'wchar', the specified hla_endoding ("
+                << "' the variable is of type 'wchar', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -543,7 +543,7 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'std::wstring', the specified hla_endoding ("
+                << "' the variable is of type 'std::wstring', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -553,7 +553,7 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
    ostringstream errmsg;
    errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
           << " ERROR: Trick ref-attributes for '" << trick_name
-          << "' the variable is of type 'std::wstring', the specified hla_endoding ("
+          << "' the variable is of type 'std::wstring', the specified HLA-encoding ("
           << hla_encoding << ") is not supported.\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 #endif // TRICK_WSTRING_MM_SUPPORT
@@ -598,7 +598,7 @@ EncoderBase *EncoderFactory::create_int16_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int16_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'short', the specified hla_endoding ("
+                << "' the variable is of type 'short', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -644,7 +644,7 @@ EncoderBase *EncoderFactory::create_int32_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int32_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'int', the specified hla_endoding ("
+                << "' the variable is of type 'int', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -690,7 +690,7 @@ EncoderBase *EncoderFactory::create_int64_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int64_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'long long', the specified hla_endoding ("
+                << "' the variable is of type 'long long', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -737,7 +737,7 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint16_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned short', the specified hla_endoding ("
+                << "' the variable is of type 'unsigned short', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -783,7 +783,7 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint32_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned int', the specified hla_endoding ("
+                << "' the variable is of type 'unsigned int', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -830,7 +830,7 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
          errmsg << "EncoderFactory::create_uint64_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
                 << "' the variable is of type 'unsigned long long', the specified"
-                << " hla_endoding (" << hla_encoding << ") is not supported.\n";
+                << " hla_encoding (" << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -876,7 +876,7 @@ EncoderBase *EncoderFactory::create_float32_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_float32_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'float', the specified hla_endoding ("
+                << "' the variable is of type 'float', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -922,7 +922,7 @@ EncoderBase *EncoderFactory::create_float64_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'double', the specified hla_endoding ("
+                << "' the variable is of type 'double', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -956,7 +956,7 @@ EncoderBase *EncoderFactory::create_bool_encoder(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_bool_encoder():" << __LINE__
                 << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'bool', the specified hla_endoding ("
+                << "' the variable is of type 'bool', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
