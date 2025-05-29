@@ -100,6 +100,7 @@ EncoderBase *EncoderFactory::create(
    string const      &trick_name,
    EncodingEnum const hla_encoding )
 {
+   // The individual encoders are responsible for deleting ref2.
    REF2 *ref2 = ref_attributes( trick_name.c_str() );
 
    // Determine if we had an error getting the ref-attributes.

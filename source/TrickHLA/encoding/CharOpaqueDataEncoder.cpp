@@ -101,9 +101,7 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
       return;
    }
 
-   HLAopaqueData *opaque_encoder = new HLAopaqueData();
-
-   this->encoder = opaque_encoder;
+   this->encoder = new HLAopaqueData();
 }
 
 CharOpaqueDataEncoder::~CharOpaqueDataEncoder()
