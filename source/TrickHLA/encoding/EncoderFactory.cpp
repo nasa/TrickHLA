@@ -418,6 +418,20 @@ EncoderBase *EncoderFactory::create_char_encoder(
          }
          break;
       }
+      case ENCODING_OPAQUE_DATA: {
+         if ( is_dynamic_array ) {
+            return new CharUnicodeStringEncoder( trick_name, hla_encoding, ref2 );
+         } else {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
+                   << " ERROR: Trick ref-attributes for '" << trick_name
+                   << "' the Trick variable is of type 'char' for the specified"
+                   << " ENCODING_OPAQUE_DATA encoding and only a dynamic"
+                   << " array of characters (i.e. char *) is supported!\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+         break;
+      }
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_char_encoder():" << __LINE__

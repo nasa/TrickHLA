@@ -32,8 +32,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include "../../../include/TrickHLA/encoding/CharASCIIStringEncoder.hh"
-
 #include <cstddef>
 #include <sstream>
 #include <string>
@@ -50,6 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/encoding/CharASCIIStringEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
