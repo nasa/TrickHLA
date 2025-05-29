@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
@@ -138,6 +139,7 @@ DECLARE_BASIC_ENCODER_CLASS( Int32BEEncoder, HLAinteger32BE, Integer32, TRICK_IN
 DECLARE_BASIC_ENCODER_CLASS( Int32LEEncoder, HLAinteger32LE, Integer32, TRICK_INTEGER )
 DECLARE_BASIC_ENCODER_CLASS( Int64BEEncoder, HLAinteger64BE, Integer64, TRICK_LONG_LONG )
 DECLARE_BASIC_ENCODER_CLASS( Int64LEEncoder, HLAinteger64LE, Integer64, TRICK_LONG_LONG )
+
 #if defined( IEEE_1516_2025 )
 DECLARE_BASIC_ENCODER_CLASS( UInt16BEEncoder, HLAunsignedInteger16BE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
 DECLARE_BASIC_ENCODER_CLASS( UInt16LEEncoder, HLAunsignedInteger16LE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
@@ -145,7 +147,10 @@ DECLARE_BASIC_ENCODER_CLASS( UInt32BEEncoder, HLAunsignedInteger32BE, UnsignedIn
 DECLARE_BASIC_ENCODER_CLASS( UInt32LEEncoder, HLAunsignedInteger32LE, UnsignedInteger32, TRICK_UNSIGNED_INTEGER )
 DECLARE_BASIC_ENCODER_CLASS( UInt64BEEncoder, HLAunsignedInteger64BE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
 DECLARE_BASIC_ENCODER_CLASS( UInt64LEEncoder, HLAunsignedInteger64LE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
-#endif
+#endif // IEEE_1516_2025
+
 DECLARE_BASIC_ENCODER_CLASS( UnicodeCharEncoder, HLAunicodeChar, wchar_t, TRICK_WCHAR )
-// Trick does not support std::wstring:
+
+#if defined( TRICK_WSTRING_MM_SUPPORT )
 DECLARE_BASIC_ENCODER_CLASS( UnicodeStringEncoder, HLAunicodeString, std::wstring, TRICK_WSTRING )
+#endif // TRICK_WSTRING_MM_SUPPORT

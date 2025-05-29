@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderFactory.cpp}
 @trick_link_dependency{encoding/src/EncodingTest.cpp}
@@ -90,10 +91,11 @@ EncodingTest::~EncodingTest()
 }
 
 void EncodingTest::char_test(
-   string const &data1_trick_base_name,
-   CharData     &data1,
-   string const &data2_trick_base_name,
-   CharData     &data2 )
+   string const      &data1_trick_base_name,
+   CharData          &data1,
+   string const      &data2_trick_base_name,
+   CharData          &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -106,31 +108,43 @@ void EncodingTest::char_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_ASCII_CHAR;
+   EncodingEnum char_rti_encoding;
+   switch ( rti_encoding ) {
+      case TrickHLA::ENCODING_UNICODE_STRING:
+      case TrickHLA::ENCODING_ASCII_STRING:
+      case TrickHLA::ENCODING_OPAQUE_DATA: {
+         char_rti_encoding = TrickHLA::ENCODING_ASCII_CHAR;
+         break;
+      }
+      default: {
+         char_rti_encoding = rti_encoding;
+         break;
+      }
+   }
 
    EncoderBase *data1_char_encoder = EncoderFactory::create(
-      data1_trick_base_name + "._char", rti_encoding );
+      data1_trick_base_name + "._char", char_rti_encoding );
 
    EncoderBase *data1_vec3_char_encoder = EncoderFactory::create(
-      data1_trick_base_name + ".vec3_char", rti_encoding );
+      data1_trick_base_name + ".vec3_char", char_rti_encoding );
 
    EncoderBase *data1_m3x3_char_encoder = EncoderFactory::create(
-      data1_trick_base_name + ".m3x3_char", rti_encoding );
+      data1_trick_base_name + ".m3x3_char", char_rti_encoding );
 
    EncoderBase *data1_ptr_char_encoder = EncoderFactory::create(
-      data1_trick_base_name + ".ptr_char", TrickHLA::ENCODING_ASCII_STRING );
+      data1_trick_base_name + ".ptr_char", rti_encoding );
 
    EncoderBase *data2_char_encoder = EncoderFactory::create(
-      data2_trick_base_name + "._char", rti_encoding );
+      data2_trick_base_name + "._char", char_rti_encoding );
 
    EncoderBase *data2_vec3_char_encoder = EncoderFactory::create(
-      data2_trick_base_name + ".vec3_char", rti_encoding );
+      data2_trick_base_name + ".vec3_char", char_rti_encoding );
 
    EncoderBase *data2_m3x3_char_encoder = EncoderFactory::create(
-      data2_trick_base_name + ".m3x3_char", rti_encoding );
+      data2_trick_base_name + ".m3x3_char", char_rti_encoding );
 
    EncoderBase *data2_ptr_char_encoder = EncoderFactory::create(
-      data2_trick_base_name + ".ptr_char", TrickHLA::ENCODING_ASCII_STRING );
+      data2_trick_base_name + ".ptr_char", rti_encoding );
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg2;
@@ -151,10 +165,20 @@ void EncodingTest::char_test(
    data2_m3x3_char_encoder->decode( data1_m3x3_char_encoder->encode() );
    data2_ptr_char_encoder->decode( data1_ptr_char_encoder->encode() );
 
-   if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "char_data1 == char_data2\n" );
+   ostringstream compare_msg;
+   if ( char_rti_encoding == rti_encoding ) {
+      compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
    } else {
-      message_publish( MSG_ERROR, "char_data1 != char_data2\n" );
+      compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ", "
+                  << encoding_enum_to_string( char_rti_encoding ) << ") ";
+   }
+
+   if ( data1.compare( data2 ) ) {
+      compare_msg << "char_data1 == char_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
+   } else {
+      compare_msg << "char_data1 != char_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -169,10 +193,11 @@ void EncodingTest::char_test(
 }
 
 void EncodingTest::string_test(
-   string const &data1_trick_base_name,
-   StringData   &data1,
-   string const &data2_trick_base_name,
-   StringData   &data2 )
+   string const      &data1_trick_base_name,
+   StringData        &data1,
+   string const      &data2_trick_base_name,
+   StringData        &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -184,8 +209,6 @@ void EncodingTest::string_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_ASCII_STRING;
 
    EncoderBase *data1_string_encoder = EncoderFactory::create(
       data1_trick_base_name + "._string", rti_encoding );
@@ -230,10 +253,15 @@ void EncodingTest::string_test(
    data2_m3x3_string_encoder->decode( data1_m3x3_string_encoder->encode() );
    data2_ptr_string_encoder->decode( data1_ptr_string_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "string_data1 == string_data2\n" );
+      compare_msg << "string_data1 == string_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "string_data1 != string_data2\n" );
+      compare_msg << "string_data1 != string_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -248,10 +276,11 @@ void EncodingTest::string_test(
 }
 
 void EncodingTest::wchar_test(
-   string const &data1_trick_base_name,
-   WCharData    &data1,
-   string const &data2_trick_base_name,
-   WCharData    &data2 )
+   string const      &data1_trick_base_name,
+   WCharData         &data1,
+   string const      &data2_trick_base_name,
+   WCharData         &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -263,8 +292,6 @@ void EncodingTest::wchar_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_UNICODE_CHAR;
 
    EncoderBase *data1_wchar_encoder = EncoderFactory::create(
       data1_trick_base_name + "._wchar", rti_encoding );
@@ -309,10 +336,15 @@ void EncodingTest::wchar_test(
    data2_m3x3_wchar_encoder->decode( data1_m3x3_wchar_encoder->encode() );
    data2_ptr_wchar_encoder->decode( data1_ptr_wchar_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "wchar_data1 == wchar_data2\n" );
+      compare_msg << "wchar_data1 == wchar_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "wchar_data1 != wchar_data2\n" );
+      compare_msg << "wchar_data1 != wchar_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -327,10 +359,11 @@ void EncodingTest::wchar_test(
 }
 
 void EncodingTest::wstring_test(
-   string const &data1_trick_base_name,
-   WStringData  &data1,
-   string const &data2_trick_base_name,
-   WStringData  &data2 )
+   string const      &data1_trick_base_name,
+   WStringData       &data1,
+   string const      &data2_trick_base_name,
+   WStringData       &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -342,8 +375,6 @@ void EncodingTest::wstring_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_ASCII_STRING;
 
    EncoderBase *data1_wstring_encoder = EncoderFactory::create(
       data1_trick_base_name + "._wstring", rti_encoding );
@@ -388,10 +419,15 @@ void EncodingTest::wstring_test(
    data2_m3x3_wstring_encoder->decode( data1_m3x3_wstring_encoder->encode() );
    data2_ptr_wstring_encoder->decode( data1_ptr_wstring_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "wstring_data1 == wstring_data2\n" );
+      compare_msg << "wstring_data1 == wstring_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "wstring_data1 != wstring_data2\n" );
+      compare_msg << "wstring_data1 != wstring_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -406,10 +442,11 @@ void EncodingTest::wstring_test(
 }
 
 void EncodingTest::int16_test(
-   string const &data1_trick_base_name,
-   Int16Data    &data1,
-   string const &data2_trick_base_name,
-   Int16Data    &data2 )
+   string const      &data1_trick_base_name,
+   Int16Data         &data1,
+   string const      &data2_trick_base_name,
+   Int16Data         &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -421,8 +458,6 @@ void EncodingTest::int16_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    EncoderBase *data1_i16_encoder = EncoderFactory::create(
       data1_trick_base_name + ".i16", rti_encoding );
@@ -467,10 +502,15 @@ void EncodingTest::int16_test(
    data2_m3x3_i16_encoder->decode( data1_m3x3_i16_encoder->encode() );
    data2_ptr_i16_encoder->decode( data1_ptr_i16_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "int16_data1 == int16_data2\n" );
+      compare_msg << "int16_data1 == int16_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "int16_data1 != int16_data2\n" );
+      compare_msg << "int16_data1 != int16_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -485,10 +525,11 @@ void EncodingTest::int16_test(
 }
 
 void EncodingTest::int32_test(
-   string const &data1_trick_base_name,
-   Int32Data    &data1,
-   string const &data2_trick_base_name,
-   Int32Data    &data2 )
+   string const      &data1_trick_base_name,
+   Int32Data         &data1,
+   string const      &data2_trick_base_name,
+   Int32Data         &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -500,8 +541,6 @@ void EncodingTest::int32_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    EncoderBase *data1_i32_encoder = EncoderFactory::create(
       data1_trick_base_name + ".i32", rti_encoding );
@@ -546,10 +585,15 @@ void EncodingTest::int32_test(
    data2_m3x3_i32_encoder->decode( data1_m3x3_i32_encoder->encode() );
    data2_ptr_i32_encoder->decode( data1_ptr_i32_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "int32_data1 == int32_data2\n" );
+      compare_msg << "int32_data1 == int32_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "int32_data1 != int32_data2\n" );
+      compare_msg << "int32_data1 != int32_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -564,10 +608,11 @@ void EncodingTest::int32_test(
 }
 
 void EncodingTest::int64_test(
-   string const &data1_trick_base_name,
-   Int64Data    &data1,
-   string const &data2_trick_base_name,
-   Int64Data    &data2 )
+   string const      &data1_trick_base_name,
+   Int64Data         &data1,
+   string const      &data2_trick_base_name,
+   Int64Data         &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -579,8 +624,6 @@ void EncodingTest::int64_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    EncoderBase *data1_i64_encoder = EncoderFactory::create(
       data1_trick_base_name + ".i64", rti_encoding );
@@ -625,10 +668,15 @@ void EncodingTest::int64_test(
    data2_m3x3_i64_encoder->decode( data1_m3x3_i64_encoder->encode() );
    data2_ptr_i64_encoder->decode( data1_ptr_i64_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "int64_data1 == int64_data2\n" );
+      compare_msg << "int64_data1 == int64_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "int64_data1 != int64_data2\n" );
+      compare_msg << "int64_data1 != int64_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -643,10 +691,11 @@ void EncodingTest::int64_test(
 }
 
 void EncodingTest::long_test(
-   string const &data1_trick_base_name,
-   LongData     &data1,
-   string const &data2_trick_base_name,
-   LongData     &data2 )
+   string const      &data1_trick_base_name,
+   LongData          &data1,
+   string const      &data2_trick_base_name,
+   LongData          &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -658,8 +707,6 @@ void EncodingTest::long_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    EncoderBase *data1_long_encoder = EncoderFactory::create(
       data1_trick_base_name + "._long", rti_encoding );
@@ -704,10 +751,15 @@ void EncodingTest::long_test(
    data2_m3x3_long_encoder->decode( data1_m3x3_long_encoder->encode() );
    data2_ptr_long_encoder->decode( data1_ptr_long_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "long_data1 == long_data2\n" );
+      compare_msg << "long_data1 == long_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "long_data1 != long_data2\n" );
+      compare_msg << "long_data1 != long_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -722,10 +774,11 @@ void EncodingTest::long_test(
 }
 
 void EncodingTest::float32_test(
-   string const &data1_trick_base_name,
-   Float32Data  &data1,
-   string const &data2_trick_base_name,
-   Float32Data  &data2 )
+   string const      &data1_trick_base_name,
+   Float32Data       &data1,
+   string const      &data2_trick_base_name,
+   Float32Data       &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -737,8 +790,6 @@ void EncodingTest::float32_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    EncoderBase *data1_f32_encoder = EncoderFactory::create(
       data1_trick_base_name + ".f32", rti_encoding );
@@ -783,10 +834,15 @@ void EncodingTest::float32_test(
    data2_m3x3_f32_encoder->decode( data1_m3x3_f32_encoder->encode() );
    data2_ptr_f32_encoder->decode( data1_ptr_f32_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "float32_data1 == float32_data2\n" );
+      compare_msg << "float32_data1 == float32_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "float32_data1 != float32_data2\n" );
+      compare_msg << "float32_data1 != float32_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -801,10 +857,11 @@ void EncodingTest::float32_test(
 }
 
 void EncodingTest::float64_test(
-   string const &data1_trick_base_name,
-   Float64Data  &data1,
-   string const &data2_trick_base_name,
-   Float64Data  &data2 )
+   string const      &data1_trick_base_name,
+   Float64Data       &data1,
+   string const      &data2_trick_base_name,
+   Float64Data       &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -816,8 +873,6 @@ void EncodingTest::float64_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    EncoderBase *data1_f64_encoder = EncoderFactory::create(
       data1_trick_base_name + ".f64", rti_encoding );
@@ -862,10 +917,15 @@ void EncodingTest::float64_test(
    data2_m3x3_f64_encoder->decode( data1_m3x3_f64_encoder->encode() );
    data2_ptr_f64_encoder->decode( data1_ptr_f64_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "float64_data1 == float64_data2\n" );
+      compare_msg << "float64_data1 == float64_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "float64_data1 != float64_data2\n" );
+      compare_msg << "float64_data1 != float64_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -880,10 +940,11 @@ void EncodingTest::float64_test(
 }
 
 void EncodingTest::bool_test(
-   string const &data1_trick_base_name,
-   BoolData     &data1,
-   string const &data2_trick_base_name,
-   BoolData     &data2 )
+   string const      &data1_trick_base_name,
+   BoolData          &data1,
+   string const      &data2_trick_base_name,
+   BoolData          &data2,
+   EncodingEnum const rti_encoding )
 {
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream msg1;
@@ -895,8 +956,6 @@ void EncodingTest::bool_test(
            << "Data2: " << data2.to_string();
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
-
-   EncodingEnum const rti_encoding = TrickHLA::ENCODING_BOOLEAN;
 
    EncoderBase *data1_bool_encoder = EncoderFactory::create(
       data1_trick_base_name + "._bool", rti_encoding );
@@ -941,10 +1000,15 @@ void EncodingTest::bool_test(
    data2_m3x3_bool_encoder->decode( data1_m3x3_bool_encoder->encode() );
    data2_ptr_bool_encoder->decode( data1_ptr_bool_encoder->encode() );
 
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
    if ( data1.compare( data2 ) ) {
-      message_publish( MSG_INFO, "bool_data1 == bool_data2\n" );
+      compare_msg << "bool_data1 == bool_data2\n";
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      message_publish( MSG_ERROR, "bool_data1 != bool_data2\n" );
+      compare_msg << "bool_data1 != bool_data2\n";
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {

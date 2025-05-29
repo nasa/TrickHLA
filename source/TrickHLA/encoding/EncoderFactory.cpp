@@ -49,6 +49,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
@@ -522,6 +523,7 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
    bool const is_static_array = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
 
    switch ( hla_encoding ) {
+#if defined( TRICK_WSTRING_MM_SUPPORT )
       case ENCODING_UNICODE_STRING: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -534,6 +536,7 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
          }
          break;
       }
+#endif // TRICK_WSTRING_MM_SUPPORT
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__

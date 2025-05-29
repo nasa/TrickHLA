@@ -356,6 +356,11 @@ typedef std::vector< std::wstring > VectorOfWstrings;
 //
 // Helper methods for these enumerations.
 //
+/*! @brief Convert an EncodingEnum value into a printable string.
+ *  @return Encoding as a printable string.
+ *  @param encoding Encoding value. */
+std::string encoding_enum_to_string( EncodingEnum const encoding );
+
 // TrickHLA::ExecutionModeEnum methods.
 /*! @brief Convert an ExecutionModeEnum value into a printable string.
  *  @return Execution control mode as a printable string.

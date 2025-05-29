@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
@@ -154,6 +155,7 @@ DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32BEFixedArrayEncoder, HLAinteger32B
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32LEFixedArrayEncoder, HLAinteger32LE, Integer32, TRICK_INTEGER )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64BEFixedArrayEncoder, HLAinteger64BE, Integer64, TRICK_LONG_LONG )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64LEFixedArrayEncoder, HLAinteger64LE, Integer64, TRICK_LONG_LONG )
+
 #if defined( IEEE_1516_2025 )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16BEFixedArrayEncoder, HLAunsignedInteger16BE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16LEFixedArrayEncoder, HLAunsignedInteger16LE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
@@ -161,7 +163,10 @@ DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32BEFixedArrayEncoder, HLAunsignedI
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32LEFixedArrayEncoder, HLAunsignedInteger32LE, UnsignedInteger32, TRICK_UNSIGNED_INTEGER )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64BEFixedArrayEncoder, HLAunsignedInteger64BE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64LEFixedArrayEncoder, HLAunsignedInteger64LE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
-#endif
+#endif // IEEE_1516_2025
+
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeCharFixedArrayEncoder, HLAunicodeChar, wchar_t, TRICK_WCHAR )
-// Trick does not support std::wstring:
+
+#if defined( TRICK_WSTRING_MM_SUPPORT )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeStringFixedArrayEncoder, HLAunicodeString, std::wstring, TRICK_WSTRING )
+#endif // TRICK_WSTRING_MM_SUPPORT

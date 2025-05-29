@@ -49,6 +49,9 @@ NASA, Johnson Space Center\n
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 
+// TrickHLA includes.
+#include "TrickHLA/Types.hh"
+
 #include "BoolData.hh"
 #include "CharData.hh"
 #include "Float32Data.hh"
@@ -85,60 +88,71 @@ class EncodingTest
    /*! @brief Destructor for the TrickHLAModel EncodingTest class. */
    virtual ~EncodingTest();
 
-   void char_test( std::string const &data1_trick_base_name,
-                   CharData          &data1,
-                   std::string const &data2_trick_base_name,
-                   CharData          &data2 );
+   void char_test( std::string const           &data1_trick_base_name,
+                   CharData                    &data1,
+                   std::string const           &data2_trick_base_name,
+                   CharData                    &data2,
+                   TrickHLA::EncodingEnum const rti_encoding );
 
-   void string_test( std::string const &data1_trick_base_name,
-                     StringData        &data1,
-                     std::string const &data2_trick_base_name,
-                     StringData        &data2 );
+   void string_test( std::string const           &data1_trick_base_name,
+                     StringData                  &data1,
+                     std::string const           &data2_trick_base_name,
+                     StringData                  &data2,
+                     TrickHLA::EncodingEnum const rti_encoding );
 
-   void wchar_test( std::string const &data1_trick_base_name,
-                    WCharData         &data1,
-                    std::string const &data2_trick_base_name,
-                    WCharData         &data2 );
+   void wchar_test( std::string const           &data1_trick_base_name,
+                    WCharData                   &data1,
+                    std::string const           &data2_trick_base_name,
+                    WCharData                   &data2,
+                    TrickHLA::EncodingEnum const rti_encoding );
 
-   void wstring_test( std::string const &data1_trick_base_name,
-                      WStringData       &data1,
-                      std::string const &data2_trick_base_name,
-                      WStringData       &data2 );
+   void wstring_test( std::string const           &data1_trick_base_name,
+                      WStringData                 &data1,
+                      std::string const           &data2_trick_base_name,
+                      WStringData                 &data2,
+                      TrickHLA::EncodingEnum const rti_encoding );
 
-   void int16_test( std::string const &data1_trick_base_name,
-                    Int16Data         &data1,
-                    std::string const &data2_trick_base_name,
-                    Int16Data         &data2 );
+   void int16_test( std::string const           &data1_trick_base_name,
+                    Int16Data                   &data1,
+                    std::string const           &data2_trick_base_name,
+                    Int16Data                   &data2,
+                    TrickHLA::EncodingEnum const rti_encoding );
 
-   void int32_test( std::string const &data1_trick_base_name,
-                    Int32Data         &data1,
-                    std::string const &data2_trick_base_name,
-                    Int32Data         &data2 );
+   void int32_test( std::string const           &data1_trick_base_name,
+                    Int32Data                   &data1,
+                    std::string const           &data2_trick_base_name,
+                    Int32Data                   &data2,
+                    TrickHLA::EncodingEnum const rti_encoding );
 
-   void int64_test( std::string const &data1_trick_base_name,
-                    Int64Data         &data1,
-                    std::string const &data2_trick_base_name,
-                    Int64Data         &data2 );
+   void int64_test( std::string const           &data1_trick_base_name,
+                    Int64Data                   &data1,
+                    std::string const           &data2_trick_base_name,
+                    Int64Data                   &data2,
+                    TrickHLA::EncodingEnum const rti_encoding );
 
-   void long_test( std::string const &data1_trick_base_name,
-                   LongData          &data1,
-                   std::string const &data2_trick_base_name,
-                   LongData          &data2 );
+   void long_test( std::string const           &data1_trick_base_name,
+                   LongData                    &data1,
+                   std::string const           &data2_trick_base_name,
+                   LongData                    &data2,
+                   TrickHLA::EncodingEnum const rti_encoding );
 
-   void float32_test( std::string const &data1_trick_base_name,
-                      Float32Data       &data1,
-                      std::string const &data2_trick_base_name,
-                      Float32Data       &data2 );
+   void float32_test( std::string const           &data1_trick_base_name,
+                      Float32Data                 &data1,
+                      std::string const           &data2_trick_base_name,
+                      Float32Data                 &data2,
+                      TrickHLA::EncodingEnum const rti_encoding );
 
-   void float64_test( std::string const &data1_trick_base_name,
-                      Float64Data       &data1,
-                      std::string const &data2_trick_base_name,
-                      Float64Data       &data2 );
+   void float64_test( std::string const           &data1_trick_base_name,
+                      Float64Data                 &data1,
+                      std::string const           &data2_trick_base_name,
+                      Float64Data                 &data2,
+                      TrickHLA::EncodingEnum const rti_encoding );
 
-   void bool_test( std::string const &data1_trick_base_name,
-                   BoolData          &data1,
-                   std::string const &data2_trick_base_name,
-                   BoolData          &data2 );
+   void bool_test( std::string const           &data1_trick_base_name,
+                   BoolData                    &data1,
+                   std::string const           &data2_trick_base_name,
+                   BoolData                    &data2,
+                   TrickHLA::EncodingEnum const rti_encoding );
 };
 
 } // namespace TrickHLAModel
