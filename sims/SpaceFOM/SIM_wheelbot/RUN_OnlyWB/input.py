@@ -291,11 +291,11 @@ federate.set_root_frame( root_frame )
 frame_A = SpaceFOMRefFrameObject( 
    create_frame_object          = True,
    frame_instance_name          = 'FrameA',
-   frame_S_define_instance      = ref_frame_A.frame_packing,
-   frame_S_define_instance_name = 'ref_frame_A.frame_packing' )
+   frame_S_define_instance      = leaf_ref_frame.frame_packing,
+   frame_S_define_instance_name = 'leaf_ref_frame.frame_packing' )
 
 # Set the debug flag for the root reference frame.
-ref_frame_A.frame_packing.debug = verbose
+leaf_ref_frame.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
@@ -363,7 +363,7 @@ else:
 federate.add_sim_object( THLA )
 federate.add_sim_object( THLA_INIT )
 federate.add_sim_object( root_ref_frame )
-# federate.add_sim_object( ref_frame_A )
+# federate.add_sim_object( leaf_ref_frame )
 
 #---------------------------------------------------------------------------
 # Make sure that the Python federate configuration object is initialized.
