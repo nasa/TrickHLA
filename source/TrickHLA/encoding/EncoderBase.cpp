@@ -101,6 +101,11 @@ EncoderBase::~EncoderBase()
       free( ref2 );
       ref2 = NULL;
    }
+
+   if ( encoder != NULL ) {
+      delete encoder;
+      encoder = NULL;
+   }
 }
 
 void EncoderBase::update_ref2()
@@ -137,7 +142,7 @@ void EncoderBase::update_ref2()
 VariableLengthData &EncoderBase::encode()
 {
    try {
-      encoder->encode( data );
+      encoder->encode( this->data );
    } catch ( EncoderException &e ) {
       string err_details;
       StringUtilities::to_string( err_details, e.what() );
@@ -147,7 +152,7 @@ VariableLengthData &EncoderBase::encode()
              << trick_name << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   return data;
+   return this->data;
 }
 
 void EncoderBase::decode(

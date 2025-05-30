@@ -124,17 +124,13 @@ using namespace TrickHLA;
                                                                                                                       \
    EncoderClassName::~EncoderClassName()                                                                              \
    {                                                                                                                  \
-      if ( encoder != NULL ) {                                                                                        \
-         delete encoder;                                                                                              \
-         encoder = NULL;                                                                                              \
-      }                                                                                                               \
+      return;                                                                                                         \
    }                                                                                                                  \
                                                                                                                       \
    string EncoderClassName::to_string()                                                                               \
    {                                                                                                                  \
       ostringstream msg;                                                                                              \
-      msg << #EncoderClassName                                                                                        \
-          << "[trick_name:" << trick_name << "]";                                                                     \
+      msg << #EncoderClassName << "[trick_name:" << trick_name << "]";                                                \
       return msg.str();                                                                                               \
    }
 

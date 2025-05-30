@@ -108,10 +108,7 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
 
 CharASCIIStringEncoder::~CharASCIIStringEncoder()
 {
-   if ( encoder != NULL ) {
-      delete encoder;
-      encoder = NULL;
-   }
+   return;
 }
 
 VariableLengthData &CharASCIIStringEncoder::encode()

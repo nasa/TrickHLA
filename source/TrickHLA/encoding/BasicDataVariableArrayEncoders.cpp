@@ -114,10 +114,7 @@ using namespace TrickHLA;
                                                                                                                          \
    EncoderClassName::~EncoderClassName()                                                                                 \
    {                                                                                                                     \
-      if ( encoder != NULL ) {                                                                                           \
-         delete encoder;                                                                                                 \
-         encoder = NULL;                                                                                                 \
-      }                                                                                                                  \
+      return;                                                                                                            \
    }                                                                                                                     \
                                                                                                                          \
    VariableLengthData &EncoderClassName::encode()                                                                        \
@@ -172,7 +169,7 @@ using namespace TrickHLA;
       size_t const new_size )                                                                                            \
    {                                                                                                                     \
       /* Trick array variable size does not match the new size. */                                                       \
-      if ( ( ref2_element_count != new_size )                                                                            \
+      if ( ( new_size != ref2_element_count )                                                                            \
            || ( *( static_cast< void ** >( ref2->address ) ) == NULL ) ) {                                               \
                                                                                                                          \
          if ( ref2->attr->type == TRICK_STRING ) {                                                                       \
@@ -212,7 +209,7 @@ using namespace TrickHLA;
    {                                                                                                                     \
       HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                                   \
                                                                                                                          \
-      if ( array_encoder->size() != new_size ) {                                                                         \
+      if ( new_size != array_encoder->size() ) {                                                                         \
          EncodableDataType data_prototype;                                                                               \
                                                                                                                          \
          if ( new_size < array_encoder->size() ) {                                                                       \

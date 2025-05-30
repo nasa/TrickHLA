@@ -108,10 +108,7 @@ CharUnicodeStringEncoder::CharUnicodeStringEncoder(
 
 CharUnicodeStringEncoder::~CharUnicodeStringEncoder()
 {
-   if ( encoder != NULL ) {
-      delete encoder;
-      encoder = NULL;
-   }
+   return;
 }
 
 VariableLengthData &CharUnicodeStringEncoder::encode()

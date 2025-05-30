@@ -78,20 +78,11 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-/*!
- * @details The endianess of the computer is determined as part of the
- * EncoderFactory construction process.
- * @job_class{initialization}
- */
 EncoderFactory::EncoderFactory()
 {
    return;
 }
 
-/*!
- * @details The buffer and ref2 values are freed and nulled.
- * @job_class{shutdown}
- */
 EncoderFactory::~EncoderFactory()
 {
    return;

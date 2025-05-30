@@ -104,10 +104,7 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
 
 CharOpaqueDataEncoder::~CharOpaqueDataEncoder()
 {
-   if ( encoder != NULL ) {
-      delete encoder;
-      encoder = NULL;
-   }
+   return;
 }
 
 VariableLengthData &CharOpaqueDataEncoder::encode()
@@ -130,9 +127,9 @@ void CharOpaqueDataEncoder::decode(
 
    resize_trick_var( opaque_encoder->dataLength() );
 
-   Octet *data = *static_cast< Octet ** >( ref2->address );
-   if ( data != NULL ) {
-      memcpy( data, opaque_encoder->get(), opaque_encoder->dataLength() );
+   Octet *byte_data = *static_cast< Octet ** >( ref2->address );
+   if ( byte_data != NULL ) {
+      memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() );
    }
 }
 
@@ -145,7 +142,7 @@ void CharOpaqueDataEncoder::resize_trick_var(
    size_t const new_size )
 {
    /* Trick array variable size does not match the new size. */
-   if ( ( ref2_element_count != new_size )
+   if ( ( new_size != ref2_element_count )
         || ( *( static_cast< void ** >( ref2->address ) ) == NULL ) ) {
 
       if ( *( static_cast< void ** >( ref2->address ) ) == NULL ) {
