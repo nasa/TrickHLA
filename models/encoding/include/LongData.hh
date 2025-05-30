@@ -65,7 +65,7 @@ class LongData
    /*! @brief Destructor for the TrickHLAModel LongData class. */
    virtual ~LongData();
 
-   bool compare( LongData &data );
+   bool compare( LongData &data, std::string &explanation );
 
    std::string to_string();
 

@@ -65,7 +65,7 @@ class Float64Data
    /*! @brief Destructor for the TrickHLAModel Float64Data class. */
    virtual ~Float64Data();
 
-   bool compare( Float64Data &data );
+   bool compare( Float64Data &data, std::string &explanation );
 
    std::string to_string();
 

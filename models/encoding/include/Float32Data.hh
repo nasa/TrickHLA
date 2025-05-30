@@ -65,7 +65,7 @@ class Float32Data
    /*! @brief Destructor for the TrickHLAModel Float32Data class. */
    virtual ~Float32Data();
 
-   bool compare( Float32Data &data );
+   bool compare( Float32Data &data, std::string &explanation );
 
    std::string to_string();
 

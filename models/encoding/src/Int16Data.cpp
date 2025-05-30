@@ -90,7 +90,8 @@ Int16Data::~Int16Data()
 }
 
 bool Int16Data::compare(
-   Int16Data &data )
+   Int16Data &data,
+   string    &explanation )
 {
    bool equal_values = true;
 
@@ -150,13 +151,7 @@ bool Int16Data::compare(
       }
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
-      if ( equal_values ) {
-         message_publish( MSG_NORMAL, msg.str().c_str() );
-      } else {
-         message_publish( MSG_ERROR, msg.str().c_str() );
-      }
-   }
+   explanation = msg.str();
 
    return equal_values;
 }

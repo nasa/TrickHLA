@@ -65,7 +65,7 @@ class BoolData
    /*! @brief Destructor for the TrickHLAModel BoolData class. */
    virtual ~BoolData();
 
-   bool compare( BoolData &data );
+   bool compare( BoolData &data, std::string &explanation );
 
    std::string to_string();
 

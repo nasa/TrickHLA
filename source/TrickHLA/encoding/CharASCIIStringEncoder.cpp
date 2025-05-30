@@ -116,19 +116,15 @@ CharASCIIStringEncoder::~CharASCIIStringEncoder()
 
 VariableLengthData &CharASCIIStringEncoder::encode()
 {
-   /* Since the Trick variable is dynamic (i.e. a pointer) its */
-   /* size can change at any point so we need to refresh ref2. */
-   update_ref2();
-
-   /* Convert the char * string into a wide string. */
-   string data = *static_cast< char ** >( ref2->address );
+   /* Convert the char * string into a std::string. */
+   string str_data = *static_cast< char ** >( ref2->address );
 
    HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
 
    const_cast< HLAASCIIstring & >(
       dynamic_cast< HLAASCIIstring const & >(
          array_encoder->get( 0 ) ) )
-      .set( data );
+      .set( str_data );
 
    return EncoderBase::encode();
 }
@@ -140,10 +136,7 @@ void CharASCIIStringEncoder::decode(
 
    HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
 
-   /* Trick variable is dynamic (i.e. a pointer) so we need to refresh ref2. */
-   update_ref2();
-
-   /* Convert from the wide-string to a char * string. */
+   /* Convert from the std::string to a char * string. */
    *static_cast< char ** >( ref2->address ) = StringUtilities::ip_strdup_string(
       dynamic_cast< HLAASCIIstring const & >( array_encoder->get( 0 ) ).get() );
 }

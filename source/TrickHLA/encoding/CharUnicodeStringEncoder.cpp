@@ -116,10 +116,6 @@ CharUnicodeStringEncoder::~CharUnicodeStringEncoder()
 
 VariableLengthData &CharUnicodeStringEncoder::encode()
 {
-   /* Since the Trick variable is dynamic (i.e. a pointer) its */
-   /* size can change at any point so we need to refresh ref2. */
-   update_ref2();
-
    /* Convert the char * string into a wide string. */
    wstring wide_string;
    StringUtilities::to_wstring( wide_string, *static_cast< char ** >( ref2->address ) );
@@ -140,9 +136,6 @@ void CharUnicodeStringEncoder::decode(
    EncoderBase::decode( encoded_data );
 
    HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
-
-   /* Trick variable is dynamic (i.e. a pointer) so we need to refresh ref2. */
-   update_ref2();
 
    /* Convert from the wide-string to a char * string. */
    *static_cast< char ** >( ref2->address ) = StringUtilities::ip_strdup_wstring(

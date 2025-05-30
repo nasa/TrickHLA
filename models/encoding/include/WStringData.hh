@@ -65,7 +65,7 @@ class WStringData
    /*! @brief Destructor for the TrickHLAModel WStringData class. */
    virtual ~WStringData();
 
-   bool compare( WStringData &data );
+   bool compare( WStringData &data, std::string &explanation );
 
    std::string  to_string();
    std::wstring to_wstring();

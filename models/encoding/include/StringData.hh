@@ -65,7 +65,7 @@ class StringData
    /*! @brief Destructor for the TrickHLAModel StringData class. */
    virtual ~StringData();
 
-   bool compare( StringData &data );
+   bool compare( StringData &data, std::string &explanation );
 
    std::string to_string();
 

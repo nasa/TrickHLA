@@ -16,7 +16,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{encoding/src/WStringData.cpp}
-@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 
 @revs_title
 @revs_begin
@@ -38,7 +37,6 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math.h"
 
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StringUtilities.hh"
 
 // Model include files.
@@ -98,7 +96,8 @@ WStringData::~WStringData()
 }
 
 bool WStringData::compare(
-   WStringData &data )
+   WStringData &data,
+   string      &explanation )
 {
    bool equal_values = true;
 
@@ -160,15 +159,8 @@ bool WStringData::compare(
       }
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
-      string msg_str;
-      StringUtilities::to_string( msg_str, msg.str() );
-      if ( equal_values ) {
-         message_publish( MSG_NORMAL, msg_str.c_str() );
-      } else {
-         message_publish( MSG_ERROR, msg_str.c_str() );
-      }
-   }
+   // Convert from wide-string.
+   StringUtilities::to_string( explanation, msg.str() );
 
    return equal_values;
 }

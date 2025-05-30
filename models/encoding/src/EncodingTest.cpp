@@ -173,11 +173,19 @@ void EncodingTest::char_test(
                   << encoding_enum_to_string( char_rti_encoding ) << ") ";
    }
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "char_data1 == char_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "char_data1 != char_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -256,11 +264,19 @@ void EncodingTest::string_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "string_data1 == string_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "string_data1 != string_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -339,11 +355,19 @@ void EncodingTest::wchar_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "wchar_data1 == wchar_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "wchar_data1 != wchar_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -422,11 +446,19 @@ void EncodingTest::wstring_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "wstring_data1 == wstring_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "wstring_data1 != wstring_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -505,11 +537,19 @@ void EncodingTest::int16_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "int16_data1 == int16_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "int16_data1 != int16_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -588,11 +628,19 @@ void EncodingTest::int32_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "int32_data1 == int32_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "int32_data1 != int32_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -671,11 +719,19 @@ void EncodingTest::int64_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "int64_data1 == int64_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "int64_data1 != int64_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -754,11 +810,19 @@ void EncodingTest::long_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "long_data1 == long_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "long_data1 != long_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -837,11 +901,19 @@ void EncodingTest::float32_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "float32_data1 == float32_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "float32_data1 != float32_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -920,11 +992,19 @@ void EncodingTest::float64_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "float64_data1 == float64_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "float64_data1 != float64_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
@@ -1003,11 +1083,19 @@ void EncodingTest::bool_test(
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
-   if ( data1.compare( data2 ) ) {
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
       compare_msg << "bool_data1 == bool_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
       compare_msg << "bool_data1 != bool_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+         compare_msg << explanation;
+      }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 

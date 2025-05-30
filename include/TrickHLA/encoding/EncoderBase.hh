@@ -126,6 +126,13 @@ class EncoderBase
       return ( !is_array() || is_static_array() );
    }
 
+   bool const is_null_address()
+   {
+      return is_dynamic_array()
+                ? ( ( ref2 != NULL ) && ( *static_cast< void ** >( ref2->address ) == NULL ) )
+                : ( ( ref2 != NULL ) && ( ref2->address == NULL ) );
+   }
+
   protected:
    void update_ref2();
 

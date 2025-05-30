@@ -43,7 +43,7 @@ class TestSimObj : public Trick::SimObject {
    CharData char_data9  = CharData( 0 );
    CharData char_data10 = CharData( 10 );
 
-   StringData string_data1 = StringData( 1 );
+   StringData string_data1 = StringData( 10 );
    StringData string_data2 = StringData( 0 );
 
    WCharData wchar_data1 = WCharData( 0 );

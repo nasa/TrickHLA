@@ -65,7 +65,7 @@ class Int32Data
    /*! @brief Destructor for the TrickHLAModel Int32Data class. */
    virtual ~Int32Data();
 
-   bool compare( Int32Data &data );
+   bool compare( Int32Data &data, std::string &explanation );
 
    std::string to_string();
 

@@ -105,10 +105,7 @@ EncoderBase::~EncoderBase()
 
 void EncoderBase::update_ref2()
 {
-   if ( is_dynamic_array() || ( ref2 == NULL ) ) {
-      if ( ref2 != NULL ) {
-         delete ref2;
-      }
+   if ( ref2 == NULL ) {
       ref2 = ref_attributes( trick_name.c_str() );
 
       // Determine if we had an error getting the ref-attributes.
@@ -123,10 +120,17 @@ void EncoderBase::update_ref2()
                 << " uses either the 'public' or 'protected' access level for"
                 << " the variable.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
-         return;
       }
    }
-
+   if ( is_null_address() ) {
+      ostringstream errmsg;
+      errmsg << "EncoderBase::update_ref2():" << __LINE__
+             << " ERROR: The ref-attributes address is NULL for the Trick"
+             << " simulation variable '" << trick_name << "'. Please make"
+             << " sure the Trick simulation variable is allocated memory"
+             << " by the Trick Memory Manager.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
    calculate_ref2_element_count();
 }
 

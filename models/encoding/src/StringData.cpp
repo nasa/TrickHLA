@@ -93,7 +93,8 @@ StringData::~StringData()
 }
 
 bool StringData::compare(
-   StringData &data )
+   StringData  &data,
+   std::string &explanation )
 {
    bool equal_values = true;
 
@@ -156,13 +157,7 @@ bool StringData::compare(
       }
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
-      if ( equal_values ) {
-         message_publish( MSG_NORMAL, msg.str().c_str() );
-      } else {
-         message_publish( MSG_ERROR, msg.str().c_str() );
-      }
-   }
+   explanation = msg.str();
 
    return equal_values;
 }
@@ -185,16 +180,12 @@ string StringData::to_string()
    }
    msg << "\n";
 
-   int string_size = ptr_string->size();
-   msg << "ptr_string size:" << string_size << "\n";
-#if 1
-   msg << "*ptr_string:'" << ( *ptr_string ) << "'\n";
-#else
-   for ( int i = 0; i < string_size; ++i ) {
-      msg << "(*ptr_string)[" << i << "]:" << ( *ptr_string )[i] << " ";
+   int num_items = get_size( this->ptr_string );
+   msg << "ptr_string size:" << num_items << "\n";
+   for ( int i = 0; i < num_items; ++i ) {
+      msg << "ptr_string[" << i << "]:" << this->ptr_string[i] << "\n";
    }
    msg << "\n";
-#endif
 
    return msg.str();
 }

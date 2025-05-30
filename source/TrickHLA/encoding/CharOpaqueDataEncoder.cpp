@@ -112,14 +112,11 @@ CharOpaqueDataEncoder::~CharOpaqueDataEncoder()
 
 VariableLengthData &CharOpaqueDataEncoder::encode()
 {
-   /* Since the Trick variable is dynamic (i.e. a pointer) its */
-   /* size can change at any point so we need to refresh ref2. */
-   update_ref2();
-   Octet *data = *static_cast< Octet ** >( ref2->address );
+   Octet *byte_data = *static_cast< Octet ** >( ref2->address );
 
    HLAopaqueData *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
 
-   opaque_encoder->set( const_cast< Octet const * >( data ), get_size( data ) );
+   opaque_encoder->set( const_cast< Octet const * >( byte_data ), get_size( byte_data ) );
 
    return EncoderBase::encode();
 }
@@ -131,8 +128,6 @@ void CharOpaqueDataEncoder::decode(
 
    HLAopaqueData const *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
 
-   /* Trick variable is dynamic (i.e. a pointer) so we need to refresh ref2. */
-   update_ref2();
    resize_trick_var( opaque_encoder->dataLength() );
 
    Octet *data = *static_cast< Octet ** >( ref2->address );

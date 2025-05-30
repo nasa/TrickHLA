@@ -16,7 +16,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{encoding/src/BoolData.cpp}
-@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 
 @revs_title
 @revs_begin
@@ -90,7 +89,8 @@ BoolData::~BoolData()
 }
 
 bool BoolData::compare(
-   BoolData &data )
+   BoolData &data,
+   string   &explanation )
 {
    bool equal_values = true;
 
@@ -150,13 +150,7 @@ bool BoolData::compare(
       }
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
-      if ( equal_values ) {
-         message_publish( MSG_NORMAL, msg.str().c_str() );
-      } else {
-         message_publish( MSG_ERROR, msg.str().c_str() );
-      }
-   }
+   explanation = msg.str();
 
    return equal_values;
 }

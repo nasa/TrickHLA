@@ -122,9 +122,9 @@ using namespace TrickHLA;
                                                                                                                          \
    VariableLengthData &EncoderClassName::encode()                                                                        \
    {                                                                                                                     \
-      /* Since the Trick variable is dynamic (i.e. a pointer) its */                                                     \
-      /* size can change at any point so we need to refresh ref2. */                                                     \
-      update_ref2();                                                                                                     \
+      /* Since the Trick variable is dynamic (i.e. a pointer) its size */                                                \
+      /* can change at any point so we need to refresh the counts.     */                                                \
+      calculate_ref2_element_count();                                                                                    \
                                                                                                                          \
       /* Ensure the number of data elements matches the Trick variable */                                                \
       resize_data_elements( ref2_element_count );                                                                        \
@@ -149,9 +149,6 @@ using namespace TrickHLA;
       EncoderBase::decode( encoded_data );                                                                               \
                                                                                                                          \
       HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                             \
-                                                                                                                         \
-      /* Trick variable is dynamic (i.e. a pointer) so we need to refresh ref2. */                                       \
-      update_ref2();                                                                                                     \
                                                                                                                          \
       /* Resize Trick array variable to match the decoded data size. */                                                  \
       resize_trick_var( array_encoder->size() );                                                                         \
