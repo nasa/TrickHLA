@@ -123,7 +123,7 @@ class EncoderBase
 
    bool const is_static_in_size()
    {
-      return ( is_primitive() || is_static_array() );
+      return ( !is_array() || is_static_array() );
    }
 
   protected:
