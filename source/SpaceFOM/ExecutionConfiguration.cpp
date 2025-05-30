@@ -498,10 +498,17 @@ void ExecutionConfiguration::set_next_execution_mode(
 void ExecutionConfiguration::set_least_common_time_step(
    double const lcts )
 {
-   // TODO: Need more checking here.
    // WARNING: Only the Master federate should ever set this.
    if ( execution_control->is_master() ) {
       this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
+   } else {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+         ostringstream msg;
+         msg << "SpaceFOM::ExecutionConfiguration::set_least_common_time_step():" << __LINE__
+             << " This is not a Master federate so this setting will be ignored."
+             << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
    }
 }
 

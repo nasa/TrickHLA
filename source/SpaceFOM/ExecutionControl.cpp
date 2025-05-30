@@ -2989,6 +2989,14 @@ void ExecutionControl::set_least_common_time_step(
       this->least_common_time_step_seconds = lcts;
       this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
       ExCO->set_least_common_time_step( lcts );
+   } else {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+         ostringstream msg;
+         msg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
+             << " This is not a Master federate so this setting will be ignored."
+             << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
    }
 }
 
