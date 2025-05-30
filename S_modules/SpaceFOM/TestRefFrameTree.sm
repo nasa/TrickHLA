@@ -51,11 +51,11 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
 
    // Working SpaceFOM reference frames.
    SpaceFOM::RefFrameData root_frame_data;
-   SpaceFOM::RefFrameData vehicle_frame_data;
+   SpaceFOM::RefFrameData leaf_frame_data;
 
    // References to working SpaceFOM reference frames.
    SpaceFOM::RefFrameBase * root_frame_ptr;
-   SpaceFOM::RefFrameBase * vehicle_frame_ptr;
+   SpaceFOM::RefFrameBase * leaf_frame_ptr;
 
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    SpaceFOMTestRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
@@ -63,7 +63,7 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
       : SpaceFOMRefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _BUILD ),
         root_frame_ptr( NULL ),
-        vehicle_frame_ptr( NULL )
+        leaf_frame_ptr( NULL )
    {
       return;
    }
@@ -90,13 +90,13 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
       // Set the root reference frame in the ExCO.
       exec_cntrl.root_ref_frame = root_frame_ptr;
 
-      // Setup the Sun inertial reference frame.
-      vehicle_frame_ptr->base_config( false,
-                                      "vehicle_frame",
-                                      "frame_packing",
-                                      "FrameA",
-                                      "RootFrame",
-                                      root_frame_ptr );
+      // Define a leaf reference frame.
+      leaf_frame_ptr->base_config( false,
+                                   "leaf_ref_frame",
+                                   "frame_packing",
+                                   "FrameA",
+                                   "RootFrame",
+                                   root_frame_ptr );
    }
 
   private:
@@ -122,7 +122,7 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
 SpaceFOMTestRefFrameTreeSimObject ref_frame_tree( THLA.manager,
                                                   THLA.execution_control );
 SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.frame_tree, ref_frame_tree.root_frame_data );
-SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_tree, ref_frame_tree.vehicle_frame_data );
+SpaceFOMRefFrameSimObject leaf_ref_frame( ref_frame_tree.frame_tree, ref_frame_tree.leaf_frame_data );
 
 
 //==========================================================================
@@ -131,7 +131,7 @@ SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_tree, ref_frame_tree
 void create_connections() {
    // Make the connections for the root and child frame in the reference frame tree.
    ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
-   ref_frame_tree.vehicle_frame_ptr = &ref_frame_A.frame_packing;
+   ref_frame_tree.leaf_frame_ptr = &leaf_ref_frame.frame_packing;
 }
 
 #endif // SPACEFOM_TEST_REF_FRAME_TREE_SIM_OBJECT

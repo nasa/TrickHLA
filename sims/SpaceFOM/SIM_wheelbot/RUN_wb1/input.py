@@ -280,7 +280,7 @@ else:
 federate.add_sim_object( THLA )
 federate.add_sim_object( THLA_INIT )
 federate.add_sim_object( root_ref_frame )
-# federate.add_sim_object( ref_frame_A )
+# federate.add_sim_object( leaf_ref_frame )
 
 #---------------------------------------------------------------------------
 # Make sure that the Python federate configuration object is initialized.

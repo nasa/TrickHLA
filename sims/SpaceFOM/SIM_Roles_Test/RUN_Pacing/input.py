@@ -259,7 +259,7 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 # Turn off all the vehicle and vehicle systems simulation objects.
 trick.exec_set_sim_object_onoff( 'ref_frame_tree' , False )
 trick.exec_set_sim_object_onoff( 'root_ref_frame' , False )
-trick.exec_set_sim_object_onoff( 'ref_frame_A' , False )
+trick.exec_set_sim_object_onoff( 'leaf_ref_frame' , False )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
