@@ -151,7 +151,5 @@ void CharUnicodeStringEncoder::decode(
 
 string CharUnicodeStringEncoder::to_string()
 {
-   ostringstream msg;
-   msg << "CharUnicodeStringEncoder[trick_name:" << trick_name << "]";
-   return msg.str();
+   return ( "CharUnicodeStringEncoder[trick_name:" + trick_name + "]" );
 }

@@ -143,9 +143,7 @@ void CharOpaqueDataEncoder::decode(
 
 string CharOpaqueDataEncoder::to_string()
 {
-   ostringstream msg;
-   msg << "CharOpaqueDataEncoder[trick_name:" << trick_name << "]";
-   return msg.str();
+   return ( "CharOpaqueDataEncoder[trick_name:" + trick_name + "]" );
 }
 
 void CharOpaqueDataEncoder::resize_trick_var(

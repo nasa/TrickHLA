@@ -164,9 +164,7 @@ void EncoderBase::decode(
 
 string EncoderBase::to_string()
 {
-   ostringstream msg;
-   msg << "EncoderBase[trick_name:" << trick_name << "]";
-   return msg.str();
+   return ( "EncoderBase[trick_name:" + trick_name + "]" );
 }
 
 void EncoderBase::calculate_ref2_element_count()

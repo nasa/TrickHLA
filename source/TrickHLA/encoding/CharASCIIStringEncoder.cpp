@@ -150,7 +150,5 @@ void CharASCIIStringEncoder::decode(
 
 string CharASCIIStringEncoder::to_string()
 {
-   ostringstream msg;
-   msg << "CharASCIIStringEncoder[trick_name:" << trick_name << "]";
-   return msg.str();
+   return ( "CharASCIIStringEncoder[trick_name:" + trick_name + "]" );
 }
