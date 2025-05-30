@@ -92,7 +92,7 @@ class TestSimObj : public Trick::SimObject {
 
    TestSimObj()
    {
-      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_0_TRACE,
+      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_1_TRACE,
                                             TrickHLA::DEBUG_SOURCE_ALL_MODULES );
 
       ("initialization") encoder_test.char_test( "T.char_data1", char_data1,
