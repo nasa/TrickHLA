@@ -77,7 +77,6 @@ class CharOpaqueDataEncoder : public EncoderBase
   public:
    /*! @brief Default constructor. */
    CharOpaqueDataEncoder( std::string const &trick_variable_name,
-                          EncodingEnum const hla_encoding,
                           REF2              *r2 );
 
    /*! @brief Destructor for the TrickHLA CharOpaqueDataEncoder class. */
@@ -90,16 +89,16 @@ class CharOpaqueDataEncoder : public EncoderBase
    virtual std::string to_string();
 
   protected:
-   void resize_trick_var( size_t const new_size );
+   void resize_trick_var( std::size_t const new_size );
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharOpaqueDataEncoder();
-   /*! @brief Copy constructor for CharOpaqueDataEncoder class. */
-   /*  @details This constructor is private to prevent inadvertent copies.      */
+   /*! @brief Copy constructor for CharOpaqueDataEncoder class.            */
+   /*  @details This constructor is private to prevent inadvertent copies. */
    CharOpaqueDataEncoder( CharOpaqueDataEncoder const &rhs );
-   /*! @brief Assignment operator for CharOpaqueDataEncoder class. */
-   /*  @details Assignment operator is private to prevent inadvertent copies.      */
+   /*! @brief Assignment operator for CharOpaqueDataEncoder class.            */
+   /*  @details Assignment operator is private to prevent inadvertent copies. */
    CharOpaqueDataEncoder &operator=( CharOpaqueDataEncoder const &rhs );
 };
 

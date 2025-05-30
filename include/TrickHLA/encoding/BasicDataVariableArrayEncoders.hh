@@ -79,7 +79,6 @@ namespace TrickHLA
      public:                                                                            \
       /*! @brief Default constructor. */                                                \
       EncoderClassName( std::string const &trick_variable_name,                         \
-                        EncodingEnum const hla_encoding,                                \
                         REF2              *r2 );                                                     \
                                                                                         \
       /*! @brief Destructor for the TrickHLA EncoderClassName class. */                 \

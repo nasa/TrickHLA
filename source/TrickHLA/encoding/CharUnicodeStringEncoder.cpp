@@ -69,11 +69,9 @@ using namespace std;
 using namespace TrickHLA;
 
 CharUnicodeStringEncoder::CharUnicodeStringEncoder(
-   string const      &trick_variable_name,
-   EncodingEnum const hla_encoding,
-   REF2              *r2 )
+   string const &trick_variable_name,
+   REF2         *r2 )
    : EncoderBase( trick_variable_name,
-                  hla_encoding,
                   r2 )
 {
    if ( ref2 == NULL ) {
@@ -92,7 +90,7 @@ CharUnicodeStringEncoder::CharUnicodeStringEncoder(
       return;
    }
 
-   if ( !is_dynamic_array ) {
+   if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharUnicodeStringEncoder::CharUnicodeStringEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << trick_name
@@ -154,7 +152,6 @@ void CharUnicodeStringEncoder::decode(
 string CharUnicodeStringEncoder::to_string()
 {
    ostringstream msg;
-   msg << "CharUnicodeStringEncoder[trick_name:'" << trick_name
-       << "' rti_encoding:" << rti_encoding << "]";
+   msg << "CharUnicodeStringEncoder[trick_name:" << trick_name << "]";
    return msg.str();
 }

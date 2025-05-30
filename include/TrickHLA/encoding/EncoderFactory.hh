@@ -22,7 +22,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderFactory.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -45,7 +44,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need

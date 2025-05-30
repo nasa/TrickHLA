@@ -77,7 +77,6 @@ namespace TrickHLA
                                                                                     \
      public:                                                                        \
       EncoderClassName( std::string const &trick_variable_name,                     \
-                        EncodingEnum const hla_encoding,                            \
                         REF2              *r2 );                                                 \
                                                                                     \
       virtual ~EncoderClassName();                                                  \
@@ -85,10 +84,10 @@ namespace TrickHLA
       virtual std::string to_string();                                              \
                                                                                     \
      private:                                                                       \
-      /* Do not allow the default, copy constructor or assignment operator.      */ \
+      /* Do not allow the default, copy constructor or assignment operator. */      \
       EncoderClassName();                                                           \
-      /*! @brief Copy constructor for EncoderClassName class.                    */ \
-      /*  @details This constructor is private to prevent inadvertent copies.    */ \
+      /*! @brief Copy constructor for EncoderClassName class.                 */    \
+      /*  @details This constructor is private to prevent inadvertent copies. */    \
       EncoderClassName( EncoderClassName const &rhs );                              \
       /*! @brief Assignment operator for EncoderClassName class.                 */ \
       /*  @details Assignment operator is private to prevent inadvertent copies. */ \

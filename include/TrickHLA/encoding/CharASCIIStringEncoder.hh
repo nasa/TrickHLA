@@ -77,7 +77,6 @@ class CharASCIIStringEncoder : public EncoderBase
   public:
    /*! @brief Default constructor. */
    CharASCIIStringEncoder( std::string const &trick_variable_name,
-                           EncodingEnum const hla_encoding,
                            REF2              *r2 );
 
    /*! @brief Destructor for the TrickHLA CharASCIIStringEncoder class. */
@@ -92,11 +91,11 @@ class CharASCIIStringEncoder : public EncoderBase
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharASCIIStringEncoder();
-   /*! @brief Copy constructor for CharASCIIStringEncoder class. */
-   /*  @details This constructor is private to prevent inadvertent copies.      */
+   /*! @brief Copy constructor for CharASCIIStringEncoder class.           */
+   /*  @details This constructor is private to prevent inadvertent copies. */
    CharASCIIStringEncoder( CharASCIIStringEncoder const &rhs );
-   /*! @brief Assignment operator for CharASCIIStringEncoder class. */
-   /*  @details Assignment operator is private to prevent inadvertent copies.      */
+   /*! @brief Assignment operator for CharASCIIStringEncoder class.           */
+   /*  @details Assignment operator is private to prevent inadvertent copies. */
    CharASCIIStringEncoder &operator=( CharASCIIStringEncoder const &rhs );
 };
 

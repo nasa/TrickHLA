@@ -69,11 +69,9 @@ using namespace std;
 using namespace TrickHLA;
 
 CharASCIIStringEncoder::CharASCIIStringEncoder(
-   string const      &trick_variable_name,
-   EncodingEnum const hla_encoding,
-   REF2              *r2 )
+   string const &trick_variable_name,
+   REF2         *r2 )
    : EncoderBase( trick_variable_name,
-                  hla_encoding,
                   r2 )
 {
    if ( ref2 == NULL ) {
@@ -92,7 +90,7 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
       return;
    }
 
-   if ( !is_dynamic_array ) {
+   if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << trick_name
@@ -153,7 +151,6 @@ void CharASCIIStringEncoder::decode(
 string CharASCIIStringEncoder::to_string()
 {
    ostringstream msg;
-   msg << "CharASCIIStringEncoder[trick_name:'" << trick_name
-       << "' rti_encoding:" << rti_encoding << "]";
+   msg << "CharASCIIStringEncoder[trick_name:" << trick_name << "]";
    return msg.str();
 }

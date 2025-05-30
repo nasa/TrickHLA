@@ -72,11 +72,9 @@ using namespace TrickHLA;
 #define DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum ) \
                                                                                                                          \
    EncoderClassName::EncoderClassName(                                                                                   \
-      string const      &trick_variable_name,                                                                            \
-      EncodingEnum const hla_encoding,                                                                                   \
-      REF2              *r2 )                                                                                            \
+      string const &trick_variable_name,                                                                                 \
+      REF2         *r2 )                                                                                                 \
       : EncoderBase( trick_variable_name,                                                                                \
-                     hla_encoding,                                                                                       \
                      r2 )                                                                                                \
    {                                                                                                                     \
       if ( ref2 == NULL ) {                                                                                              \
@@ -99,7 +97,7 @@ using namespace TrickHLA;
          return;                                                                                                         \
       }                                                                                                                  \
                                                                                                                          \
-      if ( !is_dynamic_array ) {                                                                                         \
+      if ( !is_dynamic_array() ) {                                                                                       \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
                 << " ERROR: Trick ref-attributes for '" << trick_name                                                    \
@@ -169,8 +167,7 @@ using namespace TrickHLA;
    string EncoderClassName::to_string()                                                                                  \
    {                                                                                                                     \
       ostringstream msg;                                                                                                 \
-      msg << #EncoderClassName << "[trick_name:'" << trick_name                                                          \
-          << "' rti_encoding:" << rti_encoding << "]";                                                                   \
+      msg << #EncoderClassName << "[trick_name:" << trick_name << "]";                                                   \
       return msg.str();                                                                                                  \
    }                                                                                                                     \
                                                                                                                          \

@@ -73,19 +73,11 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 EncoderBase::EncoderBase(
-   string const      &trick_variable_name,
-   EncodingEnum const hla_encoding,
-   REF2              *r2 )
+   string const &trick_variable_name,
+   REF2         *r2 )
    : trick_name( trick_variable_name ),
-     rti_encoding( hla_encoding ),
      ref2( r2 ),
      ref2_element_count( 0 ),
-     ref2_initialized( false ),
-     is_array( false ),
-     is_1d_array( false ),
-     is_static_array( false ),
-     is_dynamic_array( false ),
-     is_static_in_size( false ),
      data(),
      data_elements(),
      encoder( NULL )
@@ -113,7 +105,7 @@ EncoderBase::~EncoderBase()
 
 void EncoderBase::update_ref2()
 {
-   if ( is_dynamic_array || ( ref2 == NULL ) ) {
+   if ( is_dynamic_array() || ( ref2 == NULL ) ) {
       if ( ref2 != NULL ) {
          delete ref2;
       }
@@ -133,19 +125,6 @@ void EncoderBase::update_ref2()
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
-   }
-
-   if ( !ref2_initialized ) {
-      // For now, we do not support more than a 1-D array that is dynamic
-      // (i.e. a pointer such as char *). If the size of the last indexed
-      // attribute is zero then it is a pointer and not static.
-      is_array          = ( ref2->attr->num_index > 0 );
-      is_1d_array       = ( ref2->attr->num_index == 1 );
-      is_static_array   = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 );
-      is_dynamic_array  = is_array && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 );
-      is_static_in_size = !is_array || is_static_array;
-
-      ref2_initialized = true;
    }
 
    calculate_ref2_element_count();
@@ -186,16 +165,15 @@ void EncoderBase::decode(
 string EncoderBase::to_string()
 {
    ostringstream msg;
-   msg << "EncoderBase[trick_name:'" << trick_name
-       << "' rti_encoding:" << rti_encoding << "]";
+   msg << "EncoderBase[trick_name:" << trick_name << "]";
    return msg.str();
 }
 
 void EncoderBase::calculate_ref2_element_count()
 {
-   if ( !is_static_in_size || ( ref2_element_count == 0 ) ) {
+   if ( !is_static_in_size() || ( ref2_element_count == 0 ) ) {
 
-      if ( is_dynamic_array ) {
+      if ( is_dynamic_array() ) {
          // We have a multi-dimension array that is a pointer and the
          // number of dimensions is ref2->attr->num_index. Note: Make sure
          // to refresh ref2 before this call because it is dynamic array.
@@ -222,13 +200,12 @@ void EncoderBase::calculate_ref2_element_count()
       msg << "EncoderBase::calculate_trick_variable_sizes():" << __LINE__ << '\n'
           << "========================================================\n"
           << "  trick_name:'" << trick_name << "'\n"
-          << "  rti_encoding:" << rti_encoding << '\n'
           << "  ref2->attr->name:'" << ref2->attr->name << "'\n"
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'\n"
           << "  ref2->attr->type:" << ref2->attr->type << '\n'
           << "  ref2->attr->units:" << ref2->attr->units << '\n'
           << "  ref2_element_count:" << ref2_element_count << '\n';
-      if ( is_array ) {
+      if ( is_array() ) {
          msg << "  get_size(*(void **)ref2->address):" << get_size( *static_cast< void ** >( ref2->address ) ) << '\n';
       } else {
          msg << "  get_size(ref2->address):" << get_size( ref2->address ) << '\n';
@@ -238,11 +215,11 @@ void EncoderBase::calculate_ref2_element_count()
       for ( int i = 0; i < ref2->attr->num_index; ++i ) {
          msg << "  ref2->attr->index[" << i << "].size:" << ref2->attr->index[i].size << '\n';
       }
-      msg << "  is_array:" << ( is_array ? "Yes" : "No" ) << '\n'
-          << "  is_1d_array:" << ( is_1d_array ? "Yes" : "No" ) << '\n'
-          << "  is_static_array:" << ( is_static_array ? "Yes" : "No" ) << '\n'
-          << "  is_dynamic_array:" << ( is_dynamic_array ? "Yes" : "No" ) << '\n';
-      if ( is_dynamic_array && ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) ) {
+      msg << "  is_array:" << ( is_array() ? "Yes" : "No" ) << '\n'
+          << "  is_1d_array:" << ( is_1d_array() ? "Yes" : "No" ) << '\n'
+          << "  is_static_array:" << ( is_static_array() ? "Yes" : "No" ) << '\n'
+          << "  is_dynamic_array:" << ( is_dynamic_array() ? "Yes" : "No" ) << '\n';
+      if ( is_dynamic_array() && ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) ) {
          msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
