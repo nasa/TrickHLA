@@ -334,26 +334,26 @@ federate.set_root_frame( root_frame )
 frame_A = SpaceFOMRefFrameObject( 
    create_frame_object          = True,
    frame_instance_name          = 'FrameA',
-   frame_S_define_instance      = ref_frame_A.frame_packing,
-   frame_S_define_instance_name = 'ref_frame_A.frame_packing',
+   frame_S_define_instance      = leaf_ref_frame.frame_packing,
+   frame_S_define_instance_name = 'leaf_ref_frame.frame_packing',
    parent_S_define_instance     = root_ref_frame.frame_packing,
    parent_name                  = root_frame_name,
-   frame_conditional            = ref_frame_A.conditional,
-   frame_lag_comp               = ref_frame_A.lag_compensation,
-   frame_ownership              = ref_frame_A.ownership_handler,
-   frame_deleted                = ref_frame_A.deleted_callback )
+   frame_conditional            = leaf_ref_frame.conditional,
+   frame_lag_comp               = leaf_ref_frame.lag_compensation,
+   frame_ownership              = leaf_ref_frame.ownership_handler,
+   frame_deleted                = leaf_ref_frame.deleted_callback )
 
 # Set the debug flag for the root reference frame.
-ref_frame_A.frame_packing.debug = verbose
+leaf_ref_frame.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
 
 # Set the lag compensation parameters.
 # The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
-ref_frame_A.lag_compensation.debug = False
-ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
-ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+leaf_ref_frame.lag_compensation.debug = False
+leaf_ref_frame.lag_compensation.set_integ_tolerance( 1.0e-6 )
+leaf_ref_frame.lag_compensation.set_integ_dt( 0.025 )
 
 # frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
 frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
@@ -366,7 +366,7 @@ frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 federate.add_sim_object( THLA )
 federate.add_sim_object( THLA_INIT )
 federate.add_sim_object( root_ref_frame )
-federate.add_sim_object( ref_frame_A )
+federate.add_sim_object( leaf_ref_frame )
 
 #---------------------------------------------------------------------------
 # Make sure that the Python federate configuration object is initialized.
