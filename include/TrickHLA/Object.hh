@@ -803,16 +803,8 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Create a name value pair set, aka attribute handle value pair,
     * for the attributes of this object.
-    * @param required_config Attribute configuration required in order to send data. */
-   void create_attribute_set( DataUpdateEnum const required_config )
-   {
-      create_attribute_set( required_config, false );
-   }
-
-   /*! @brief Create a name value pair set, aka attribute handle value pair,
-    * for the attributes of this object.
     * @param required_config Attribute configuration required in order to send data
-    * @param include_requested True to also included requeted attributes */
+    * @param include_requested True to also included requested attributes */
    void create_attribute_set( DataUpdateEnum const required_config, bool const include_requested );
 
    /*! @brief Initialize the thread ID array based on the users 'thread_ids' input.*/

@@ -2063,6 +2063,10 @@ void Object::send_cyclic_and_requested_data(
       packing->pack();
    }
 
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+   // Create the map of "cyclic" and requested attribute values we will be updating.
+   create_attribute_set( CONFIG_CYCLIC, true );
+#else
    // Buffer the attribute values for the object.
    pack_cyclic_and_requested_attribute_buffers();
 
@@ -2075,6 +2079,7 @@ void Object::send_cyclic_and_requested_data(
       message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d For object '%s', cannot create attribute value/pair set: '%s'\n",
                        __LINE__, get_name(), rti_err_msg.c_str() );
    }
+#endif
 
    // Make sure we don't send an empty attribute map to the other federates.
    if ( !attribute_values_map->empty() ) {
@@ -2328,6 +2333,11 @@ void Object::send_zero_lookahead_and_requested_data(
       packing->pack();
    }
 
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+   // Create the map of "zero lookahead" and requested attribute values
+   // we will be updating.
+   create_attribute_set( CONFIG_ZERO_LOOKAHEAD, true );
+#else
    // Buffer the attribute values for the object.
    pack_zero_lookahead_and_requested_attribute_buffers();
 
@@ -2341,6 +2351,7 @@ void Object::send_zero_lookahead_and_requested_data(
       message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d For object '%s', cannot create attribute value/pair set: '%s'\n",
                        __LINE__, get_name(), rti_err_msg.c_str() );
    }
+#endif
 
    // Make sure we don't send an empty attribute map to the other federates.
    if ( attribute_values_map->empty() ) {
@@ -2608,6 +2619,10 @@ void Object::send_blocking_io_data()
       packing->pack();
    }
 
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+   // Create the map of "blocking I/O" attribute values we will be updating.
+   create_attribute_set( CONFIG_BLOCKING_IO, false );
+#else
    // Buffer the attribute values for the object.
    pack_blocking_io_attribute_buffers();
 
@@ -2620,6 +2635,7 @@ void Object::send_blocking_io_data()
       message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d For object '%s', cannot create attribute value/pair set: '%s'\n",
                        __LINE__, get_name(), rti_err_msg.c_str() );
    }
+#endif
 
    // Make sure we don't send an empty attribute map to the other federates.
    if ( attribute_values_map->empty() ) {
@@ -3127,18 +3143,27 @@ void Object::send_init_data()
       packing->pack();
    }
 
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+
+   // Create the map of "initialize" attribute values we will be updating,
+   // but do not include any requested attributes.
+   create_attribute_set( CONFIG_INITIALIZE, false );
+
+#else
    // Buffer the attribute values for the object.
    pack_init_attribute_buffers();
 
    try {
-      // Create the map of "initialize" attribute values we will be updating.
-      create_attribute_set( CONFIG_INITIALIZE );
+      // Create the map of "initialize" attribute values we will be updating,
+      // but do not include any requested attributes.
+      create_attribute_set( CONFIG_INITIALIZE, false );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "Object::send_init_data():%d For object '%s', can not create attribute value/pair set: '%s'\n",
                        __LINE__, get_name(), rti_err_msg.c_str() );
    }
+#endif
 
    try {
       // Do not send any data if federate save / restore has begun (see
@@ -3371,8 +3396,12 @@ void Object::create_requested_attribute_set()
             message_publish( MSG_NORMAL, "Object::create_requested_attribute_set():%d Adding '%s' to attribute map.\n",
                              __LINE__, attributes[i].get_FOM_name() );
          }
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+         ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
+#else
          // Create the Attribute-Value from the buffered data.
          ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].get_attribute_value();
+#endif
       }
    }
 }
@@ -3421,9 +3450,13 @@ void Object::create_attribute_set(
                   message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For cyclic object '%s', adding '%s' to attribute map.\n",
                                    __LINE__, get_name(), attributes[i].get_FOM_name() );
                }
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+               ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
+#else
                // Create the Attribute-Value from the buffered data.
                ( *attribute_values_map )[attributes[i].get_attribute_handle()] =
                   attributes[i].get_attribute_value();
+#endif
             }
          }
       }
@@ -3454,9 +3487,13 @@ void Object::create_attribute_set(
                   message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For object '%s', adding '%s' to attribute map.\n",
                                    __LINE__, get_name(), attributes[i].get_FOM_name() );
                }
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+               ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
+#else
                // Create the Attribute-Value from the buffered data.
                ( *attribute_values_map )[attributes[i].get_attribute_handle()] =
                   attributes[i].get_attribute_value();
+#endif
             }
          }
       }
@@ -3474,9 +3511,13 @@ void Object::create_attribute_set(
             // it here.
             attributes[i].set_update_requested( false );
 
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+            ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
+#else
             // Create the Attribute-Value from the buffered data.
             ( *attribute_values_map )[attributes[i].get_attribute_handle()] =
                attributes[i].get_attribute_value();
+#endif
          }
       }
    }
