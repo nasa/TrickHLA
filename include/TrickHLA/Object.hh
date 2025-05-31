@@ -281,10 +281,10 @@ class Object : public CheckpointConversionBase
     *  @param theAttributes Attributes data. */
    void enqueue_data( RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributes );
 
-   /*! @brief This function extracts the new attribute values.
+   /*! @brief This function decoded the received encoded attributes.
     *  @param theAttributes Attributes data.
-    *  @return True if successfully extracted data, false otherwise. */
-   bool extract_data( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
+    *  @return True if successfully decoded data, false otherwise. */
+   bool decode( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
 
    /*! @brief Remove this object instance from the RTI/Federation. */
    void remove();
@@ -614,7 +614,7 @@ class Object : public CheckpointConversionBase
       if ( !changed ) {
          if ( !thla_reflected_attributes_queue.empty() ) {
             // The 'changed' flag is set when the data is extracted.
-            extract_data( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >( thla_reflected_attributes_queue.front() ) );
+            decode( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >( thla_reflected_attributes_queue.front() ) );
             thla_reflected_attributes_queue.pop();
          }
       }

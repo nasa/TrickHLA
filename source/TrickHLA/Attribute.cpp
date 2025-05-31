@@ -572,8 +572,15 @@ void Attribute::initialize(
    // Determine if the size of this attribute is static or dynamic.
    size_is_static = is_static_in_size();
 
+   // Create the encoder based on the Trick variable and encoding.
    this->encoder = EncoderFactory::create( trick_name, rti_encoding );
-   cout << this->encoder->to_string() << std::endl; // TEMP
+
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      ostringstream msg;
+      msg << "Attribute::initialize():" << __LINE__
+          << " Encoder:" << this->encoder->to_string() << std::endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
 
    // Get the attribute size and number of items.
    // However, do not re-initialize an attribute which was loaded

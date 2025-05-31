@@ -3537,21 +3537,20 @@ void Object::enqueue_data(
 }
 
 /*!
- * @details This routine is called by the federate ambassador when new
- * attribute values come in for this object.
+ * @details Decode the received encoded attributes.
  * @job_class{scheduled}
  */
-bool Object::extract_data(
+bool Object::decode(
    AttributeHandleValueMap &theAttributes )
 {
    // We need to iterate through the AttributeHandleValuePairSet
-   // to extract each AttributeHandleValuePair. Based on the type
+   // to decode each AttributeHandleValuePair. Based on the type
    // specified ( the value returned by getHandle() ) we need to
    // extract the data from the buffer that is returned by
    // getValue().
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-      message_publish( MSG_NORMAL, "Object::extract_data():%d '%s' FOM-name:'%s'.\n",
+      message_publish( MSG_NORMAL, "Object::decode():%d '%s' FOM-name:'%s'.\n",
                        __LINE__, get_name(), get_FOM_name() );
    }
 
@@ -3574,7 +3573,6 @@ bool Object::extract_data(
             any_attr_received = true;
          }
 #else
-         // Place the RTI AttributeValue into the TrickHLA Attribute.
          if ( attr->extract_data( &( iter->second ) ) ) {
             any_attr_received = true;
          }
@@ -3582,7 +3580,7 @@ bool Object::extract_data(
       } else if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, iter->first );
-         message_publish( MSG_WARNING, "Object::extract_data():%d WARNING: For \
+         message_publish( MSG_WARNING, "Object::decode():%d WARNING: For \
 Object '%s' with FOM name '%s', data was received for Attribute-ID:%s, which \
 has not been configured for this object instance in the input.py file. Ignoring \
 this attribute.\n",
