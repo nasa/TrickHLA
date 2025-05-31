@@ -25,6 +25,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
+@trick_link_dependency{encoding/EncoderBase.cpp}
+@trick_link_dependency{encoding/EncoderFactory.cpp}
 
 
 @revs_title
@@ -60,6 +62,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/encoding/EncoderFactory.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -101,6 +105,7 @@ Attribute::Attribute()
      cycle_ratio( 1 ),
      cycle_cnt( 0 ),
      ref2( NULL ),
+     encoder( NULL ),
      pull_requested( false ),
      push_requested( false ),
      divest_requested( false ),
@@ -130,6 +135,11 @@ Attribute::~Attribute()
    if ( ref2 != NULL ) {
       free( ref2 );
       ref2 = NULL;
+   }
+
+   if ( encoder != NULL ) {
+      delete encoder;
+      encoder = NULL;
    }
 }
 
@@ -562,6 +572,9 @@ void Attribute::initialize(
    // Determine if the size of this attribute is static or dynamic.
    size_is_static = is_static_in_size();
 
+   this->encoder = EncoderFactory::create( trick_name, rti_encoding );
+   cout << this->encoder->to_string() << std::endl; // TEMP
+
    // Get the attribute size and number of items.
    // However, do not re-initialize an attribute which was loaded
    // from a checkpoint (already in an initialized state).
@@ -629,6 +642,29 @@ void Attribute::initialize(
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+}
+
+VariableLengthData &Attribute::encode()
+{
+   return encoder->encode();
+}
+
+bool const Attribute::decode(
+   VariableLengthData const &encoded_data )
+{
+   if ( encoder->decode( encoded_data ) ) {
+
+      if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+         message_publish( MSG_NORMAL, "Attribute::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
+                          __LINE__, get_FOM_name(), get_trick_name() );
+      }
+
+      // Mark the attribute value as changed.
+      mark_changed();
+
+      return true;
+   }
+   return false;
 }
 
 void Attribute::determine_cycle_ratio(

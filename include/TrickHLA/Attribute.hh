@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
+@trick_link_dependency{../../source/TrickHLA/encoding/EncoderBase.cpp}
 
 @revs_title
 @revs_begin
@@ -51,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -118,6 +120,10 @@ class Attribute
    void initialize( char const *obj_FOM_name,
                     int const   object_index,
                     int const   attribute_index );
+
+   RTI1516_NAMESPACE::VariableLengthData &encode();
+
+   bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
    /*! @brief Get the reflection rate configuration type.
     *  @return The reflection rate configuration type enumeration value. */
@@ -508,6 +514,8 @@ class Attribute
    int cycle_cnt;   ///< @trick_units{count} Internal cycle counter used to determine when cyclic data will be sent.
 
    REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.
+
+   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this attributes data.
 
    RTI1516_NAMESPACE::AttributeHandle attr_handle; ///< @trick_io{**} The RTI attribute handle.
 

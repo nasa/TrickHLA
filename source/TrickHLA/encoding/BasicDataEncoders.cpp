@@ -82,7 +82,8 @@ using namespace TrickHLA;
       bool valid = ( ref2->attr->type == TrickTypeEnum )                                                  \
                    || ( ( ( ref2->attr->type == TRICK_LONG )                                              \
                           || ( ref2->attr->type == TRICK_UNSIGNED_LONG ) )                                \
-                        && ( sizeof( long ) == sizeof( SimpleDataType ) ) );                              \
+                        && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                               \
+                   || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER );                                   \
       if ( !valid ) {                                                                                     \
          ostringstream errmsg;                                                                            \
          errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                    \
@@ -117,7 +118,7 @@ using namespace TrickHLA;
    string EncoderClassName::to_string()                                                                   \
    {                                                                                                      \
       ostringstream msg;                                                                                  \
-      msg << #EncoderClassName << "[trick_name:" << trick_name << "]";                                    \
+      msg << #EncoderClassName << "[trick_var:" << trick_name << "]";                                     \
       return msg.str();                                                                                   \
    }
 

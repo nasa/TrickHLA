@@ -84,7 +84,8 @@ using namespace TrickHLA;
       bool valid = ( ref2->attr->type == TrickTypeEnum )                                                                 \
                    || ( ( ( ref2->attr->type == TRICK_LONG )                                                             \
                           || ( ref2->attr->type == TRICK_UNSIGNED_LONG ) )                                               \
-                        && ( sizeof( long ) == sizeof( SimpleDataType ) ) );                                             \
+                        && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                                              \
+                   || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER );                                                  \
       if ( !valid ) {                                                                                                    \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
@@ -140,28 +141,31 @@ using namespace TrickHLA;
       return EncoderBase::encode();                                                                                      \
    }                                                                                                                     \
                                                                                                                          \
-   void EncoderClassName::decode(                                                                                        \
+   bool const EncoderClassName::decode(                                                                                  \
       VariableLengthData const &encoded_data )                                                                           \
    {                                                                                                                     \
-      EncoderBase::decode( encoded_data );                                                                               \
+      if ( EncoderBase::decode( encoded_data ) ) {                                                                       \
                                                                                                                          \
-      HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                             \
+         HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                          \
                                                                                                                          \
-      /* Resize Trick array variable to match the decoded data size. */                                                  \
-      resize_trick_var( array_encoder->size() );                                                                         \
+         /* Resize Trick array variable to match the decoded data size. */                                               \
+         resize_trick_var( array_encoder->size() );                                                                      \
                                                                                                                          \
-      SimpleDataType *array_data = *static_cast< SimpleDataType ** >( ref2->address );                                   \
+         SimpleDataType *array_data = *static_cast< SimpleDataType ** >( ref2->address );                                \
                                                                                                                          \
-      /* Copy the decoded data element values to the Trick array. */                                                     \
-      for ( size_t i = 0; i < ref2_element_count; ++i ) {                                                                \
-         array_data[i] = dynamic_cast< EncodableDataType const & >( array_encoder->get( i ) ).get();                     \
+         /* Copy the decoded data element values to the Trick array. */                                                  \
+         for ( size_t i = 0; i < ref2_element_count; ++i ) {                                                             \
+            array_data[i] = dynamic_cast< EncodableDataType const & >( array_encoder->get( i ) ).get();                  \
+         }                                                                                                               \
+         return true;                                                                                                    \
       }                                                                                                                  \
+      return false;                                                                                                      \
    }                                                                                                                     \
                                                                                                                          \
    string EncoderClassName::to_string()                                                                                  \
    {                                                                                                                     \
       ostringstream msg;                                                                                                 \
-      msg << #EncoderClassName << "[trick_name:" << trick_name << "]";                                                   \
+      msg << #EncoderClassName << "[trick_var:" << trick_name << "]";                                                    \
       return msg.str();                                                                                                  \
    }                                                                                                                     \
                                                                                                                          \

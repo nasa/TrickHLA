@@ -78,7 +78,8 @@ CharUnicodeStringEncoder::CharUnicodeStringEncoder(
       update_ref2();
    }
 
-   if ( ref2->attr->type != TRICK_CHARACTER ) {
+   if ( ( ref2->attr->type != TRICK_CHARACTER )
+        && ( ref2->attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharUnicodeStringEncoder::CharUnicodeStringEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << trick_name
@@ -127,19 +128,23 @@ VariableLengthData &CharUnicodeStringEncoder::encode()
    return EncoderBase::encode();
 }
 
-void CharUnicodeStringEncoder::decode(
+bool const CharUnicodeStringEncoder::decode(
    VariableLengthData const &encoded_data )
 {
-   EncoderBase::decode( encoded_data );
+   if ( EncoderBase::decode( encoded_data ) ) {
 
-   HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
+      HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
 
-   /* Convert from the wide-string to a char * string. */
-   *static_cast< char ** >( ref2->address ) = StringUtilities::ip_strdup_wstring(
-      dynamic_cast< HLAunicodeString const & >( array_encoder->get( 0 ) ).get() );
+      /* Convert from the wide-string to a char * string. */
+      *static_cast< char ** >( ref2->address ) = StringUtilities::ip_strdup_wstring(
+         dynamic_cast< HLAunicodeString const & >( array_encoder->get( 0 ) ).get() );
+
+      return true;
+   }
+   return false;
 }
 
 string CharUnicodeStringEncoder::to_string()
 {
-   return ( "CharUnicodeStringEncoder[trick_name:" + trick_name + "]" );
+   return ( "CharUnicodeStringEncoder[trick_var:" + trick_name + "]" );
 }

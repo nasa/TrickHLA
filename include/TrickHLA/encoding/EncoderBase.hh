@@ -90,7 +90,7 @@ class EncoderBase
 
    virtual RTI1516_NAMESPACE::VariableLengthData &encode();
 
-   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+   virtual bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
    virtual std::string to_string();
 
@@ -142,9 +142,9 @@ class EncoderBase
 
    std::size_t ref2_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick simulation variable.
 
-   RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_units{--} Holds HLA encoded data.
+   RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_units{**} Holds HLA encoded data.
 
-   std::vector< RTI1516_NAMESPACE::DataElement * > data_elements;
+   std::vector< RTI1516_NAMESPACE::DataElement * > data_elements; ///< @trick_units{**} Vector of data elements.
 
    RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_units{--} HLA data element encoder.
 

@@ -117,8 +117,8 @@ EncoderBase *EncoderFactory::create(
          // No type, not supported.
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'void', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'void', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -132,11 +132,7 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
          encoder = create_uchar_encoder( trick_name, hla_encoding, ref2 );
 #else
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned char', and is not supported.\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
+         encoder = create_char_encoder( trick_name, hla_encoding, ref2 );
 #endif
          break;
       }
@@ -157,8 +153,8 @@ EncoderBase *EncoderFactory::create(
 #else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned short', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'unsigned short', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif
          break;
@@ -175,8 +171,8 @@ EncoderBase *EncoderFactory::create(
 #else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned int', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'unsigned int', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif
          break;
@@ -213,8 +209,8 @@ EncoderBase *EncoderFactory::create(
 #else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned long', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'unsigned long', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif
          break;
@@ -233,8 +229,8 @@ EncoderBase *EncoderFactory::create(
          // (signed int : 1), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type bit-field 'int : 1', and is"
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type bit-field 'int : 1', and is"
                 << " not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -243,8 +239,8 @@ EncoderBase *EncoderFactory::create(
          // (unsigned int : 1), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type bit-field 'unsigned int : 1',"
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type bit-field 'unsigned int : 1',"
                 << " and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -261,8 +257,8 @@ EncoderBase *EncoderFactory::create(
 #else
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned long long', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'unsigned long long', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif
          break;
@@ -271,8 +267,8 @@ EncoderBase *EncoderFactory::create(
          // (file *), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'file *', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'file *', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -295,8 +291,8 @@ EncoderBase *EncoderFactory::create(
          // An arbitrary address (void *), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'void *', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'void *', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -304,8 +300,8 @@ EncoderBase *EncoderFactory::create(
          // User defined type (enumeration), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'enum', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'enum', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -313,8 +309,8 @@ EncoderBase *EncoderFactory::create(
          // User defined type (struct/class), Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'struct' or class, and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'struct' or class, and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -322,8 +318,8 @@ EncoderBase *EncoderFactory::create(
          // User defined type (where type details are as yet unknown)
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'opaque', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'opaque', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -331,8 +327,8 @@ EncoderBase *EncoderFactory::create(
          // stl::type, Not supported
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'stl::type', and is not supported.\n";
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'stl::type', and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -340,8 +336,8 @@ EncoderBase *EncoderFactory::create(
          // Unrecognized types are not supported.
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of unknown type ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of unknown type ("
                 << Utilities::get_trick_type_string( ref2->attr->type )
                 << " = " << ref2->attr->type << "), and is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -392,8 +388,8 @@ EncoderBase *EncoderFactory::create_char_encoder(
          } else {
             ostringstream errmsg;
             errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick ref-attributes for '" << trick_name
-                   << "' the Trick variable is of type 'char' for the specified"
+                   << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                   << "' is of type 'char' for the specified"
                    << " ENCODING_ASCII_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -406,8 +402,8 @@ EncoderBase *EncoderFactory::create_char_encoder(
          } else {
             ostringstream errmsg;
             errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick ref-attributes for '" << trick_name
-                   << "' the Trick variable is of type 'char' for the specified"
+                   << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                   << "' is of type 'char' for the specified"
                    << " ENCODING_UNICODE_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -420,8 +416,8 @@ EncoderBase *EncoderFactory::create_char_encoder(
          } else {
             ostringstream errmsg;
             errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick ref-attributes for '" << trick_name
-                   << "' the Trick variable is of type 'char' for the specified"
+                   << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                   << "' is of type 'char' for the specified"
                    << " ENCODING_OPAQUE_DATA encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -431,8 +427,8 @@ EncoderBase *EncoderFactory::create_char_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'char', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'char', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -465,8 +461,8 @@ EncoderBase *EncoderFactory::create_string_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'std::string', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'std::string', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -499,8 +495,8 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_wchar_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'wchar', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'wchar', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -534,8 +530,8 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'std::wstring', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'std::wstring', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -544,8 +540,8 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
 #else
    ostringstream errmsg;
    errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
-          << " ERROR: Trick ref-attributes for '" << trick_name
-          << "' the variable is of type 'std::wstring', the specified HLA-encoding ("
+          << " ERROR: Trick ref-attributes for the variable '" << trick_name
+          << "' is of type 'std::wstring', the specified HLA-encoding ("
           << hla_encoding << ") is not supported.\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 #endif // TRICK_WSTRING_MM_SUPPORT
@@ -589,8 +585,8 @@ EncoderBase *EncoderFactory::create_int16_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int16_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'short', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'short', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -635,8 +631,8 @@ EncoderBase *EncoderFactory::create_int32_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int32_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'int', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'int', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -681,8 +677,8 @@ EncoderBase *EncoderFactory::create_int64_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_int64_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'long long', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'long long', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -728,8 +724,8 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint16_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned short', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'unsigned short', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -774,8 +770,8 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint32_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned int', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'unsigned int', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -820,8 +816,8 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_uint64_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'unsigned long long', the specified"
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'unsigned long long', the specified"
                 << " hla_encoding (" << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -867,8 +863,8 @@ EncoderBase *EncoderFactory::create_float32_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_float32_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'float', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'float', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -913,8 +909,8 @@ EncoderBase *EncoderFactory::create_float64_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'double', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'double', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -947,8 +943,8 @@ EncoderBase *EncoderFactory::create_bool_encoder(
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_bool_encoder():" << __LINE__
-                << " ERROR: Trick ref-attributes for '" << trick_name
-                << "' the variable is of type 'bool', the specified HLA-encoding ("
+                << " ERROR: Trick ref-attributes for the variable '" << trick_name
+                << "' is of type 'bool', the specified HLA-encoding ("
                 << hla_encoding << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;

@@ -78,7 +78,8 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
       update_ref2();
    }
 
-   if ( ref2->attr->type != TRICK_CHARACTER ) {
+   if ( ( ref2->attr->type != TRICK_CHARACTER )
+        && ( ref2->attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << trick_name
@@ -118,24 +119,28 @@ VariableLengthData &CharOpaqueDataEncoder::encode()
    return EncoderBase::encode();
 }
 
-void CharOpaqueDataEncoder::decode(
+bool const CharOpaqueDataEncoder::decode(
    VariableLengthData const &encoded_data )
 {
-   EncoderBase::decode( encoded_data );
+   if ( EncoderBase::decode( encoded_data ) ) {
 
-   HLAopaqueData const *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
+      HLAopaqueData const *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
 
-   resize_trick_var( opaque_encoder->dataLength() );
+      resize_trick_var( opaque_encoder->dataLength() );
 
-   Octet *byte_data = *static_cast< Octet ** >( ref2->address );
-   if ( byte_data != NULL ) {
-      memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() );
+      Octet *byte_data = *static_cast< Octet ** >( ref2->address );
+      if ( byte_data != NULL ) {
+         memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() );
+      }
+
+      return true;
    }
+   return false;
 }
 
 string CharOpaqueDataEncoder::to_string()
 {
-   return ( "CharOpaqueDataEncoder[trick_name:" + trick_name + "]" );
+   return ( "CharOpaqueDataEncoder[trick_var:" + trick_name + "]" );
 }
 
 void CharOpaqueDataEncoder::resize_trick_var(

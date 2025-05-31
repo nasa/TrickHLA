@@ -3528,10 +3528,16 @@ bool Object::extract_data(
       // Determine if this object has this attribute.
       if ( attr != NULL ) {
 
+#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+         if ( attr->decode( iter->second ) ) {
+            any_attr_received = true;
+         }
+#else
          // Place the RTI AttributeValue into the TrickHLA Attribute.
          if ( attr->extract_data( &( iter->second ) ) ) {
             any_attr_received = true;
          }
+#endif
       } else if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, iter->first );

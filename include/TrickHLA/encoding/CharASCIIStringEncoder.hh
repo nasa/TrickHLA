@@ -84,7 +84,7 @@ class CharASCIIStringEncoder : public EncoderBase
 
    virtual RTI1516_NAMESPACE::VariableLengthData &encode();
 
-   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+   virtual bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
    virtual std::string to_string();
 

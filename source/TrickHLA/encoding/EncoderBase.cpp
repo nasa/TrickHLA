@@ -155,7 +155,7 @@ VariableLengthData &EncoderBase::encode()
    return this->data;
 }
 
-void EncoderBase::decode(
+bool const EncoderBase::decode(
    VariableLengthData const &encoded_data )
 {
    try {
@@ -168,12 +168,14 @@ void EncoderBase::decode(
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
              << trick_name << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
    }
+   return true;
 }
 
 string EncoderBase::to_string()
 {
-   return ( "EncoderBase[trick_name:" + trick_name + "]" );
+   return ( "EncoderBase[trick_var:" + trick_name + "]" );
 }
 
 void EncoderBase::calculate_ref2_element_count()
