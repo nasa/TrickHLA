@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
-#include "trick/reference.h"
+#include "trick/attributes.h"
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -76,8 +76,8 @@ class CharOpaqueDataEncoder : public EncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharOpaqueDataEncoder( std::string const &trick_variable_name,
-                          REF2              *r2 );
+   CharOpaqueDataEncoder( void       *var_address,
+                          ATTRIBUTES *var_attr );
 
    /*! @brief Destructor for the TrickHLA CharOpaqueDataEncoder class. */
    virtual ~CharOpaqueDataEncoder();

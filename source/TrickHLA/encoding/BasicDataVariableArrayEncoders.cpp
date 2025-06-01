@@ -72,26 +72,21 @@ using namespace TrickHLA;
 #define DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum ) \
                                                                                                                          \
    EncoderClassName::EncoderClassName(                                                                                   \
-      string const &trick_variable_name,                                                                                 \
-      REF2         *r2 )                                                                                                 \
-      : EncoderBase( trick_variable_name,                                                                                \
-                     r2 )                                                                                                \
+      void       *var_address,                                                                                           \
+      ATTRIBUTES *var_attr )                                                                                             \
+      : EncoderBase( var_address, var_attr )                                                                             \
    {                                                                                                                     \
-      if ( ref2 == NULL ) {                                                                                              \
-         update_ref2();                                                                                                  \
-      }                                                                                                                  \
-                                                                                                                         \
-      bool valid = ( ref2->attr->type == TrickTypeEnum )                                                                 \
-                   || ( ( ( ref2->attr->type == TRICK_LONG )                                                             \
-                          || ( ref2->attr->type == TRICK_UNSIGNED_LONG ) )                                               \
+      bool valid = ( attr->type == TrickTypeEnum )                                                                       \
+                   || ( ( ( attr->type == TRICK_LONG )                                                                   \
+                          || ( attr->type == TRICK_UNSIGNED_LONG ) )                                                     \
                         && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                                              \
-                   || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER );                                                  \
+                   || ( attr->type == TRICK_UNSIGNED_CHARACTER );                                                        \
       if ( !valid ) {                                                                                                    \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
-                << " ERROR: Trick type for the '" << trick_name                                                          \
+                << " ERROR: Trick type for the '" << attr->name                                                          \
                 << "' simulation variable (type:"                                                                        \
-                << Utilities::get_trick_type_string( ref2->attr->type )                                                  \
+                << Utilities::get_trick_type_string( attr->type )                                                        \
                 << ") is not the expected type '"                                                                        \
                 << Utilities::get_trick_type_string( TrickTypeEnum ) << "'.\n";                                          \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
@@ -101,7 +96,7 @@ using namespace TrickHLA;
       if ( !is_dynamic_array() ) {                                                                                       \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
-                << " ERROR: Trick ref-attributes for '" << trick_name                                                    \
+                << " ERROR: Trick ref-attributes for '" << attr->name                                                    \
                 << "' the variable must be a dynamic variable array!\n";                                                 \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
          return;                                                                                                         \
@@ -110,7 +105,7 @@ using namespace TrickHLA;
       EncodableDataType data_prototype;                                                                                  \
       this->encoder = new HLAvariableArray( data_prototype );                                                            \
                                                                                                                          \
-      resize_data_elements( ref2_element_count );                                                                        \
+      resize_data_elements( attr_element_count );                                                                        \
    }                                                                                                                     \
                                                                                                                          \
    EncoderClassName::~EncoderClassName()                                                                                 \
@@ -122,16 +117,16 @@ using namespace TrickHLA;
    {                                                                                                                     \
       /* Since the Trick variable is dynamic (i.e. a pointer) its size */                                                \
       /* can change at any point so we need to refresh the counts.     */                                                \
-      calculate_ref2_element_count();                                                                                    \
+      calculate_attr_element_count();                                                                                    \
                                                                                                                          \
       /* Ensure the number of data elements matches the Trick variable */                                                \
-      resize_data_elements( ref2_element_count );                                                                        \
+      resize_data_elements( attr_element_count );                                                                        \
                                                                                                                          \
       HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                             \
-      SimpleDataType         *array_data    = *static_cast< SimpleDataType ** >( ref2->address );                        \
+      SimpleDataType         *array_data    = *static_cast< SimpleDataType ** >( address );                              \
                                                                                                                          \
       /* Copy the Trick array values to the data elements to be encoded. */                                              \
-      for ( size_t i = 0; i < ref2_element_count; ++i ) {                                                                \
+      for ( size_t i = 0; i < attr_element_count; ++i ) {                                                                \
          const_cast< EncodableDataType & >(                                                                              \
             dynamic_cast< EncodableDataType const & >(                                                                   \
                array_encoder->get( i ) ) )                                                                               \
@@ -151,10 +146,10 @@ using namespace TrickHLA;
          /* Resize Trick array variable to match the decoded data size. */                                               \
          resize_trick_var( array_encoder->size() );                                                                      \
                                                                                                                          \
-         SimpleDataType *array_data = *static_cast< SimpleDataType ** >( ref2->address );                                \
+         SimpleDataType *array_data = *static_cast< SimpleDataType ** >( address );                                      \
                                                                                                                          \
          /* Copy the decoded data element values to the Trick array. */                                                  \
-         for ( size_t i = 0; i < ref2_element_count; ++i ) {                                                             \
+         for ( size_t i = 0; i < attr_element_count; ++i ) {                                                             \
             array_data[i] = dynamic_cast< EncodableDataType const & >( array_encoder->get( i ) ).get();                  \
          }                                                                                                               \
          return true;                                                                                                    \
@@ -165,7 +160,7 @@ using namespace TrickHLA;
    string EncoderClassName::to_string()                                                                                  \
    {                                                                                                                     \
       ostringstream msg;                                                                                                 \
-      msg << #EncoderClassName << "[trick_var:" << trick_name << "]";                                                    \
+      msg << #EncoderClassName << "[" << string( attr->name ) << "]";                                                    \
       return msg.str();                                                                                                  \
    }                                                                                                                     \
                                                                                                                          \
@@ -173,36 +168,36 @@ using namespace TrickHLA;
       size_t const new_size )                                                                                            \
    {                                                                                                                     \
       /* Trick array variable size does not match the new size. */                                                       \
-      if ( ( new_size != ref2_element_count )                                                                            \
-           || ( *( static_cast< void ** >( ref2->address ) ) == NULL ) ) {                                               \
+      if ( ( new_size != attr_element_count )                                                                            \
+           || ( *( static_cast< void ** >( address ) ) == NULL ) ) {                                                     \
                                                                                                                          \
-         if ( ref2->attr->type == TRICK_STRING ) {                                                                       \
+         if ( attr->type == TRICK_STRING ) {                                                                             \
             /* TMM_resize_array_1d_a does not support STL strings. */                                                    \
-            if ( *( static_cast< void ** >( ref2->address ) ) != NULL ) {                                                \
-               TMM_delete_var_a( *( static_cast< void ** >( ref2->address ) ) );                                         \
+            if ( *( static_cast< void ** >( address ) ) != NULL ) {                                                      \
+               TMM_delete_var_a( *( static_cast< void ** >( address ) ) );                                               \
             }                                                                                                            \
-            *( static_cast< void ** >( ref2->address ) ) =                                                               \
+            *( static_cast< void ** >( address ) ) =                                                                     \
                static_cast< void * >( TMM_declare_var_1d( "std::string", new_size ) );                                   \
          } else {                                                                                                        \
-            if ( *( static_cast< void ** >( ref2->address ) ) == NULL ) {                                                \
-               *( static_cast< void ** >( ref2->address ) ) =                                                            \
+            if ( *( static_cast< void ** >( address ) ) == NULL ) {                                                      \
+               *( static_cast< void ** >( address ) ) =                                                                  \
                   static_cast< void * >( TMM_declare_var_1d( #SimpleDataType, new_size ) );                              \
             } else {                                                                                                     \
-               *( static_cast< void ** >( ref2->address ) ) =                                                            \
+               *( static_cast< void ** >( address ) ) =                                                                  \
                   static_cast< void * >( TMM_resize_array_1d_a(                                                          \
-                     *( static_cast< void ** >( ref2->address ) ), new_size ) );                                         \
+                     *( static_cast< void ** >( address ) ), new_size ) );                                               \
             }                                                                                                            \
          }                                                                                                               \
       }                                                                                                                  \
                                                                                                                          \
       /* Update the element count to the new size. */                                                                    \
-      ref2_element_count = new_size;                                                                                     \
+      attr_element_count = new_size;                                                                                     \
                                                                                                                          \
-      if ( *static_cast< SimpleDataType ** >( ref2->address ) == NULL ) {                                                \
+      if ( *static_cast< SimpleDataType ** >( address ) == NULL ) {                                                      \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::resize_trick_var():" << __LINE__                                              \
                 << " ERROR: Could not allocate memory for Trick variable"                                                \
-                << " with name '" << trick_name << "' with " << new_size                                                 \
+                << " with name '" << attr->name << "' with " << new_size                                                 \
                 << " elements!\n";                                                                                       \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
       }                                                                                                                  \

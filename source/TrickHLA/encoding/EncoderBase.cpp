@@ -32,12 +32,14 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
+#include "trick/attributes.h"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -73,16 +75,31 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 EncoderBase::EncoderBase(
-   string const &trick_variable_name,
-   REF2         *r2 )
-   : trick_name( trick_variable_name ),
-     ref2( r2 ),
-     ref2_element_count( 0 ),
+   void       *var_address,
+   ATTRIBUTES *var_attr )
+   : address( var_address ),
+     attr( var_attr ),
+     attr_element_count( 0 ),
      data(),
      data_elements(),
      encoder( NULL )
 {
-   update_ref2();
+   if ( attr == NULL ) {
+      ostringstream errmsg;
+      errmsg << "EncoderBase::EncoderBase():" << __LINE__
+             << " ERROR: Unexpected NULL Trick attributes. Please make sure the"
+             << " variable is allocated memory by the Trick Memory Manager.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   if ( is_null_address() ) {
+      ostringstream errmsg;
+      errmsg << "EncoderBase::EncoderBase():" << __LINE__
+             << " ERROR: The variable address is NULL for variable '"
+             << attr->name << "'. Please make sure the Trick variable"
+             << " is allocated memory by the Trick Memory Manager.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   calculate_attr_element_count();
 }
 
 /*!
@@ -97,46 +114,15 @@ EncoderBase::~EncoderBase()
       data_elements.pop_back();
    }
 
-   if ( ref2 != NULL ) {
-      free( ref2 );
-      ref2 = NULL;
+   if ( attr != NULL ) {
+      free( attr );
+      attr = NULL;
    }
 
    if ( encoder != NULL ) {
       delete encoder;
       encoder = NULL;
    }
-}
-
-void EncoderBase::update_ref2()
-{
-   if ( ref2 == NULL ) {
-      ref2 = ref_attributes( trick_name.c_str() );
-
-      // Determine if we had an error getting the ref-attributes.
-      if ( ref2 == NULL ) {
-         ostringstream errmsg;
-         errmsg << "EncoderBase::update_ref2():" << __LINE__
-                << " ERROR: Error retrieving Trick ref-attributes for '"
-                << trick_name << "'. Please check your input or modified-data"
-                << " files to make sure the object attribute Trick name is"
-                << " correctly specified. If '" << trick_name
-                << "' is an inherited variable then make sure the base class"
-                << " uses either the 'public' or 'protected' access level for"
-                << " the variable.\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-   }
-   if ( is_null_address() ) {
-      ostringstream errmsg;
-      errmsg << "EncoderBase::update_ref2():" << __LINE__
-             << " ERROR: The ref-attributes address is NULL for the Trick"
-             << " simulation variable '" << trick_name << "'. Please make"
-             << " sure the Trick simulation variable is allocated memory"
-             << " by the Trick Memory Manager.\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   calculate_ref2_element_count();
 }
 
 VariableLengthData &EncoderBase::encode()
@@ -149,7 +135,7 @@ VariableLengthData &EncoderBase::encode()
       ostringstream errmsg;
       errmsg << "EncoderBase::encode():" << __LINE__
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
-             << trick_name << "' with error: " << err_details << std::endl;
+             << attr->name << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return this->data;
@@ -166,7 +152,7 @@ bool const EncoderBase::decode(
       ostringstream errmsg;
       errmsg << "EncoderBase::decode():" << __LINE__
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
-             << trick_name << "' with error: " << err_details << std::endl;
+             << attr->name << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -175,32 +161,32 @@ bool const EncoderBase::decode(
 
 string EncoderBase::to_string()
 {
-   return ( "EncoderBase[trick_var:" + trick_name + "]" );
+   return ( "EncoderBase[" + string( attr->name ) + "]" );
 }
 
-void EncoderBase::calculate_ref2_element_count()
+void EncoderBase::calculate_attr_element_count()
 {
-   if ( !is_static_in_size() || ( ref2_element_count == 0 ) ) {
+   if ( !is_static_in_size() || ( attr_element_count == 0 ) ) {
 
       if ( is_dynamic_array() ) {
          // We have a multi-dimension array that is a pointer and the
-         // number of dimensions is ref2->attr->num_index. Note: Make sure
+         // number of dimensions is attr->num_index. Note: Make sure
          // to refresh ref2 before this call because it is dynamic array.
 
          // get_size returns the number of elements in the dynamic array.
-         int const num_items = get_size( *static_cast< void ** >( ref2->address ) );
-         ref2_element_count  = ( num_items > 0 ) ? num_items : 0;
+         int const num_items = get_size( *static_cast< void ** >( address ) );
+         attr_element_count  = ( num_items > 0 ) ? num_items : 0;
 
       } else {
          // The user variable is either a primitive type or a static
          // multi-dimension array.
          size_t num_items = 1;
-         for ( int i = 0; i < ref2->attr->num_index; ++i ) {
-            if ( ref2->attr->index[i].size > 0 ) {
-               num_items *= ref2->attr->index[i].size;
+         for ( int i = 0; i < attr->num_index; ++i ) {
+            if ( attr->index[i].size > 0 ) {
+               num_items *= attr->index[i].size;
             }
          }
-         ref2_element_count = num_items;
+         attr_element_count = num_items;
       }
    }
 
@@ -208,28 +194,27 @@ void EncoderBase::calculate_ref2_element_count()
       ostringstream msg;
       msg << "EncoderBase::calculate_trick_variable_sizes():" << __LINE__ << '\n'
           << "========================================================\n"
-          << "  trick_name:'" << trick_name << "'\n"
-          << "  ref2->attr->name:'" << ref2->attr->name << "'\n"
-          << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'\n"
-          << "  ref2->attr->type:" << ref2->attr->type << '\n'
-          << "  ref2->attr->units:" << ref2->attr->units << '\n'
-          << "  ref2_element_count:" << ref2_element_count << '\n';
+          << "  attr->name:'" << attr->name << "'\n"
+          << "  attr->type_name:'" << attr->type_name << "'\n"
+          << "  attr->type:" << attr->type << '\n'
+          << "  attr->units:" << attr->units << '\n'
+          << "  attr_element_count:" << attr_element_count << '\n';
       if ( is_array() ) {
-         msg << "  get_size(*(void **)ref2->address):" << get_size( *static_cast< void ** >( ref2->address ) ) << '\n';
+         msg << "  get_size(*(void **)address):" << get_size( *static_cast< void ** >( address ) ) << '\n';
       } else {
-         msg << "  get_size(ref2->address):" << get_size( ref2->address ) << '\n';
+         msg << "  get_size(address):" << get_size( address ) << '\n';
       }
-      msg << "  ref2->attr->size:" << ref2->attr->size << '\n'
-          << "  ref2->attr->num_index:" << ref2->attr->num_index << '\n';
-      for ( int i = 0; i < ref2->attr->num_index; ++i ) {
-         msg << "  ref2->attr->index[" << i << "].size:" << ref2->attr->index[i].size << '\n';
+      msg << "  attr->size:" << attr->size << '\n'
+          << "  attr->num_index:" << attr->num_index << '\n';
+      for ( int i = 0; i < attr->num_index; ++i ) {
+         msg << "  attr->index[" << i << "].size:" << attr->index[i].size << '\n';
       }
       msg << "  is_array:" << ( is_array() ? "Yes" : "No" ) << '\n'
           << "  is_1d_array:" << ( is_1d_array() ? "Yes" : "No" ) << '\n'
           << "  is_static_array:" << ( is_static_array() ? "Yes" : "No" ) << '\n'
           << "  is_dynamic_array:" << ( is_dynamic_array() ? "Yes" : "No" ) << '\n';
-      if ( is_dynamic_array() && ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) ) {
-         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"\n";
+      if ( is_dynamic_array() && ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) ) {
+         msg << "  value:\"" << ( *static_cast< char ** >( address ) ) << "\"\n";
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

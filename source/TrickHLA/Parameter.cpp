@@ -21,6 +21,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
+@trick_link_dependency{encoding/EncoderBase.cpp}
+@trick_link_dependency{encoding/EncoderFactory.cpp}
 
 
 @revs_title
@@ -59,6 +61,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/encoding/EncoderFactory.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -90,7 +94,8 @@ Parameter::Parameter()
      byteswap( false ),
      address( NULL ),
      attr( NULL ),
-     interaction_FOM_name( NULL )
+     interaction_FOM_name( NULL ),
+     encoder( NULL )
 {
    // The value is set based on the Endianness of this computer.
    // HLAtrue is a value of 1 on a Big Endian computer.
@@ -119,6 +124,11 @@ Parameter::~Parameter()
                           __LINE__ );
       }
       interaction_FOM_name = NULL;
+   }
+
+   if ( encoder != NULL ) {
+      delete encoder;
+      encoder = NULL;
    }
 }
 
@@ -172,6 +182,27 @@ void Parameter::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
+   // Create the encoder based on the Trick variable.
+   if ( this->encoder != NULL ) {
+      delete this->encoder;
+   }
+   this->encoder = EncoderFactory::create( trick_name, rti_encoding );
+   if ( this->encoder == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Parameter::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL encoder for Trick variable '"
+             << trick_name << "' with an 'rti_encoding' value of "
+             << rti_encoding << ".\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      ostringstream msg;
+      msg << "Parameter::initialize():" << __LINE__
+          << " Encoder:" << this->encoder->to_string() << std::endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
    // Get the ref-attributes.
    REF2 *ref2 = ref_attributes( trick_name );
 
@@ -190,9 +221,9 @@ void Parameter::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
-      address              = ref2->address;
-      attr                 = ref2->attr;
-      interaction_FOM_name = trick_MM->mm_strdup( const_cast< char * >( interaction_fom_name ) );
+      this->address              = ref2->address;
+      this->attr                 = ref2->attr;
+      this->interaction_FOM_name = trick_MM->mm_strdup( const_cast< char * >( interaction_fom_name ) );
 
       // Free the memory used by ref2.
       free( ref2 );
@@ -229,6 +260,27 @@ void Parameter::initialize(
    }
 
    interaction_FOM_name = trick_MM->mm_strdup( const_cast< char * >( interaction_fom_name ) );
+
+   // Create the encoder based on the Trick variable address and attributes.
+   if ( this->encoder != NULL ) {
+      delete this->encoder;
+   }
+   this->encoder = EncoderFactory::create( this->address, this->attr, rti_encoding );
+   if ( this->encoder == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Parameter::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL encoder for Trick variable '"
+             << attr->name << "' with an 'rti_encoding' value of "
+             << rti_encoding << ".\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      ostringstream msg;
+      msg << "Parameter::initialize():" << __LINE__
+          << " Encoder:" << this->encoder->to_string() << std::endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
 
    complete_initialization();
 }
@@ -531,6 +583,29 @@ void Parameter::complete_initialization()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+}
+
+VariableLengthData &Parameter::encode()
+{
+   return encoder->encode();
+}
+
+bool const Parameter::decode(
+   VariableLengthData const &encoded_data )
+{
+   if ( encoder->decode( encoded_data ) ) {
+
+      if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+         message_publish( MSG_NORMAL, "Parameter::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
+                          __LINE__, get_FOM_name(), get_trick_name() );
+      }
+
+      // Mark the attribute value as changed.
+      mark_changed();
+
+      return true;
+   }
+   return false;
 }
 
 VariableLengthData Parameter::get_encoded_parameter_value()

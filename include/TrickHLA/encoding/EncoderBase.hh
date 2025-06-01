@@ -39,8 +39,7 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick include files.
-#include "trick/parameter_types.h"
-#include "trick/reference.h"
+#include "trick/attributes.h"
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -82,8 +81,8 @@ class EncoderBase
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA EncoderBase class. */
-   EncoderBase( std::string const &trick_variable_name,
-                REF2              *r2 );
+   EncoderBase( void       *var_address,
+                ATTRIBUTES *var_attr );
 
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
    virtual ~EncoderBase();
@@ -94,31 +93,31 @@ class EncoderBase
 
    virtual std::string to_string();
 
-   void calculate_ref2_element_count();
+   void calculate_attr_element_count();
 
    bool const is_primitive()
    {
-      return ( ( ref2 != NULL ) && ( ref2->attr->num_index == 0 ) );
+      return ( ( attr != NULL ) && ( attr->num_index == 0 ) );
    }
 
    bool const is_array()
    {
-      return ( ( ref2 != NULL ) && ( ref2->attr->num_index > 0 ) );
+      return ( ( attr != NULL ) && ( attr->num_index > 0 ) );
    }
 
    bool const is_1d_array()
    {
-      return ( ( ref2 != NULL ) && ( ref2->attr->num_index == 1 ) );
+      return ( ( attr != NULL ) && ( attr->num_index == 1 ) );
    }
 
    bool const is_static_array()
    {
-      return ( is_array() && ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) );
+      return ( is_array() && ( attr->index[attr->num_index - 1].size != 0 ) );
    }
 
    bool const is_dynamic_array()
    {
-      return ( is_array() && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) );
+      return ( is_array() && ( attr->index[attr->num_index - 1].size == 0 ) );
    }
 
    bool const is_static_in_size()
@@ -128,23 +127,20 @@ class EncoderBase
 
    bool const is_null_address()
    {
-      return is_dynamic_array()
-                ? ( ( ref2 != NULL ) && ( *static_cast< void ** >( ref2->address ) == NULL ) )
-                : ( ( ref2 != NULL ) && ( ref2->address == NULL ) );
+      return ( address == NULL )
+             || ( is_dynamic_array() && ( *static_cast< void ** >( address ) == NULL ) );
    }
 
   protected:
-   void update_ref2();
+   void *address; ///< @trick_units{--} Address of the trick variable.
 
-   std::string trick_name; ///< @trick_units{--} Trick variable name.
+   ATTRIBUTES *attr; ///< @trick_io{**} The attributes of the trick variable.
 
-   REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.
+   std::size_t attr_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick variable.
 
-   std::size_t ref2_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick simulation variable.
+   RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_io{**} Holds HLA encoded data.
 
-   RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_units{**} Holds HLA encoded data.
-
-   std::vector< RTI1516_NAMESPACE::DataElement * > data_elements; ///< @trick_units{**} Vector of data elements.
+   std::vector< RTI1516_NAMESPACE::DataElement * > data_elements; ///< @trick_io{**} Vector of data elements.
 
    RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_units{--} HLA data element encoder.
 

@@ -515,7 +515,7 @@ class Attribute
 
    REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.
 
-   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this attributes data.
+   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this attribute data.
 
    RTI1516_NAMESPACE::AttributeHandle attr_handle; ///< @trick_io{**} The RTI attribute handle.
 

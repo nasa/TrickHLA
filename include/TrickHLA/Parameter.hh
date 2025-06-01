@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
+@trick_link_dependency{../../source/TrickHLA/encoding/EncoderBase.cpp}
 
 @revs_title
 @revs_begin
@@ -47,6 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -113,6 +115,10 @@ class Parameter
 
    /*! @brief Initializes the TrickHLA Parameter. */
    void complete_initialization();
+
+   RTI1516_NAMESPACE::VariableLengthData &encode();
+
+   bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
    /*! @brief Get the FOM name for this parameter.
     *  @return The FOM name of this parameter. */
@@ -256,6 +262,8 @@ class Parameter
    void       *address;              ///< @trick_io{**} Address of the trick variable
    ATTRIBUTES *attr;                 ///< @trick_io{**} ATTRIBUTES of the trick variable
    char       *interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
+
+   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this parameter data.
 
    RTI1516_NAMESPACE::ParameterHandle param_handle; ///< @trick_io{**} The RTI parameter handle.
 

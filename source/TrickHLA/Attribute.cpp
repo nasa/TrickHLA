@@ -573,7 +573,18 @@ void Attribute::initialize(
    size_is_static = is_static_in_size();
 
    // Create the encoder based on the Trick variable and encoding.
+   if ( this->encoder != NULL ) {
+      delete this->encoder;
+   }
    this->encoder = EncoderFactory::create( trick_name, rti_encoding );
+   if ( this->encoder == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Attribute::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL encoder for Trick variable '"
+             << trick_name << "' with an 'rti_encoding' value of "
+             << rti_encoding << ".\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;

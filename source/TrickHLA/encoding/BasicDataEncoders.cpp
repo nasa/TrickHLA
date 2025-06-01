@@ -70,26 +70,21 @@ using namespace TrickHLA;
 #define DECLARE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum ) \
                                                                                                           \
    EncoderClassName::EncoderClassName(                                                                    \
-      string const &trick_variable_name,                                                                  \
-      REF2         *r2 )                                                                                  \
-      : EncoderBase( trick_variable_name,                                                                 \
-                     r2 )                                                                                 \
+      void       *var_address,                                                                            \
+      ATTRIBUTES *var_attr )                                                                              \
+      : EncoderBase( var_address, var_attr )                                                              \
    {                                                                                                      \
-      if ( ref2 == NULL ) {                                                                               \
-         update_ref2();                                                                                   \
-      }                                                                                                   \
-                                                                                                          \
-      bool valid = ( ref2->attr->type == TrickTypeEnum )                                                  \
-                   || ( ( ( ref2->attr->type == TRICK_LONG )                                              \
-                          || ( ref2->attr->type == TRICK_UNSIGNED_LONG ) )                                \
+      bool valid = ( attr->type == TrickTypeEnum )                                                        \
+                   || ( ( ( attr->type == TRICK_LONG )                                                    \
+                          || ( attr->type == TRICK_UNSIGNED_LONG ) )                                      \
                         && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                               \
-                   || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER );                                   \
+                   || ( attr->type == TRICK_UNSIGNED_CHARACTER );                                         \
       if ( !valid ) {                                                                                     \
          ostringstream errmsg;                                                                            \
          errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                    \
-                << " ERROR: Trick type for the '" << trick_name                                           \
+                << " ERROR: Trick type for the '" << attr->name                                           \
                 << "' simulation variable (type:"                                                         \
-                << Utilities::get_trick_type_string( ref2->attr->type )                                   \
+                << Utilities::get_trick_type_string( attr->type )                                         \
                 << ") is not the expected type '"                                                         \
                 << Utilities::get_trick_type_string( TrickTypeEnum ) << "'.\n";                           \
          DebugHandler::terminate_with_message( errmsg.str() );                                            \
@@ -100,14 +95,14 @@ using namespace TrickHLA;
       if ( is_array() ) {                                                                                 \
          ostringstream errmsg;                                                                            \
          errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                    \
-                << " ERROR: Trick ref-attributes for the '" << trick_name                                 \
+                << " ERROR: Trick ref-attributes for the '" << attr->name                                 \
                 << "' variable must be a primitive and not an array!\n";                                  \
          DebugHandler::terminate_with_message( errmsg.str() );                                            \
          return;                                                                                          \
       }                                                                                                   \
                                                                                                           \
       this->encoder = new EncodableDataType(                                                              \
-         static_cast< SimpleDataType * >( ref2->address ) );                                              \
+         static_cast< SimpleDataType * >( address ) );                                                    \
    }                                                                                                      \
                                                                                                           \
    EncoderClassName::~EncoderClassName()                                                                  \
@@ -118,7 +113,7 @@ using namespace TrickHLA;
    string EncoderClassName::to_string()                                                                   \
    {                                                                                                      \
       ostringstream msg;                                                                                  \
-      msg << #EncoderClassName << "[trick_var:" << trick_name << "]";                                     \
+      msg << #EncoderClassName << "[" << string( attr->name ) << "]";                                     \
       return msg.str();                                                                                   \
    }
 

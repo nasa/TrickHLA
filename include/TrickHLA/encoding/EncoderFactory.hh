@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/attributes.h"
 #include "trick/reference.h"
 
 // TrickHLA include files.
@@ -84,76 +85,83 @@ class EncoderFactory
    virtual ~EncoderFactory();
 
    static TrickHLA::EncoderBase *create(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding );
+      std::string const           &trick_name,
+      TrickHLA::EncodingEnum const hla_encoding );
+
+   static TrickHLA::EncoderBase *create(
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
   protected:
    static TrickHLA::EncoderBase *create_char_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
    static TrickHLA::EncoderBase *create_string_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
    static TrickHLA::EncoderBase *create_wchar_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
+#if defined( TRICK_WSTRING_MM_SUPPORT )
    static TrickHLA::EncoderBase *create_wstring_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
+#endif
 
    static TrickHLA::EncoderBase *create_int16_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
    static TrickHLA::EncoderBase *create_int32_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
    static TrickHLA::EncoderBase *create_int64_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
 #if defined( IEEE_1516_2025 )
    static TrickHLA::EncoderBase *create_uint16_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
    static TrickHLA::EncoderBase *create_uint32_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
    static TrickHLA::EncoderBase *create_uint64_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 #endif
 
    static TrickHLA::EncoderBase *create_float32_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
    static TrickHLA::EncoderBase *create_float64_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
    static TrickHLA::EncoderBase *create_bool_encoder(
-      std::string const &trick_name,
-      EncodingEnum const hla_encoding,
-      REF2              *ref2 );
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding );
 
   private:
    // Do not allow the copy constructor or assignment operator.

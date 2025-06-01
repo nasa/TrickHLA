@@ -69,22 +69,17 @@ using namespace std;
 using namespace TrickHLA;
 
 CharOpaqueDataEncoder::CharOpaqueDataEncoder(
-   string const &trick_variable_name,
-   REF2         *r2 )
-   : EncoderBase( trick_variable_name,
-                  r2 )
+   void       *var_address,
+   ATTRIBUTES *var_attr )
+   : EncoderBase( var_address, var_attr )
 {
-   if ( ref2 == NULL ) {
-      update_ref2();
-   }
-
-   if ( ( ref2->attr->type != TRICK_CHARACTER )
-        && ( ref2->attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
+   if ( ( attr->type != TRICK_CHARACTER )
+        && ( attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << trick_name
+             << " ERROR: Trick type for the '" << attr->name
              << "' simulation variable (type:"
-             << Utilities::get_trick_type_string( ref2->attr->type )
+             << Utilities::get_trick_type_string( attr->type )
              << ") is not the expected type '"
              << Utilities::get_trick_type_string( TRICK_CHARACTER ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -94,7 +89,7 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << trick_name
+             << " ERROR: Trick ref-attributes for '" << attr->name
              << "' the variable must be a dynamic variable array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -110,7 +105,7 @@ CharOpaqueDataEncoder::~CharOpaqueDataEncoder()
 
 VariableLengthData &CharOpaqueDataEncoder::encode()
 {
-   Octet *byte_data = *static_cast< Octet ** >( ref2->address );
+   Octet *byte_data = *static_cast< Octet ** >( address );
 
    HLAopaqueData *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
 
@@ -128,7 +123,7 @@ bool const CharOpaqueDataEncoder::decode(
 
       resize_trick_var( opaque_encoder->dataLength() );
 
-      Octet *byte_data = *static_cast< Octet ** >( ref2->address );
+      Octet *byte_data = *static_cast< Octet ** >( address );
       if ( byte_data != NULL ) {
          memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() );
       }
@@ -140,33 +135,33 @@ bool const CharOpaqueDataEncoder::decode(
 
 string CharOpaqueDataEncoder::to_string()
 {
-   return ( "CharOpaqueDataEncoder[trick_var:" + trick_name + "]" );
+   return ( "CharOpaqueDataEncoder[" + string( attr->name ) + "]" );
 }
 
 void CharOpaqueDataEncoder::resize_trick_var(
    size_t const new_size )
 {
    /* Trick array variable size does not match the new size. */
-   if ( ( new_size != ref2_element_count )
-        || ( *( static_cast< void ** >( ref2->address ) ) == NULL ) ) {
+   if ( ( new_size != attr_element_count )
+        || ( *( static_cast< void ** >( address ) ) == NULL ) ) {
 
-      if ( *( static_cast< void ** >( ref2->address ) ) == NULL ) {
-         *( static_cast< void ** >( ref2->address ) ) =
+      if ( *( static_cast< void ** >( address ) ) == NULL ) {
+         *( static_cast< void ** >( address ) ) =
             static_cast< void * >( TMM_declare_var_1d( "char", new_size ) );
       } else {
-         *( static_cast< void ** >( ref2->address ) ) =
+         *( static_cast< void ** >( address ) ) =
             static_cast< void * >( TMM_resize_array_1d_a(
-               *( static_cast< void ** >( ref2->address ) ), new_size ) );
+               *( static_cast< void ** >( address ) ), new_size ) );
       }
 
       /* Update the element count to the new size. */
-      ref2_element_count = new_size;
+      attr_element_count = new_size;
 
-      if ( *static_cast< void ** >( ref2->address ) == NULL ) {
+      if ( *static_cast< void ** >( address ) == NULL ) {
          ostringstream errmsg;
          errmsg << "CharOpaqueDataEncoder::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"
-                << " with name '" << trick_name << "' with " << new_size
+                << " with name '" << attr->name << "' with " << new_size
                 << " elements!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }

@@ -69,22 +69,17 @@ using namespace std;
 using namespace TrickHLA;
 
 CharASCIIStringEncoder::CharASCIIStringEncoder(
-   string const &trick_variable_name,
-   REF2         *r2 )
-   : EncoderBase( trick_variable_name,
-                  r2 )
+   void       *var_address,
+   ATTRIBUTES *var_attr )
+   : EncoderBase( var_address, var_attr )
 {
-   if ( ref2 == NULL ) {
-      update_ref2();
-   }
-
-   if ( ( ref2->attr->type != TRICK_CHARACTER )
-        && ( ref2->attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
+   if ( ( attr->type != TRICK_CHARACTER )
+        && ( attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << trick_name
+             << " ERROR: Trick type for the '" << attr->name
              << "' simulation variable (type:"
-             << Utilities::get_trick_type_string( ref2->attr->type )
+             << Utilities::get_trick_type_string( attr->type )
              << ") is not the expected type '"
              << Utilities::get_trick_type_string( TRICK_CHARACTER ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -94,7 +89,7 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << trick_name
+             << " ERROR: Trick ref-attributes for '" << attr->name
              << "' the variable must be a dynamic variable array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -115,7 +110,7 @@ CharASCIIStringEncoder::~CharASCIIStringEncoder()
 VariableLengthData &CharASCIIStringEncoder::encode()
 {
    /* Convert the char * string into a std::string. */
-   string str_data = *static_cast< char ** >( ref2->address );
+   string str_data = *static_cast< char ** >( address );
 
    HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
 
@@ -135,7 +130,7 @@ bool const CharASCIIStringEncoder::decode(
       HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
 
       /* Convert from the std::string to a char * string. */
-      *static_cast< char ** >( ref2->address ) = StringUtilities::ip_strdup_string(
+      *static_cast< char ** >( address ) = StringUtilities::ip_strdup_string(
          dynamic_cast< HLAASCIIstring const & >( array_encoder->get( 0 ) ).get() );
 
       return true;
@@ -145,5 +140,5 @@ bool const CharASCIIStringEncoder::decode(
 
 string CharASCIIStringEncoder::to_string()
 {
-   return ( "CharASCIIStringEncoder[trick_var:" + trick_name + "]" );
+   return ( "CharASCIIStringEncoder[" + string( attr->name ) + "]" );
 }
