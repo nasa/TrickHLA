@@ -191,7 +191,7 @@ void EncoderBase::calculate_var_element_count()
       // to refresh ref2 before this call because it is dynamic array.
 
       // get_size returns the number of elements in the dynamic array.
-      int const num_items = get_size( *static_cast< void ** >( address ) );
-      var_element_count   = ( num_items > 0 ) ? num_items : 0;
+      int const num_items     = get_size( *static_cast< void ** >( address ) );
+      this->var_element_count = ( num_items > 0 ) ? num_items : 0;
    }
 }
