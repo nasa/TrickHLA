@@ -81,7 +81,7 @@ class EncoderBase
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA EncoderBase class. */
+   /*! @brief Constructor for the TrickHLA EncoderBase class. */
    EncoderBase( void *addr, ATTRIBUTES *attr );
 
    /*! @brief Destructor for the TrickHLA EncoderBase class. */

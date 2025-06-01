@@ -69,11 +69,6 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-/*!
- * @details The endianess of the computer is determined as part of the
- * EncoderBase construction process.
- * @job_class{initialization}
- */
 EncoderBase::EncoderBase(
    void       *addr,
    ATTRIBUTES *attr )
@@ -126,10 +121,6 @@ EncoderBase::EncoderBase(
    }
 }
 
-/*!
- * @details The values are freed and nulled.
- * @job_class{shutdown}
- */
 EncoderBase::~EncoderBase()
 {
    while ( !data_elements.empty() ) {
