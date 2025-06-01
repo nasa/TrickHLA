@@ -97,10 +97,10 @@ EncoderBase::EncoderBase(
    this->type = attr->type;
 
    // Set the persistent flags about the trick variable.
-   is_array_flag         = ( attr->num_index > 0 );
-   is_1d_array_flag      = ( attr->num_index == 1 );
-   is_static_array_flag  = is_array() && ( attr->index[attr->num_index - 1].size != 0 );
-   is_dynamic_array_flag = is_array() && ( attr->index[attr->num_index - 1].size == 0 );
+   this->is_array_flag         = ( attr->num_index > 0 );
+   this->is_1d_array_flag      = ( attr->num_index == 1 );
+   this->is_static_array_flag  = is_array() && ( attr->index[attr->num_index - 1].size != 0 );
+   this->is_dynamic_array_flag = is_array() && ( attr->index[attr->num_index - 1].size == 0 );
 
    if ( is_null_address() ) {
       ostringstream errmsg;
@@ -114,10 +114,10 @@ EncoderBase::EncoderBase(
    if ( is_static_in_size() ) {
       // The user variable is either a primitive type or a static
       // multi-dimension array.
-      var_element_count = 1;
+      this->var_element_count = 1;
       for ( int i = 0; i < attr->num_index; ++i ) {
          if ( attr->index[i].size > 0 ) {
-            var_element_count *= attr->index[i].size;
+            this->var_element_count *= attr->index[i].size;
          }
       }
    } else {
