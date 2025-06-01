@@ -1192,8 +1192,7 @@ bool Interaction::extract_data(
                              __LINE__, parameters[param_item->index].get_FOM_name() );
          }
 #if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
-         if ( parameters[param_item->index].decode(
-                 VariableLengthData( param_item->data, param_item->size ) ) ) {
+         if ( parameters[param_item->index].decode( VariableLengthData( param_item->data, param_item->size ) ) ) {
             any_param_received = true;
          }
 #else
