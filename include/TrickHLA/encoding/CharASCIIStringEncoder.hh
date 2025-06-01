@@ -76,8 +76,7 @@ class CharASCIIStringEncoder : public EncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharASCIIStringEncoder( void       *var_address,
-                           ATTRIBUTES *var_attr );
+   CharASCIIStringEncoder( void *addr, ATTRIBUTES *attr );
 
    /*! @brief Destructor for the TrickHLA CharASCIIStringEncoder class. */
    virtual ~CharASCIIStringEncoder();

@@ -74,8 +74,7 @@ class CharUnicodeStringEncoder : public EncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharUnicodeStringEncoder( void       *var_address,
-                             ATTRIBUTES *var_attr );
+   CharUnicodeStringEncoder( void *addr, ATTRIBUTES *attr );
 
    /*! @brief Destructor for the TrickHLA CharUnicodeStringEncoder class. */
    virtual ~CharUnicodeStringEncoder();

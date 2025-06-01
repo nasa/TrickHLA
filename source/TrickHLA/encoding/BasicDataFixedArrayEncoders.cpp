@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/parameter_types.h"
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -72,9 +73,9 @@ using namespace TrickHLA;
 #define DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum ) \
                                                                                                                       \
    EncoderClassName::EncoderClassName(                                                                                \
-      void       *var_address,                                                                                        \
-      ATTRIBUTES *var_attr )                                                                                          \
-      : EncoderBase( var_address, var_attr )                                                                          \
+      void       *addr,                                                                                               \
+      ATTRIBUTES *attr )                                                                                              \
+      : EncoderBase( addr, attr )                                                                                     \
    {                                                                                                                  \
       bool valid = ( attr->type == TrickTypeEnum )                                                                    \
                    || ( ( ( attr->type == TRICK_LONG )                                                                \
@@ -84,7 +85,7 @@ using namespace TrickHLA;
       if ( !valid ) {                                                                                                 \
          ostringstream errmsg;                                                                                        \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                   \
-                << " ERROR: Trick type for the '" << attr->name                                                       \
+                << " ERROR: Trick type for the '" << this->name                                                       \
                 << "' simulation variable (type:"                                                                     \
                 << Utilities::get_trick_type_string( attr->type )                                                     \
                 << ") is not the expected type '"                                                                     \
@@ -97,7 +98,7 @@ using namespace TrickHLA;
       if ( !is_static_array() ) {                                                                                     \
          ostringstream errmsg;                                                                                        \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                   \
-                << " ERROR: Trick ref-attributes for '" << attr->name                                                 \
+                << " ERROR: Trick ref-attributes for '" << this->name                                                 \
                 << "' the variable must be a static array!\n";                                                        \
          DebugHandler::terminate_with_message( errmsg.str() );                                                        \
          return;                                                                                                      \
@@ -127,7 +128,7 @@ using namespace TrickHLA;
    string EncoderClassName::to_string()                                                                               \
    {                                                                                                                  \
       ostringstream msg;                                                                                              \
-      msg << #EncoderClassName << "[" << string( attr->name ) << "]";                                                 \
+      msg << #EncoderClassName << "[" << this->name << "]";                                                           \
       return msg.str();                                                                                               \
    }
 

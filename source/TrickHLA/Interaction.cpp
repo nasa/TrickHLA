@@ -1174,7 +1174,7 @@ bool Interaction::decode(
       set_user_supplied_tag( interaction_item->user_supplied_tag, interaction_item->user_supplied_tag_size );
       mark_changed();
    } else {
-      set_user_supplied_tag( (unsigned char *)NULL, 0 );
+      set_user_supplied_tag( NULL, 0 );
    }
 
    bool any_param_received = false;

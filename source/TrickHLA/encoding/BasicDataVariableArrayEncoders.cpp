@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/parameter_types.h"
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -73,21 +74,21 @@ using namespace TrickHLA;
 #define DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum ) \
                                                                                                                          \
    EncoderClassName::EncoderClassName(                                                                                   \
-      void       *var_address,                                                                                           \
-      ATTRIBUTES *var_attr )                                                                                             \
-      : EncoderBase( var_address, var_attr )                                                                             \
+      void       *addr,                                                                                                  \
+      ATTRIBUTES *attr )                                                                                                 \
+      : EncoderBase( addr, attr )                                                                                        \
    {                                                                                                                     \
-      bool valid = ( attr->type == TrickTypeEnum )                                                                       \
-                   || ( ( ( attr->type == TRICK_LONG )                                                                   \
-                          || ( attr->type == TRICK_UNSIGNED_LONG ) )                                                     \
+      bool valid = ( this->type == TrickTypeEnum )                                                                       \
+                   || ( ( ( this->type == TRICK_LONG )                                                                   \
+                          || ( this->type == TRICK_UNSIGNED_LONG ) )                                                     \
                         && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                                              \
-                   || ( attr->type == TRICK_UNSIGNED_CHARACTER );                                                        \
+                   || ( this->type == TRICK_UNSIGNED_CHARACTER );                                                        \
       if ( !valid ) {                                                                                                    \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
-                << " ERROR: Trick type for the '" << attr->name                                                          \
+                << " ERROR: Trick type for the '" << this->name                                                          \
                 << "' simulation variable (type:"                                                                        \
-                << Utilities::get_trick_type_string( attr->type )                                                        \
+                << Utilities::get_trick_type_string( this->type )                                                        \
                 << ") is not the expected type '"                                                                        \
                 << Utilities::get_trick_type_string( TrickTypeEnum ) << "'.\n";                                          \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
@@ -97,7 +98,7 @@ using namespace TrickHLA;
       if ( !is_dynamic_array() ) {                                                                                       \
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
-                << " ERROR: Trick ref-attributes for '" << attr->name                                                    \
+                << " ERROR: Trick ref-attributes for '" << this->name                                                    \
                 << "' the variable must be a dynamic variable array!\n";                                                 \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
          return;                                                                                                         \
@@ -161,7 +162,7 @@ using namespace TrickHLA;
    string EncoderClassName::to_string()                                                                                  \
    {                                                                                                                     \
       ostringstream msg;                                                                                                 \
-      msg << #EncoderClassName << "[" << string( attr->name ) << "]";                                                    \
+      msg << #EncoderClassName << "[" << this->name << "]";                                                              \
       return msg.str();                                                                                                  \
    }                                                                                                                     \
                                                                                                                          \
@@ -172,7 +173,7 @@ using namespace TrickHLA;
       if ( ( new_size != attr_element_count )                                                                            \
            || ( *( static_cast< void ** >( address ) ) == NULL ) ) {                                                     \
                                                                                                                          \
-         if ( attr->type == TRICK_STRING ) {                                                                             \
+         if ( this->type == TRICK_STRING ) {                                                                             \
             /* TMM_resize_array_1d_a does not support STL strings. */                                                    \
             if ( *( static_cast< void ** >( address ) ) != NULL ) {                                                      \
                TMM_delete_var_a( *( static_cast< void ** >( address ) ) );                                               \
@@ -198,7 +199,7 @@ using namespace TrickHLA;
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::resize_trick_var():" << __LINE__                                              \
                 << " ERROR: Could not allocate memory for Trick variable"                                                \
-                << " with name '" << attr->name << "' with " << new_size                                                 \
+                << " with name '" << this->name << "' with " << new_size                                                 \
                 << " elements!\n";                                                                                       \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
       }                                                                                                                  \

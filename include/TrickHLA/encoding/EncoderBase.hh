@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/attributes.h"
+#include "trick/parameter_types.h"
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -81,8 +82,7 @@ class EncoderBase
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA EncoderBase class. */
-   EncoderBase( void       *var_address,
-                ATTRIBUTES *var_attr );
+   EncoderBase( void *addr, ATTRIBUTES *attr );
 
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
    virtual ~EncoderBase();
@@ -95,29 +95,24 @@ class EncoderBase
 
    void calculate_attr_element_count();
 
-   bool const is_primitive()
-   {
-      return ( ( attr != NULL ) && ( attr->num_index == 0 ) );
-   }
-
    bool const is_array()
    {
-      return ( ( attr != NULL ) && ( attr->num_index > 0 ) );
+      return is_array_flag;
    }
 
    bool const is_1d_array()
    {
-      return ( ( attr != NULL ) && ( attr->num_index == 1 ) );
+      return is_1d_array_flag;
    }
 
    bool const is_static_array()
    {
-      return ( is_array() && ( attr->index[attr->num_index - 1].size != 0 ) );
+      return is_static_array_flag;
    }
 
    bool const is_dynamic_array()
    {
-      return ( is_array() && ( attr->index[attr->num_index - 1].size == 0 ) );
+      return is_dynamic_array_flag;
    }
 
    bool const is_static_in_size()
@@ -132,9 +127,16 @@ class EncoderBase
    }
 
   protected:
+   std::string name; ///< @trick_units{--} Name of the trick variable.
+
+   TRICK_TYPE type; ///< @trick_units{--} The trick variable type.
+
    void *address; ///< @trick_units{--} Address of the trick variable.
 
-   ATTRIBUTES *attr; ///< @trick_io{**} The attributes of the trick variable.
+   bool is_array_flag;         ///< @trick_units{--} Flag indicating is array.
+   bool is_1d_array_flag;      ///< @trick_units{--} Flag indicating is 1D array.
+   bool is_static_array_flag;  ///< @trick_units{--} Flag indicating is static array.
+   bool is_dynamic_array_flag; ///< @trick_units{--} Flag indicating is dynamic array.
 
    std::size_t attr_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick variable.
 

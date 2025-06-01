@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/parameter_types.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
@@ -70,15 +71,15 @@ using namespace std;
 using namespace TrickHLA;
 
 CharOpaqueDataEncoder::CharOpaqueDataEncoder(
-   void       *var_address,
-   ATTRIBUTES *var_attr )
-   : EncoderBase( var_address, var_attr )
+   void       *addr,
+   ATTRIBUTES *attr )
+   : EncoderBase( addr, attr )
 {
    if ( ( attr->type != TRICK_CHARACTER )
         && ( attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << attr->name
+             << " ERROR: Trick type for the '" << this->name
              << "' simulation variable (type:"
              << Utilities::get_trick_type_string( attr->type )
              << ") is not the expected type '"
@@ -90,7 +91,7 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << attr->name
+             << " ERROR: Trick ref-attributes for '" << this->name
              << "' the variable must be a dynamic variable array!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -136,7 +137,7 @@ bool const CharOpaqueDataEncoder::decode(
 
 string CharOpaqueDataEncoder::to_string()
 {
-   return ( "CharOpaqueDataEncoder[" + string( attr->name ) + "]" );
+   return ( "CharOpaqueDataEncoder[" + this->name + "]" );
 }
 
 void CharOpaqueDataEncoder::resize_trick_var(
@@ -162,7 +163,7 @@ void CharOpaqueDataEncoder::resize_trick_var(
          ostringstream errmsg;
          errmsg << "CharOpaqueDataEncoder::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"
-                << " with name '" << attr->name << "' with " << new_size
+                << " with name '" << this->name << "' with " << new_size
                 << " elements!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }

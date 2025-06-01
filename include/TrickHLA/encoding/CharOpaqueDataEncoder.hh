@@ -76,8 +76,7 @@ class CharOpaqueDataEncoder : public EncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharOpaqueDataEncoder( void       *var_address,
-                          ATTRIBUTES *var_attr );
+   CharOpaqueDataEncoder( void *addr, ATTRIBUTES *attr );
 
    /*! @brief Destructor for the TrickHLA CharOpaqueDataEncoder class. */
    virtual ~CharOpaqueDataEncoder();

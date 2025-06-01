@@ -78,8 +78,7 @@ namespace TrickHLA
                                                                                               \
      public:                                                                                  \
       /*! @brief Default constructor. */                                                      \
-      EncoderClassName( void       *var_address,                                              \
-                        ATTRIBUTES *var_attr );                                               \
+      EncoderClassName( void *addr, ATTRIBUTES *attr );                                       \
                                                                                               \
       /*! @brief Destructor for the TrickHLA EncoderClassName class. */                       \
       virtual ~EncoderClassName();                                                            \

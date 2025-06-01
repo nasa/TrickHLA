@@ -110,11 +110,7 @@ EncoderBase *EncoderFactory::create(
       return NULL;
    }
 
-   // The individual encoders are responsible for deleting ref2->attr.
    EncoderBase *encoder = create( ref2->address, ref2->attr, hla_encoding );
-
-   // TODO: Handle deleting ref2 without affecting ref2->address, ref2->attr.
-   // Does deleting ref2 also deallocate sub-elements of ref2 like attr?
    delete ref2;
 
    return encoder;
