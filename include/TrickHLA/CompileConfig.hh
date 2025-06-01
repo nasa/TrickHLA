@@ -29,9 +29,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_COMPILE_CONFIG_HH
 #define TRICKHLA_COMPILE_CONFIG_HH
 
-// Use the Encoder help wrappers around Trick ref-attributes.
-#define USE_HLA_ENCODER_HELPER_WRAPPERS
-
 // Trick does not support the std::wstring type in the Memory Manager for now.
 // Default: NO_TRICK_WSTRING_MM_SUPPORT
 #define NO_TRICK_WSTRING_MM_SUPPORT

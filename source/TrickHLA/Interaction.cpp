@@ -906,11 +906,7 @@ bool Interaction::send(
 
       // Add all the parameter values to the map.
       for ( int i = 0; i < param_count; ++i ) {
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].encode();
-#else
-         param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
-#endif
       }
 
       // Release mutex lock as auto_unlock_mutex goes out of scope
@@ -986,11 +982,7 @@ bool Interaction::send(
             message_publish( MSG_NORMAL, "Interaction::send():%d Adding '%s' to parameter map.\n",
                              __LINE__, parameters[i].get_FOM_name() );
          }
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].encode();
-#else
-         param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
-#endif
       }
 
       // auto_unlock_mutex unlocks the mutex here as it goes out of scope.
@@ -1115,11 +1107,6 @@ void Interaction::process_interaction()
          }
       }
 
-      // Unpack all the parameter data.
-      for ( int i = 0; i < param_count; ++i ) {
-         parameters[i].unpack_parameter_buffer();
-      }
-
       mark_unchanged();
 
       // Unlock the mutex as the auto_unlock_mutex goes out of scope.
@@ -1191,16 +1178,9 @@ bool Interaction::decode(
             message_publish( MSG_NORMAL, "Interaction::decode():%d Decoding '%s' from parameter map.\n",
                              __LINE__, parameters[param_item->index].get_FOM_name() );
          }
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
          if ( parameters[param_item->index].decode( VariableLengthData( param_item->data, param_item->size ) ) ) {
             any_param_received = true;
          }
-#else
-         // Extract the parameter data for the given parameter-item.
-         if ( parameters[param_item->index].extract_data( param_item->size, param_item->data ) ) {
-            any_param_received = true;
-         }
-#endif
       }
 
       // Now that we extracted the data from the parameter-item remove it

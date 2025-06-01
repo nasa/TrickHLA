@@ -106,15 +106,12 @@ class Parameter
    /*! @brief Initializes the TrickHLA Parameter from the supplied address and
     * ATTRIBUTES of the trick variable.
     *  @param interaction_fom_name FOM name of the interaction.
-    *  @param in_addr Address of the trick variable.
-    *  @param in_attr ATTRIBUTES of the trick variable.
+    *  @param address Address of the trick variable.
+    *  @param attr ATTRIBUTES of the trick variable.
     */
    void initialize( char const *interaction_fom_name,
-                    void       *in_addr,
-                    ATTRIBUTES *in_attr );
-
-   /*! @brief Initializes the TrickHLA Parameter. */
-   void complete_initialization();
+                    void       *address,
+                    ATTRIBUTES *attr );
 
    RTI1516_NAMESPACE::VariableLengthData &encode();
 
@@ -153,28 +150,6 @@ class Parameter
    void set_encoding( EncodingEnum in_type )
    {
       rti_encoding = in_type;
-
-      // Determine if we need to do a byteswap for data transmission.
-      byteswap = Utilities::is_transmission_byteswap( rti_encoding );
-   }
-
-   /*! @brief Calculate the number of attribute items associated with this parameter.
-    *  @return The number of attribute items associated with this parameter. */
-   int calculate_number_of_items()
-   {
-      calculate_size_and_number_of_items();
-      return num_items;
-   }
-
-   /*! @brief Determines if the parameter is static in size.
-    *  @return True if parameter size is static. */
-   bool is_static_in_size() const;
-
-   /*! @brief Determines if the parameter has to be byte swapped.
-    *  @return True if parameter is byte swapped. */
-   bool is_byteswap() const
-   {
-      return byteswap;
    }
 
    /*! @brief Get the HLA Parameter handle.
@@ -190,17 +165,6 @@ class Parameter
    {
       this->param_handle = hdl;
    }
-
-   /*! @brief Gets the HLA Parameter Value using the appropriate encoding.
-    *  @return Encoded parameter value. */
-   RTI1516_NAMESPACE::VariableLengthData get_encoded_parameter_value();
-
-   /*! @brief Extract the data out of the HLA Parameter Value.
-    *  @param param_size Parameter data size.
-    *  @param param_data Parameter data.
-    *  @return True if successfully extracted data, false otherwise. */
-   bool extract_data( int const            param_size,
-                      unsigned char const *param_data );
 
    /*! @brief Check if a parameter value has changed.
     *  @return True if a parameter value has changed; False otherwise. */
@@ -221,21 +185,6 @@ class Parameter
       this->value_changed = false;
    }
 
-   /*! @brief Unpack the parameter from the buffer into the trick-variable
-    * using the appropriate decoding. */
-   void unpack_parameter_buffer();
-
-   /*! @brief Prints the contents of buffer used to encode/decode the parameter
-    * to the console on standard out. */
-   void print_buffer() const;
-
-   /*! @brief Get the Trick ATTRIBUTES for this Parameter.
-    *  @return A copy of the Trick ATTRIBUTES structure for this Parameter. */
-   ATTRIBUTES get_ref2_attributes() const
-   {
-      return ( *attr );
-   }
-
    /*! @brief Get the RTI encoding for this Parameter.
     *  @return The encoding type for this Parameter. */
    EncodingEnum get_rti_encoding() const
@@ -244,92 +193,13 @@ class Parameter
    }
 
   private:
-   unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
-   int            buffer_capacity; ///< @trick_units{--} The capacity of the buffer.
-   int            buffer_size;     ///< @trick_units{--} The size of the data in the buffer.
-
-   bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
-
-   int size;      ///< @trick_units{--} The size of the attribute in bytes.
-   int num_items; ///< @trick_units{--} Number of attribute items, length of the array.
-
    bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
 
-   unsigned int HLAtrue; ///< @trick_units{--} A 32-bit integer with a value of 1 on a Big Endian computer.
-
-   bool byteswap; ///< @trick_units{--} Flag to indicate byte-swap before RTI Rx/Tx.
-
-   void       *address;              ///< @trick_io{**} Address of the trick variable
-   ATTRIBUTES *attr;                 ///< @trick_io{**} ATTRIBUTES of the trick variable
-   char       *interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
+   char *interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
 
    EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this parameter data.
 
    RTI1516_NAMESPACE::ParameterHandle param_handle; ///< @trick_io{**} The RTI parameter handle.
-
-   /*! @brief Ensure the parameter buffer has at least the specified capacity.
-    *  @param capacity Desired capacity of the buffer in bytes. */
-   void ensure_buffer_capacity( int capacity );
-
-   /*! @brief Pack the parameter into the buffer using the appropriate encoding. */
-   void pack_parameter_buffer();
-
-   /*! @brief Gets the parameter size in bytes.
-    *  @return The size in bytes of the parameter. */
-   int get_parameter_size();
-
-   /*! @brief Calculates the parameter size in bytes and the number of items
-    * it contains. */
-   void calculate_size_and_number_of_items();
-
-   /*! @brief Calculates the number of static items contained by the parameter. */
-   void calculate_static_number_of_items();
-
-   /*! @brief Determines if the HLA interaction parameter type is supported
-    * given the RTI encoding.
-    *  @return True if supported, false otherwise. */
-   bool is_supported_parameter_type() const;
-
-   /*! @brief Encode a boolean parameter into the buffer using the HLAboolean
-    * data type which is encoded as a HLAinteger32BE. */
-   void encode_boolean_to_buffer();
-
-   /*! @brief Decode a boolean parameter from the buffer using the HLAboolean
-    * data type which is encoded as a HLAinteger32BE. */
-   void decode_boolean_from_buffer() const;
-
-   /*! @brief Encode the interaction parameter using the HLAlogicalTime 64-bit
-    * integer encoding. */
-   void encode_logical_time();
-
-   /*! @brief Decode the interaction parameter that is using the HLAlogicalTime
-    * 64-bit integer encoding. */
-   void decode_logical_time();
-
-   /*! @brief Encode the data as HLA opaque data into the buffer. */
-   void encode_opaque_data_to_buffer();
-
-   /*! @brief Decode the opaque data in the buffer. */
-   void decode_opaque_data_from_buffer();
-
-   /*! @brief Decode the raw data in the buffer. */
-   void decode_raw_data_from_buffer();
-
-   /*! @brief Encode a string parameter into the buffer using the appropriate encoding. */
-   void encode_string_to_buffer();
-
-   /*! @brief Decode a string from the buffer into the parameter using the appropriate decoding. */
-   void decode_string_from_buffer();
-
-   /*! @brief Copy the data from the source to the destination and byteswap as needed.
-    *  @param dest      Destination to copy data to.
-    *  @param src       Source of the data to byteswap and copy from.
-    *  @param type      The type of the data.
-    *  @param num_bytes The number of bytes in the source array. */
-   void byteswap_buffer_copy( void       *dest,
-                              void const *src,
-                              int const   type,
-                              int const   num_bytes ) const;
 
   private:
    // Do not allow the copy constructor or assignment operator.
