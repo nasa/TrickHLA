@@ -133,9 +133,9 @@ class Attribute
    }
 
    /*! @brief Set the reflection rate configuration type. */
-   void set_configuration( DataUpdateEnum const c )
+   void set_configuration( DataUpdateEnum const configuration )
    {
-      this->config = c;
+      this->config = configuration;
    }
 
    /*! @brief Determine the cycle-ratio given the core job cycle rate and the
@@ -366,11 +366,6 @@ class Attribute
    }
 
   private:
-   /*! @brief Determines if the HLA object attribute type is supported given
-    *         the RTI encoding.
-    *  @return True if supported, false otherwise. */
-   bool is_supported_attribute_type() const;
-
    bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
 
    bool update_requested; ///< @trick_units{--} Flag to indicate another federate has requested an attribute update.
@@ -385,8 +380,6 @@ class Attribute
    bool pull_requested;   ///< @trick_units{--} Has someone asked to own us?
    bool push_requested;   ///< @trick_units{--} Is someone giving up ownership?
    bool divest_requested; ///< @trick_units{--} Are we releasing ownership?
-
-   bool initialized; ///< @trick_units{--} Has this attribute been initialized?
 
   private:
    // Do not allow the copy constructor or assignment operator.

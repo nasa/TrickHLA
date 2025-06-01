@@ -101,8 +101,7 @@ Attribute::Attribute()
      encoder( NULL ),
      pull_requested( false ),
      push_requested( false ),
-     divest_requested( false ),
-     initialized( false )
+     divest_requested( false )
 {
    return;
 }
@@ -251,8 +250,6 @@ void Attribute::initialize(
           << " Encoder:" << this->encoder->to_string() << std::endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
-
-   this->initialized = true;
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       string attr_handle_string;
