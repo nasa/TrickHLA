@@ -143,22 +143,6 @@ class Attribute
     *  @param core_job_cycle_time Core job cycle time in seconds. */
    void determine_cycle_ratio( double const core_job_cycle_time );
 
-   /*! @brief Pack the attribute into the buffer using the appropriate encoding. */
-   void pack_attribute_buffer();
-
-   /*! @brief Unpack the attribute from the buffer into the trick-variable
-    *         using the appropriate decoding. */
-   void unpack_attribute_buffer();
-
-   /*! @brief Gets the encoded attribute value.
-    *  @return The attribute value that contains the buffer of the encoded attribute. */
-   RTI1516_NAMESPACE::VariableLengthData get_attribute_value();
-
-   /*! @brief Extract the data out of the HLA Attribute Value.
-    *  @param attr_value The variable length data buffer containing the attribute value.
-    *  @return True if successfully extracted data, false otherwise. */
-   bool extract_data( RTI1516_NAMESPACE::VariableLengthData const *attr_value );
-
    /*! @brief Determine if an attribute was received from another federate.
     *  @return True if new attribute value has been received. */
    bool is_received() const
@@ -307,13 +291,6 @@ class Attribute
       this->divest_requested = enable;
    }
 
-   /*! @brief Determine if byteswapping is required.
-    *  @return True is byte swapping of the attribute date is required. */
-   bool is_byteswap() const
-   {
-      return byteswap;
-   }
-
    /*! @brief Determine is the data cycle is ready for sending data.
     *  @return True if the data cycle is ready for a send, false otherwise.*/
    bool is_data_cycle_ready() const
@@ -374,31 +351,6 @@ class Attribute
       this->attr_handle = id;
    }
 
-   /*! @brief Get the Trick simulation variable associated with this attribute. */
-   void *get_sim_variable_address()
-   {
-      // Address to a string is different so handle differently.
-      if ( ( ref2->attr->type == TRICK_STRING )
-           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
-                && ( ref2->attr->num_index > 0 )
-                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         return ( *( static_cast< void ** >( ref2->address ) ) );
-      } else {
-         return ( ref2->address );
-      }
-   }
-
-   /*! @brief Prints the contents of buffer used to encode/decode the attribute
-    *         to the console on standard out. */
-   void print_buffer() const;
-
-   /*! @brief Get the Trick "Ref Attributes" associated with this attribute.
-    *  @return A pointer to the Trick "Ref Attributes" class. */
-   ATTRIBUTES get_ref2_attributes() const
-   {
-      return ( *( ref2->attr ) );
-   }
-
    /*! @brief Get the RTI encoding for this attribute.
     *  @return The RTI encoding type enumeration value. */
    EncodingEnum get_rti_encoding() const
@@ -411,109 +363,20 @@ class Attribute
    void set_encoding( EncodingEnum const in_type )
    {
       rti_encoding = in_type;
-
-      // Determine if we need to do a byteswap for data transmission.
-      byteswap = Utilities::is_transmission_byteswap( rti_encoding );
    }
-
-   /*! @brief Determines if the attribute is static in size.
-    *  @return True if attribute size is static. */
-   bool is_static_in_size() const;
-
-   /*! @brief Calculate the number of items in the attribute.
-    *  @return Number of items in the attribute. */
-   int const calculate_number_of_items()
-   {
-      calculate_size_and_number_of_items();
-      return num_items;
-   }
-
-   /*! @brief Gets the attribute size in bytes.
-    *  @return The size in bytes of the attribute. */
-   int get_attribute_size();
 
   private:
-   /*! @brief Calculates the attribute size in bytes and the number of items it contains. */
-   void calculate_size_and_number_of_items();
-
-   /*! @brief Calculates the number of items contained by the attribute. */
-   void calculate_static_number_of_items();
-
-   /*! @brief Ensure the attribute buffer has at least the specified capacity.
-    *  @param capacity Desired capacity of the buffer in bytes. */
-   void ensure_buffer_capacity( int const capacity );
-
    /*! @brief Determines if the HLA object attribute type is supported given
     *         the RTI encoding.
     *  @return True if supported, false otherwise. */
    bool is_supported_attribute_type() const;
 
-   /*! @brief Encode a boolean attribute into the buffer using the HLAboolean
-    * data type which is encoded as a HLAinteger32BE. */
-   void encode_boolean_to_buffer();
-
-   /*! @brief Decode a boolean attribute from the buffer using the HLAboolean
-    * data type which is encoded as a HLAinteger32BE. */
-   void decode_boolean_from_buffer() const;
-
-   /*! @brief Encode the object attribute using the HLAlogicalTime 64-bit
-    * integer encoding. */
-   void encode_logical_time();
-
-   /*! @brief Decode the object attribute that is using the HLAlogicalTime
-    * 64-bit integer encoding. */
-   void decode_logical_time();
-
-   /*! @brief Encode the data as HLA opaque data into the buffer. */
-   void encode_opaque_data_to_buffer();
-
-   /*! @brief Decode the opaque data in the buffer. */
-   void decode_opaque_data_from_buffer();
-
-   /*! @brief Decode the raw data in the buffer. */
-   void decode_raw_data_from_buffer();
-
-   /*! @brief Encode a string attribute into the buffer using the appropriate
-    * encoding. */
-   void encode_string_to_buffer();
-
-   /*! @brief Decode a string from the buffer into the attribute using the
-    * appropriate decoding. */
-   void decode_string_from_buffer();
-
-   /*! @brief Copy the data from the source to the destination and byteswap as
-    * needed.
-    *  @param dest      Destination to copy data to.
-    *  @param src       Source of the data to byteswap and copy from.
-    *  @param type      The type of the data.
-    *  @param num_bytes The number of bytes in the source array.
-    *  */
-   void byteswap_buffer_copy( void       *dest,
-                              void const *src,
-                              int const   type,
-                              int const   num_bytes ) const;
-
-   unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
-   int            buffer_capacity; ///< @trick_units{count} The capacity of the buffer.
-   int            buffer_size;     ///< @trick_units{count} The size of the encoded attribute in the buffer.
-
-   bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
-
-   int size;      ///< @trick_units{count} The size of the attribute in bytes.
-   int num_items; ///< @trick_units{count} Number of attribute items, length of the array.
-
    bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
 
    bool update_requested; ///< @trick_units{--} Flag to indicate another federate has requested an attribute update.
 
-   unsigned int HLAtrue; ///< @trick_units{--} A 32-bit integer with a value of 1 on a Big Endian computer.
-
-   bool byteswap; ///< @trick_units{--} Flag to indicate byte-swap before RTI Rx/Tx.
-
    int cycle_ratio; ///< @trick_units{--} Ratio of the attribute cycle-time to the send_cyclic_and_requested_data job cycle time.
    int cycle_cnt;   ///< @trick_units{count} Internal cycle counter used to determine when cyclic data will be sent.
-
-   REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.
 
    EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this attribute data.
 

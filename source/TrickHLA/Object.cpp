@@ -1801,18 +1801,8 @@ void Object::send_requested_data(
       packing->pack();
    }
 
-   // Buffer the requested attribute values for the object.
-   pack_requested_attribute_buffers();
-
-   try {
-      // Create the map of "requested" attribute values we will be updating.
-      create_requested_attribute_set();
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::send_requested_data():%d Can not create attribute value/pair set: '%s'\n",
-                       __LINE__, rti_err_msg.c_str() );
-   }
+   // Create the map of "requested" attribute values we will be updating.
+   create_requested_attribute_set();
 
    Federate const *federate = get_federate();
 
@@ -2063,23 +2053,8 @@ void Object::send_cyclic_and_requested_data(
       packing->pack();
    }
 
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
    // Create the map of "cyclic" and requested attribute values we will be updating.
    create_attribute_set( CONFIG_CYCLIC, true );
-#else
-   // Buffer the attribute values for the object.
-   pack_cyclic_and_requested_attribute_buffers();
-
-   try {
-      // Create the map of "cyclic" and requested attribute values we will be updating.
-      create_attribute_set( CONFIG_CYCLIC, true );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d For object '%s', cannot create attribute value/pair set: '%s'\n",
-                       __LINE__, get_name(), rti_err_msg.c_str() );
-   }
-#endif
 
    // Make sure we don't send an empty attribute map to the other federates.
    if ( !attribute_values_map->empty() ) {
@@ -2333,25 +2308,9 @@ void Object::send_zero_lookahead_and_requested_data(
       packing->pack();
    }
 
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
    // Create the map of "zero lookahead" and requested attribute values
    // we will be updating.
    create_attribute_set( CONFIG_ZERO_LOOKAHEAD, true );
-#else
-   // Buffer the attribute values for the object.
-   pack_zero_lookahead_and_requested_attribute_buffers();
-
-   try {
-      // Create the map of "zero lookahead" and requested attribute values we
-      // will be updating.
-      create_attribute_set( CONFIG_ZERO_LOOKAHEAD, true );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d For object '%s', cannot create attribute value/pair set: '%s'\n",
-                       __LINE__, get_name(), rti_err_msg.c_str() );
-   }
-#endif
 
    // Make sure we don't send an empty attribute map to the other federates.
    if ( attribute_values_map->empty() ) {
@@ -2619,23 +2578,8 @@ void Object::send_blocking_io_data()
       packing->pack();
    }
 
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
    // Create the map of "blocking I/O" attribute values we will be updating.
    create_attribute_set( CONFIG_BLOCKING_IO, false );
-#else
-   // Buffer the attribute values for the object.
-   pack_blocking_io_attribute_buffers();
-
-   try {
-      // Create the map of "blocking I/O" attribute values we will be updating.
-      create_attribute_set( CONFIG_BLOCKING_IO, false );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d For object '%s', cannot create attribute value/pair set: '%s'\n",
-                       __LINE__, get_name(), rti_err_msg.c_str() );
-   }
-#endif
 
    // Make sure we don't send an empty attribute map to the other federates.
    if ( attribute_values_map->empty() ) {
@@ -2903,9 +2847,6 @@ void Object::receive_cyclic_data()
                           __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
 #endif
 
-         // Unpack the buffer and copy the values to the object attributes.
-         unpack_cyclic_attribute_buffers();
-
          // Unpack the data for the object if we have a packing object.
          if ( packing != NULL ) {
             packing->unpack();
@@ -2981,9 +2922,6 @@ void Object::receive_zero_lookahead_data()
                        __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
 #endif
 
-      // Unpack the buffer and copy the values to the object attributes.
-      unpack_zero_lookahead_attribute_buffers();
-
       // Unpack the data for the object if we have a packing object.
       if ( packing != NULL ) {
          packing->unpack();
@@ -3058,9 +2996,6 @@ void Object::receive_blocking_io_data()
       message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d for '%s' at HLA-logical-time=%G\n",
                        __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds() );
 #endif
-
-      // Unpack the buffer and copy the values to the object attributes.
-      unpack_blocking_io_attribute_buffers();
 
       // Unpack the data for the object if we have a packing object.
       if ( packing != NULL ) {
@@ -3143,27 +3078,9 @@ void Object::send_init_data()
       packing->pack();
    }
 
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
-
    // Create the map of "initialize" attribute values we will be updating,
    // but do not include any requested attributes.
    create_attribute_set( CONFIG_INITIALIZE, false );
-
-#else
-   // Buffer the attribute values for the object.
-   pack_init_attribute_buffers();
-
-   try {
-      // Create the map of "initialize" attribute values we will be updating,
-      // but do not include any requested attributes.
-      create_attribute_set( CONFIG_INITIALIZE, false );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d For object '%s', can not create attribute value/pair set: '%s'\n",
-                       __LINE__, get_name(), rti_err_msg.c_str() );
-   }
-#endif
 
    try {
       // Do not send any data if federate save / restore has begun (see
@@ -3346,9 +3263,6 @@ void Object::receive_init_data()
                        __LINE__, get_name() );
 #endif
 
-      // Unpack the buffer and copy the values to the object attributes.
-      unpack_init_attribute_buffers();
-
       // Unpack the data for the object if we have a packing object.
       if ( packing != NULL ) {
          packing->unpack();
@@ -3396,12 +3310,8 @@ void Object::create_requested_attribute_set()
             message_publish( MSG_NORMAL, "Object::create_requested_attribute_set():%d Adding '%s' to attribute map.\n",
                              __LINE__, attributes[i].get_FOM_name() );
          }
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
+
          ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
-#else
-         // Create the Attribute-Value from the buffered data.
-         ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].get_attribute_value();
-#endif
       }
    }
 }
@@ -3450,13 +3360,7 @@ void Object::create_attribute_set(
                   message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For cyclic object '%s', adding '%s' to attribute map.\n",
                                    __LINE__, get_name(), attributes[i].get_FOM_name() );
                }
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
                ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
-#else
-               // Create the Attribute-Value from the buffered data.
-               ( *attribute_values_map )[attributes[i].get_attribute_handle()] =
-                  attributes[i].get_attribute_value();
-#endif
             }
          }
       }
@@ -3487,13 +3391,7 @@ void Object::create_attribute_set(
                   message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For object '%s', adding '%s' to attribute map.\n",
                                    __LINE__, get_name(), attributes[i].get_FOM_name() );
                }
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
                ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
-#else
-               // Create the Attribute-Value from the buffered data.
-               ( *attribute_values_map )[attributes[i].get_attribute_handle()] =
-                  attributes[i].get_attribute_value();
-#endif
             }
          }
       }
@@ -3511,13 +3409,7 @@ void Object::create_attribute_set(
             // it here.
             attributes[i].set_update_requested( false );
 
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
             ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
-#else
-            // Create the Attribute-Value from the buffered data.
-            ( *attribute_values_map )[attributes[i].get_attribute_handle()] =
-               attributes[i].get_attribute_value();
-#endif
          }
       }
    }
@@ -3567,16 +3459,9 @@ bool Object::decode(
 
       // Determine if this object has this attribute.
       if ( attr != NULL ) {
-
-#if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
          if ( attr->decode( iter->second ) ) {
             any_attr_received = true;
          }
-#else
-         if ( attr->extract_data( &( iter->second ) ) ) {
-            any_attr_received = true;
-         }
-#endif
       } else if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, iter->first );
@@ -5286,37 +5171,6 @@ bool Object::any_remotely_owned_subscribed_attribute(
       }
    }
    return false; // No attribute remotely owned, subscribed for given config.
-}
-
-void Object::pack_requested_attribute_buffers()
-{
-   for ( int i = 0; i < attr_count; ++i ) {
-      if ( attributes[i].is_update_requested() ) {
-         attributes[i].pack_attribute_buffer();
-      }
-   }
-}
-
-void Object::pack_attribute_buffers(
-   DataUpdateEnum const attr_config,
-   bool const           include_requested )
-{
-   for ( int i = 0; i < attr_count; ++i ) {
-      if ( ( include_requested && attributes[i].is_update_requested() )
-           || ( attributes[i].get_configuration() & attr_config ) == attr_config ) {
-         attributes[i].pack_attribute_buffer();
-      }
-   }
-}
-
-void Object::unpack_attribute_buffers(
-   DataUpdateEnum const attr_config )
-{
-   for ( int i = 0; i < attr_count; ++i ) {
-      if ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) {
-         attributes[i].unpack_attribute_buffer();
-      }
-   }
 }
 
 void Object::set_to_unblocking_cyclic_reads()

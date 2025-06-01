@@ -254,41 +254,9 @@ void SinePacking::pack()
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's, where most users may never go.
-      string     name_attr_str = "Name";
-      Attribute *attr          = get_attribute( name_attr_str.c_str() );
+      string name_attr_str = "Name";
 
       msg << "\t FOM-Attribute '" << name_attr_str << "'\n";
-
-      if ( attr != NULL ) {
-
-         // Get the address of the "name" simulation data variable.
-         char *name_sim_var = static_cast< char * >( attr->get_sim_variable_address() );
-
-         // Make a little change to the name and show it.
-         if ( name_sim_var != NULL ) {
-
-            // Number of bytes ref-attributes says this variable is.
-            int const name_sim_var_size = attr->get_attribute_size();
-
-            // NOTE: Make the last character either a '0' through '9' character
-            // so that we can see that the name is changing.
-            int name_len = strnlen( name_sim_var, name_sim_var_size );
-            if ( name_len > 0 ) {
-               name_sim_var[name_len - 1] = (char)( '0' + ( pack_count % 10 ) );
-            }
-
-            msg << "\t Value:'" << string( name_sim_var ) << "'\n";
-         } else {
-            msg << "\t Value:NULL\n";
-         }
-
-         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PACKING ) ) {
-            // Print the state of the TrickHLA-Attribute internal buffer.
-            attr->print_buffer();
-         }
-      } else {
-         msg << "\t NULL Attribute for FOM-Attribute '" << name_attr_str << "'\n";
-      }
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -408,31 +376,9 @@ void SinePacking::unpack()
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's where most users may never go.
-      string     name_attr_str = "Name";
-      Attribute *attr          = get_attribute( name_attr_str.c_str() );
+      string name_attr_str = "Name";
 
       msg << "\t FOM-Attribute '" << name_attr_str << "'\n";
-
-      if ( attr != NULL ) {
-
-         // Get the address of the "name" simulation data variable.
-         char *name_sim_var = static_cast< char * >( attr->get_sim_variable_address() );
-
-         // Display the name.
-         if ( name_sim_var != NULL ) {
-            msg << "\t Value:'" << string( name_sim_var ) << "'\n";
-         } else {
-            msg << "\t Value:NULL\n";
-         }
-
-         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PACKING ) ) {
-            // Print the state of the TrickHLA-Attribute internal buffer.
-            attr->print_buffer();
-         }
-      } else {
-         msg << "\t NULL Attribute for FOM-Attribute '" << name_attr_str
-             << "'\n";
-      }
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
