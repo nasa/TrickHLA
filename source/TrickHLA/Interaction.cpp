@@ -1197,7 +1197,7 @@ bool Interaction::decode(
          }
 #else
          // Extract the parameter data for the given parameter-item.
-         if ( parameters[param_item->index].decode( param_item->size, param_item->data ) ) {
+         if ( parameters[param_item->index].extract_data( param_item->size, param_item->data ) ) {
             any_param_received = true;
          }
 #endif
