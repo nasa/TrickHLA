@@ -144,7 +144,7 @@ void CharOpaqueDataEncoder::resize_trick_var(
    size_t const new_size )
 {
    /* Trick array variable size does not match the new size. */
-   if ( ( new_size != attr_element_count )
+   if ( ( new_size != var_element_count )
         || ( *( static_cast< void ** >( address ) ) == NULL ) ) {
 
       if ( *( static_cast< void ** >( address ) ) == NULL ) {
@@ -157,7 +157,7 @@ void CharOpaqueDataEncoder::resize_trick_var(
       }
 
       /* Update the element count to the new size. */
-      attr_element_count = new_size;
+      var_element_count = new_size;
 
       if ( *static_cast< void ** >( address ) == NULL ) {
          ostringstream errmsg;

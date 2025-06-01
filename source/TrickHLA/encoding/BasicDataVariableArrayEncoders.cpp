@@ -107,7 +107,7 @@ using namespace TrickHLA;
       EncodableDataType data_prototype;                                                                                  \
       this->encoder = new HLAvariableArray( data_prototype );                                                            \
                                                                                                                          \
-      resize_data_elements( attr_element_count );                                                                        \
+      resize_data_elements( var_element_count );                                                                         \
    }                                                                                                                     \
                                                                                                                          \
    EncoderClassName::~EncoderClassName()                                                                                 \
@@ -119,16 +119,16 @@ using namespace TrickHLA;
    {                                                                                                                     \
       /* Since the Trick variable is dynamic (i.e. a pointer) its size */                                                \
       /* can change at any point so we need to refresh the counts.     */                                                \
-      calculate_attr_element_count();                                                                                    \
+      calculate_var_element_count();                                                                                     \
                                                                                                                          \
       /* Ensure the number of data elements matches the Trick variable */                                                \
-      resize_data_elements( attr_element_count );                                                                        \
+      resize_data_elements( var_element_count );                                                                         \
                                                                                                                          \
       HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                             \
       SimpleDataType         *array_data    = *static_cast< SimpleDataType ** >( address );                              \
                                                                                                                          \
       /* Copy the Trick array values to the data elements to be encoded. */                                              \
-      for ( size_t i = 0; i < attr_element_count; ++i ) {                                                                \
+      for ( size_t i = 0; i < var_element_count; ++i ) {                                                                 \
          const_cast< EncodableDataType & >(                                                                              \
             dynamic_cast< EncodableDataType const & >(                                                                   \
                array_encoder->get( i ) ) )                                                                               \
@@ -151,7 +151,7 @@ using namespace TrickHLA;
          SimpleDataType *array_data = *static_cast< SimpleDataType ** >( address );                                      \
                                                                                                                          \
          /* Copy the decoded data element values to the Trick array. */                                                  \
-         for ( size_t i = 0; i < attr_element_count; ++i ) {                                                             \
+         for ( size_t i = 0; i < var_element_count; ++i ) {                                                              \
             array_data[i] = dynamic_cast< EncodableDataType const & >( array_encoder->get( i ) ).get();                  \
          }                                                                                                               \
          return true;                                                                                                    \
@@ -170,7 +170,7 @@ using namespace TrickHLA;
       size_t const new_size )                                                                                            \
    {                                                                                                                     \
       /* Trick array variable size does not match the new size. */                                                       \
-      if ( ( new_size != attr_element_count )                                                                            \
+      if ( ( new_size != var_element_count )                                                                             \
            || ( *( static_cast< void ** >( address ) ) == NULL ) ) {                                                     \
                                                                                                                          \
          if ( this->type == TRICK_STRING ) {                                                                             \
@@ -193,7 +193,7 @@ using namespace TrickHLA;
       }                                                                                                                  \
                                                                                                                          \
       /* Update the element count to the new size. */                                                                    \
-      attr_element_count = new_size;                                                                                     \
+      var_element_count = new_size;                                                                                      \
                                                                                                                          \
       if ( *static_cast< SimpleDataType ** >( address ) == NULL ) {                                                      \
          ostringstream errmsg;                                                                                           \

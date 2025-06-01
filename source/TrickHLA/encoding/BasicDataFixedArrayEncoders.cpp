@@ -105,15 +105,15 @@ using namespace TrickHLA;
       }                                                                                                               \
                                                                                                                       \
       EncodableDataType data_prototype;                                                                               \
-      HLAfixedArray    *array_encoder = new HLAfixedArray( data_prototype, attr_element_count );                      \
+      HLAfixedArray    *array_encoder = new HLAfixedArray( data_prototype, var_element_count );                       \
                                                                                                                       \
       this->encoder = array_encoder;                                                                                  \
                                                                                                                       \
-      data_elements.reserve( attr_element_count );                                                                    \
+      data_elements.reserve( var_element_count );                                                                     \
       SimpleDataType *array_data = static_cast< SimpleDataType * >( address );                                        \
                                                                                                                       \
       /* Connect the users array data to the encoder array elements. */                                               \
-      for ( size_t i = 0; i < attr_element_count; ++i ) {                                                             \
+      for ( size_t i = 0; i < var_element_count; ++i ) {                                                              \
          EncodableDataType *element = new EncodableDataType( &array_data[i] );                                        \
          data_elements.push_back( element );                                                                          \
          array_encoder->setElementPointer( i, element );                                                              \

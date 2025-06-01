@@ -78,7 +78,7 @@ EncoderBase::EncoderBase(
    void       *addr,
    ATTRIBUTES *attr )
    : address( addr ),
-     attr_element_count( 0 ),
+     var_element_count( 0 ),
      data(),
      data_elements(),
      encoder( NULL )
@@ -114,15 +114,15 @@ EncoderBase::EncoderBase(
    if ( is_static_in_size() ) {
       // The user variable is either a primitive type or a static
       // multi-dimension array.
-      attr_element_count = 1;
+      var_element_count = 1;
       for ( int i = 0; i < attr->num_index; ++i ) {
          if ( attr->index[i].size > 0 ) {
-            attr_element_count *= attr->index[i].size;
+            var_element_count *= attr->index[i].size;
          }
       }
    } else {
       // Dynamic variable array size calculation.
-      calculate_attr_element_count();
+      calculate_var_element_count();
    }
 }
 
@@ -183,7 +183,7 @@ string EncoderBase::to_string()
    return ( "EncoderBase[" + this->name + "]" );
 }
 
-void EncoderBase::calculate_attr_element_count()
+void EncoderBase::calculate_var_element_count()
 {
    if ( is_dynamic_array() ) {
       // We have a multi-dimension array that is a pointer and the
@@ -192,6 +192,6 @@ void EncoderBase::calculate_attr_element_count()
 
       // get_size returns the number of elements in the dynamic array.
       int const num_items = get_size( *static_cast< void ** >( address ) );
-      attr_element_count  = ( num_items > 0 ) ? num_items : 0;
+      var_element_count   = ( num_items > 0 ) ? num_items : 0;
    }
 }

@@ -93,7 +93,7 @@ class EncoderBase
 
    virtual std::string to_string();
 
-   void calculate_attr_element_count();
+   void calculate_var_element_count();
 
    bool const is_array()
    {
@@ -133,18 +133,18 @@ class EncoderBase
 
    TRICK_TYPE type; ///< @trick_units{--} The trick variable type.
 
-   bool is_array_flag;         ///< @trick_units{--} Flag indicating is array.
-   bool is_1d_array_flag;      ///< @trick_units{--} Flag indicating is 1D array.
-   bool is_static_array_flag;  ///< @trick_units{--} Flag indicating is static array.
-   bool is_dynamic_array_flag; ///< @trick_units{--} Flag indicating is dynamic array.
-
-   std::size_t attr_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick variable.
+   std::size_t var_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick variable.
 
    RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_io{**} Holds HLA encoded data.
 
    std::vector< RTI1516_NAMESPACE::DataElement * > data_elements; ///< @trick_io{**} Vector of data elements.
 
    RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_units{--} HLA data element encoder.
+
+   bool is_array_flag;         ///< @trick_units{--} Flag indicating is array.
+   bool is_1d_array_flag;      ///< @trick_units{--} Flag indicating is 1D array.
+   bool is_static_array_flag;  ///< @trick_units{--} Flag indicating is static array.
+   bool is_dynamic_array_flag; ///< @trick_units{--} Flag indicating is dynamic array.
 
   private:
    // Do not allow the copy constructor or assignment operator.
