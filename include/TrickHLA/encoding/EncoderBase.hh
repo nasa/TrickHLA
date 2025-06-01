@@ -127,11 +127,11 @@ class EncoderBase
    }
 
   protected:
+   void *address; ///< @trick_units{--} Address of the trick variable.
+
    std::string name; ///< @trick_units{--} Name of the trick variable.
 
    TRICK_TYPE type; ///< @trick_units{--} The trick variable type.
-
-   void *address; ///< @trick_units{--} Address of the trick variable.
 
    bool is_array_flag;         ///< @trick_units{--} Flag indicating is array.
    bool is_1d_array_flag;      ///< @trick_units{--} Flag indicating is 1D array.
