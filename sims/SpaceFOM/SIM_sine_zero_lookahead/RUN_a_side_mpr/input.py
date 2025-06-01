@@ -352,23 +352,23 @@ ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
 ref_frame_tree.root_frame_data.state.time = 0.0
 
-ref_frame_tree.vehicle_frame_data.name = 'FrameA'
-ref_frame_tree.vehicle_frame_data.parent_name = root_frame_name
+ref_frame_tree.leaf_frame_data.name = 'FrameA'
+ref_frame_tree.leaf_frame_data.parent_name = root_frame_name
 
-ref_frame_tree.vehicle_frame_data.state.pos[0] = 10.0
-ref_frame_tree.vehicle_frame_data.state.pos[1] = 10.0
-ref_frame_tree.vehicle_frame_data.state.pos[2] = 10.0
-ref_frame_tree.vehicle_frame_data.state.vel[0] = 0.0
-ref_frame_tree.vehicle_frame_data.state.vel[1] = 0.1
-ref_frame_tree.vehicle_frame_data.state.vel[2] = 0.0
-ref_frame_tree.vehicle_frame_data.state.att.scalar = 1.0
-ref_frame_tree.vehicle_frame_data.state.att.vector[0] = 0.0
-ref_frame_tree.vehicle_frame_data.state.att.vector[1] = 0.0
-ref_frame_tree.vehicle_frame_data.state.att.vector[2] = 0.0
-ref_frame_tree.vehicle_frame_data.state.ang_vel[0] = 0.0
-ref_frame_tree.vehicle_frame_data.state.ang_vel[1] = 0.1
-ref_frame_tree.vehicle_frame_data.state.ang_vel[2] = 0.0
-ref_frame_tree.vehicle_frame_data.state.time = 0.0
+ref_frame_tree.leaf_frame_data.state.pos[0] = 10.0
+ref_frame_tree.leaf_frame_data.state.pos[1] = 10.0
+ref_frame_tree.leaf_frame_data.state.pos[2] = 10.0
+ref_frame_tree.leaf_frame_data.state.vel[0] = 0.0
+ref_frame_tree.leaf_frame_data.state.vel[1] = 0.1
+ref_frame_tree.leaf_frame_data.state.vel[2] = 0.0
+ref_frame_tree.leaf_frame_data.state.att.scalar = 1.0
+ref_frame_tree.leaf_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.leaf_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.leaf_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.leaf_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.leaf_frame_data.state.ang_vel[1] = 0.1
+ref_frame_tree.leaf_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.leaf_frame_data.state.time = 0.0
 
 #---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.
