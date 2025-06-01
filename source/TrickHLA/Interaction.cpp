@@ -52,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"

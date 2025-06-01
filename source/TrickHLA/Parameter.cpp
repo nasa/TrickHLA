@@ -54,6 +54,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Parameter.hh"
