@@ -575,7 +575,7 @@ bool ExecutionControl::receive_interaction(
                                theUserSuppliedTag,
                                theTime );
 
-         mtr_interaction->extract_data( &item );
+         mtr_interaction->decode( &item );
          mtr_interaction->process_interaction();
       } else {
          InteractionItem item( 0,
@@ -585,7 +585,7 @@ bool ExecutionControl::receive_interaction(
                                theParameterValues,
                                theUserSuppliedTag );
 
-         mtr_interaction->extract_data( &item );
+         mtr_interaction->decode( &item );
          mtr_interaction->process_interaction();
       }
 

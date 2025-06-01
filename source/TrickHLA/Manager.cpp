@@ -2451,7 +2451,7 @@ void Manager::process_interactions()
                  && ( item->index < inter_count )
                  && interactions[item->index].is_subscribe() ) {
 
-               interactions[item->index].extract_data( item );
+               interactions[item->index].decode( item );
 
                interactions[item->index].process_interaction();
             }

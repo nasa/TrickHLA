@@ -1275,7 +1275,7 @@ bool ExecutionControl::receive_interaction(
                                   theUserSuppliedTag,
                                   theTime );
 
-            freeze_interaction[i].extract_data( &item );
+            freeze_interaction[i].decode( &item );
             freeze_interaction[i].process_interaction();
          } else {
             InteractionItem item( i,
@@ -1285,7 +1285,7 @@ bool ExecutionControl::receive_interaction(
                                   theParameterValues,
                                   theUserSuppliedTag );
 
-            freeze_interaction[i].extract_data( &item );
+            freeze_interaction[i].decode( &item );
             freeze_interaction[i].process_interaction();
          }
 

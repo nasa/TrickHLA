@@ -674,8 +674,8 @@ bool Parameter::extract_data(
          // RTI encoding only supports a fixed length array of characters.
          if ( size_is_static && ( param_size != expected_byte_count ) ) {
             ostringstream errmsg;
-            errmsg << "Parameter::extract_data():"
-                   << __LINE__ << " WARNING: For Parameter '" << interaction_FOM_name
+            errmsg << "Parameter::extract_data():" << __LINE__
+                   << " WARNING: For Parameter '" << interaction_FOM_name
                    << "'->'" << FOM_name << "' with Trick name '" << trick_name
                    << "', the received FOM data size (" << param_size << " bytes) != Expected"
                    << " Trick simulation variable memory size (" << expected_byte_count
@@ -714,8 +714,8 @@ bool Parameter::extract_data(
          //
          if ( param_size != 8 ) {
             ostringstream errmsg;
-            errmsg << "Parameter::extract_data():"
-                   << __LINE__ << " ERROR: For Parameter '" << interaction_FOM_name
+            errmsg << "Parameter::extract_data():" << __LINE__
+                   << " ERROR: For Parameter '" << interaction_FOM_name
                    << "'->'" << FOM_name << "' with Trick name '" << trick_name
                    << "', the received FOM data size (" << param_size << " bytes) != Expected"
                    << " Trick simulation variable memory size (8 bytes) for the"
@@ -741,8 +741,8 @@ bool Parameter::extract_data(
       case ENCODING_OPAQUE_DATA: {
          if ( size_is_static && ( param_size != expected_byte_count ) ) {
             ostringstream errmsg;
-            errmsg << "Parameter::extract_data():"
-                   << __LINE__ << " WARNING: For Parameter '" << interaction_FOM_name
+            errmsg << "Parameter::extract_data():" << __LINE__
+                   << " WARNING: For Parameter '" << interaction_FOM_name
                    << "'->'" << FOM_name << "' with Trick name '" << trick_name
                    << "', the received FOM data size (" << param_size << " bytes) != Expected"
                    << " Trick simulation variable memory size (" << expected_byte_count
@@ -774,8 +774,8 @@ bool Parameter::extract_data(
               && ( param_size != expected_byte_count )
               && ( rti_encoding != ENCODING_UNICODE_STRING ) ) {
             ostringstream errmsg;
-            errmsg << "Parameter::extract_data():"
-                   << __LINE__ << " WARNING: For Parameter '" << interaction_FOM_name
+            errmsg << "Parameter::extract_data():" << __LINE__
+                   << " WARNING: For Parameter '" << interaction_FOM_name
                    << "'->'" << FOM_name << "' with Trick name '" << trick_name
                    << "', the received FOM data size (" << param_size << " bytes) != Expected"
                    << " Trick simulation variable memory size (" << expected_byte_count

@@ -1136,7 +1136,7 @@ void Interaction::process_interaction()
    }
 }
 
-bool Interaction::extract_data(
+bool Interaction::decode(
    InteractionItem *interaction_item )
 {
    // Must be set to subscribe to the interaction and the interaction item
@@ -1148,7 +1148,7 @@ bool Interaction::extract_data(
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       string handle_str;
       StringUtilities::to_string( handle_str, class_handle );
-      message_publish( MSG_NORMAL, "Interaction::extract_data():%d ID:%s, FOM_name:'%s'\n",
+      message_publish( MSG_NORMAL, "Interaction::decode():%d ID:%s, FOM_name:'%s'\n",
                        __LINE__, handle_str.c_str(), get_FOM_name() );
    }
 
@@ -1188,7 +1188,7 @@ bool Interaction::extract_data(
       if ( ( param_item != NULL ) && ( param_item->index >= 0 ) && ( param_item->index < param_count ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            message_publish( MSG_NORMAL, "Interaction::extract_data():%d Decoding '%s' from parameter map.\n",
+            message_publish( MSG_NORMAL, "Interaction::decode():%d Decoding '%s' from parameter map.\n",
                              __LINE__, parameters[param_item->index].get_FOM_name() );
          }
 #if defined( USE_HLA_ENCODER_HELPER_WRAPPERS )
@@ -1197,7 +1197,7 @@ bool Interaction::extract_data(
          }
 #else
          // Extract the parameter data for the given parameter-item.
-         if ( parameters[param_item->index].extract_data( param_item->size, param_item->data ) ) {
+         if ( parameters[param_item->index].decode( param_item->size, param_item->data ) ) {
             any_param_received = true;
          }
 #endif

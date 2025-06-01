@@ -175,10 +175,10 @@ class Interaction
     * users simulation variables and calling the users interaction-handler. */
    void process_interaction();
 
-   /*! @brief Extracts the parameters for the received Interaction.
+   /*! @brief Decode the parameters for the received Interaction.
     *  @param interaction_item Interaction item.
-    *  @return True if successfull extracted data, false otherwise. */
-   bool extract_data( InteractionItem *interaction_item );
+    *  @return True if successfully decoded data, false otherwise. */
+   bool decode( InteractionItem *interaction_item );
 
    // Instance methods
    /*! @brief Get the FOM name for this interaction.
