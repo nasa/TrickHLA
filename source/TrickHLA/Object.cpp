@@ -3462,14 +3462,16 @@ bool Object::decode(
          if ( attr->decode( iter->second ) ) {
             any_attr_received = true;
          }
-      } else if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         string id_str;
-         StringUtilities::to_string( id_str, iter->first );
-         message_publish( MSG_WARNING, "Object::decode():%d WARNING: For \
+      } else {
+         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            string id_str;
+            StringUtilities::to_string( id_str, iter->first );
+            message_publish( MSG_WARNING, "Object::decode():%d WARNING: For \
 Object '%s' with FOM name '%s', data was received for Attribute-ID:%s, which \
 has not been configured for this object instance in the input.py file. Ignoring \
 this attribute.\n",
-                          __LINE__, name, FOM_name, id_str.c_str() );
+                             __LINE__, name, FOM_name, id_str.c_str() );
+         }
       }
    }
 

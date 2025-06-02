@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 #include "trick/parameter_types.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
@@ -145,9 +146,20 @@ VariableLengthData &EncoderBase::encode()
       ostringstream errmsg;
       errmsg << "EncoderBase::encode():" << __LINE__
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
-             << this->name << "' with error: " << err_details << std::endl;
+             << this->name << "' using encoder " << this->to_string()
+             << " with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream errmsg;
+      errmsg << "EncoderBase::encode():" << __LINE__
+             << " Trick variable '" << this->name
+             << "' with encoded length " << encoder->getEncodedLength()
+             << " using encoder " << this->to_string() << std::endl;
+      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+   }
+
    return this->data;
 }
 
@@ -161,9 +173,21 @@ bool const EncoderBase::decode(
       StringUtilities::to_string( err_details, e.what() );
       ostringstream errmsg;
       errmsg << "EncoderBase::decode():" << __LINE__
-             << " ERROR: Unexpected error decoding HLA data for Trick variable '"
-             << this->name << "' with error: " << err_details << std::endl;
+#if defined( THLA_WARNING_ON_DECODE_ERROR )
+             << " WARNING:"
+#else
+             << " ERROR:"
+#endif
+             << " Unexpected error decoding HLA data for Trick variable '"
+             << this->name << "' with encoded length " << encoder->getEncodedLength()
+             << " using encoder " << this->to_string()
+             << " with error: " << err_details << std::endl;
+
+#if defined( THLA_WARNING_ON_DECODE_ERROR )
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#else
       DebugHandler::terminate_with_message( errmsg.str() );
+#endif
       return false;
    }
    return true;
