@@ -132,9 +132,14 @@ bool const CharASCIIStringEncoder::decode(
       HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
 
       /* Convert from the std::string to a char * string. */
-      *static_cast< char ** >( address ) = StringUtilities::ip_strdup_string(
-         dynamic_cast< HLAASCIIstring const & >( array_encoder->get( 0 ) ).get() );
+      if ( array_encoder->size() > 0 ) {
+         *static_cast< char ** >( address ) = StringUtilities::ip_strdup_string(
+            dynamic_cast< HLAASCIIstring const & >( array_encoder->get( 0 ) ).get() );
+      } else {
+         char empty = '\0';
 
+         *static_cast< char ** >( address ) = TMM_strdup( &empty );
+      }
       return true;
    }
    return false;
