@@ -99,10 +99,11 @@ Attribute::Attribute()
      update_requested( false ),
      cycle_ratio( 1 ),
      cycle_cnt( 0 ),
-     encoder( NULL ),
      pull_requested( false ),
      push_requested( false ),
-     divest_requested( false )
+     divest_requested( false ),
+     attr_handle(),
+     encoder( NULL )
 {
    return;
 }

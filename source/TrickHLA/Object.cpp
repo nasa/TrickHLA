@@ -156,6 +156,8 @@ Object::Object()
      rti_ambassador( NULL ),
      thla_reflected_attributes_queue(),
      thla_attribute_map(),
+     class_handle(),
+     instance_handle(),
      elapsed_time_stats()
 {
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS

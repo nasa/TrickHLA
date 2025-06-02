@@ -88,6 +88,7 @@ Parameter::Parameter()
      rti_encoding( ENCODING_UNKNOWN ),
      value_changed( false ),
      interaction_FOM_name( NULL ),
+     param_handle(),
      encoder( NULL )
 {
    return;

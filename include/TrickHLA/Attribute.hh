@@ -374,13 +374,13 @@ class Attribute
    int cycle_ratio; ///< @trick_units{--} Ratio of the attribute cycle-time to the send_cyclic_and_requested_data job cycle time.
    int cycle_cnt;   ///< @trick_units{count} Internal cycle counter used to determine when cyclic data will be sent.
 
-   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this attribute data.
-
-   RTI1516_NAMESPACE::AttributeHandle attr_handle; ///< @trick_io{**} The RTI attribute handle.
-
    bool pull_requested;   ///< @trick_units{--} Has someone asked to own us?
    bool push_requested;   ///< @trick_units{--} Is someone giving up ownership?
    bool divest_requested; ///< @trick_units{--} Are we releasing ownership?
+
+   RTI1516_NAMESPACE::AttributeHandle attr_handle; ///< @trick_io{**} The RTI attribute handle.
+
+   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this attribute data.
 
   private:
    // Do not allow the copy constructor or assignment operator.

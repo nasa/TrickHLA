@@ -768,9 +768,6 @@ class Object : public CheckpointConversionBase
    bool any_attribute_FOM_specified_order; ///< @trick_units{--} True if any attribute is the FOM specified order.
    bool any_attribute_timestamp_order;     ///< @trick_units{--} True if any attribute is timestamp order.
 
-   RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
-   RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
-
    bool pull_requested;     ///< @trick_units{--} Has someone asked to own us?
    bool divest_requested;   ///< @trick_units{--} Are we releasing ownership?
    bool ownership_acquired; ///< @trick_units{--} True when attribute ownership changed.
@@ -786,6 +783,9 @@ class Object : public CheckpointConversionBase
    ReflectedAttributesQueue thla_reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
 
    AttributeMap thla_attribute_map; ///< @trick_io{**} Map of the Attribute's, key is the AttributeHandle.
+
+   RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
+   RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
 
   public:
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS

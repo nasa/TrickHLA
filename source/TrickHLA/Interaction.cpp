@@ -99,6 +99,7 @@ Interaction::Interaction()
      received_as_TSO( false ),
      time( 0.0 ),
      manager( NULL ),
+     class_handle(),
      user_supplied_tag_size( 0 ),
      user_supplied_tag_capacity( 0 ),
      user_supplied_tag( NULL )

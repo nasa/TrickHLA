@@ -198,9 +198,9 @@ class Parameter
 
    char *interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
 
-   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this parameter data.
-
    RTI1516_NAMESPACE::ParameterHandle param_handle; ///< @trick_io{**} The RTI parameter handle.
+
+   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this parameter data.
 
   private:
    // Do not allow the copy constructor or assignment operator.
