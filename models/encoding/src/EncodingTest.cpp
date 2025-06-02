@@ -70,6 +70,17 @@ NASA, Johnson Space Center\n
 #include "../include/WCharData.hh"
 #include "../include/WStringData.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we
+// need to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
+#pragma GCC diagnostic pop
+
+using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
@@ -161,10 +172,40 @@ void EncodingTest::char_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
-   data2_char_encoder->decode( data1_char_encoder->encode() );
-   data2_vec3_char_encoder->decode( data1_vec3_char_encoder->encode() );
-   data2_m3x3_char_encoder->decode( data1_m3x3_char_encoder->encode() );
-   data2_ptr_char_encoder->decode( data1_ptr_char_encoder->encode() );
+   ostringstream encode_msg;
+   encode_msg << "EncodingTest::char_test():" << __LINE__ << std::endl;
+
+   VariableLengthData encoded_data1_char = data1_char_encoder->encode();
+   data2_char_encoder->decode( encoded_data1_char );
+   encode_msg << data1_char_encoder->to_string()
+              << " Encoded data1_char size:" << encoded_data1_char.size()
+              << " Encoded-length:" << data1_char_encoder->get_encoded_length()
+              << std::endl;
+
+   VariableLengthData encoded_data1_vec3 = data1_vec3_char_encoder->encode();
+   data2_vec3_char_encoder->decode( encoded_data1_vec3 );
+   encode_msg << data1_vec3_char_encoder->to_string()
+              << " Encoded data1_vec3 size:" << encoded_data1_vec3.size()
+              << " Encoded-length:" << data1_vec3_char_encoder->get_encoded_length()
+              << std::endl;
+
+   VariableLengthData encoded_data1_m3x3 = data1_m3x3_char_encoder->encode();
+   data2_m3x3_char_encoder->decode( encoded_data1_m3x3 );
+   encode_msg << data1_m3x3_char_encoder->to_string()
+              << " Encoded data1_m3x3 size:" << encoded_data1_m3x3.size()
+              << " Encoded-length:" << data1_m3x3_char_encoder->get_encoded_length()
+              << std::endl;
+
+   VariableLengthData encoded_data1_ptr_char = data1_ptr_char_encoder->encode();
+   data2_ptr_char_encoder->decode( encoded_data1_ptr_char );
+   encode_msg << data1_ptr_char_encoder->to_string()
+              << " Encoded data1_ptr_char size:" << encoded_data1_ptr_char.size()
+              << " Encoded-length:" << data1_ptr_char_encoder->get_encoded_length()
+              << std::endl;
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_ALL_MODULES ) ) {
+      message_publish( MSG_NORMAL, encode_msg.str().c_str() );
+   }
 
    ostringstream compare_msg;
    if ( char_rti_encoding == rti_encoding ) {

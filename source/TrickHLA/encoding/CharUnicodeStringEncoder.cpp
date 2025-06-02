@@ -73,7 +73,8 @@ using namespace TrickHLA;
 CharUnicodeStringEncoder::CharUnicodeStringEncoder(
    void       *addr,
    ATTRIBUTES *attr )
-   : EncoderBase( addr, attr )
+   : EncoderBase( addr, attr ),
+     wstring_data()
 {
    if ( ( attr->type != TRICK_CHARACTER )
         && ( attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
@@ -97,11 +98,8 @@ CharUnicodeStringEncoder::CharUnicodeStringEncoder(
       return;
    }
 
-   HLAunicodeString  data_prototype;
-   HLAvariableArray *array_encoder = new HLAvariableArray( data_prototype );
-   array_encoder->addElement( data_prototype );
-
-   this->encoder = array_encoder;
+   // Automatically encode and decode into the wstring_data.
+   this->encoder = new HLAunicodeString( &wstring_data );
 }
 
 CharUnicodeStringEncoder::~CharUnicodeStringEncoder()
@@ -112,15 +110,7 @@ CharUnicodeStringEncoder::~CharUnicodeStringEncoder()
 VariableLengthData &CharUnicodeStringEncoder::encode()
 {
    /* Convert the char * string into a wide string. */
-   wstring wide_string;
-   StringUtilities::to_wstring( wide_string, *static_cast< char ** >( address ) );
-
-   HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
-
-   const_cast< HLAunicodeString & >(
-      dynamic_cast< HLAunicodeString const & >(
-         array_encoder->get( 0 ) ) )
-      .set( wide_string );
+   StringUtilities::to_wstring( wstring_data, *static_cast< char ** >( address ) );
 
    return EncoderBase::encode();
 }
@@ -130,12 +120,9 @@ bool const CharUnicodeStringEncoder::decode(
 {
    if ( EncoderBase::decode( encoded_data ) ) {
 
-      HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
-
       /* Convert from the wide-string to a char * string. */
-      if ( array_encoder->size() > 0 ) {
-         *static_cast< char ** >( address ) = StringUtilities::ip_strdup_wstring(
-            dynamic_cast< HLAunicodeString const & >( array_encoder->get( 0 ) ).get() );
+      if ( wstring_data.size() > 0 ) {
+         *static_cast< char ** >( address ) = StringUtilities::ip_strdup_wstring( wstring_data );
       } else {
          char empty = '\0';
 

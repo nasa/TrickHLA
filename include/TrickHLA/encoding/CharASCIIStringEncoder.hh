@@ -87,6 +87,9 @@ class CharASCIIStringEncoder : public EncoderBase
 
    virtual std::string to_string();
 
+  protected:
+   std::string string_data; ///< @trick_io{**} std::string intermediate data.
+
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharASCIIStringEncoder();

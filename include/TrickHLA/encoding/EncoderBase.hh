@@ -95,6 +95,11 @@ class EncoderBase
 
    void calculate_var_element_count();
 
+   std::size_t const get_encoded_length()
+   {
+      return encoder->getEncodedLength();
+   }
+
    bool const is_array()
    {
       return is_array_flag;

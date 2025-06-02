@@ -85,6 +85,9 @@ class CharUnicodeStringEncoder : public EncoderBase
 
    virtual std::string to_string();
 
+  protected:
+   std::wstring wstring_data; ///< @trick_io{**} Wide string intermediate data.
+
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharUnicodeStringEncoder();

@@ -73,7 +73,8 @@ using namespace TrickHLA;
 CharASCIIStringEncoder::CharASCIIStringEncoder(
    void       *addr,
    ATTRIBUTES *attr )
-   : EncoderBase( addr, attr )
+   : EncoderBase( addr, attr ),
+     string_data()
 {
    if ( ( attr->type != TRICK_CHARACTER )
         && ( attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
@@ -97,11 +98,8 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
       return;
    }
 
-   HLAASCIIstring    data_prototype;
-   HLAvariableArray *array_encoder = new HLAvariableArray( data_prototype );
-   array_encoder->addElement( data_prototype );
-
-   this->encoder = array_encoder;
+   // Automatically encode and decode into the string_data.
+   this->encoder = new HLAASCIIstring( &string_data );
 }
 
 CharASCIIStringEncoder::~CharASCIIStringEncoder()
@@ -112,14 +110,7 @@ CharASCIIStringEncoder::~CharASCIIStringEncoder()
 VariableLengthData &CharASCIIStringEncoder::encode()
 {
    /* Convert the char * string into a std::string. */
-   string str_data = *static_cast< char ** >( address );
-
-   HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
-
-   const_cast< HLAASCIIstring & >(
-      dynamic_cast< HLAASCIIstring const & >(
-         array_encoder->get( 0 ) ) )
-      .set( str_data );
+   string_data = *static_cast< char ** >( address );
 
    return EncoderBase::encode();
 }
@@ -129,12 +120,9 @@ bool const CharASCIIStringEncoder::decode(
 {
    if ( EncoderBase::decode( encoded_data ) ) {
 
-      HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );
-
       /* Convert from the std::string to a char * string. */
-      if ( array_encoder->size() > 0 ) {
-         *static_cast< char ** >( address ) = StringUtilities::ip_strdup_string(
-            dynamic_cast< HLAASCIIstring const & >( array_encoder->get( 0 ) ).get() );
+      if ( string_data.size() > 0 ) {
+         *static_cast< char ** >( address ) = StringUtilities::ip_strdup_string( string_data );
       } else {
          char empty = '\0';
 
