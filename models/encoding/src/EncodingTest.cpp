@@ -112,7 +112,8 @@ void EncodingTest::char_test(
    switch ( rti_encoding ) {
       case TrickHLA::ENCODING_UNICODE_STRING:
       case TrickHLA::ENCODING_ASCII_STRING:
-      case TrickHLA::ENCODING_OPAQUE_DATA: {
+      case TrickHLA::ENCODING_OPAQUE_DATA:
+      case TrickHLA::ENCODING_NONE: {
          char_rti_encoding = TrickHLA::ENCODING_ASCII_CHAR;
          break;
       }

@@ -26,6 +26,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cctype>
 #include <sstream>
 #include <string>
 
@@ -151,11 +152,17 @@ bool CharData::compare(
    }
    for ( int i = 0; i < min_ptr_char_size; ++i ) {
       if ( this->ptr_char[i] == data.ptr_char[i] ) {
-         msg << "this->ptr_char[" << i << "] (" << this->ptr_char[i]
-             << ") == (" << data.ptr_char[i] << ") data.ptr_char[" << i << "]\n";
+         msg << "this->ptr_char[" << i << "] ("
+             << ( std::isprint( this->ptr_char[i] ) ? this->ptr_char[i] : ' ' )
+             << ") == ("
+             << ( std::isprint( data.ptr_char[i] ) ? data.ptr_char[i] : ' ' )
+             << ") data.ptr_char[" << i << "]\n";
       } else {
-         msg << "this->ptr_char[" << i << "] (" << this->ptr_char[i]
-             << ") != (" << data.ptr_char[i] << ") data.ptr_char[" << i << "]\n";
+         msg << "this->ptr_char[" << i << "] ("
+             << ( std::isprint( this->ptr_char[i] ) ? this->ptr_char[i] : ' ' )
+             << ") != ("
+             << ( std::isprint( data.ptr_char[i] ) ? data.ptr_char[i] : ' ' )
+             << ") data.ptr_char[" << i << "]\n";
          equal_values = false;
       }
    }

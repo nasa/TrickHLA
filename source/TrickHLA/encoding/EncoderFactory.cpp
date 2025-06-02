@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{BasicDataVariableArrayEncoders.cpp}
 @trick_link_dependency{CharASCIIStringEncoder.cpp}
 @trick_link_dependency{CharOpaqueDataEncoder.cpp}
+@trick_link_dependency{CharRawDataEncoder.cpp}
 @trick_link_dependency{CharUnicodeStringEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
@@ -62,6 +63,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 #include "TrickHLA/encoding/CharASCIIStringEncoder.hh"
 #include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
+#include "TrickHLA/encoding/CharRawDataEncoder.hh"
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
@@ -394,18 +396,6 @@ EncoderBase *EncoderFactory::create_char_encoder(
    bool const is_dynamic_array = is_array && ( attr->index[attr->num_index - 1].size == 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_NONE: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new ByteFixedArrayEncoder( address, attr );
-            } else {
-               return new ByteVariableArrayEncoder( address, attr );
-            }
-         } else {
-            return new ByteEncoder( address, attr );
-         }
-         break;
-      }
       case ENCODING_ASCII_CHAR: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -455,6 +445,20 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << " ERROR: Trick attributes for the variable '" << attr->name
                    << "' is of type 'char' for the specified"
                    << " ENCODING_OPAQUE_DATA encoding and only a dynamic"
+                   << " array of characters (i.e. char *) is supported!\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+         break;
+      }
+      case ENCODING_NONE: {
+         if ( is_dynamic_array ) {
+            return new CharRawDataEncoder( address, attr );
+         } else {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
+                   << " ERROR: Trick attributes for the variable '" << attr->name
+                   << "' is of type 'char' for the specified"
+                   << " ENCODING_NONE encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
