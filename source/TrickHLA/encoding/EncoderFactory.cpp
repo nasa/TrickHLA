@@ -320,7 +320,8 @@ EncoderBase *EncoderFactory::create(
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'std::wstring', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif // TRICK_WSTRING_MM_SUPPORT
          break;
@@ -469,7 +470,8 @@ EncoderBase *EncoderFactory::create_char_encoder(
          errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'char', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -503,7 +505,8 @@ EncoderBase *EncoderFactory::create_string_encoder(
          errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'std::string', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -537,7 +540,8 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
          errmsg << "EncoderFactory::create_wchar_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'wchar', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -572,7 +576,8 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
          errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'std::wstring', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -620,7 +625,8 @@ EncoderBase *EncoderFactory::create_int16_encoder(
          errmsg << "EncoderFactory::create_int16_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'short', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -666,7 +672,8 @@ EncoderBase *EncoderFactory::create_int32_encoder(
          errmsg << "EncoderFactory::create_int32_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'int', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -712,7 +719,8 @@ EncoderBase *EncoderFactory::create_int64_encoder(
          errmsg << "EncoderFactory::create_int64_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'long long', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -759,7 +767,8 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
          errmsg << "EncoderFactory::create_uint16_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'unsigned short', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -805,7 +814,8 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
          errmsg << "EncoderFactory::create_uint32_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'unsigned int', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -851,7 +861,8 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
          errmsg << "EncoderFactory::create_uint64_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'unsigned long long', the specified"
-                << " hla_encoding (" << hla_encoding << ") is not supported.\n";
+                << " hla_encoding (" << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -898,7 +909,8 @@ EncoderBase *EncoderFactory::create_float32_encoder(
          errmsg << "EncoderFactory::create_float32_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'float', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -944,7 +956,8 @@ EncoderBase *EncoderFactory::create_float64_encoder(
          errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'double', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -978,7 +991,8 @@ EncoderBase *EncoderFactory::create_bool_encoder(
          errmsg << "EncoderFactory::create_bool_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of type 'bool', the specified HLA-encoding ("
-                << hla_encoding << ") is not supported.\n";
+                << encoding_enum_to_string( hla_encoding )
+                << ") is not supported.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
