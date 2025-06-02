@@ -48,9 +48,6 @@ string TrickHLA::encoding_enum_to_string(
       case ENCODING_LOGICAL_TIME: {
          return "ENCODING_LOGICAL_TIME";
       }
-      case ENCODING_C_STRING: {
-         return "ENCODING_C_STRING";
-      }
       case ENCODING_UNICODE_STRING: {
          return "ENCODING_UNICODE_STRING";
       }
