@@ -98,7 +98,7 @@ EncoderBase::EncoderBase(
    this->is_static_array_flag  = is_array() && ( attr->index[attr->num_index - 1].size != 0 );
    this->is_dynamic_array_flag = is_array() && ( attr->index[attr->num_index - 1].size == 0 );
 
-   if ( is_null_address() ) {
+   if ( address == NULL ) {
       ostringstream errmsg;
       errmsg << "EncoderBase::EncoderBase():" << __LINE__
              << " ERROR: The variable address is NULL for variable '"
@@ -206,7 +206,11 @@ void EncoderBase::calculate_var_element_count()
       // to refresh ref2 before this call because it is dynamic array.
 
       // get_size returns the number of elements in the dynamic array.
-      int const num_items     = get_size( *static_cast< void ** >( this->address ) );
-      this->var_element_count = ( num_items > 0 ) ? num_items : 0;
+      if ( is_null_address() ) {
+         this->var_element_count = 0;
+      } else {
+         int const num_items     = get_size( *static_cast< void ** >( this->address ) );
+         this->var_element_count = ( num_items > 0 ) ? num_items : 0;
+      }
    }
 }
