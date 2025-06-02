@@ -396,15 +396,17 @@ EncoderBase *EncoderFactory::create_char_encoder(
    bool const is_dynamic_array = is_array && ( attr->index[attr->num_index - 1].size == 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_ASCII_CHAR: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new ASCIICharFixedArrayEncoder( address, attr );
-            } else {
-               return new ASCIICharVariableArrayEncoder( address, attr );
-            }
+      case ENCODING_UNICODE_STRING: {
+         if ( is_dynamic_array ) {
+            return new CharUnicodeStringEncoder( address, attr );
          } else {
-            return new ASCIICharEncoder( address, attr );
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
+                   << " ERROR: Trick attributes for the variable '" << attr->name
+                   << "' is of type 'char' for the specified"
+                   << " ENCODING_UNICODE_STRING encoding and only a dynamic"
+                   << " array of characters (i.e. char *) is supported!\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -417,20 +419,6 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << " ERROR: Trick attributes for the variable '" << attr->name
                    << "' is of type 'char' for the specified"
                    << " ENCODING_ASCII_STRING encoding and only a dynamic"
-                   << " array of characters (i.e. char *) is supported!\n";
-            DebugHandler::terminate_with_message( errmsg.str() );
-         }
-         break;
-      }
-      case ENCODING_UNICODE_STRING: {
-         if ( is_dynamic_array ) {
-            return new CharUnicodeStringEncoder( address, attr );
-         } else {
-            ostringstream errmsg;
-            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick attributes for the variable '" << attr->name
-                   << "' is of type 'char' for the specified"
-                   << " ENCODING_UNICODE_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -461,6 +449,18 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << " ENCODING_NONE encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
             DebugHandler::terminate_with_message( errmsg.str() );
+         }
+         break;
+      }
+      case ENCODING_ASCII_CHAR: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new ASCIICharFixedArrayEncoder( address, attr );
+            } else {
+               return new ASCIICharVariableArrayEncoder( address, attr );
+            }
+         } else {
+            return new ASCIICharEncoder( address, attr );
          }
          break;
       }
