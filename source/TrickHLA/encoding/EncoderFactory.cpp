@@ -27,6 +27,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{CharOpaqueDataEncoder.cpp}
 @trick_link_dependency{CharRawDataEncoder.cpp}
 @trick_link_dependency{CharUnicodeStringEncoder.cpp}
+@trick_link_dependency{Float64ToLogicalTimeEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 @trick_link_dependency{../Utilities.cpp}
@@ -67,6 +68,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
+#include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -948,6 +950,20 @@ EncoderBase *EncoderFactory::create_float64_encoder(
             }
          } else {
             return new Float64LEEncoder( address, attr );
+         }
+         break;
+      }
+      case ENCODING_LOGICAL_TIME: {
+         if ( !is_array ) {
+            return new Float64ToLogicalTimeEncoder( address, attr );
+         } else {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
+                   << " ERROR: Trick attributes for the variable '" << attr->name
+                   << "' is of type 'double', the specified HLA-encoding ("
+                   << encoding_enum_to_string( hla_encoding )
+                   << ") is only supported for a primitive double value.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }

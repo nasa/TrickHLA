@@ -129,7 +129,7 @@ typedef enum {
    ENCODING_OPAQUE_DATA    = 6,  ///< Variable length HLA Opaque data for a "char *" type.
    ENCODING_BOOLEAN        = 7,  ///< Boolean c++ type configured in the FOM to use HLAboolean HLA data type encoded as an HLAinteger32BE.
    ENCODING_NONE           = 8,  ///< Fixed length array of data for "char *" type sent as is.
-   ENCODING_UNICODE_CHAR   = 9, ///< Variable length HLA Unicode character encoding.
+   ENCODING_UNICODE_CHAR   = 9,  ///< Variable length HLA Unicode character encoding.
    ENCODING_ASCII_CHAR     = 10, ///< Variable length HLA ASCII character encoding.
    ENCODING_LAST_VALUE     = 10  ///< Set to the Last value in the enumeration.
 

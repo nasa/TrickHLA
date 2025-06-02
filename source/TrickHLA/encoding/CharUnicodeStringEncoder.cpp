@@ -63,7 +63,6 @@ NASA, Johnson Space Center\n
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
-#include "RTI/encoding/HLAvariableArray.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

@@ -70,7 +70,7 @@ class CharUnicodeStringEncoder : public EncoderBase
    friend class InputProcessor;
    /* IMPORTANT Note: you must have the following line too.            */
    /* Syntax: friend void init_attr<namespace>__<class name>();        */
-   friend void init_attrTrickHLA__CharUnicodeStringVariableArrayEncoder();
+   friend void init_attrTrickHLA__CharUnicodeStringEncoder();
 
   public:
    /*! @brief Default constructor. */
