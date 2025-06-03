@@ -119,13 +119,39 @@ bool const CharUnicodeStringEncoder::decode(
 {
    if ( EncoderBase::decode( encoded_data ) ) {
 
-      /* Convert from the wide-string to a char * string. */
-      if ( wstring_data.size() > 0 ) {
-         *static_cast< char ** >( address ) = StringUtilities::ip_strdup_wstring( wstring_data );
-      } else {
-         char empty = '\0';
+      calculate_var_element_count();
 
-         *static_cast< char ** >( address ) = TMM_strdup( &empty );
+      // Include the null terminating char in the size comparison.
+      if ( ( wstring_data.size() + 1 ) == var_element_count ) {
+         // Convert from wstring to string.
+         std::string str_data;
+         str_data.assign( wstring_data.begin(), wstring_data.end() );
+
+         // Copy value to existing Trick variable char* memory and include
+         // the null terminating character in the c_str().
+         if ( str_data.size() > 0 ) {
+            memcpy( *static_cast< void ** >( address ), str_data.c_str(), ( str_data.size() + 1 ) );
+         } else {
+            // Zero length so set the null terminating character.
+            *static_cast< char ** >( address )[0] = '\0';
+         }
+      } else {
+         // Need to make the Trick variable char* bigger by reallocating.
+
+         // Don't leak memory by deleting the old char* string allocation.
+         if ( *static_cast< void ** >( address ) != NULL ) {
+            TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
+         }
+
+         // Convert from the wide-string to a char* string.
+         if ( wstring_data.size() > 0 ) {
+            *static_cast< char ** >( address ) = StringUtilities::ip_strdup_wstring( wstring_data );
+         } else {
+            char empty = '\0';
+
+            // Zero length so allocate and set the null terminating character.
+            *static_cast< char ** >( address ) = TMM_strdup( &empty );
+         }
       }
       return true;
    }
