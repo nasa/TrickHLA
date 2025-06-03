@@ -96,9 +96,6 @@ CharRawDataEncoder::CharRawDataEncoder(
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-
-   HLAbyte data_prototype;
-   this->encoder = new HLAfixedArray( data_prototype, var_element_count );
 }
 
 CharRawDataEncoder::~CharRawDataEncoder()
@@ -112,45 +109,16 @@ VariableLengthData &CharRawDataEncoder::encode()
    /* can change at any point so we need to refresh the counts.     */
    calculate_var_element_count();
 
-   /* Ensure the number of data elements matches the Trick variable */
-   resize_data_elements( var_element_count );
-
-   HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( encoder );
-   Octet               *array_data    = *static_cast< Octet ** >( address );
-
-   /* Copy the Trick array values to the data elements to be encoded. */
-   for ( size_t i = 0; i < var_element_count; ++i ) {
-      const_cast< HLAbyte & >(
-         dynamic_cast< HLAbyte const & >(
-            array_encoder->get( i ) ) )
-         .set( array_data[i] );
-   }
-
-   return EncoderBase::encode();
+   this->data.setDataPointer( *static_cast< void ** >( address ), var_element_count );
+   return this->data;
 }
 
 bool const CharRawDataEncoder::decode(
    VariableLengthData const &encoded_data )
 {
-   // Resize the data element array to match the incoming data size.
-   resize_data_elements( encoded_data.size() );
-
-   if ( EncoderBase::decode( encoded_data ) ) {
-
-      HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( encoder );
-
-      /* Resize Trick array variable to match the decoded data size. */
-      resize_trick_var( array_encoder->size() );
-
-      Octet *array_data = *static_cast< Octet ** >( address );
-
-      /* Copy the decoded data element values to the Trick array. */
-      for ( size_t i = 0; i < var_element_count; ++i ) {
-         array_data[i] = dynamic_cast< HLAbyte const & >( array_encoder->get( i ) ).get();
-      }
-      return true;
-   }
-   return false;
+   resize_trick_var( encoded_data.size() );
+   memcpy( *static_cast< void ** >( address ), encoded_data.data(), encoded_data.size() );
+   return true;
 }
 
 string CharRawDataEncoder::to_string()
@@ -185,17 +153,5 @@ void CharRawDataEncoder::resize_trick_var(
                 << " elements!\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-   }
-}
-
-void CharRawDataEncoder::resize_data_elements(
-   size_t const new_size )
-{
-   HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( encoder );
-
-   if ( new_size != array_encoder->size() ) {
-      HLAbyte data_prototype;
-      delete this->encoder;
-      this->encoder = new HLAfixedArray( data_prototype, new_size );
    }
 }
