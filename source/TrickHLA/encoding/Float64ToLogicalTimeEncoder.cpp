@@ -99,7 +99,7 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
    }
 
    // Automatically encode and decode into the string_data.
-   this->encoder = new HLAinteger64LE( &time_data );
+   this->encoder = new HLAinteger64BE( &time_data );
 }
 
 Float64ToLogicalTimeEncoder::~Float64ToLogicalTimeEncoder()
