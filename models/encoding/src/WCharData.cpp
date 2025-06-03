@@ -90,8 +90,8 @@ WCharData::~WCharData()
 }
 
 bool WCharData::compare(
-   WCharData &data,
-   string    &explanation )
+   WCharData const &data,
+   string          &explanation )
 {
    bool equal_values = true;
 

@@ -65,7 +65,7 @@ class Int64Data
    /*! @brief Destructor for the TrickHLAModel Int64Data class. */
    virtual ~Int64Data();
 
-   bool compare( Int64Data &data, std::string &explanation );
+   bool compare( Int64Data const &data, std::string &explanation );
 
    std::string to_string();
 

@@ -93,8 +93,8 @@ StringData::~StringData()
 }
 
 bool StringData::compare(
-   StringData  &data,
-   std::string &explanation )
+   StringData const &data,
+   std::string      &explanation )
 {
    bool equal_values = true;
 

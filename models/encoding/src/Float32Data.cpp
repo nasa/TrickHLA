@@ -90,8 +90,8 @@ Float32Data::~Float32Data()
 }
 
 bool Float32Data::compare(
-   Float32Data &data,
-   string      &explanation )
+   Float32Data const &data,
+   string            &explanation )
 {
    bool equal_values = true;
 

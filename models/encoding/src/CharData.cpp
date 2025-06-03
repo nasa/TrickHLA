@@ -98,8 +98,8 @@ CharData::~CharData()
 }
 
 bool CharData::compare(
-   CharData &data,
-   string   &explanation )
+   CharData const &data,
+   string         &explanation )
 {
    bool equal_values = true;
 
@@ -137,8 +137,8 @@ bool CharData::compare(
       }
    }
 
-   int data1_ptr_char_size = get_size( this->ptr_char );
-   int data2_ptr_char_size = get_size( data.ptr_char );
+   int data1_ptr_char_size = strlen( this->ptr_char );
+   int data2_ptr_char_size = strlen( data.ptr_char );
    int min_ptr_char_size   = ( data1_ptr_char_size <= data2_ptr_char_size )
                                 ? data1_ptr_char_size
                                 : data2_ptr_char_size;

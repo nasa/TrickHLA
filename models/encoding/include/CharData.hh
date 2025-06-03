@@ -65,7 +65,7 @@ class CharData
    /*! @brief Destructor for the TrickHLAModel CharData class. */
    virtual ~CharData();
 
-   bool compare( CharData &data, std::string &explanation );
+   bool compare( CharData const &data, std::string &explanation );
 
    std::string to_string();
 

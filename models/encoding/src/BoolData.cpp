@@ -89,8 +89,8 @@ BoolData::~BoolData()
 }
 
 bool BoolData::compare(
-   BoolData &data,
-   string   &explanation )
+   BoolData const &data,
+   string         &explanation )
 {
    bool equal_values = true;
 

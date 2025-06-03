@@ -96,8 +96,8 @@ WStringData::~WStringData()
 }
 
 bool WStringData::compare(
-   WStringData &data,
-   string      &explanation )
+   WStringData const &data,
+   string            &explanation )
 {
    bool equal_values = true;
 

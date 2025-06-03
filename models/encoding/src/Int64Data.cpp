@@ -90,8 +90,8 @@ Int64Data::~Int64Data()
 }
 
 bool Int64Data::compare(
-   Int64Data &data,
-   string    &explanation )
+   Int64Data const &data,
+   string          &explanation )
 {
    bool equal_values = true;
 

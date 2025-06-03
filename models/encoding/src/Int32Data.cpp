@@ -90,8 +90,8 @@ Int32Data::~Int32Data()
 }
 
 bool Int32Data::compare(
-   Int32Data &data,
-   string    &explanation )
+   Int32Data const &data,
+   string          &explanation )
 {
    bool equal_values = true;
 

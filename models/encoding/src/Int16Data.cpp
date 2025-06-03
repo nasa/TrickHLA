@@ -90,8 +90,8 @@ Int16Data::~Int16Data()
 }
 
 bool Int16Data::compare(
-   Int16Data &data,
-   string    &explanation )
+   Int16Data const &data,
+   string          &explanation )
 {
    bool equal_values = true;
 

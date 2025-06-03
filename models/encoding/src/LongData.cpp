@@ -90,8 +90,8 @@ LongData::~LongData()
 }
 
 bool LongData::compare(
-   LongData &data,
-   string   &explanation )
+   LongData const &data,
+   string         &explanation )
 {
    bool equal_values = true;
 
