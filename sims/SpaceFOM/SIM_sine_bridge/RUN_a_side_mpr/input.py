@@ -141,10 +141,10 @@ def fix_var_server_source_address():
       if ( trick.var_server_get_hostname() == socket.gethostname() ):
          host_ip_addr = socket.gethostbyname( socket.gethostname() )
          try:
-            ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode() 
+            ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode()
             if ( ifconfig_out.find( host_ip_addr ) < 0 ):
                print( 'WARNING: Invalid IP address ' + host_ip_addr
-                      + ' resolved for host \'' + trick.var_server_get_hostname() 
+                      + ' resolved for host \'' + trick.var_server_get_hostname()
                       + '\', setting the variable server source address to 127.0.0.1!' )
                trick.var_server_set_source_address( '127.0.0.1' )
          except:
@@ -198,6 +198,7 @@ trick.exec_set_stack_trace( False )
 
 trick.var_server_set_port( 7000 )
 trick.sim_control_panel_set_enabled( True )
+
 fix_var_server_source_address()
 
 # simControlPanel = trick.SimControlPanel()
