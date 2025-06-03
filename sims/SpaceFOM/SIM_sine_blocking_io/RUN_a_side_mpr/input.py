@@ -14,6 +14,8 @@
 # PROGRAMMERS:
 #    (((Dan Dexter) (NASA/ER6) (Nov 2024) (--) (SpaceFOM sine blocking I/O example.)))
 ##############################################################################
+import socket
+import subprocess
 import sys
 sys.path.append( '../../../' )
 

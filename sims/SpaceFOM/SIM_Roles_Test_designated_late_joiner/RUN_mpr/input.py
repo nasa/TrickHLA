@@ -13,6 +13,8 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
 ##############################################################################
+import socket
+import subprocess
 import sys
 sys.path.append( '../../../' )
 

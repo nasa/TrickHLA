@@ -16,6 +16,8 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA/ER6) (Aug 2020) (--) (Updated command-line parsing.))))
 ##############################################################################
+import socket
+import subprocess
 import sys
 sys.path.append( '../../../' )
 

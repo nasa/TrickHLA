@@ -15,6 +15,8 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (June 2023) (--) (JEOD support and testing.)))
 ##############################################################################
+import socket
+import subprocess
 import sys
 sys.path.append( '../../../' )
 # Load the SpaceFOM specific federate configuration object.
