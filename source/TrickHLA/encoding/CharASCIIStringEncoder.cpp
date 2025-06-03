@@ -108,7 +108,7 @@ CharASCIIStringEncoder::~CharASCIIStringEncoder()
 
 VariableLengthData &CharASCIIStringEncoder::encode()
 {
-   /* Convert the char * string into a std::string. */
+   // Convert the char * string into a std::string.
    this->string_data = *static_cast< char ** >( address );
 
    return EncoderBase::encode();
@@ -127,7 +127,7 @@ bool const CharASCIIStringEncoder::decode(
          // the null terminating character in the c_str().
          memcpy( *static_cast< void ** >( address ),
                  string_data.c_str(),
-                 ( string_data.size() + 1 ) );
+                 string_data.size() + 1 );
       } else {
          // Need to make the Trick variable char* bigger by reallocating.
 
@@ -138,7 +138,7 @@ bool const CharASCIIStringEncoder::decode(
 
          // Convert from the wide-string to a char* string.
          if ( string_data.size() > 0 ) {
-            *static_cast< char ** >( address ) = StringUtilities::ip_strdup_string( string_data );
+            *static_cast< char ** >( address ) = StringUtilities::mm_strdup_string( string_data );
          } else {
             char empty = '\0';
 

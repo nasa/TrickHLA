@@ -143,7 +143,7 @@ string CharOpaqueDataEncoder::to_string()
 void CharOpaqueDataEncoder::resize_trick_var(
    size_t const new_size )
 {
-   /* Trick array variable size does not match the new size. */
+   // Trick array variable size does not match the new size.
    if ( ( new_size != var_element_count )
         || ( *( static_cast< void ** >( address ) ) == NULL ) ) {
 
@@ -156,7 +156,7 @@ void CharOpaqueDataEncoder::resize_trick_var(
                *( static_cast< void ** >( address ) ), new_size ) );
       }
 
-      /* Update the element count to the new size. */
+      // Update the element count to the new size.
       var_element_count = new_size;
 
       if ( *static_cast< void ** >( address ) == NULL ) {

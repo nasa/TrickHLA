@@ -105,8 +105,8 @@ CharRawDataEncoder::~CharRawDataEncoder()
 
 VariableLengthData &CharRawDataEncoder::encode()
 {
-   /* Since the Trick variable is dynamic (i.e. a pointer) its size */
-   /* can change at any point so we need to refresh the counts.     */
+   // Since the Trick variable is dynamic (i.e. a pointer) its size
+   // can change at any point so we need to refresh the counts.
    calculate_var_element_count();
 
    this->data.setDataPointer( *static_cast< void ** >( address ), var_element_count );
@@ -129,7 +129,7 @@ string CharRawDataEncoder::to_string()
 void CharRawDataEncoder::resize_trick_var(
    size_t const new_size )
 {
-   /* Trick array variable size does not match the new size. */
+   // Trick array variable size does not match the new size.
    if ( ( new_size != var_element_count )
         || ( *( static_cast< void ** >( address ) ) == NULL ) ) {
 
@@ -142,7 +142,7 @@ void CharRawDataEncoder::resize_trick_var(
                *( static_cast< void ** >( address ) ), new_size ) );
       }
 
-      /* Update the element count to the new size. */
+      // Update the element count to the new size.
       var_element_count = new_size;
 
       if ( *static_cast< void ** >( address ) == NULL ) {

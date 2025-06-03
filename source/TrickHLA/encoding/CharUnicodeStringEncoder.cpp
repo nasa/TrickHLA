@@ -108,7 +108,7 @@ CharUnicodeStringEncoder::~CharUnicodeStringEncoder()
 
 VariableLengthData &CharUnicodeStringEncoder::encode()
 {
-   /* Convert the char * string into a wide string. */
+   // Convert the char * string into a wide string.
    StringUtilities::to_wstring( this->wstring_data, *static_cast< char ** >( address ) );
 
    return EncoderBase::encode();
@@ -131,7 +131,7 @@ bool const CharUnicodeStringEncoder::decode(
          // the null terminating character in the c_str().
          memcpy( *static_cast< void ** >( address ),
                  str_data.c_str(),
-                 ( str_data.size() + 1 ) );
+                 str_data.size() + 1 );
       } else {
          // Need to make the Trick variable char* bigger by reallocating.
 
@@ -142,7 +142,7 @@ bool const CharUnicodeStringEncoder::decode(
 
          // Convert from the wide-string to a char* string.
          if ( wstring_data.size() > 0 ) {
-            *static_cast< char ** >( address ) = StringUtilities::ip_strdup_wstring( wstring_data );
+            *static_cast< char ** >( address ) = StringUtilities::mm_strdup_wstring( wstring_data );
          } else {
             char empty = '\0';
 
