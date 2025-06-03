@@ -109,7 +109,7 @@ CharUnicodeStringEncoder::~CharUnicodeStringEncoder()
 VariableLengthData &CharUnicodeStringEncoder::encode()
 {
    /* Convert the char * string into a wide string. */
-   StringUtilities::to_wstring( wstring_data, *static_cast< char ** >( address ) );
+   StringUtilities::to_wstring( this->wstring_data, *static_cast< char ** >( address ) );
 
    return EncoderBase::encode();
 }
@@ -122,19 +122,16 @@ bool const CharUnicodeStringEncoder::decode(
       calculate_var_element_count();
 
       // Include the null terminating char in the size comparison.
-      if ( ( wstring_data.size() + 1 ) == var_element_count ) {
+      if ( ( wstring_data.size() + 1 ) <= var_element_count ) {
          // Convert from wstring to string.
          std::string str_data;
          str_data.assign( wstring_data.begin(), wstring_data.end() );
 
          // Copy value to existing Trick variable char* memory and include
          // the null terminating character in the c_str().
-         if ( str_data.size() > 0 ) {
-            memcpy( *static_cast< void ** >( address ), str_data.c_str(), ( str_data.size() + 1 ) );
-         } else {
-            // Zero length so set the null terminating character.
-            *static_cast< char ** >( address )[0] = '\0';
-         }
+         memcpy( *static_cast< void ** >( address ),
+                 str_data.c_str(),
+                 ( str_data.size() + 1 ) );
       } else {
          // Need to make the Trick variable char* bigger by reallocating.
 

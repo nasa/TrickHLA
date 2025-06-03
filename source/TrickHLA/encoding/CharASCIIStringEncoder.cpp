@@ -109,7 +109,7 @@ CharASCIIStringEncoder::~CharASCIIStringEncoder()
 VariableLengthData &CharASCIIStringEncoder::encode()
 {
    /* Convert the char * string into a std::string. */
-   string_data = *static_cast< char ** >( address );
+   this->string_data = *static_cast< char ** >( address );
 
    return EncoderBase::encode();
 }
@@ -122,15 +122,12 @@ bool const CharASCIIStringEncoder::decode(
       calculate_var_element_count();
 
       // Include the null terminating char in the size comparison.
-      if ( ( string_data.size() + 1 ) == var_element_count ) {
+      if ( ( string_data.size() + 1 ) <= var_element_count ) {
          // Copy value to existing Trick variable char* memory and include
          // the null terminating character in the c_str().
-         if ( string_data.size() > 0 ) {
-            memcpy( *static_cast< void ** >( address ), string_data.c_str(), ( string_data.size() + 1 ) );
-         } else {
-            // Zero length so set the null terminating character.
-            *static_cast< char ** >( address )[0] = '\0';
-         }
+         memcpy( *static_cast< void ** >( address ),
+                 string_data.c_str(),
+                 ( string_data.size() + 1 ) );
       } else {
          // Need to make the Trick variable char* bigger by reallocating.
 
