@@ -149,7 +149,7 @@ class StringUtilities
     *  could end up with a memory leak.
     *  @return C string.
     *  @param input The input string. */
-   static char *ip_strdup_string(
+   static char *mm_strdup_string(
       std::string const &input )
    {
       return trick_MM->mm_strdup( const_cast< char * >( input.c_str() ) );
@@ -161,7 +161,7 @@ class StringUtilities
     *  could end up with a memory leak.
     *  @return C string.
     *  @param input The input wide string. */
-   static char *ip_strdup_wstring(
+   static char *mm_strdup_wstring(
       std::wstring const &input )
    {
       std::string s;

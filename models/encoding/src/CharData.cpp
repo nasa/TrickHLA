@@ -77,7 +77,7 @@ CharData::CharData(
 
    string str = "str-" + std::to_string( 1 + offset );
 #if 1
-   ptr_char = StringUtilities::ip_strdup_string( str );
+   ptr_char = StringUtilities::mm_strdup_string( str );
 #else
    int const ptr_char_size = str.size() + 1;
 

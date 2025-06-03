@@ -1181,7 +1181,7 @@ void SyncPointList::encode_checkpoint()
    free_checkpoint();
 
    // Checkpointable copy of the list name.
-   this->list_name_chkpt = StringUtilities::ip_strdup_string( this->list_name );
+   this->list_name_chkpt = StringUtilities::mm_strdup_string( this->list_name );
 
 #if SYNC_POINT_TMM_ARRAY
    for ( int i = 0; i < list_count; ++i ) {

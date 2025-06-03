@@ -181,7 +181,7 @@ void SyncPoint::encode_checkpoint()
    free_checkpoint();
 
    // Checkpointable copy of the label.
-   this->label_chkpt = StringUtilities::ip_strdup_wstring( this->label );
+   this->label_chkpt = StringUtilities::mm_strdup_wstring( this->label );
 }
 
 void SyncPoint::decode_checkpoint()

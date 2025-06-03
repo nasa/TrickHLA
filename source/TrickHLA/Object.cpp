@@ -1379,7 +1379,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          try {
             // Get the instance name based on the object instance handle. Use
             // the set_name() function to avoid a memory leak on the name.
-            set_name( StringUtilities::ip_strdup_wstring(
+            set_name( StringUtilities::mm_strdup_wstring(
                rti_amb->getObjectInstanceName( this->instance_handle ) ) );
          } catch ( ObjectInstanceNotKnown const &e ) {
             message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: ObjectInstanceNotKnown \n",

@@ -1105,7 +1105,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( is_federate_executing() ) {
          bool found = false;
          for ( int loop = 0; loop < running_feds_count; ++loop ) {
-            char const *tName = StringUtilities::ip_strdup_wstring( federate_name_ws );
+            char const *tName = StringUtilities::mm_strdup_wstring( federate_name_ws );
             if ( !strcmp( running_feds[loop].name, tName ) ) {
                found = true;
                break;
@@ -1334,7 +1334,7 @@ void Federate::determine_federate_MOM_object_instance_names()
                // Get the instance name based on the MOM object instance handle
                // and make sure it is in the Trick memory space.
                known_feds[i].MOM_instance_name =
-                  StringUtilities::ip_strdup_wstring(
+                  StringUtilities::mm_strdup_wstring(
                      rti_amb->getObjectInstanceName( fed_mom_instance_hdl ) );
             }
          }
@@ -6352,9 +6352,9 @@ void Federate::update_running_feds()
    for ( map_iter = joined_federate_name_map.begin();
          map_iter != joined_federate_name_map.end(); ++map_iter ) {
 
-      running_feds[index].name = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
+      running_feds[index].name = StringUtilities::mm_strdup_wstring( map_iter->second.c_str() );
 
-      running_feds[index].MOM_instance_name = StringUtilities::ip_strdup_wstring(
+      running_feds[index].MOM_instance_name = StringUtilities::mm_strdup_wstring(
          MOM_HLAfederate_instance_name_map[map_iter->first].c_str() );
 
       // If the federate was running at the time of the checkpoint, it must be
@@ -6391,8 +6391,8 @@ void Federate::add_a_single_entry_into_running_feds()
 
       TrickHLAObjInstanceNameMap::const_iterator map_iter;
       map_iter                                        = joined_federate_name_map.begin();
-      temp_feds[running_feds_count].MOM_instance_name = StringUtilities::ip_strdup_wstring( MOM_HLAfederate_instance_name_map[map_iter->first].c_str() );
-      temp_feds[running_feds_count].name              = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
+      temp_feds[running_feds_count].MOM_instance_name = StringUtilities::mm_strdup_wstring( MOM_HLAfederate_instance_name_map[map_iter->first].c_str() );
+      temp_feds[running_feds_count].name              = StringUtilities::mm_strdup_wstring( map_iter->second.c_str() );
       temp_feds[running_feds_count].required          = true;
 
       // delete running_feds data structure.
@@ -6452,7 +6452,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    TrickHLAObjInstanceNameMap::iterator iter = MOM_HLAfederate_instance_name_map.find( instance_hndl );
    if ( iter != MOM_HLAfederate_instance_name_map.end() ) {
-      tMOMName  = StringUtilities::ip_strdup_wstring( iter->second.c_str() );
+      tMOMName  = StringUtilities::mm_strdup_wstring( iter->second.c_str() );
       foundName = true;
       MOM_HLAfederate_instance_name_map.erase( iter );
 
