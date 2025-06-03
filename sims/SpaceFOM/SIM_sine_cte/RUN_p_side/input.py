@@ -14,6 +14,8 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
 ##############################################################################
+import socket
+import subprocess
 import sys
 sys.path.append( '../../../' )
 
