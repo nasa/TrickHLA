@@ -1,6 +1,7 @@
 ##############################################################################
 # PURPOSE:
-#    (This is a python file for use in a Trick input file.)
+#    (This is a python file for use in a Trick input file for fixing the
+#     Trick variable server source address.)
 #
 # REFERENCE:
 #    (Trick 17 documentation.)
