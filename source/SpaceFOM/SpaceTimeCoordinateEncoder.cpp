@@ -34,6 +34,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StringUtilities.hh"
 
 // Model include files.
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
@@ -50,6 +52,7 @@ NASA, Johnson Space Center\n
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
+using namespace TrickHLA;
 using namespace SpaceFOM;
 
 /**
@@ -132,6 +135,11 @@ SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder(
    // We can do this here because the record is a fixed size all the time.
    set_byte_alignment( 1 );
    ensure_buffer_capacity( encoder.getEncodedLength() );
+
+   // Initialize the variable length data to point to the buffer.
+   encoded_data.setDataPointer( buffer, capacity );
+
+   return;
 }
 
 /**
@@ -139,13 +147,31 @@ SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder(
  */
 void SpaceTimeCoordinateEncoder::encode()
 {
-   // Encode the data into the reference frame buffer.
-   VariableLengthData encoded_data = encoder.encode();
+   // Encode the STC data into the VariableLengthData encoded data.
+   try {
+      encoder.encode( encoded_data );
+   } catch ( rti1516e::EncoderException & e ) {
+      ostringstream errmsg;
+      std::string what_s;
+      StringUtilities::to_string( what_s, e.what() );
+      errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::encode():" << __LINE__
+             << " Error: Encoder exception!" << std::endl;
+      errmsg << what_s;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    // Copy the encoded data into the buffer.
    if ( get_capacity() >= encoded_data.size() ) {
+
+      // Note that the encode operation above encodes into the encoded_data
+      // VariableLengthData instance but into a different data area that the
+      // one set in the constructor above.  So, we have to copy the encoded
+      // data into the transmission buffer.
       memcpy( buffer, encoded_data.data(), encoded_data.size() );
+
    } else {
+
       // Print message and terminate.
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::encode():" << __LINE__
@@ -153,6 +179,7 @@ void SpaceTimeCoordinateEncoder::encode()
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+
    }
 
    return;
@@ -163,12 +190,21 @@ void SpaceTimeCoordinateEncoder::encode()
  */
 void SpaceTimeCoordinateEncoder::decode()
 {
-   // The Encoder helps operate on VariableLengthData so create one using the
-   // buffered HLA data we received through the TrickHLA callback.
-   VariableLengthData encoded_data = VariableLengthData( buffer, capacity );
 
-   // Use the HLA encoder helpers to decode the reference frame fixed record.
-   encoder.decode( encoded_data );
+   // Decode the STC fixed record.  This will decode the incoming data
+   // directly into the STC data instance passed into the constructor.
+   try {
+      encoder.decode( encoded_data );
+   } catch( rti1516e::EncoderException & e ) {
+      ostringstream errmsg;
+      std::string what_s;
+      StringUtilities::to_string( what_s, e.what() );
+      errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::decode():" << __LINE__
+             << " Error: Encoder exception!" << std::endl;
+      errmsg << what_s;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    return;
 }

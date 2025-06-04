@@ -33,6 +33,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StringUtilities.hh"
 
 // Model include files.
 #include "SpaceFOM/QuaternionEncoder.hh"
@@ -49,6 +51,7 @@ NASA, Johnson Space Center\n
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
+using namespace TrickHLA;
 using namespace SpaceFOM;
 
 /**
@@ -61,15 +64,14 @@ QuaternionEncoder::QuaternionEncoder(
      vector_encoder( HLAfloat64LE(), 3 ),
      encoder()
 {
-   // Build up the encoders.
-   // ObjectClass: ReferenceFrame, FOM-Module: SISO_SpaceFOM_environment.xml
-   //   Attribute-Name: attitude_quaternion, DataType: AttitudeQuaternion, encoding: HLAfixedRecord, FOM-Module: SISO_SpaceFOM_datatypes.xml
-   //      field-name: scalar, dataType: Scalar, representation: HLAfloat64LE
-   //      field-name: vector, dataType: Vector, dataType:(Scalar,representation:HLAfloat64LE), encoding:HLAfixedArray, cardinality: 3
-   //
+   // Build up the QuaternionData encoder.
+   // DataType: AttitudeQuaternion
+   // Encoding: HLAfixedRecord
+   // FOM-Module: SISO_SpaceFOM_datatypes.xml
+   //    field-name: scalar, dataType: Scalar, representation: HLAfloat64LE
+   //    field-name: vector, dataType: Vector, dataType:(Scalar,representation:HLAfloat64LE), encoding:HLAfixedArray, cardinality: 3
 
-   // Build up the attitude quaternion encoder.
-   // Quaternion:
+   // Build up the attitude quaternion encoder:
    // Quaternion scalar: The attitude quaternion scalar encoder was configured
    // in the constructor initialization list above.
    // Quaternion vector:
@@ -85,6 +87,11 @@ QuaternionEncoder::QuaternionEncoder(
    // We can do this here because the record is a fixed size all the time.
    set_byte_alignment( 1 );
    ensure_buffer_capacity( encoder.getEncodedLength() );
+
+   // Initialize the variable length data to point to the buffer.
+   encoded_data.setDataPointer( buffer, capacity );
+
+   return;
 }
 
 /**
@@ -92,13 +99,32 @@ QuaternionEncoder::QuaternionEncoder(
  */
 void QuaternionEncoder::encode() // Return: -- Nothing.
 {
-   // Encode the data into the reference frame buffer.
-   VariableLengthData encoded_data = encoder.encode();
 
-   // Copy the encoded data into the buffer.
+   // Encode the quaternion data into the VariableLengthData encoded data.
+   try {
+      encoder.encode( encoded_data );
+   } catch ( rti1516e::EncoderException & e ) {
+      ostringstream errmsg;
+      std::string what_s;
+      StringUtilities::to_string( what_s, e.what() );
+      errmsg << "SpaceFOM::QuaternionEncoder::encode():" << __LINE__
+             << " Error: Encoder exception!" << std::endl;
+      errmsg << what_s;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Copy the encoded data into the outgoing buffer.
    if ( get_capacity() >= encoded_data.size() ) {
+
+      // Note that the encode operation above encodes into the encoded_data
+      // VariableLengthData instance but into a different data area that the
+      // one set in the constructor above.  So, we have to copy the encoded
+      // data into the transmission buffer.
       memcpy( buffer, encoded_data.data(), encoded_data.size() );
+
    } else {
+
       // Print message and terminate.
       ostringstream errmsg;
       errmsg << "SpaceFOM::QuaternionEncoder::encode():" << __LINE__
@@ -106,6 +132,7 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+
    }
 
    return;
@@ -116,12 +143,21 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
  */
 void QuaternionEncoder::decode() // Return: -- Nothing.
 {
-   // The Encoder helps operate on VariableLengthData so create one using the
-   // buffered HLA data we received through the TrickHLA callback.
-   VariableLengthData encoded_data = VariableLengthData( buffer, capacity );
 
-   // Use the HLA encoder helpers to decode the reference frame fixed record.
-   encoder.decode( encoded_data );
+   // Decode the quaternion fixed record.  This will decode the incoming data
+   // directly into the QuaternionData instance passed into the constructor.
+   try {
+      encoder.decode( encoded_data );
+   } catch( rti1516e::EncoderException & e ) {
+      ostringstream errmsg;
+      std::string what_s;
+      StringUtilities::to_string( what_s, e.what() );
+      errmsg << "SpaceFOM::QuaternionEncoder::decode():" << __LINE__
+             << " Error: Encoder exception!" << std::endl;
+      errmsg << what_s;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    return;
 }
