@@ -611,12 +611,11 @@ class Object : public CheckpointConversionBase
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &receive_mutex );
 
-      if ( !changed ) {
-         if ( !thla_reflected_attributes_queue.empty() ) {
-            // The 'changed' flag is set when the data is extracted.
-            decode( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >( thla_reflected_attributes_queue.front() ) );
-            thla_reflected_attributes_queue.pop();
-         }
+      if ( !changed && !reflected_attributes_queue.empty() ) {
+         // The 'changed' flag is set when the data is decoded.
+         decode( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >(
+            reflected_attributes_queue.front() ) );
+         reflected_attributes_queue.pop();
       }
       return changed;
    }
@@ -780,7 +779,7 @@ class Object : public CheckpointConversionBase
 
    RTI1516_NAMESPACE::AttributeHandleValueMap *attribute_values_map; ///< @trick_io{**} Map of attributes that will be sent as an update to other federates.
 
-   ReflectedAttributesQueue thla_reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
+   ReflectedAttributesQueue reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
 
    AttributeMap thla_attribute_map; ///< @trick_io{**} Map of the Attribute's, key is the AttributeHandle.
 

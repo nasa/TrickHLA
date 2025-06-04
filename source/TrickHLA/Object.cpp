@@ -154,7 +154,7 @@ Object::Object()
      attribute_FOM_names(),
      manager( NULL ),
      rti_ambassador( NULL ),
-     thla_reflected_attributes_queue(),
+     reflected_attributes_queue(),
      thla_attribute_map(),
      class_handle(),
      instance_handle(),
@@ -3427,7 +3427,7 @@ void Object::enqueue_data(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &receive_mutex );
 
-   thla_reflected_attributes_queue.push( theAttributes );
+   reflected_attributes_queue.push( theAttributes );
 }
 
 /*!
