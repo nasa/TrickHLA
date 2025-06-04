@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 
 // Model include files.
@@ -103,9 +103,9 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
    // Encode the quaternion data into the VariableLengthData encoded data.
    try {
       encoder.encode( encoded_data );
-   } catch ( rti1516e::EncoderException & e ) {
+   } catch ( rti1516e::EncoderException &e ) {
       ostringstream errmsg;
-      std::string what_s;
+      std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::QuaternionEncoder::encode():" << __LINE__
              << " Error: Encoder exception!" << std::endl;
@@ -132,7 +132,6 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
       message_publish( MSG_WARNING, errmsg.str().c_str() );
-
    }
 
    return;
@@ -148,9 +147,9 @@ void QuaternionEncoder::decode() // Return: -- Nothing.
    // directly into the QuaternionData instance passed into the constructor.
    try {
       encoder.decode( encoded_data );
-   } catch( rti1516e::EncoderException & e ) {
+   } catch ( rti1516e::EncoderException &e ) {
       ostringstream errmsg;
-      std::string what_s;
+      std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::QuaternionEncoder::decode():" << __LINE__
              << " Error: Encoder exception!" << std::endl;

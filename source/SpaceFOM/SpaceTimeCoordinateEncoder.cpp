@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 
 // Model include files.
@@ -150,9 +150,9 @@ void SpaceTimeCoordinateEncoder::encode()
    // Encode the STC data into the VariableLengthData encoded data.
    try {
       encoder.encode( encoded_data );
-   } catch ( rti1516e::EncoderException & e ) {
+   } catch ( rti1516e::EncoderException &e ) {
       ostringstream errmsg;
-      std::string what_s;
+      std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::encode():" << __LINE__
              << " Error: Encoder exception!" << std::endl;
@@ -179,7 +179,6 @@ void SpaceTimeCoordinateEncoder::encode()
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
       message_publish( MSG_WARNING, errmsg.str().c_str() );
-
    }
 
    return;
@@ -195,9 +194,9 @@ void SpaceTimeCoordinateEncoder::decode()
    // directly into the STC data instance passed into the constructor.
    try {
       encoder.decode( encoded_data );
-   } catch( rti1516e::EncoderException & e ) {
+   } catch ( rti1516e::EncoderException &e ) {
       ostringstream errmsg;
-      std::string what_s;
+      std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::decode():" << __LINE__
              << " Error: Encoder exception!" << std::endl;
