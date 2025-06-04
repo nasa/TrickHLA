@@ -292,7 +292,7 @@ void QuaternionPacking::unpack()
       }
    }
 
-   // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
+   // Use the HLA encoder helpers to decode the Quaternion fixed record.
    quat_encoder.decode();
 
    // Transfer the packing data into the working data.
