@@ -105,6 +105,8 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
 
    rti1516e::HLAfixedRecord encoder; ///< @trick_io{**} Space/Time coordinate encoder
 
+   rti1516e::VariableLengthData encoded_data; ///< @trick_io{**} Variable length encode/decode data.
+
   private:
    // This object is not copyable
    /*! @brief Copy constructor for SpaceTimeCoordinateEncoder class.

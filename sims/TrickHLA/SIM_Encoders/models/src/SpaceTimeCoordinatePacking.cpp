@@ -292,7 +292,7 @@ void SpaceTimeCoordinatePacking::unpack()
       }
    }
 
-   // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
+   // Use the HLA encoder helpers to decode the STC fixed record.
    stc_encoder.decode();
 
    // Transfer the packing data into the working data.
