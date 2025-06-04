@@ -97,7 +97,7 @@ class ReflectedAttributesQueue
 
    /*! @brief Get the first/oldest item in the queue.
     *  @return The first/oldest item in the queue. */
-   RTI1516_NAMESPACE::AttributeHandleValueMap const &front();
+   RTI1516_NAMESPACE::AttributeHandleValueMap &front();
 
    /*! @brief Clear the queue of all values. */
    void clear();

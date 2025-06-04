@@ -101,14 +101,13 @@ void ReflectedAttributesQueue::pop()
    attribute_map_queue.pop();
 }
 
-AttributeHandleValueMap const &ReflectedAttributesQueue::front()
+AttributeHandleValueMap &ReflectedAttributesQueue::front()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &queue_mutex );
 
-   AttributeHandleValueMap const &theAttributes = attribute_map_queue.front();
-   return theAttributes;
+   return attribute_map_queue.front();
 }
 
 void ReflectedAttributesQueue::clear()

@@ -613,8 +613,7 @@ class Object : public CheckpointConversionBase
 
       if ( !changed && !reflected_attributes_queue.empty() ) {
          // The 'changed' flag is set when the data is decoded.
-         decode( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >(
-            reflected_attributes_queue.front() ) );
+         decode( reflected_attributes_queue.front() );
          reflected_attributes_queue.pop();
       }
       return changed;
