@@ -681,12 +681,12 @@ class Object : public CheckpointConversionBase
    /*! @brief Gets the attribute for the given FOM name.
     *  @return Associated TrickHLA::Attribute.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( std::string const &attr_FOM_name );
+   Attribute *get_attribute( char const *attr_FOM_name );
 
    /*! @brief Gets the attribute for the given FOM name.
     *  @return Associated TrickHLA::Attribute.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( char const *attr_FOM_name );
+   Attribute *get_attribute( std::string const &attr_FOM_name );
 
    /*! @brief Get the count of the number of attributes associated with this object.
     *  @return The number of attributes associated with this object. */

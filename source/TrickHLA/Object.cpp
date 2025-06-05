@@ -4982,25 +4982,24 @@ Attribute *Object::get_attribute(
 }
 
 Attribute *Object::get_attribute(
+   char const *attr_FOM_name )
+{
+   return ( attr_FOM_name != NULL ) ? get_attribute( string( attr_FOM_name ) ) : NULL;
+}
+
+Attribute *Object::get_attribute(
    string const &attr_FOM_name )
 {
-   string fom_name_str;
    for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].get_FOM_name() != NULL ) {
-         fom_name_str = attributes[i].get_FOM_name();
+         string fom_name_str = attributes[i].get_FOM_name();
 
-         if ( attr_FOM_name == fom_name_str ) {
+         if ( attr_FOM_name.compare( fom_name_str ) == 0 ) {
             return ( &attributes[i] );
          }
       }
    }
    return NULL;
-}
-
-Attribute *Object::get_attribute(
-   char const *attr_FOM_name )
-{
-   return ( attr_FOM_name != NULL ) ? get_attribute( string( attr_FOM_name ) ) : NULL;
 }
 
 void Object::stop_publishing_attributes()
