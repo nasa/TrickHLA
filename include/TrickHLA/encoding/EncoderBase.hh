@@ -127,12 +127,6 @@ class EncoderBase
       return ( !is_array() || is_static_array() );
    }
 
-   bool const is_null_address()
-   {
-      return ( address == NULL )
-             || ( is_dynamic_array() && ( *static_cast< void ** >( address ) == NULL ) );
-   }
-
   protected:
    void *address; ///< @trick_units{--} Address of the trick variable.
 

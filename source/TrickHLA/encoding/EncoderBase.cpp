@@ -202,14 +202,11 @@ string EncoderBase::to_string()
 void EncoderBase::calculate_var_element_count()
 {
    if ( is_dynamic_array() ) {
-      // We have a multi-dimension array that is a pointer and the
-      // number of dimensions is attr->num_index. Note: Make sure
-      // to refresh ref2 before this call because it is dynamic array.
-
-      // get_size returns the number of elements in the dynamic array.
-      if ( is_null_address() ) {
+      // Multi-dimension array that is a pointer so check for NULL.
+      if ( *static_cast< void ** >( address ) == NULL ) {
          this->var_element_count = 0;
       } else {
+         // get_size returns the number of elements in the dynamic array.
          int const num_items     = get_size( *static_cast< void ** >( this->address ) );
          this->var_element_count = ( num_items > 0 ) ? num_items : 0;
       }
