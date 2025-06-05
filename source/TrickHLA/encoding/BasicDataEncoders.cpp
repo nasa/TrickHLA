@@ -88,7 +88,8 @@ using namespace TrickHLA;
                 << "' simulation variable (type:"                                                         \
                 << Utilities::get_trick_type_string( attr->type )                                         \
                 << ") is not the expected type '"                                                         \
-                << Utilities::get_trick_type_string( TrickTypeEnum ) << "'.\n";                           \
+                << Utilities::get_trick_type_string( TrickTypeEnum )                                      \
+                << "'." << std::endl;                                                                     \
          DebugHandler::terminate_with_message( errmsg.str() );                                            \
          return;                                                                                          \
       }                                                                                                   \
@@ -98,7 +99,7 @@ using namespace TrickHLA;
          ostringstream errmsg;                                                                            \
          errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                    \
                 << " ERROR: Trick ref-attributes for the '" << this->name                                 \
-                << "' variable must be a primitive and not an array!\n";                                  \
+                << "' variable must be a primitive and not an array!" << std::endl;                       \
          DebugHandler::terminate_with_message( errmsg.str() );                                            \
          return;                                                                                          \
       }                                                                                                   \

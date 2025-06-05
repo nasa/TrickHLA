@@ -84,7 +84,8 @@ EncoderBase::EncoderBase(
       ostringstream errmsg;
       errmsg << "EncoderBase::EncoderBase():" << __LINE__
              << " ERROR: Unexpected NULL Trick attributes. Please make sure the"
-             << " variable is allocated memory by the Trick Memory Manager.\n";
+             << " variable is allocated memory by the Trick Memory Manager."
+             << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -104,7 +105,8 @@ EncoderBase::EncoderBase(
       errmsg << "EncoderBase::EncoderBase():" << __LINE__
              << " ERROR: The variable address is NULL for variable '"
              << this->name << "'. Please make sure the Trick variable"
-             << " is allocated memory by the Trick Memory Manager.\n";
+             << " is allocated memory by the Trick Memory Manager."
+             << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -245,8 +247,9 @@ void EncoderBase::resize_trick_var(
          ostringstream errmsg;
          errmsg << "EncoderBase::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"
-                << " with name '" << this->name << "' with " << new_size
-                << " elements!\n";
+                << " with name '" << this->name << "' and type '"
+                << Utilities::get_trick_type_string( this->type )
+                << "' for " << new_size << " elements!" << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }

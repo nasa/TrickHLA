@@ -90,7 +90,8 @@ using namespace TrickHLA;
                 << "' simulation variable (type:"                                                                        \
                 << Utilities::get_trick_type_string( this->type )                                                        \
                 << ") is not the expected type '"                                                                        \
-                << Utilities::get_trick_type_string( TrickTypeEnum ) << "'.\n";                                          \
+                << Utilities::get_trick_type_string( TrickTypeEnum )                                                     \
+                << "'." << std::endl;                                                                                    \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
          return;                                                                                                         \
       }                                                                                                                  \
@@ -99,7 +100,7 @@ using namespace TrickHLA;
          ostringstream errmsg;                                                                                           \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
                 << " ERROR: Trick ref-attributes for '" << this->name                                                    \
-                << "' the variable must be a dynamic variable array!\n";                                                 \
+                << "' the variable must be a dynamic variable array!" << std::endl;                                      \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
          return;                                                                                                         \
       }                                                                                                                  \
