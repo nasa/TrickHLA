@@ -75,13 +75,13 @@ CharRawDataEncoder::CharRawDataEncoder(
    ATTRIBUTES *attr )
    : EncoderBase( addr, attr )
 {
-   if ( ( attr->type != TRICK_CHARACTER )
-        && ( attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
+   if ( ( this->type != TRICK_CHARACTER )
+        && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << this->name
              << "' simulation variable (type:"
-             << Utilities::get_trick_type_string( attr->type )
+             << Utilities::get_trick_type_string( this->type )
              << ") is not the expected type '"
              << Utilities::get_trick_type_string( TRICK_CHARACTER ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -124,34 +124,4 @@ bool const CharRawDataEncoder::decode(
 string CharRawDataEncoder::to_string()
 {
    return ( "CharRawDataEncoder[" + this->name + "]" );
-}
-
-void CharRawDataEncoder::resize_trick_var(
-   size_t const new_size )
-{
-   // Trick array variable size does not match the new size.
-   if ( ( new_size != var_element_count )
-        || ( *( static_cast< void ** >( address ) ) == NULL ) ) {
-
-      if ( *( static_cast< void ** >( address ) ) == NULL ) {
-         *( static_cast< void ** >( address ) ) =
-            static_cast< void * >( TMM_declare_var_1d( "char", new_size ) );
-      } else {
-         *( static_cast< void ** >( address ) ) =
-            static_cast< void * >( TMM_resize_array_1d_a(
-               *( static_cast< void ** >( address ) ), new_size ) );
-      }
-
-      // Update the element count to the new size.
-      var_element_count = new_size;
-
-      if ( *static_cast< void ** >( address ) == NULL ) {
-         ostringstream errmsg;
-         errmsg << "CharRawDataEncoder::resize_trick_var():" << __LINE__
-                << " ERROR: Could not allocate memory for Trick variable"
-                << " with name '" << this->name << "' with " << new_size
-                << " elements!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-   }
 }

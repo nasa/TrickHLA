@@ -95,6 +95,8 @@ class EncoderBase
 
    void calculate_var_element_count();
 
+   void resize_trick_var( std::size_t const new_size );
+
    std::size_t const get_encoded_length()
    {
       return encoder->getEncodedLength();

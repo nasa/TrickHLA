@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
+@trick_link_dependency{../Utilities.cpp}
 
 
 @revs_title
@@ -211,6 +212,47 @@ void EncoderBase::calculate_var_element_count()
       } else {
          int const num_items     = get_size( *static_cast< void ** >( this->address ) );
          this->var_element_count = ( num_items > 0 ) ? num_items : 0;
+      }
+   }
+}
+
+void EncoderBase::resize_trick_var(
+   size_t const new_size )
+{
+   // Trick array variable size does not match the new size.
+   if ( is_dynamic_array()
+        && ( ( new_size != var_element_count )
+             || ( *( static_cast< void ** >( address ) ) == NULL ) ) ) {
+
+      if ( this->type == TRICK_STRING ) {
+         // TMM_resize_array_1d_a does not support STL strings.
+         if ( *( static_cast< void ** >( address ) ) != NULL ) {
+            TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
+         }
+         *( static_cast< void ** >( address ) ) =
+            static_cast< void * >( TMM_declare_var_1d( "std::string", new_size ) );
+      } else {
+         if ( *( static_cast< void ** >( address ) ) == NULL ) {
+            *( static_cast< void ** >( address ) ) =
+               static_cast< void * >( TMM_declare_var_1d(
+                  Utilities::get_trick_type_string( this->type ).c_str(), new_size ) );
+         } else {
+            *( static_cast< void ** >( address ) ) =
+               static_cast< void * >( TMM_resize_array_1d_a(
+                  *( static_cast< void ** >( address ) ), new_size ) );
+         }
+      }
+
+      // Update the element count to the new size.
+      this->var_element_count = new_size;
+
+      if ( *static_cast< void ** >( address ) == NULL ) {
+         ostringstream errmsg;
+         errmsg << "EncoderBase::resize_trick_var():" << __LINE__
+                << " ERROR: Could not allocate memory for Trick variable"
+                << " with name '" << this->name << "' with " << new_size
+                << " elements!\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
 }

@@ -166,45 +166,6 @@ using namespace TrickHLA;
       return msg.str();                                                                                                  \
    }                                                                                                                     \
                                                                                                                          \
-   void EncoderClassName::resize_trick_var(                                                                              \
-      size_t const new_size )                                                                                            \
-   {                                                                                                                     \
-      /* Trick array variable size does not match the new size. */                                                       \
-      if ( ( new_size != var_element_count )                                                                             \
-           || ( *( static_cast< void ** >( address ) ) == NULL ) ) {                                                     \
-                                                                                                                         \
-         if ( this->type == TRICK_STRING ) {                                                                             \
-            /* TMM_resize_array_1d_a does not support STL strings. */                                                    \
-            if ( *( static_cast< void ** >( address ) ) != NULL ) {                                                      \
-               TMM_delete_var_a( *( static_cast< void ** >( address ) ) );                                               \
-            }                                                                                                            \
-            *( static_cast< void ** >( address ) ) =                                                                     \
-               static_cast< void * >( TMM_declare_var_1d( "std::string", new_size ) );                                   \
-         } else {                                                                                                        \
-            if ( *( static_cast< void ** >( address ) ) == NULL ) {                                                      \
-               *( static_cast< void ** >( address ) ) =                                                                  \
-                  static_cast< void * >( TMM_declare_var_1d( #SimpleDataType, new_size ) );                              \
-            } else {                                                                                                     \
-               *( static_cast< void ** >( address ) ) =                                                                  \
-                  static_cast< void * >( TMM_resize_array_1d_a(                                                          \
-                     *( static_cast< void ** >( address ) ), new_size ) );                                               \
-            }                                                                                                            \
-         }                                                                                                               \
-      }                                                                                                                  \
-                                                                                                                         \
-      /* Update the element count to the new size. */                                                                    \
-      var_element_count = new_size;                                                                                      \
-                                                                                                                         \
-      if ( *static_cast< SimpleDataType ** >( address ) == NULL ) {                                                      \
-         ostringstream errmsg;                                                                                           \
-         errmsg << #EncoderClassName << "::resize_trick_var():" << __LINE__                                              \
-                << " ERROR: Could not allocate memory for Trick variable"                                                \
-                << " with name '" << this->name << "' with " << new_size                                                 \
-                << " elements!\n";                                                                                       \
-         DebugHandler::terminate_with_message( errmsg.str() );                                                           \
-      }                                                                                                                  \
-   }                                                                                                                     \
-                                                                                                                         \
    void EncoderClassName::resize_data_elements(                                                                          \
       size_t const new_size )                                                                                            \
    {                                                                                                                     \

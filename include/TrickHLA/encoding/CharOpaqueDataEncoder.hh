@@ -87,9 +87,6 @@ class CharOpaqueDataEncoder : public EncoderBase
 
    virtual std::string to_string();
 
-  protected:
-   void resize_trick_var( std::size_t const new_size );
-
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharOpaqueDataEncoder();

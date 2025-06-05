@@ -77,12 +77,12 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
    : EncoderBase( addr, attr ),
      time_data( 0LL )
 {
-   if ( attr->type != TRICK_DOUBLE ) {
+   if ( this->type != TRICK_DOUBLE ) {
       ostringstream errmsg;
       errmsg << "Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << this->name
              << "' simulation variable (type:"
-             << Utilities::get_trick_type_string( attr->type )
+             << Utilities::get_trick_type_string( this->type )
              << ") is not the expected type '"
              << Utilities::get_trick_type_string( TRICK_CHARACTER ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );

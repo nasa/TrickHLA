@@ -75,13 +75,13 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
    : EncoderBase( addr, attr ),
      string_data()
 {
-   if ( ( attr->type != TRICK_CHARACTER )
-        && ( attr->type != TRICK_UNSIGNED_CHARACTER ) ) {
+   if ( ( this->type != TRICK_CHARACTER )
+        && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << this->name
              << "' simulation variable (type:"
-             << Utilities::get_trick_type_string( attr->type )
+             << Utilities::get_trick_type_string( this->type )
              << ") is not the expected type '"
              << Utilities::get_trick_type_string( TRICK_CHARACTER ) << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );

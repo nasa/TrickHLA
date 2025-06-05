@@ -90,8 +90,6 @@ namespace TrickHLA
       virtual std::string to_string();                                                        \
                                                                                               \
      protected:                                                                               \
-      void resize_trick_var( std::size_t const new_size );                                    \
-                                                                                              \
       void resize_data_elements( std::size_t const new_size );                                \
                                                                                               \
      private:                                                                                 \
