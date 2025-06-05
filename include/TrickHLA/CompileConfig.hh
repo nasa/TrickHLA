@@ -29,10 +29,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_COMPILE_CONFIG_HH
 #define TRICKHLA_COMPILE_CONFIG_HH
 
-// Just produce a warning on HLA decode error instead of terminating with an error.
-// Default: THLA_WARNING_ON_DECODE_ERROR
-#define THLA_WARNING_ON_DECODE_ERROR
-
 // Trick does not support the std::wstring type in the Memory Manager for now.
 // Default: NO_TRICK_WSTRING_MM_SUPPORT
 #define NO_TRICK_WSTRING_MM_SUPPORT

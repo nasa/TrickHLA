@@ -176,19 +176,12 @@ bool const EncoderBase::decode(
       StringUtilities::to_string( err_details, e.what() );
       ostringstream errmsg;
       errmsg << "EncoderBase::decode():" << __LINE__
-#if defined( THLA_WARNING_ON_DECODE_ERROR )
              << " WARNING: Unexpected error decoding HLA data for Trick variable '"
-             << this->name << "' with encoded length " << encoder->getEncodedLength()
+             << this->name << "' with encoded length "
+             << encoder->getEncodedLength()
              << " using encoder " << this->to_string()
              << " with error: " << err_details << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
-#else
-             << " ERROR: Unexpected error decoding HLA data for Trick variable '"
-             << this->name << "' with encoded length " << encoder->getEncodedLength()
-             << " using encoder " << this->to_string()
-             << " with error: " << err_details << std::endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-#endif
       return false;
    }
    return true;
