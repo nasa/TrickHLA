@@ -443,7 +443,7 @@ string const Utilities::get_trick_type_string(
          return "unsigned char";
       }
       case TRICK_STRING: {
-         return "char *";
+         return "std::string";
       }
       case TRICK_SHORT: {
          return "short";
