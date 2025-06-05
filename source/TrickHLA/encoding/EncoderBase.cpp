@@ -175,18 +175,16 @@ bool const EncoderBase::decode(
       ostringstream errmsg;
       errmsg << "EncoderBase::decode():" << __LINE__
 #if defined( THLA_WARNING_ON_DECODE_ERROR )
-             << " WARNING:"
-#else
-             << " ERROR:"
-#endif
-             << " Unexpected error decoding HLA data for Trick variable '"
+             << " WARNING: Unexpected error decoding HLA data for Trick variable '"
              << this->name << "' with encoded length " << encoder->getEncodedLength()
              << " using encoder " << this->to_string()
              << " with error: " << err_details << std::endl;
-
-#if defined( THLA_WARNING_ON_DECODE_ERROR )
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #else
+             << " ERROR: Unexpected error decoding HLA data for Trick variable '"
+             << this->name << "' with encoded length " << encoder->getEncodedLength()
+             << " using encoder " << this->to_string()
+             << " with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
 #endif
       return false;
@@ -202,7 +200,7 @@ string EncoderBase::to_string()
 void EncoderBase::calculate_var_element_count()
 {
    if ( is_dynamic_array() ) {
-      // Multi-dimension array that is a pointer so check for NULL.
+      // Dynamic array that is a pointer so check for NULL.
       if ( *static_cast< void ** >( address ) == NULL ) {
          this->var_element_count = 0;
       } else {
