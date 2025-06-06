@@ -79,9 +79,9 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
       errmsg << "Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << this->name
              << "' simulation variable (type:"
-             << trickTypeCharString( this->type, "UNKNOWN_TYPE" )
+             << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
-             << trickTypeCharString( TRICK_CHARACTER, "TRICK_CHARACTER" )
+             << trickTypeCharString( TRICK_DOUBLE, "UNSUPPORTED_TYPE" )
              << "'." << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;

@@ -384,7 +384,7 @@ EncoderBase *EncoderFactory::create(
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of unknown type ("
-                << trickTypeCharString( attr->type, "UNKNOWN_TYPE" )
+                << trickTypeCharString( attr->type, "UNSUPPORTED_TYPE" )
                 << " = " << attr->type << "), and is not supported." << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;

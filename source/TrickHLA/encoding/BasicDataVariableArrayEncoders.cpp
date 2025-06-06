@@ -83,12 +83,12 @@ using namespace TrickHLA;
                    || ( this->type == TRICK_UNSIGNED_CHARACTER );                                                        \
       if ( !valid ) {                                                                                                    \
          ostringstream errmsg;                                                                                           \
-         errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
+         errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                                   \
                 << " ERROR: Trick type for the '" << this->name                                                          \
                 << "' simulation variable (type:"                                                                        \
-                << trickTypeCharString( this->type, "UNKNOWN_TYPE" )                                                     \
+                << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )                                                 \
                 << ") is not the expected type '"                                                                        \
-                << trickTypeCharString( TrickTypeEnum, "UNKNOWN_TYPE" )                                                  \
+                << trickTypeCharString( TrickTypeEnum, "UNSUPPORTED_TYPE" )                                              \
                 << "'." << std::endl;                                                                                    \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
          return;                                                                                                         \
@@ -96,7 +96,7 @@ using namespace TrickHLA;
                                                                                                                          \
       if ( !is_dynamic_array() ) {                                                                                       \
          ostringstream errmsg;                                                                                           \
-         errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
+         errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                                   \
                 << " ERROR: Trick ref-attributes for '" << this->name                                                    \
                 << "' the variable must be a dynamic variable array!" << std::endl;                                      \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \

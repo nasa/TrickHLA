@@ -84,9 +84,9 @@ using namespace TrickHLA;
          errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                    \
                 << " ERROR: Trick type for the '" << this->name                                           \
                 << "' simulation variable (type:"                                                         \
-                << trickTypeCharString( this->type, "UNKNOWN_TYPE" )                                      \
+                << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )                                  \
                 << ") is not the expected type '"                                                         \
-                << trickTypeCharString( TrickTypeEnum, "UNKNOWN_TYPE" )                                   \
+                << trickTypeCharString( TrickTypeEnum, "UNSUPPORTED_TYPE" )                               \
                 << "'." << std::endl;                                                                     \
          DebugHandler::terminate_with_message( errmsg.str() );                                            \
          return;                                                                                          \

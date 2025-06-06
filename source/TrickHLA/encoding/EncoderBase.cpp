@@ -223,7 +223,7 @@ void EncoderBase::resize_trick_var(
          if ( *( static_cast< void ** >( address ) ) == NULL ) {
             *( static_cast< void ** >( address ) ) =
                static_cast< void * >( TMM_declare_var_1d(
-                  trickTypeCharString( this->type, "UNKNOWN_TYPE" ), new_size ) );
+                  trickTypeCharString( this->type, "UNSUPPORTED_TYPE" ), new_size ) );
          } else {
             *( static_cast< void ** >( address ) ) =
                static_cast< void * >( TMM_resize_array_1d_a(
@@ -239,7 +239,7 @@ void EncoderBase::resize_trick_var(
          errmsg << "EncoderBase::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"
                 << " with name '" << this->name << "' and type '"
-                << trickTypeCharString( this->type, "UNKNOWN_TYPE" )
+                << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
                 << "' for " << new_size << " elements!" << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
