@@ -240,10 +240,6 @@ class Utilities
     *  @param usec Time to sleep in microseconds. */
    static int micro_sleep( long const usec );
 
-   /*! @brief Returns the Trick type as a string.
-    *  @return Trick type as a string. */
-   static std::string const get_trick_type_string( TRICK_TYPE type );
-
    /*! @brief Return the current TrickHLA version string from the Version.hh
     *  header file.
     *  @return TrickHKLA version string. */

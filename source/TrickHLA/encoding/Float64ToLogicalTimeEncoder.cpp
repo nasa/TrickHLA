@@ -22,7 +22,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Int64BaseTime.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
 
 
 @revs_title
@@ -49,9 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
 
@@ -82,9 +79,9 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
       errmsg << "Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << this->name
              << "' simulation variable (type:"
-             << Utilities::get_trick_type_string( this->type )
+             << trickTypeCharString( this->type, "UNKNOWN_TYPE" )
              << ") is not the expected type '"
-             << Utilities::get_trick_type_string( TRICK_CHARACTER )
+             << trickTypeCharString( TRICK_CHARACTER, "TRICK_CHARACTER" )
              << "'." << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;

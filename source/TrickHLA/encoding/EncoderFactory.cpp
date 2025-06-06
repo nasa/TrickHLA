@@ -30,7 +30,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Float64ToLogicalTimeEncoder.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
 
 
 @revs_title
@@ -58,7 +57,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
@@ -386,7 +384,7 @@ EncoderBase *EncoderFactory::create(
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
                 << "' is of unknown type ("
-                << Utilities::get_trick_type_string( attr->type )
+                << trickTypeCharString( attr->type, "UNKNOWN_TYPE" )
                 << " = " << attr->type << "), and is not supported." << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
@@ -575,7 +573,7 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
       case ENCODING_UNICODE_STRING: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UnicodeStringFixedArrayEncoder( address, attr );
+               return new WUnicodeStringFixedArrayEncoder( address, attr );
             } else {
                return new UnicodeStringVariableArrayEncoder( address, attr );
             }

@@ -48,9 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
@@ -88,9 +86,9 @@ using namespace TrickHLA;
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                      \
                 << " ERROR: Trick type for the '" << this->name                                                          \
                 << "' simulation variable (type:"                                                                        \
-                << Utilities::get_trick_type_string( this->type )                                                        \
+                << trickTypeCharString( this->type, "UNKNOWN_TYPE" )                                                     \
                 << ") is not the expected type '"                                                                        \
-                << Utilities::get_trick_type_string( TrickTypeEnum )                                                     \
+                << trickTypeCharString( TrickTypeEnum, "UNKNOWN_TYPE" )                                                  \
                 << "'." << std::endl;                                                                                    \
          DebugHandler::terminate_with_message( errmsg.str() );                                                           \
          return;                                                                                                         \

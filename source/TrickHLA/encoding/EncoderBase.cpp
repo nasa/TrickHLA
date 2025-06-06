@@ -21,7 +21,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
 
 
 @revs_title
@@ -52,7 +51,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -225,7 +223,7 @@ void EncoderBase::resize_trick_var(
          if ( *( static_cast< void ** >( address ) ) == NULL ) {
             *( static_cast< void ** >( address ) ) =
                static_cast< void * >( TMM_declare_var_1d(
-                  Utilities::get_trick_type_string( this->type ).c_str(), new_size ) );
+                  trickTypeCharString( this->type, "UNKNOWN_TYPE" ), new_size ) );
          } else {
             *( static_cast< void ** >( address ) ) =
                static_cast< void * >( TMM_resize_array_1d_a(
@@ -241,7 +239,7 @@ void EncoderBase::resize_trick_var(
          errmsg << "EncoderBase::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"
                 << " with name '" << this->name << "' and type '"
-                << Utilities::get_trick_type_string( this->type )
+                << trickTypeCharString( this->type, "UNKNOWN_TYPE" )
                 << "' for " << new_size << " elements!" << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }

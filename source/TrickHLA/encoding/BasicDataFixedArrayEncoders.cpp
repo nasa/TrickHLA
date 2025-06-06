@@ -48,9 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
@@ -77,19 +75,19 @@ using namespace TrickHLA;
       ATTRIBUTES *attr )                                                                                              \
       : EncoderBase( addr, attr )                                                                                     \
    {                                                                                                                  \
-      bool valid = ( attr->type == TrickTypeEnum )                                                                    \
-                   || ( ( ( attr->type == TRICK_LONG )                                                                \
-                          || ( attr->type == TRICK_UNSIGNED_LONG ) )                                                  \
+      bool valid = ( this->type == TrickTypeEnum )                                                                    \
+                   || ( ( ( this->type == TRICK_LONG )                                                                \
+                          || ( this->type == TRICK_UNSIGNED_LONG ) )                                                  \
                         && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                                           \
-                   || ( attr->type == TRICK_UNSIGNED_CHARACTER );                                                     \
+                   || ( this->type == TRICK_UNSIGNED_CHARACTER );                                                     \
       if ( !valid ) {                                                                                                 \
          ostringstream errmsg;                                                                                        \
          errmsg << #EncoderClassName << "::" #EncoderClassName << "():" << __LINE__                                   \
                 << " ERROR: Trick type for the '" << this->name                                                       \
                 << "' simulation variable (type:"                                                                     \
-                << Utilities::get_trick_type_string( attr->type )                                                     \
+                << trickTypeCharString( this->type, "UNKNOWN_TYPE" )                                                  \
                 << ") is not the expected type '"                                                                     \
-                << Utilities::get_trick_type_string( TrickTypeEnum )                                                  \
+                << trickTypeCharString( TrickTypeEnum, "UNKNOWN_TYPE" )                                               \
                 << "'." << std::endl;                                                                                 \
          DebugHandler::terminate_with_message( errmsg.str() );                                                        \
          return;                                                                                                      \
