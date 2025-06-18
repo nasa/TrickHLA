@@ -134,8 +134,11 @@ DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeCharVariableArrayEncoder )
 DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeStringVariableArrayEncoder )
 #endif // TRICK_WSTRING_MM_SUPPORT
 
-#pragma GCC diagnostic pop
-
 } // namespace TrickHLA
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic pop
 
 #endif // TRICKHLA_BASIC_DATA_VARIABLE_ARRAY_ENCODERS_HH

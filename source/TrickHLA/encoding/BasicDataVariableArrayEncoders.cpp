@@ -175,7 +175,9 @@ DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeCharVariableArrayEncoder, HLA
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
 DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeStringVariableArrayEncoder, HLAunicodeString, std::wstring )
-
-#pragma GCC diagnostic pop
-
 #endif // TRICK_WSTRING_MM_SUPPORT
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic pop

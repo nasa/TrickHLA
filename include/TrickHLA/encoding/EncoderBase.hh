@@ -167,6 +167,9 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
 } // namespace TrickHLA
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
 #pragma GCC diagnostic pop
 
 #endif // TRICKHLA_ENCODER_BASE_HH

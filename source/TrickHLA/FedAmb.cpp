@@ -72,9 +72,9 @@ NASA, Johnson Space Center\n
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
+
 // HLA include files.
 #include RTI1516_HEADER
-#pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -164,12 +164,6 @@ void FedAmb::initialize()
 ////////////////////////////////////
 // Federation Management Services //
 ////////////////////////////////////
-
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
 
 void FedAmb::connectionLost(
    wstring const &faultDescription ) throw( RTI1516_NAMESPACE::FederateInternalError )
@@ -1509,4 +1503,7 @@ FedAmb::requestRetraction():%d \n",
                     federate->get_federate_name(), __LINE__ );
 }
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
 #pragma GCC diagnostic pop
