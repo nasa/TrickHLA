@@ -56,7 +56,6 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/DataElement.h"
-#pragma GCC diagnostic pop
 
 namespace TrickHLA
 {
@@ -147,7 +146,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
    virtual RTI1516_NAMESPACE::Integer64 hash() const
    {
-      return ( data_encoder != NULL ) ? data_encoder->hash() : RTI1516_NAMESPACE::Integer64(0);
+      return ( data_encoder != NULL ) ? data_encoder->hash() : RTI1516_NAMESPACE::Integer64( 0 );
    }
 #endif // SWIG
 
@@ -166,5 +165,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 };
 
 } // namespace TrickHLA
+
+#pragma GCC diagnostic pop
 
 #endif // TRICKHLA_ENCODER_BASE_HH
