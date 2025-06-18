@@ -55,12 +55,12 @@ NASA, Johnson Space Center\n
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
+
 // HLA include files.
 #include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/HLAvariableArray.h"
-#pragma GCC diagnostic pop
 
 namespace TrickHLA
 {
@@ -133,6 +133,8 @@ DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeCharVariableArrayEncoder )
 #if defined( TRICK_WSTRING_MM_SUPPORT )
 DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeStringVariableArrayEncoder )
 #endif // TRICK_WSTRING_MM_SUPPORT
+
+#pragma GCC diagnostic pop
 
 } // namespace TrickHLA
 
