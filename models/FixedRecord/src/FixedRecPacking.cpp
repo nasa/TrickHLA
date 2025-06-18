@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <algorithm>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <math.h>
