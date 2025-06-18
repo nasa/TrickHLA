@@ -724,8 +724,8 @@ void Object::remove_object_instance()
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
       message_publish( MSG_NORMAL, "Object::remove_object_instance():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
-                       __LINE__, get_name(), id_str.c_str(),
-                       ( is_instance_handle_valid() ? "Yes" : "No" ) );
+                       __LINE__, ( ( get_name() != NULL ) ? get_name() : "NULL" ),
+                       id_str.c_str(), ( is_instance_handle_valid() ? "Yes" : "No" ) );
    }
 }
 
@@ -741,8 +741,8 @@ void Object::process_deleted_object()
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          message_publish( MSG_NORMAL, "Object::process_deleted_object():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
-                          __LINE__, get_name(), id_str.c_str(),
-                          ( is_instance_handle_valid() ? "Yes" : "No" ) );
+                          __LINE__, ( ( get_name() != NULL ) ? get_name() : "NULL" ),
+                          id_str.c_str(), ( is_instance_handle_valid() ? "Yes" : "No" ) );
       }
 
       // If the callback class has been defined, call it...
@@ -769,36 +769,27 @@ void Object::mark_all_attributes_as_nonlocal()
       StringUtilities::to_string( id_str, instance_handle );
 
       msg << "Object::mark_all_attributes_as_nonlocal():"
-          << __LINE__ << '\n'
-          << "  Object:'" << get_name() << "'"
-          << " FOM-Name:'" << get_FOM_name() << "'"
+          << __LINE__ << endl
+          << "  Object:'" << ( ( get_name() != NULL ) ? get_name() : "NULL" ) << "'"
+          << " FOM-Name:'" << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" ) << "'"
           << " Instance-ID:" << id_str;
    }
    for ( int i = 0; i < attr_count; ++i ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         msg << '\n'
-             << "   " << ( i + 1 ) << "/" << attr_count
-             << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
-             << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
-             << " locally_owned: "
-             << ( attributes[i].is_locally_owned() ? "Yes" : "No" );
-      }
-
       if ( attributes[i].is_locally_owned() ) {
          attributes[i].unmark_locally_owned();
-
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-            msg << '\n'
-                << "   " << ( i + 1 ) << "/" << attr_count
-                << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
-                << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
-                << " locally_owned: "
-                << ( attributes[i].is_locally_owned() ? "Yes" : "No" );
-         }
+      }
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         char const *attr_fom_name   = attributes[i].get_FOM_name();
+         char const *attr_trick_name = attributes[i].get_trick_name();
+         msg << endl
+             << "   " << ( i + 1 ) << "/" << attr_count
+             << " FOM-Attribute:'" << ( ( attr_fom_name != NULL ) ? attr_fom_name : "NULL" ) << "'"
+             << " Trick-Name:'" << ( ( attr_trick_name != NULL ) ? attr_trick_name : "NULL" ) << "'"
+             << " locally_owned: " << ( attributes[i].is_locally_owned() ? "Yes" : "No" );
       }
    }
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      msg << '\n';
+      msg << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -1514,9 +1505,11 @@ void Object::setup_preferred_order_with_RTI()
       if ( attributes[i].is_locally_owned()
            && ( attributes[i].get_preferred_order() == TRANSPORT_TIMESTAMP_ORDER ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            char const *attr_fom_name   = attributes[i].get_FOM_name();
+            char const *attr_trick_name = attributes[i].get_trick_name();
             msg << "   " << ( i + 1 ) << "/" << attr_count
-                << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
-                << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
+                << " FOM-Attribute:'" << ( ( attr_fom_name != NULL ) ? attr_fom_name : "NULL" ) << "'"
+                << " Trick-Name:'" << ( ( attr_trick_name != NULL ) ? attr_trick_name : "NULL" ) << "'"
                 << " Preferred-Order:TIMESTAMP\n";
          }
          TSO_attr_handle_set.insert( attributes[i].get_attribute_handle() );
@@ -1528,10 +1521,12 @@ void Object::setup_preferred_order_with_RTI()
       if ( attributes[i].is_locally_owned()
            && ( attributes[i].get_preferred_order() == TRANSPORT_RECEIVE_ORDER ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            char const *attr_fom_name   = attributes[i].get_FOM_name();
+            char const *attr_trick_name = attributes[i].get_trick_name();
             msg << "   " << ( i + 1 ) << "/" << attr_count
-                << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
-                << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
-                << " Preferred-Order:RECEIVE\n";
+                << " FOM-Attribute:'" << ( ( attr_fom_name != NULL ) ? attr_fom_name : "NULL" ) << "'"
+                << " Trick-Name:'" << ( ( attr_trick_name != NULL ) ? attr_trick_name : "NULL" ) << "'"
+                << " Preferred-Order:RECEIVE" << endl;
          }
          RO_attr_handle_set.insert( attributes[i].get_attribute_handle() );
       }

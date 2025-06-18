@@ -134,18 +134,24 @@ void Parameter::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Make sure we have a valid parameter Trick-Name.
-   if ( ( rti_encoding != ENCODING_FIXED_RECORD )
-        && ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) ) {
-      ostringstream errmsg;
-      errmsg << "Parameter::initialize():" << __LINE__
-             << " ERROR: FOM Interaction Parameter '"
-             << interaction_fom_name << "'->'" << FOM_name << "' has a missing"
-             << " Trick name for the parameter. Make sure 'THLA.manager.interactions["
-             << interaction_index << "].parameters[" << parameter_index
-             << "].trick_name' in either your input.py file or modified-data files"
-             << " is correctly specified.\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
+   if ( rti_encoding == ENCODING_FIXED_RECORD ) {
+      // For a fixed record, set an empty string for the Trick-name if null.
+      if ( trick_name == NULL ) {
+         trick_name = StringUtilities::mm_strdup_string( "" );
+      }
+   } else {
+      // Make sure we have a valid parameter Trick-Name.
+      if ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) {
+         ostringstream errmsg;
+         errmsg << "Parameter::initialize():" << __LINE__
+                << " ERROR: FOM Interaction Parameter '"
+                << interaction_fom_name << "'->'" << FOM_name << "' has a missing"
+                << " Trick name for the parameter. Make sure 'THLA.manager.interactions["
+                << interaction_index << "].parameters[" << parameter_index
+                << "].trick_name' in either your input.py file or modified-data files"
+                << " is correctly specified.\n";
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 
    // Do a quick bounds check on the rti_encoding value.
