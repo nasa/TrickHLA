@@ -54,6 +54,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/encoding/DataElement.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA
@@ -84,81 +85,81 @@ class EncoderFactory
    /*! @brief Destructor for the TrickHLA EncoderFactory class. */
    virtual ~EncoderFactory();
 
-   static TrickHLA::EncoderBase *create(
+   static EncoderBase *create(
       std::string const           &trick_name,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create(
+   static EncoderBase *create(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
   protected:
-   static TrickHLA::EncoderBase *create_char_encoder(
+   static EncoderBase *create_char_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create_string_encoder(
+   static EncoderBase *create_string_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create_wchar_encoder(
+   static EncoderBase *create_wchar_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
-   static TrickHLA::EncoderBase *create_wstring_encoder(
+   static EncoderBase *create_wstring_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 #endif
 
-   static TrickHLA::EncoderBase *create_int16_encoder(
+   static EncoderBase *create_int16_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create_int32_encoder(
+   static EncoderBase *create_int32_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create_int64_encoder(
+   static EncoderBase *create_int64_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
 #if defined( IEEE_1516_2025 )
-   static TrickHLA::EncoderBase *create_uint16_encoder(
+   static EncoderBase *create_uint16_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create_uint32_encoder(
+   static EncoderBase *create_uint32_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create_uint64_encoder(
+   static EncoderBase *create_uint64_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 #endif
 
-   static TrickHLA::EncoderBase *create_float32_encoder(
+   static EncoderBase *create_float32_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create_float64_encoder(
+   static EncoderBase *create_float64_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );
 
-   static TrickHLA::EncoderBase *create_bool_encoder(
+   static EncoderBase *create_bool_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding );

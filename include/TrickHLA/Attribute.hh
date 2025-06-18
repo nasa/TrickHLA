@@ -22,9 +22,9 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../source/TrickHLA/RecordElement.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
-@trick_link_dependency{../../source/TrickHLA/encoding/EncoderBase.cpp}
 
 @revs_title
 @revs_begin
@@ -50,10 +50,10 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Conditional.hh"
+#include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -67,7 +67,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class Attribute
+class Attribute : public RecordElement
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -83,9 +83,6 @@ class Attribute
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   char *trick_name; ///< @trick_units{--} Trick name for the attribute.
-   char *FOM_name;   ///< @trick_units{--} FOM name for the attribute.
-
    DataUpdateEnum config; ///< @trick_units{--} The attribute configuration.
 
    TransportationEnum preferred_order; ///< @trick_units{--} Either Timestamp (default) or Receive Order.
@@ -94,8 +91,6 @@ class Attribute
    bool subscribe; ///< @trick_units{--} True to subscribe to attribute.
 
    bool locally_owned; ///< @trick_units{--} Flag to indicate attribute is locally owned.
-
-   EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
 
    double cycle_time; ///< @trick_units{s} Send the cyclic attribute at the specified rate.
 
@@ -379,8 +374,6 @@ class Attribute
    bool divest_requested; ///< @trick_units{--} Are we releasing ownership?
 
    RTI1516_NAMESPACE::AttributeHandle attr_handle; ///< @trick_io{**} The RTI attribute handle.
-
-   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this attribute data.
 
   private:
    // Do not allow the copy constructor or assignment operator.

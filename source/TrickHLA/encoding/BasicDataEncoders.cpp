@@ -18,8 +18,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{BasicDataEncoders.cpp}
+@trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
@@ -72,49 +73,14 @@ using namespace TrickHLA;
    EncoderClassName::EncoderClassName(                                                                    \
       void       *addr,                                                                                   \
       ATTRIBUTES *attr )                                                                                  \
-      : EncoderBase( addr, attr )                                                                         \
+      : EncoderBase()                                                                                     \
    {                                                                                                      \
-      bool valid = ( this->type == TrickTypeEnum )                                                        \
-                   || ( ( ( this->type == TRICK_LONG )                                                    \
-                          || ( this->type == TRICK_UNSIGNED_LONG ) )                                      \
-                        && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                               \
-                   || ( this->type == TRICK_UNSIGNED_CHARACTER );                                         \
-      if ( !valid ) {                                                                                     \
-         ostringstream errmsg;                                                                            \
-         errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                    \
-                << " ERROR: Trick type for the '" << this->name                                           \
-                << "' simulation variable (type:"                                                         \
-                << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )                                  \
-                << ") is not the expected type '"                                                         \
-                << trickTypeCharString( TrickTypeEnum, "UNSUPPORTED_TYPE" )                               \
-                << "'." << std::endl;                                                                     \
-         DebugHandler::terminate_with_message( errmsg.str() );                                            \
-         return;                                                                                          \
-      }                                                                                                   \
-                                                                                                          \
-      /* This encoder is only for a primitive type. */                                                    \
-      if ( is_array() ) {                                                                                 \
-         ostringstream errmsg;                                                                            \
-         errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                    \
-                << " ERROR: Trick ref-attributes for the '" << this->name                                 \
-                << "' variable must be a primitive and not an array!" << std::endl;                       \
-         DebugHandler::terminate_with_message( errmsg.str() );                                            \
-         return;                                                                                          \
-      }                                                                                                   \
-                                                                                                          \
-      this->encoder = new EncodableDataType( static_cast< SimpleDataType * >( address ) );                \
+      this->data_encoder = new EncodableDataType( static_cast< SimpleDataType * >( addr ) );              \
    }                                                                                                      \
                                                                                                           \
    EncoderClassName::~EncoderClassName()                                                                  \
    {                                                                                                      \
       return;                                                                                             \
-   }                                                                                                      \
-                                                                                                          \
-   string EncoderClassName::to_string()                                                                   \
-   {                                                                                                      \
-      ostringstream msg;                                                                                  \
-      msg << #EncoderClassName << "[" << this->name << "]";                                               \
-      return msg.str();                                                                                   \
    }
 
 DECLARE_BASIC_ENCODER_CLASS( ASCIICharEncoder, HLAASCIIchar, char, TRICK_CHARACTER )

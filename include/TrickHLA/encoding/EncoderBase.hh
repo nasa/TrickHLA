@@ -21,7 +21,6 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -35,6 +34,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -46,7 +46,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -62,7 +61,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class EncoderBase
+class EncoderBase : public RTI1516_NAMESPACE::DataElement
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -81,75 +80,74 @@ class EncoderBase
    //
    // Public constructors and destructor.
    //
-   /*! @brief Constructor for the TrickHLA EncoderBase class. */
-   EncoderBase( void *addr, ATTRIBUTES *attr );
+   /*! @brief Default constructor for the TrickHLA EncoderBase class. */
+   EncoderBase();
 
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
    virtual ~EncoderBase();
 
-   virtual RTI1516_NAMESPACE::VariableLengthData &encode();
+   virtual void update_before_encode() = 0;
 
-   virtual bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+   virtual void update_after_decode() = 0;
 
-   virtual std::string to_string();
-
-   void calculate_var_element_count();
-
-   void resize_trick_var( std::size_t const new_size );
-
-   std::size_t const get_encoded_length()
+   virtual std::auto_ptr< RTI1516_NAMESPACE::DataElement > clone() const
    {
-      return encoder->getEncodedLength();
+      return data_encoder->clone();
    }
 
-   bool const is_array()
+   virtual RTI1516_NAMESPACE::VariableLengthData encode() const throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return is_array_flag;
+      return data_encoder->encode();
    }
 
-   bool const is_1d_array()
+   virtual void encode( RTI1516_NAMESPACE::VariableLengthData &inData ) const throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return is_1d_array_flag;
+      data_encoder->encode( inData );
    }
 
-   bool const is_static_array()
+   virtual void encodeInto( std::vector< RTI1516_NAMESPACE::Octet > &buffer ) const throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return is_static_array_flag;
+      data_encoder->encodeInto( buffer );
    }
 
-   bool const is_dynamic_array()
+   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return is_dynamic_array_flag;
+      data_encoder->decode( inData );
    }
 
-   bool const is_static_in_size()
+   virtual size_t decodeFrom(
+      std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
+      size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return ( !is_array() || is_static_array() );
+      return data_encoder->decodeFrom( buffer, index );
    }
 
-  protected:
-   void *address; ///< @trick_units{--} Address of the trick variable.
+   virtual size_t getEncodedLength() const throw( RTI1516_NAMESPACE::EncoderException )
+   {
+      return data_encoder->getEncodedLength();
+   }
 
-   std::string name; ///< @trick_units{--} Name of the trick variable.
+   virtual unsigned int getOctetBoundary() const
+   {
+      return data_encoder->getOctetBoundary();
+   }
 
-   TRICK_TYPE type; ///< @trick_units{--} The trick variable type.
+   virtual bool isSameTypeAs( RTI1516_NAMESPACE::DataElement const &inData ) const
+   {
+      return data_encoder->isSameTypeAs( inData );
+   }
 
-   std::size_t var_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick variable.
+   virtual RTI1516_NAMESPACE::Integer64 hash() const
+   {
+      return data_encoder->hash();
+   }
+
+   RTI1516_NAMESPACE::DataElement *data_encoder; ///< @trick_io{**} Data encoder.
 
    RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_io{**} Holds HLA encoded data.
 
-   std::vector< RTI1516_NAMESPACE::DataElement * > data_elements; ///< @trick_io{**} Vector of data elements.
-
-   RTI1516_NAMESPACE::DataElement *encoder; ///< @trick_units{--} HLA data element encoder.
-
-   bool is_array_flag;         ///< @trick_units{--} Flag indicating is array.
-   bool is_1d_array_flag;      ///< @trick_units{--} Flag indicating is 1D array.
-   bool is_static_array_flag;  ///< @trick_units{--} Flag indicating is static array.
-   bool is_dynamic_array_flag; ///< @trick_units{--} Flag indicating is dynamic array.
-
   private:
    // Do not allow the copy constructor or assignment operator.
-   EncoderBase();
    /*! @brief Copy constructor for EncoderBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
    EncoderBase( EncoderBase const &rhs );

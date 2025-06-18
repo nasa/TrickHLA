@@ -21,9 +21,9 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
+@trick_link_dependency{../../source/TrickHLA/RecordElement.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
-@trick_link_dependency{../../source/TrickHLA/encoding/EncoderBase.cpp}
 
 @revs_title
 @revs_begin
@@ -46,10 +46,10 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -63,7 +63,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class Parameter
+class Parameter : public RecordElement
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -74,15 +74,6 @@ class Parameter
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__Parameter();
-
-   //----------------------------- USER VARIABLES -----------------------------
-   // The variables in this section are configured by the user in either the
-   // input or modified-data file.
-  public:
-   char *trick_name; ///< @trick_units{--} Trick name for the attribute.
-   char *FOM_name;   ///< @trick_units{--} FOM name for the attribute
-
-   EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
 
   public:
    //
@@ -199,8 +190,6 @@ class Parameter
    char *interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
 
    RTI1516_NAMESPACE::ParameterHandle param_handle; ///< @trick_io{**} The RTI parameter handle.
-
-   EncoderBase *encoder; ///< @trick_io{**} The HLA data encoder for this parameter data.
 
   private:
    // Do not allow the copy constructor or assignment operator.

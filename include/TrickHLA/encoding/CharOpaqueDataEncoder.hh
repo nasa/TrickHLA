@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/encoding/CharOpaqueDataEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataVariableArrayEncoders.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 
@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -56,13 +56,15 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
+#include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/HLAopaqueData.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA
 {
 
-class CharOpaqueDataEncoder : public EncoderBase
+class CharOpaqueDataEncoder : public VariableArrayEncoderBase
 {
    /* Let the Trick input processor access protected and private data. */
    /* InputProcessor is really just a marker class (does not really    */
@@ -81,11 +83,9 @@ class CharOpaqueDataEncoder : public EncoderBase
    /*! @brief Destructor for the TrickHLA CharOpaqueDataEncoder class. */
    virtual ~CharOpaqueDataEncoder();
 
-   virtual RTI1516_NAMESPACE::VariableLengthData &encode();
+   virtual void update_before_encode();
 
-   virtual bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
-
-   virtual std::string to_string();
+   virtual void update_after_decode();
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */

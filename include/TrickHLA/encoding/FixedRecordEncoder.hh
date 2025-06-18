@@ -1,7 +1,7 @@
 /*!
-@file TrickHLA/encoding/CharRawDataEncoder.hh
+@file TrickHLA/encoding/FixedRecordEncoder.hh
 @ingroup TrickHLA
-@brief This class represents the char array raw data/none encoder implementation.
+@brief This class represents the fixed record encoder implementation.
 
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -19,9 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/encoding/CharRawDataEncoder.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/VariableArrayEncoderBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataVariableArrayEncoders.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/FixedRecordEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -31,8 +30,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
-#define TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
+#ifndef TRICKHLA_FIXED_RECORD_ENCODER_HH
+#define TRICKHLA_FIXED_RECORD_ENCODER_HH
 
 // System includes.
 #include <cstddef>
@@ -45,8 +44,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
-#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -56,14 +54,14 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
-#include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/HLAfixedRecord.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA
 {
 
-class CharRawDataEncoder : public VariableArrayEncoderBase
+class FixedRecordEncoder : public EncoderBase
 {
    /* Let the Trick input processor access protected and private data. */
    /* InputProcessor is really just a marker class (does not really    */
@@ -73,30 +71,33 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
    friend class InputProcessor;
    /* IMPORTANT Note: you must have the following line too.            */
    /* Syntax: friend void init_attr<namespace>__<class name>();        */
-   friend void init_attrTrickHLA__CharRawDataEncoder();
+   friend void init_attrTrickHLA__FixedRecordEncoder();
 
   public:
    /*! @brief Default constructor. */
-   CharRawDataEncoder( void *addr, ATTRIBUTES *attr );
+   FixedRecordEncoder();
 
-   /*! @brief Destructor for the TrickHLA CharRawDataEncoder class. */
-   virtual ~CharRawDataEncoder();
+   /*! @brief Destructor for the TrickHLA FixedRecordEncoder class. */
+   virtual ~FixedRecordEncoder();
 
    virtual void update_before_encode();
 
    virtual void update_after_decode();
 
+   void update_before_encode( RTI1516_NAMESPACE::HLAfixedRecord *fixed_rec );
+
+   void update_after_decode( RTI1516_NAMESPACE::HLAfixedRecord *fixed_rec );
+
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
-   CharRawDataEncoder();
-   /*! @brief Copy constructor for CharRawDataEncoder class.            */
+   /*! @brief Copy constructor for FixedRecordEncoder class.           */
    /*  @details This constructor is private to prevent inadvertent copies. */
-   CharRawDataEncoder( CharRawDataEncoder const &rhs );
-   /*! @brief Assignment operator for CharRawDataEncoder class.            */
+   FixedRecordEncoder( FixedRecordEncoder const &rhs );
+   /*! @brief Assignment operator for FixedRecordEncoder class.           */
    /*  @details Assignment operator is private to prevent inadvertent copies. */
-   CharRawDataEncoder &operator=( CharRawDataEncoder const &rhs );
+   FixedRecordEncoder &operator=( FixedRecordEncoder const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
+#endif // TRICKHLA_FIXED_RECORD_ENCODER_HH

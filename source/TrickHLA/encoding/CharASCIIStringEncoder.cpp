@@ -18,7 +18,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{CharASCIIStringEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
+@trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -32,6 +34,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
+#include <cstring>
 #include <sstream>
 #include <string>
 
@@ -50,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/CharASCIIStringEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -70,14 +74,15 @@ using namespace TrickHLA;
 CharASCIIStringEncoder::CharASCIIStringEncoder(
    void       *addr,
    ATTRIBUTES *attr )
-   : EncoderBase( addr, attr ),
+   : VariableArrayEncoderBase( addr, attr ),
      string_data()
 {
    if ( ( this->type != TRICK_CHARACTER )
         && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << this->name
+             << " ERROR: Trick type for the '"
+             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
@@ -90,14 +95,14 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << this->name
+             << " ERROR: Trick ref-attributes for '"
+             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
              << "' the variable must be a dynamic variable array!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
-   // Automatically encode and decode into the string_data.
-   this->encoder = new HLAASCIIstring( &string_data );
+   this->data_encoder = new HLAASCIIstring( &string_data );
 }
 
 CharASCIIStringEncoder::~CharASCIIStringEncoder()
@@ -105,52 +110,39 @@ CharASCIIStringEncoder::~CharASCIIStringEncoder()
    return;
 }
 
-VariableLengthData &CharASCIIStringEncoder::encode()
+void CharASCIIStringEncoder::update_before_encode()
 {
    // Convert the char * string into a std::string.
    this->string_data = *static_cast< char ** >( address );
-
-   return EncoderBase::encode();
 }
 
-bool const CharASCIIStringEncoder::decode(
-   VariableLengthData const &encoded_data )
+void CharASCIIStringEncoder::update_after_decode()
 {
-   if ( EncoderBase::decode( encoded_data ) ) {
+   calculate_var_element_count();
 
-      calculate_var_element_count();
+   // Include the null terminating char in the size comparison.
+   if ( ( string_data.size() + 1 ) <= var_element_count ) {
+      // Copy value to existing Trick variable char* memory and include
+      // the null terminating character in the c_str().
+      memcpy( *static_cast< void ** >( address ),
+              string_data.c_str(),
+              string_data.size() + 1 );
+   } else {
+      // Need to make the Trick variable char* bigger by reallocating.
 
-      // Include the null terminating char in the size comparison.
-      if ( ( string_data.size() + 1 ) <= var_element_count ) {
-         // Copy value to existing Trick variable char* memory and include
-         // the null terminating character in the c_str().
-         memcpy( *static_cast< void ** >( address ),
-                 string_data.c_str(),
-                 string_data.size() + 1 );
-      } else {
-         // Need to make the Trick variable char* bigger by reallocating.
-
-         // Don't leak memory by deleting the old char* string allocation.
-         if ( *static_cast< void ** >( address ) != NULL ) {
-            TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
-         }
-
-         // Convert from the wide-string to a char* string.
-         if ( string_data.size() > 0 ) {
-            *static_cast< char ** >( address ) = StringUtilities::mm_strdup_string( string_data );
-         } else {
-            char empty = '\0';
-
-            // Zero length so allocate and set the null terminating character.
-            *static_cast< char ** >( address ) = TMM_strdup( &empty );
-         }
+      // Don't leak memory by deleting the old char* string allocation.
+      if ( *static_cast< void ** >( address ) != NULL ) {
+         TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
       }
-      return true;
-   }
-   return false;
-}
 
-string CharASCIIStringEncoder::to_string()
-{
-   return ( "CharASCIIStringEncoder[" + this->name + "]" );
+      // Convert from the wide-string to a char* string.
+      if ( string_data.size() > 0 ) {
+         *static_cast< char ** >( address ) = StringUtilities::mm_strdup_string( string_data );
+      } else {
+         char empty = '\0';
+
+         // Zero length so allocate and set the null terminating character.
+         *static_cast< char ** >( address ) = TMM_strdup( &empty );
+      }
+   }
 }

@@ -18,8 +18,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{BasicDataVariableArrayEncoders.cpp}
+@trick_link_dependency{EncoderBase.cpp}
+@trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -48,9 +49,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -69,150 +72,107 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-#define DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum ) \
-                                                                                                                         \
-   EncoderClassName::EncoderClassName(                                                                                   \
-      void       *addr,                                                                                                  \
-      ATTRIBUTES *attr )                                                                                                 \
-      : EncoderBase( addr, attr )                                                                                        \
-   {                                                                                                                     \
-      bool valid = ( this->type == TrickTypeEnum )                                                                       \
-                   || ( ( ( this->type == TRICK_LONG )                                                                   \
-                          || ( this->type == TRICK_UNSIGNED_LONG ) )                                                     \
-                        && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                                              \
-                   || ( this->type == TRICK_UNSIGNED_CHARACTER );                                                        \
-      if ( !valid ) {                                                                                                    \
-         ostringstream errmsg;                                                                                           \
-         errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                                   \
-                << " ERROR: Trick type for the '" << this->name                                                          \
-                << "' simulation variable (type:"                                                                        \
-                << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )                                                 \
-                << ") is not the expected type '"                                                                        \
-                << trickTypeCharString( TrickTypeEnum, "UNSUPPORTED_TYPE" )                                              \
-                << "'." << std::endl;                                                                                    \
-         DebugHandler::terminate_with_message( errmsg.str() );                                                           \
-         return;                                                                                                         \
-      }                                                                                                                  \
-                                                                                                                         \
-      if ( !is_dynamic_array() ) {                                                                                       \
-         ostringstream errmsg;                                                                                           \
-         errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                                   \
-                << " ERROR: Trick ref-attributes for '" << this->name                                                    \
-                << "' the variable must be a dynamic variable array!" << std::endl;                                      \
-         DebugHandler::terminate_with_message( errmsg.str() );                                                           \
-         return;                                                                                                         \
-      }                                                                                                                  \
-                                                                                                                         \
-      EncodableDataType data_prototype;                                                                                  \
-      this->encoder = new HLAvariableArray( data_prototype );                                                            \
-                                                                                                                         \
-      resize_data_elements( var_element_count );                                                                         \
-   }                                                                                                                     \
-                                                                                                                         \
-   EncoderClassName::~EncoderClassName()                                                                                 \
-   {                                                                                                                     \
-      return;                                                                                                            \
-   }                                                                                                                     \
-                                                                                                                         \
-   VariableLengthData &EncoderClassName::encode()                                                                        \
-   {                                                                                                                     \
-      /* Since the Trick variable is dynamic (i.e. a pointer) its size */                                                \
-      /* can change at any point so we need to refresh the counts.     */                                                \
-      calculate_var_element_count();                                                                                     \
-                                                                                                                         \
-      /* Ensure the number of data elements matches the Trick variable */                                                \
-      resize_data_elements( var_element_count );                                                                         \
-                                                                                                                         \
-      HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                             \
-      SimpleDataType         *array_data    = *static_cast< SimpleDataType ** >( address );                              \
-                                                                                                                         \
-      /* Copy the Trick array values to the data elements to be encoded. */                                              \
-      for ( size_t i = 0; i < var_element_count; ++i ) {                                                                 \
-         const_cast< EncodableDataType & >(                                                                              \
-            dynamic_cast< EncodableDataType const & >(                                                                   \
-               array_encoder->get( i ) ) )                                                                               \
-            .set( array_data[i] );                                                                                       \
-      }                                                                                                                  \
-                                                                                                                         \
-      return EncoderBase::encode();                                                                                      \
-   }                                                                                                                     \
-                                                                                                                         \
-   bool const EncoderClassName::decode(                                                                                  \
-      VariableLengthData const &encoded_data )                                                                           \
-   {                                                                                                                     \
-      if ( EncoderBase::decode( encoded_data ) ) {                                                                       \
-                                                                                                                         \
-         HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                          \
-                                                                                                                         \
-         /* Resize Trick array variable to match the decoded data size. */                                               \
-         resize_trick_var( array_encoder->size() );                                                                      \
-                                                                                                                         \
-         SimpleDataType *array_data = *static_cast< SimpleDataType ** >( address );                                      \
-                                                                                                                         \
-         /* Copy the decoded data element values to the Trick array. */                                                  \
-         for ( size_t i = 0; i < var_element_count; ++i ) {                                                              \
-            array_data[i] = dynamic_cast< EncodableDataType const & >( array_encoder->get( i ) ).get();                  \
-         }                                                                                                               \
-         return true;                                                                                                    \
-      }                                                                                                                  \
-      return false;                                                                                                      \
-   }                                                                                                                     \
-                                                                                                                         \
-   string EncoderClassName::to_string()                                                                                  \
-   {                                                                                                                     \
-      ostringstream msg;                                                                                                 \
-      msg << #EncoderClassName << "[" << this->name << "]";                                                              \
-      return msg.str();                                                                                                  \
-   }                                                                                                                     \
-                                                                                                                         \
-   void EncoderClassName::resize_data_elements(                                                                          \
-      size_t const new_size )                                                                                            \
-   {                                                                                                                     \
-      HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( encoder );                                   \
-                                                                                                                         \
-      if ( new_size != array_encoder->size() ) {                                                                         \
-         EncodableDataType data_prototype;                                                                               \
-                                                                                                                         \
-         if ( new_size < array_encoder->size() ) {                                                                       \
-            /* Because we can't resize the encoder to a smaller */                                                       \
-            /* size we have to create a new one.                */                                                       \
-            delete this->encoder;                                                                                        \
-            array_encoder = new HLAvariableArray( data_prototype );                                                      \
-            this->encoder = array_encoder;                                                                               \
-         }                                                                                                               \
-                                                                                                                         \
-         while ( array_encoder->size() < new_size ) {                                                                    \
-            array_encoder->addElement( data_prototype );                                                                 \
-         }                                                                                                               \
-      }                                                                                                                  \
+#define DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType ) \
+                                                                                                          \
+   EncoderClassName::EncoderClassName(                                                                    \
+      void       *addr,                                                                                   \
+      ATTRIBUTES *attr )                                                                                  \
+      : VariableArrayEncoderBase( addr, attr )                                                            \
+   {                                                                                                      \
+      this->data_encoder = new HLAvariableArray( EncodableDataType() );                                   \
+      resize_data_elements( var_element_count );                                                          \
+   }                                                                                                      \
+                                                                                                          \
+   EncoderClassName::~EncoderClassName()                                                                  \
+   {                                                                                                      \
+      return;                                                                                             \
+   }                                                                                                      \
+                                                                                                          \
+   void EncoderClassName::update_before_encode()                                                          \
+   {                                                                                                      \
+      /* Since the Trick variable is dynamic (i.e. a pointer) its size */                                 \
+      /* can change at any point so we need to refresh the counts.     */                                 \
+      calculate_var_element_count();                                                                      \
+                                                                                                          \
+      /* Ensure the number of data elements matches the Trick variable */                                 \
+      resize_data_elements( var_element_count );                                                          \
+                                                                                                          \
+      HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( data_encoder );               \
+      SimpleDataType   *array_data    = *static_cast< SimpleDataType ** >( address );                     \
+                                                                                                          \
+      /* Copy the Trick array values to the data elements to be encoded. */                               \
+      for ( size_t i = 0; i < var_element_count; ++i ) {                                                  \
+         const_cast< EncodableDataType & >(                                                               \
+            dynamic_cast< EncodableDataType const & >(                                                    \
+               array_encoder->get( i ) ) )                                                                \
+            .set( array_data[i] );                                                                        \
+      }                                                                                                   \
+   }                                                                                                      \
+                                                                                                          \
+   void EncoderClassName::update_after_decode()                                                           \
+   {                                                                                                      \
+      HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( data_encoder );               \
+                                                                                                          \
+      /* Resize Trick array variable to match the decoded data size. */                                   \
+      resize_trick_var( array_encoder->size() );                                                          \
+                                                                                                          \
+      SimpleDataType *array_data = *static_cast< SimpleDataType ** >( address );                          \
+                                                                                                          \
+      /* Copy the decoded data element values to the Trick array. */                                      \
+      for ( size_t i = 0; i < var_element_count; ++i ) {                                                  \
+         array_data[i] = dynamic_cast< EncodableDataType const & >(                                       \
+                            array_encoder->get( i ) )                                                     \
+                            .get();                                                                       \
+      }                                                                                                   \
+   }                                                                                                      \
+                                                                                                          \
+   void EncoderClassName::resize_data_elements(                                                           \
+      size_t new_size ) throw( EncoderException )                                                         \
+   {                                                                                                      \
+      HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( data_encoder );               \
+      if ( new_size != array_encoder->size() ) {                                                          \
+         EncodableDataType data_prototype;                                                                \
+                                                                                                          \
+         if ( new_size < array_encoder->size() ) {                                                        \
+            /* Because we can't resize the encoder to a smaller */                                        \
+            /* size we have to create a new one.                */                                        \
+            delete data_encoder;                                                                          \
+            array_encoder = new HLAvariableArray( data_prototype );                                       \
+            data_encoder  = array_encoder;                                                                \
+         }                                                                                                \
+                                                                                                          \
+         while ( array_encoder->size() < new_size ) {                                                     \
+            array_encoder->addElement( data_prototype );                                                  \
+         }                                                                                                \
+      }                                                                                                   \
    }
 
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ASCIICharVariableArrayEncoder, HLAASCIIchar, char, TRICK_CHARACTER )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ASCIIStringVariableArrayEncoder, HLAASCIIstring, std::string, TRICK_STRING )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( BoolVariableArrayEncoder, HLAboolean, bool, TRICK_BOOLEAN )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ByteVariableArrayEncoder, HLAbyte, Octet, TRICK_CHARACTER )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float32BEVariableArrayEncoder, HLAfloat32BE, float, TRICK_FLOAT )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float32LEVariableArrayEncoder, HLAfloat32LE, float, TRICK_FLOAT )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float64BEVariableArrayEncoder, HLAfloat64BE, double, TRICK_DOUBLE )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float64LEVariableArrayEncoder, HLAfloat64LE, double, TRICK_DOUBLE )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int16BEVariableArrayEncoder, HLAinteger16BE, Integer16, TRICK_SHORT )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int16LEVariableArrayEncoder, HLAinteger16LE, Integer16, TRICK_SHORT )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int32BEVariableArrayEncoder, HLAinteger32BE, Integer32, TRICK_INTEGER )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int32LEVariableArrayEncoder, HLAinteger32LE, Integer32, TRICK_INTEGER )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int64BEVariableArrayEncoder, HLAinteger64BE, Integer64, TRICK_LONG_LONG )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int64LEVariableArrayEncoder, HLAinteger64LE, Integer64, TRICK_LONG_LONG )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ASCIICharVariableArrayEncoder, HLAASCIIchar, char )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ASCIIStringVariableArrayEncoder, HLAASCIIstring, std::string )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( BoolVariableArrayEncoder, HLAboolean, bool )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ByteVariableArrayEncoder, HLAbyte, Octet )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float32BEVariableArrayEncoder, HLAfloat32BE, float )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float32LEVariableArrayEncoder, HLAfloat32LE, float )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float64BEVariableArrayEncoder, HLAfloat64BE, double )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Float64LEVariableArrayEncoder, HLAfloat64LE, double )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int16BEVariableArrayEncoder, HLAinteger16BE, Integer16 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int16LEVariableArrayEncoder, HLAinteger16LE, Integer16 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int32BEVariableArrayEncoder, HLAinteger32BE, Integer32 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int32LEVariableArrayEncoder, HLAinteger32LE, Integer32 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int64BEVariableArrayEncoder, HLAinteger64BE, Integer64 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( Int64LEVariableArrayEncoder, HLAinteger64LE, Integer64 )
 
 #if defined( IEEE_1516_2025 )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt16BEVariableArrayEncoder, HLAunsignedInteger16BE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt16LEVariableArrayEncoder, HLAunsignedInteger16LE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt32BEVariableArrayEncoder, HLAunsignedInteger32BE, UnsignedInteger32, TRICK_UNSIGNED_INTEGER )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt32LEVariableArrayEncoder, HLAunsignedInteger32LE, UnsignedInteger32, TRICK_UNSIGNED_INTEGER )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt64BEVariableArrayEncoder, HLAunsignedInteger64BE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt64LEVariableArrayEncoder, HLAunsignedInteger64LE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt16BEVariableArrayEncoder, HLAunsignedInteger16BE, UnsignedInteger16 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt16LEVariableArrayEncoder, HLAunsignedInteger16LE, UnsignedInteger16 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt32BEVariableArrayEncoder, HLAunsignedInteger32BE, UnsignedInteger32 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt32LEVariableArrayEncoder, HLAunsignedInteger32LE, UnsignedInteger32 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt64BEVariableArrayEncoder, HLAunsignedInteger64BE, UnsignedInteger64 )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UInt64LEVariableArrayEncoder, HLAunsignedInteger64LE, UnsignedInteger64 )
 #endif // IEEE_1516_2025
 
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeCharVariableArrayEncoder, HLAunicodeChar, wchar_t, TRICK_WCHAR )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeCharVariableArrayEncoder, HLAunicodeChar, wchar_t )
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
-DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeStringVariableArrayEncoder, HLAunicodeString, std::wstring, TRICK_WSTRING )
+DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( UnicodeStringVariableArrayEncoder, HLAunicodeString, std::wstring )
 #endif // TRICK_WSTRING_MM_SUPPORT

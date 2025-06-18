@@ -22,7 +22,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataFixedArrayEncoders.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -38,14 +37,10 @@ NASA, Johnson Space Center\n
 #include <cstddef>
 #include <string>
 
-// Trick include files.
-#include "trick/attributes.h"
-
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -56,12 +51,14 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include RTI1516_HEADER
 #include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/HLAfixedArray.h"
+#include <RTI/encoding/EncodingConfig.h>
 #pragma GCC diagnostic pop
 
 namespace TrickHLA
 {
 
-#define DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName )                  \
+#define DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, SimpleDataType )  \
                                                                                     \
    class EncoderClassName : public EncoderBase                                      \
    {                                                                                \
@@ -77,52 +74,57 @@ namespace TrickHLA
                                                                                     \
      public:                                                                        \
       /*! @brief Default constructor for the TrickHLA EncoderClassName class. */    \
-      EncoderClassName( void *addr, ATTRIBUTES *attr );                             \
+      EncoderClassName( SimpleDataType *array_data, size_t length );                \
                                                                                     \
       /*! @brief Destructor for the TrickHLA EncoderClassName class. */             \
       virtual ~EncoderClassName();                                                  \
                                                                                     \
-      virtual std::string to_string();                                              \
+      virtual void update_before_encode()                                           \
+      {                                                                             \
+         return;                                                                    \
+      }                                                                             \
+                                                                                    \
+      virtual void update_after_decode()                                            \
+      {                                                                             \
+         return;                                                                    \
+      }                                                                             \
                                                                                     \
      private:                                                                       \
       /* Do not allow the default, copy constructor or assignment operator. */      \
       EncoderClassName();                                                           \
-      /*! @brief Copy constructor for EncoderClassName class.                 */    \
-      /*  @details This constructor is private to prevent inadvertent copies. */    \
-      EncoderClassName( EncoderClassName const &rhs );                              \
       /*! @brief Assignment operator for EncoderClassName class.                 */ \
       /*  @details Assignment operator is private to prevent inadvertent copies. */ \
       EncoderClassName &operator=( EncoderClassName const &rhs );                   \
    };
 
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIICharFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIIStringFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( BoolFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ByteFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float32BEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float32LEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float64BEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float64LEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int16BEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int16LEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32BEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32LEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64BEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64LEFixedArrayEncoder )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIICharFixedArrayEncoder, char )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIIStringFixedArrayEncoder, std::string )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( BoolFixedArrayEncoder, bool )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ByteFixedArrayEncoder, RTI1516_NAMESPACE::Octet )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float32BEFixedArrayEncoder, float )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float32LEFixedArrayEncoder, float )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float64BEFixedArrayEncoder, double )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float64LEFixedArrayEncoder, double )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int16BEFixedArrayEncoder, RTI1516_NAMESPACE::Integer16 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int16LEFixedArrayEncoder, RTI1516_NAMESPACE::Integer16 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32BEFixedArrayEncoder, RTI1516_NAMESPACE::Integer32 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32LEFixedArrayEncoder, RTI1516_NAMESPACE::Integer32 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64BEFixedArrayEncoder, RTI1516_NAMESPACE::Integer64 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64LEFixedArrayEncoder, RTI1516_NAMESPACE::Integer64 )
 
 #if defined( IEEE_1516_2025 )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16BEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16LEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32BEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32LEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64BEFixedArrayEncoder )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64LEFixedArrayEncoder )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16BEFixedArrayEncoder, RTI1516_NAMESPACE::UnsignedInteger16 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16LEFixedArrayEncoder, RTI1516_NAMESPACE::UnsignedInteger16 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32BEFixedArrayEncoder, RTI1516_NAMESPACE::UnsignedInteger32 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32LEFixedArrayEncoder, RTI1516_NAMESPACE::UnsignedInteger32 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64BEFixedArrayEncoder, RTI1516_NAMESPACE::UnsignedInteger64 )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64LEFixedArrayEncoder, RTI1516_NAMESPACE::UnsignedInteger64 )
 #endif // IEEE_1516_2025
 
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeCharFixedArrayEncoder )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeCharFixedArrayEncoder, wchar_t )
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
-DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeStringFixedArrayEncoder )
+DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeStringFixedArrayEncoder, std::wstring )
 #endif // TRICK_WSTRING_MM_SUPPORT
 
 } // namespace TrickHLA

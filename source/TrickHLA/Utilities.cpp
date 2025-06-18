@@ -48,6 +48,29 @@ fpu_control_t __fpu_control;
 using namespace std;
 using namespace TrickHLA;
 
+size_t Utilities::get_static_var_element_count(
+   ATTRIBUTES *attr )
+{
+   size_t count = 0;
+
+   if ( attr != NULL ) {
+      bool const is_array        = ( attr->num_index > 0 );
+      bool const is_static_array = is_array && ( attr->index[attr->num_index - 1].size != 0 );
+
+      if ( !is_array || is_static_array ) {
+         // The user variable is either a primitive type or a static
+         // multi-dimension array.
+         count = 1;
+         for ( int i = 0; i < attr->num_index; ++i ) {
+            if ( attr->index[i].size > 0 ) {
+               count *= attr->index[i].size;
+            }
+         }
+      }
+   }
+   return count;
+}
+
 bool Utilities::is_transmission_byteswap(
    EncodingEnum const rti_encoding )
 {

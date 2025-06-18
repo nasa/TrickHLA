@@ -20,6 +20,9 @@
 ##include "encoding/include/WCharData.hh"
 ##include "encoding/include/WStringData.hh"
 
+##include "FixedRecord/include/FixedRecData.hh"
+
+
 %header{
  using namespace TrickHLA;
  using namespace TrickHLAModel;
@@ -87,6 +90,12 @@ class TestSimObj : public Trick::SimObject {
 
    BoolData bool_data1 = BoolData( 0 );
    BoolData bool_data2 = BoolData( 1 );
+
+   FixedRecData fixed_rec_data1 = FixedRecData();
+   FixedRecData fixed_rec_data2 = FixedRecData();
+
+   FixedRecData fixed_rec_data3 = FixedRecData();
+   FixedRecData fixed_rec_data4 = FixedRecData();
 
    EncodingTest encoder_test;
 
@@ -172,6 +181,12 @@ class TestSimObj : public Trick::SimObject {
       ("initialization") encoder_test.bool_test( "T.bool_data1", bool_data1,
                                                  "T.bool_data2", bool_data2,
                                                  TrickHLA::ENCODING_BOOLEAN );
+
+      ("initialization") encoder_test.fixed_record_test( "T.fixed_rec_data1", fixed_rec_data1,
+                                                         "T.fixed_rec_data2", fixed_rec_data2 );
+
+      ("initialization") encoder_test.fixed_record_attribute_test( "T.fixed_rec_data3", fixed_rec_data3,
+                                                                   "T.fixed_rec_data4", fixed_rec_data4 );
 
       ("initialization") exec_terminate( __FILE__, "Done" );
    }

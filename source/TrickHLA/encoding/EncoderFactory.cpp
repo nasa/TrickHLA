@@ -19,7 +19,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{EncoderFactory.cpp}
-@trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{BasicDataEncoders.cpp}
 @trick_link_dependency{BasicDataFixedArrayEncoders.cpp}
 @trick_link_dependency{BasicDataVariableArrayEncoders.cpp}
@@ -27,9 +26,12 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{CharOpaqueDataEncoder.cpp}
 @trick_link_dependency{CharRawDataEncoder.cpp}
 @trick_link_dependency{CharUnicodeStringEncoder.cpp}
+@trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{Float64ToLogicalTimeEncoder.cpp}
+@trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
+@trick_link_dependency{../Utilities.cpp}
 
 
 @revs_title
@@ -57,6 +59,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/Utilities.hh"
+
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
@@ -64,7 +68,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
 #include "TrickHLA/encoding/CharRawDataEncoder.hh"
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
 
@@ -75,6 +78,9 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/encoding/BasicDataElements.h"
+#include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/HLAfixedArray.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
@@ -467,12 +473,18 @@ EncoderBase *EncoderFactory::create_char_encoder(
       case ENCODING_ASCII_CHAR: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new ASCIICharFixedArrayEncoder( address, attr );
+               return new ASCIICharFixedArrayEncoder(
+                  static_cast< char * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new ASCIICharVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new ASCIICharEncoder( address, attr );
+#else
+            return new HLAASCIIchar( static_cast< char * >( address ) );
+#endif
          }
          break;
       }
@@ -502,12 +514,18 @@ EncoderBase *EncoderFactory::create_string_encoder(
       case ENCODING_ASCII_STRING: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new ASCIIStringFixedArrayEncoder( address, attr );
+               return new ASCIIStringFixedArrayEncoder(
+                  static_cast< std::string * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new ASCIIStringVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new ASCIIStringEncoder( address, attr );
+#else
+            return new HLAASCIIstring( static_cast< std::string * >( address ) );
+#endif
          }
          break;
       }
@@ -537,12 +555,18 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
       case ENCODING_UNICODE_CHAR: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UnicodeCharFixedArrayEncoder( address, attr );
+               return new UnicodeCharFixedArrayEncoder(
+                  static_cast< wchar_t * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UnicodeCharVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new UnicodeCharEncoder( address, attr );
+#else
+            return new HLAunicodeChar( static_cast< wchar_t * >( address ) );
+#endif
          }
          break;
       }
@@ -573,12 +597,18 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
       case ENCODING_UNICODE_STRING: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new WUnicodeStringFixedArrayEncoder( address, attr );
+               return new WUnicodeStringFixedArrayEncoder(
+                  static_cast< std::wstring * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UnicodeStringVariableArrayEncoder( address, attr );
             }
          } else {
+#   if 1
             return new UnicodeStringEncoder( address, attr );
+#   else
+            return new HLAunicodeString( static_cast< std::wstring * >( address ) );
+#   endif
          }
          break;
       }
@@ -610,24 +640,36 @@ EncoderBase *EncoderFactory::create_int16_encoder(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int16BEFixedArrayEncoder( address, attr );
+               return new Int16BEFixedArrayEncoder(
+                  static_cast< Integer16 * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Int16BEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Int16BEEncoder( address, attr );
+#else
+            return new HLAinteger16BE( static_cast< Integer16 * >( address ) );
+#endif
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int16LEFixedArrayEncoder( address, attr );
+               return new Int16LEFixedArrayEncoder(
+                  static_cast< Integer16 * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Int16LEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Int16LEEncoder( address, attr );
+#else
+            return new HLAinteger16LE( static_cast< Integer16 * >( address ) );
+#endif
          }
          break;
       }
@@ -657,24 +699,36 @@ EncoderBase *EncoderFactory::create_int32_encoder(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int32BEFixedArrayEncoder( address, attr );
+               return new Int32BEFixedArrayEncoder(
+                  static_cast< Integer32 * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Int32BEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Int32BEEncoder( address, attr );
+#else
+            return new HLAinteger32BE( static_cast< Integer32 * >( address ) );
+#endif
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int32LEFixedArrayEncoder( address, attr );
+               return new Int32LEFixedArrayEncoder(
+                  static_cast< Integer32 * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Int32LEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Int32LEEncoder( address, attr );
+#else
+            return new HLAinteger32LE( static_cast< Integer32 * >( address ) );
+#endif
          }
          break;
       }
@@ -704,24 +758,36 @@ EncoderBase *EncoderFactory::create_int64_encoder(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int64BEFixedArrayEncoder( address, attr );
+               return new Int64BEFixedArrayEncoder(
+                  static_cast< Integer64 * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Int64BEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Int64BEEncoder( address, attr );
+#else
+            return new HLAinteger64BE( static_cast< Integer64 * >( address ) );
+#endif
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Int64LEFixedArrayEncoder( address, attr );
+               return new Int64LEFixedArrayEncoder(
+                  static_cast< Integer64 * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Int64LEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Int64LEEncoder( address, attr );
+#else
+            return new HLAinteger64LE( static_cast< Integer64 * >( address ) );
+#endif
          }
          break;
       }
@@ -752,24 +818,38 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt16BEFixedArrayEncoder( address, attr );
+               return new UInt16BEFixedArrayEncoder(
+                  static_cast< UnsignedInteger16 * >( address ),
+                  Utilities::get_static_var_element_count( attr ),
+                  attr->name );
             } else {
                return new UInt16BEVariableArrayEncoder( address, attr );
             }
          } else {
+#   if 1
             return new UInt16BEEncoder( address, attr );
+#   else
+            return new HLAunsignedInteger16BE( static_cast< UnsignedInteger16 * >( address ) );
+#   endif
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt16LEFixedArrayEncoder( address, attr );
+               return new UInt16LEFixedArrayEncoder(
+                  static_cast< UnsignedInteger16 * >( address ),
+                  Utilities::get_static_var_element_count( attr ),
+                  attr->name );
             } else {
                return new UInt16LEVariableArrayEncoder( address, attr );
             }
          } else {
+#   if 1
             return new UInt16LEEncoder( address, attr );
+#   else
+            return new HLAunsignedInteger16LE( static_cast< UnsignedInteger16 * >( address ) );
+#   endif
          }
          break;
       }
@@ -799,24 +879,38 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt32BEFixedArrayEncoder( address, attr );
+               return new UInt32BEFixedArrayEncoder(
+                  static_cast< UnsignedInteger32 * >( address ),
+                  Utilities::get_static_var_element_count( attr ),
+                  attr->name );
             } else {
                return new UInt32BEVariableArrayEncoder( address, attr );
             }
          } else {
+#   if 1
             return new UInt32BEEncoder( address, attr );
+#   else
+            return new HLAunsignedInteger32BE( static_cast< UnsignedInteger32 * >( address ) );
+#   endif
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt32LEFixedArrayEncoder( address, attr );
+               return new UInt32LEFixedArrayEncoder(
+                  static_cast< UnsignedInteger32 * >( address ),
+                  Utilities::get_static_var_element_count( attr ),
+                  attr->name );
             } else {
                return new UInt32LEVariableArrayEncoder( address, attr );
             }
          } else {
+#   if 1
             return new UInt32LEEncoder( address, attr );
+#   else
+            return new HLAunsignedInteger32LE( static_cast< UnsignedInteger32 * >( address ) );
+#   endif
          }
          break;
       }
@@ -846,24 +940,38 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt64BEFixedArrayEncoder( address, attr );
+               return new UInt64BEFixedArrayEncoder(
+                  static_cast< UnsignedInteger64 * >( address ),
+                  Utilities::get_static_var_element_count( attr ),
+                  attr->name );
             } else {
                return new UInt64BEVariableArrayEncoder( address, attr );
             }
          } else {
+#   if 1
             return new UInt64BEEncoder( address, attr );
+#   else
+            return new HLAunsignedInteger64BE( static_cast< UnsignedInteger64 * >( address ) );
+#   endif
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new UInt64LEFixedArrayEncoder( address, attr );
+               return new UInt64LEFixedArrayEncoder(
+                  static_cast< UnsignedInteger64 * >( address ),
+                  Utilities::get_static_var_element_count( attr ),
+                  attr->name );
             } else {
                return new UInt64LEVariableArrayEncoder( address, attr );
             }
          } else {
+#   if 1
             return new UInt64LEEncoder( address, attr );
+#   else
+            return new HLAunsignedInteger64LE( static_cast< UnsignedInteger64 * >( address ) );
+#   endif
          }
          break;
       }
@@ -894,24 +1002,36 @@ EncoderBase *EncoderFactory::create_float32_encoder(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Float32BEFixedArrayEncoder( address, attr );
+               return new Float32BEFixedArrayEncoder(
+                  static_cast< float * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Float32BEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Float32BEEncoder( address, attr );
+#else
+            return new HLAfloat32BE( static_cast< float * >( address ) );
+#endif
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Float32LEFixedArrayEncoder( address, attr );
+               return new Float32LEFixedArrayEncoder(
+                  static_cast< float * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Float32LEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Float32LEEncoder( address, attr );
+#else
+            return new HLAfloat32LE( static_cast< float * >( address ) );
+#endif
          }
          break;
       }
@@ -941,24 +1061,36 @@ EncoderBase *EncoderFactory::create_float64_encoder(
       case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Float64BEFixedArrayEncoder( address, attr );
+               return new Float64BEFixedArrayEncoder(
+                  static_cast< double * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Float64BEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Float64BEEncoder( address, attr );
+#else
+            return new HLAfloat64BE( static_cast< double * >( address ) );
+#endif
          }
          break;
       }
       case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new Float64LEFixedArrayEncoder( address, attr );
+               return new Float64LEFixedArrayEncoder(
+                  static_cast< double * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new Float64LEVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new Float64LEEncoder( address, attr );
+#else
+            return new HLAfloat64LE( static_cast< double * >( address ) );
+#endif
          }
          break;
       }
@@ -1003,12 +1135,18 @@ EncoderBase *EncoderFactory::create_bool_encoder(
       case ENCODING_BOOLEAN: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new BoolFixedArrayEncoder( address, attr );
+               return new BoolFixedArrayEncoder(
+                  static_cast< bool * >( address ),
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new BoolVariableArrayEncoder( address, attr );
             }
          } else {
+#if 1
             return new BoolEncoder( address, attr );
+#else
+            return new HLAboolean( static_cast< bool * >( address ) );
+#endif
          }
          break;
       }

@@ -18,7 +18,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{CharOpaqueDataEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
+@trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -32,6 +34,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
+#include <cstring>
 #include <sstream>
 #include <string>
 
@@ -49,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -70,13 +74,14 @@ using namespace TrickHLA;
 CharOpaqueDataEncoder::CharOpaqueDataEncoder(
    void       *addr,
    ATTRIBUTES *attr )
-   : EncoderBase( addr, attr )
+   : VariableArrayEncoderBase( addr, attr )
 {
    if ( ( this->type != TRICK_CHARACTER )
         && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << this->name
+             << " ERROR: Trick type for the '"
+             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
@@ -89,13 +94,13 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << this->name
+             << " ERROR: Trick ref-attributes for '"
+             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
              << "' the variable must be a dynamic variable array!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-
-   this->encoder = new HLAopaqueData();
+   this->data_encoder = new HLAopaqueData();
 }
 
 CharOpaqueDataEncoder::~CharOpaqueDataEncoder()
@@ -103,37 +108,22 @@ CharOpaqueDataEncoder::~CharOpaqueDataEncoder()
    return;
 }
 
-VariableLengthData &CharOpaqueDataEncoder::encode()
+void CharOpaqueDataEncoder::update_before_encode()
 {
-   Octet *byte_data = *static_cast< Octet ** >( address );
-
-   HLAopaqueData *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
+   HLAopaqueData *opaque_encoder = dynamic_cast< HLAopaqueData * >( data_encoder );
+   Octet         *byte_data      = *static_cast< Octet ** >( address );
 
    opaque_encoder->set( const_cast< Octet const * >( byte_data ), get_size( byte_data ) );
-
-   return EncoderBase::encode();
 }
 
-bool const CharOpaqueDataEncoder::decode(
-   VariableLengthData const &encoded_data )
+void CharOpaqueDataEncoder::update_after_decode()
 {
-   if ( EncoderBase::decode( encoded_data ) ) {
+   HLAopaqueData const *opaque_encoder = dynamic_cast< HLAopaqueData * >( data_encoder );
 
-      HLAopaqueData const *opaque_encoder = dynamic_cast< HLAopaqueData * >( encoder );
+   resize_trick_var( opaque_encoder->dataLength() );
 
-      resize_trick_var( opaque_encoder->dataLength() );
-
-      Octet *byte_data = *static_cast< Octet ** >( address );
-      if ( byte_data != NULL ) {
-         memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() );
-      }
-
-      return true;
+   Octet *byte_data = *static_cast< Octet ** >( address );
+   if ( byte_data != NULL ) {
+      memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() );
    }
-   return false;
-}
-
-string CharOpaqueDataEncoder::to_string()
-{
-   return ( "CharOpaqueDataEncoder[" + this->name + "]" );
 }

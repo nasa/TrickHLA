@@ -19,10 +19,10 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Parameter.cpp}
+@trick_link_dependency{RecordElement.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 @trick_link_dependency{encoding/EncoderBase.cpp}
-@trick_link_dependency{encoding/EncoderFactory.cpp}
 
 
 @revs_title
@@ -59,12 +59,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
-#include "TrickHLA/encoding/EncoderFactory.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -83,13 +83,10 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Parameter::Parameter()
-   : trick_name( NULL ),
-     FOM_name( NULL ),
-     rti_encoding( ENCODING_UNKNOWN ),
+   : RecordElement(),
      value_changed( false ),
      interaction_FOM_name( NULL ),
-     param_handle(),
-     encoder( NULL )
+     param_handle()
 {
    return;
 }
@@ -138,7 +135,8 @@ void Parameter::initialize(
    }
 
    // Make sure we have a valid parameter Trick-Name.
-   if ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) {
+   if ( ( rti_encoding != ENCODING_FIXED_RECORD )
+        && ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
              << " ERROR: FOM Interaction Parameter '"
@@ -164,11 +162,9 @@ void Parameter::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Create the encoder based on the Trick variable.
-   if ( this->encoder != NULL ) {
-      delete this->encoder;
-   }
-   this->encoder = EncoderFactory::create( trick_name, rti_encoding );
+   // Initialize the element encoders including a fixed record encoder.
+   initialize_element_encoder();
+
    if ( this->encoder == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
@@ -186,7 +182,7 @@ void Parameter::initialize(
       ostringstream msg;
       msg << "Parameter::initialize():" << __LINE__ << '\n'
           << "========================================================\n"
-          << "  Encoder:" << this->encoder->to_string() << "\n"
+          //        << "  Encoder:" << this->encoder->to_string() << "\n"
           << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
@@ -222,11 +218,9 @@ void Parameter::initialize(
 
    this->interaction_FOM_name = trick_MM->mm_strdup( const_cast< char * >( interaction_fom_name ) );
 
-   // Create the encoder based on the Trick variable address and attributes.
-   if ( this->encoder != NULL ) {
-      delete this->encoder;
-   }
-   this->encoder = EncoderFactory::create( address, attr, rti_encoding );
+   // Initialize the element encoders including a fixed record encoder.
+   initialize_element_encoder( address, attr );
+
    if ( this->encoder == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
@@ -242,7 +236,7 @@ void Parameter::initialize(
       ostringstream msg;
       msg << "Parameter::initialize():" << __LINE__ << '\n'
           << "========================================================\n"
-          << "  Encoder:" << this->encoder->to_string() << "\n"
+          << "  Encoder:\n"
           << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
@@ -255,23 +249,53 @@ void Parameter::initialize(
 
 VariableLengthData &Parameter::encode()
 {
-   return encoder->encode();
+   update_before_encode();
+
+   try {
+      encoder->encode( encoder->data );
+   } catch ( EncoderException &e ) {
+      string err_details;
+      StringUtilities::to_string( err_details, e.what() );
+      ostringstream errmsg;
+      errmsg << "Parameter::encode():" << __LINE__
+             << " ERROR: Unexpected error encoding HLA data for Trick variable '"
+             << ( ( get_trick_name() != NULL ) ? get_trick_name() : "NULL" )
+             << "' and FOM name '"
+             << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" )
+             << "' with error: " << err_details << std::endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   return encoder->data;
 }
 
 bool const Parameter::decode(
    VariableLengthData const &encoded_data )
 {
-   if ( encoder->decode( encoded_data ) ) {
-
-      if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-         message_publish( MSG_NORMAL, "Parameter::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
-                          __LINE__, get_FOM_name(), get_trick_name() );
-      }
-
-      // Mark the attribute value as changed.
-      mark_changed();
-
-      return true;
+   try {
+      encoder->decode( encoded_data );
+   } catch ( EncoderException &e ) {
+      string err_details;
+      StringUtilities::to_string( err_details, e.what() );
+      ostringstream errmsg;
+      errmsg << "Parameter::decode():" << __LINE__
+             << " ERROR: Unexpected error decoding HLA data for Trick variable '"
+             << ( ( get_trick_name() != NULL ) ? get_trick_name() : "NULL" )
+             << "' and FOM name '"
+             << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" )
+             << "' with error: " << err_details << std::endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
-   return false;
+
+   update_after_decode();
+
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      message_publish( MSG_NORMAL, "Parameter::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
+                       __LINE__, get_FOM_name(), get_trick_name() );
+   }
+
+   // Mark the attribute value as changed.
+   mark_changed();
+
+   return true;
 }

@@ -64,6 +64,8 @@ NASA, Johnson Space Center\n
 #include "WCharData.hh"
 #include "WStringData.hh"
 
+#include "../../FixedRecord/include/FixedRecData.hh"
+
 namespace TrickHLAModel
 {
 
@@ -153,6 +155,16 @@ class EncodingTest
                    std::string const           &data2_trick_base_name,
                    BoolData                    &data2,
                    TrickHLA::EncodingEnum const rti_encoding );
+
+   void fixed_record_test( std::string const &data1_trick_base_name,
+                           FixedRecData      &data1,
+                           std::string const &data2_trick_base_name,
+                           FixedRecData      &data2 );
+
+   void fixed_record_attribute_test( std::string const &data1_trick_base_name,
+                                     FixedRecData      &data1,
+                                     std::string const &data2_trick_base_name,
+                                     FixedRecData      &data2 );
 };
 
 } // namespace TrickHLAModel

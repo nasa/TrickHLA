@@ -18,7 +18,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{EncoderBase.cpp}
+@trick_link_dependency{CharRawDataEncoder.cpp}
+@trick_link_dependency{VariableArrayEncoderBase.cpp}
+
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -32,6 +34,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
+#include <cstring>
 #include <sstream>
 #include <string>
 
@@ -48,7 +51,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/CharRawDataEncoder.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -70,13 +73,14 @@ using namespace TrickHLA;
 CharRawDataEncoder::CharRawDataEncoder(
    void       *addr,
    ATTRIBUTES *attr )
-   : EncoderBase( addr, attr )
+   : VariableArrayEncoderBase( addr, attr )
 {
    if ( ( this->type != TRICK_CHARACTER )
         && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << this->name
+             << " ERROR: Trick type for the '"
+             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
@@ -89,7 +93,8 @@ CharRawDataEncoder::CharRawDataEncoder(
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << this->name
+             << " ERROR: Trick ref-attributes for '"
+             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
              << "' the variable must be a dynamic variable array!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -101,25 +106,16 @@ CharRawDataEncoder::~CharRawDataEncoder()
    return;
 }
 
-VariableLengthData &CharRawDataEncoder::encode()
+void CharRawDataEncoder::update_before_encode()
 {
    // Since the Trick variable is dynamic (i.e. a pointer) its size
    // can change at any point so we need to refresh the counts.
    calculate_var_element_count();
 
    this->data.setDataPointer( *static_cast< void ** >( address ), var_element_count );
-   return this->data;
 }
 
-bool const CharRawDataEncoder::decode(
-   VariableLengthData const &encoded_data )
+void CharRawDataEncoder::update_after_decode()
 {
-   resize_trick_var( encoded_data.size() );
-   memcpy( *static_cast< void ** >( address ), encoded_data.data(), encoded_data.size() );
-   return true;
-}
-
-string CharRawDataEncoder::to_string()
-{
-   return ( "CharRawDataEncoder[" + this->name + "]" );
+   return;
 }

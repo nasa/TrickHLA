@@ -22,7 +22,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataEncoders.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -45,7 +44,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -55,13 +53,14 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA
 {
 
-#define DEFINE_BASIC_ENCODER_CLASS( EncoderClassName )                              \
+#define DEFINE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType )           \
                                                                                     \
    class EncoderClassName : public EncoderBase                                      \
    {                                                                                \
@@ -80,7 +79,15 @@ namespace TrickHLA
                                                                                     \
       virtual ~EncoderClassName();                                                  \
                                                                                     \
-      virtual std::string to_string();                                              \
+      virtual void update_before_encode()                                           \
+      {                                                                             \
+         return;                                                                    \
+      }                                                                             \
+                                                                                    \
+      virtual void update_after_decode()                                            \
+      {                                                                             \
+         return;                                                                    \
+      }                                                                             \
                                                                                     \
      private:                                                                       \
       /* Do not allow the default, copy constructor or assignment operator. */      \
@@ -93,34 +100,34 @@ namespace TrickHLA
       EncoderClassName &operator=( EncoderClassName const &rhs );                   \
    };
 
-DEFINE_BASIC_ENCODER_CLASS( ASCIICharEncoder )
-DEFINE_BASIC_ENCODER_CLASS( ASCIIStringEncoder )
-DEFINE_BASIC_ENCODER_CLASS( BoolEncoder )
-DEFINE_BASIC_ENCODER_CLASS( ByteEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Float32BEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Float32LEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Float64BEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Float64LEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Int16BEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Int16LEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Int32BEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Int32LEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Int64BEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( Int64LEEncoder )
+DEFINE_BASIC_ENCODER_CLASS( ASCIICharEncoder, HLAASCIIchar )
+DEFINE_BASIC_ENCODER_CLASS( ASCIIStringEncoder, HLAASCIIstring )
+DEFINE_BASIC_ENCODER_CLASS( BoolEncoder, HLAboolean )
+DEFINE_BASIC_ENCODER_CLASS( ByteEncoder, HLAbyte )
+DEFINE_BASIC_ENCODER_CLASS( Float32BEEncoder, HLAfloat32BE )
+DEFINE_BASIC_ENCODER_CLASS( Float32LEEncoder, HLAfloat32LE )
+DEFINE_BASIC_ENCODER_CLASS( Float64BEEncoder, HLAfloat64BE )
+DEFINE_BASIC_ENCODER_CLASS( Float64LEEncoder, HLAfloat64LE )
+DEFINE_BASIC_ENCODER_CLASS( Int16BEEncoder, HLAinteger16BE )
+DEFINE_BASIC_ENCODER_CLASS( Int16LEEncoder, HLAinteger16LE )
+DEFINE_BASIC_ENCODER_CLASS( Int32BEEncoder, HLAinteger32BE )
+DEFINE_BASIC_ENCODER_CLASS( Int32LEEncoder, HLAinteger32LE )
+DEFINE_BASIC_ENCODER_CLASS( Int64BEEncoder, HLAinteger64BE )
+DEFINE_BASIC_ENCODER_CLASS( Int64LEEncoder, HLAinteger64LE )
 
 #if defined( IEEE_1516_2025 )
-DEFINE_BASIC_ENCODER_CLASS( UInt16BEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( UInt16LEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( UInt32BEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( UInt32LEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( UInt64BEEncoder )
-DEFINE_BASIC_ENCODER_CLASS( UInt64LEEncoder )
+DEFINE_BASIC_ENCODER_CLASS( UInt16BEEncoder, HLAunsignedInteger16BE )
+DEFINE_BASIC_ENCODER_CLASS( UInt16LEEncoder, HLAunsignedInteger16LE )
+DEFINE_BASIC_ENCODER_CLASS( UInt32BEEncoder, HLAunsignedInteger32BE )
+DEFINE_BASIC_ENCODER_CLASS( UInt32LEEncoder, HLAunsignedInteger32LE )
+DEFINE_BASIC_ENCODER_CLASS( UInt64BEEncoder, HLAunsignedInteger64BE )
+DEFINE_BASIC_ENCODER_CLASS( UInt64LEEncoder, HLAunsignedInteger64LE )
 #endif // IEEE_1516_2025
 
-DEFINE_BASIC_ENCODER_CLASS( UnicodeCharEncoder )
+DEFINE_BASIC_ENCODER_CLASS( UnicodeCharEncoder, HLAunicodeChar )
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
-DEFINE_BASIC_ENCODER_CLASS( UnicodeStringEncoder )
+DEFINE_BASIC_ENCODER_CLASS( UnicodeStringEncoder, HLAunicodeString )
 #endif // TRICK_WSTRING_MM_SUPPORT
 
 } // namespace TrickHLA

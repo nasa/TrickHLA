@@ -19,8 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/BasicDataVariableArrayEncoders.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Utilities.cpp}
 
@@ -47,6 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -57,50 +59,49 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/HLAvariableArray.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA
 {
 
-#define DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName )                         \
-                                                                                              \
-   class EncoderClassName : public EncoderBase                                                \
-   {                                                                                          \
-      /* Let the Trick input processor access protected and private data. */                  \
-      /* InputProcessor is really just a marker class (does not really    */                  \
-      /* exists - at least yet). This friend statement just tells Trick   */                  \
-      /* to go ahead and process the protected and private data as well   */                  \
-      /* as the usual public data.                                        */                  \
-      friend class InputProcessor;                                                            \
-      /* IMPORTANT Note: you must have the following line too.            */                  \
-      /* Syntax: friend void init_attr<namespace>__<class name>();        */                  \
-      friend void init_attrTrickHLA__EncoderClassName();                                      \
-                                                                                              \
-     public:                                                                                  \
-      /*! @brief Default constructor. */                                                      \
-      EncoderClassName( void *addr, ATTRIBUTES *attr );                                       \
-                                                                                              \
-      /*! @brief Destructor for the TrickHLA EncoderClassName class. */                       \
-      virtual ~EncoderClassName();                                                            \
-                                                                                              \
-      virtual RTI1516_NAMESPACE::VariableLengthData &encode();                                \
-                                                                                              \
-      virtual bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data ); \
-                                                                                              \
-      virtual std::string to_string();                                                        \
-                                                                                              \
-     protected:                                                                               \
-      void resize_data_elements( std::size_t const new_size );                                \
-                                                                                              \
-     private:                                                                                 \
-      /* Do not allow the default, copy constructor or assignment operator. */                \
-      EncoderClassName();                                                                     \
-      /*! @brief Copy constructor for EncoderClassName class.                 */              \
-      /*  @details This constructor is private to prevent inadvertent copies. */              \
-      EncoderClassName( EncoderClassName const &rhs );                                        \
-      /*! @brief Assignment operator for EncoderClassName class.                 */           \
-      /*  @details Assignment operator is private to prevent inadvertent copies. */           \
-      EncoderClassName &operator=( EncoderClassName const &rhs );                             \
+#define DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName )                                 \
+                                                                                                      \
+   class EncoderClassName : public VariableArrayEncoderBase                                           \
+   {                                                                                                  \
+      /* Let the Trick input processor access protected and private data. */                          \
+      /* InputProcessor is really just a marker class (does not really    */                          \
+      /* exists - at least yet). This friend statement just tells Trick   */                          \
+      /* to go ahead and process the protected and private data as well   */                          \
+      /* as the usual public data.                                        */                          \
+      friend class InputProcessor;                                                                    \
+      /* IMPORTANT Note: you must have the following line too.            */                          \
+      /* Syntax: friend void init_attr<namespace>__<class name>();        */                          \
+      friend void init_attrTrickHLA__EncoderClassName();                                              \
+                                                                                                      \
+     public:                                                                                          \
+      /*! @brief Default constructor. */                                                              \
+      EncoderClassName( void *addr, ATTRIBUTES *attr );                                               \
+                                                                                                      \
+      /*! @brief Destructor for the TrickHLA EncoderClassName class. */                               \
+      virtual ~EncoderClassName();                                                                    \
+                                                                                                      \
+      virtual void update_before_encode();                                                            \
+                                                                                                      \
+      virtual void update_after_decode();                                                             \
+                                                                                                      \
+     protected:                                                                                       \
+      void resize_data_elements( std::size_t new_size ) throw( RTI1516_NAMESPACE::EncoderException ); \
+                                                                                                      \
+     private:                                                                                         \
+      /* Do not allow the default, copy constructor or assignment operator. */                        \
+      /* EncoderClassName(); */                                                                       \
+      /*! @brief Copy constructor for EncoderClassName class.                 */                      \
+      /*  @details This constructor is private to prevent inadvertent copies. */                      \
+      EncoderClassName( EncoderClassName const &rhs );                                                \
+      /*! @brief Assignment operator for EncoderClassName class.                 */                   \
+      /*  @details Assignment operator is private to prevent inadvertent copies. */                   \
+      EncoderClassName &operator=( EncoderClassName const &rhs );                                     \
    };
 
 DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ASCIICharVariableArrayEncoder )

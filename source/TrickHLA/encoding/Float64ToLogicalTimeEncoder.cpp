@@ -18,7 +18,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{Float64ToLogicalTimeEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
+@trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Int64BaseTime.cpp}
 @trick_link_dependency{../Types.cpp}
@@ -51,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
+#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -71,13 +74,14 @@ using namespace TrickHLA;
 Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
    void       *addr,
    ATTRIBUTES *attr )
-   : EncoderBase( addr, attr ),
+   : VariableArrayEncoderBase( addr, attr ),
      time_data( 0LL )
 {
    if ( this->type != TRICK_DOUBLE ) {
       ostringstream errmsg;
       errmsg << "Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << this->name
+             << " ERROR: Trick type for the '"
+             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
@@ -87,17 +91,18 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
       return;
    }
 
+   // Is the attribute for an Trick variable that is an array.
    if ( is_array() ) {
       ostringstream errmsg;
       errmsg << "Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << this->name
+             << " ERROR: Trick ref-attributes for '"
+             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
              << "' the variable must be a double primitive!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
-   // Automatically encode and decode into the string_data.
-   this->encoder = new HLAinteger64BE( &time_data );
+   this->data_encoder = new HLAinteger64BE( &time_data );
 }
 
 Float64ToLogicalTimeEncoder::~Float64ToLogicalTimeEncoder()
@@ -105,25 +110,14 @@ Float64ToLogicalTimeEncoder::~Float64ToLogicalTimeEncoder()
    return;
 }
 
-VariableLengthData &Float64ToLogicalTimeEncoder::encode()
+void Float64ToLogicalTimeEncoder::update_before_encode()
 {
    // Convert double time in seconds to the base time.
    this->time_data = Int64BaseTime::to_base_time( *static_cast< double * >( address ) );
-   return EncoderBase::encode();
 }
 
-bool const Float64ToLogicalTimeEncoder::decode(
-   VariableLengthData const &encoded_data )
+void Float64ToLogicalTimeEncoder::update_after_decode()
 {
-   if ( EncoderBase::decode( encoded_data ) ) {
-      // Convert 64-bit integer time to time in seconds.
-      *static_cast< double * >( address ) = Int64BaseTime::to_seconds( this->time_data );
-      return true;
-   }
-   return false;
-}
-
-string Float64ToLogicalTimeEncoder::to_string()
-{
-   return ( "Float64ToLogicalTimeEncoder[" + this->name + "]" );
+   // Convert 64-bit integer time to time in seconds.
+   *static_cast< double * >( address ) = Int64BaseTime::to_seconds( this->time_data );
 }

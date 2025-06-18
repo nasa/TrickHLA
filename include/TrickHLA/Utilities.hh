@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/attributes.h"
 #include "trick/parameter_types.h"
 #include "trick/trick_byteswap.h"
 
@@ -162,6 +163,8 @@ class Utilities
       }
       return endianness;
    }
+
+   static size_t get_static_var_element_count( ATTRIBUTES *attr );
 
    /*! @brief Determine if the RTI data needs a byteswap before transmission.
     *  @return True if byteswap is needed.

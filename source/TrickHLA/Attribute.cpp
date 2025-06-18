@@ -23,10 +23,10 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Conditional.cpp}
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
+@trick_link_dependency{RecordElement.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 @trick_link_dependency{encoding/EncoderBase.cpp}
-@trick_link_dependency{encoding/EncoderFactory.cpp}
 
 
 @revs_title
@@ -60,12 +60,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
-#include "TrickHLA/encoding/EncoderFactory.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -86,14 +86,12 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Attribute::Attribute()
-   : trick_name( NULL ),
-     FOM_name( NULL ),
+   : RecordElement(),
      config( CONFIG_NONE ),
      preferred_order( TRANSPORT_SPECIFIED_IN_FOM ),
      publish( false ),
      subscribe( false ),
      locally_owned( false ),
-     rti_encoding( ENCODING_UNKNOWN ),
      cycle_time( -std::numeric_limits< double >::max() ),
      value_changed( false ),
      update_requested( false ),
@@ -102,8 +100,7 @@ Attribute::Attribute()
      pull_requested( false ),
      push_requested( false ),
      divest_requested( false ),
-     attr_handle(),
-     encoder( NULL )
+     attr_handle()
 {
    return;
 }
@@ -114,10 +111,7 @@ Attribute::Attribute()
  */
 Attribute::~Attribute()
 {
-   if ( encoder != NULL ) {
-      delete encoder;
-      encoder = NULL;
-   }
+   return;
 }
 
 void Attribute::initialize(
@@ -153,7 +147,8 @@ void Attribute::initialize(
    }
 
    // Make sure we have a valid attribute Trick-Name.
-   if ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) {
+   if ( ( rti_encoding != ENCODING_FIXED_RECORD )
+        && ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
@@ -232,24 +227,21 @@ void Attribute::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Create the encoder based on the Trick variable and encoding.
-   if ( this->encoder != NULL ) {
-      delete this->encoder;
-   }
-   this->encoder = EncoderFactory::create( trick_name, rti_encoding );
+   // Initialize the element encoders including a fixed record encoder.
+   initialize_element_encoder();
+
    if ( this->encoder == NULL ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: Unexpected NULL encoder for Trick variable '"
              << trick_name << "' with an 'rti_encoding' value of "
-             << rti_encoding << ".\n";
+             << encoding_enum_to_string( rti_encoding ) << ".\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
-      msg << "Attribute::initialize():" << __LINE__
-          << " Encoder:" << this->encoder->to_string() << std::endl;
+      msg << "Attribute::initialize():" << __LINE__ << std::endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -274,25 +266,55 @@ void Attribute::initialize(
 
 VariableLengthData &Attribute::encode()
 {
-   return encoder->encode();
+   update_before_encode();
+
+   try {
+      encoder->encode( encoder->data );
+   } catch ( EncoderException &e ) {
+      string err_details;
+      StringUtilities::to_string( err_details, e.what() );
+      ostringstream errmsg;
+      errmsg << "Attribute::encode():" << __LINE__
+             << " ERROR: Unexpected error encoding HLA data for Trick variable '"
+             << ( ( get_trick_name() != NULL ) ? get_trick_name() : "NULL" )
+             << "' and FOM name '"
+             << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" )
+             << "' with error: " << err_details << std::endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   return encoder->data;
 }
 
 bool const Attribute::decode(
    VariableLengthData const &encoded_data )
 {
-   if ( encoder->decode( encoded_data ) ) {
-
-      if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-         message_publish( MSG_NORMAL, "Attribute::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
-                          __LINE__, get_FOM_name(), get_trick_name() );
-      }
-
-      // Mark the attribute value as changed.
-      mark_changed();
-
-      return true;
+   try {
+      encoder->decode( encoded_data );
+   } catch ( EncoderException &e ) {
+      string err_details;
+      StringUtilities::to_string( err_details, e.what() );
+      ostringstream errmsg;
+      errmsg << "Attribute::decode():" << __LINE__
+             << " ERROR: Unexpected error decoding HLA data for Trick variable '"
+             << ( ( get_trick_name() != NULL ) ? get_trick_name() : "NULL" )
+             << "' and FOM name '"
+             << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" )
+             << "' with error: " << err_details << std::endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
-   return false;
+
+   update_after_decode();
+
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      message_publish( MSG_NORMAL, "Attribute::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
+                       __LINE__, get_FOM_name(), get_trick_name() );
+   }
+
+   // Mark the attribute value as changed.
+   mark_changed();
+
+   return true;
 }
 
 void Attribute::determine_cycle_ratio(

@@ -18,8 +18,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{BasicDataFixedArrayEncoders.cpp}
+@trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
@@ -62,101 +63,63 @@ NASA, Johnson Space Center\n
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/HLAfixedArray.h"
+#include <RTI/encoding/EncodingConfig.h>
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-#define DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum ) \
-                                                                                                                      \
-   EncoderClassName::EncoderClassName(                                                                                \
-      void       *addr,                                                                                               \
-      ATTRIBUTES *attr )                                                                                              \
-      : EncoderBase( addr, attr )                                                                                     \
-   {                                                                                                                  \
-      bool valid = ( this->type == TrickTypeEnum )                                                                    \
-                   || ( ( ( this->type == TRICK_LONG )                                                                \
-                          || ( this->type == TRICK_UNSIGNED_LONG ) )                                                  \
-                        && ( sizeof( long ) == sizeof( SimpleDataType ) ) )                                           \
-                   || ( this->type == TRICK_UNSIGNED_CHARACTER );                                                     \
-      if ( !valid ) {                                                                                                 \
-         ostringstream errmsg;                                                                                        \
-         errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                                \
-                << " ERROR: Trick type for the '" << this->name                                                       \
-                << "' simulation variable (type:"                                                                     \
-                << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )                                              \
-                << ") is not the expected type '"                                                                     \
-                << trickTypeCharString( TrickTypeEnum, "UNSUPPORTED_TYPE" )                                           \
-                << "'." << std::endl;                                                                                 \
-         DebugHandler::terminate_with_message( errmsg.str() );                                                        \
-         return;                                                                                                      \
-      }                                                                                                               \
-                                                                                                                      \
-      /* This encoder is only for a static array. */                                                                  \
-      if ( !is_static_array() ) {                                                                                     \
-         ostringstream errmsg;                                                                                        \
-         errmsg << #EncoderClassName << "::" << #EncoderClassName << "():" << __LINE__                                \
-                << " ERROR: Trick ref-attributes for '" << this->name                                                 \
-                << "' the variable must be a static array!" << std::endl;                                             \
-         DebugHandler::terminate_with_message( errmsg.str() );                                                        \
-         return;                                                                                                      \
-      }                                                                                                               \
-                                                                                                                      \
-      EncodableDataType data_prototype;                                                                               \
-      HLAfixedArray    *array_encoder = new HLAfixedArray( data_prototype, var_element_count );                       \
-                                                                                                                      \
-      this->encoder = array_encoder;                                                                                  \
-                                                                                                                      \
-      data_elements.reserve( var_element_count );                                                                     \
-      SimpleDataType *array_data = static_cast< SimpleDataType * >( address );                                        \
-                                                                                                                      \
-      /* Connect the users array data to the encoder array elements. */                                               \
-      for ( size_t i = 0; i < var_element_count; ++i ) {                                                              \
-         EncodableDataType *element = new EncodableDataType( &array_data[i] );                                        \
-         data_elements.push_back( element );                                                                          \
-         array_encoder->setElementPointer( i, element );                                                              \
-      }                                                                                                               \
-   }                                                                                                                  \
-                                                                                                                      \
-   EncoderClassName::~EncoderClassName()                                                                              \
-   {                                                                                                                  \
-      return;                                                                                                         \
-   }                                                                                                                  \
-                                                                                                                      \
-   string EncoderClassName::to_string()                                                                               \
-   {                                                                                                                  \
-      ostringstream msg;                                                                                              \
-      msg << #EncoderClassName << "[" << this->name << "]";                                                           \
-      return msg.str();                                                                                               \
+#define DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType ) \
+                                                                                                       \
+   EncoderClassName::EncoderClassName(                                                                 \
+      SimpleDataType *array_data,                                                                      \
+      size_t          length )                                                                         \
+      : EncoderBase()                                                                                  \
+   {                                                                                                   \
+      HLAfixedArray *array_encoder = new HLAfixedArray( EncodableDataType(), length );                 \
+      this->data_encoder           = array_encoder;                                                    \
+                                                                                                       \
+      /* Connect the users array data to the encoder array elements. */                                \
+      for ( size_t i = 0; i < length; ++i ) {                                                          \
+         const_cast< EncodableDataType & >(                                                            \
+            dynamic_cast< EncodableDataType const & >(                                                 \
+               array_encoder->get( i ) ) )                                                             \
+            .setDataPointer( &array_data[i] );                                                         \
+      }                                                                                                \
+   }                                                                                                   \
+                                                                                                       \
+   EncoderClassName::~EncoderClassName()                                                               \
+   {                                                                                                   \
+      return;                                                                                          \
    }
 
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIICharFixedArrayEncoder, HLAASCIIchar, char, TRICK_CHARACTER )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIIStringFixedArrayEncoder, HLAASCIIstring, std::string, TRICK_STRING )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( BoolFixedArrayEncoder, HLAboolean, bool, TRICK_BOOLEAN )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ByteFixedArrayEncoder, HLAbyte, Octet, TRICK_CHARACTER )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float32BEFixedArrayEncoder, HLAfloat32BE, float, TRICK_FLOAT )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float32LEFixedArrayEncoder, HLAfloat32LE, float, TRICK_FLOAT )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float64BEFixedArrayEncoder, HLAfloat64BE, double, TRICK_DOUBLE )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float64LEFixedArrayEncoder, HLAfloat64LE, double, TRICK_DOUBLE )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int16BEFixedArrayEncoder, HLAinteger16BE, Integer16, TRICK_SHORT )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int16LEFixedArrayEncoder, HLAinteger16LE, Integer16, TRICK_SHORT )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32BEFixedArrayEncoder, HLAinteger32BE, Integer32, TRICK_INTEGER )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32LEFixedArrayEncoder, HLAinteger32LE, Integer32, TRICK_INTEGER )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64BEFixedArrayEncoder, HLAinteger64BE, Integer64, TRICK_LONG_LONG )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64LEFixedArrayEncoder, HLAinteger64LE, Integer64, TRICK_LONG_LONG )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIICharFixedArrayEncoder, HLAASCIIchar, char )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIIStringFixedArrayEncoder, HLAASCIIstring, std::string )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( BoolFixedArrayEncoder, HLAboolean, bool )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ByteFixedArrayEncoder, HLAbyte, Octet )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float32BEFixedArrayEncoder, HLAfloat32BE, float )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float32LEFixedArrayEncoder, HLAfloat32LE, float )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float64BEFixedArrayEncoder, HLAfloat64BE, double )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Float64LEFixedArrayEncoder, HLAfloat64LE, double )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int16BEFixedArrayEncoder, HLAinteger16BE, Integer16 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int16LEFixedArrayEncoder, HLAinteger16LE, Integer16 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32BEFixedArrayEncoder, HLAinteger32BE, Integer32 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32LEFixedArrayEncoder, HLAinteger32LE, Integer32 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64BEFixedArrayEncoder, HLAinteger64BE, Integer64 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64LEFixedArrayEncoder, HLAinteger64LE, Integer64 )
 
 #if defined( IEEE_1516_2025 )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16BEFixedArrayEncoder, HLAunsignedInteger16BE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16LEFixedArrayEncoder, HLAunsignedInteger16LE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32BEFixedArrayEncoder, HLAunsignedInteger32BE, UnsignedInteger32, TRICK_UNSIGNED_INTEGER )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32LEFixedArrayEncoder, HLAunsignedInteger32LE, UnsignedInteger32, TRICK_UNSIGNED_INTEGER )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64BEFixedArrayEncoder, HLAunsignedInteger64BE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64LEFixedArrayEncoder, HLAunsignedInteger64LE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16BEFixedArrayEncoder, HLAunsignedInteger16BE, UnsignedInteger16 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16LEFixedArrayEncoder, HLAunsignedInteger16LE, UnsignedInteger16 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32BEFixedArrayEncoder, HLAunsignedInteger32BE, UnsignedInteger32 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32LEFixedArrayEncoder, HLAunsignedInteger32LE, UnsignedInteger32 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64BEFixedArrayEncoder, HLAunsignedInteger64BE, UnsignedInteger64 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64LEFixedArrayEncoder, HLAunsignedInteger64LE, UnsignedInteger64 )
 #endif // IEEE_1516_2025
 
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeCharFixedArrayEncoder, HLAunicodeChar, wchar_t, TRICK_WCHAR )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeCharFixedArrayEncoder, HLAunicodeChar, wchar_t )
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeStringFixedArrayEncoder, HLAunicodeString, std::wstring, TRICK_WSTRING )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeStringFixedArrayEncoder, HLAunicodeString, std::wstring )
 #endif // TRICK_WSTRING_MM_SUPPORT
