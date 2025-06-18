@@ -90,6 +90,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
    virtual void update_after_decode() = 0;
 
+#if !defined( SWIG )
    virtual std::auto_ptr< RTI1516_NAMESPACE::DataElement > clone() const
    {
       return data_encoder->clone();
@@ -141,6 +142,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    {
       return data_encoder->hash();
    }
+#endif // SWIG
 
    RTI1516_NAMESPACE::DataElement *data_encoder; ///< @trick_io{**} Data encoder.
 
