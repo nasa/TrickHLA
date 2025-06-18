@@ -98,49 +98,56 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
    virtual RTI1516_NAMESPACE::VariableLengthData encode() const throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return data_encoder->encode();
+      return ( data_encoder != NULL ) ? data_encoder->encode()
+                                      : RTI1516_NAMESPACE::VariableLengthData();
    }
 
    virtual void encode( RTI1516_NAMESPACE::VariableLengthData &inData ) const throw( RTI1516_NAMESPACE::EncoderException )
    {
-      data_encoder->encode( inData );
+      if ( data_encoder != NULL ) {
+         data_encoder->encode( inData );
+      }
    }
 
    virtual void encodeInto( std::vector< RTI1516_NAMESPACE::Octet > &buffer ) const throw( RTI1516_NAMESPACE::EncoderException )
    {
-      data_encoder->encodeInto( buffer );
+      if ( data_encoder != NULL ) {
+         data_encoder->encodeInto( buffer );
+      }
    }
 
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException )
    {
-      data_encoder->decode( inData );
+      if ( data_encoder != NULL ) {
+         data_encoder->decode( inData );
+      }
    }
 
    virtual size_t decodeFrom(
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
       size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return data_encoder->decodeFrom( buffer, index );
+      return ( data_encoder != NULL ) ? data_encoder->decodeFrom( buffer, index ) : 0;
    }
 
    virtual size_t getEncodedLength() const throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return data_encoder->getEncodedLength();
+      return ( data_encoder != NULL ) ? data_encoder->getEncodedLength() : 0;
    }
 
    virtual unsigned int getOctetBoundary() const
    {
-      return data_encoder->getOctetBoundary();
+      return ( data_encoder != NULL ) ? data_encoder->getOctetBoundary() : 0;
    }
 
    virtual bool isSameTypeAs( RTI1516_NAMESPACE::DataElement const &inData ) const
    {
-      return data_encoder->isSameTypeAs( inData );
+      return ( data_encoder != NULL ) ? data_encoder->isSameTypeAs( inData ) : false;
    }
 
    virtual RTI1516_NAMESPACE::Integer64 hash() const
    {
-      return data_encoder->hash();
+      return ( data_encoder != NULL ) ? data_encoder->hash() : RTI1516_NAMESPACE::Integer64(0);
    }
 #endif // SWIG
 
