@@ -220,7 +220,7 @@ void InteractionItem::checkpoint_queue()
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      int i;
+      int            i;
       ParameterItem *item;
 
       // Iterate through the parameter-queue.

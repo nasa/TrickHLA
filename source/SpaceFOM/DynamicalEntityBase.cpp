@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 
 // using namespace std;
