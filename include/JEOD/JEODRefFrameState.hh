@@ -40,12 +40,15 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_JEOD_REF_FRAME_STATE_HH
 #define SPACEFOM_JEOD_REF_FRAME_STATE_HH
 
-// JEOD include files.
-#include "environment/time/include/time_tt.hh"
-#include "utils/ref_frames/include/ref_frame_state.hh"
+// SpaceFOM includes.
+#include "../SpaceFOM/RefFrameBase.hh"
+#include "../SpaceFOM/SpaceTimeCoordinateData.hh"
 
-// SpaceFOM include files.
-#include "SpaceFOM/RefFrameBase.hh"
+namespace jeod
+{
+class RefFrameState;
+class TimeTT;
+} /* namespace jeod */
 
 namespace SpaceFOM
 {

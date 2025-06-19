@@ -36,18 +36,14 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_JEOD_PHYSICAL_INTERFACE_HH
 #define SPACEFOM_JEOD_PHYSICAL_INTERFACE_HH
 
-// System include files.
+// SpaceFOM includes.
+#include "../SpaceFOM/PhysicalInterfaceBase.hh"
 
-// Trick include files.
-
-// JEOD include files.
-#include "dynamics/dyn_body/include/body_ref_frame.hh"
-#include "dynamics/dyn_body/include/dyn_body.hh"
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
-#include "SpaceFOM/PhysicalInterfaceBase.hh"
+namespace jeod
+{
+class BodyRefFrame;
+class DynBody;
+} /* namespace jeod */
 
 namespace TrickHLA
 {

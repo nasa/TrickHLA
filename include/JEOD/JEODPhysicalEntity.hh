@@ -36,17 +36,13 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_JEOD_PHYSICAL_ENTITY_HH
 #define SPACEFOM_JEOD_PHYSICAL_ENTITY_HH
 
-// System include files.
+// SpaceFOM includes.
+#include "../SpaceFOM/PhysicalEntityBase.hh"
 
-// Trick include files.
-
-// JEOD include files.
-#include "dynamics/dyn_body/include/dyn_body.hh"
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityBase.hh"
+namespace jeod
+{
+class DynBody;
+} /* namespace jeod */
 
 namespace TrickHLA
 {

@@ -27,31 +27,30 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstdlib>
-#include <iostream>
-#include <limits>
-#include <math.h>
 #include <sstream>
-#include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
-#include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
-#include "trick/vector_macros.h"
+// JEOD model includes.
+#include "dynamics/dyn_body/include/body_ref_frame.hh"
+#include "dynamics/dyn_body/include/dyn_body.hh"
+#include "dynamics/dyn_body/include/frame_derivs.hh"
+#include "dynamics/mass/include/mass.hh"
+#include "dynamics/mass/include/mass_properties.hh"
+#include "utils/quaternion/include/quat.hh"
+#include "utils/ref_frames/include/ref_frame_state.hh"
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/Packing.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// JEOD includes.
 #include "JEOD/JEODPhysicalEntity.hh"
+
+// SpaceFOM includes.
+#include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;
