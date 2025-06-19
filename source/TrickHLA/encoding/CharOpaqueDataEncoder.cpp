@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstring>
 #include <sstream>
-#include <string>
 
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
