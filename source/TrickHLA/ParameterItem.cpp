@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdlib>
+#include <cstring>
 #include <string>
 
 // Trick includes.
