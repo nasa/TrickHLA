@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstring>
 #include <pthread.h>
 #include <set>
 #include <sstream>

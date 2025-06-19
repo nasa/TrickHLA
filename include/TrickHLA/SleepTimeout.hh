@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SLEEP_TIMEOUT_HH
 
 // System includes.
+<cstdint>
 #include <time.h>
 
 struct timespec;

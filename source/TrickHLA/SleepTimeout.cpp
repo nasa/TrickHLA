@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
 #include <limits>
 #include <time.h>
 
