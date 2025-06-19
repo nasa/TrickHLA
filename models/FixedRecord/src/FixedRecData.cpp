@@ -24,20 +24,11 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstring>
-#include <sstream>
+// System includes.
 #include <string>
+#include <sstream>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
-#include "trick/integrator_c_intf.h"
-#include "trick/memorymanager_c_intf.h"
-#include "trick/message_proto.h"
-#include "trick/trick_math.h"
-
-// Model include files.
+// FixedRecord model includes.
 #include "../include/FixedRecData.hh"
 
 using namespace std;

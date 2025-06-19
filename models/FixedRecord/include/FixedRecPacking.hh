@@ -35,12 +35,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODEL_FIXED_REC_PACKING_HH
 #define TRICKHLA_MODEL_FIXED_REC_PACKING_HH
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Object.hh"
+// TrickHLA includes.
 #include "TrickHLA/Packing.hh"
 
-// Model include files.
+// FixedRecord model includes.
 #include "FixedRecData.hh"
 
 namespace TrickHLAModel

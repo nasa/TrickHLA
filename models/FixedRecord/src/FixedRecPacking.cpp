@@ -29,27 +29,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <algorithm>
-#include <cstring>
-#include <iomanip>
-#include <iostream>
-#include <math.h>
-#include <stdlib.h>
+// System includes.
+#include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA model include files.
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
-// Model include files.
-#include "../include/FixedRecData.hh"
+// FixedRecord model includes.
 #include "../include/FixedRecPacking.hh"
 
 using namespace std;

@@ -34,10 +34,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
-
 namespace TrickHLAModel
 {
 
