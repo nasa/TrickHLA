@@ -26,18 +26,19 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cmath>
-#include <iostream>
 #include <sstream>
+#include <string>
 
-// Trick include files.
+// Trick includes.
+#include "trick/Integrator.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/LagCompensationInteg.hh"
+#include "TrickHLA/Types.hh"
 
 // Uncomment this define if you want additional debug information.
 #define TRICK_HLA_DEBUG_INTEG

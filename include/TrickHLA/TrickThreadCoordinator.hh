@@ -38,11 +38,10 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 // System includes
 #include <cstdint>
-#include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "MutexLock.hh"
+#include "Types.hh"
 
 namespace TrickHLA
 {

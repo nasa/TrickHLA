@@ -23,10 +23,10 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-// System include files.
+// System includes.
 #include <pthread.h>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/MutexLock.hh"
 
 using namespace TrickHLA;

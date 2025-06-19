@@ -44,26 +44,24 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstdint>
+// System includes.
 #include <float.h>
-#include <iomanip>
 #include <map>
-#include <string>
+#include <sstream>
+#include <vector>
 
-// Trick include files.
-#include "trick/Executive.hh"
+// Trick includes.
 #include "trick/MemoryManager.hh"
+#include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
+#include "trick/sim_mode.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
-#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
@@ -71,15 +69,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/Types.hh"
+#include "TrickHLA/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -88,6 +83,10 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Exception.h"
+#include "RTI/Handle.h"
+#include "RTI/RTIambassador.h"
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

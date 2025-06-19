@@ -36,38 +36,33 @@ thread data cycle time being longer than the main thread data cycle time.}
 @revs_end
 */
 
-// System include files.
-#include <cmath>
-#include <cstdint>
-#include <cstdlib>
+// System includes.
 #include <iomanip>
-#include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
-// Trick include files.
+// Trick includes.
+#include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/Threads.hh"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/realtimesync_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/TrickThreadCoordinator.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 
 using namespace std;
 using namespace TrickHLA;

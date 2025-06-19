@@ -36,13 +36,11 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_EXECUTION_CONFIGURATION_HH
 #define TRICKHLA_EXECUTION_CONFIGURATION_HH
 
-// System include files.
+// System includes.
 #include <cstdint>
 
-// TrickHLA include files.
-#include "TrickHLA/ExecutionConfigurationBase.hh"
-#include "TrickHLA/Packing.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "ExecutionConfigurationBase.hh"
 
 namespace TrickHLA
 {

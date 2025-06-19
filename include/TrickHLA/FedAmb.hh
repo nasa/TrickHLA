@@ -52,12 +52,12 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_FED_AMB_HH
 #define TRICKHLA_FED_AMB_HH
 
-// System include files.
+// System includes.
+#include <set>
 #include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA inlcudes.
+#include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -67,7 +67,9 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Enums.h"
 #include "RTI/FederateAmbassador.h"
+#include "RTI/Typedefs.h"
 
 namespace TrickHLA
 {

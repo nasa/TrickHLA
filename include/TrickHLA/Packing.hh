@@ -38,8 +38,8 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_PACKING_HH
 #define TRICKHLA_PACKING_HH
 
-// TrickHLA include files.
-#include "TrickHLA/Types.hh"
+// System includes.
+#include <string>
 
 namespace TrickHLA
 {

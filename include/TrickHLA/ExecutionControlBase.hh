@@ -47,13 +47,17 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <string>
 
-#include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
-#include "TrickHLA/SimTimeline.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPointManagerBase.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "StandardsSupport.hh"
+#include "SyncPointManagerBase.hh"
+#include "Types.hh"
+
+namespace TrickHLA
+{
+class CTETimelineBase;
+class ScenarioTimeline;
+class SimTimeline;
+} /* namespace TrickHLA */
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -62,6 +66,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
 #include RTI1516_HEADER
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA

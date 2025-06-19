@@ -39,20 +39,19 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cmath>
 #include <limits>
 #include <sstream>
 
-// Trick include files.
+// Trick includes.
 #include <trick/message_proto.h>
 #include <trick/message_type.h>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

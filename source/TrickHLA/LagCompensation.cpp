@@ -35,23 +35,16 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
+// System includes.
 #include <limits>
 #include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/message_proto.h"
-
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Object.hh"
 

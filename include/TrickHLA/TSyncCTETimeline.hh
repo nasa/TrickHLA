@@ -39,15 +39,11 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_TSYNC_CTE_TIMELINE_HH
 #define TRICKHLA_TSYNC_CTE_TIMELINE_HH
 
-// System include files.
-#include <time.h>
+// System includes.
+#include <string>
 
-// Trick include files.
-#include "trick/Clock.hh"
-
-// TrickHLA include files.
-#include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/Timeline.hh"
+// TrickHLA includes
+#include "CTETimelineBase.hh"
 
 #if !defined( SWIG )
 #   if !defined( __linux__ )

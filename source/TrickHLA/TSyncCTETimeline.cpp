@@ -37,19 +37,14 @@ NASA, Johnson Space Center\n
 #include <string>
 #include <time.h>
 
-// Trick include files.
-#include "trick/Clock.hh"
-#include "trick/Executive.hh"
-#include "trick/RealtimeSync.hh"
+// Trick includes.
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
-#include "trick/realtimesync_proto.h"
+#include "trick/message_type.h"
+#include "tsync_error_codes.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/DebugHandler.hh"
+// TrickHLA includes.
 #include "TrickHLA/TSyncCTETimeline.hh"
-#include "TrickHLA/Timeline.hh"
 
 #if !defined( SWIG )
 #   if !defined( __linux__ )

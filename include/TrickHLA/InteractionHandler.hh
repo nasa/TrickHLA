@@ -38,10 +38,10 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_INTERACTION_HANDLER_HH
 
 // TrickHLA include files.
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
+#include "Int64Interval.hh"
+#include "Int64Time.hh"
+#include "Interaction.hh"
+#include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

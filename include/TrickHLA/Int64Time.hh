@@ -37,16 +37,14 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INT64_TIME_HH
 #define TRICKHLA_INT64_TIME_HH
 
-// System include files.
+// System includes.
 #include <cstdint>
 #include <string>
 
-// Trick include files.
-
-// TrickHLA includes
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "Int64BaseTime.hh"
+#include "Int64Interval.hh"
+#include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

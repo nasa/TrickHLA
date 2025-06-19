@@ -33,15 +33,13 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_TYPES_HH
 
 // System include files.
-#include <cstdint>
-#include <limits.h>
 #include <map>
 #include <queue>
 #include <string>
 #include <vector>
 
-// TrickHLA include files.
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -50,6 +48,9 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Handle.h"
+#include "RTI/RTIambassador.h"
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 // Default/desired padding time in seconds.

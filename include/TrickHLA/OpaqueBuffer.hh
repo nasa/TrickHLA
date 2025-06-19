@@ -36,10 +36,8 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OPAQUE_BUFFER_HH
 #define TRICKHLA_OPAQUE_BUFFER_HH
 
-// System include
-
-// TrickHLA include files.
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "Types.hh"
 
 namespace TrickHLA
 {

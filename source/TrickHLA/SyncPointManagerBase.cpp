@@ -34,32 +34,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstdint>
-#include <iostream>
+// System includes.
 #include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
+// Trick includes.
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/release.h"
+#include "trick/message_type.h"
 
-// HLA include files.
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

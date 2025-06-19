@@ -32,14 +32,12 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INT64_BASE_TIME_HH
 #define TRICKHLA_INT64_BASE_TIME_HH
 
-// System include files.
+// System includes.
 #include <cstdint>
 #include <string>
 
-// Trick include files.
-
-// TrickHLA includes
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "Types.hh"
 
 namespace TrickHLA
 {

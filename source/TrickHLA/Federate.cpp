@@ -39,53 +39,37 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <arpa/inet.h>
-#include <cmath>
-#include <cstddef>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib> // for atof
-#include <float.h>
-#include <fstream> // for ifstream
+#include <fstream>
+#include <initializer_list>
 #include <iomanip>
-#include <iostream>
 #include <limits>
-#include <map>
-#include <memory>
+#include <set>
 #include <sstream>
 #include <string>
-#include <sys/time.h>
-#include <time.h>
+#include <vector>
 
-// Trick include files.
+// Trick includes.
 #include "trick/CheckPointRestart.hh"
 #include "trick/CheckPointRestart_c_intf.hh"
-#include "trick/Clock.hh"
-#include "trick/DataRecordDispatcher.hh" //DANNY2.7 need the_drd to init data recording groups when restoring at init time (IMSIM)
-#include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/command_line_protos.h"
 #include "trick/exec_proto.h"
-#include "trick/input_processor_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/release.h"
+#include "trick/message_type.h"
+#include "trick/sim_mode.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/TrickThreadCoordinator.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 // Access the Trick global objects for CheckPoint restart and the Clock.
@@ -98,7 +82,13 @@ extern Trick::CheckPointRestart *the_cpr;
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
-#include <RTI/encoding/BasicDataElements.h>
+#include "RTI/Exception.h"
+#include "RTI/RTIambassador.h"
+#include "RTI/RTIambassadorFactory.h"
+#include "RTI/VariableLengthData.h"
+#include "RTI/encoding/BasicDataElements.h"
+#include "RTI/time/HLAinteger64Interval.h"
+#include "RTI/time/HLAinteger64Time.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

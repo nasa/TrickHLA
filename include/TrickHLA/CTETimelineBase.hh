@@ -44,13 +44,14 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_CTE_TIMELINE_BASE_HH
 #define TRICKHLA_CTE_TIMELINE_BASE_HH
 
-// System include files.
+// System includes.
+#include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/Clock.hh"
 
-// TrickHLA include files.
-#include "TrickHLA/Timeline.hh"
+// TrickHLA includes.
+#include "Timeline.hh"
 
 namespace TrickHLA
 {

@@ -24,12 +24,11 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstdint>
-#include <limits>
 #include <string>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Types.hh"
 
 using namespace std;

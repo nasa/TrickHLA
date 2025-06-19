@@ -46,26 +46,27 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
+// System includes.
 #include <map>
 #include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/exec_proto.h"
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -75,6 +76,10 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Exception.h"
+#include "RTI/Handle.h"
+#include "RTI/VariableLengthData.h"
+#include "RTI/time/HLAinteger64Time.h"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

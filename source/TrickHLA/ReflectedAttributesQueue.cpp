@@ -27,13 +27,12 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
+#include <queue>
 
-// TrickHLA include files.
-#include "TrickHLA/ReflectedAttributesQueue.hh"
-#include "TrickHLA/MutexLock.hh"
+// TrickHLA includes.
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/ReflectedAttributesQueue.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

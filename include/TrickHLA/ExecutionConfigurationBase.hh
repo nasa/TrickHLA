@@ -44,9 +44,9 @@ execution.
 #ifndef TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 #define TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 
-// TrickHLA include files.
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/Packing.hh"
+// TrickHLA includes.
+#include "Object.hh"
+#include "Packing.hh"
 
 namespace TrickHLA
 {

@@ -30,9 +30,11 @@ NASA, Johnson Space Center\n
 
 */
 
-// TrickHLA include files.
+// System includes.
+#include <sstream>
+
+// TrickHLA includes.
 #include "TrickHLA/Conditional.hh"
-#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 

@@ -39,17 +39,13 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <sstream>
+// System includes.
 #include <string>
-#include <time.h>
 
-// Trick include files.
-#include "trick/Clock.hh"
-#include "trick/RealtimeSync.hh"
+// Trick includes.
 #include "trick/realtimesync_proto.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/CTETimelineBase.hh"
 
 using namespace std;

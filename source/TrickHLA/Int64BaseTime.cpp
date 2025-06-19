@@ -26,18 +26,14 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cmath>
-#include <cstdint>
-#include <cstdio>
 #include <sstream>
 #include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;

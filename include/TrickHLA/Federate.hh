@@ -45,21 +45,25 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_FEDERATE_HH
 
 // System includes.
-#include <cstdint>
+#include <map>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/Flag.h"
 
-// TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/KnownFederate.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/TrickThreadCoordinator.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "Int64Interval.hh"
+#include "Int64Time.hh"
+#include "MutexLock.hh"
+#include "MutexProtection.hh"
+#include "StandardsSupport.hh"
+#include "TrickThreadCoordinator.hh"
+#include "Types.hh"
+
+namespace TrickHLA
+{
+class KnownFederate;
+} /* namespace TrickHLA */
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -68,6 +72,9 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Enums.h"
+#include "RTI/Handle.h"
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA

@@ -43,18 +43,18 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MANAGER_HH
 #define TRICKHLA_MANAGER_HH
 
-// System include files.
-#include <cstdint>
+// System includes.
 #include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/ItemQueue.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "ExecutionControlBase.hh"
+#include "Int64Interval.hh"
+#include "Int64Time.hh"
+#include "ItemQueue.hh"
+#include "MutexLock.hh"
+#include "Object.hh"
+#include "StandardsSupport.hh"
+#include "Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -63,6 +63,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 // Special handling of SWIG limitations for forward declarations.

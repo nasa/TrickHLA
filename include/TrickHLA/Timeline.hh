@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_TIMELINE_HH
 #define TRICKHLA_TIMELINE_HH
 
-// System include files.
+// System includes.
 #include <cfloat>
 
 namespace TrickHLA

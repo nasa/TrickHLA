@@ -44,39 +44,37 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstdint>
-#include <cstring>
 #include <iomanip>
-#include <iostream>
 #include <limits>
+#include <sstream>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
+#include "trick/attributes.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
+#include "trick/reference.h"
 
-// TrickHLA include files.
+// SpaceFOM includes.
+#include "SpaceFOM/ExecutionConfiguration.hh"
+
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/ExecutionConfigurationBase.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/LagCompensation.hh"
-#include "TrickHLA/Manager.hh"
-#include "TrickHLA/ObjectDeleted.hh"
-#include "TrickHLA/OwnershipHandler.hh"
-#include "TrickHLA/Packing.hh"
+#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
-#include "SpaceFOM/ExecutionConfiguration.hh"
-#include "SpaceFOM/ExecutionControl.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

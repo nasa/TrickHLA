@@ -31,8 +31,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MUTEX_PROTECTION_HH
 #define TRICKHLA_MUTEX_PROTECTION_HH
 
-// TrickHLA include files.
-#include "TrickHLA/MutexLock.hh"
+namespace TrickHLA
+{
+class MutexLock;
+} /* namespace TrickHLA */
 
 namespace TrickHLA
 {

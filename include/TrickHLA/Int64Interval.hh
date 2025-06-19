@@ -40,11 +40,9 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <string>
 
-// Trick includes.
-
-// TrickHLA include files.
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "Int64BaseTime.hh"
+#include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

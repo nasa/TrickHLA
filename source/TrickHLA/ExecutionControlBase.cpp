@@ -37,39 +37,31 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstdint>
-#include <iomanip>
-#include <iostream>
+// System includes.
 #include <limits>
-#include <math.h>
 #include <sstream>
 #include <string>
+#include <vector>
 
 // Trick includes.
-#include "trick/Clock.hh"
-#include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
+#include "trick/exec_proto.h"
 #include "trick/message_proto.h"
-#include "trick/trick_byteswap.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPointManagerBase.hh"
-#include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -78,6 +70,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Handle.h"
 #pragma GCC diagnostic pop
 
 // Access the Trick global objects the Clock.

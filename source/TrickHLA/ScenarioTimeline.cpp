@@ -29,20 +29,13 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cfloat>
+// System includes.
 #include <cstdint>
 
-// Trick include files.
-#include "trick/Executive.hh"
-#include "trick/exec_proto.h"
-
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
-#include "TrickHLA/Timeline.hh"
 
 using namespace TrickHLA;
 

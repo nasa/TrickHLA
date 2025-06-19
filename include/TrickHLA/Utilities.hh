@@ -37,15 +37,15 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_UTILITIES_HH
 #define TRICKHLA_UTILITIES_HH
 
-// System include files.
+// System includes.
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/attributes.h"
 #include "trick/parameter_types.h"
 #include "trick/trick_byteswap.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Types.hh"
 

@@ -26,12 +26,10 @@ NASA, Johnson Space Center\n
 
 */
 
-// System includes
+// System includes.
 #include <time.h>
 
-// Trick include files.
-
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/TimeOfDayTimeline.hh"
 
 using namespace TrickHLA;

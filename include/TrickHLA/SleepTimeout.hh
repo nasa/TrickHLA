@@ -31,9 +31,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SLEEP_TIMEOUT_HH
 #define TRICKHLA_SLEEP_TIMEOUT_HH
 
-// System include files.
-#include <cstdint>
+// System includes.
 #include <time.h>
+
+struct timespec;
 
 #define THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC ( (double)10.0 )
 #define THLA_DEFAULT_SLEEP_WAIT_IN_MICROS ( (long)10000 )

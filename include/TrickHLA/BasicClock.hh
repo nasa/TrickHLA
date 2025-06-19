@@ -31,14 +31,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_BASIC_CLOCK_HH
 #define TRICKHLA_BASIC_CLOCK_HH
 
-// System includes
-
 // Trick includes
-#include "trick/Executive.hh"
 #include "trick/clock_proto.h"
 #include "trick/exec_proto.h"
-
-// TrickHLA includes
 
 namespace TrickHLA
 {

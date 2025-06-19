@@ -35,13 +35,13 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SYNC_POINT_HH
 #define TRICKHLA_SYNC_POINT_HH
 
-// System includes
+// System includes.
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
+#include "CheckpointConversionBase.hh"
+#include "StandardsSupport.hh"
+#include "Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

@@ -24,14 +24,14 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-// System include files.
+// System includes.
 #include <cstdio>
 
-// Trick include files.
-#include "trick/message_proto.h"
+// Trick includes.
+#include <trick/message_proto.h>
+#include <trick/message_type.h>
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 

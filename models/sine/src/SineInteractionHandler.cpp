@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../../source/TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineInteractionHandler.cpp}
@@ -33,27 +34,27 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
+// System includes.
 #include <sstream>
-#include <stdlib.h>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// Model include files.
+// TrickHLA includes.
+#include "../../../include/TrickHLA/DebugHandler.hh"
+#include "../../../include/TrickHLA/Int64BaseTime.hh"
+#include "../../../include/TrickHLA/Int64Time.hh"
+#include "../../../include/TrickHLA/StringUtilities.hh"
+#include "../../../include/TrickHLA/Types.hh"
+
+// Sine model includes.
 #include "../include/SineInteractionHandler.hh"
 
-// TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/InteractionHandler.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/Types.hh"
+// HLA includes.
+#include "RTI/VariableLengthData.h"
 
 using namespace std;
 using namespace TrickHLA;

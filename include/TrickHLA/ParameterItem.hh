@@ -34,12 +34,14 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_PARAMETER_ITEM_HH
 #define TRICKHLA_PARAMETER_ITEM_HH
 
-// System includes
-#include <cstddef>
+// TrickHLA includes.
+#include "Item.hh"
+#include "StandardsSupport.hh"
 
-// TrickHLA include files.
-#include "TrickHLA/Item.hh"
-#include "TrickHLA/StandardsSupport.hh"
+namespace rti1516e
+{
+class VariableLengthData;
+} /* namespace rti1516e */
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

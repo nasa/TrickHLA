@@ -42,18 +42,16 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_HH
 #define TRICKHLA_INTERACTION_HH
 
-// System include files.
-
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "Int64Time.hh"
+#include "MutexLock.hh"
+#include "StandardsSupport.hh"
+#include "Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -62,6 +60,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Handle.h"
 #pragma GCC diagnostic pop
 
 // Special handling of SWIG limitations for forward declarations.

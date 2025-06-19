@@ -27,7 +27,7 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_VERSION_HH
 #define TRICKHLA_VERSION_HH
 
-// System include files.
+// System includes.
 #include <string>
 
 namespace TrickHLA

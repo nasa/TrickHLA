@@ -39,15 +39,17 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OWNERSHIP_HANDLER_HH
 #define TRICKHLA_OWNERSHIP_HANDLER_HH
 
-// System include files.
+// System includes.
+#include <map>
 #include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/OwnershipItem.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "Attribute.hh"
+#include "CheckpointConversionBase.hh"
+#include "Int64Interval.hh"
+#include "Int64Time.hh"
+#include "OwnershipItem.hh"
+#include "Types.hh"
 
 namespace TrickHLA
 {

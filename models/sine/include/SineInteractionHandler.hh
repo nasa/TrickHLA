@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH
 #define TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 

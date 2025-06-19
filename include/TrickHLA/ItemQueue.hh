@@ -36,13 +36,16 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_ITEM_QUEUE_HH
 #define TRICKHLA_ITEM_QUEUE_HH
 
-// System include files.
+// System includes.
 #include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/Item.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/MutexProtection.hh"
+// TrickHLA includes.
+#include "MutexLock.hh"
+
+namespace TrickHLA
+{
+class Item;
+} /* namespace TrickHLA */
 
 namespace TrickHLA
 {

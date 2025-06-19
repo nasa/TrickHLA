@@ -29,9 +29,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_CHECKPOINT_CONVERSION_BASE_HH
 #define TRICKHLA_CHECKPOINT_CONVERSION_BASE_HH
 
-// TrickHLA includes.
-#include "TrickHLA/StandardsSupport.hh"
-
 namespace TrickHLA
 {
 

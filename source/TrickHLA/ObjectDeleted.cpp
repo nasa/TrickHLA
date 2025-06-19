@@ -29,7 +29,7 @@ NASA, Johnson Space Center\n
 
 */
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/ObjectDeleted.hh"
 #include "TrickHLA/Object.hh"
 

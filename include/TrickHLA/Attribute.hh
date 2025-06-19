@@ -44,10 +44,10 @@ NASA, Johnson Space Center\n
 #include <stdlib.h>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/reference.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/RecordElement.hh"

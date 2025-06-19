@@ -38,18 +38,16 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_PARAMETER_HH
 #define TRICKHLA_PARAMETER_HH
 
-// System include files.
-
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/RecordElement.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
+// TrickHLA includes.
+#include "RecordElement.hh"
+#include "StandardsSupport.hh"
+#include "Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -58,6 +56,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Handle.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA

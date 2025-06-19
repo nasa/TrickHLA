@@ -45,13 +45,14 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SCENARIO_TIMELINE_HH
 #define TRICKHLA_SCENARIO_TIMELINE_HH
 
-// System include files.
-#include <cstdint>
+// TrickHLA includes.
+#include "Int64Time.hh"
+#include "Timeline.hh"
 
-// TrickHLA include files.
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/SimTimeline.hh"
-#include "TrickHLA/Timeline.hh"
+namespace TrickHLA
+{
+class SimTimeline;
+} /* namespace TrickHLA */
 
 namespace TrickHLA
 {

@@ -45,15 +45,11 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_TIMEOFDAY_CTE_TIMELINE_HH
 #define TRICKHLA_TIMEOFDAY_CTE_TIMELINE_HH
 
-// System include files.
+// System includes.
 #include <time.h>
 
-// Trick include files.
-#include "trick/Clock.hh"
-
-// TrickHLA include files.
-#include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/Timeline.hh"
+// TrickHLA includes.
+#include "CTETimelineBase.hh"
 
 namespace TrickHLA
 {

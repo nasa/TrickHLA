@@ -24,17 +24,15 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstdint>
+// System includes.
 #include <limits>
 #include <time.h>
 
-// Trick include files.
-#include "trick/Executive.hh"
+// Trick includes.
 #include "trick/clock_proto.h"
 #include "trick/exec_proto.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/SleepTimeout.hh"
 
 using namespace TrickHLA;

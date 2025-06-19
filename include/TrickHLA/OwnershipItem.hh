@@ -34,15 +34,14 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OWNERSHIP_ITEM_HH
 #define TRICKHLA_OWNERSHIP_ITEM_HH
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/Item.hh"
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "Item.hh"
+#include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

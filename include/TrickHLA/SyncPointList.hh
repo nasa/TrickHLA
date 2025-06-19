@@ -37,20 +37,21 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SYNC_POINT_LIST_HH
 
 // System includes.
-#include <map>
 #include <string>
-#include <vector>
 
-// Trick include files.
+// TrickHLA
+#include "CheckpointConversionBase.hh"
+#include "StandardsSupport.hh"
+#include "Types.hh"
 
-// TrickHLA include files.
-#include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPoint.hh"
-#include "TrickHLA/SyncPointTimed.hh"
+namespace TrickHLA
+{
+class Federate;
+class Int64Time;
+class MutexLock;
+class SyncPoint;
+class SyncPointTimed;
+} /* namespace TrickHLA */
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -59,6 +60,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 #define SYNC_POINT_TMM_ARRAY 1

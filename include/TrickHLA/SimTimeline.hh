@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SIM_TIMELINE_HH
 #define TRICKHLA_SIM_TIMELINE_HH
 
-// TrickHLA include files.
-#include "TrickHLA/Timeline.hh"
+// TrickHLA includes.
+#include "Timeline.hh"
 
 namespace TrickHLA
 {

@@ -40,10 +40,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPoint.hh"
-#include "TrickHLA/Types.hh"
+#include "Int64Time.hh"
+#include "StandardsSupport.hh"
+#include "SyncPoint.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
