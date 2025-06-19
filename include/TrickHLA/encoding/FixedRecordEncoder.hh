@@ -33,18 +33,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_FIXED_RECORD_ENCODER_HH
 #define TRICKHLA_FIXED_RECORD_ENCODER_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-
-// Trick include files.
-#include "trick/attributes.h"
-
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
+// TrickHLA includes.
+#include "../StandardsSupport.hh"
+#include "EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -57,6 +48,11 @@ NASA, Johnson Space Center\n
 #include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/HLAfixedRecord.h"
 #pragma GCC diagnostic pop
+
+namespace RTI1516_NAMESPACE
+{
+class HLAfixedRecord;
+} // namespace RTI1516_NAMESPACE
 
 namespace TrickHLA
 {

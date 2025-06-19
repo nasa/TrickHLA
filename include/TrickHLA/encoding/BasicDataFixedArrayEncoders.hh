@@ -38,10 +38,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
+#include "../StandardsSupport.hh"
+#include "EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -51,8 +49,8 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include RTI1516_HEADER
 #include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/EncodingConfig.h"
 #include "RTI/encoding/HLAfixedArray.h"
-#include <RTI/encoding/EncodingConfig.h>
 #pragma GCC diagnostic pop
 
 namespace TrickHLA

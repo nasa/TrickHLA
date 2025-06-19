@@ -33,27 +33,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstddef>
-#include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/attributes.h"
-#include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
-#include "trick/message_proto.h"
-#include "trick/parameter_types.h"
-
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
-#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -66,6 +49,7 @@ NASA, Johnson Space Center\n
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/EncodingConfig.h"
 #include "RTI/encoding/HLAvariableArray.h"
 
 using namespace RTI1516_NAMESPACE;

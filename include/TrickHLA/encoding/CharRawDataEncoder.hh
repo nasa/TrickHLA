@@ -34,19 +34,12 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
 #define TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-
-// Trick include files.
+// Trick includes.
 #include "trick/attributes.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
-#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
+// TrickHLA includes.
+#include "../StandardsSupport.hh"
+#include "VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

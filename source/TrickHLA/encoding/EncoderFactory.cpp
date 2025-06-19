@@ -43,25 +43,16 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstddef>
 #include <sstream>
 #include <string>
-#include <vector>
 
 // Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/attributes.h"
-#include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
-#include "trick/message_proto.h"
+#include "trick/parameter_types.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
-
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
@@ -82,6 +73,7 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/EncodingConfig.h"
 #include "RTI/encoding/HLAfixedArray.h"
 #pragma GCC diagnostic pop
 

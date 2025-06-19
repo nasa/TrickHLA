@@ -41,30 +41,17 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cmath>
-#include <cstdint>
-#include <cstring>
 #include <limits>
 #include <sstream>
-#include <string>
 
 // Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
-#include "trick/message_proto.h"
-#include "trick/trick_byteswap.h"
+#include <trick/message_proto.h>
+#include <trick/message_type.h>
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/RecordElement.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -74,6 +61,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/encoding/EncodingExceptions.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
