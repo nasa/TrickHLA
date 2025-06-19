@@ -258,34 +258,9 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    trickhla_include_dirs.extend( ['-I', trick_home + '/include/trick/compat'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/trick_source'] )
    trickhla_include_dirs.extend( ['-I', rti_include] )
+   trickhla_include_dirs.extend( ['-I', './models'] )
    if jeod_home:
       trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
-   if os.path.isdir( './models/DistIf/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/DistIf/include'] )
-   if os.path.isdir( './models/encoding/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/encoding/include'] )
-   if os.path.isdir( './models/EntityDynamics/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
-   if os.path.isdir( './models/FrameDynamics/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/FrameDynamics/include'] )
-   if os.path.isdir( './models/SAIntegrator/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
-   if os.path.isdir( './models/simconfig/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/simconfig/include'] )
-   if os.path.isdir( './models/sine/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/sine/include'] )
-   if os.path.isdir( './models/Wheelbot/Battery/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Battery/include'] )
-   if os.path.isdir( './models/Wheelbot/Control/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Control/include'] )
-   if os.path.isdir( './models/Wheelbot/Electrical/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Electrical/include'] )
-   if os.path.isdir( './models/Wheelbot/Guidance/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Guidance/include'] )
-   if os.path.isdir( './models/Wheelbot/Motor/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Motor/include'] )
-   if os.path.isdir( './models/Wheelbot/Vehicle/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Vehicle/include'] )
 
    # Form relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./source'] )

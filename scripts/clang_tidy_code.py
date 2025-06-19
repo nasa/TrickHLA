@@ -205,70 +205,34 @@ def main():
 
    # Add models source code and include paths to process.
    if args.process_all or args.process_models:
+      include_dirs.extend( ['-I./models'] )
+
       if os.path.isdir( './models/DistIf/src' ):
          source_dirs.extend( ['./models/DistIf/src/'] )
-      if os.path.isdir( './models/DistIf/include' ):
-         include_dirs.extend( ['-I./models/DistIf/include'] )
-
       if os.path.isdir( './models/encoding/src' ):
          source_dirs.extend( ['./models/encoding/src/'] )
-      if os.path.isdir( './models/encoding/include' ):
-         include_dirs.extend( ['-I./models/encoding/include'] )
-
       if os.path.isdir( './models/EntityDynamics/src' ):
          source_dirs.extend( ['./models/EntityDynamics/src/'] )
-      if os.path.isdir( './models/EntityDynamics/include' ):
-         include_dirs.extend( ['-I./models/EntityDynamics/include'] )
-
       if os.path.isdir( './models/FrameDynamics/src' ):
          source_dirs.extend( ['./models/FrameDynamics/src/'] )
-      if os.path.isdir( './models/FrameDynamics/include' ):
-         include_dirs.extend( ['-I./models/FrameDynamics/include'] )
-
       if os.path.isdir( './models/SAIntegrator/src' ):
          source_dirs.extend( ['./models/SAIntegrator/src/'] )
-      if os.path.isdir( './models/SAIntegrator/include' ):
-         include_dirs.extend( ['-I./models/SAIntegrator/include'] )
-
       if os.path.isdir( './models/simconfig/src' ):
          source_dirs.extend ( ['./models/simconfig/src/'] )
-      if os.path.isdir( './models/simconfig/include' ):
-         include_dirs.extend( ['-I./models/simconfig/include'] )
-
       if os.path.isdir( './models/sine/src' ):
          source_dirs.extend ( ['./models/sine/src/'] )
-      if os.path.isdir( './models/sine/include' ):
-         include_dirs.extend( ['-I./models/sine/include'] )
-
       if os.path.isdir( './models/Wheelbot/Battery/src' ):
          source_dirs.extend( ['./models/Wheelbot/Battery/src/'] )
-      if os.path.isdir( './models/Wheelbot/Battery/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Battery/include'] )
-
       if os.path.isdir( './models/Wheelbot/Control/src' ):
          source_dirs.extend( ['./models/Wheelbot/Control/src/'] )
-      if os.path.isdir( './models/Wheelbot/Control/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Control/include'] )
-
       if os.path.isdir( './models/Wheelbot/Electrical/src' ):
          source_dirs.extend( ['./models/Wheelbot/Electrical/src/'] )
-      if os.path.isdir( './models/Wheelbot/Electrical/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Electrical/include'] )
-
       if os.path.isdir( './models/Wheelbot/Guidance/src' ):
          source_dirs.extend( ['./models/Wheelbot/Guidance/src/'] )
-      if os.path.isdir( './models/Wheelbot/Guidance/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Guidance/include'] )
-
       if os.path.isdir( './models/Wheelbot/Motor/src' ):
          source_dirs.extend( ['./models/Wheelbot/Motor/src/'] )
-      if os.path.isdir( './models/Wheelbot/Motor/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Motor/include'] )
-
       if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
          source_dirs.extend( ['./models/Wheelbot/Vehicle/src/'] )
-      if os.path.isdir( './models/Wheelbot/Vehicle/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Vehicle/include'] )
 
    # JEOD
    if args.process_all or args.process_JEOD:
