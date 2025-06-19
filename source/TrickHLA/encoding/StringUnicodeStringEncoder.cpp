@@ -97,7 +97,7 @@ StringUnicodeStringEncoder::StringUnicodeStringEncoder(
       errmsg << "StringUnicodeStringEncoder::StringUnicodeStringEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '"
              << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
-             << "' the variable must be a std::string!" << std::endl;
+             << "' the variable must be a std::string and not an array!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
