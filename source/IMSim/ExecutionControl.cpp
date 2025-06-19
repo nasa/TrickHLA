@@ -41,40 +41,41 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstdint>
 #include <float.h>
 #include <iomanip>
 #include <limits>
-#include <math.h>
-#include <string>
+#include <set>
+#include <sstream>
 
 // Trick includes.
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
+#include "trick/attributes.h"
+#include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
+#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/ScenarioTimeline.hh"
+#include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPoint.hh"
-#include "TrickHLA/SyncPointTimed.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
+#include "TrickHLA/Timeline.hh"
 
-// IMSim include files.
-#include "IMSim/ExecutionConfiguration.hh"
+// IMSim includes.
 #include "IMSim/ExecutionControl.hh"
-#include "IMSim/FreezeInteractionHandler.hh"
-#include "IMSim/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -83,6 +84,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
 #include RTI1516_HEADER
+#include "RTI/Handle.h"
 #pragma GCC diagnostic pop
 
 // IMSim file level declarations.

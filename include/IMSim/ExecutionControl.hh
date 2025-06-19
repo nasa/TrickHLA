@@ -43,16 +43,22 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/Interaction.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "../TrickHLA/ExecutionControlBase.hh"
+#include "../TrickHLA/Interaction.hh"
+#include "../TrickHLA/StandardsSupport.hh"
+#include "../TrickHLA/Types.hh"
 
-// IMSim include files.
-#include "IMSim/ExecutionConfiguration.hh"
-#include "IMSim/FreezeInteractionHandler.hh"
-#include "IMSim/Types.hh"
+// IMSim includes.
+#include "ExecutionConfiguration.hh"
+#include "FreezeInteractionHandler.hh"
+#include "Types.hh"
+
+namespace IMSim
+{
+class ExecutionConfiguration;
+class FreezeInteractionHandler;
+} /* namespace IMSim */
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -61,6 +67,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
 #include RTI1516_HEADER
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 namespace IMSim

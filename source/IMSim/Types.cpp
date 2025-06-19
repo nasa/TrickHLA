@@ -24,10 +24,10 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <string>
 
-// IMSim include files.
+// IMSim includes.
 #include "IMSim/Types.hh"
 
 using namespace std;

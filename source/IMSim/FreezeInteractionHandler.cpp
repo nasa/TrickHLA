@@ -37,11 +37,11 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
@@ -51,7 +51,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Types.hh"
 
-// IMSim include files.
+// IMSim includes.
 #include "IMSim/ExecutionControl.hh"
 #include "IMSim/FreezeInteractionHandler.hh"
 

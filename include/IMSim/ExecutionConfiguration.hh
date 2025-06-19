@@ -36,15 +36,12 @@ NASA, Johnson Space Center\n
 #ifndef IMSIM_EXECUTION_CONFIGURATION_HH
 #define IMSIM_EXECUTION_CONFIGURATION_HH
 
-// System include files.
+// System includes.
 #include <cstdint>
+#include <iostream>
 
-// TrickHLA include files.
-#include "TrickHLA/ExecutionConfigurationBase.hh"
-#include "TrickHLA/Packing.hh"
-
-// IMSim include files.
-#include "IMSim/Types.hh"
+// TrickHLA includes.
+#include "../TrickHLA/ExecutionConfigurationBase.hh"
 
 namespace IMSim
 {
