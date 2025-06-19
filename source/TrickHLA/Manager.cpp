@@ -3166,7 +3166,7 @@ void Manager::encode_checkpoint_interactions()
          interactions_queue.dump_linked_list( "Manager::encode_checkpoint_interactions()" );
       }
 
-      unsigned int     i;
+      int              i;
       InteractionItem *item;
 
       // Iterate through the interactions-queue.
