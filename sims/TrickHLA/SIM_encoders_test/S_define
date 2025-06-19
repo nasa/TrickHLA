@@ -48,6 +48,8 @@ class TestSimObj : public Trick::SimObject {
 
    StringData string_data1 = StringData( 10 );
    StringData string_data2 = StringData( 0 );
+   StringData string_data3 = StringData( 0 );
+   StringData string_data4 = StringData( 10 );
 
    WCharData wchar_data1 = WCharData( 0 );
    WCharData wchar_data2 = WCharData( 10 );
@@ -125,6 +127,9 @@ class TestSimObj : public Trick::SimObject {
       ("initialization") encoder_test.string_test( "T.string_data1", string_data1,
                                                    "T.string_data2", string_data2,
                                                    TrickHLA::ENCODING_ASCII_STRING );
+      ("initialization") encoder_test.string_test( "T.string_data3", string_data3,
+                                                   "T.string_data4", string_data4,
+                                                   TrickHLA::ENCODING_UNICODE_STRING );
 
       ("initialization") encoder_test.wchar_test( "T.wchar_data1", wchar_data1,
                                                   "T.wchar_data2", wchar_data2,

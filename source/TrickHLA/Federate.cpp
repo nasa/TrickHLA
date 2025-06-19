@@ -6404,7 +6404,7 @@ void Federate::add_a_single_entry_into_running_feds()
       ++running_feds_count; // make the new running_feds_count size permanent
    }
 
-#if 0
+#if 0 // TODO: Update for IMSim.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::add_a_single_entry_into_running_feds():%d Exiting routine, here is what running_feds contains:\n",
                __LINE__, '\n');

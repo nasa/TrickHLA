@@ -277,29 +277,41 @@ void EncodingTest::string_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_string_encoder = EncoderFactory::create(
+   EncodingEnum basic_rti_encoding;
+   switch ( rti_encoding ) {
+      case TrickHLA::ENCODING_UNICODE_STRING: {
+         basic_rti_encoding = TrickHLA::ENCODING_ASCII_STRING;
+         break;
+      }
+      default: {
+         basic_rti_encoding = rti_encoding;
+         break;
+      }
+   }
+
+   EncoderBase *data1_string_encoder = EncoderFactory::create(
       data1_trick_base_name + "._string", rti_encoding );
 
    EncoderBase const *data1_vec3_string_encoder = EncoderFactory::create(
-      data1_trick_base_name + ".vec3_string", rti_encoding );
+      data1_trick_base_name + ".vec3_string", basic_rti_encoding );
 
    EncoderBase const *data1_m3x3_string_encoder = EncoderFactory::create(
-      data1_trick_base_name + ".m3x3_string", rti_encoding );
+      data1_trick_base_name + ".m3x3_string", basic_rti_encoding );
 
    EncoderBase *data1_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
-      data1_trick_base_name + ".ptr_string", rti_encoding ) );
+      data1_trick_base_name + ".ptr_string", basic_rti_encoding ) );
 
    EncoderBase *data2_string_encoder = EncoderFactory::create(
       data2_trick_base_name + "._string", rti_encoding );
 
    EncoderBase *data2_vec3_string_encoder = EncoderFactory::create(
-      data2_trick_base_name + ".vec3_string", rti_encoding );
+      data2_trick_base_name + ".vec3_string", basic_rti_encoding );
 
    EncoderBase *data2_m3x3_string_encoder = EncoderFactory::create(
-      data2_trick_base_name + ".m3x3_string", rti_encoding );
+      data2_trick_base_name + ".m3x3_string", basic_rti_encoding );
 
    EncoderBase *data2_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
-      data2_trick_base_name + ".ptr_string", rti_encoding ) );
+      data2_trick_base_name + ".ptr_string", basic_rti_encoding ) );
 
 #if 0
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
@@ -317,7 +329,10 @@ void EncodingTest::string_test(
    }
 #endif
 
+   data1_string_encoder->update_before_encode();
    data2_string_encoder->decode( data1_string_encoder->encode() );
+   data2_string_encoder->update_after_decode();
+
    data2_vec3_string_encoder->decode( data1_vec3_string_encoder->encode() );
    data2_m3x3_string_encoder->decode( data1_m3x3_string_encoder->encode() );
 
@@ -326,7 +341,12 @@ void EncodingTest::string_test(
    data2_ptr_string_encoder->update_after_decode();
 
    ostringstream compare_msg;
-   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+   if ( basic_rti_encoding == rti_encoding ) {
+      compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+   } else {
+      compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ", "
+                  << encoding_enum_to_string( basic_rti_encoding ) << ") ";
+   }
 
    string explanation;
 
@@ -1351,17 +1371,9 @@ void EncodingTest::fixed_record_test(
    top1_fixed_rec_encoder->update_before_encode();
 #if 0
    VariableLengthData encoded_data = top1_fixed_rec_encoder->encode();
-
-   cout << "EncodingTest::fixed_record_test() encoded-size:"
-        << encoded_data.size() << std::endl; //TEMP
-
    top2_fixed_rec_encoder->decode( encoded_data );
 #else
    top1_fixed_rec_encoder->encode( top1_fixed_rec_encoder->data );
-
-   cout << "EncodingTest::fixed_record_test() encoded-size:"
-        << top1_fixed_rec_encoder->data.size() << std::endl; // TEMP
-
    top2_fixed_rec_encoder->decode( top1_fixed_rec_encoder->data );
 #endif
    top2_fixed_rec_encoder->update_after_decode();

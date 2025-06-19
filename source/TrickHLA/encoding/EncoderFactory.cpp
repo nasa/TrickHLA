@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{CharUnicodeStringEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{Float64ToLogicalTimeEncoder.cpp}
+@trick_link_dependency{StringUnicodeStringEncoder.cpp}
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
@@ -70,6 +71,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
+#include "TrickHLA/encoding/StringUnicodeStringEncoder.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -480,11 +482,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
                return new ASCIICharVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new ASCIICharEncoder( address, attr );
-#else
-            return new HLAASCIIchar( static_cast< char * >( address ) );
-#endif
          }
          break;
       }
@@ -521,11 +519,22 @@ EncoderBase *EncoderFactory::create_string_encoder(
                return new ASCIIStringVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new ASCIIStringEncoder( address, attr );
-#else
-            return new HLAASCIIstring( static_cast< std::string * >( address ) );
-#endif
+         }
+         break;
+      }
+      case ENCODING_UNICODE_STRING: {
+         if ( !is_array ) {
+            return new StringUnicodeStringEncoder( address, attr );
+         } else {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
+                   << " ERROR: Trick attributes for the variable '" << attr->name
+                   << "' is of type 'std::string', the specified HLA-encoding ("
+                   << encoding_enum_to_string( hla_encoding )
+                   << ") is only supported for a primitive std::string value."
+                   << std::endl;
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -562,11 +571,7 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
                return new UnicodeCharVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new UnicodeCharEncoder( address, attr );
-#else
-            return new HLAunicodeChar( static_cast< wchar_t * >( address ) );
-#endif
          }
          break;
       }
@@ -647,11 +652,7 @@ EncoderBase *EncoderFactory::create_int16_encoder(
                return new Int16BEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Int16BEEncoder( address, attr );
-#else
-            return new HLAinteger16BE( static_cast< Integer16 * >( address ) );
-#endif
          }
          break;
       }
@@ -665,11 +666,7 @@ EncoderBase *EncoderFactory::create_int16_encoder(
                return new Int16LEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Int16LEEncoder( address, attr );
-#else
-            return new HLAinteger16LE( static_cast< Integer16 * >( address ) );
-#endif
          }
          break;
       }
@@ -706,11 +703,7 @@ EncoderBase *EncoderFactory::create_int32_encoder(
                return new Int32BEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Int32BEEncoder( address, attr );
-#else
-            return new HLAinteger32BE( static_cast< Integer32 * >( address ) );
-#endif
          }
          break;
       }
@@ -724,11 +717,7 @@ EncoderBase *EncoderFactory::create_int32_encoder(
                return new Int32LEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Int32LEEncoder( address, attr );
-#else
-            return new HLAinteger32LE( static_cast< Integer32 * >( address ) );
-#endif
          }
          break;
       }
@@ -765,11 +754,7 @@ EncoderBase *EncoderFactory::create_int64_encoder(
                return new Int64BEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Int64BEEncoder( address, attr );
-#else
-            return new HLAinteger64BE( static_cast< Integer64 * >( address ) );
-#endif
          }
          break;
       }
@@ -783,11 +768,7 @@ EncoderBase *EncoderFactory::create_int64_encoder(
                return new Int64LEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Int64LEEncoder( address, attr );
-#else
-            return new HLAinteger64LE( static_cast< Integer64 * >( address ) );
-#endif
          }
          break;
       }
@@ -1009,11 +990,7 @@ EncoderBase *EncoderFactory::create_float32_encoder(
                return new Float32BEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Float32BEEncoder( address, attr );
-#else
-            return new HLAfloat32BE( static_cast< float * >( address ) );
-#endif
          }
          break;
       }
@@ -1027,11 +1004,7 @@ EncoderBase *EncoderFactory::create_float32_encoder(
                return new Float32LEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Float32LEEncoder( address, attr );
-#else
-            return new HLAfloat32LE( static_cast< float * >( address ) );
-#endif
          }
          break;
       }
@@ -1068,11 +1041,7 @@ EncoderBase *EncoderFactory::create_float64_encoder(
                return new Float64BEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Float64BEEncoder( address, attr );
-#else
-            return new HLAfloat64BE( static_cast< double * >( address ) );
-#endif
          }
          break;
       }
@@ -1086,11 +1055,7 @@ EncoderBase *EncoderFactory::create_float64_encoder(
                return new Float64LEVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new Float64LEEncoder( address, attr );
-#else
-            return new HLAfloat64LE( static_cast< double * >( address ) );
-#endif
          }
          break;
       }
@@ -1142,11 +1107,7 @@ EncoderBase *EncoderFactory::create_bool_encoder(
                return new BoolVariableArrayEncoder( address, attr );
             }
          } else {
-#if 1
             return new BoolEncoder( address, attr );
-#else
-            return new HLAboolean( static_cast< bool * >( address ) );
-#endif
          }
          break;
       }
