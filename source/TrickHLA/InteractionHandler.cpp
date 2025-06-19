@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstring>
 #include <cstdlib>
 #include <limits>
 
