@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstring>
 #include <iomanip>
 #include <limits>
 #include <sstream>
