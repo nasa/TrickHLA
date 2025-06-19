@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_STRING_UTILITIES_HH
 
 // System includes.
+#include <cstring>
 #include <string>
 #include <vector>
 
