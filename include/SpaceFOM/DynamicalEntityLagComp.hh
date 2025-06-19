@@ -36,15 +36,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_HH
 
-// System include files.
-
-// Trick includes.
-#include "trick/Integrator.hh"
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
-#include "SpaceFOM/DynamicalEntityLagCompInteg.hh"
+// SpaceFOM includes.
+#include "DynamicalEntityLagCompInteg.hh"
 
 namespace SpaceFOM
 {

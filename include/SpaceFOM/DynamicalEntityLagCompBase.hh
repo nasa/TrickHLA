@@ -39,21 +39,12 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_BASE_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_BASE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 
-// Trick includes.
-
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/LagCompensation.hh"
-#include "TrickHLA/Object.hh"
-
-// SpaceFOM include files.
-#include "SpaceFOM/DynamicalEntityBase.hh"
-#include "SpaceFOM/PhysicalEntityLagCompBase.hh"
-#include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+// SpaceFOM includes.
+#include "DynamicalEntityBase.hh"
+#include "PhysicalEntityLagCompBase.hh"
 
 namespace SpaceFOM
 {

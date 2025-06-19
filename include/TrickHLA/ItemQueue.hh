@@ -40,12 +40,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "Item.hh"
 #include "MutexLock.hh"
-
-namespace TrickHLA
-{
-class Item;
-} /* namespace TrickHLA */
 
 namespace TrickHLA
 {

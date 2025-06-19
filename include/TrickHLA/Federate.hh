@@ -54,16 +54,12 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "Int64Interval.hh"
 #include "Int64Time.hh"
+#include "KnownFederate.hh"
 #include "MutexLock.hh"
 #include "MutexProtection.hh"
 #include "StandardsSupport.hh"
 #include "TrickThreadCoordinator.hh"
 #include "Types.hh"
-
-namespace TrickHLA
-{
-class KnownFederate;
-} /* namespace TrickHLA */
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

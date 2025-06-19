@@ -22,22 +22,20 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-// System include files.
-#include <cstring>
-#include <iostream>
+// System includes.
 #include <sstream>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
-
-// Model include files.
+// SpaceFOM includes.
 #include "SpaceFOM/QuaternionEncoder.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StringUtilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -47,6 +45,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
+#include "RTI/encoding/EncodingExceptions.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

@@ -36,8 +36,8 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <string>
 
-// TrickHLA include.
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "../TrickHLA/Types.hh"
 
 namespace SpaceFOM
 {

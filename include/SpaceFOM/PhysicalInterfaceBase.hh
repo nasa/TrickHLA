@@ -39,17 +39,15 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_INTERFACE_BASE_HH
 #define SPACEFOM_PHYSICAL_INTERFACE_BASE_HH
 
-// System include files.
+// System includes.
+#include <iostream>
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/OpaqueBuffer.hh"
-#include "TrickHLA/Packing.hh"
+// SpaceFOM includes.
+#include "PhysicalInterfaceData.hh"
+#include "QuaternionEncoder.hh"
 
-// SpaceFOM include files.
-#include "SpaceFOM/PhysicalInterfaceData.hh"
-#include "SpaceFOM/QuaternionEncoder.hh"
+// TrickHLA includes.
+#include "../TrickHLA/Packing.hh"
 
 namespace SpaceFOM
 {

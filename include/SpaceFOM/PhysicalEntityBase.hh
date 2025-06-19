@@ -41,19 +41,17 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_BASE_HH
 #define SPACEFOM_PHYSICAL_ENTITY_BASE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/OpaqueBuffer.hh"
-#include "TrickHLA/Packing.hh"
+// SpaceFOM includes.
+#include "PhysicalEntityData.hh"
+#include "QuaternionEncoder.hh"
+#include "SpaceTimeCoordinateData.hh"
+#include "SpaceTimeCoordinateEncoder.hh"
 
-// SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityData.hh"
-#include "SpaceFOM/QuaternionEncoder.hh"
-#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+// TrickHLA includes.
+#include "../TrickHLA/Packing.hh"
 
 namespace SpaceFOM
 {

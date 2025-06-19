@@ -42,11 +42,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "../StandardsSupport.hh"
 #include "../Types.hh"
-
-namespace TrickHLA
-{
-class EncoderBase;
-} // namespace TrickHLA
+#include "EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

@@ -31,12 +31,11 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_DATA_STATE_HH
 #define SPACEFOM_REF_FRAME_DATA_STATE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
-#include <string>
 
-// SpaceFOM include files.
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+// SpaceFOM includes.
+#include "SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {

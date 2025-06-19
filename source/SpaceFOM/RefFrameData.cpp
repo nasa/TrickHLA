@@ -28,17 +28,14 @@ NASA, Johnson Space Center\n
 
 */
 
-// C includes.
-#include <cstring>
+// System includes.
 #include <sstream>
+#include <string>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
-
-// Trick HLA includes.
-#include "TrickHLA/CompileConfig.hh"
+#include "trick/message_type.h"
 
 // SpaceFOM includes.
 #include "SpaceFOM/RefFrameData.hh"

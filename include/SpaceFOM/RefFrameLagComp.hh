@@ -36,15 +36,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_LAG_COMP_HH
 #define SPACEFOM_REF_FRAME_LAG_COMP_HH
 
-// System include files.
-
-// Trick includes.
-#include "trick/Integrator.hh"
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
-#include "SpaceFOM/RefFrameLagCompInteg.hh"
+// SpaceFOM includes.
+#include "RefFrameLagCompInteg.hh"
 
 namespace SpaceFOM
 {

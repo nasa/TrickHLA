@@ -40,16 +40,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_STATE_HH
 #define SPACEFOM_REF_FRAME_STATE_HH
 
-// System include files.
-#include <string>
-
-// TrickHLA include files.
-#include "TrickHLA/Packing.hh"
-
-// SpaceFOM include files.
-#include "SpaceFOM/RefFrameBase.hh"
-#include "SpaceFOM/RefFrameData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+// SpaceFOM includes.
+#include "RefFrameBase.hh"
 
 namespace SpaceFOM
 {

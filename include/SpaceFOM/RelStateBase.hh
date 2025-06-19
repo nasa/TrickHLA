@@ -34,18 +34,14 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REL_STATE_BASE_HH
 #define SPACEFOM_REL_STATE_BASE_HH
 
-// System include files.
-#include <string>
+// System includes.
+#include <iostream>
 
-// Trick include files.
-
-// TrickHLA model include files.
-
-// SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityData.hh"
-#include "SpaceFOM/RefFrameBase.hh"
-#include "SpaceFOM/RefFrameTree.hh"
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+// SpaceFOM includes.
+#include "PhysicalEntityData.hh"
+#include "RefFrameBase.hh"
+#include "RefFrameData.hh"
+#include "RefFrameTree.hh"
 
 namespace SpaceFOM
 {

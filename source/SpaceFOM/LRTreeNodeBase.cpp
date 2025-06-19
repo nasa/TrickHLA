@@ -40,19 +40,22 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstring>
+#include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 /* Global singleton pointer to the memory manager. */
 extern Trick::MemoryManager *trick_MM;
 
-// TrickHLA model include files.
+// TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/LRTreeNodeBase.hh"

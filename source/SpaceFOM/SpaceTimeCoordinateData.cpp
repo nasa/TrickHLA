@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 
 */
 
-// C includes.
-#include <math.h>
+// System includes.
+#include <ostream>
 
 // Trick includes.
 #include "trick/vector_macros.h"

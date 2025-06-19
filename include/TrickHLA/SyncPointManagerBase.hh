@@ -40,16 +40,12 @@ NASA, Johnson Space Center\n
 
 // trickHLA includes.
 #include "CheckpointConversionBase.hh"
+#include "Federate.hh"
+#include "Int64Time.hh"
 #include "MutexLock.hh"
 #include "StandardsSupport.hh"
+#include "SyncPointList.hh"
 #include "Types.hh"
-
-namespace TrickHLA
-{
-class Federate;
-class Int64Time;
-class SyncPointList;
-} /* namespace TrickHLA */
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

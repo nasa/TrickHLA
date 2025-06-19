@@ -41,12 +41,10 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstring>
 #include <iomanip>
 #include <limits>
 #include <math.h>
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/Executive.hh"
@@ -76,8 +74,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Timeline.hh"
 #include "TrickHLA/Utilities.hh"
 

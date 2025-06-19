@@ -36,13 +36,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_HH
 #define SPACEFOM_PHYSICAL_ENTITY_HH
 
-// System include files.
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityBase.hh"
-#include "SpaceFOM/PhysicalEntityData.hh"
+// SpaceFOM includes.
+#include "PhysicalEntityBase.hh"
 
 namespace TrickHLA
 {

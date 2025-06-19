@@ -29,22 +29,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
+// System includes.
+#include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/exec_proto.h"
+// Trick includes.
+#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Conditional.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
-
-// Model include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterfaceConditionalBase.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;

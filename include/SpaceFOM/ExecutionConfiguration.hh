@@ -36,15 +36,14 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_EXECUTION_CONFIGURATION_HH
 #define SPACEFOM_EXECUTION_CONFIGURATION_HH
 
-// System include files.
+// System includes.
 #include <cstdint>
 
-// TrickHLA include files.
-#include "TrickHLA/ExecutionConfigurationBase.hh"
-#include "TrickHLA/Packing.hh"
+// SpaceFOM includes.
+#include "Types.hh"
 
-// SpaceFOM include files.
-#include "SpaceFOM/Types.hh"
+// TrickHLA includes.
+#include "../TrickHLA/ExecutionConfigurationBase.hh"
 
 namespace SpaceFOM
 {

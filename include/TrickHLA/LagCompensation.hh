@@ -39,15 +39,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_LAG_COMPENSATION_HH
 #define TRICKHLA_LAG_COMPENSATION_HH
 
+#include "Attribute.hh"
 #include "Int64Interval.hh"
 #include "Int64Time.hh"
-
-namespace TrickHLA
-{
-// Forward declarations of TrickHLA classes needed for pointers.
-class Attribute;
-class Object;
-} /* namespace TrickHLA */
+#include "Object.hh"
 
 namespace TrickHLA
 {

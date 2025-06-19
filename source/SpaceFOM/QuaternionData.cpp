@@ -28,12 +28,14 @@ NASA, Johnson Space Center\n
 
 */
 
-// C includes.
+// System includes.
 #include <math.h>
+#include <ostream>
 
 // Trick includes.
 #include "trick/constant.h"
-#include "trick/trick_math.h"
+#include "trick/trick_math_proto.h"
+#include "trick/vector_macros.h"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"

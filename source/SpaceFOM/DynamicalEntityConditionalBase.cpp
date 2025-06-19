@@ -29,20 +29,10 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
+// System includes.
 #include <string>
 
-// Trick include files.
-#include "trick/exec_proto.h"
-
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Conditional.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
-
-// Model include files.
+// SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityConditionalBase.hh"
 
 using namespace std;

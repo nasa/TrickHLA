@@ -48,16 +48,12 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "CTETimelineBase.hh"
+#include "ScenarioTimeline.hh"
+#include "SimTimeline.hh"
 #include "StandardsSupport.hh"
 #include "SyncPointManagerBase.hh"
 #include "Types.hh"
-
-namespace TrickHLA
-{
-class CTETimelineBase;
-class ScenarioTimeline;
-class SimTimeline;
-} /* namespace TrickHLA */
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

@@ -33,11 +33,12 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_QUATERNION_ENCODER_HH
 #define SPACEFOM_QUATERNION_ENCODER_HH
 
-// TrickHLA include files.
-#include "TrickHLA/OpaqueBuffer.hh"
+// SpaceFOM includes.
+#include "QuaternionData.hh"
 
-// SpaceFOM include files.
-#include "SpaceFOM/QuaternionData.hh"
+// TrickHLA includes.
+#include "../TrickHLA/OpaqueBuffer.hh"
+#include "../TrickHLA/StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -46,6 +47,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/HLAfixedArray.h"
 #include "RTI/encoding/HLAfixedRecord.h"

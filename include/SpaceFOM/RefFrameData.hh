@@ -33,7 +33,11 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_DATA_HH
 #define SPACEFOM_REF_FRAME_DATA_HH
 
-#include "SpaceFOM/RefFrameDataState.hh"
+// System includes.
+#include <iostream>
+
+// SpaceFOM includes.
+#include "RefFrameDataState.hh"
 
 namespace SpaceFOM
 {

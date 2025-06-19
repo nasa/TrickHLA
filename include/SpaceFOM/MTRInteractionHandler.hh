@@ -36,13 +36,15 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_MTR_INTERACTION_HANDLER_HH
 #define SPACEFOM_MTR_INTERACTION_HANDLER_HH
 
-// System include files.
+// System includes.
+#include <cstdint>
 
-// TrickHLA include files.
-#include "TrickHLA/InteractionHandler.hh"
+// SpaceFOM includes.
+#include "Types.hh"
 
-// SpaceFOM include files.
-#include "SpaceFOM/Types.hh"
+// TrickHLA includes.
+#include "../TrickHLA/InteractionHandler.hh"
+#include "../TrickHLA/StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

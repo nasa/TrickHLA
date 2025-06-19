@@ -47,12 +47,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "Int64Time.hh"
+#include "SimTimeline.hh"
 #include "Timeline.hh"
-
-namespace TrickHLA
-{
-class SimTimeline;
-} /* namespace TrickHLA */
 
 namespace TrickHLA
 {

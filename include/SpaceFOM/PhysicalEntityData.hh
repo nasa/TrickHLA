@@ -32,12 +32,12 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_DATA_HH
 #define SPACEFOM_PHYSICAL_ENTITY_DATA_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 
-// SpaceFOM include files.
-#include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+// SpaceFOM includes.
+#include "QuaternionData.hh"
+#include "SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {

@@ -35,14 +35,10 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_CONDITIONAL_BASE_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_CONDITIONAL_BASE_HH
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Conditional.hh"
-#include "TrickHLA/Object.hh"
-
-// SpaceFOM include files.
-#include "SpaceFOM/DynamicalEntityBase.hh"
-#include "SpaceFOM/PhysicalEntityConditionalBase.hh"
+// SpaceFOM includes.
+#include "DynamicalEntityBase.hh"
+#include "DynamicalEntityData.hh"
+#include "PhysicalEntityConditionalBase.hh"
 
 namespace SpaceFOM
 {

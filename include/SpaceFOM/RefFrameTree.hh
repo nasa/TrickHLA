@@ -43,15 +43,13 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_TREE_HH
 #define SPACEFOM_REF_FRAME_TREE_HH
 
-// System include files.
-#include <map>
-#include <string>
+// System includes.
+#include <iostream>
 
-// TrickHLA include files.
-
-// SpaceFOM include files.
-#include "SpaceFOM/LRTreeBase.hh"
-#include "SpaceFOM/RefFrameBase.hh"
+// SpaceFOM includes.
+#include "LRTreeBase.hh"
+#include "RefFrameBase.hh"
+#include "RefFrameData.hh"
 
 namespace SpaceFOM
 {

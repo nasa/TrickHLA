@@ -28,18 +28,7 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
-#include <sstream>
-#include <stdlib.h>
-#include <string>
-
-// TrickHLA include files.
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/OwnershipHandler.hh"
-#include "TrickHLA/Types.hh"
-
-// Model include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
 
 using namespace std;

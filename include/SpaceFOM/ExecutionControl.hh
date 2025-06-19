@@ -40,25 +40,20 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_EXECUTON_CONTROL_HH
 #define SPACEFOM_EXECUTON_CONTROL_HH
 
-// System include files.
-#include <cstdint>
+// System includes.
 #include <string>
 
-// Trick include files.
+// SpaceFOM includes.
+#include "ExecutionConfiguration.hh"
+#include "MTRInteractionHandler.hh"
+#include "RefFrameBase.hh"
+#include "Types.hh"
 
-// HLA include files.
-
-// TrickHLA include files.
-#include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/Interaction.hh"
-#include "TrickHLA/SyncPointManagerBase.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
-#include "SpaceFOM/ExecutionConfiguration.hh"
-#include "SpaceFOM/MTRInteractionHandler.hh"
-#include "SpaceFOM/RefFrameBase.hh"
-#include "SpaceFOM/Types.hh"
+// TrickHLA includes.
+#include "../TrickHLA/ExecutionControlBase.hh"
+#include "../TrickHLA/Interaction.hh"
+#include "../TrickHLA/StandardsSupport.hh"
+#include "../TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -67,6 +62,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
 #include RTI1516_HEADER
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 namespace SpaceFOM

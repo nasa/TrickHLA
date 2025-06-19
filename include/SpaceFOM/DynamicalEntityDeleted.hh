@@ -34,12 +34,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_DELETED_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_DELETED_HH
 
-// Trick include files.
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/ObjectDeleted.hh"
-
-// SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityDeleted.hh"
+// SpaceFOM includes.
+#include "PhysicalEntityDeleted.hh"
 
 namespace SpaceFOM
 {

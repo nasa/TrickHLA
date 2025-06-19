@@ -32,9 +32,12 @@ v@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 #ifndef SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH
 #define SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH
 
-// TrickHLA include files.
-#include "TrickHLA/OpaqueBuffer.hh"
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "../TrickHLA/OpaqueBuffer.hh"
+#include "../TrickHLA/StandardsSupport.hh"
+
+// SpaceFOM includes.
+#include "../SpaceFOM/SpaceTimeCoordinateData.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -43,6 +46,7 @@ v@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/HLAfixedArray.h"
 #include "RTI/encoding/HLAfixedRecord.h"

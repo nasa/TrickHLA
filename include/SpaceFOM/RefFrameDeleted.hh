@@ -34,9 +34,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_DELETED_HH
 #define SPACEFOM_REF_FRAME_DELETED_HH
 
-// Trick include files.
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/ObjectDeleted.hh"
+// TrickHLA includes.
+#include "../TrickHLA/ObjectDeleted.hh"
 
 namespace SpaceFOM
 {
