@@ -416,10 +416,10 @@ void Manager::verify_object_and_interaction_arrays()
 
    // Make sure there is not already a user defined Interaction that uses
    // the same interaction FOM name as the execution control interaction.
-   for ( int i = 0; i < exec_fom_names_vector.size(); ++i ) {
+   for ( size_t i = 0; i < exec_fom_names_vector.size(); ++i ) {
 
       // Make sure Execution Control interactins names are not duplicates.
-      for ( int n = i + 1; n < exec_fom_names_vector.size(); ++n ) {
+      for ( size_t n = i + 1; n < exec_fom_names_vector.size(); ++n ) {
          if ( exec_fom_names_vector[n] == exec_fom_names_vector[i] ) {
             ostringstream errmsg;
             errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
