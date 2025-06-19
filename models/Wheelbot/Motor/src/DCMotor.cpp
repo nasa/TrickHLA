@@ -1,8 +1,8 @@
 #include <cmath>
 #include <iostream>
 
-#include "../include/DCMotor.hh"
-#include "../include/PWM.hh"
+#include "Wheelbot/Motor/include/DCMotor.hh"
+#include "Wheelbot/Motor/include/PWM.hh"
 
 using namespace TrickHLAModel;
 

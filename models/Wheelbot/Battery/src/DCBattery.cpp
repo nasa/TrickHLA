@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../include/DCBattery.hh"
+#include "Wheelbot/Battery/include/DCBattery.hh"
 
 using namespace TrickHLAModel;
 

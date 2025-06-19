@@ -1,4 +1,4 @@
-#include "../include/Motor.hh"
+#include "Wheelbot/Motor/include/Motor.hh"
 
 using namespace TrickHLAModel;
 

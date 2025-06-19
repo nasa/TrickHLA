@@ -45,14 +45,14 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "../../../include/TrickHLA/DebugHandler.hh"
-#include "../../../include/TrickHLA/Int64BaseTime.hh"
-#include "../../../include/TrickHLA/Int64Time.hh"
-#include "../../../include/TrickHLA/StringUtilities.hh"
-#include "../../../include/TrickHLA/Types.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Types.hh"
 
 // Sine model includes.
-#include "../include/SineInteractionHandler.hh"
+#include "sine/include/SineInteractionHandler.hh"
 
 // HLA includes.
 #include "RTI/VariableLengthData.h"

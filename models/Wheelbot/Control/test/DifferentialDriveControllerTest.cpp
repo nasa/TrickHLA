@@ -3,8 +3,8 @@
 
 #define private public
 
-#include "../include/DifferentialDriveController.hh"
-#include "../include/TestMotorController.hh"
+#include "Wheelbot/Control/include/DifferentialDriveController.hh"
+#include "Wheelbot/Control/include/TestMotorController.hh"
 
 #ifndef PI
 #   define PI 3.1415926535

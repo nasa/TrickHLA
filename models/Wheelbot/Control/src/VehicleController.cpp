@@ -1,10 +1,10 @@
 // This file contains functions for controlling the movement of the vehicles.
 #include <iostream>
 
-#include "../../Guidance/include/Navigator.hh"
-#include "../../Guidance/include/Point.hh"
-#include "../include/DifferentialDriveController.hh"
-#include "../include/VehicleController.hh"
+#include "Wheelbot/Control/include/DifferentialDriveController.hh"
+#include "Wheelbot/Control/include/VehicleController.hh"
+#include "Wheelbot/Guidance/include/Navigator.hh"
+#include "Wheelbot/Guidance/include/Point.hh"
 
 using namespace TrickHLAModel;
 

@@ -40,7 +40,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 
 // Model include files.
-#include "../include/WStringData.hh"
+#include "encoding/include/WStringData.hh"
 
 using namespace std;
 using namespace TrickHLA;

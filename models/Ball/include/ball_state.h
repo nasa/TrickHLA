@@ -38,7 +38,7 @@ NASA, Johnson Space Center\n
 #include <stdbool.h>
 
 /* Trick includes. */
-#include "sim_services/Integrator/include/regula_falsi.h"
+#include "trick/compat/sim_services/Integrator/include/regula_falsi.h"
 
 /** @struct BallState_In
     @brief Ball state input parameters

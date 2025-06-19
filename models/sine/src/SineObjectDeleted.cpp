@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 
 // Model include files.
-#include "../include/SineObjectDeleted.hh"
+#include "sine/include/SineObjectDeleted.hh"
 
 using namespace TrickHLA;
 using namespace TrickHLAModel;

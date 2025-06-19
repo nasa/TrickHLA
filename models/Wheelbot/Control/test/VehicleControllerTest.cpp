@@ -2,12 +2,12 @@
 #include <gtest/gtest.h>
 #define private public
 
-#include "../../Guidance/include/Navigator.hh"
-#include "../../Guidance/include/Point.hh"
+#include "Wheelbot/Guidance/include/Navigator.hh"
+#include "Wheelbot/Guidance/include/Point.hh"
 
-#include "../include/DifferentialDriveController.hh"
-#include "../include/TestMotorController.hh"
-#include "../include/VehicleController.hh"
+#include "Wheelbot/Control/include/DifferentialDriveController.hh"
+#include "Wheelbot/Control/include/TestMotorController.hh"
+#include "Wheelbot/Control/include/VehicleController.hh"
 
 #ifndef PI
 #   define PI 3.1415926535

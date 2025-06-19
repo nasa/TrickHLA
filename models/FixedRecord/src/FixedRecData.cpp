@@ -29,7 +29,7 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // FixedRecord model includes.
-#include "../include/FixedRecData.hh"
+#include "FixedRecord/include/FixedRecData.hh"
 
 using namespace std;
 using namespace TrickHLAModel;

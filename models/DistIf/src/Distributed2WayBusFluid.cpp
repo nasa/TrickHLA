@@ -28,7 +28,7 @@ NASA, Johnson Space Center\n
 #include <cfloat>
 #include <cmath>
 
-#include "../include/Distributed2WayBusFluid.hh"
+#include "DistIf/include/Distributed2WayBusFluid.hh"
 
 using namespace DistIf;
 

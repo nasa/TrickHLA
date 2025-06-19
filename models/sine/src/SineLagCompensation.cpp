@@ -40,10 +40,10 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "../../../include/TrickHLA/DebugHandler.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 // sine model includes.
-#include "../include/SineLagCompensation.hh"
+#include "sine/include/SineLagCompensation.hh"
 
 using namespace std;
 using namespace TrickHLA;

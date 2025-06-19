@@ -1,8 +1,8 @@
 #include <iostream>
 #include <math.h> // for: sqrt(), atan2(), cos(), and sin()
 
-#include "../include/Navigator.hh"
-#include "../include/Point.hh"
+#include "Wheelbot/Guidance/include/Navigator.hh"
+#include "Wheelbot/Guidance/include/Point.hh"
 
 using namespace TrickHLAModel;
 

@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 
 // Model include files.
-#include "../include/StringData.hh"
+#include "encoding/include/StringData.hh"
 
 using namespace std;
 using namespace TrickHLA;

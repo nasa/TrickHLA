@@ -66,19 +66,19 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/FixedRecordEncoder.hh"
 
 // Model include files.
-#include "../../FixedRecord/include/FixedRecData.hh"
-#include "../include/BoolData.hh"
-#include "../include/CharData.hh"
-#include "../include/EncodingTest.hh"
-#include "../include/Float32Data.hh"
-#include "../include/Float64Data.hh"
-#include "../include/Int16Data.hh"
-#include "../include/Int32Data.hh"
-#include "../include/Int64Data.hh"
-#include "../include/LongData.hh"
-#include "../include/StringData.hh"
-#include "../include/WCharData.hh"
-#include "../include/WStringData.hh"
+#include "FixedRecord/include/FixedRecData.hh"
+#include "encoding/include/BoolData.hh"
+#include "encoding/include/CharData.hh"
+#include "encoding/include/EncodingTest.hh"
+#include "encoding/include/Float32Data.hh"
+#include "encoding/include/Float64Data.hh"
+#include "encoding/include/Int16Data.hh"
+#include "encoding/include/Int32Data.hh"
+#include "encoding/include/Int64Data.hh"
+#include "encoding/include/LongData.hh"
+#include "encoding/include/StringData.hh"
+#include "encoding/include/WCharData.hh"
+#include "encoding/include/WStringData.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.

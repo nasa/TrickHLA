@@ -29,10 +29,10 @@ NASA, Johnson Space Center\n
 #include <cfloat>
 #include <iostream>
 
-#include "../include/CabinAtmoVolume.hh"
+#include "DistIf/include/CabinAtmoVolume.hh"
 
 // Trick include for TMM
-#include "sim_services/MemoryManager/include/memorymanager_c_intf.h"
+#include "trick/compat/sim_services/MemoryManager/include/memorymanager_c_intf.h"
 
 using namespace DistIf;
 

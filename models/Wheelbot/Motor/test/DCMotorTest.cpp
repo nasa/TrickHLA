@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #define private public
 
-#include "../include/DCMotor.hh"
+#include "Wheelbot/Motor/include/DCMotor.hh"
 
 using namespace TrickHLAModel;
 

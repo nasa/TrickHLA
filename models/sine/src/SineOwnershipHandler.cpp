@@ -40,7 +40,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // Model include files.
-#include "../include/SineOwnershipHandler.hh"
+#include "sine/include/SineOwnershipHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;

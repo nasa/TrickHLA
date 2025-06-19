@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 
 // Model include files.
-#include "../include/Float32Data.hh"
+#include "encoding/include/Float32Data.hh"
 
 using namespace std;
 using namespace TrickHLA;

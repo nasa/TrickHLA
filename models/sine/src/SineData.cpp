@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math.h"
 
 // Model include files.
-#include "../include/SineData.hh"
+#include "sine/include/SineData.hh"
 
 using namespace TrickHLAModel;
 

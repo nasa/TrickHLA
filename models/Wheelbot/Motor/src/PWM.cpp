@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "../include/PWM.hh"
+#include "Wheelbot/Motor/include/PWM.hh"
 
 using namespace TrickHLAModel;
 

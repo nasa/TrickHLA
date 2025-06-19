@@ -41,7 +41,6 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
-#include "tsync_error_codes.h"
 
 // TrickHLA includes.
 #include "TrickHLA/TSyncCTETimeline.hh"
@@ -53,6 +52,7 @@ NASA, Johnson Space Center\n
 
 extern "C" {
 #   include "tsync.h" // cppcheck-suppress [missingInclude]
+#   include "tsync_error_codes.h"
 }
 #endif
 

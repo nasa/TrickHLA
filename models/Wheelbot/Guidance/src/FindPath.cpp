@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <vector> // std::vector
 
-#include "../include/Arena.hh"
-#include "../include/FindPath.hh"
-#include "../include/GridSquare.hh"
-#include "../include/Point.hh"
+#include "Wheelbot/Guidance/include/Arena.hh"
+#include "Wheelbot/Guidance/include/FindPath.hh"
+#include "Wheelbot/Guidance/include/GridSquare.hh"
+#include "Wheelbot/Guidance/include/Point.hh"
 
 using namespace TrickHLAModel;
 

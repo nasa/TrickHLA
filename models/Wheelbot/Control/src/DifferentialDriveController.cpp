@@ -5,9 +5,9 @@
 #   define PI 3.14159265
 #endif
 
-#include "../../Motor/include/MotorSpeedController.hh"
+#include "Wheelbot/Motor/include/MotorSpeedController.hh"
 
-#include "../include/DifferentialDriveController.hh"
+#include "Wheelbot/Control/include/DifferentialDriveController.hh"
 
 using namespace TrickHLAModel;
 

@@ -1,6 +1,6 @@
 #include <math.h>
 
-#include "../include/ServoMotor.hh"
+#include "Wheelbot/Motor/include/ServoMotor.hh"
 
 using namespace TrickHLAModel;
 

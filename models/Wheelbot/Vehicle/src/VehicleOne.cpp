@@ -12,14 +12,14 @@ PROGRAMMERS:
 #include "trick/MemoryManager.hh"
 #include "trick/integrator_c_intf.h"
 
-#include "../../Control/include/DifferentialDriveController.hh"
-#include "../../Control/include/VehicleController.hh"
-#include "../../Guidance/include/Navigator.hh"
-#include "../../Guidance/include/Point.hh"
-#include "../../Motor/include/DCMotor.hh"
-#include "../../Motor/include/DCMotorSpeedController.hh"
+#include "Wheelbot/Control/include/DifferentialDriveController.hh"
+#include "Wheelbot/Control/include/VehicleController.hh"
+#include "Wheelbot/Guidance/include/Navigator.hh"
+#include "Wheelbot/Guidance/include/Point.hh"
+#include "Wheelbot/Motor/include/DCMotor.hh"
+#include "Wheelbot/Motor/include/DCMotorSpeedController.hh"
 
-#include "../include/VehicleOne.hh"
+#include "Wheelbot/Vehicle/include/VehicleOne.hh"
 
 extern Trick::MemoryManager *trick_MM;
 

@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Sine model includes.
-#include "../include/SinePacking.hh"
+#include "sine/include/SinePacking.hh"
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -45,8 +45,8 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "../../../include/TrickHLA/DebugHandler.hh"
-#include "../../../include/TrickHLA/Types.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;

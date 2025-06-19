@@ -52,7 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // Model include files.
-#include "../include/SimpleSimConfig.hh"
+#include "simconfig/include/SimpleSimConfig.hh"
 
 using namespace std;
 using namespace TrickHLA;

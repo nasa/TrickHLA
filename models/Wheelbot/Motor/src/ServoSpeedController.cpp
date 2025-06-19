@@ -1,8 +1,8 @@
 #include <iostream>
 #include <math.h>
 
-#include "../include/ServoMotor.hh"
-#include "../include/ServoSpeedController.hh"
+#include "Wheelbot/Motor/include/ServoMotor.hh"
+#include "Wheelbot/Motor/include/ServoSpeedController.hh"
 
 using namespace TrickHLAModel;
 

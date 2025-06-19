@@ -42,8 +42,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 
 // Model include files.
-#include "../include/SineConditional.hh"
-#include "../include/SineData.hh"
+#include "sine/include/SineConditional.hh"
+#include "sine/include/SineData.hh"
 
 using namespace std;
 using namespace TrickHLA;

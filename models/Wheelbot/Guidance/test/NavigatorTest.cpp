@@ -3,8 +3,8 @@
 
 #define private public
 
-#include "../include/Navigator.hh"
-#include "../include/Point.hh"
+#include "Wheelbot/Guidance/include/Navigator.hh"
+#include "Wheelbot/Guidance/include/Point.hh"
 
 #define PI 3.14159265358979
 #define FP_TOLERANCE 0.000000001

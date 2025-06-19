@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "../include/DCMotor.hh"
-#include "../include/DCMotorSpeedController.hh"
-#include "../include/MotorSpeedController.hh"
+#include "Wheelbot/Motor/include/DCMotor.hh"
+#include "Wheelbot/Motor/include/DCMotorSpeedController.hh"
+#include "Wheelbot/Motor/include/MotorSpeedController.hh"
 
 using namespace TrickHLAModel;
 

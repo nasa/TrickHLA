@@ -44,7 +44,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // Model includes.
-#include "../include/FrameDynamics.hh"
+#include "FrameDynamics/include/FrameDynamics.hh"
 
 /* GLOBAL Integrator. */
 extern Trick::Integrator *trick_curr_integ;

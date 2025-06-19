@@ -38,9 +38,9 @@ NASA, Johnson Space Center\n
 #ifndef MODELS_TRICKHLA_BALL_PROTO_H_
 #define MODELS_TRICKHLA_BALL_PROTO_H_
 
-#include "ball_state.h"
-#include "ball_force.h"
-#include "ball_walls.h"
+#include "Ball/include/ball_state.h"
+#include "Ball/include/ball_force.h"
+#include "Ball/include/ball_walls.h"
 
 
 #ifdef __cplusplus

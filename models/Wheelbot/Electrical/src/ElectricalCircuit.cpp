@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "../../Battery/include/DCBattery.hh"
-#include "../../Motor/include/DCMotor.hh"
+#include "Wheelbot/Battery/include/DCBattery.hh"
+#include "Wheelbot/Motor/include/DCMotor.hh"
 
-#include "../include/ElectricalCircuit.hh"
+#include "Wheelbot/Electrical/include/ElectricalCircuit.hh"
 
 using namespace TrickHLAModel;
 

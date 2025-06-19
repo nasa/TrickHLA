@@ -44,7 +44,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // FixedRecord model includes.
-#include "../include/FixedRecPacking.hh"
+#include "FixedRecord/include/FixedRecPacking.hh"
 
 using namespace std;
 using namespace TrickHLA;

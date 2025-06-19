@@ -27,7 +27,7 @@ NASA, Johnson Space Center\n
 #include <cfloat>
 #include <iostream>
 
-#include "../include/CabinAtmoMixture.hh"
+#include "DistIf/include/CabinAtmoMixture.hh"
 
 using namespace DistIf;
 
