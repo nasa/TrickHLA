@@ -74,6 +74,7 @@ using namespace TrickHLA;
  */
 Attribute::Attribute()
    : RecordElement(),
+     FOM_name( NULL ),
      config( CONFIG_NONE ),
      preferred_order( TRANSPORT_SPECIFIED_IN_FOM ),
      publish( false ),

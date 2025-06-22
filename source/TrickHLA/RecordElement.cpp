@@ -60,7 +60,6 @@ using namespace TrickHLA;
 
 RecordElement::RecordElement()
    : trick_name( NULL ),
-     FOM_name( NULL ),
      rti_encoding( ENCODING_UNKNOWN ),
      element_count( 0 ),
      elements( NULL ),
@@ -87,7 +86,6 @@ string RecordElement::to_string()
    msg << "RecordElement["
        << ( ( trick_name != NULL ) ? trick_name : "" )
        << ", " << encoding_enum_to_string( rti_encoding )
-       << ", " << ( ( FOM_name != NULL ) ? FOM_name : "" )
        << ", element_count:" << element_count << "]";
    return msg.str();
 }
@@ -102,7 +100,6 @@ void RecordElement::initialize_element_encoder()
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
                 << " ERROR: For element with trick_name '"
                 << ( ( trick_name != NULL ) ? trick_name : "" )
-                << "' and FOM_name '" << ( ( FOM_name != NULL ) ? FOM_name : "" )
                 << "', the 'element_count' is " << element_count
                 << " but no 'elements' are specified. Please check your input.py"
                 << " or modified-data files to make sure the attributes are"
@@ -117,7 +114,6 @@ void RecordElement::initialize_element_encoder()
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
                 << " ERROR: For element with trick_name '"
                 << ( ( trick_name != NULL ) ? trick_name : "" )
-                << "' and FOM_name '" << ( ( FOM_name != NULL ) ? FOM_name : "" )
                 << "', the 'element_count' is " << element_count
                 << " but 'elements' have been specified. Please check your"
                 << " input.py or modified-data files to make sure the"
@@ -157,7 +153,6 @@ void RecordElement::initialize_element_encoder(
       errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
              << " ERROR: For element with trick_name '"
              << ( ( trick_name != NULL ) ? trick_name : "" )
-             << "' and FOM_name '" << ( ( FOM_name != NULL ) ? FOM_name : "" )
              << "', this function does not support the ENCODING_FIXED_RECORD"
              << " encoding for a given address and ATTRIBUTES." << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );

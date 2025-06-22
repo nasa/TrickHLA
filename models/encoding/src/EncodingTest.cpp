@@ -1450,7 +1450,7 @@ void EncodingTest::fixed_record_attribute_test(
    attr_data1[0].elements[1].trick_name   = StringUtilities::mm_strdup_string( data1_trick_base_name + ".field_2_float64" );
    attr_data1[0].elements[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   attr_data1[0].elements[2].FOM_name      = StringUtilities::mm_strdup_string( "field_3_rec" );
+   // field_3_rec
    attr_data1[0].elements[2].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data1[0].elements[2].element_count = 3;
    attr_data1[0].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data1[0].elements[2].element_count ) );
@@ -1461,7 +1461,7 @@ void EncodingTest::fixed_record_attribute_test(
    attr_data1[0].elements[2].elements[1].trick_name   = StringUtilities::mm_strdup_string( data1_trick_base_name + ".elem_2_float64" );
    attr_data1[0].elements[2].elements[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   attr_data1[0].elements[2].elements[2].FOM_name      = StringUtilities::mm_strdup_string( "elem_3_record" );
+   // elem_3_record
    attr_data1[0].elements[2].elements[2].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data1[0].elements[2].elements[2].element_count = 2;
    attr_data1[0].elements[2].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data1[0].elements[2].elements[2].element_count ) );
@@ -1486,7 +1486,7 @@ void EncodingTest::fixed_record_attribute_test(
    attr_data2[0].elements[1].trick_name   = StringUtilities::mm_strdup_string( data2_trick_base_name + ".field_2_float64" );
    attr_data2[0].elements[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   attr_data2[0].elements[2].FOM_name      = StringUtilities::mm_strdup_string( "field_3_rec" );
+   // field_3_rec
    attr_data2[0].elements[2].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data2[0].elements[2].element_count = 3;
    attr_data2[0].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data2[0].elements[2].element_count ) );
@@ -1497,7 +1497,7 @@ void EncodingTest::fixed_record_attribute_test(
    attr_data2[0].elements[2].elements[1].trick_name   = StringUtilities::mm_strdup_string( data2_trick_base_name + ".elem_2_float64" );
    attr_data2[0].elements[2].elements[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   attr_data2[0].elements[2].elements[2].FOM_name      = StringUtilities::mm_strdup_string( "elem_3_record" );
+   // elem_3_record
    attr_data2[0].elements[2].elements[2].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data2[0].elements[2].elements[2].element_count = 2;
    attr_data2[0].elements[2].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data2[0].elements[2].elements[2].element_count ) );

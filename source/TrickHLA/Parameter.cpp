@@ -65,6 +65,7 @@ using namespace TrickHLA;
  */
 Parameter::Parameter()
    : RecordElement(),
+     FOM_name( NULL ),
      value_changed( false ),
      interaction_FOM_name( NULL ),
      param_handle()

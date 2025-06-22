@@ -95,7 +95,6 @@ class RecordElement
 
   public:
    char *trick_name; ///< @trick_units{--} Trick variable name for the element.
-   char *FOM_name;   ///< @trick_units{--} FOM name for the element.
 
    EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
 

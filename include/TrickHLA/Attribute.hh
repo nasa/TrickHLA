@@ -83,6 +83,8 @@ class Attribute : public RecordElement
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
+   char *FOM_name; ///< @trick_units{--} FOM name for the attribute.
+
    DataUpdateEnum config; ///< @trick_units{--} The attribute configuration.
 
    TransportationEnum preferred_order; ///< @trick_units{--} Either Timestamp (default) or Receive Order.

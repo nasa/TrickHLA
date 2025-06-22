@@ -23,7 +23,7 @@ class TrickHLAAttributeConfig( object ):
    subscribe     = True
    locally_owned = True
    config        = trick.TrickHLA.CONFIG_CYCLIC
-   rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING
+   rti_encoding  = trick.TrickHLA.ENCODING_UNKNOWN
 
    def __init__( self,
                  FOM_name,
@@ -32,7 +32,7 @@ class TrickHLAAttributeConfig( object ):
                  subscribe     = True,
                  locally_owned = True,
                  config        = trick.TrickHLA.CONFIG_CYCLIC,
-                 rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING ):
+                 rti_encoding  = trick.TrickHLA.ENCODING_UNKNOWN ):
 
       self.FOM_name = FOM_name
       self.trick_name = trick_name

@@ -183,6 +183,9 @@ class Parameter : public RecordElement
       return rti_encoding;
    }
 
+  public:
+   char *FOM_name; ///< @trick_units{--} FOM name for the parameter.
+
   private:
    bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
 

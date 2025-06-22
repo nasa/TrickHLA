@@ -334,7 +334,6 @@ THLA.manager.objects[2].attributes[2].elements[0].trick_name    = 'R.packing.ele
 THLA.manager.objects[2].attributes[2].elements[0].rti_encoding  = trick.ENCODING_UNICODE_STRING
 THLA.manager.objects[2].attributes[2].elements[1].trick_name    = 'R.packing.elem_2_float64'
 THLA.manager.objects[2].attributes[2].elements[1].rti_encoding  = trick.ENCODING_LITTLE_ENDIAN
-#THLA.manager.objects[2].attributes[2].elements[2].trick_name    = 'R.packing.elem_3_record'
 THLA.manager.objects[2].attributes[2].elements[2].rti_encoding  = trick.ENCODING_FIXED_RECORD
 THLA.manager.objects[2].attributes[2].elements[2].element_count = 2;
 THLA.manager.objects[2].attributes[2].elements[2].elements      = trick.sim_services.alloc_type( THLA.manager.objects[2].attributes[2].elements[2].element_count, 'TrickHLA::RecordElement' )

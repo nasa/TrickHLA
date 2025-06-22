@@ -19,12 +19,12 @@ class TrickHLAParameterConfig( object ):
 
    FOM_name     = None
    trick_name   = None
-   rti_encoding = trick.ENCODING_UNICODE_STRING
+   rti_encoding = trick.ENCODING_UNKNOWN
 
    def __init__( self,
                  FOM_name,
                  trick_name,
-                 rti_encoding = trick.ENCODING_UNICODE_STRING ):
+                 rti_encoding = trick.ENCODING_UNKNOWN ):
 
       self.FOM_name = FOM_name
       self.trick_name = trick_name
