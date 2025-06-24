@@ -56,7 +56,7 @@ class TrickHLAObjectConfig( object ):
                  thla_attribute_config     = None,
                  thla_blocking_cyclic_read = False ):
 
-      # Allocate and empty attribute list.
+      # Allocate an empty attribute list.
       self.attributes = []
 
       # Set the Trick HLA object reference here so the set() function calls will
@@ -129,6 +129,7 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def initialize( self, thla_object = None ):
 
       # Assign the associated TrickHLA object if specified.
@@ -157,14 +158,16 @@ class TrickHLAObjectConfig( object ):
 
       # Allocate the federate object's attribute list.
       self.hla_object.attr_count = len( self.attributes )
-      self.hla_object.attributes = trick.TMM_declare_var_1d( 'TrickHLA::Attribute',
-                                                             self.hla_object.attr_count )
+      if ( self.hla_object.attr_count > 0 ):
+         self.hla_object.attributes = trick.TMM_declare_var_1d( 'TrickHLA::Attribute',
+                                                                self.hla_object.attr_count )
 
       # Loop through the federation object attributes and initialize them.
       for indx in range( 0, self.hla_object.attr_count ):
          self.attributes[indx].initialize( self.hla_object.attributes[indx] )
 
       return
+
 
    def set_create( self, create_obj ):
 
@@ -174,9 +177,11 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def get_create( self ):
 
       return self.hla_create
+
 
    def set_instance_name( self, name ):
 
@@ -186,9 +191,11 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def get_instance_name( self ):
 
       return str( self.hla_instance_name )
+
 
    def set_FOM_name( self, name ):
 
@@ -198,9 +205,11 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def get_FOM_name( self ):
 
       return str( self.hla_FOM_name )
+
 
    def set_thread_IDs( self, threadIDs ):
 
@@ -210,9 +219,11 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def get_thread_IDs( self ):
 
       return str( self.hla_thread_IDs )
+
 
    def set_lag_comp_instance( self, obj_lag_comp ):
 
@@ -223,6 +234,7 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def set_lag_comp_type( self, lag_comp_type ):
 
       self.hla_lag_comp_type = lag_comp_type
@@ -230,6 +242,7 @@ class TrickHLAObjectConfig( object ):
          self.hla_object.lag_comp_type = lag_comp_type
 
       return
+
 
    def set_deleted_instance( self, obj_deleted ):
 
@@ -239,6 +252,7 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def set_ownership_instance( self, obj_ownership_handler ):
 
       self.hla_ownership_instance = obj_ownership_handler
@@ -246,6 +260,7 @@ class TrickHLAObjectConfig( object ):
          self.hla_object.ownership = obj_ownership_handler
 
       return
+
 
    def set_conditional_instance( self, obj_conditional ):
 
@@ -255,6 +270,7 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def set_packing_instance( self, obj_packing ):
 
       self.hla_packing_instance = obj_packing
@@ -263,9 +279,11 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def get_packing_instance( self ):
 
       return self.hla_packing_instance
+
 
    def add_attribute( self, attribute ):
 
@@ -273,15 +291,18 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def set_attribute_publish( self, publish ):
 
       self.hla_attribute_publish = publish
 
       return
 
+
    def get_attribute_publish( self ):
 
       return self.hla_attribute_publish
+
 
    def set_attribute_subscribe( self, subscribe ):
 
@@ -289,9 +310,11 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def get_attribute_subscribe( self ):
 
       return self.hla_attribute_subscribe
+
 
    def set_attribute_config( self, attribute_config ):
 
@@ -299,9 +322,11 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
    def get_attribute_config( self ):
 
       return self.hla_attribute_config
+
 
    def set_blocking_cyclic_read( self, blocking_cyclic_read ):
 
@@ -310,6 +335,7 @@ class TrickHLAObjectConfig( object ):
          self.hla_object.blocking_cyclic_read = self.hla_blocking_cyclic_read
 
       return
+
 
    def get_blocking_cyclic_read( self ):
 

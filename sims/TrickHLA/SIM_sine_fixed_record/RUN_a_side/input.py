@@ -44,12 +44,12 @@ P.packing.buff = trick.sim_services.alloc_type( P.packing.buff_size, 'unsigned c
 A.sim_data.name = 'A.sim_data.name.A-side'
 P.sim_data.name = 'P.sim_data.name.A-side'
 
-R.sim_data.field_1_string = 'R.sim_data.field_1_string.A-side';
-R.sim_data.elem_1_string  = 'R.sim_data.elem_1_string.A-side';
-R.sim_data.element_2_name = 'R.sim_data.element_2_name.A-side';
-R.packing.field_1_string  = 'R.packing.field_1_string.A-side';
-R.packing.elem_1_string   = 'R.packing.elem_1_string.A-side';
-R.packing.element_2_name  = 'R.packing.element_2_name.A-side';
+R.sim_data.field_1_string = 'R.sim_data.field_1_string.A-side'
+R.sim_data.elem_1_string  = 'R.sim_data.elem_1_string.A-side'
+R.sim_data.element_2_name = 'R.sim_data.element_2_name.A-side'
+R.packing.field_1_string  = 'R.packing.field_1_string.A-side'
+R.packing.elem_1_string   = 'R.packing.elem_1_string.A-side'
+R.packing.element_2_name  = 'R.packing.element_2_name.A-side'
 
 # We are taking advantage of the input file to specify a unique name and
 # message for the A-side federate interaction handler.
@@ -328,14 +328,14 @@ THLA.manager.objects[2].attributes[2].publish         = True
 THLA.manager.objects[2].attributes[2].subscribe       = True
 THLA.manager.objects[2].attributes[2].locally_owned   = True
 THLA.manager.objects[2].attributes[2].rti_encoding    = trick.ENCODING_FIXED_RECORD
-THLA.manager.objects[2].attributes[2].element_count   = 3;
+THLA.manager.objects[2].attributes[2].element_count   = 3
 THLA.manager.objects[2].attributes[2].elements        = trick.sim_services.alloc_type( THLA.manager.objects[2].attributes[2].element_count, 'TrickHLA::RecordElement' )
 THLA.manager.objects[2].attributes[2].elements[0].trick_name    = 'R.packing.elem_1_string'
 THLA.manager.objects[2].attributes[2].elements[0].rti_encoding  = trick.ENCODING_UNICODE_STRING
 THLA.manager.objects[2].attributes[2].elements[1].trick_name    = 'R.packing.elem_2_float64'
 THLA.manager.objects[2].attributes[2].elements[1].rti_encoding  = trick.ENCODING_LITTLE_ENDIAN
 THLA.manager.objects[2].attributes[2].elements[2].rti_encoding  = trick.ENCODING_FIXED_RECORD
-THLA.manager.objects[2].attributes[2].elements[2].element_count = 2;
+THLA.manager.objects[2].attributes[2].elements[2].element_count = 2
 THLA.manager.objects[2].attributes[2].elements[2].elements      = trick.sim_services.alloc_type( THLA.manager.objects[2].attributes[2].elements[2].element_count, 'TrickHLA::RecordElement' )
 THLA.manager.objects[2].attributes[2].elements[2].elements[0].trick_name   = 'R.packing.element_1_count'
 THLA.manager.objects[2].attributes[2].elements[2].elements[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN

@@ -38,7 +38,7 @@ class TrickHLAInteractionConfig( object ):
                  thla_handler_instance_name = None,
                  thla_manager_interaction   = None ):
 
-      # Allocate and empty parameters list.
+      # Allocate an empty parameters list.
       self.parameters = []
 
       # Set the Trick HLA object reference here so that the set() function calls
@@ -63,6 +63,7 @@ class TrickHLAInteractionConfig( object ):
 
       return
 
+
    def initialize( self, thla_manager_interaction = None ):
 
       # Assign the associated TrickHLA object if specified.
@@ -82,15 +83,17 @@ class TrickHLAInteractionConfig( object ):
 
       # Allocate the federate object's attribute list.
       self.hla_manager_interaction.param_count = len( self.parameters )
-      self.hla_manager_interaction.parameters = \
-         trick.alloc_type( self.hla_manager_interaction.param_count,
-                           'TrickHLA::Parameter' )
+      if ( self.hla_manager_interaction.param_count > 0 ):
+         self.hla_manager_interaction.parameters = \
+               trick.TMM_declare_var_1d( 'TrickHLA::Parameter',
+                                         self.hla_manager_interaction.param_count )
 
       # Loop through the federation interaction parameters and initialize them.
       for indx in range( 0, self.hla_manager_interaction.param_count ):
          self.parameters[indx].initialize( self.hla_manager_interaction.parameters[indx] )
 
       return
+
 
    def set_FOM_name( self, name ):
 
@@ -100,9 +103,11 @@ class TrickHLAInteractionConfig( object ):
 
       return
 
+
    def get_FOM_name( self ):
 
       return str( self.hla_FOM_name )
+
 
    def set_publish( self, publish ):
 
@@ -112,9 +117,11 @@ class TrickHLAInteractionConfig( object ):
 
       return
 
+
    def get_publish( self ):
 
       return hla_publish
+
 
    def set_subscribe( self, subscribe ):
 
@@ -124,9 +131,11 @@ class TrickHLAInteractionConfig( object ):
 
       return
 
+
    def get_subscribe( self ):
 
       return hla_subscribe
+
 
    def set_handler_instance( self, inter_hndlr ):
 
@@ -136,13 +145,14 @@ class TrickHLAInteractionConfig( object ):
 
       return
 
+
    def get_handler_instance( self ):
 
       return self.hla_handler_instance
+
 
    def add_parameter( self, param ):
 
       self.parameters.append( param )
 
       return
-
