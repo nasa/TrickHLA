@@ -11,7 +11,7 @@
 #     (Assumes that trick is available globally.))
 #
 # PROGRAMMERS:
-#    (((Dan Dexter) (NASA) (Jue 2025) (--) (SpaceFOM sine fixed record example)))
+#    (((Dan Dexter) (NASA) (June 2025) (--) (SpaceFOM sine fixed record example)))
 ##############################################################################
 import trick
 from ..TrickHLA.TrickHLAObjectConfig import *
