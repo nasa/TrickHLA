@@ -1,4 +1,4 @@
-#     - elem_1_string:  HLAunicodeString##############################################################################
+###############################################################################
 # PURPOSE:
 #    (This is a Python input file class to set up the general parameters that
 #     describe the Fixed Record Test data to configure a TrickHLA Object.)
@@ -12,7 +12,7 @@
 #
 # PROGRAMMERS:
 #    (((Dan Dexter) (NASA) (June 2025) (--) (SpaceFOM sine fixed record example)))
-##############################################################################
+###############################################################################
 import trick
 from ..TrickHLA.TrickHLAObjectConfig import *
 from ..TrickHLA.TrickHLAAttributeConfig import *
