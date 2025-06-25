@@ -98,26 +98,17 @@ extern ATTRIBUTES attrIMSim__ExecutionConfiguration[];
  */
 ExecutionConfiguration::ExecutionConfiguration()
    : TrickHLA::ExecutionConfigurationBase(),
-     owner( NULL ),
-     scenario( NULL ),
-     mode( NULL ),
+     owner(),
+     scenario(),
+     mode(),
      run_duration( -1 ),
      number_of_federates( 0 ),
-     required_federates( NULL ),
+     required_federates(),
      start_year( 2024 ),
      start_seconds( 1517932 ),
      DUT1( 0.0 ),
      deltaAT( 37 )
 {
-   // Set default empty strings.
-   this->owner = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-
-   this->scenario = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-
-   this->mode = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-
-   this->required_federates = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-
    // Note that the default start time is 18 January 2024, 13:38;52 UTC.
 
    // This is both a TrickHLA::Object and Packing.
@@ -129,28 +120,19 @@ ExecutionConfiguration::ExecutionConfiguration()
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration(
-   char const *s_define_name )
+   string const &s_define_name )
    : TrickHLA::ExecutionConfigurationBase( s_define_name ),
-     owner( NULL ),
-     scenario( NULL ),
-     mode( NULL ),
+     owner(),
+     scenario(),
+     mode(),
      run_duration( -1 ),
      number_of_federates( 0 ),
-     required_federates( NULL ),
+     required_federates(),
      start_year( 2024 ),
      start_seconds( 1517932 ),
      DUT1( 0.0 ),
      deltaAT( 37 )
 {
-   // Set default empty strings.
-   this->owner = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-
-   this->scenario = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-
-   this->mode = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-
-   this->required_federates = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-
    // Note that the default start time is 18 January 2024, 13:38;52 UTC.
 
    // This is both a TrickHLA::Object and Packing.
@@ -165,35 +147,6 @@ ExecutionConfiguration::ExecutionConfiguration(
  */
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
-   // Free the allocated strings.
-   if ( this->owner != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->owner ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->owner'\n",
-                          __LINE__ );
-      }
-      this->owner = NULL;
-   }
-   if ( this->scenario != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->scenario ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->scenario'\n",
-                          __LINE__ );
-      }
-      this->scenario = NULL;
-   }
-   if ( this->mode != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->mode ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->mode'\n",
-                          __LINE__ );
-      }
-      this->mode = NULL;
-   }
-   if ( this->required_federates != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->required_federates ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->required_federates'\n",
-                          __LINE__ );
-      }
-      this->owner = required_federates;
-   }
    this->execution_control = NULL;
 }
 
@@ -202,29 +155,23 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
  * @job_class{default_data}
  */
 void ExecutionConfiguration::configure_attributes(
-   char const *sim_config_name )
+   string const &sim_config_name )
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
-   if ( sim_config_name == NULL ) {
+   if ( sim_config_name.empty() ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name.\n";
+             << " ERROR: Unexpected empty sim_config_name.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Set the S_define instance name.
-   if ( this->S_define_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::configure_attributes():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
-                          __LINE__ );
-      }
-      this->S_define_name = trick_MM->mm_strdup( sim_config_name );
+   if ( !S_define_name.empty() ) {
+      this->S_define_name = string( sim_config_name );
    }
 
    // Now call the default configure_attributes function.
    configure_attributes();
-
-   return;
 }
 
 /*!
@@ -234,10 +181,10 @@ void ExecutionConfiguration::configure_attributes(
 void ExecutionConfiguration::configure_attributes()
 {
    // Check to make sure we have an S_define name for this simulation configuration instance.
-   if ( S_define_name == NULL ) {
+   if ( S_define_name.empty() ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name.\n";
+             << " ERROR: Unexpected empty S_define_name.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -309,8 +256,6 @@ void ExecutionConfiguration::configure_attributes()
    trick_name_str                   = simconfig_name_str + string( ".deltaAT" );
    this->attributes[9].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[9].rti_encoding = ENCODING_LITTLE_ENDIAN;
-
-   return;
 }
 
 /*!
@@ -327,7 +272,7 @@ void ExecutionConfiguration::configure()
    }
 
    // The Simulation Configuration object must have a name.
-   if ( name == NULL ) {
+   if ( name.empty() ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Simulation configuration must have a name!\n";
@@ -343,8 +288,6 @@ void ExecutionConfiguration::configure()
    // Make sure the ExecutionConfiguration attributes go out in
    // Receive-Order so that a late joining federate can get them.
    reset_preferred_order();
-
-   return;
 }
 
 /*!
@@ -353,7 +296,6 @@ void ExecutionConfiguration::configure()
 void ExecutionConfiguration::set_imsim_control( IMSim::ExecutionControl *exec_control )
 {
    execution_control = static_cast< TrickHLA::ExecutionControlBase * >( exec_control );
-   return;
 }
 
 /*!
@@ -418,67 +360,31 @@ void ExecutionConfiguration::unpack()
 }
 
 void ExecutionConfiguration::set_owner(
-   char const *owner_name )
+   string const &owner_name )
 {
-   // Free the Trick memory if it's already allocated.
-   if ( this->owner != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->owner ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::set_owner():%d WARNING failed to delete Trick Memory for 'this->owner'\n",
-                          __LINE__ );
-      }
-      this->owner = NULL;
-   }
-
-   // Allocate and duplicate the new root reference frame name.
-   this->owner = trick_MM->mm_strdup( const_cast< char * >( owner_name ) );
+   // Duplicate the new root reference frame name.
+   this->owner = string( owner_name );
 }
 
 void ExecutionConfiguration::set_scenario(
-   char const *scenario_id )
+   string const &scenario_id )
 {
-   // Free the Trick memory if it's already allocated.
-   if ( this->scenario != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->scenario ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::set_scenario():%d WARNING failed to delete Trick Memory for 'this->scenario'\n",
-                          __LINE__ );
-      }
-      this->scenario = NULL;
-   }
-
-   // Allocate and duplicate the new root reference frame name.
-   this->scenario = trick_MM->mm_strdup( const_cast< char * >( scenario_id ) );
+   // Duplicate the new root reference frame name.
+   this->scenario = string( scenario_id );
 }
 
 void ExecutionConfiguration::set_mode(
-   char const *mode_id )
+   string const &mode_id )
 {
-   // Free the Trick memory if it's already allocated.
-   if ( this->mode != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->mode ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::set_mode():%d WARNING failed to delete Trick Memory for 'this->mode'\n",
-                          __LINE__ );
-      }
-      this->mode = NULL;
-   }
-
-   // Allocate and duplicate the new root reference frame name.
-   this->mode = trick_MM->mm_strdup( const_cast< char * >( mode_id ) );
+   // Duplicate the new root reference frame name.
+   this->mode = string( mode_id );
 }
 
 void ExecutionConfiguration::set_required_federates(
-   char const *federates )
+   string const &federates )
 {
-   // Free the Trick memory if it's already allocated.
-   if ( this->required_federates != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->required_federates ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionConfiguration::set_required_federates():%d WARNING failed to delete Trick Memory for 'this->required_federates'\n",
-                          __LINE__ );
-      }
-      this->required_federates = NULL;
-   }
-
-   // Allocate and duplicate the new root reference frame name.
-   this->required_federates = trick_MM->mm_strdup( const_cast< char * >( federates ) );
+   // Duplicate the new root reference frame name.
+   this->required_federates = string( federates );
 }
 
 /*!
@@ -491,7 +397,6 @@ void ExecutionConfiguration::setup_ref_attributes(
    errormsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
             << " ERROR: This routine does NOT work and should not be called!\n";
    DebugHandler::terminate_with_message( errormsg.str() );
-   return;
 }
 
 void ExecutionConfiguration::print_execution_configuration() const
@@ -517,7 +422,6 @@ void ExecutionConfiguration::print_simconfig( std::ostream &stream ) const
           << "\t start seconds:       " << start_seconds << " (s)\n"
           << "\t DUT1:                " << DUT1 << " (s)\n"
           << "\t delta AT:            " << deltaAT << " (s)\n";
-   return;
 }
 
 bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.

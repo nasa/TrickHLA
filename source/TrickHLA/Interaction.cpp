@@ -87,7 +87,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Interaction::Interaction()
-   : FOM_name( NULL ),
+   : FOM_name(),
      publish( false ),
      subscribe( false ),
      preferred_order( TRANSPORT_SPECIFIED_IN_FOM ),
@@ -150,7 +150,7 @@ void Interaction::initialize(
    this->manager = trickhla_mgr;
 
    // Make sure we have a valid object FOM name.
-   if ( ( FOM_name == NULL ) || ( *FOM_name == '\0' ) ) {
+   if ( FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: Missing Interaction FOM Name."
@@ -166,7 +166,7 @@ void Interaction::initialize(
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: For Interaction '"
-             << FOM_name << "', the 'preferred_order' is not valid and must be one"
+             << get_FOM_name() << "', the 'preferred_order' is not valid and must be one"
              << " of TRANSPORT_SPECIFIED_IN_FOM, TRANSPORT_TIMESTAMP_ORDER or"
              << " TRANSPORT_RECEIVE_ORDER. Please check your input or modified-data"
              << " files to make sure the 'preferred_order' is correctly specified.\n";
@@ -178,7 +178,7 @@ void Interaction::initialize(
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: For Interaction '"
-             << FOM_name << "', the 'param_count' is " << param_count
+             << get_FOM_name() << "', the 'param_count' is " << param_count
              << " but no 'parameters' are specified. Please check your input or"
              << " modified-data files to make sure the Interaction Parameters are"
              << " correctly specified.\n";
@@ -191,7 +191,7 @@ void Interaction::initialize(
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: For Interaction '"
-             << FOM_name << "', the 'param_count' is " << param_count
+             << get_FOM_name() << "', the 'param_count' is " << param_count
              << " but 'parameters' have been specified. Please check your input"
              << " or modified-data files to make sure the Interaction Parameters"
              << " are correctly specified.\n";
@@ -209,33 +209,30 @@ void Interaction::initialize(
       // Validate the FOM-name to make sure we don't have a problem with the
       // list of names as well as get a difficult to debug runtime error for
       // the string constructor if we had a null FOM-name.
-      if ( ( parameters[i].get_FOM_name() == NULL ) || ( *( parameters[i].get_FOM_name() ) == '\0' ) ) {
+      if ( parameters[i].get_FOM_name().empty() ) {
          ostringstream errmsg;
          errmsg << "Interaction::initialize():" << __LINE__
-                << " ERROR: Interaction '" << FOM_name << "' has a missing Parameter"
+                << " ERROR: Interaction '" << get_FOM_name() << "' has a missing Parameter"
                 << " FOM Name at array index " << i << ". Please check your input"
                 << " or modified-data files to make sure the interaction parameter"
                 << " FOM name is correctly specified.\n";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      string fom_name_str( parameters[i].get_FOM_name() );
 
       // Since Interaction updates are sent as a ParameterHandleValueMap there can be
       // no duplicate Parameters because the map only allows unique ParameterHandles.
       for ( int k = i + 1; k < param_count; ++k ) {
-         if ( ( parameters[k].get_FOM_name() != NULL ) && ( *( parameters[k].get_FOM_name() ) != '\0' ) ) {
-
-            if ( fom_name_str == string( parameters[k].get_FOM_name() ) ) {
-               ostringstream errmsg;
-               errmsg << "Interaction::initialize():" << __LINE__
-                      << " ERROR: Interaction '" << FOM_name << "' has Parameters"
-                      << " at array indexes " << i << " and " << k
-                      << " that have the same FOM Name '" << fom_name_str
-                      << "'. Please check your input or modified-data files to"
-                      << " make sure the interaction parameters do not use"
-                      << " duplicate FOM names.\n";
-               DebugHandler::terminate_with_message( errmsg.str() );
-            }
+         if ( !parameters[k].get_FOM_name().empty()
+              && ( parameters[i].get_FOM_name() == parameters[k].get_FOM_name() ) ) {
+            ostringstream errmsg;
+            errmsg << "Interaction::initialize():" << __LINE__
+                   << " ERROR: Interaction '" << get_FOM_name() << "' has Parameters"
+                   << " at array indexes " << i << " and " << k
+                   << " that have the same FOM Name '" << parameters[i].get_FOM_name()
+                   << "'. Please check your input or modified-data files to"
+                   << " make sure the interaction parameters do not use"
+                   << " duplicate FOM names.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
       }
    }
@@ -246,7 +243,7 @@ void Interaction::initialize(
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: An Interaction-Handler for"
-             << " 'handler' was not specified for the '" << FOM_name << "'"
+             << " 'handler' was not specified for the '" << get_FOM_name() << "'"
              << " interaction. Please check your input or modified-data files to"
              << " make sure an Interaction-Handler is correctly specified.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -299,7 +296,7 @@ void Interaction::remove() // RETURN: -- None.
             try {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
                   message_publish( MSG_NORMAL, "Interaction::remove():%d Unpublish Interaction '%s'.\n",
-                                   __LINE__, get_FOM_name() );
+                                   __LINE__, get_FOM_name().c_str() );
                }
 
                rti_amb->unpublishInteractionClass( get_class_handle() );
@@ -307,7 +304,7 @@ void Interaction::remove() // RETURN: -- None.
                string rti_err_msg;
                StringUtilities::to_string( rti_err_msg, e.what() );
                message_publish( MSG_WARNING, "Interaction::remove():%d Unpublish Interaction '%s' exception '%s'\n",
-                                __LINE__, get_FOM_name(), rti_err_msg.c_str() );
+                                __LINE__, get_FOM_name().c_str(), rti_err_msg.c_str() );
             }
 
             // Macro to restore the saved FPU Control Word register value.
@@ -340,7 +337,7 @@ void Interaction::setup_preferred_order_with_RTI()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       message_publish( MSG_NORMAL, "Interaction::setup_preferred_order_with_RTI():%d \
 Published Interaction '%s' Preferred-Order:%s\n",
-                       __LINE__, get_FOM_name(),
+                       __LINE__, get_FOM_name().c_str(),
                        ( preferred_order == TRANSPORT_TIMESTAMP_ORDER ? "TIMESTAMP" : "RECEIVE" ) );
    }
 
@@ -467,7 +464,7 @@ void Interaction::publish_interaction()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       message_publish( MSG_NORMAL, "Interaction::publish_interaction():%d Interaction '%s'.\n",
-                       __LINE__, get_FOM_name() );
+                       __LINE__, get_FOM_name().c_str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -569,7 +566,7 @@ void Interaction::unpublish_interaction()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "Interaction::unpublish_interaction():%d Interaction '%s'\n",
-                          __LINE__, get_FOM_name() );
+                          __LINE__, get_FOM_name().c_str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -672,7 +669,7 @@ void Interaction::subscribe_to_interaction()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "Interaction::subscribe_to_interaction():%d Interaction '%s'\n",
-                          __LINE__, get_FOM_name() );
+                          __LINE__, get_FOM_name().c_str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -786,7 +783,7 @@ void Interaction::unsubscribe_from_interaction()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "Interaction::unsubscribe_from_interaction():%d Interaction '%s'\n",
-                          __LINE__, get_FOM_name() );
+                          __LINE__, get_FOM_name().c_str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -915,7 +912,7 @@ bool Interaction::send(
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       message_publish( MSG_NORMAL, "Interaction::send():%d As Receive-Order: Interaction '%s'\n",
-                       __LINE__, get_FOM_name() );
+                       __LINE__, get_FOM_name().c_str() );
    }
 
    bool successfuly_sent = false;
@@ -936,7 +933,7 @@ bool Interaction::send(
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "Interaction::send():%d As Receive-Order: Interaction '%s' with exception '%s'\n",
-                       __LINE__, get_FOM_name(), rti_err_msg.c_str() );
+                       __LINE__, get_FOM_name().c_str(), rti_err_msg.c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -981,7 +978,7 @@ bool Interaction::send(
       for ( int i = 0; i < param_count; ++i ) {
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             message_publish( MSG_NORMAL, "Interaction::send():%d Adding '%s' to parameter map.\n",
-                             __LINE__, parameters[i].get_FOM_name() );
+                             __LINE__, parameters[i].get_FOM_name().c_str() );
          }
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].encode();
       }
@@ -1013,7 +1010,7 @@ bool Interaction::send(
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
                message_publish( MSG_NORMAL, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.\n",
-                                __LINE__, get_FOM_name(), time.get_time_in_seconds() );
+                                __LINE__, get_FOM_name().c_str(), time.get_time_in_seconds() );
             }
 
             // This call returns an event retraction handle but we
@@ -1029,7 +1026,7 @@ bool Interaction::send(
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
                message_publish( MSG_NORMAL, "Interaction::send():%d As Receive-Order: \
 Interaction '%s' is time-regulating:%s, preferred-order:%s.\n",
-                                __LINE__, get_FOM_name(),
+                                __LINE__, get_FOM_name().c_str(),
                                 ( federate->in_time_regulating_state() ? "Yes" : "No" ),
                                 ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ) );
             }
@@ -1100,11 +1097,11 @@ void Interaction::process_interaction()
          StringUtilities::to_string( handle_str, class_handle );
          if ( received_as_TSO ) {
             message_publish( MSG_NORMAL, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', HLA time:%G, Timestamp-Order\n",
-                             __LINE__, handle_str.c_str(), get_FOM_name(),
+                             __LINE__, handle_str.c_str(), get_FOM_name().c_str(),
                              time.get_time_in_seconds() );
          } else {
             message_publish( MSG_NORMAL, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', Receive-Order\n",
-                             __LINE__, handle_str.c_str(), get_FOM_name() );
+                             __LINE__, handle_str.c_str(), get_FOM_name().c_str() );
          }
       }
 
@@ -1137,7 +1134,7 @@ bool Interaction::decode(
       string handle_str;
       StringUtilities::to_string( handle_str, class_handle );
       message_publish( MSG_NORMAL, "Interaction::decode():%d ID:%s, FOM_name:'%s'\n",
-                       __LINE__, handle_str.c_str(), get_FOM_name() );
+                       __LINE__, handle_str.c_str(), get_FOM_name().c_str() );
    }
 
    // For thread safety, lock here to avoid corrupting the parameters.
@@ -1177,7 +1174,7 @@ bool Interaction::decode(
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             message_publish( MSG_NORMAL, "Interaction::decode():%d Decoding '%s' from parameter map.\n",
-                             __LINE__, parameters[param_item->index].get_FOM_name() );
+                             __LINE__, parameters[param_item->index].get_FOM_name().c_str() );
          }
          if ( parameters[param_item->index].decode( VariableLengthData( param_item->data, param_item->size ) ) ) {
             any_param_received = true;

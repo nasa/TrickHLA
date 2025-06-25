@@ -98,8 +98,8 @@ ExecutionConfiguration::ExecutionConfiguration()
      run_duration( 0.0 ),
      run_duration_base_time( 0L ),
      num_federates( 0 ),
-     required_federates( NULL ),
-     owner( NULL )
+     required_federates(),
+     owner()
 {
    return;
 }
@@ -108,13 +108,13 @@ ExecutionConfiguration::ExecutionConfiguration()
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration(
-   char const *s_define_name )
+   string const &s_define_name )
    : TrickHLA::ExecutionConfigurationBase( s_define_name ),
      run_duration( 0.0 ),
      run_duration_base_time( 0L ),
      num_federates( 0 ),
-     required_federates( NULL ),
-     owner( NULL )
+     required_federates(),
+     owner()
 {
    return;
 }
@@ -126,21 +126,7 @@ ExecutionConfiguration::ExecutionConfiguration(
  */
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
-   if ( required_federates != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
-                          __LINE__ );
-      }
-      required_federates = NULL;
-   }
-
-   if ( owner != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'owner'\n",
-                          __LINE__ );
-      }
-      owner = NULL;
-   }
+   return;
 }
 
 /*!
@@ -153,10 +139,10 @@ void ExecutionConfiguration::configure_attributes()
    string trick_name_str;
 
    // Check to make sure we have an S_define name for this ExCO instance.
-   if ( S_define_name == NULL ) {
+   if ( S_define_name.empty() ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name.\n";
+             << " ERROR: Unexpected empty S_define_name.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -227,12 +213,8 @@ void ExecutionConfiguration::configure()
    }
 
    // Release the memory used by the required_federates c-string.
-   if ( required_federates != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
-                          __LINE__ );
-      }
-      required_federates = NULL;
+   if ( !required_federates.empty() ) {
+      required_federates = "";
    }
 
    ostringstream federate_list;
@@ -262,7 +244,7 @@ void ExecutionConfiguration::configure()
    this->num_federates = required_federate_count;
 
    // Make sure we use correct function so that it is Trick managed memory.
-   this->required_federates = trick_MM->mm_strdup( const_cast< char * >( federate_list.str().c_str() ) );
+   this->required_federates = string( federate_list.str() );
 }
 
 /*!
@@ -307,11 +289,11 @@ void ExecutionConfiguration::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << '\n'
           << "\tObject-Name:'" << object->get_name() << "'\n"
-          << "\towner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\towner:'" << owner << "'\n"
           << "\trun_duration:" << run_duration << " seconds\n"
           << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
           << "\tnum_federates:" << num_federates << '\n'
-          << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "\trequired_federates:'" << required_federates << "'\n"
           << "===================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -344,11 +326,11 @@ void ExecutionConfiguration::unpack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << '\n'
           << "\tObject-Name:'" << object->get_name() << "'\n"
-          << "\towner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\towner:'" << owner << "'\n"
           << "\trun_duration:" << run_duration << " seconds\n"
           << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << '\n'
           << "\tnum_federates:" << num_federates << '\n'
-          << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "\trequired_federates:'" << required_federates << "'\n"
           << "===================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

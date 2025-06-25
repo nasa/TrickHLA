@@ -89,7 +89,7 @@ void LagCompensation::receive_lag_compensation()
  *  @param attr_FOM_name Attribute FOM name.
  */
 Attribute *LagCompensation::get_attribute(
-   char const *attr_FOM_name )
+   string const &attr_FOM_name )
 {
    return object->get_attribute( attr_FOM_name );
 }
@@ -99,10 +99,10 @@ Attribute *LagCompensation::get_attribute(
  *  then exec-terminate is called.
  */
 Attribute *LagCompensation::get_attribute_and_validate(
-   char const *attr_FOM_name )
+   string const &attr_FOM_name )
 {
    // Make sure the FOM name is not NULL.
-   if ( attr_FOM_name == NULL ) {
+   if ( attr_FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "LagCompensation::get_attribute_and_validate():" << __LINE__
              << " ERROR: Unexpected NULL attribute FOM name specified.\n";

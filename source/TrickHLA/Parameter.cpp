@@ -65,9 +65,9 @@ using namespace TrickHLA;
  */
 Parameter::Parameter()
    : RecordElement(),
-     FOM_name( NULL ),
+     FOM_name(),
      value_changed( false ),
-     interaction_FOM_name( NULL ),
+     interaction_FOM_name(),
      param_handle()
 {
    return;
@@ -79,14 +79,6 @@ Parameter::Parameter()
  */
 Parameter::~Parameter()
 {
-   if ( interaction_FOM_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( interaction_FOM_name ) ) ) {
-         message_publish( MSG_WARNING, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'interaction_FOM_name'\n",
-                          __LINE__ );
-      }
-      interaction_FOM_name = NULL;
-   }
-
    if ( encoder != NULL ) {
       delete encoder;
       encoder = NULL;
@@ -97,14 +89,14 @@ Parameter::~Parameter()
  * @job_class{initialization}
  */
 void Parameter::initialize(
-   char const *interaction_fom_name,
-   int const   interaction_index,
-   int const   parameter_index )
+   string const &interaction_fom_name,
+   int const     interaction_index,
+   int const     parameter_index )
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Make sure we have a valid parameter FOM name.
-   if ( ( FOM_name == NULL ) || ( *FOM_name == '\0' ) ) {
+   if ( FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
              << " ERROR: Interaction with FOM Name '"
@@ -116,18 +108,13 @@ void Parameter::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   if ( rti_encoding == ENCODING_FIXED_RECORD ) {
-      // For a fixed record, set an empty string for the Trick-name if null.
-      if ( trick_name == NULL ) {
-         trick_name = StringUtilities::mm_strdup_string( "" );
-      }
-   } else {
+   if ( rti_encoding != ENCODING_FIXED_RECORD ) {
       // Make sure we have a valid parameter Trick-Name.
-      if ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) {
+      if ( trick_name.empty() ) {
          ostringstream errmsg;
          errmsg << "Parameter::initialize():" << __LINE__
                 << " ERROR: FOM Interaction Parameter '"
-                << interaction_fom_name << "'->'" << FOM_name << "' has a missing"
+                << interaction_fom_name << "'->'" << get_FOM_name() << "' has a missing"
                 << " Trick name for the parameter. Make sure 'THLA.manager.interactions["
                 << interaction_index << "].parameters[" << parameter_index
                 << "].trick_name' in either your input.py file or modified-data files"
@@ -141,8 +128,8 @@ void Parameter::initialize(
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
              << " ERROR: FOM Interaction Parameter '"
-             << interaction_fom_name << "'->'" << FOM_name << "' with Trick name '"
-             << trick_name << "' has an 'rti_encoding' value of "
+             << interaction_fom_name << "'->'" << get_FOM_name() << "' with Trick name '"
+             << get_trick_name() << "' has an 'rti_encoding' value of "
              << rti_encoding << " which is out of the valid range of "
              << ENCODING_FIRST_VALUE << " to " << ENCODING_LAST_VALUE
              << ". Please check your input or modified-data files to make sure"
@@ -157,12 +144,13 @@ void Parameter::initialize(
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
              << " ERROR: Unexpected NULL encoder for Trick variable '"
-             << trick_name << "' with an 'rti_encoding' value of "
+             << get_trick_name() << "' with an 'rti_encoding' value of "
              << rti_encoding << ".\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->interaction_FOM_name = trick_MM->mm_strdup( const_cast< char * >( interaction_fom_name ) );
+   // Make a copy.
+   this->interaction_FOM_name = string( interaction_fom_name );
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       string param_handle_string;
@@ -172,8 +160,8 @@ void Parameter::initialize(
           << "========================================================\n"
           //        << "  Encoder:" << this->encoder->to_string() << "\n"
           << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
+          << "  FOM_name:'" << get_FOM_name() << "'\n"
+          << "  trick_name:'" << get_trick_name() << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -185,9 +173,9 @@ void Parameter::initialize(
  * @job_class{initialization}
  */
 void Parameter::initialize(
-   char const *interaction_fom_name,
-   void       *address,
-   ATTRIBUTES *attr )
+   string const &interaction_fom_name,
+   void         *address,
+   ATTRIBUTES   *attr )
 {
    if ( address == NULL ) {
       ostringstream errmsg;
@@ -204,7 +192,8 @@ void Parameter::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->interaction_FOM_name = trick_MM->mm_strdup( const_cast< char * >( interaction_fom_name ) );
+   // Make a copy.
+   this->interaction_FOM_name = string( interaction_fom_name );
 
    // Initialize the element encoders including a fixed record encoder.
    initialize_element_encoder( address, attr );
@@ -226,8 +215,8 @@ void Parameter::initialize(
           << "========================================================\n"
           << "  Encoder:\n"
           << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
+          << "  FOM_name:'" << get_FOM_name() << "'\n"
+          << "  trick_name:'" << get_trick_name() << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
@@ -247,10 +236,8 @@ VariableLengthData &Parameter::encode()
       ostringstream errmsg;
       errmsg << "Parameter::encode():" << __LINE__
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
-             << ( ( get_trick_name() != NULL ) ? get_trick_name() : "NULL" )
-             << "' and FOM name '"
-             << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" )
-             << "' with error: " << err_details << std::endl;
+             << get_trick_name() << "' and FOM name '"
+             << get_FOM_name() << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -268,10 +255,8 @@ bool const Parameter::decode(
       ostringstream errmsg;
       errmsg << "Parameter::decode():" << __LINE__
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
-             << ( ( get_trick_name() != NULL ) ? get_trick_name() : "NULL" )
-             << "' and FOM name '"
-             << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" )
-             << "' with error: " << err_details << std::endl;
+             << get_trick_name() << "' and FOM name '"
+             << get_FOM_name() << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -279,7 +264,7 @@ bool const Parameter::decode(
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       message_publish( MSG_NORMAL, "Parameter::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
-                       __LINE__, get_FOM_name(), get_trick_name() );
+                       __LINE__, get_FOM_name().c_str(), get_trick_name().c_str() );
    }
 
    // Mark the attribute value as changed.

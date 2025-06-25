@@ -128,22 +128,22 @@ class OwnershipHandler : public CheckpointConversionBase
    /*! @brief Query if the attribute is locally owned.
     *  @return True if attribute is locally owned; False otherwise.
     *  @param attribute_FOM_name Attribute FOM name. */
-   bool is_locally_owned( char const *attribute_FOM_name );
+   bool is_locally_owned( std::string const &attribute_FOM_name );
 
    /*! @brief Query if the attribute is remotely owned.
     *  @return True if attribute is remotely owned; False otherwise.
     *  @param attribute_FOM_name Attribute FOM name. */
-   bool is_remotely_owned( char const *attribute_FOM_name );
+   bool is_remotely_owned( std::string const &attribute_FOM_name );
 
    /*! @brief Query if the attribute is published.
     *  @return True if attribute is published; False otherwise.
     *  @param attribute_FOM_name Attribute FOM name. */
-   bool is_published( char const *attribute_FOM_name );
+   bool is_published( std::string const &attribute_FOM_name );
 
    /*! @brief Query if the attribute is subscribed.
     *  @return True if attribute is subscribed; False otherwise.
     *  @param attribute_FOM_name Attribute FOM name. */
-   bool is_subscribed( char const *attribute_FOM_name );
+   bool is_subscribed( std::string const &attribute_FOM_name );
 
    /*! @brief Pull ownership of all object attributes as soon as possible. */
    void pull_ownership();
@@ -154,12 +154,12 @@ class OwnershipHandler : public CheckpointConversionBase
 
    /*! @brief Pull ownership of the specified attribute as soon as possible.
     *  @param attribute_FOM_name Attribute FOM name. */
-   void pull_ownership( char const *attribute_FOM_name );
+   void pull_ownership( std::string const &attribute_FOM_name );
 
    /*! @brief Pull ownership of the specified attribute at the given time.
     *  @param attribute_FOM_name Attribute FOM name.
     *  @param time               Requested time to pull ownership. */
-   void pull_ownership( char const *attribute_FOM_name, double time );
+   void pull_ownership( std::string const &attribute_FOM_name, double time );
 
    /*! @brief Push ownership of all the object attributes as soon as possible. */
    void push_ownership();
@@ -170,12 +170,12 @@ class OwnershipHandler : public CheckpointConversionBase
 
    /*! @brief Push ownership of the specified attribute as soon as possible.
     *  @param attribute_FOM_name Attribute FOM name. */
-   void push_ownership( char const *attribute_FOM_name );
+   void push_ownership( std::string const &attribute_FOM_name );
 
    /*! @brief Push ownership of the specified attribute at the given time.
     *  @param attribute_FOM_name Attribute FOM name.
     *  @param time Requested time to push ownership. */
-   void push_ownership( char const *attribute_FOM_name, double time );
+   void push_ownership( std::string const &attribute_FOM_name, double time );
 
    /*! @brief Return a copy of the object's lookahead time.
     *  @return A copy of the fedetate's lookahead time */
@@ -198,7 +198,7 @@ class OwnershipHandler : public CheckpointConversionBase
     * if an attribute corresponding to the FOM name is not found.
     * @return Attribute of the object.
     * @param attribute_FOM_name Attribute FOM name.*/
-   Attribute *get_attribute( char const *attribute_FOM_name );
+   Attribute *get_attribute( std::string const &attribute_FOM_name );
 
    Object *object; ///< @trick_io{**} Reference to the TrickHLA Object.
 

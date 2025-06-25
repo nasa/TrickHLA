@@ -108,7 +108,7 @@ extern ATTRIBUTES attrSpaceFOM__ExecutionConfiguration[];
  */
 ExecutionConfiguration::ExecutionConfiguration()
    : TrickHLA::ExecutionConfigurationBase(),
-     root_frame_name( NULL ),
+     root_frame_name(),
      scenario_time_epoch( -std::numeric_limits< double >::max() ),
      next_mode_scenario_time( -std::numeric_limits< double >::max() ),
      next_mode_cte_time( -std::numeric_limits< double >::max() ),
@@ -123,9 +123,9 @@ ExecutionConfiguration::ExecutionConfiguration()
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration(
-   char const *s_define_name )
+   string const &s_define_name )
    : TrickHLA::ExecutionConfigurationBase( s_define_name ),
-     root_frame_name( NULL ),
+     root_frame_name(),
      scenario_time_epoch( -std::numeric_limits< double >::max() ),
      next_mode_scenario_time( -std::numeric_limits< double >::max() ),
      next_mode_cte_time( -std::numeric_limits< double >::max() ),
@@ -143,14 +143,7 @@ ExecutionConfiguration::ExecutionConfiguration(
  */
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
-   // Free the allocated root reference frame name.
-   if ( this->root_frame_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'\n",
-                          __LINE__ );
-      }
-      this->root_frame_name = NULL;
-   }
+   return;
 }
 
 /*!
@@ -163,10 +156,10 @@ void ExecutionConfiguration::configure_attributes()
    string trick_name_str;
 
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
-   if ( S_define_name == NULL ) {
+   if ( S_define_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected NULL S_define_name.\n";
+             << " ERROR: Unexpected empty S_define_name.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -255,14 +248,7 @@ void ExecutionConfiguration::configure()
 
    // Clear out the existing object instance name, because we are going to
    // make sure it is ExCO regardless of what the user set it to be.
-   if ( name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'name'\n",
-                          __LINE__ );
-      }
-      name = NULL;
-   }
-   name = trick_MM->mm_strdup( const_cast< char * >( "ExCO" ) );
+   this->name = "ExCO";
 
    // Lag compensation is not supported for the Execution Configuration object.
    set_lag_compensation_type( LAG_COMPENSATION_NONE );
@@ -295,7 +281,7 @@ void ExecutionConfiguration::pack()
           << " (" << get_federate()->get_requested_time().get_base_time() << ")\n"
           << ".............................................................\n"
           << "\t Object-Name:             " << get_name() << "'\n"
-          << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
+          << "\t root_frame_name:         '" << root_frame_name << "'\n"
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << '\n'
           << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n';
@@ -364,7 +350,7 @@ void ExecutionConfiguration::unpack()
           << " (" << get_federate()->get_requested_time().get_base_time() << ")\n"
           << ".............................................................\n"
           << "\t Object-Name:            '" << get_name() << "'\n"
-          << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
+          << "\t root_frame_name:        '" << root_frame_name << "'\n"
           << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << '\n'
           << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << '\n';
@@ -394,19 +380,10 @@ void ExecutionConfiguration::unpack()
 }
 
 void ExecutionConfiguration::set_root_frame_name(
-   char const *name )
+   string const &name )
 {
-   // Free the Trick memory if it's already allocated.
-   if ( this->root_frame_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'\n",
-                          __LINE__ );
-      }
-      this->root_frame_name = NULL;
-   }
-
-   // Allocate and duplicate the new root reference frame name.
-   this->root_frame_name = trick_MM->mm_strdup( const_cast< char * >( name ) );
+   // Duplicate the new root reference frame name.
+   this->root_frame_name = string( name );
 }
 
 /*!
@@ -647,7 +624,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    memcpy( &exco_attr[1], &attrSpaceFOM__ExecutionConfiguration[attr_index], sizeof( ATTRIBUTES ) );
 
    // Initialize the attribute.
-   attributes[0].initialize( this->FOM_name, 0, 0 );
+   attributes[0].initialize( get_FOM_name().c_str(), 0, 0 );
 
    // Initialize the TrickHLA Attribute. Since we built the attributes
    // in-line, and not via the Trick input.py file, use the alternate version of
@@ -688,7 +665,7 @@ void ExecutionConfiguration::print_execution_configuration() const
           << "=============================================================\n"
           << "SpaceFOM::ExecutionConfiguration::print_exec_config():" << __LINE__ << '\n'
           << "\t Object-Name:             '" << get_name() << "'\n"
-          << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'\n"
+          << "\t root_frame_name:         '" << root_frame_name << "'\n"
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << '\n'
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << '\n'
           << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << '\n';

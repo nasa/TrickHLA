@@ -42,6 +42,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_HH
 #define TRICKHLA_INTERACTION_HH
 
+// System includes.
+#include <string>
+
 // Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
@@ -103,7 +106,7 @@ class Interaction
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   char *FOM_name; ///< @trick_units{--} FOM name for the interaction.
+   std::string FOM_name; ///< @trick_units{--} FOM name for the interaction.
 
    bool publish;   ///< @trick_units{--} True to publish interaction.
    bool subscribe; ///< @trick_units{--} True to subscribe to interaction.
@@ -182,7 +185,7 @@ class Interaction
    // Instance methods
    /*! @brief Get the FOM name for this interaction.
     *  @return Constant string with the FOM name for this interaction. */
-   char const *get_FOM_name() const
+   std::string const &get_FOM_name() const
    {
       return FOM_name;
    }
@@ -292,15 +295,10 @@ class Interaction
 
    /*! @brief Set the FOM name for this interaction.
     *  @param in_name The FOM name for this interaction. */
-   void set_FOM_name( char const *in_name )
+   void set_FOM_name( std::string const &in_name )
    {
-      if ( this->FOM_name != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
-            message_publish( MSG_WARNING, "Interaction::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n", __LINE__ );
-         }
-         this->FOM_name = NULL;
-      }
-      this->FOM_name = trick_MM->mm_strdup( in_name );
+      // Make a copy.
+      this->FOM_name = std::string( in_name );
    }
 
    /*! @brief Set the received user supplied tag.

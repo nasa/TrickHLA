@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
+#include <string>
 
 // TrickHLA includes.
 #include "ExecutionConfigurationBase.hh"
@@ -62,10 +63,10 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    double  run_duration;           ///< @trick_units{s}  The run duration of the simulation.
    int64_t run_duration_base_time; ///< @trick_units{us} The run duration in base HLA Logical Time.
 
-   int   num_federates;      ///< @trick_units{--} Number of required federates.
-   char *required_federates; ///< @trick_units{--} Comma-separated list of required federates.
+   int         num_federates;      ///< @trick_units{--} Number of required federates.
+   std::string required_federates; ///< @trick_units{--} Comma-separated list of required federates.
 
-   char *owner; ///< @trick_units{--} Federate's name publishing the object.
+   std::string owner; ///< @trick_units{--} Federate's name publishing the object.
 
   public:
    // Public constructors and destructors.
@@ -73,7 +74,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    ExecutionConfiguration();
    /*! @brief Initialization constructor for the TrickHLA ExecutionConfiguration class.
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   explicit ExecutionConfiguration( char const *s_define_name );
+   explicit ExecutionConfiguration( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the TrickHLA ExecutionConfiguration class. */
    virtual ~ExecutionConfiguration();
 

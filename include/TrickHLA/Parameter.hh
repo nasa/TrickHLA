@@ -38,6 +38,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_PARAMETER_HH
 #define TRICKHLA_PARAMETER_HH
 
+// System includes.
+#include <string>
+
 // Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
@@ -90,9 +93,9 @@ class Parameter : public RecordElement
     *  @param interaction_index The array index to the parent TrickHLA::Interaction.
     *  @param parameter_index The array index to this Parameter.
     */
-   void initialize( char const *interaction_fom_name,
-                    int const   interaction_index,
-                    int const   parameter_index );
+   void initialize( std::string const &interaction_fom_name,
+                    int const          interaction_index,
+                    int const          parameter_index );
 
    /*! @brief Initializes the TrickHLA Parameter from the supplied address and
     * ATTRIBUTES of the trick variable.
@@ -100,9 +103,9 @@ class Parameter : public RecordElement
     *  @param address Address of the trick variable.
     *  @param attr ATTRIBUTES of the trick variable.
     */
-   void initialize( char const *interaction_fom_name,
-                    void       *address,
-                    ATTRIBUTES *attr );
+   void initialize( std::string const &interaction_fom_name,
+                    void              *address,
+                    ATTRIBUTES        *attr );
 
    RTI1516_NAMESPACE::VariableLengthData &encode();
 
@@ -110,29 +113,17 @@ class Parameter : public RecordElement
 
    /*! @brief Get the FOM name for this parameter.
     *  @return The FOM name of this parameter. */
-   char const *get_FOM_name() const
+   std::string const &get_FOM_name() const
    {
       return FOM_name;
    }
 
    /*! @brief Set the FOM name for the parameter.
     *  @param in_name The FOM name for the parameter. */
-   void set_FOM_name( char const *in_name )
+   void set_FOM_name( std::string const &in_name )
    {
-      if ( this->FOM_name != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
-            message_publish( MSG_WARNING, "Parameter::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n",
-                             __LINE__ );
-         }
-      }
-      this->FOM_name = trick_MM->mm_strdup( in_name );
-   }
-
-   /*! @brief Get the Trick variable name associated with this parameter.
-    *  @return The Trick variable name associated with this parameter. */
-   char const *get_trick_name() const
-   {
-      return trick_name;
+      // Make a copy.
+      this->FOM_name = std::string( in_name );
    }
 
    /*! @brief Set the RTI encoding and based on the new encoding determine if
@@ -184,12 +175,12 @@ class Parameter : public RecordElement
    }
 
   public:
-   char *FOM_name; ///< @trick_units{--} FOM name for the parameter.
+   std::string FOM_name; ///< @trick_units{--} FOM name for the parameter.
 
   private:
    bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
 
-   char *interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
+   std::string interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
 
    RTI1516_NAMESPACE::ParameterHandle param_handle; ///< @trick_io{**} The RTI parameter handle.
 

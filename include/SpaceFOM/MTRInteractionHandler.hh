@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
+#include <string>
 
 // SpaceFOM includes.
 #include "Types.hh"
@@ -100,7 +101,7 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
    // Public utility functions.
    /*! @brief Set the associated name for this interaction handler.
     *  @param new_name  Associated name. */
-   virtual void set_name( char const *new_name );
+   virtual void set_name( std::string const &new_name );
 
    /*! @brief Get the address of the MTR interaction mode transition state.
     *  @return Address of the MTR interaction mode transition state. */
@@ -110,7 +111,8 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
    }
 
   public:
-   char   *name;         ///< @trick_units{--} Federation instance name for this interaction.
+   std::string name; ///< @trick_units{--} Federation instance name for this interaction.
+
    MTREnum mtr_mode;     ///< @trick_units{--} Requested mode transition state.
    int16_t mtr_mode_int; ///< @trick_units{--} Requested mode transition state (integer version).
 

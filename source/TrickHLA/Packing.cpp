@@ -105,7 +105,7 @@ void Packing::set_object( TrickHLA::Object *mngr_obj )
  * @param attr_FOM_name Attribute FOM name.
  */
 Attribute *Packing::get_attribute(
-   char const *attr_FOM_name )
+   string const &attr_FOM_name )
 {
    return object->get_attribute( attr_FOM_name );
 }
@@ -116,10 +116,10 @@ Attribute *Packing::get_attribute(
  * @param attr_FOM_name Attribute FOM name.
  */
 Attribute *Packing::get_attribute_and_validate(
-   char const *attr_FOM_name )
+   string const &attr_FOM_name )
 {
    // Make sure the FOM name is not NULL.
-   if ( attr_FOM_name == NULL ) {
+   if ( attr_FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Packing::get_attribute_and_validate():" << __LINE__
              << " ERROR: Unexpected NULL attribute FOM name specified.\n";
@@ -170,25 +170,4 @@ double Packing::get_cte_time()
       }
    }
    return -std::numeric_limits< double >::max();
-}
-
-/*!
- * @job_class{default_data}
- */
-char *Packing::allocate_input_string( // RETURN: -- None.
-   char const *c_string )             // IN: -- String to allocate.
-{
-   return allocate_input_string( string( c_string ) );
-}
-
-/*!
- * @job_class{default_data}
- */
-char *Packing::allocate_input_string( // RETURN: -- None.
-   string const &cpp_string )         // IN: -- String to allocate.
-{
-   char *new_c_str = static_cast< char * >( TMM_declare_var_1d( "char", cpp_string.length() + 1 ) );
-   strncpy( new_c_str, cpp_string.c_str(), cpp_string.length() + 1 );
-
-   return new_c_str;
 }

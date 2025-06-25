@@ -103,7 +103,7 @@ Manager::Manager()
      inter_count( 0 ),
      interactions( NULL ),
      restore_federation( 0 ),
-     restore_file_name( NULL ),
+     restore_file_name(),
      initiated_a_federation_save( false ),
      interactions_queue(),
      check_interactions_count( 0 ),
@@ -328,20 +328,17 @@ void Manager::verify_object_and_interaction_arrays()
 
    // Object instance names must be unique and can not be a duplicate.
    for ( int n = 0; n < obj_count; ++n ) {
-
-      if ( ( objects[n].name != NULL ) && ( *objects[n].name != '\0' ) ) {
-         string obj_name1 = objects[n].name;
+      if ( !objects[n].get_name().empty() ) {
 
          for ( int k = n + 1; k < obj_count; ++k ) {
-            if ( ( objects[k].name != NULL ) && ( *objects[k].name != '\0' ) ) {
-               string obj_name2 = objects[k].name;
+            if ( !objects[k].get_name().empty() ) {
 
-               if ( obj_name1 == obj_name2 ) {
+               if ( objects[n].get_name() == objects[k].get_name() ) {
                   ostringstream errmsg;
                   errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
-                         << " ERROR: Object instance '" << obj_name1
+                         << " ERROR: Object instance '" << objects[n].get_name()
                          << "' at array index " << n << " has the same name as"
-                         << " object instance '" << obj_name2
+                         << " object instance '" << objects[k].get_name()
                          << "' at array index " << k << ". Please check your"
                          << " input or modified-data files to make sure the"
                          << " object instance names are unique with no duplicates.\n";
@@ -384,20 +381,17 @@ void Manager::verify_object_and_interaction_arrays()
    // Interactions must be unique and can not be a duplicate for a given
    // FOM-name. Only one interaction per FOM-name.
    for ( int i = 0; i < inter_count; ++i ) {
-
-      if ( ( interactions[i].FOM_name != NULL ) && ( *interactions[i].FOM_name != '\0' ) ) {
-         string inter_fom_name1 = interactions[i].FOM_name;
+      if ( !interactions[i].get_FOM_name().empty() ) {
 
          for ( int k = i + 1; k < inter_count; ++k ) {
-            if ( ( interactions[k].FOM_name != NULL ) && ( *interactions[k].FOM_name != '\0' ) ) {
-               string inter_fom_name2 = interactions[k].FOM_name;
+            if ( !interactions[k].get_FOM_name().empty() ) {
 
-               if ( inter_fom_name1 == inter_fom_name2 ) {
+               if ( interactions[i].get_FOM_name() == interactions[k].get_FOM_name() ) {
                   ostringstream errmsg;
                   errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
-                         << " ERROR: Interaction '" << inter_fom_name1
+                         << " ERROR: Interaction '" << interactions[i].get_FOM_name()
                          << "' at array index " << i << " has the same FOM name"
-                         << " as interaction '" << inter_fom_name2
+                         << " as interaction '" << interactions[k].get_FOM_name()
                          << "' at array index " << k << ". Please check your"
                          << " input or modified-data files to make sure the"
                          << " interaction FOM names are unique with no duplicates.\n";
@@ -434,21 +428,18 @@ void Manager::verify_object_and_interaction_arrays()
 
       // Check Execution Control interaction names against user defined interactions.
       for ( int k = 0; k < inter_count; ++k ) {
-         if ( ( interactions[k].FOM_name != NULL ) && ( *interactions[k].FOM_name != '\0' ) ) {
-            string inter_fom_name = interactions[k].FOM_name;
-
-            if ( exec_fom_names_vector[i] == inter_fom_name ) {
-               ostringstream errmsg;
-               errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
-                      << " ERROR: Execution Control Interaction '"
-                      << exec_fom_names_vector[i]
-                      << "' has the same FOM name as user specified interaction '"
-                      << inter_fom_name << "' at array index " << k
-                      << ". Please check your input or modified-data files to"
-                      << " make sure the interaction FOM names are unique with"
-                      << " no duplicates.\n";
-               DebugHandler::terminate_with_message( errmsg.str() );
-            }
+         if ( !interactions[k].get_FOM_name().empty()
+              && ( exec_fom_names_vector[i] == interactions[k].FOM_name ) ) {
+            ostringstream errmsg;
+            errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                   << " ERROR: Execution Control Interaction '"
+                   << exec_fom_names_vector[i]
+                   << "' has the same FOM name as user specified interaction '"
+                   << interactions[k].FOM_name << "' at array index " << k
+                   << ". Please check your input or modified-data files to"
+                   << " make sure the interaction FOM names are unique with"
+                   << " no duplicates.\n";
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
       }
    }
@@ -479,7 +470,7 @@ federate so this call will be ignored.\n",
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                message_publish( MSG_NORMAL, "Manager::send_init_data():%d '%s'\n",
-                                __LINE__, objects[n].get_name() );
+                                __LINE__, objects[n].get_name().c_str() );
             }
 
             // Send the object init data to the other federates.
@@ -500,7 +491,7 @@ federate so this call will be ignored.\n",
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::send_init_data():%d Nothing to send for '%s'\n",
-                             __LINE__, objects[n].get_name() );
+                             __LINE__, objects[n].get_name().c_str() );
          }
       }
    }
@@ -510,7 +501,7 @@ federate so this call will be ignored.\n",
  * @job_class{initialization}
  */
 void Manager::send_init_data(
-   char const *instance_name )
+   string const &instance_name )
 {
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
@@ -518,15 +509,15 @@ void Manager::send_init_data(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          message_publish( MSG_NORMAL, "Manager::send_init_data():%d Late joining \
 federate so the data will not be sent for '%s'.\n",
-                          __LINE__, instance_name );
+                          __LINE__, instance_name.c_str() );
       }
       return;
    }
 
-   if ( instance_name == NULL ) {
+   if ( instance_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Manager::send_init_data():" << __LINE__
-             << " ERROR: Null Object Instance Name\n";
+             << " ERROR: Empty Object Instance Name\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -553,7 +544,7 @@ federate so the data will not be sent for '%s'.\n",
       if ( execution_control->wait_for_init_data() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::send_init_data():%d '%s'\n",
-                             __LINE__, instance_name );
+                             __LINE__, instance_name.c_str() );
          }
 
          // Send the object init data to the other federates.
@@ -574,7 +565,7 @@ federate so the data will not be sent for '%s'.\n",
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          message_publish( MSG_NORMAL, "Manager::send_init_data():%d Nothing to send for '%s'\n",
-                          __LINE__, instance_name );
+                          __LINE__, instance_name.c_str() );
       }
    }
 }
@@ -608,7 +599,7 @@ federate so this call will be ignored.\n",
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                                __LINE__, objects[n].get_name(),
+                                __LINE__, objects[n].get_name().c_str(),
                                 ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
             }
 
@@ -646,7 +637,7 @@ federate so this call will be ignored.\n",
                   if ( print_timer.timeout( wallclock_time ) ) {
                      print_timer.reset();
                      message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                                      __LINE__, objects[n].get_name(),
+                                      __LINE__, objects[n].get_name().c_str(),
                                       ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
                   }
                }
@@ -657,7 +648,7 @@ federate so this call will be ignored.\n",
          if ( objects[n].is_changed() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Received '%s'\n",
-                                __LINE__, objects[n].get_name() );
+                                __LINE__, objects[n].get_name().c_str() );
             }
 
             // Receive the data from the publishing federate.
@@ -665,14 +656,14 @@ federate so this call will be ignored.\n",
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
-                                __LINE__, objects[n].get_name(),
+                                __LINE__, objects[n].get_name().c_str(),
                                 ( obj_required ? "REQUIRED" : "not required" ) );
             }
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Nothing to receive for '%s'\n",
-                             __LINE__, objects[n].get_name() );
+                             __LINE__, objects[n].get_name().c_str() );
          }
       }
    }
@@ -682,22 +673,22 @@ federate so this call will be ignored.\n",
  * @job_class{initialization}
  */
 void Manager::receive_init_data(
-   char const *instance_name )
+   std::string const &instance_name )
 {
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Late joining federate so skipping data for '%s'\n",
-                          __LINE__, instance_name );
+                          __LINE__, instance_name.c_str() );
       }
       return;
    }
 
-   if ( instance_name == NULL ) {
+   if ( instance_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Manager::receive_init_data():" << __LINE__
-             << " ERROR: Null Object Instance Name";
+             << " ERROR: Empty Object Instance Name";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -727,7 +718,7 @@ void Manager::receive_init_data(
       if ( obj_required ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                             __LINE__, instance_name,
+                             __LINE__, instance_name.c_str(),
                              ( obj->is_required() ? "REQUIRED" : "not required" ) );
          }
 
@@ -765,7 +756,7 @@ void Manager::receive_init_data(
                if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
                   message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                                   __LINE__, instance_name,
+                                   __LINE__, instance_name.c_str(),
                                    ( obj->is_required() ? "REQUIRED" : "not required" ) );
                }
             }
@@ -777,7 +768,7 @@ void Manager::receive_init_data(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL,
                              "Manager::receive_init_data():%d Received '%s'\n",
-                             __LINE__, instance_name );
+                             __LINE__, instance_name.c_str() );
          }
 
          // Receive the data from the publishing federate.
@@ -785,14 +776,14 @@ void Manager::receive_init_data(
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
-                             __LINE__, instance_name,
+                             __LINE__, instance_name.c_str(),
                              ( obj_required ? "REQUIRED" : "not required" ) );
          }
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          message_publish( MSG_NORMAL, "Manager::receive_init_data():%d Nothing to receive for '%s'\n",
-                          __LINE__, instance_name );
+                          __LINE__, instance_name.c_str() );
       }
    }
 }
@@ -811,7 +802,7 @@ void Manager::clear_init_sync_points()
  * @job_class{initialization}
  */
 void Manager::wait_for_init_sync_point(
-   char const *sync_point_label )
+   string const &sync_point_label )
 {
    if ( !execution_control->is_wait_for_init_sync_point_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -838,17 +829,10 @@ void Manager::wait_for_init_sync_point(
       return;
    }
 
-   if ( sync_point_label == NULL ) {
+   if ( sync_point_label.empty() ) {
       ostringstream errmsg;
       errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
-             << " ERROR: Null Sync-Point Label specified!\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-   if ( sync_point_label[0] == '\0' ) {
-      ostringstream errmsg;
-      errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
-             << " ERROR: No Sync-Point label specified!\n";
+             << " ERROR: Empty Sync-Point Label specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -921,12 +905,8 @@ void Manager::request_data_update(
  * @job_class{initialization}
  */
 void Manager::request_data_update(
-   char const *instance_name )
+   string const &instance_name )
 {
-   if ( ( instance_name == NULL ) || ( instance_name[0] == '\0' ) ) {
-      return;
-   }
-
    wstring ws_obj_instance_name;
    StringUtilities::to_wstring( ws_obj_instance_name, instance_name );
 
@@ -951,7 +931,7 @@ void Manager::object_instance_name_reservation_succeeded(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::object_instance_name_reservation_succeeded():%d \
 RESERVED Object Instance Name '%s'\n",
-                             __LINE__, trickhla_obj->get_name() );
+                             __LINE__, trickhla_obj->get_name().c_str() );
          }
       }
    }
@@ -1049,7 +1029,7 @@ void Manager::setup_all_ref_attributes()
    // Create the map of object instance names to object array indexes.
    obj_name_index_map.clear();
    for ( int n = 0; n < obj_count; ++n ) {
-      obj_name_index_map[objects[n].get_name_string()] = n;
+      obj_name_index_map[objects[n].get_name()] = n;
    }
 
    // Make sure the object-map is empty/clear before we continue.
@@ -1121,7 +1101,7 @@ void Manager::setup_object_ref_attributes(
       for ( int i = 0; i < attr_count; ++i ) {
 
          // Initialize the TrickHLA-Attribute before we use it.
-         attrs[i].initialize( data_objects[n].get_FOM_name(), n, i );
+         attrs[i].initialize( data_objects[n].get_FOM_name().c_str(), n, i );
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
@@ -1254,9 +1234,9 @@ void Manager::setup_object_RTI_handles(
                        __LINE__ );
    }
 
-   char const *obj_FOM_name  = "";
-   char const *attr_FOM_name = "";
-   int         FOM_name_type = 0; // 0:N/A 1:Object 2:Attribute - What name are we dealing with.
+   string obj_FOM_name  = "";
+   string attr_FOM_name = "";
+   int    FOM_name_type = 0; // 0:N/A 1:Object 2:Attribute - What name are we dealing with.
 
    // Initialize the Object and Attribute RTI handles.
    try {
@@ -1452,9 +1432,9 @@ void Manager::setup_interaction_RTI_handles(
                        __LINE__ );
    }
 
-   char const *inter_FOM_name = "";
-   char const *param_FOM_name = "";
-   int         FOM_name_type  = 0; // 0:NA 1:Interaction 2:Parameter  What name we are dealing with.
+   string inter_FOM_name = "";
+   string param_FOM_name = "";
+   int    FOM_name_type  = 0; // 0:NA 1:Interaction 2:Parameter  What name we are dealing with.
 
    // Initialize the Interaction and Parameter RTI handles.
    try {
@@ -2198,7 +2178,7 @@ void Manager::set_object_instance_handles_by_name(
       for ( int n = 0; n < data_obj_count; ++n ) {
 
          // Create the wide-string version of the instance name.
-         char const *instance_name = data_objects[n].get_name();
+         string instance_name = data_objects[n].get_name();
          StringUtilities::to_wstring( ws_instance_name, instance_name );
 
          try {
@@ -2233,7 +2213,7 @@ void Manager::set_object_instance_handles_by_name(
                ostringstream errmsg;
                errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
                       << " ERROR: Object Instance Not Known for '"
-                      << ( instance_name != NULL ? instance_name : "" ) << "'\n";
+                      << instance_name << "'\n";
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2637,7 +2617,7 @@ bool Manager::discover_object_instance(
          string id_str;
          StringUtilities::to_string( id_str, theObject );
          message_publish( MSG_NORMAL, "Manager::discover_object_instance():%d Data-Object '%s' Instance-ID:%s\n",
-                          __LINE__, trickhla_obj->get_name(), id_str.c_str() );
+                          __LINE__, trickhla_obj->get_name().c_str(), id_str.c_str() );
       }
    } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederate_class( theObjectClass ) ) {
 
@@ -2720,9 +2700,7 @@ Object *Manager::get_unregistered_remote_object(
       if ( ( !objects[n].is_create_HLA_instance() )
            && ( objects[n].get_class_handle() == theObjectClass )
            && ( !objects[n].is_instance_handle_valid() )
-           && ( !objects[n].is_name_required()
-                || ( objects[n].get_name() == NULL )
-                || ( *( objects[n].get_name() ) == '\0' ) ) ) {
+           && ( !objects[n].is_name_required() || objects[n].get_name().empty() ) ) {
          return ( &objects[n] );
       }
    }
@@ -2767,7 +2745,7 @@ void Manager::mark_object_as_deleted_from_federation(
             string id_str;
             StringUtilities::to_string( id_str, instance_id );
             message_publish( MSG_NORMAL, "Manager::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
-                             __LINE__, obj->get_name(), id_str.c_str(),
+                             __LINE__, obj->get_name().c_str(), id_str.c_str(),
                              ( instance_id.isValid() ? "Yes" : "No" ) );
          }
          obj->remove_object_instance();
@@ -2808,10 +2786,10 @@ void Manager::pull_ownership()
  *  of for all attributes.
  */
 void Manager::pull_ownership_at_init(
-   char const *obj_instance_name )
+   string const &obj_instance_name )
 
 {
-   pull_ownership_at_init( obj_instance_name, NULL );
+   pull_ownership_at_init( obj_instance_name, "" );
 }
 
 /*!
@@ -2822,13 +2800,13 @@ void Manager::pull_ownership_at_init(
  * @param attribute_list Comma separated list of attributes.
  */
 void Manager::pull_ownership_at_init(
-   char const *obj_instance_name,
-   char const *attribute_list )
+   string const &obj_instance_name,
+   string const &attribute_list )
 {
-   if ( obj_instance_name == NULL ) {
+   if ( obj_instance_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Manager::pull_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected NULL obj_instance_name specified!\n";
+             << " ERROR: Unexpected empty obj_instance_name specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2853,12 +2831,12 @@ void Manager::pull_ownership_at_init(
  *  pulled ownership attributes from.
  */
 void Manager::handle_pulled_ownership_at_init(
-   char const *obj_instance_name )
+   string const &obj_instance_name )
 {
-   if ( obj_instance_name == NULL ) {
+   if ( obj_instance_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected NULL obj_instance_name specified!\n";
+             << " ERROR: Unexpected empty obj_instance_name specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2905,9 +2883,9 @@ void Manager::push_ownership()
  * of for all attributes.
  */
 void Manager::push_ownership_at_init(
-   char const *obj_instance_name )
+   string const &obj_instance_name )
 {
-   push_ownership_at_init( obj_instance_name, NULL );
+   push_ownership_at_init( obj_instance_name, "" );
 }
 
 /*!
@@ -2918,13 +2896,13 @@ void Manager::push_ownership_at_init(
  * @param attribute_list Comma separated list of attribute FOM names.
  */
 void Manager::push_ownership_at_init(
-   char const *obj_instance_name,
-   char const *attribute_list )
+   string const &obj_instance_name,
+   string const &attribute_list )
 {
-   if ( obj_instance_name == NULL ) {
+   if ( obj_instance_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Manager::push_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected NULL obj_instance_name specified!\n";
+             << " ERROR: Unexpected empty obj_instance_name specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -2949,12 +2927,12 @@ void Manager::push_ownership_at_init(
  * pushed ownership attributes from.
  */
 void Manager::handle_pushed_ownership_at_init(
-   char const *obj_instance_name )
+   string const &obj_instance_name )
 {
-   if ( obj_instance_name == NULL ) {
+   if ( obj_instance_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected NULL obj_instance_name specified!\n";
+             << " ERROR: Unexpected empty obj_instance_name specified!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -3019,11 +2997,11 @@ int64_t const Manager::get_granted_base_time() const
 }
 
 bool Manager::is_RTI_ready(
-   char const *method_name )
+   string const &method_name )
 {
    if ( this->federate == NULL ) {
       message_publish( MSG_WARNING, "Manager::%s:%d Unexpected NULL 'federate' pointer!\n",
-                       method_name, __LINE__ );
+                       method_name.c_str(), __LINE__ );
       return false;
    }
 
@@ -3033,7 +3011,7 @@ bool Manager::is_RTI_ready(
    bool rti_valid = true;
    if ( get_RTI_ambassador() == NULL ) {
       message_publish( MSG_WARNING, "Manager::%s:%d Unexpected NULL RTIambassador!\n",
-                       method_name, __LINE__ );
+                       method_name.c_str(), __LINE__ );
       rti_valid = false;
    }
 
@@ -3051,7 +3029,7 @@ bool Manager::is_RTI_ready(
  * them and mess things up.
  */
 void Manager::initiate_federation_save(
-   char const *file_name )
+   string const &file_name )
 {
    federate->set_checkpoint_file_name( file_name );
    federate->initiate_save_announce();
@@ -3060,14 +3038,14 @@ void Manager::initiate_federation_save(
 }
 
 void Manager::start_federation_save(
-   char const *file_name )
+   string const &file_name )
 {
    start_federation_save_at_scenario_time( -DBL_MAX, file_name );
 }
 
 void Manager::start_federation_save_at_sim_time(
-   double      freeze_sim_time,
-   char const *file_name )
+   double        freeze_sim_time,
+   string const &file_name )
 {
    start_federation_save_at_scenario_time(
       execution_control->convert_sim_time_to_scenario_time( freeze_sim_time ),
@@ -3075,8 +3053,8 @@ void Manager::start_federation_save_at_sim_time(
 }
 
 void Manager::start_federation_save_at_scenario_time(
-   double      freeze_scenario_time,
-   char const *file_name )
+   double        freeze_scenario_time,
+   string const &file_name )
 {
    // Call the ExecutionControl method.
    execution_control->start_federation_save_at_scenario_time( freeze_scenario_time, file_name );

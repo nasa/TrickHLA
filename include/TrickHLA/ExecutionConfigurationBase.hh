@@ -44,6 +44,9 @@ execution.
 #ifndef TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 #define TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 
+// System includes.
+#include <string>
+
 // TrickHLA includes.
 #include "Object.hh"
 #include "Packing.hh"
@@ -69,7 +72,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    friend void init_attrTrickHLA__ExecutionConfigurationBase();
 
   public:
-   char const *S_define_name; /**< @trick_units{--}
+   std::string S_define_name; /**< @trick_units{--}
       Full path name in the S_define for this ExecutionConfiguration instance. */
 
   public:
@@ -78,7 +81,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    ExecutionConfigurationBase();
    /*! @brief Initialization constructor for the TrickHLA ExecutionConfigurationBase class.
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   explicit ExecutionConfigurationBase( char const *s_define_name );
+   explicit ExecutionConfigurationBase( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the TrickHLA ExecutionConfigurationBase class. */
    virtual ~ExecutionConfigurationBase() = 0;
 
@@ -98,12 +101,12 @@ class ExecutionConfigurationBase : public Object, public Packing
    /*! @brief Set the full path name in the S_define to the
     * ExecutionConfiguration object instance.
     *  @param new_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   virtual void set_S_define_name( char const *new_name );
+   virtual void set_S_define_name( std::string const &new_name );
 
    /*! @brief Get the full path name in the S_define to the
     * ExecutionConfiguration object instance.
     *  @return S_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   virtual char const *get_S_define_name()
+   virtual std::string const &get_S_define_name()
    {
       return ( S_define_name );
    }

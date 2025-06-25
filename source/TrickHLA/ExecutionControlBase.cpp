@@ -98,7 +98,7 @@ ExecutionControlBase::ExecutionControlBase()
      cte_timeline( NULL ),
      use_preset_master( false ),
      master( false ),
-     multiphase_init_sync_points( NULL ),
+     multiphase_init_sync_points(),
      time_padding( 0.0 ),
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
@@ -131,7 +131,7 @@ ExecutionControlBase::ExecutionControlBase(
      cte_timeline( NULL ),
      use_preset_master( false ),
      master( false ),
-     multiphase_init_sync_points( NULL ),
+     multiphase_init_sync_points(),
      time_padding( 0.0 ),
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
@@ -158,17 +158,7 @@ ExecutionControlBase::ExecutionControlBase(
  */
 ExecutionControlBase::~ExecutionControlBase()
 {
-   // TODO: Should not call a virtual function from within virtual destructor.
-   // clear_mode_values();
-
-   // Free the memory used for the multiphase initialization synchronization points.
-   if ( multiphase_init_sync_points != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( multiphase_init_sync_points ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::~ExecutionControlBase():%d WARNING failed to delete Trick Memory for 'multiphase_init_sync_points'\n",
-                          __LINE__ );
-      }
-      multiphase_init_sync_points = NULL;
-   }
+   return;
 }
 
 /*!
@@ -484,7 +474,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    // Add the user specified initialization synchronization points.
    // Parse the comma separated list of sync-point labels.
    vector< string > user_sync_pt_labels;
-   if ( this->multiphase_init_sync_points != NULL ) {
+   if ( !multiphase_init_sync_points.empty() ) {
       StringUtilities::tokenize( this->multiphase_init_sync_points, user_sync_pt_labels, "," );
    }
 
@@ -738,7 +728,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    if ( execution_configuration != NULL ) {
 
       // Execution Configuration object.
-      if ( obj_instance_name == get_execution_configuration()->get_name_string() ) {
+      if ( obj_instance_name == get_execution_configuration()->get_name() ) {
          return ( execution_configuration );
       }
    }
@@ -809,8 +799,7 @@ Object *ExecutionControlBase::get_unregistered_remote_object(
            && ( execution_configuration->get_class_handle() == theObjectClass )
            && ( !execution_configuration->is_instance_handle_valid() )
            && ( !execution_configuration->is_name_required()
-                || ( execution_configuration->get_name() == NULL )
-                || ( *( execution_configuration->get_name() ) == '\0' ) ) ) {
+                || execution_configuration->get_name().empty() ) ) {
          return ( execution_configuration );
       }
    }
@@ -829,7 +818,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
          message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
-                          __LINE__, execution_configuration->get_name(), id_str.c_str(),
+                          __LINE__, execution_configuration->get_name().c_str(), id_str.c_str(),
                           ( instance_id.isValid() ? "Yes" : "No" ) );
       }
       execution_configuration->remove_object_instance();

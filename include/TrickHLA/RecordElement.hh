@@ -91,10 +91,17 @@ class RecordElement
 
    void update_after_decode();
 
+   /*! @brief Get the associated Trick variable space name.
+    *  @return The Trick variable space name associated with this attribute. */
+   std::string const &get_trick_name() const
+   {
+      return trick_name;
+   }
+
    virtual std::string to_string();
 
   public:
-   char *trick_name; ///< @trick_units{--} Trick variable name for the element.
+   std::string trick_name; ///< @trick_units{--} Trick variable name for the element.
 
    EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
 

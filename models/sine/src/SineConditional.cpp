@@ -153,7 +153,7 @@ bool SineConditional::should_send(
 {
    if ( this->sim_data == NULL ) {
       message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: Unexpected NULL sim_data!\n",
-                       attr->get_FOM_name(), __LINE__ );
+                       attr->get_FOM_name().c_str(), __LINE__ );
       exit( -1 );
    }
 
@@ -201,7 +201,7 @@ bool SineConditional::should_send(
    } else {
       message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: \
 Could not find the data for the specified FOM attribute!\n",
-                       attr->get_FOM_name(), __LINE__ );
+                       attr->get_FOM_name().c_str(), __LINE__ );
       exit( -1 );
    }
 

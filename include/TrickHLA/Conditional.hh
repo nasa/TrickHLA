@@ -35,6 +35,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_CONDITIONAL_HH
 #define TRICKHLA_CONDITIONAL_HH
 
+// System includes.
+#include <string>
+
 namespace TrickHLA
 {
 
@@ -80,12 +83,12 @@ class Conditional
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( char const *attr_FOM_name );
+   Attribute *get_attribute( std::string const &attr_FOM_name );
 
    /*! @brief This function returns the Attribute for the given attribute FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute_and_validate( char const *attr_FOM_name );
+   Attribute *get_attribute_and_validate( std::string const &attr_FOM_name );
 
   protected:
    bool    initialized; ///< @trick_units{--} Initialization status flag.

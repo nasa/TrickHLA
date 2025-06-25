@@ -112,19 +112,19 @@ class Federate
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   char *name;            ///< @trick_units{--} The federate name.
-   char *type;            ///< @trick_units{--} The federate type.
-   char *federation_name; ///< @trick_units{--} Federation execution name.
+   std::string name;            ///< @trick_units{--} The federate name.
+   std::string type;            ///< @trick_units{--} The federate type.
+   std::string federation_name; ///< @trick_units{--} Federation execution name.
 
-   char *local_settings; /**< @trick_units{--}
+   std::string local_settings; /**< @trick_units{--}
       Vendor specific HLA-Evolved local settings for the connect API.
       Pitch RTI: "crcHost = 192.168.1.1\ncrcPort = 8989" \n
       MAK RTI: "(setqb RTI_tcpForwarderAddr \"192.168.1.1\") (setqb RTI_distributedForwarderPort 5000)" */
 
-   char *FOM_modules; /**< @trick_units{--}
+   std::string FOM_modules; /**< @trick_units{--}
       FOM filename for the IEEE 1516-2000 and SISO-STD-004.1-2004 standards,
       or a comma separated list of FOM-module filenames for IEEE 1516-2010. */
-   char *MIM_module;  /**< @trick_units{--}
+   std::string MIM_module;  /**< @trick_units{--}
       Filename for the MOM and Initialization Module (MIM) for HLA IEEE 1516-2010. */
 
    // FIXME: Is this really needed?
@@ -304,6 +304,10 @@ class Federate
    //
    /*! @brief Load the running federate names from the RTI. */
    void load_and_print_running_federate_names();
+
+   /*! @brief Deallocate running federates based on current known information
+    * in preparation for re-size. */
+   void clear_known_feds();
 
    /*! @brief Deallocate running federates based on current known information
     * in preparation for re-size. */
@@ -702,7 +706,7 @@ class Federate
                                          double const       data_cycle );
 
    /*! @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA. */
-   void disable_trick_child_thread_associations( char const *thread_ids );
+   void disable_trick_child_thread_associations( std::string const &thread_ids );
 
    /*! @brief Verify the thread IDs associated to the objects. */
    void verify_trick_child_thread_associations();
@@ -896,21 +900,21 @@ class Federate
 
    /*! @brief Get the pointer to the associated federate name.
     *  @return Pointer to associated federate name. */
-   char const *get_federate_name() const
+   std::string const &get_federate_name() const
    {
       return this->name;
    }
 
    /*! @brief Get the pointer to the associated federate type.
     *  @return Pointer to associated federate type. */
-   char const *get_federate_type() const
+   std::string const &get_federate_type() const
    {
       return this->type;
    }
 
    /*! @brief Get the pointer to the associated federation execution name.
     *  @return Pointer to associated federation execution name. */
-   char const *get_federation_name() const
+   std::string const &get_federation_name() const
    {
       return this->federation_name;
    }
@@ -1326,7 +1330,8 @@ class Federate
    /*! @brief Join a federation.
     *  @param federate_name Name of this federate.
     *  @param federate_type Type for this federate. */
-   void join_federation( char const *const federate_name, char const *const federate_type );
+   void join_federation( std::string const &federate_name,
+                         std::string const &federate_type );
 
    /*! @brief Determine if the specified federate name is a required federate.
     *  @return True if a name of required federate, otherwise false.
@@ -1336,7 +1341,7 @@ class Federate
    /*! @brief Determine if the specified federate name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.
     *  @param federate_name Federate name to test. */
-   bool is_joined_federate( char const *federate_name );
+   bool is_joined_federate( std::string const &federate_name );
 
    /*! @brief Determine if the specified federate name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.

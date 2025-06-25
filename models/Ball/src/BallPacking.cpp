@@ -173,8 +173,8 @@ void BallPacking::base_config(
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
-   object->FOM_name            = allocate_input_string( "Ball" );
-   object->name                = allocate_input_string( ball_name );
+   object->FOM_name            = "Ball";
+   object->name                = ball_name;
    object->create_HLA_instance = publishes;
    object->packing             = this;
    // Allocate the attributes for the Ball HLA object.
@@ -184,54 +184,54 @@ void BallPacking::base_config(
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name      = allocate_input_string( "name" );
+   object->attributes[0].FOM_name      = "name";
    trick_name_str                      = entity_name_str + string( ".name" );
-   object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[0].trick_name    = trick_name_str;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC);
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name      = allocate_input_string( "time" );
+   object->attributes[1].FOM_name      = "time";
    trick_name_str                      = entity_name_str + string( ".time" );
-   object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[1].trick_name    = trick_name_str;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[2].FOM_name      = allocate_input_string( "position" );
+   object->attributes[2].FOM_name      = "position";
    trick_name_str                      = entity_name_str + string( ".position" );
-   object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[2].trick_name    = trick_name_str;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[3].FOM_name      = allocate_input_string( "velocity" );
+   object->attributes[3].FOM_name      = "velocity";
    trick_name_str                      = entity_name_str + string( ".velocity" );
-   object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[3].trick_name    = trick_name_str;
    object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[3].publish       = publishes;
    object->attributes[3].subscribe     = !publishes;
    object->attributes[3].locally_owned = publishes;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[4].FOM_name      = allocate_input_string( "acceleration" );
+   object->attributes[4].FOM_name      = "acceleration";
    trick_name_str                      = entity_name_str + string( ".acceleration" );
-   object->attributes[4].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[4].trick_name    = trick_name_str;
    object->attributes[4].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[4].publish       = publishes;
    object->attributes[4].subscribe     = !publishes;
    object->attributes[4].locally_owned = publishes;
    object->attributes[4].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[5].FOM_name      = allocate_input_string( "force" );
+   object->attributes[5].FOM_name      = "force";
    trick_name_str                      = entity_name_str + string( ".external_force" );
-   object->attributes[5].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[5].trick_name    = trick_name_str;
    object->attributes[5].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[5].publish       = publishes;
    object->attributes[5].subscribe     = !publishes;

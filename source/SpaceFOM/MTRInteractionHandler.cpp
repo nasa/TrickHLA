@@ -77,7 +77,7 @@ using namespace TrickHLA;
  */
 MTRInteractionHandler::MTRInteractionHandler(
    Federate const *fed )
-   : name( NULL ),
+   : name(),
      mtr_mode( MTR_UNINITIALIZED ),
      mtr_mode_int( 0 ),
      scenario_time( 0.0 ),
@@ -95,13 +95,6 @@ MTRInteractionHandler::MTRInteractionHandler(
  */
 MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
-   if ( this->name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                          __LINE__ );
-      }
-      this->name = NULL;
-   }
    return;
 }
 
@@ -109,18 +102,9 @@ MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
  * @job_class{default_data}
  */
 void MTRInteractionHandler::set_name(
-   char const *new_name )
+   string const &new_name )
 {
-   if ( this->name != NULL ) {
-      if ( trick_MM->is_alloced( this->name ) ) {
-         if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            message_publish( MSG_WARNING, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                             __LINE__ );
-         }
-      }
-      this->name = NULL;
-   }
-   this->name = trick_MM->mm_strdup( new_name );
+   this->name = string( new_name );
 }
 
 /*!
@@ -147,8 +131,8 @@ void MTRInteractionHandler::send_interaction(
 
    // Create a User Supplied Tag based off the name in this example.
    RTI1516_USERDATA rti_user_supplied_tag;
-   if ( name != NULL ) {
-      rti_user_supplied_tag = RTI1516_USERDATA( name, strlen( name ) );
+   if ( !name.empty() ) {
+      rti_user_supplied_tag = RTI1516_USERDATA( name.c_str(), strlen( name.c_str() ) );
    } else {
       rti_user_supplied_tag = RTI1516_USERDATA( 0, 0 );
    }
@@ -174,7 +158,7 @@ void MTRInteractionHandler::send_interaction(
 
          msg << "++++SENDING++++ MTRInteractionHandler::send_interaction("
              << "Receive Order):" << __LINE__ << '\n'
-             << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+             << "  name: '" << name << "'\n"
              << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
              << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << '\n'
              << "  mode request: " << mtr_enum_to_string( mtr_mode ) << '\n'
@@ -209,7 +193,7 @@ void MTRInteractionHandler::send_interaction(
          ostringstream msg;
          msg << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
              << __LINE__ << '\n'
-             << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+             << "  name:'" << name << "'\n"
              << "  Scenario time: " << scenario_time << '\n'
              << "  Simulation time: " << sim_time << '\n';
          if ( exco_base->does_cte_timeline_exist() ) {
@@ -277,7 +261,7 @@ void MTRInteractionHandler::receive_interaction(
       ostringstream msg;
       msg << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
           << __LINE__ << '\n'
-          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
+          << "  name:'" << name << "'\n"
           << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
           << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << '\n'
           << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << '\n'

@@ -59,7 +59,7 @@ using namespace std;
 using namespace TrickHLA;
 
 RecordElement::RecordElement()
-   : trick_name( NULL ),
+   : trick_name(),
      rti_encoding( ENCODING_UNKNOWN ),
      element_count( 0 ),
      elements( NULL ),
@@ -83,8 +83,7 @@ RecordElement::~RecordElement()
 string RecordElement::to_string()
 {
    ostringstream msg;
-   msg << "RecordElement["
-       << ( ( trick_name != NULL ) ? trick_name : "" )
+   msg << "RecordElement[" << get_trick_name()
        << ", " << encoding_enum_to_string( rti_encoding )
        << ", element_count:" << element_count << "]";
    return msg.str();
@@ -98,8 +97,7 @@ void RecordElement::initialize_element_encoder()
       if ( ( element_count > 0 ) && ( elements == NULL ) ) {
          ostringstream errmsg;
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-                << " ERROR: For element with trick_name '"
-                << ( ( trick_name != NULL ) ? trick_name : "" )
+                << " ERROR: For element with trick_name '" << get_trick_name()
                 << "', the 'element_count' is " << element_count
                 << " but no 'elements' are specified. Please check your input.py"
                 << " or modified-data files to make sure the attributes are"
@@ -113,11 +111,10 @@ void RecordElement::initialize_element_encoder()
          ostringstream errmsg;
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
                 << " ERROR: For element with trick_name '"
-                << ( ( trick_name != NULL ) ? trick_name : "" )
-                << "', the 'element_count' is " << element_count
-                << " but 'elements' have been specified. Please check your"
-                << " input.py or modified-data files to make sure the"
-                << " elements are correctly specified." << std::endl;
+                << get_trick_name() << "', the 'element_count' is "
+                << element_count << " but 'elements' have been specified."
+                << " Please check your input.py or modified-data files to"
+                << " make sure the elements are correctly specified." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -129,7 +126,7 @@ void RecordElement::initialize_element_encoder()
          hla_fixed_rec->appendElementPointer( elements[i].encoder );
       }
    } else {
-      if ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) {
+      if ( trick_name.empty() ) {
          ostringstream errmsg;
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
                 << " ERROR: The fixed record element has a missing Trick name."
@@ -151,8 +148,7 @@ void RecordElement::initialize_element_encoder(
    if ( rti_encoding == ENCODING_FIXED_RECORD ) {
       ostringstream errmsg;
       errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-             << " ERROR: For element with trick_name '"
-             << ( ( trick_name != NULL ) ? trick_name : "" )
+             << " ERROR: For element with trick_name '" << get_trick_name()
              << "', this function does not support the ENCODING_FIXED_RECORD"
              << " encoding for a given address and ATTRIBUTES." << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );

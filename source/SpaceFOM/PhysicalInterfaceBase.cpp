@@ -131,8 +131,8 @@ void PhysicalInterfaceBase::base_config(
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
-   object->FOM_name            = allocate_input_string( "PhysicalInterface" );
-   object->name                = allocate_input_string( interface_name );
+   object->FOM_name            = "PhysicalInterface";
+   object->name                = interface_name;
    object->create_HLA_instance = publishes;
    object->packing             = this;
    // Allocate the attributes for the PhysicalInterface HLA object.
@@ -142,36 +142,36 @@ void PhysicalInterfaceBase::base_config(
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name      = allocate_input_string( "name" );
+   object->attributes[0].FOM_name      = "name";
    trick_name_str                      = interface_name_str + string( ".packing_data.name" );
-   object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[0].trick_name    = trick_name_str;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name      = allocate_input_string( "parent_name" );
+   object->attributes[1].FOM_name      = "parent_name";
    trick_name_str                      = interface_name_str + string( ".packing_data.parent_name" );
-   object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[1].trick_name    = trick_name_str;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[2].FOM_name      = allocate_input_string( "position" );
+   object->attributes[2].FOM_name      = "position";
    trick_name_str                      = interface_name_str + string( ".packing_data.position" );
-   object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[2].trick_name    = trick_name_str;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[3].FOM_name      = allocate_input_string( "attitude" );
+   object->attributes[3].FOM_name      = "attitude";
    trick_name_str                      = interface_name_str + string( ".quat_encoder.buffer" );
-   object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[3].trick_name    = trick_name_str;
    object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
    object->attributes[3].subscribe     = !publishes;

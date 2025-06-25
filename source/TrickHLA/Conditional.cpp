@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <sstream>
+#include <string>
 
 // TrickHLA includes.
 #include "TrickHLA/Conditional.hh"
@@ -81,7 +82,7 @@ bool Conditional::should_send( // RETURN: -- None.
  * @job_class{scheduled}
  */
 Attribute *Conditional::get_attribute(
-   char const *attr_FOM_name )
+   string const &attr_FOM_name )
 {
    return object->get_attribute( attr_FOM_name );
 }
@@ -90,10 +91,10 @@ Attribute *Conditional::get_attribute(
  * @job_class{scheduled}
  */
 Attribute *Conditional::get_attribute_and_validate(
-   char const *attr_FOM_name )
+   string const &attr_FOM_name )
 {
    // Make sure the FOM name is not NULL.
-   if ( attr_FOM_name == NULL ) {
+   if ( attr_FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Conditional::get_attribute_and_validate():" << __LINE__
              << " ERROR: Unexpected NULL attribute FOM name specified.\n";

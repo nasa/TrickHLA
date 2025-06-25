@@ -338,9 +338,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Save restore_file_name before it gets wiped out with the loading of the checkpoint file...
    char *tRestoreName = NULL;
-   if ( manager->restore_file_name != NULL ) {
+   if ( !manager->restore_file_name.empty() ) {
       // we don't want this to get wiped out when trick clears memory for load checkpoint, so don't allocate with TMM
-      tRestoreName = strdup( manager->restore_file_name );
+      tRestoreName = strdup( manager->restore_file_name.c_str() );
    }
 
    // Initialize the MOM interface handles.
@@ -2199,13 +2199,13 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(
-   double      freeze_scenario_time,
-   char const *file_name )
+   double        freeze_scenario_time,
+   string const &file_name )
 {
    if ( freeze_interaction->get_handler() != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d\n",
-                          freeze_scenario_time, file_name, __LINE__ );
+                          freeze_scenario_time, file_name.c_str(), __LINE__ );
       }
       federate->set_announce_save();
 
@@ -2218,7 +2218,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
 freeze_interaction's HANLDER is NULL! Request was ignored!\n",
-                          freeze_scenario_time, file_name, __LINE__ );
+                          freeze_scenario_time, file_name.c_str(), __LINE__ );
       }
    }
 }

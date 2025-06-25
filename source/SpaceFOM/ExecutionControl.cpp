@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 #include <limits>
 #include <math.h>
 #include <sstream>
+#include <string>
 
 // Trick includes.
 #include "trick/Executive.hh"
@@ -1046,7 +1047,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    }
 
    // Make sure the ExCO has at least a FOM-name to be valid.
-   if ( ExCO->get_FOM_name() == NULL ) {
+   if ( ExCO->get_FOM_name().empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
              << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object.\n";
@@ -2796,7 +2797,7 @@ void ExecutionControl::send_init_root_ref_frame()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::send_init_root_ref_frame():%d Late joining \
 federate so the data will not be sent for '%s'.\n",
-                          __LINE__, execution_configuration->get_name() );
+                          __LINE__, execution_configuration->get_name().c_str() );
       }
       return;
    }
@@ -2952,8 +2953,8 @@ void ExecutionControl::receive_root_ref_frame()
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(
-   double      freeze_scenario_time,
-   char const *file_name )
+   double        freeze_scenario_time,
+   string const &file_name )
 {
    ostringstream errmsg;
    errmsg << "SpaceFOM::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__

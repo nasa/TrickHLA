@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include <initializer_list>
 #include <limits>
 #include <sstream>
+#include <string>
 #include <vector>
 
 // Trick includes.
@@ -211,7 +212,7 @@ void OwnershipHandler::decode_checkpoint()
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             message_publish( MSG_NORMAL, "OwnershipHandler::decode_checkpoint():%d Restoring ownership pull item attribute \"%s\"\n",
-                             __LINE__, pull_items[count].FOM_name );
+                             __LINE__, pull_items[count].FOM_name.c_str() );
          }
       }
    }
@@ -240,7 +241,7 @@ void OwnershipHandler::decode_checkpoint()
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             message_publish( MSG_NORMAL, "OwnershipHandler::decode_checkpoint():%d Restoring ownership push item attribute \"%s\"\n",
-                             __LINE__, push_items[count].FOM_name );
+                             __LINE__, push_items[count].FOM_name.c_str() );
          }
       }
    }
@@ -283,12 +284,12 @@ void OwnershipHandler::initialize_callback(
 
 string OwnershipHandler::get_object_name() const
 {
-   return ( ( this->object != NULL ) ? string( object->get_name() ) : string( "" ) );
+   return ( ( this->object != NULL ) ? object->get_name() : "" );
 }
 
 string OwnershipHandler::get_object_FOM_name() const
 {
-   return ( ( this->object != NULL ) ? string( object->get_FOM_name() ) : string( "" ) );
+   return ( ( this->object != NULL ) ? object->get_FOM_name() : "" );
 }
 
 int OwnershipHandler::get_attribute_count() const
@@ -302,34 +303,34 @@ VectorOfStrings const OwnershipHandler::get_attribute_FOM_names() const
 }
 
 Attribute *OwnershipHandler::get_attribute(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    return ( ( object != NULL ) ? object->get_attribute( attribute_FOM_name ) : NULL );
 }
 
 bool OwnershipHandler::is_locally_owned(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_locally_owned() : false );
 }
 
 bool OwnershipHandler::is_remotely_owned(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_remotely_owned() : false );
 }
 
 bool OwnershipHandler::is_published(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_publish() : false );
 }
 
 bool OwnershipHandler::is_subscribed(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_subscribe() : false );
@@ -388,14 +389,14 @@ void OwnershipHandler::pull_ownership(
 }
 
 void OwnershipHandler::pull_ownership( // RETURN: -- None.
-   char const *attribute_FOM_name )    // IN: -- Attribute FOM name.
+   string const &attribute_FOM_name )  // IN: -- Attribute FOM name.
 {
    pull_ownership( attribute_FOM_name, -std::numeric_limits< double >::max() );
 }
 
 void OwnershipHandler::pull_ownership(
-   char const *attribute_FOM_name,
-   double      time )
+   std::string const &attribute_FOM_name,
+   double             time )
 {
    // Find the attribute for the given attribute FOM name.
    Attribute *attribute = get_attribute( attribute_FOM_name );
@@ -407,7 +408,7 @@ void OwnershipHandler::pull_ownership(
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G \n",
-                       attribute_FOM_name, time, __LINE__, get_scenario_time(),
+                       attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
                        get_lookahead().get_time_in_seconds() );
    }
@@ -491,14 +492,14 @@ void OwnershipHandler::push_ownership(
 }
 
 void OwnershipHandler::push_ownership(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    push_ownership( attribute_FOM_name, -std::numeric_limits< double >::max() );
 }
 
 void OwnershipHandler::push_ownership(
-   char const *attribute_FOM_name,
-   double      time )
+   string const &attribute_FOM_name,
+   double        time )
 {
    // Find the attribute for the given attribute FOM name.
    Attribute *attribute = get_attribute( attribute_FOM_name );
@@ -510,7 +511,7 @@ void OwnershipHandler::push_ownership(
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G \n",
-                       attribute_FOM_name, time, __LINE__, get_scenario_time(),
+                       attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
                        get_lookahead().get_time_in_seconds() );
    }

@@ -103,7 +103,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
       initialization process. (default: false) */
 
    // TODO: May also want to change this into an STL Array.
-   char *multiphase_init_sync_points; /**< @trick_units{--}
+   std::string multiphase_init_sync_points; /**< @trick_units{--}
       Comma-separated list of multi-phase initialization sync-points. */
 
   public:
@@ -573,7 +573,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name ) = 0;
+   virtual void start_federation_save_at_scenario_time( double             freeze_scenario_time,
+                                                        std::string const &file_name ) = 0;
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
    virtual void encode_checkpoint();

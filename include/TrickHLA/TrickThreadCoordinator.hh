@@ -38,6 +38,7 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 // System includes
 #include <cstdint>
+#include <string>
 
 // TrickHLA includes.
 #include "MutexLock.hh"
@@ -76,8 +77,7 @@ class TrickThreadCoordinator
    /*! @brief Setup the required class instance associations.
     *  @param federate  Associated TrickHLA::Federate class instance.
     *  @param manager   Associated TrickHLA::Manager class instance. */
-   void setup( Federate &federate,
-               Manager  &manager );
+   void setup( Federate &federate, Manager &manager );
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
    void initialize( double const main_thread_data_cycle_time );
@@ -87,7 +87,7 @@ class TrickThreadCoordinator
                                          double const       data_cycle );
 
    /*! @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA. */
-   void disable_trick_thread_associations( char const *thread_ids );
+   void disable_trick_thread_associations( std::string const &thread_ids );
 
    /*! @brief Verify the threads IDs associated to objects in the input file. */
    void verify_trick_thread_associations();
@@ -192,7 +192,7 @@ class TrickThreadCoordinator
 
    bool any_child_thread_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
 
-   char *disable_thread_ids; ///< @trick_units{--} Comma separated list of thread ID's to disable association to TrickHLA.
+   std::string disable_thread_ids; ///< @trick_units{--} Comma separated list of thread ID's to disable association to TrickHLA.
 
    unsigned int thread_cnt; ///< @trick_units{--} Number of Trick child threads used for array sizes.
 

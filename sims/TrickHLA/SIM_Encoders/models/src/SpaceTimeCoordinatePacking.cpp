@@ -126,8 +126,8 @@ void SpaceTimeCoordinatePacking::base_config(
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
    // Set the FOM name of the object.
-   object->FOM_name            = allocate_input_string( "STCTest" );
-   object->name                = allocate_input_string( "stc_test" );
+   object->FOM_name            = "STCTest";
+   object->name                = "stc_test";
    object->create_HLA_instance = publishes;
    object->packing             = this;
    // Allocate the attributes for the SpaceTimeCoordinatePacking HLA object.
@@ -137,9 +137,9 @@ void SpaceTimeCoordinatePacking::base_config(
    //
    // Specify the attributes.
    //
-   object->attributes[0].FOM_name      = allocate_input_string( "state" );
+   object->attributes[0].FOM_name      = "state";
    trick_name_str                      = stc_name_str + string( ".stc_encoder.buffer" );
-   object->attributes[0].trick_name    = allocate_input_string( trick_name_str.c_str() );
+   object->attributes[0].trick_name    = trick_name_str.c_str();
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;

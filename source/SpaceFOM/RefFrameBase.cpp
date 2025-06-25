@@ -159,8 +159,8 @@ void RefFrameBase::base_config(
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
-   object->FOM_name            = allocate_input_string( "ReferenceFrame" );
-   object->name                = allocate_input_string( ref_frame_name );
+   object->FOM_name            = "ReferenceFrame";
+   object->name                = ref_frame_name;
    object->create_HLA_instance = publishes;
    object->packing             = this;
    // Allocate the attributes for the RefFrameBase HLA object.
@@ -170,27 +170,27 @@ void RefFrameBase::base_config(
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name      = allocate_input_string( "name" );
+   object->attributes[0].FOM_name      = "name";
    trick_name_str                      = ref_frame_name_str + string( ".packing_data.name" );
-   object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[0].trick_name    = trick_name_str;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name      = allocate_input_string( "parent_name" );
+   object->attributes[1].FOM_name      = "parent_name";
    trick_name_str                      = ref_frame_name_str + string( ".packing_data.parent_name" );
-   object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[1].trick_name    = trick_name_str;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[2].FOM_name      = allocate_input_string( "state" );
+   object->attributes[2].FOM_name      = "state";
    trick_name_str                      = ref_frame_name_str + string( ".stc_encoder.buffer" );
-   object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[2].trick_name    = trick_name_str;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
@@ -241,16 +241,12 @@ void RefFrameBase::initialize()
    if ( this->packing_data.name == NULL ) {
       ostringstream errmsg;
 
-      string trick_name = ( name_attr != NULL )
-                             ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
-                             : "";
-      string fom_name   = ( name_attr != NULL )
-                             ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
-                             : "";
+      string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
+      string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " WARNING: For RefFrame object '"
-             << ( ( object != NULL ) ? object->get_name_string() : "" )
+             << ( ( object != NULL ) ? object->get_name() : "" )
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
              << "', detected unexpected NULL federation instance name!"
@@ -268,16 +264,12 @@ void RefFrameBase::initialize()
 
          ostringstream errmsg;
 
-         string trick_name = ( name_attr != NULL )
-                                ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
-                                : "";
-         string fom_name   = ( name_attr != NULL )
-                                ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
-                                : "";
+         string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
+         string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: For RefFrame '" << this->packing_data.name
-                << "' and object '" << ( ( object != NULL ) ? object->get_name_string() : "" )
+                << "' and object '" << ( ( object != NULL ) ? object->get_name() : "" )
                 << "' with Attribute Trick name '" << trick_name
                 << "' and FOM name '" << fom_name
                 << "', detected unexpected NULL federation instance parent frame name!"
@@ -307,16 +299,12 @@ void RefFrameBase::initialize()
         && ( this->parent_frame == NULL ) ) {
       ostringstream errmsg;
 
-      string trick_name = ( name_attr != NULL )
-                             ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
-                             : "";
-      string fom_name   = ( name_attr != NULL )
-                             ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
-                             : "";
+      string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
+      string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " WARNING: For RefFrame object '"
-             << ( ( object != NULL ) ? object->get_name_string() : "" )
+             << ( ( object != NULL ) ? object->get_name() : "" )
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
              << "', detected unexpected NULL parent frame reference!"

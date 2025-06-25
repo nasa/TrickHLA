@@ -584,8 +584,8 @@ void ExecutionControl::set_time_padding( double t )
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(
-   double      freeze_scenario_time,
-   char const *file_name )
+   double        freeze_scenario_time,
+   string const &file_name )
 {
    ostringstream errmsg;
    errmsg << "TrickHLA::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__

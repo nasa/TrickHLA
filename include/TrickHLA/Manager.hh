@@ -114,9 +114,9 @@ class Manager : public CheckpointConversionBase
    int          inter_count;  ///< @trick_units{--} Number of TrickHLA Interactions.
    Interaction *interactions; ///< @trick_units{--} Array of TrickHLA Interactions.
 
-   bool  restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore
-   char *restore_file_name;           ///< @trick_io{*i} @trick_units{--} File name, which will be the label name
-   bool  initiated_a_federation_save; ///< @trick_io{**} Did this manager initiate the federation save?
+   bool        restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore
+   std::string restore_file_name;           ///< @trick_io{*i} @trick_units{--} File name, which will be the label name
+   bool        initiated_a_federation_save; ///< @trick_io{**} Did this manager initiate the federation save?
 
   public:
    //
@@ -152,7 +152,7 @@ class Manager : public CheckpointConversionBase
     * initialized.
     *  @return True if the RTI is ready, false otherwise.
     *  @param method_name The method/function name. */
-   bool is_RTI_ready( char const *method_name );
+   bool is_RTI_ready( std::string const &method_name );
 
    /*! @brief Check if this is a late joining federate.
     *  @return True if the is a late joining federate. */
@@ -166,7 +166,7 @@ class Manager : public CheckpointConversionBase
 
    /*! @brief Sends the initialization data for the specified object instance name.
     *  @param instance_name Name of object instance name to send data for. */
-   void send_init_data( char const *instance_name );
+   void send_init_data( std::string const &instance_name );
 
    /*! @brief Wait to receive all the initialization data that is marked as required. */
    void receive_init_data();
@@ -174,7 +174,7 @@ class Manager : public CheckpointConversionBase
    /*! @brief Wait to receive the initialization data for the specified object
     * instance name.
     * @param instance_name Name of object instance name to receive data for. */
-   void receive_init_data( char const *instance_name );
+   void receive_init_data( std::string const &instance_name );
 
    /*! @brief Clear any remaining initialization sync-points. */
    void clear_init_sync_points();
@@ -182,7 +182,7 @@ class Manager : public CheckpointConversionBase
    /*! @brief Achieve then wait for the federation to become synchronized for
     * the specified sync-point label.
     *  @param sync_point_label Name of the synchronization point label. */
-   void wait_for_init_sync_point( char const *sync_point_label );
+   void wait_for_init_sync_point( std::string const &sync_point_label );
 
    /*! @brief Request an update to the object attributes for the given object
     * instance name.
@@ -192,7 +192,7 @@ class Manager : public CheckpointConversionBase
    /*! @brief Request an update to the object attributes for the given object
     * instance name.
     *  @param instance_name Object instance name. */
-   void request_data_update( char const *instance_name );
+   void request_data_update( std::string const &instance_name );
 
    /*! @brief Send cyclic an requested atrributes data to the remote federates. */
    void send_cyclic_and_requested_data();
@@ -299,17 +299,19 @@ class Manager : public CheckpointConversionBase
 
    /*! @brief Start the federation save as soon as possible.
     *  @param file_name Checkpoint file name. */
-   void start_federation_save( char const *file_name );
+   void start_federation_save( std::string const &file_name );
 
    /*! @brief Start the Federation save at the specified simulation time.
     *  @param freeze_sim_time Simulation time to freeze.
     *  @param file_name       Checkpoint file name. */
-   void start_federation_save_at_sim_time( double freeze_sim_time, char const *file_name );
+   void start_federation_save_at_sim_time( double             freeze_sim_time,
+                                           std::string const &file_name );
 
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
-   void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name );
+   void start_federation_save_at_scenario_time( double             freeze_scenario_time,
+                                                std::string const &file_name );
 
    /*! @brief Encode/setup the checkpoint data structures. */
    virtual void encode_checkpoint();
@@ -573,21 +575,21 @@ class Manager : public CheckpointConversionBase
     *  instance at initialization.
     *  @param obj_instance_name Object instance name to pull ownership
     *  of for all attributes. */
-   void pull_ownership_at_init( char const *obj_instance_name );
+   void pull_ownership_at_init( std::string const &obj_instance_name );
 
    /*! @brief Blocking function call to pull ownership of the named object
     *  instance at initialization.
     *  @param obj_instance_name Object instance name to pull ownership
     *  of for all attributes.
     *  @param attribute_list Comma separated list of attributes. */
-   void pull_ownership_at_init( char const *obj_instance_name,
-                                char const *attribute_list );
+   void pull_ownership_at_init( std::string const &obj_instance_name,
+                                std::string const &attribute_list );
 
    /*! @brief Blocking function call to wait to handle the remote request to
     *  Pull ownership object attributes to this federate.
     *  @param obj_instance_name Object instance name to handle the remote
     *  pulled ownership attributes from. */
-   void handle_pulled_ownership_at_init( char const *obj_instance_name );
+   void handle_pulled_ownership_at_init( std::string const &obj_instance_name );
 
    /*! @brief Pull ownership from the other federates when this federate has
     * rejoined the Federation. */
@@ -601,21 +603,21 @@ class Manager : public CheckpointConversionBase
     *  owned object attributes.
     *  @param obj_instance_name Object instance name to push ownership
     *  of for all attributes. */
-   void push_ownership_at_init( char const *obj_instance_name );
+   void push_ownership_at_init( std::string const &obj_instance_name );
 
    /*! @brief Blocking function call to push ownership of the named object
     *  instance at initialization.
     *  @param obj_instance_name Object instance name to push ownership
     *  of for all attributes.
     *  @param attribute_list Comma separated list of attribute FOM names. */
-   void push_ownership_at_init( char const *obj_instance_name,
-                                char const *attribute_list );
+   void push_ownership_at_init( std::string const &obj_instance_name,
+                                std::string const &attribute_list );
 
    /*! @brief Blocking function call to wait to handle the remote request to
     *  Push ownership object attributes to this federate.
     *  @param obj_instance_name Object instance name to handle the remote
     *  pushed ownership attributes from. */
-   void handle_pushed_ownership_at_init( char const *obj_instance_name );
+   void handle_pushed_ownership_at_init( std::string const &obj_instance_name );
 
    /*! @brief Grant any request to pull the ownership. */
    void grant_pull_request();
@@ -626,7 +628,7 @@ class Manager : public CheckpointConversionBase
    /*! @brief Tell the federate to initiate a save announce with the
     * user-supplied checkpoint name set for the current frame.
     *  @param file_name Checkpoint file name. */
-   void initiate_federation_save( char const *file_name );
+   void initiate_federation_save( std::string const &file_name );
 
    //
    // Checkpoint / clear / restore any interactions

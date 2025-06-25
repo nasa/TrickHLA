@@ -39,6 +39,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_LAG_COMPENSATION_HH
 #define TRICKHLA_LAG_COMPENSATION_HH
 
+// System includes.
+#include <string>
+
+// TrickHLA includes.
 #include "Attribute.hh"
 #include "Int64Interval.hh"
 #include "Int64Time.hh"
@@ -100,13 +104,13 @@ class LagCompensation
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( char const *attr_FOM_name );
+   Attribute *get_attribute( std::string const &attr_FOM_name );
 
    /*! @brief Get the Attribute for the given attribute FOM name an validate
     *  that is exists.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute_and_validate( char const *attr_FOM_name );
+   Attribute *get_attribute_and_validate( std::string const &attr_FOM_name );
 
    /*! @brief Returns a copy of the object's lookahead time.
     *  @return A copy of the federate's lookahead time. */

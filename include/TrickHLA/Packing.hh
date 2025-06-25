@@ -104,12 +104,12 @@ class Packing
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( char const *attr_FOM_name );
+   Attribute *get_attribute( std::string const &attr_FOM_name );
 
    /*! @brief This function returns the Attribute for the given attribute FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute_and_validate( char const *attr_FOM_name );
+   Attribute *get_attribute_and_validate( std::string const &attr_FOM_name );
 
    /*! @brief Get the current scenario time.
     *  @return Returns the current scenario time. */
@@ -122,13 +122,6 @@ class Packing
   protected:
    bool    initialized; ///< @trick_units{--} Initialization status flag.
    Object *object;      ///< @trick_io{**} Object associated with this class.
-
-   /*! @brief Uses Trick memory allocation routines to allocate a new string
-    *  that is input file compliant. */
-   char *allocate_input_string( char const *c_string );
-   /*! @brief Uses Trick memory allocation routines to allocate a new string
-    *  that is input file compliant. */
-   char *allocate_input_string( std::string const &cpp_string );
 
   private:
    // Do not allow the copy constructor or assignment operator.

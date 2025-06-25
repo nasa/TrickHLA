@@ -75,7 +75,7 @@ TrickThreadCoordinator::TrickThreadCoordinator() // RETURN: -- None.
      manager( NULL ),
      mutex(),
      any_child_thread_associated( false ),
-     disable_thread_ids( NULL ),
+     disable_thread_ids(),
      thread_cnt( 0 ),
      thread_state( NULL ),
      data_cycle_base_time_per_thread( NULL ),
@@ -90,14 +90,6 @@ TrickThreadCoordinator::TrickThreadCoordinator() // RETURN: -- None.
  */
 TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
 {
-   if ( this->disable_thread_ids != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {
-         message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->disable_thread_ids'\n",
-                          __LINE__ );
-      }
-      this->disable_thread_ids = NULL;
-   }
-
    // Release the arrays.
    if ( this->thread_state != NULL ) {
       this->thread_cnt = 0;
@@ -244,7 +236,7 @@ void TrickThreadCoordinator::initialize(
 
    // Disable Trick thread ID associations as configured in the input file.
    // This will override the compile-time associations in the S_define file.
-   if ( disable_thread_ids != NULL ) {
+   if ( !disable_thread_ids.empty() ) {
       // Break up the comma separated thread-IDs list into a vector.
       std::vector< std::string > thread_id_vec;
       StringUtilities::tokenize( disable_thread_ids, thread_id_vec, "," );
@@ -343,15 +335,10 @@ void TrickThreadCoordinator::initialize(
  * @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA.
  */
 void TrickThreadCoordinator::disable_trick_thread_associations(
-   char const *thread_ids )
+   string const &thread_ids )
 {
-   if ( disable_thread_ids != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( disable_thread_ids ) ) ) {
-         message_publish( MSG_WARNING, "TrickThreadCoordinator::disable_trick_thread_associations():%d WARNING failed to delete Trick Memory for 'this->disable_thread_ids'\n",
-                          __LINE__ );
-      }
-   }
-   disable_thread_ids = ( thread_ids != NULL ) ? trick_MM->mm_strdup( thread_ids ) : NULL;
+   // Make a copy.
+   this->disable_thread_ids = string( thread_ids );
 }
 
 /*!

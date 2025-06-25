@@ -176,7 +176,7 @@ void SinePacking::pack()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      string        obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
+      string        obj_name = ( this->object != NULL ) ? object->get_name() : "";
       ostringstream msg;
       msg << "SinePacking::pack():" << __LINE__ << '\n'
           << "\t Object-Name:'" << obj_name << "'\n"
@@ -242,7 +242,7 @@ void SinePacking::pack()
          }
       }
 
-      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       msg << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
           << "\t Object-Name:'" << obj_name << "'\n";
@@ -310,7 +310,7 @@ void SinePacking::unpack()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
-      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
       msg << "SinePacking::unpack():" << __LINE__ << '\n'
@@ -364,7 +364,7 @@ void SinePacking::unpack()
          }
       }
 
-      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       msg << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
           << "\t Object-Name:'" << obj_name << "'\n";

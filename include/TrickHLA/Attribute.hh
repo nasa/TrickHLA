@@ -83,7 +83,7 @@ class Attribute : public RecordElement
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   char *FOM_name; ///< @trick_units{--} FOM name for the attribute.
+   std::string FOM_name; ///< @trick_units{--} FOM name for the attribute.
 
    DataUpdateEnum config; ///< @trick_units{--} The attribute configuration.
 
@@ -115,9 +115,9 @@ class Attribute : public RecordElement
     *  @param object_index The array index to the parent Object.
     *  @param attribute_index The array index to this Attribute.
     */
-   void initialize( char const *obj_FOM_name,
-                    int const   object_index,
-                    int const   attribute_index );
+   void initialize( std::string const &obj_FOM_name,
+                    int const          object_index,
+                    int const          attribute_index );
 
    RTI1516_NAMESPACE::VariableLengthData &encode();
 
@@ -169,16 +169,9 @@ class Attribute : public RecordElement
 
    /*! @brief Get the Federation Object Model attribute name.
     *  @return FOM name for the attribute. */
-   char const *get_FOM_name() const
+   std::string const &get_FOM_name() const
    {
       return FOM_name;
-   }
-
-   /*! @brief Get the associated Trick variable space name.
-    *  @return The Trick variable space name associated with this attribute. */
-   char const *get_trick_name() const
-   {
-      return trick_name;
    }
 
    /*! @brief Determine if the attribute is published.

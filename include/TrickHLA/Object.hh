@@ -125,10 +125,10 @@ class Object : public CheckpointConversionBase
 
    // The variables below this point are configured by the user in either the
    // input or modified-data file.
-   char *name;          ///< @trick_units{--} Object Instance Name.
-   bool  name_required; ///< @trick_units{--} True (default) to require an object instance name be specified by you, or false to use the instance name automatically assigned by the RTI.
+   std::string name;          ///< @trick_units{--} Object Instance Name.
+   bool        name_required; ///< @trick_units{--} True (default) to require an object instance name be specified by you, or false to use the instance name automatically assigned by the RTI.
 
-   char *FOM_name; ///< @trick_units{--} FOM name for the object.
+   std::string FOM_name; ///< @trick_units{--} FOM name for the object.
 
    bool create_HLA_instance; ///< @trick_units{--} Set to true to create an HLA named instance of this object.
 
@@ -136,7 +136,7 @@ class Object : public CheckpointConversionBase
 
    bool blocking_cyclic_read; ///< @trick_units{--} True to block in receive_cyclic_data() for data to be received.
 
-   char *thread_ids; ///< @trick_units{--} Comma separated list of Trick child thread IDs associated to this object.
+   std::string thread_ids; ///< @trick_units{--} Comma separated list of Trick child thread IDs associated to this object.
 
    int        attr_count; ///< @trick_units{--} Number of object attributes.
    Attribute *attributes; ///< @trick_units{--} Array of object attributes.
@@ -299,7 +299,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Pull ownership of the named object instance at initialization.
     *  @param attribute_list Comma separated list of attributes FOM names. */
-   void pull_ownership_at_init( char const *attribute_list );
+   void pull_ownership_at_init( std::string const &attribute_list );
 
    /*! @brief Wait to handle the remote request to Pull ownership object
     *  attributes to this federate. */
@@ -317,7 +317,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Push ownership of the named object instance at initialization.
     *  @param attribute_list Comma separated list of attributes FOM names. */
-   void push_ownership_at_init( char const *attribute_list );
+   void push_ownership_at_init( std::string const &attribute_list );
 
    /*! @brief Wait to handle the remote request to Push ownership object
     *  attributes to this federate. */
@@ -350,16 +350,9 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Get the object instance name.
     *  @return Object instance name. */
-   char const *get_name() const
+   std::string const &get_name() const
    {
       return name;
-   }
-
-   /*! @brief Get the object instance name as a C++ string.
-    *  @return The object instance name as a C++ string. */
-   std::string const get_name_string() const
-   {
-      return ( ( name != NULL ) ? name : "" );
    }
 
    /*! @brief Check if an object instance name is required.
@@ -390,7 +383,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Get the FOM name for this object.
     *  @return The FOM name for this object. */
-   char const *get_FOM_name() const
+   std::string const &get_FOM_name() const
    {
       return FOM_name;
    }
@@ -447,7 +440,7 @@ class Object : public CheckpointConversionBase
       set_instance_handle( id );
       std::string instance_name_str;
       StringUtilities::to_string( instance_name_str, instance_name );
-      set_name( instance_name_str.c_str() );
+      set_name( instance_name_str );
       set_name_registered();
    }
 
@@ -678,11 +671,6 @@ class Object : public CheckpointConversionBase
    /*! @brief Gets the attribute for the given FOM name.
     *  @return Associated TrickHLA::Attribute.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( char const *attr_FOM_name );
-
-   /*! @brief Gets the attribute for the given FOM name.
-    *  @return Associated TrickHLA::Attribute.
-    *  @param attr_FOM_name Attribute FOM name. */
    Attribute *get_attribute( std::string const &attr_FOM_name );
 
    /*! @brief Get the count of the number of attributes associated with this object.
@@ -793,11 +781,11 @@ class Object : public CheckpointConversionBase
   private:
    /*! @brief Sets the new value of the name attribute.
     *  @param new_name New name for the object instance. */
-   void set_name( char const *new_name );
+   void set_name( std::string const &new_name );
 
    /*! @brief Set the name of the object and mark it as changed.
     *  @param new_name The new name of the object. */
-   void set_name_and_mark_changed( char const *new_name )
+   void set_name_and_mark_changed( std::string const &new_name )
    {
       set_name( new_name );
       mark_changed();

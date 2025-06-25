@@ -74,7 +74,7 @@ using namespace TrickHLA;
  */
 Attribute::Attribute()
    : RecordElement(),
-     FOM_name( NULL ),
+     FOM_name(),
      config( CONFIG_NONE ),
      preferred_order( TRANSPORT_SPECIFIED_IN_FOM ),
      publish( false ),
@@ -103,27 +103,27 @@ Attribute::~Attribute()
 }
 
 void Attribute::initialize(
-   char const *obj_FOM_name,
-   int const   object_index,
-   int const   attribute_index )
+   std::string const &obj_FOM_name,
+   int const          object_index,
+   int const          attribute_index )
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Make sure we have a valid Object FOM name.
-   if ( ( obj_FOM_name == NULL ) || ( *obj_FOM_name == '\0' ) ) {
+   if ( obj_FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: Unexpected NULL Object FOM-Name argument passed to this"
              << " function.";
-      if ( FOM_name != NULL ) {
-         errmsg << " For FOM Attribute Named '" << FOM_name << "'.";
+      if ( !get_FOM_name().empty() ) {
+         errmsg << " For FOM Attribute Named '" << get_FOM_name() << "'.";
       }
       errmsg << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Make sure we have a valid attribute FOM name.
-   if ( ( FOM_name == NULL ) || ( *FOM_name == '\0' ) ) {
+   if ( get_FOM_name().empty() ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: Object with FOM Name '" << obj_FOM_name << "' has a missing"
@@ -134,18 +134,13 @@ void Attribute::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   if ( rti_encoding == ENCODING_FIXED_RECORD ) {
-      // For a fixed record, set an empty string for the Trick-name if null.
-      if ( trick_name == NULL ) {
-         trick_name = StringUtilities::mm_strdup_string( "" );
-      }
-   } else {
+   if ( rti_encoding != ENCODING_FIXED_RECORD ) {
       // Make sure we have a valid attribute Trick-Name.
-      if ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) {
+      if ( trick_name.empty() ) {
          ostringstream errmsg;
          errmsg << "Attribute::initialize():" << __LINE__
                 << " ERROR: FOM Object Attribute '"
-                << obj_FOM_name << "'->'" << FOM_name << "' has a missing Trick name"
+                << obj_FOM_name << "'->'" << get_FOM_name() << "' has a missing Trick name"
                 << " for the attribute. Make sure THLA.manager.objects["
                 << object_index << "].attributes[" << attribute_index
                 << "].trick_name' in either your input.py file or modified-data files"
@@ -159,8 +154,8 @@ void Attribute::initialize(
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
-             << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-             << trick_name << "' has an 'rti_encoding' value of " << rti_encoding
+             << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
+             << get_trick_name() << "' has an 'rti_encoding' value of " << rti_encoding
              << " which is out of the valid range of " << ENCODING_FIRST_VALUE
              << " to " << ENCODING_LAST_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for the 'rti_encoding'"
@@ -173,8 +168,8 @@ void Attribute::initialize(
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
-             << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-             << trick_name << "' has an invalid 'preferred_order' and it must be"
+             << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
+             << get_trick_name() << "' has an invalid 'preferred_order' and it must be"
              << " one of TRANSPORT_TYPE_SPECIFIED_IN_FOM, THLA_TIMESTAMP_ORDER or"
              << " THLA_RECEIVE_ORDER. Please check your input or modified-data"
              << " files to make sure the 'preferred_order' is correctly specified.\n";
@@ -186,8 +181,8 @@ void Attribute::initialize(
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
-             << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-             << trick_name << "' has a 'config' value of " << config
+             << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
+             << get_trick_name() << "' has a 'config' value of " << config
              << " which is out of the valid range of " << CONFIG_NONE
              << " to " << CONFIG_MAX_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for 'config'"
@@ -201,8 +196,8 @@ void Attribute::initialize(
          ostringstream errmsg;
          errmsg << "Attribute::initialize():" << __LINE__
                 << " WARNING: FOM Object Attribute '"
-                << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                << trick_name << "' has a 'config' value of CONFIG_TYPE_NONE.\n";
+                << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
+                << get_trick_name() << "' has a 'config' value of CONFIG_TYPE_NONE.\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -212,12 +207,13 @@ void Attribute::initialize(
    if ( ( this->cycle_time <= 0.0 ) && ( this->cycle_time > -std::numeric_limits< double >::max() ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: FOM Object Attribute '" << obj_FOM_name << "'->'" << FOM_name
-             << "' with Trick name '" << trick_name << "' has a 'cycle_time' value"
-             << " of " << this->cycle_time << " seconds, which is not valid. The"
-             << " 'cycle_time' must be > 0. Please check your input or"
-             << " modified-data files to make sure the value for the 'cycle_time'"
-             << " is correctly specified.\n";
+             << " ERROR: FOM Object Attribute '"
+             << obj_FOM_name << "'->'" << get_FOM_name()
+             << "' with Trick name '" << get_trick_name()
+             << "' has a 'cycle_time' value of " << this->cycle_time
+             << " seconds, which is not valid. The 'cycle_time' must be > 0."
+             << " Please check your input or modified-data files to make sure"
+             << " the value for the 'cycle_time' is correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -228,7 +224,7 @@ void Attribute::initialize(
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: Unexpected NULL encoder for Trick variable '"
-             << trick_name << "' with an 'rti_encoding' value of "
+             << get_trick_name() << "' with an 'rti_encoding' value of "
              << encoding_enum_to_string( rti_encoding ) << ".\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -245,8 +241,8 @@ void Attribute::initialize(
       ostringstream msg;
       msg << "Attribute::initialize():" << __LINE__ << '\n'
           << "========================================================\n"
-          << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'\n"
-          << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'\n"
+          << "  FOM_name:'" << get_FOM_name() << "'\n"
+          << "  trick_name:'" << get_trick_name() << "'\n"
           << "  AttributeHandle:" << attr_handle_string << '\n'
           << "  publish:" << publish << '\n'
           << "  subscribe:" << subscribe << '\n'
@@ -270,9 +266,7 @@ VariableLengthData &Attribute::encode()
       ostringstream errmsg;
       errmsg << "Attribute::encode():" << __LINE__
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
-             << ( ( get_trick_name() != NULL ) ? get_trick_name() : "NULL" )
-             << "' and FOM name '"
-             << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" )
+             << get_trick_name() << "' and FOM name '" << get_FOM_name()
              << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -291,9 +285,7 @@ bool const Attribute::decode(
       ostringstream errmsg;
       errmsg << "Attribute::decode():" << __LINE__
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
-             << ( ( get_trick_name() != NULL ) ? get_trick_name() : "NULL" )
-             << "' and FOM name '"
-             << ( ( get_FOM_name() != NULL ) ? get_FOM_name() : "NULL" )
+             << get_trick_name() << "' and FOM name '" << get_FOM_name()
              << "' with error: " << err_details << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -302,7 +294,7 @@ bool const Attribute::decode(
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       message_publish( MSG_NORMAL, "Attribute::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
-                       __LINE__, get_FOM_name(), get_trick_name() );
+                       __LINE__, get_FOM_name().c_str(), get_trick_name().c_str() );
    }
 
    // Mark the attribute value as changed.
@@ -323,8 +315,8 @@ void Attribute::determine_cycle_ratio(
       if ( core_job_cycle_time <= 0.0 ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " ERROR: FOM Object Attribute '" << this->FOM_name
-                << "' with Trick name '" << this->trick_name
+                << " ERROR: FOM Object Attribute '" << get_FOM_name()
+                << "' with Trick name '" << get_trick_name()
                 << "'. The core job cycle time (" << core_job_cycle_time
                 << " seconds) for the send_cyclic_and_requested_data() job"
                 << " must be > 0. Please make sure your S_define and/or THLA.sm"
@@ -337,8 +329,8 @@ void Attribute::determine_cycle_ratio(
       if ( this->cycle_time < core_job_cycle_time ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " ERROR: FOM Object Attribute '" << this->FOM_name
-                << "' with Trick name '" << this->trick_name
+                << " ERROR: FOM Object Attribute '" << get_FOM_name()
+                << "' with Trick name '" << get_trick_name()
                 << "' has a 'cycle_time' value of " << this->cycle_time
                 << " seconds, which is not valid. The attribute 'cycle_time'"
                 << " must be >= " << core_job_cycle_time
@@ -358,9 +350,9 @@ void Attribute::determine_cycle_ratio(
       if ( fmod( this->cycle_time, core_job_cycle_time ) != 0.0 ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " ERROR: FOM Object Attribute '" << FOM_name << "' with Trick name '"
-                << this->trick_name << "' has a 'cycle_time' value of "
-                << this->cycle_time
+                << " ERROR: FOM Object Attribute '" << get_FOM_name()
+                << "' with Trick name '" << get_trick_name()
+                << "' has a 'cycle_time' value of " << this->cycle_time
                 << " seconds, which is not an integer multiple of the core job"
                 << " cycle time of " << core_job_cycle_time << " seconds for the"
                 << " send_cyclic_and_requested_data() job. The ratio of the"
@@ -375,8 +367,8 @@ void Attribute::determine_cycle_ratio(
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::determine_cycle_ratio():" << __LINE__ << '\n'
-             << "  FOM_name:'" << ( ( this->FOM_name != NULL ) ? this->FOM_name : "NULL" ) << "'\n"
-             << "  trick_name:'" << ( ( this->trick_name != NULL ) ? this->trick_name : "NULL" ) << "'\n"
+             << "  FOM_name:'" << get_FOM_name() << "'\n"
+             << "  trick_name:'" << get_trick_name() << "'\n"
              << "  core_job_cycle_time:" << core_job_cycle_time << " seconds\n"
              << "  cyle_time:" << this->cycle_time << " seconds\n"
              << "  cycle_ratio:" << this->cycle_ratio << '\n';

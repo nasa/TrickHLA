@@ -88,13 +88,10 @@ extern ATTRIBUTES attrTrickHLA__ExecutionConfigurationBase[];
  * @job_class{initialization}
  */
 ExecutionConfigurationBase::ExecutionConfigurationBase()
-   : S_define_name( NULL ),
+   : S_define_name(),
      pending_update( false ),
      execution_control( NULL )
 {
-   // Set the name to an empty string.
-   this->name = trick_MM->mm_strdup( "" );
-
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
    this->packing = this;
@@ -104,15 +101,12 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
  * @job_class{initialization}
  */
 ExecutionConfigurationBase::ExecutionConfigurationBase(
-   char const *s_define_name )
+   string const &s_define_name )
    : pending_update( false ),
      execution_control( NULL )
 {
-   // Set the name to an empty string.
-   this->name = trick_MM->mm_strdup( "" );
-
-   // Set the full path S_define name.
-   this->S_define_name = trick_MM->mm_strdup( s_define_name );
+   // Set the full path S_define name and make a copy.
+   this->S_define_name = string( s_define_name );
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
@@ -124,13 +118,7 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
  */
 ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
-   if ( this->S_define_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
-                          __LINE__ );
-      }
-      this->S_define_name = NULL;
-   }
+   return;
 }
 
 /*!
@@ -155,18 +143,10 @@ void ExecutionConfigurationBase::setup(
  * @job_class{initialization}
  */
 void ExecutionConfigurationBase::set_S_define_name(
-   char const *new_name )
+   string const &new_name )
 {
-   if ( this->S_define_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionConfigurationBase::set_S_define_name():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
-                          __LINE__ );
-      }
-      this->S_define_name = NULL;
-   }
-
-   // Set the full path S_define name.
-   this->S_define_name = trick_MM->mm_strdup( new_name );
+   // Set the full path S_define name and make a copy.
+   this->S_define_name = string( new_name );
 }
 
 void ExecutionConfigurationBase::reset_preferred_order()
