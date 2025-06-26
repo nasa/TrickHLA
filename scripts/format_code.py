@@ -93,12 +93,16 @@ def main():
    # Sub-directories under source/TrickHLA (i.e. source/TrickHLA/encoding).
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source/TrickHLA' ) )
    
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Ball' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Ball' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/DistIf' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/DistIf' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/encoding' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/encoding' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/EntityDynamics' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/EntityDynamics' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/FixedRecord' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/FixedRecord' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/FrameDynamics' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/FrameDynamics' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/SAIntegrator' ) ):

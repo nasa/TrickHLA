@@ -262,14 +262,18 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    if jeod_home:
       trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
 
-   # Form relative paths to all the source directories used by TrickHLA.
+   # Relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./source'] )
+   if os.path.isdir( './models/Ball/src' ):
+      trickhla_source_dirs.extend( ['./models/Ball/src'] )
    if os.path.isdir( './models/DistIf/src' ):
       trickhla_source_dirs.extend( ['./models/DistIf/src'] )
    if os.path.isdir( './models/encoding/src' ):
       trickhla_source_dirs.extend( ['./models/encoding/src'] )
    if os.path.isdir( './models/EntityDynamics/src' ):
       trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
+   if os.path.isdir( './models/FixedRecord/src' ):
+      trickhla_source_dirs.extend( ['./models/FixedRecord/src'] )
    if os.path.isdir( './models/FrameDynamics/src' ):
       trickhla_source_dirs.extend( ['./models/FrameDynamics/src'] )
    if os.path.isdir( './models/SAIntegrator/src' ):
