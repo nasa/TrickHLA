@@ -120,7 +120,7 @@ class WallsPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
 
    /*! @brief Set the reference to the physical entity data.
     *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
-   virtual void set_data( BallWalls * walls_data_ptr )
+   virtual void set_data( BallWalls *walls_data_ptr )
    {
       walls = walls_data_ptr;
       return;
@@ -139,10 +139,10 @@ class WallsPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
   protected:
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
-   TrickHLA::Attribute * floor_y_pos_attr;      ///< @trick_io{**} Name Attribute.
-   TrickHLA::Attribute * right_wall_x_pos_attr; ///< @trick_io{**} Time Attribute.
-   TrickHLA::Attribute * ceiling_y_pos_attr;    ///< @trick_io{**} Position Attribute.
-   TrickHLA::Attribute * left_wall_x_pos_attr;  ///< @trick_io{**} Velocity Attribute.
+   TrickHLA::Attribute *floor_y_pos_attr;      ///< @trick_io{**} Name Attribute.
+   TrickHLA::Attribute *right_wall_x_pos_attr; ///< @trick_io{**} Time Attribute.
+   TrickHLA::Attribute *ceiling_y_pos_attr;    ///< @trick_io{**} Position Attribute.
+   TrickHLA::Attribute *left_wall_x_pos_attr;  ///< @trick_io{**} Velocity Attribute.
 
    // Assign to these parameters when setting up the data associations for the
    // TrickHLAObject data for the Walls.
@@ -156,7 +156,7 @@ class WallsPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
    virtual void debug_print( std::ostream &stream = std::cout ) const;
 
    // Reference to simulation Walls position data.
-   BallWalls * walls; ///< @trick_units{--} Walls position data.
+   BallWalls *walls; ///< @trick_units{--} Walls position data.
 
   private:
    // This object is not copyable

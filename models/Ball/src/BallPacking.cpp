@@ -71,19 +71,19 @@ BallPacking::BallPacking()
      velocity_attr( NULL ),
      acceleration_attr( NULL ),
      force_attr( NULL ),
-     name( NULL),
+     name( NULL ),
      time( 0.0 ),
      ball_state( NULL )
 {
    //
    // Initialize the state.
    //
-   position[0] = 0.0;
-   position[0] = 0.0;
-   velocity[0] = 0.0;
-   velocity[0] = 0.0;
-   acceleration[0] = 0.0;
-   acceleration[0] = 0.0;
+   position[0]       = 0.0;
+   position[0]       = 0.0;
+   velocity[0]       = 0.0;
+   velocity[0]       = 0.0;
+   acceleration[0]   = 0.0;
+   acceleration[0]   = 0.0;
    external_force[0] = 0.0;
    external_force[0] = 0.0;
 
@@ -101,19 +101,19 @@ BallPacking::BallPacking( BallState &ball_state_ref )
      velocity_attr( NULL ),
      acceleration_attr( NULL ),
      force_attr( NULL ),
-     name( NULL),
+     name( NULL ),
      time( 0.0 ),
      ball_state( &ball_state_ref )
 {
    //
    // Initialize the state.
    //
-   position[0] = 0.0;
-   position[0] = 0.0;
-   velocity[0] = 0.0;
-   velocity[0] = 0.0;
-   acceleration[0] = 0.0;
-   acceleration[0] = 0.0;
+   position[0]       = 0.0;
+   position[0]       = 0.0;
+   velocity[0]       = 0.0;
+   velocity[0]       = 0.0;
+   acceleration[0]   = 0.0;
+   acceleration[0]   = 0.0;
    external_force[0] = 0.0;
    external_force[0] = 0.0;
 
@@ -187,7 +187,7 @@ void BallPacking::base_config(
    object->attributes[0].FOM_name      = "name";
    trick_name_str                      = entity_name_str + string( ".name" );
    object->attributes[0].trick_name    = trick_name_str;
-   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC);
+   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
@@ -331,11 +331,10 @@ void BallPacking::set_name( char const *new_name )
    }
 
    // Check for NULL new name.
-   if ( new_name == NULL ){
+   if ( new_name == NULL ) {
       // Allocate and assign and empty string.
       this->name = trick_MM->mm_strdup( "" );
-   }
-   else {
+   } else {
       // Allocate and assign new name in trick memory.
       this->name = trick_MM->mm_strdup( new_name );
    }
@@ -496,7 +495,7 @@ void BallPacking::unpack_into_working_data()
    if ( time_attr->is_received() ) {
       // Time tag for this state data.
       // For now, we dump the time tag.
-      //ball_state->time = time;
+      // ball_state->time = time;
    }
 
    // Unpack the position data.

@@ -41,14 +41,13 @@ NASA, Johnson Space Center\n
  * @job_class{default_data}
  */
 int ball_force_default_data(
-  BallForce * force )
+   BallForce *force )
 {
 
-   force->input.origin[0] = 0.0 ;
-   force->input.origin[1] = 2.0 ;
-   force->input.force = 8.0 ;
+   force->input.origin[0] = 0.0;
+   force->input.origin[1] = 2.0;
+   force->input.force     = 8.0;
 
    /* RETURN */
-   return( 0 ) ;
-
+   return ( 0 );
 }

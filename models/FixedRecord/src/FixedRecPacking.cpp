@@ -89,17 +89,17 @@ void FixedRecPacking::pack()
 
    // MainFixedRecObject
    field_2_float64 += 1.0;
-   string str = "field_1_string-" + std::to_string( field_2_float64 );
+   string str     = "field_1_string-" + std::to_string( field_2_float64 );
    field_1_string = StringUtilities::mm_strdup_string( str );
 
    // MainFixedRecord
    elem_2_float64 += 1000.0;
-   str = "elem_1_string-" + std::to_string( elem_2_float64 );
+   str           = "elem_1_string-" + std::to_string( elem_2_float64 );
    elem_1_string = StringUtilities::mm_strdup_string( str );
 
    // SecondaryFixedRecord
    element_1_count += 10;
-   str = "element_2_name-" + std::to_string( element_1_count );
+   str            = "element_2_name-" + std::to_string( element_1_count );
    element_2_name = StringUtilities::mm_strdup_string( str );
 
    // Use the inherited debug-handler to allow debug comments to be turned
@@ -127,19 +127,19 @@ void FixedRecPacking::unpack()
 
    // MainFixedRecObject
    if ( field_1_string != NULL ) {
-      sim_data->field_1_string  = StringUtilities::mm_strdup_string( field_1_string );
+      sim_data->field_1_string = StringUtilities::mm_strdup_string( field_1_string );
    }
    sim_data->field_2_float64 = field_2_float64;
 
    // MainFixedRecord
    if ( elem_1_string != NULL ) {
-      sim_data->elem_1_string  = StringUtilities::mm_strdup_string( elem_1_string );
+      sim_data->elem_1_string = StringUtilities::mm_strdup_string( elem_1_string );
    }
    sim_data->elem_2_float64 = elem_2_float64;
 
    // SecondaryFixedRecord
    if ( element_2_name != NULL ) {
-      sim_data->element_2_name  = StringUtilities::mm_strdup_string( element_2_name );
+      sim_data->element_2_name = StringUtilities::mm_strdup_string( element_2_name );
    }
    sim_data->element_1_count = element_1_count;
 

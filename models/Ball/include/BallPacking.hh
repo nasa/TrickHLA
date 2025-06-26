@@ -126,7 +126,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
 
    /*! @brief Get the position of the Ball.
     *  @param pos Current Ball position. */
-   virtual void get_position( double * pos )
+   virtual void get_position( double *pos )
    {
       pos[0] = position[0];
       pos[1] = position[1];
@@ -144,7 +144,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
 
    /*! @brief Get the velocity of the Ball.
     *  @param vel Current Ball velocity. */
-   virtual void get_velocity( double * vel )
+   virtual void get_velocity( double *vel )
    {
       vel[0] = velocity[0];
       vel[1] = velocity[1];
@@ -162,7 +162,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
 
    /*! @brief Get the acceleration of the Ball.
     *  @param accel Current Ball acceleration. */
-   virtual void get_acceleration( double * accel )
+   virtual void get_acceleration( double *accel )
    {
       accel[0] = acceleration[0];
       accel[1] = acceleration[1];
@@ -180,7 +180,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
 
    /*! @brief Get the force of the Ball.
     *  @param vel Current Ball force. */
-   virtual void set_force( double * force )
+   virtual void set_force( double *force )
    {
       force[0] = external_force[0];
       force[1] = external_force[1];
@@ -214,7 +214,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
 
    /*! @brief Set the reference to the physical entity data.
     *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
-   virtual void set_data( BallState * ball_data_ptr )
+   virtual void set_data( BallState *ball_data_ptr )
    {
       ball_state = ball_data_ptr;
       return;
@@ -233,28 +233,28 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
   protected:
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
-   TrickHLA::Attribute * name_attr;         ///< @trick_io{**} Name Attribute.
-   TrickHLA::Attribute * time_attr;         ///< @trick_io{**} Time Attribute.
-   TrickHLA::Attribute * position_attr;     ///< @trick_io{**} Position Attribute.
-   TrickHLA::Attribute * velocity_attr;     ///< @trick_io{**} Velocity Attribute.
-   TrickHLA::Attribute * acceleration_attr; ///< @trick_io{**} Acceleration Attribute.
-   TrickHLA::Attribute * force_attr;        ///< @trick_io{**} Force Attribute.
+   TrickHLA::Attribute *name_attr;         ///< @trick_io{**} Name Attribute.
+   TrickHLA::Attribute *time_attr;         ///< @trick_io{**} Time Attribute.
+   TrickHLA::Attribute *position_attr;     ///< @trick_io{**} Position Attribute.
+   TrickHLA::Attribute *velocity_attr;     ///< @trick_io{**} Velocity Attribute.
+   TrickHLA::Attribute *acceleration_attr; ///< @trick_io{**} Acceleration Attribute.
+   TrickHLA::Attribute *force_attr;        ///< @trick_io{**} Force Attribute.
 
    // Assign to these parameters when setting up the data associations for the
    // TrickHLAObject data for the Ball.
-   char   * name;              ///< @trick_units{--}   Name of ball.
-   double   time;              ///< @trick_units{s}    Time.
-   double   position[2];       ///< @trick_units{m}    X(horizontal), Y(vertical) position.
-   double   velocity[2];       ///< @trick_units{m/s}  X,Y velocity.
-   double   acceleration[2];   ///< @trick_units{m/s2} X,Y acceleration.
-   double   external_force[2]; ///< @trick_units{N}    Total external force on ball.
+   char  *name;              ///< @trick_units{--}   Name of ball.
+   double time;              ///< @trick_units{s}    Time.
+   double position[2];       ///< @trick_units{m}    X(horizontal), Y(vertical) position.
+   double velocity[2];       ///< @trick_units{m/s}  X,Y velocity.
+   double acceleration[2];   ///< @trick_units{m/s2} X,Y acceleration.
+   double external_force[2]; ///< @trick_units{N}    Total external force on ball.
 
    /*! @brief Print out the packing data debug information.
     *  @param stream Output stream. */
    virtual void debug_print( std::ostream &stream = std::cout ) const;
 
   protected:
-   BallState * ball_state; ///< @trick_units{--} Ball state data.
+   BallState *ball_state; ///< @trick_units{--} Ball state data.
 
   private:
    // This object is not copyable

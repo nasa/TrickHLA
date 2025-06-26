@@ -26,8 +26,8 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
-#include <string>
 #include <sstream>
+#include <string>
 
 // FixedRecord model includes.
 #include "FixedRecord/include/FixedRecData.hh"
@@ -53,7 +53,7 @@ FixedRecData::~FixedRecData()
 
 bool FixedRecData::compare(
    FixedRecData const &data,
-   string         &explanation )
+   string             &explanation )
 {
    bool equal_values = true;
 
@@ -77,8 +77,8 @@ bool FixedRecData::compare(
    int data1_field_1_string_size = strlen( this->field_1_string );
    int data2_field_1_string_size = strlen( data.field_1_string );
    int min_field_1_string_size   = ( data1_field_1_string_size <= data2_field_1_string_size )
-                                ? data1_field_1_string_size
-                                : data2_field_1_string_size;
+                                      ? data1_field_1_string_size
+                                      : data2_field_1_string_size;
    if ( data1_field_1_string_size != data2_field_1_string_size ) {
       msg << "this->field_1_string size (" << data1_field_1_string_size
           << ") != (" << data2_field_1_string_size << ") data.field_1_string size\n";
@@ -107,10 +107,10 @@ bool FixedRecData::compare(
    // - field_2_float64: HLAfloat64LE
    if ( this->field_2_float64 == data.field_2_float64 ) {
       msg << "this->field_2_float64 (" << this->field_2_float64
-            << ") == (" << data.field_2_float64 << ") data.field_2_float64\n";
+          << ") == (" << data.field_2_float64 << ") data.field_2_float64\n";
    } else {
       msg << "this->field_2_float64 (" << this->field_2_float64
-            << ") != (" << data.field_2_float64 << ") data.field_2_float64\n";
+          << ") != (" << data.field_2_float64 << ") data.field_2_float64\n";
       equal_values = false;
    }
 
@@ -120,8 +120,8 @@ bool FixedRecData::compare(
    int data1_elem_1_string_size = strlen( this->elem_1_string );
    int data2_elem_1_string_size = strlen( data.elem_1_string );
    int min_elem_1_string_size   = ( data1_elem_1_string_size <= data2_elem_1_string_size )
-                                ? data1_elem_1_string_size
-                                : data2_elem_1_string_size;
+                                     ? data1_elem_1_string_size
+                                     : data2_elem_1_string_size;
    if ( data1_elem_1_string_size != data2_elem_1_string_size ) {
       msg << "this->elem_1_string size (" << data1_elem_1_string_size
           << ") != (" << data2_elem_1_string_size << ") data.elem_1_string size\n";
@@ -152,10 +152,10 @@ bool FixedRecData::compare(
    //     - elem_2_float64: HLAfloat64LE
    if ( this->elem_2_float64 == data.elem_2_float64 ) {
       msg << "this->elem_2_float64 (" << this->elem_2_float64
-            << ") == (" << data.elem_2_float64 << ") data.elem_2_float64\n";
+          << ") == (" << data.elem_2_float64 << ") data.elem_2_float64\n";
    } else {
       msg << "this->elem_2_float64 (" << this->elem_2_float64
-            << ") != (" << data.elem_2_float64 << ") data.elem_2_float64\n";
+          << ") != (" << data.elem_2_float64 << ") data.elem_2_float64\n";
       equal_values = false;
    }
 
@@ -164,10 +164,10 @@ bool FixedRecData::compare(
    //         - element_1_count: HLAinteger32LE
    if ( this->element_1_count == data.element_1_count ) {
       msg << "this->element_1_count (" << this->element_1_count
-            << ") == (" << data.element_1_count << ") data.element_1_count\n";
+          << ") == (" << data.element_1_count << ") data.element_1_count\n";
    } else {
       msg << "this->element_1_count (" << this->element_1_count
-            << ") != (" << data.element_1_count << ") data.element_1_count\n";
+          << ") != (" << data.element_1_count << ") data.element_1_count\n";
       equal_values = false;
    }
 
@@ -177,8 +177,8 @@ bool FixedRecData::compare(
    int data1_element_2_name_size = strlen( this->element_2_name );
    int data2_element_2_name_size = strlen( data.element_2_name );
    int min_element_2_name_size   = ( data1_element_2_name_size <= data2_element_2_name_size )
-                                ? data1_element_2_name_size
-                                : data2_element_2_name_size;
+                                      ? data1_element_2_name_size
+                                      : data2_element_2_name_size;
    if ( data1_element_2_name_size != data2_element_2_name_size ) {
       msg << "this->element_2_name size (" << data1_element_2_name_size
           << ") != (" << data2_element_2_name_size << ") data.element_2_name size\n";
@@ -214,13 +214,13 @@ string FixedRecData::to_string()
    ostringstream msg;
    msg << "FixedRecData::to_string():" << __LINE__ << std::endl
        << "\t field_1_string:"
-       << ((field_1_string != NULL ) ? field_1_string : "NULL") << std::endl
+       << ( ( field_1_string != NULL ) ? field_1_string : "NULL" ) << std::endl
        << "\t field_2_float64:" << field_2_float64 << std::endl
        << "\t elem_1_string:"
-       << ((elem_1_string != NULL ) ? elem_1_string : "NULL") << std::endl
+       << ( ( elem_1_string != NULL ) ? elem_1_string : "NULL" ) << std::endl
        << "\t elem_2_float64:" << elem_2_float64 << std::endl
        << "\t element_1_count:" << element_1_count << std::endl
        << "\t element_2_name:"
-       << ((element_2_name != NULL ) ? element_2_name : "NULL") << std::endl;
+       << ( ( element_2_name != NULL ) ? element_2_name : "NULL" ) << std::endl;
    return msg.str();
 }

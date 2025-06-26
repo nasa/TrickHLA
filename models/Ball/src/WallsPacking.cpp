@@ -69,10 +69,10 @@ WallsPacking::WallsPacking()
      right_wall_x_pos_attr( NULL ),
      ceiling_y_pos_attr( NULL ),
      left_wall_x_pos_attr( NULL ),
-     floor_y_pos(0.0),
-     right_wall_x_pos(0.0),
-     ceiling_y_pos(0.0),
-     left_wall_x_pos(0.0),
+     floor_y_pos( 0.0 ),
+     right_wall_x_pos( 0.0 ),
+     ceiling_y_pos( 0.0 ),
+     left_wall_x_pos( 0.0 ),
      walls( NULL )
 {
    return;
@@ -87,10 +87,10 @@ WallsPacking::WallsPacking( BallWalls &walls_ref )
      right_wall_x_pos_attr( NULL ),
      ceiling_y_pos_attr( NULL ),
      left_wall_x_pos_attr( NULL ),
-     floor_y_pos(0.0),
-     right_wall_x_pos(0.0),
-     ceiling_y_pos(0.0),
-     left_wall_x_pos(0.0),
+     floor_y_pos( 0.0 ),
+     right_wall_x_pos( 0.0 ),
+     ceiling_y_pos( 0.0 ),
+     left_wall_x_pos( 0.0 ),
      walls( &walls_ref )
 {
    return;
@@ -330,7 +330,7 @@ void WallsPacking::unpack_into_working_data()
 
    // Unpack the ceiling Y position.
    if ( ceiling_y_pos_attr->is_received() ) {
-      walls->ceiling_y_pos =ceiling_y_pos;
+      walls->ceiling_y_pos = ceiling_y_pos;
    }
 
    // Unpack the left wall X position.

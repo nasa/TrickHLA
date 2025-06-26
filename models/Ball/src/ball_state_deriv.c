@@ -35,31 +35,29 @@ NASA, Johnson Space Center\n
 /* Trick include files. */
 #include "sim_services/include/collect_macros.h"
 
-
 /* Model include files. */
 #include "../include/ball_state.h"
-
 
 /*!
  * @job_class{derivative}
  */
 int ball_state_deriv(
-   BallState * state )
+   BallState *state )
 {
 
    /* GET SHORTHAND NOTATION FOR DATA STRUCTURES */
-   BallState_In   *SI = &(state->input);
-   BallState_Out  *SO = &(state->output);
-   BallState_Work *SW = &(state->work);
+   BallState_In   *SI = &( state->input );
+   BallState_Out  *SO = &( state->output );
+   BallState_Work *SW = &( state->work );
 
    /* LOCAL VARIABLE DECLARATIONS */
    double **collected_forces;
 
    /* COLLECT EXTERNAL FORCES ON THE BALL  --  TRUST US ON THIS ONE */
-   collected_forces = (double**)(SW->external_force);
+   collected_forces      = (double **)( SW->external_force );
    SO->external_force[0] = 0.0;
    SO->external_force[1] = 0.0;
-   for( int iinc = 0; iinc < NUM_COLLECT(collected_forces); iinc++ ) {
+   for ( int iinc = 0; iinc < NUM_COLLECT( collected_forces ); iinc++ ) {
       SO->external_force[0] += collected_forces[iinc][0];
       SO->external_force[1] += collected_forces[iinc][1];
    }
@@ -69,5 +67,5 @@ int ball_state_deriv(
    SO->acceleration[1] = SO->external_force[1] / SI->mass; /* Y acceleration */
 
    /* RETURN */
-   return(0);
+   return ( 0 );
 }

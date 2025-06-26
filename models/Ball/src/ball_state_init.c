@@ -41,27 +41,25 @@ NASA, Johnson Space Center\n
 #include "../include/ball_proto.h"
 #include "../include/ball_state.h"
 
-
 /*!
  * @job_class{initialization}
  */
 int ball_state_init(
-   BallState * state )
+   BallState *state )
 {
 
    /* GET SHORHAND NOTATION FOR DATA STRUCTURES */
-   BallState_In  *BI = &(state->input);
-   BallState_Out *BO = &(state->output);
+   BallState_In  *BI = &( state->input );
+   BallState_Out *BO = &( state->output );
 
    /* TRANSFER INPUT POSITION STATES TO OUTPUT POSITION STATES */
-   BO->position[0] = BI->position[0];     /* X position */
-   BO->position[1] = BI->position[1];     /* Y position */
+   BO->position[0] = BI->position[0]; /* X position */
+   BO->position[1] = BI->position[1]; /* Y position */
 
    /* TRANSFER INPUT SPEED AND ELEVATION INTO THE VELOCITY VECTOR */
-   BO->velocity[0] = BI->speed * cos( BI->elevation );       /* X velocity */
-   BO->velocity[1] = BI->speed * sin( BI->elevation );       /* Y velocity */
+   BO->velocity[0] = BI->speed * cos( BI->elevation ); /* X velocity */
+   BO->velocity[1] = BI->speed * sin( BI->elevation ); /* Y velocity */
 
    /* RETURN */
-   return( 0 );
+   return ( 0 );
 }
-

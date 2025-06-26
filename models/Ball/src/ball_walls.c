@@ -32,55 +32,51 @@ NASA, Johnson Space Center\n
 
 /* Trick include files. */
 #include "sim_services/Executive/include/exec_proto.h"
-#include "sim_services/Message/include/message_proto.h"
 #include "sim_services/Integrator/include/integrator_c_intf.h"
+#include "sim_services/Message/include/message_proto.h"
 
 /* Model include files. */
 #include "../include/ball_proto.h"
 #include "../include/ball_state.h"
 #include "../include/ball_walls.h"
 
-
 /*!
  * @job_class{derivative}
  */
 double wall_contact(
-   double         integ_time,
-   double         wall_position,
-   double         position,
-   REGULA_FALSI * rf_state,
-   double       * velocity     )
+   double        integ_time,
+   double        wall_position,
+   double        position,
+   REGULA_FALSI *rf_state,
+   double       *velocity )
 {
 
-   double tgo ;
+   double tgo;
 
    /* Compute the state error. */
    rf_state->error = position - wall_position;
 
    /* Call the Regula False routine. */
-   tgo = regula_falsi( integ_time , rf_state );
+   tgo = regula_falsi( integ_time, rf_state );
 
    /* Test for 0 time to go. */
    if ( tgo == 0.0 ) {
 
       /* Reset the Regula False. */
-      reset_regula_falsi( integ_time , rf_state );
+      reset_regula_falsi( integ_time, rf_state );
 
       /* Reverse the velocity (elastic collision. */
-      *velocity = - *velocity;
-
+      *velocity = -*velocity;
    }
-   return( tgo );
-
+   return ( tgo );
 }
-
 
 /*!
  * @job_class{derivative}
  */
 double ball_ceiling(
-   BallWalls * walls,
-   BallState * ball_state )
+   BallWalls *walls,
+   BallState *ball_state )
 {
    double integ_time;
    double tgo;
@@ -91,23 +87,21 @@ double ball_ceiling(
    tgo = wall_contact( integ_time,
                        walls->ceiling_y_pos,
                        ball_state->output.position[1],
-                       &(ball_state->work.ceiling),
-                       &(ball_state->output.velocity[1]) );
-   if( tgo == 0.0 && walls->print_contact ){
+                       &( ball_state->work.ceiling ),
+                       &( ball_state->output.velocity[1] ) );
+   if ( tgo == 0.0 && walls->print_contact ) {
       message_publish( 0, "%s hit Ceiling @ t = %g.\n", ball_state->name, integ_time );
    }
 
-   return( tgo );
-
+   return ( tgo );
 }
-
 
 /*!
  * @job_class{derivative}
  */
 double ball_floor(
-   BallWalls * walls,
-   BallState * ball_state )
+   BallWalls *walls,
+   BallState *ball_state )
 {
    double integ_time;
    double tgo;
@@ -118,23 +112,21 @@ double ball_floor(
    tgo = wall_contact( integ_time,
                        walls->floor_y_pos,
                        ball_state->output.position[1],
-                       &(ball_state->work.floor),
-                       &(ball_state->output.velocity[1]) );
-   if( tgo == 0.0 && walls->print_contact ){
+                       &( ball_state->work.floor ),
+                       &( ball_state->output.velocity[1] ) );
+   if ( tgo == 0.0 && walls->print_contact ) {
       message_publish( 0, "%s hit Floor @ t = %g.\n", ball_state->name, integ_time );
    }
 
-   return( tgo );
-
+   return ( tgo );
 }
-
 
 /*!
  * @job_class{derivative}
  */
 double ball_left_wall(
-   BallWalls * walls,
-   BallState * ball_state )
+   BallWalls *walls,
+   BallState *ball_state )
 {
    double integ_time;
    double tgo;
@@ -145,23 +137,21 @@ double ball_left_wall(
    tgo = wall_contact( integ_time,
                        walls->left_wall_x_pos,
                        ball_state->output.position[0],
-                       &(ball_state->work.left_wall),
-                       &(ball_state->output.velocity[0]) );
-   if( tgo == 0.0 && walls->print_contact ){
+                       &( ball_state->work.left_wall ),
+                       &( ball_state->output.velocity[0] ) );
+   if ( tgo == 0.0 && walls->print_contact ) {
       message_publish( 0, "%s hit Left Wall @ t = %g.\n", ball_state->name, integ_time );
    }
 
-   return( tgo );
-
+   return ( tgo );
 }
-
 
 /*!
  * @job_class{derivative}
  */
 double ball_right_wall(
-   BallWalls * walls,
-   BallState * ball_state )
+   BallWalls *walls,
+   BallState *ball_state )
 {
    double integ_time;
    double tgo;
@@ -172,12 +162,11 @@ double ball_right_wall(
    tgo = wall_contact( integ_time,
                        walls->right_wall_x_pos,
                        ball_state->output.position[0],
-                       &(ball_state->work.right_wall),
-                       &(ball_state->output.velocity[0]) );
-   if( tgo == 0.0 && walls->print_contact ){
+                       &( ball_state->work.right_wall ),
+                       &( ball_state->output.velocity[0] ) );
+   if ( tgo == 0.0 && walls->print_contact ) {
       message_publish( 0, "%s hit Right Wall @ t = %g.\n", ball_state->name, integ_time );
    }
 
-   return( tgo );
-
+   return ( tgo );
 }
