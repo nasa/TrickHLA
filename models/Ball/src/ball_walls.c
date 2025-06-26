@@ -75,8 +75,8 @@ double wall_contact(
  * @job_class{derivative}
  */
 double ball_ceiling(
-   BallWalls *walls,
-   BallState *ball_state )
+   BallWalls const *walls,
+   BallState       *ball_state )
 {
    double integ_time;
    double tgo;
@@ -100,8 +100,8 @@ double ball_ceiling(
  * @job_class{derivative}
  */
 double ball_floor(
-   BallWalls *walls,
-   BallState *ball_state )
+   BallWalls const *walls,
+   BallState       *ball_state )
 {
    double integ_time;
    double tgo;
@@ -125,8 +125,8 @@ double ball_floor(
  * @job_class{derivative}
  */
 double ball_left_wall(
-   BallWalls *walls,
-   BallState *ball_state )
+   BallWalls const *walls,
+   BallState       *ball_state )
 {
    double integ_time;
    double tgo;
@@ -150,8 +150,8 @@ double ball_left_wall(
  * @job_class{derivative}
  */
 double ball_right_wall(
-   BallWalls *walls,
-   BallState *ball_state )
+   BallWalls const *walls,
+   BallState       *ball_state )
 {
    double integ_time;
    double tgo;

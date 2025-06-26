@@ -46,9 +46,9 @@ int ball_state_deriv(
 {
 
    /* GET SHORTHAND NOTATION FOR DATA STRUCTURES */
-   BallState_In   *SI = &( state->input );
-   BallState_Out  *SO = &( state->output );
-   BallState_Work *SW = &( state->work );
+   BallState_In const *SI = &( state->input );
+   BallState_Out      *SO = &( state->output );
+   BallState_Work     *SW = &( state->work );
 
    /* LOCAL VARIABLE DECLARATIONS */
    double **collected_forces;
@@ -57,7 +57,7 @@ int ball_state_deriv(
    collected_forces      = (double **)( SW->external_force );
    SO->external_force[0] = 0.0;
    SO->external_force[1] = 0.0;
-   for ( int iinc = 0; iinc < NUM_COLLECT( collected_forces ); iinc++ ) {
+   for ( int iinc = 0; iinc < NUM_COLLECT( collected_forces ); iinc++ ) { // cppcheck-suppress [invalidPointerCast]
       SO->external_force[0] += collected_forces[iinc][0];
       SO->external_force[1] += collected_forces[iinc][1];
    }

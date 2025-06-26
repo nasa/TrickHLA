@@ -40,11 +40,10 @@ NASA, Johnson Space Center\n
  * @job_class{dynamic_event}
  */
 double ball_ensemble_collision(
-   BallWalls *walls,
-   int        num_balls,
-   BallState *states[] )
+   BallWalls const *walls,
+   int              num_balls,
+   BallState       *states[] )
 {
-   double tgo;
    double event_tgo = BIG_TGO;
 
    /* NOTE: This routine only checks for collisions with walls not between balls. */
@@ -52,7 +51,7 @@ double ball_ensemble_collision(
    /* Check for collisions with walls. */
    for ( int iinc = 0; iinc < num_balls; iinc++ ) {
 
-      tgo = ball_ceiling( walls, states[iinc] );
+      double tgo = ball_ceiling( walls, states[iinc] );
       if ( tgo < event_tgo ) {
          event_tgo = tgo;
       }

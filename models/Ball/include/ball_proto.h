@@ -57,9 +57,9 @@ int ball_ensemble_integ( int num_balls, BallState *states[] );
  *  @param num_balls Number of balls in simulation.
  *  @param states List of ball states in simulation.
  *  @return Time to go to next predicted collision event. */
-double ball_ensemble_collision( BallWalls *walls,
-                                int        num_balls,
-                                BallState *states[] );
+double ball_ensemble_collision( BallWalls const *walls,
+                                int              num_balls,
+                                BallState       *states[] );
 
 /*! @brief Initializes the ball force model.
  *  @param force Force parameters for force model.
@@ -100,32 +100,32 @@ int ball_state_init( BallState *state );
  *  @param ball_state Ball state for Regula Falsi testing.
  *  @return Time to go for Regula False logic. */
 double ball_ceiling(
-   BallWalls *walls,
-   BallState *ball_state );
+   BallWalls const *walls,
+   BallState       *ball_state );
 
 /*! @brief Regula Falsi routine for left wall contact.
  *  @param walls Definition of wall constraints.
  *  @param ball_state Ball state for Regula Falsi testing.
  *  @return Time to go for Regula False logic. */
 double ball_left_wall(
-   BallWalls *walls,
-   BallState *ball_state );
+   BallWalls const *walls,
+   BallState       *ball_state );
 
 /*! @brief Regula Falsi routine for floor contact.
  *  @param walls Definition of wall constraints.
  *  @param ball_state Ball state for Regula Falsi testing.
  *  @return Time to go for Regula False logic. */
 double ball_floor(
-   BallWalls *walls,
-   BallState *ball_state );
+   BallWalls const *walls,
+   BallState       *ball_state );
 
 /*! @brief Regula Falsi routine for right wall contact.
  *  @param walls Definition of wall constraints.
  *  @param ball_state Ball state for Regula Falsi testing.
  *  @return Time to go for Regula False logic. */
 double ball_right_wall(
-   BallWalls *walls,
-   BallState *ball_state );
+   BallWalls const *walls,
+   BallState       *ball_state );
 
 /*! @brief Regula Falsi routine for general wall contact testing.
  *  @param integ_time    Current integration time.
