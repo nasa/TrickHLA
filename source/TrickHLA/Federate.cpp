@@ -6494,7 +6494,7 @@ void Federate::write_running_feds_file(
    ofstream file;
 
    full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
-   file.open( full_path.c_str(), ios::out );
+   file.open( full_path.c_str(), ios::out ); // flawfinder: ignore
    if ( file.is_open() ) {
       file << this->running_feds_count << '\n';
 
@@ -6697,7 +6697,7 @@ void Federate::read_running_feds_file(
       full_path = this->HLA_save_directory + "/" + federation_name_str + "_" + file_name + ".running_feds";
    }
 
-   file.open( full_path.c_str(), ios::in );
+   file.open( full_path.c_str(), ios::in ); // flawfinder: ignore
    if ( file.is_open() ) {
 
       clear_known_feds();
@@ -6723,7 +6723,7 @@ void Federate::read_running_feds_file(
          known_feds[i].name = string( current_line );
 
          file >> current_line;
-         known_feds[i].required = ( atoi( current_line.c_str() ) != 0 );
+         known_feds[i].required = ( atoi( current_line.c_str() ) != 0 ); // flawfinder: ignore
       }
 
       file.close(); // Close the file before exiting

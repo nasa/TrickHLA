@@ -195,8 +195,11 @@ void InteractionItem::initialize(
    // Put the user supplied tag into a buffer.
    user_supplied_tag_size = theUserSuppliedTag.size();
    if ( user_supplied_tag_size != 0 ) {
-      user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", user_supplied_tag_size ) );
-      memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size );
+      user_supplied_tag = static_cast< unsigned char * >(
+         TMM_declare_var_1d( "unsigned char", user_supplied_tag_size ) );
+      memcpy( user_supplied_tag, // flawfinder: ignore
+              theUserSuppliedTag.data(),
+              user_supplied_tag_size );
    }
 }
 
@@ -236,7 +239,7 @@ void InteractionItem::checkpoint_queue()
             parm_items[i].data = static_cast< unsigned char * >(
                TMM_declare_var_1d( "unsigned char", item->size ) );
 
-            memcpy( parm_items[i].data, item->data, item->size );
+            memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
          }
       }
    }
@@ -277,7 +280,7 @@ void InteractionItem::restore_queue()
          } else {
             item->data = static_cast< unsigned char * >(
                TMM_declare_var_1d( "unsigned char", parm_items[i].size ) );
-            memcpy( item->data, parm_items[i].data, parm_items[i].size );
+            memcpy( item->data, parm_items[i].data, parm_items[i].size ); // flawfinder: ignore
          }
 
          parameter_queue.push( item );

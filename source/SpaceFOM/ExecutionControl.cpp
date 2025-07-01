@@ -330,7 +330,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // loop until the current ATTRIBUTES name is a NULL string
    while ( strcmp( attrSpaceFOM__MTRInteractionHandler[attr_index].name, "" ) != 0 ) {
       if ( strcmp( attrSpaceFOM__MTRInteractionHandler[attr_index].name, "mtr_mode_int" ) == 0 ) {
-         memcpy( &mode_attr[0],
+         memcpy( &mode_attr[0], // flawfinder: ignore
                  &attrSpaceFOM__MTRInteractionHandler[attr_index],
                  sizeof( ATTRIBUTES ) );
       }
@@ -339,7 +339,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
 
    // Now that we have hit the end of the ATTRIBUTES array, copy the last
    // entry into my mode_attr array to make it a valid ATTRIBUTE array.
-   memcpy( &mode_attr[1],
+   memcpy( &mode_attr[1], // flawfinder: ignore
            &attrSpaceFOM__MTRInteractionHandler[attr_index],
            sizeof( ATTRIBUTES ) );
 

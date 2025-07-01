@@ -1055,7 +1055,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // loop until the current ATTRIBUTES name is a NULL string
    while ( strcmp( attrIMSim__FreezeInteractionHandler[attr_index].name, "" ) != 0 ) {
       if ( strcmp( attrIMSim__FreezeInteractionHandler[attr_index].name, "time" ) == 0 ) {
-         memcpy( &time_attr[0],
+         memcpy( &time_attr[0], // flawfinder: ignore
                  &attrIMSim__FreezeInteractionHandler[attr_index],
                  sizeof( ATTRIBUTES ) );
       }
@@ -1064,7 +1064,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
 
    // Now that we have hit the end of the ATTRIBUTES array, copy the last
    // entry into my time_attr array to make it a valid ATTRIBUTE array.
-   memcpy( &time_attr[1],
+   memcpy( &time_attr[1], // flawfinder: ignore
            &attrIMSim__FreezeInteractionHandler[attr_index],
            sizeof( ATTRIBUTES ) );
 

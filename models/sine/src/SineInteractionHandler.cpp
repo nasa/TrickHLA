@@ -110,7 +110,8 @@ void SineInteractionHandler::send_sine_interaction(
    // Create a User Supplied Tag based off the name in this example.
    RTI1516_USERDATA user_supplied_tag;
    if ( name != NULL ) {
-      user_supplied_tag = RTI1516_USERDATA( name, strlen( name ) );
+      string name_str   = name;
+      user_supplied_tag = RTI1516_USERDATA( name_str.c_str(), name_str.size() );
    } else {
       user_supplied_tag = RTI1516_USERDATA( 0, 0 );
    }
@@ -150,7 +151,7 @@ void SineInteractionHandler::send_sine_interaction(
               << __LINE__ << '\n'
               << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
               << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
-              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n'
+              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n' // flawfinder: ignore
               << "  user-supplied-tag:'" << user_supplied_tag_string << "'\n"
               << "  user-supplied-tag-size:" << user_supplied_tag.size() << '\n'
               << "  hla_granted_time:" << send_time << " ("
@@ -200,7 +201,7 @@ void SineInteractionHandler::receive_interaction(
           << __LINE__ << '\n'
           << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
           << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
-          << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n'
+          << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n' // flawfinder: ignore
           << "  user-supplied-tag:'" << user_tag_string << "'\n"
           << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << '\n'
           << "  scenario_time:" << get_scenario_time() << '\n'

@@ -115,7 +115,7 @@ void CharASCIIStringEncoder::update_after_decode()
    if ( ( string_data.size() + 1 ) <= var_element_count ) {
       // Copy value to existing Trick variable char* memory and include
       // the null terminating character in the c_str().
-      memcpy( *static_cast< void ** >( address ),
+      memcpy( *static_cast< void ** >( address ), // flawfinder: ignore
               string_data.c_str(),
               string_data.size() + 1 );
    } else {

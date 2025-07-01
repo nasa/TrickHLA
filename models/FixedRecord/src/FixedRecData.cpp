@@ -74,8 +74,8 @@ bool FixedRecData::compare(
    //         - element_2_name:  HLAunicodeString
 
    // - field_1_string:  HLAunicodeString
-   int data1_field_1_string_size = strlen( this->field_1_string );
-   int data2_field_1_string_size = strlen( data.field_1_string );
+   int data1_field_1_string_size = strlen( this->field_1_string ); // flawfinder: ignore
+   int data2_field_1_string_size = strlen( data.field_1_string );  // flawfinder: ignore
    int min_field_1_string_size   = ( data1_field_1_string_size <= data2_field_1_string_size )
                                       ? data1_field_1_string_size
                                       : data2_field_1_string_size;
@@ -117,8 +117,8 @@ bool FixedRecData::compare(
    // - field_3_rec:     MainFixedRecord
    //   + MainFixedRecord:  HLAfixedRecord
    //     - elem_1_string:  HLAunicodeString
-   int data1_elem_1_string_size = strlen( this->elem_1_string );
-   int data2_elem_1_string_size = strlen( data.elem_1_string );
+   int data1_elem_1_string_size = strlen( this->elem_1_string ); // flawfinder: ignore
+   int data2_elem_1_string_size = strlen( data.elem_1_string );  // flawfinder: ignore
    int min_elem_1_string_size   = ( data1_elem_1_string_size <= data2_elem_1_string_size )
                                      ? data1_elem_1_string_size
                                      : data2_elem_1_string_size;
@@ -174,8 +174,8 @@ bool FixedRecData::compare(
    //     - elem_3_record:  SecondaryFixedRecord
    //       + SecondaryFixedRecord: HLAfixedRecord
    //         - element_2_name:  HLAunicodeString
-   int data1_element_2_name_size = strlen( this->element_2_name );
-   int data2_element_2_name_size = strlen( data.element_2_name );
+   int data1_element_2_name_size = strlen( this->element_2_name ); // flawfinder: ignore
+   int data2_element_2_name_size = strlen( data.element_2_name );  // flawfinder: ignore
    int min_element_2_name_size   = ( data1_element_2_name_size <= data2_element_2_name_size )
                                       ? data1_element_2_name_size
                                       : data2_element_2_name_size;

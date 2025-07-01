@@ -115,6 +115,6 @@ void CharOpaqueDataEncoder::update_after_decode()
 
    Octet *byte_data = *static_cast< Octet ** >( address );
    if ( byte_data != NULL ) {
-      memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() );
+      memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() ); // flawfinder: ignore
    }
 }

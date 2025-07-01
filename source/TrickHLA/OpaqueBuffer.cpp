@@ -316,7 +316,7 @@ void OpaqueBuffer::byteswap_buffer_copy(
       // Do a byte-swap based on the size of the data.
       switch ( size ) {
          case 1: {
-            memcpy( dest, src, 1 );
+            memcpy( dest, src, 1 ); // flawfinder: ignore
             break;
          }
          case 2: {
@@ -364,6 +364,6 @@ void OpaqueBuffer::byteswap_buffer_copy(
       }
    } else {
       // No byte-swap needed so just copy the data.
-      memcpy( dest, src, size );
+      memcpy( dest, src, size ); // flawfinder: ignore
    }
 }

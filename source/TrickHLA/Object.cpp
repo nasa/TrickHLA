@@ -3802,7 +3802,7 @@ for Attributes of object '%s'.\n",
          rti_amb->attributeOwnershipAcquisition(
             this->instance_handle,
             attr_hdl_set,
-            RTI1516_USERDATA( get_name().c_str(), strlen( get_name().c_str() ) + 1 ) );
+            RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
 
       } catch ( RTI1516_EXCEPTION const &e ) {
          string rti_err_msg;
@@ -3928,7 +3928,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
          rti_amb->attributeOwnershipAcquisition(
             this->instance_handle,
             attr_hdl_set,
-            RTI1516_USERDATA( get_name().c_str(), strlen( get_name().c_str() ) + 1 ) );
+            RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
 
       } catch ( RTI1516_EXCEPTION const &e ) {
          string rti_err_msg;
@@ -4281,7 +4281,7 @@ void Object::grant_push_request()
             rti_amb->attributeOwnershipAcquisition(
                this->instance_handle,
                attrs,
-               RTI1516_USERDATA( get_name().c_str(), strlen( get_name().c_str() ) + 1 ) );
+               RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
          } catch ( FederateOwnsAttributes const &e ) {
             //            set_locally_owned();
 
@@ -4366,7 +4366,7 @@ void Object::negotiated_attribute_ownership_divestiture(
          rti_amb->negotiatedAttributeOwnershipDivestiture(
             this->instance_handle,
             *attr_hdl_set,
-            RTI1516_USERDATA( get_name().c_str(), strlen( get_name().c_str() ) + 1 ) );
+            RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
       } catch ( ObjectInstanceNotKnown const &e ) {
          message_publish( MSG_WARNING, "Object::negotiated_attribute_ownership_divestiture():%d ObjectInstanceNotKnown \n", __LINE__ );
       } catch ( AttributeNotDefined const &e ) {
@@ -5262,7 +5262,7 @@ for Attributes of object '%s'.\n",
          rti_amb->attributeOwnershipAcquisition(
             this->instance_handle,
             attr_hdl_set,
-            RTI1516_USERDATA( get_name().c_str(), strlen( get_name().c_str() ) + 1 ) );
+            RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
 
       } catch ( RTI1516_EXCEPTION const &e ) {
          string rti_err_msg;

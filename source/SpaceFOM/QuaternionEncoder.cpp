@@ -121,7 +121,7 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
       // VariableLengthData instance but into a different data area that the
       // one set in the constructor above.  So, we have to copy the encoded
       // data into the transmission buffer.
-      memcpy( buffer, encoded_data.data(), encoded_data.size() );
+      memcpy( buffer, encoded_data.data(), encoded_data.size() ); // flawfinder: ignore
 
    } else {
 

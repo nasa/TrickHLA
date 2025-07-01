@@ -3170,9 +3170,13 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
             check_interactions[i].user_supplied_tag = NULL;
          } else {
             check_interactions[i].user_supplied_tag =
-               static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", item->user_supplied_tag_size ) );
+               static_cast< unsigned char * >(
+                  trick_MM->declare_var( "unsigned char",
+                                         item->user_supplied_tag_size ) );
 
-            memcpy( check_interactions[i].user_supplied_tag, item->user_supplied_tag, item->user_supplied_tag_size );
+            memcpy( check_interactions[i].user_supplied_tag, // flawfinder: ignore
+                    item->user_supplied_tag,
+                    item->user_supplied_tag_size );
          }
 
          check_interactions[i].order_is_TSO = item->order_is_TSO;

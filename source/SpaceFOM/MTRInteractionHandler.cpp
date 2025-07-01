@@ -132,7 +132,7 @@ void MTRInteractionHandler::send_interaction(
    // Create a User Supplied Tag based off the name in this example.
    RTI1516_USERDATA rti_user_supplied_tag;
    if ( !name.empty() ) {
-      rti_user_supplied_tag = RTI1516_USERDATA( name.c_str(), strlen( name.c_str() ) );
+      rti_user_supplied_tag = RTI1516_USERDATA( name.c_str(), name.size() );
    } else {
       rti_user_supplied_tag = RTI1516_USERDATA( 0, 0 );
    }

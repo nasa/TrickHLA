@@ -262,14 +262,18 @@ void Interaction::set_user_supplied_tag(
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
       if ( user_supplied_tag == NULL ) {
-         user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", user_supplied_tag_capacity ) );
+         user_supplied_tag = static_cast< unsigned char * >(
+            TMM_declare_var_1d( "unsigned char",
+                                user_supplied_tag_capacity ) );
       } else {
-         user_supplied_tag = static_cast< unsigned char * >( TMM_resize_array_1d_a( user_supplied_tag, user_supplied_tag_capacity ) );
+         user_supplied_tag = static_cast< unsigned char * >(
+            TMM_resize_array_1d_a( user_supplied_tag,
+                                   user_supplied_tag_capacity ) );
       }
    }
    user_supplied_tag_size = tag_size;
    if ( tag != NULL ) {
-      memcpy( user_supplied_tag, tag, user_supplied_tag_size );
+      memcpy( user_supplied_tag, tag, user_supplied_tag_size ); // flawfinder: ignore
    } else {
       memset( user_supplied_tag, 0, user_supplied_tag_size );
    }

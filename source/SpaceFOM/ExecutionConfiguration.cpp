@@ -614,17 +614,21 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Loop until the current ATTRIBUTES name is a NULL string
    while ( strcmp( attrSpaceFOM__ExecutionConfiguration[attr_index].name, "" ) != 0 ) {
       if ( strcmp( attrSpaceFOM__ExecutionConfiguration[attr_index].name, "root_frame_name" ) == 0 ) {
-         memcpy( &exco_attr[0], &attrSpaceFOM__ExecutionConfiguration[attr_index], sizeof( ATTRIBUTES ) );
+         memcpy( &exco_attr[0], // flawfinder: ignore
+                 &attrSpaceFOM__ExecutionConfiguration[attr_index],
+                 sizeof( ATTRIBUTES ) );
       }
       ++attr_index;
    }
 
    // Now that we have hit the end of the ATTRIBUTES array, copy the last
    // entry into my exco_attr array to make it a valid ATTRIBUTE array.
-   memcpy( &exco_attr[1], &attrSpaceFOM__ExecutionConfiguration[attr_index], sizeof( ATTRIBUTES ) );
+   memcpy( &exco_attr[1], // flawfinder: ignore
+           &attrSpaceFOM__ExecutionConfiguration[attr_index],
+           sizeof( ATTRIBUTES ) );
 
    // Initialize the attribute.
-   attributes[0].initialize( get_FOM_name().c_str(), 0, 0 );
+   attributes[0].initialize( get_FOM_name(), 0, 0 );
 
    // Initialize the TrickHLA Attribute. Since we built the attributes
    // in-line, and not via the Trick input.py file, use the alternate version of

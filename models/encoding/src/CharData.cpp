@@ -138,8 +138,8 @@ bool CharData::compare(
       }
    }
 
-   int data1_ptr_char_size = strlen( this->ptr_char );
-   int data2_ptr_char_size = strlen( data.ptr_char );
+   int data1_ptr_char_size = strlen( this->ptr_char ); // flawfinder: ignore
+   int data2_ptr_char_size = strlen( data.ptr_char );  // flawfinder: ignore
    int min_ptr_char_size   = ( data1_ptr_char_size <= data2_ptr_char_size )
                                 ? data1_ptr_char_size
                                 : data2_ptr_char_size;

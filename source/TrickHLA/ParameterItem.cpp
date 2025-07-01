@@ -83,7 +83,7 @@ ParameterItem::ParameterItem(
          data = NULL;
       } else {
          data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", size ) );
-         memcpy( data, param_value->data(), size );
+         memcpy( data, param_value->data(), size ); // flawfinder: ignore
       }
    }
 }

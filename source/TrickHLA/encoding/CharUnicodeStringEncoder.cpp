@@ -119,7 +119,7 @@ void CharUnicodeStringEncoder::update_after_decode()
 
       // Copy value to existing Trick variable char* memory and include
       // the null terminating character in the c_str().
-      memcpy( *static_cast< void ** >( address ),
+      memcpy( *static_cast< void ** >( address ), // flawfinder: ignore
               str_data.c_str(),
               str_data.size() + 1 );
    } else {
