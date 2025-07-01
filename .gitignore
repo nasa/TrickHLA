@@ -23,6 +23,7 @@ docs/doxygen/*Err.txt
 
 # MacOS files
 .DS_Store
+*.memgraph
 
 # ctags tags files
 tags
