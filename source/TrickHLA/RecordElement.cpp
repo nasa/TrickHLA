@@ -103,6 +103,7 @@ void RecordElement::initialize_element_encoder()
                 << " or modified-data files to make sure the attributes are"
                 << " correctly specified." << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         return;
       }
 
       // If we have elements but the element-count is invalid then let
@@ -110,12 +111,24 @@ void RecordElement::initialize_element_encoder()
       if ( ( element_count <= 0 ) && ( elements != NULL ) ) {
          ostringstream errmsg;
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-                << " ERROR: For element with trick_name '"
-                << get_trick_name() << "', the 'element_count' is "
-                << element_count << " but 'elements' have been specified."
-                << " Please check your input.py or modified-data files to"
-                << " make sure the elements are correctly specified." << endl;
+                << " ERROR: For element with trick_name '" << get_trick_name()
+                << "', the 'element_count' is " << element_count
+                << " but 'elements' are specified. Please check your input.py"
+                << " or modified-data files to make sure the elements are"
+                << " correctly specified." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+
+      if ( elements == NULL ) {
+         ostringstream errmsg;
+         errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
+                << " ERROR: For element with trick_name '" << get_trick_name()
+                << "', no 'elements' have been specified. Please check your"
+                << " input.py or modified-data files to make sure the elements"
+                << " are correctly specified." << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
       }
 
       this->encoder                 = new FixedRecordEncoder();
