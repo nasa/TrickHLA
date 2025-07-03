@@ -65,11 +65,13 @@ using namespace TrickHLA;
       this->data_encoder           = array_encoder;                                                    \
                                                                                                        \
       /* Connect the users array data to the encoder array elements. */                                \
-      for ( size_t i = 0; i < length; ++i ) {                                                          \
-         const_cast< EncodableDataType & >(                                                            \
-            dynamic_cast< EncodableDataType const & >(                                                 \
-               array_encoder->get( i ) ) )                                                             \
-            .setDataPointer( &array_data[i] );                                                         \
+      if ( array_data != NULL ) {                                                                      \
+         for ( size_t i = 0; i < length; ++i ) {                                                       \
+            const_cast< EncodableDataType & >(                                                         \
+               dynamic_cast< EncodableDataType const & >(                                              \
+                  array_encoder->get( i ) ) )                                                          \
+               .setDataPointer( &array_data[i] );                                                      \
+         }                                                                                             \
       }                                                                                                \
    }                                                                                                   \
                                                                                                        \
