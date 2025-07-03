@@ -113,7 +113,7 @@ EncoderBase *EncoderFactory::create(
    }
 
    EncoderBase *encoder = create( ref2->address, ref2->attr, hla_encoding );
-   delete ref2;
+   free( ref2 );
 
    return encoder;
 }
