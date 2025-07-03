@@ -121,7 +121,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
       size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException )
    {
-      return ( data_encoder != NULL ) ? data_encoder->decodeFrom( buffer, index ) : 0;
+      return ( data_encoder != NULL ) ? data_encoder->decodeFrom( buffer, index ) : index;
    }
 
    virtual size_t getEncodedLength() const throw( RTI1516_NAMESPACE::EncoderException )
@@ -131,7 +131,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
    virtual unsigned int getOctetBoundary() const
    {
-      return ( data_encoder != NULL ) ? data_encoder->getOctetBoundary() : 0;
+      return ( data_encoder != NULL ) ? data_encoder->getOctetBoundary() : 1;
    }
 
    virtual bool isSameTypeAs( RTI1516_NAMESPACE::DataElement const &inData ) const
