@@ -47,7 +47,7 @@ def main():
                                      formatter_class = argparse.RawDescriptionHelpFormatter, \
                                      description = 'Scan the TrickHLA source code using clang-tidy.', \
                                      epilog = textwrap.dedent( '''\n
-Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-bugprone''' ) )
+Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes''' ) )
 
    parser.add_argument( '--apply-fixes', \
                         help = 'Apply fixes.', \
@@ -73,12 +73,18 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --Trick
    parser.add_argument( '--models', \
                         help = 'Process the models source code.', \
                         action = 'store_true', dest = 'process_models' )
+   parser.add_argument( '--check-all', \
+                        help = 'Run all code checks.', \
+                        action = 'store_true', dest = 'check_all' )
    parser.add_argument( '--check-bugprone', \
                         help = 'Check for bugprone.', \
                         action = 'store_true', dest = 'check_bugprone' )
    parser.add_argument( '--check-cppcoreguidelines', \
                         help = 'Check for cppcoreguidelines.', \
                         action = 'store_true', dest = 'check_cppcoreguidelines' )
+   parser.add_argument( '--check-default', \
+                        help = 'Default: Check for clang static code analyzer and performance.', \
+                        action = 'store_true', dest = 'check_default' )
    parser.add_argument( '--check-includes', \
                         help = 'Check for includes.', \
                         action = 'store_true', dest = 'check_includes' )
@@ -282,22 +288,29 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --Trick
 
    # Configure the clang-tidy arguments.
    # List all checks: clang-tidy --checks='*' --dump-config --explain-config
-   if args.check_bugprone:
-      clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,bugprone-*\'' )
-   elif args.check_cppcoreguidelines:
-      clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,cppcoreguidelines-*\'' )
-   elif args.check_includes:
-      clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,bugprone-suspicious-include,llvm-include-order,misc-header-include-cycle,misc-include-cleaner,portability-restrict-system-includes,readability-duplicate-include\'' )
-   elif args.check_misc:
-      clang_tidy_args.append( '--checks=\'-*,misc-*\'' )
-   elif args.check_portability:
-      clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,portability-*\'' )
-   else:
-      clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,clang-analyzer-*,performance-*\'' )
+   checks = '--checks=\'-*,clang-diagnostic-*'
+   if args.check_bugprone or args.check_all:
+      checks += ',bugprone-*'
+   if args.check_cppcoreguidelines or args.check_all:
+      checks += ',cppcoreguidelines-*'
+   if args.check_includes or args.check_all:
+      checks += ',bugprone-suspicious-include,llvm-include-order,misc-header-include-cycle,misc-include-cleaner,portability-restrict-system-includes,readability-duplicate-include'
+   if args.check_misc or args.check_all:
+      checks += ',misc-*'
+   if args.check_portability or args.check_all:
+      checks += ',portability-*'
+   if args.check_default or args.check_all:
+      checks += ',clang-analyzer-*,performance-*'
+   if not ( args.check_bugprone or args.check_cppcoreguidelines or args.check_includes or args.check_misc or args.check_portability or args.check_default ):
+      checks += ',clang-analyzer-*,performance-*'
 
+   checks += '\''
+   clang_tidy_args.append( checks )
+   
    if args.apply_fixes:
       clang_tidy_args.append( '--fix-notes' )
-      #clang_tidy_args.append( '--fix-errors' )
+      clang_tidy_args.append( '--fix-errors' )
+      clang_tidy_args.append( '--export-fixes=\'clang_tidy_fixes.xml\'' )
 
    clang_tidy_args.append( '--header-filter=\'.*TrickHLA/.*\'' )
    clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )
