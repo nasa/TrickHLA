@@ -33,27 +33,21 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <ostream>
 #include <sstream>
+#include <stddef.h>
 
 // Trick include files.
+#include "trick/attributes.h"
 #include "trick/memorymanager_c_intf.h"
+#include "trick/parameter_types.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
-
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-// HLA include files.
-#include RTI1516_HEADER
-#include "RTI/VariableLengthData.h"
-#include "RTI/encoding/DataElement.h"
-#include "RTI/encoding/EncodingExceptions.h"
-#pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -151,16 +145,16 @@ void VariableArrayEncoderBase::resize_trick_var(
             TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
          }
          *( static_cast< void ** >( address ) ) =
-            static_cast< void * >( TMM_declare_var_1d( "std::string", new_size ) );
+            static_cast< void * >( TMM_declare_var_1d( "std::string", (int)new_size ) );
       } else {
          if ( *( static_cast< void ** >( address ) ) == NULL ) {
             *( static_cast< void ** >( address ) ) =
                static_cast< void * >( TMM_declare_var_1d(
-                  trickTypeCharString( this->type, "UNSUPPORTED_TYPE" ), new_size ) );
+                  trickTypeCharString( this->type, "UNSUPPORTED_TYPE" ), (int)new_size ) );
          } else {
             *( static_cast< void ** >( address ) ) =
                static_cast< void * >( TMM_resize_array_1d_a(
-                  *( static_cast< void ** >( address ) ), new_size ) );
+                  *( static_cast< void ** >( address ) ), (int)new_size ) );
          }
       }
 

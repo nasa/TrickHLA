@@ -34,15 +34,20 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
 
 // Trick include files.
+#include "trick/attributes.h"
 #include "trick/parameter_types.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
+#include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -50,10 +55,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
-#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
-#include "RTI/encoding/DataElement.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

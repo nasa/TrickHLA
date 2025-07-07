@@ -32,10 +32,14 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstddef>
+#include <cstdlib>
 #include <string>
 
 // TrickHLA include files.
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -43,9 +47,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/encoding/BasicDataElements.h"
-#include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/EncodingConfig.h"
 #include "RTI/encoding/HLAfixedArray.h"
 #pragma GCC diagnostic pop
@@ -57,7 +59,7 @@ using namespace TrickHLA;
 #define DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType ) \
                                                                                                        \
    EncoderClassName::EncoderClassName(                                                                 \
-      SimpleDataType *array_data,                                                                      \
+      SimpleDataType *array_data, /* NOLINT(bugprone-macro-parentheses) */                             \
       size_t          length )                                                                         \
       : EncoderBase()                                                                                  \
    {                                                                                                   \
@@ -67,9 +69,9 @@ using namespace TrickHLA;
       /* Connect the users array data to the encoder array elements. */                                \
       if ( array_data != NULL ) {                                                                      \
          for ( size_t i = 0; i < length; ++i ) {                                                       \
-            const_cast< EncodableDataType & >(                                                         \
-               dynamic_cast< EncodableDataType const & >(                                              \
-                  array_encoder->get( i ) ) )                                                          \
+            const_cast< EncodableDataType & >( /* NOLINT(bugprone-macro-parentheses) */                \
+                                               dynamic_cast< EncodableDataType const & >(              \
+                                                  array_encoder->get( i ) ) )                          \
                .setDataPointer( &array_data[i] );                                                      \
          }                                                                                             \
       }                                                                                                \

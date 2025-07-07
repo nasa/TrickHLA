@@ -69,7 +69,7 @@ namespace TrickHLA
       friend void init_attrTrickHLA__EncoderClassName();                            \
                                                                                     \
      public:                                                                        \
-      EncoderClassName( void *addr, ATTRIBUTES *attr );                             \
+      explicit EncoderClassName( void *addr );                                      \
                                                                                     \
       virtual ~EncoderClassName();                                                  \
                                                                                     \

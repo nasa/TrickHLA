@@ -35,7 +35,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -43,9 +45,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/encoding/BasicDataElements.h"
-#include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/EncodingConfig.h"
 #pragma GCC diagnostic pop
 
@@ -53,19 +53,18 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-#define DECLARE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum ) \
-                                                                                                          \
-   EncoderClassName::EncoderClassName(                                                                    \
-      void       *addr,                                                                                   \
-      ATTRIBUTES *attr )                                                                                  \
-      : EncoderBase()                                                                                     \
-   {                                                                                                      \
-      this->data_encoder = new EncodableDataType( static_cast< SimpleDataType * >( addr ) );              \
-   }                                                                                                      \
-                                                                                                          \
-   EncoderClassName::~EncoderClassName()                                                                  \
-   {                                                                                                      \
-      return;                                                                                             \
+#define DECLARE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum )                             \
+                                                                                                                                      \
+   EncoderClassName::EncoderClassName(                                                                                                \
+      void *addr )                                                                                                                    \
+      : EncoderBase()                                                                                                                 \
+   {                                                                                                                                  \
+      this->data_encoder = new EncodableDataType( static_cast< SimpleDataType * >( addr ) ); /* NOLINT(bugprone-macro-parentheses) */ \
+   }                                                                                                                                  \
+                                                                                                                                      \
+   EncoderClassName::~EncoderClassName()                                                                                              \
+   {                                                                                                                                  \
+      return;                                                                                                                         \
    }
 
 DECLARE_BASIC_ENCODER_CLASS( ASCIICharEncoder, HLAASCIIchar, char, TRICK_CHARACTER )

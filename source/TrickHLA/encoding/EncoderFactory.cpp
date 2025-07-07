@@ -43,15 +43,21 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstdlib>
+#include <ostream>
 #include <sstream>
 #include <string>
 
 // Trick include files.
+#include "trick/attributes.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/parameter_types.h"
+#include "trick/reference.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
@@ -60,6 +66,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
 #include "TrickHLA/encoding/CharRawDataEncoder.hh"
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
 #include "TrickHLA/encoding/StringUnicodeStringEncoder.hh"
@@ -70,11 +77,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
-#include "RTI/encoding/BasicDataElements.h"
-#include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/EncodingConfig.h"
-#include "RTI/encoding/HLAfixedArray.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
@@ -113,6 +116,7 @@ EncoderBase *EncoderFactory::create(
    }
 
    EncoderBase *encoder = create( ref2->address, ref2->attr, hla_encoding );
+
    free( ref2 );
 
    return encoder;
@@ -153,7 +157,7 @@ EncoderBase *EncoderFactory::create(
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
-      case TRICK_CHARACTER: {
+      case TRICK_CHARACTER: { // NOLINT(bugprone-branch-clone)
          // (char)
          encoder = create_char_encoder( address, attr, hla_encoding );
          break;
@@ -474,7 +478,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
                return new ASCIICharVariableArrayEncoder( address, attr );
             }
          } else {
-            return new ASCIICharEncoder( address, attr );
+            return new ASCIICharEncoder( address );
          }
          break;
       }
@@ -511,7 +515,7 @@ EncoderBase *EncoderFactory::create_string_encoder(
                return new ASCIIStringVariableArrayEncoder( address, attr );
             }
          } else {
-            return new ASCIIStringEncoder( address, attr );
+            return new ASCIIStringEncoder( address );
          }
          break;
       }
@@ -563,7 +567,7 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
                return new UnicodeCharVariableArrayEncoder( address, attr );
             }
          } else {
-            return new UnicodeCharEncoder( address, attr );
+            return new UnicodeCharEncoder( address );
          }
          break;
       }
@@ -602,7 +606,7 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
             }
          } else {
 #   if 1
-            return new UnicodeStringEncoder( address, attr );
+            return new UnicodeStringEncoder( address );
 #   else
             return new HLAunicodeString( static_cast< std::wstring * >( address ) );
 #   endif
@@ -644,7 +648,7 @@ EncoderBase *EncoderFactory::create_int16_encoder(
                return new Int16BEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Int16BEEncoder( address, attr );
+            return new Int16BEEncoder( address );
          }
          break;
       }
@@ -658,7 +662,7 @@ EncoderBase *EncoderFactory::create_int16_encoder(
                return new Int16LEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Int16LEEncoder( address, attr );
+            return new Int16LEEncoder( address );
          }
          break;
       }
@@ -695,7 +699,7 @@ EncoderBase *EncoderFactory::create_int32_encoder(
                return new Int32BEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Int32BEEncoder( address, attr );
+            return new Int32BEEncoder( address );
          }
          break;
       }
@@ -709,7 +713,7 @@ EncoderBase *EncoderFactory::create_int32_encoder(
                return new Int32LEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Int32LEEncoder( address, attr );
+            return new Int32LEEncoder( address );
          }
          break;
       }
@@ -746,7 +750,7 @@ EncoderBase *EncoderFactory::create_int64_encoder(
                return new Int64BEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Int64BEEncoder( address, attr );
+            return new Int64BEEncoder( address );
          }
          break;
       }
@@ -760,7 +764,7 @@ EncoderBase *EncoderFactory::create_int64_encoder(
                return new Int64LEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Int64LEEncoder( address, attr );
+            return new Int64LEEncoder( address );
          }
          break;
       }
@@ -800,7 +804,7 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
             }
          } else {
 #   if 1
-            return new UInt16BEEncoder( address, attr );
+            return new UInt16BEEncoder( address );
 #   else
             return new HLAunsignedInteger16BE( static_cast< UnsignedInteger16 * >( address ) );
 #   endif
@@ -819,7 +823,7 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
             }
          } else {
 #   if 1
-            return new UInt16LEEncoder( address, attr );
+            return new UInt16LEEncoder( address );
 #   else
             return new HLAunsignedInteger16LE( static_cast< UnsignedInteger16 * >( address ) );
 #   endif
@@ -861,7 +865,7 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
             }
          } else {
 #   if 1
-            return new UInt32BEEncoder( address, attr );
+            return new UInt32BEEncoder( address );
 #   else
             return new HLAunsignedInteger32BE( static_cast< UnsignedInteger32 * >( address ) );
 #   endif
@@ -880,7 +884,7 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
             }
          } else {
 #   if 1
-            return new UInt32LEEncoder( address, attr );
+            return new UInt32LEEncoder( address );
 #   else
             return new HLAunsignedInteger32LE( static_cast< UnsignedInteger32 * >( address ) );
 #   endif
@@ -922,7 +926,7 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
             }
          } else {
 #   if 1
-            return new UInt64BEEncoder( address, attr );
+            return new UInt64BEEncoder( address );
 #   else
             return new HLAunsignedInteger64BE( static_cast< UnsignedInteger64 * >( address ) );
 #   endif
@@ -941,7 +945,7 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
             }
          } else {
 #   if 1
-            return new UInt64LEEncoder( address, attr );
+            return new UInt64LEEncoder( address );
 #   else
             return new HLAunsignedInteger64LE( static_cast< UnsignedInteger64 * >( address ) );
 #   endif
@@ -982,7 +986,7 @@ EncoderBase *EncoderFactory::create_float32_encoder(
                return new Float32BEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Float32BEEncoder( address, attr );
+            return new Float32BEEncoder( address );
          }
          break;
       }
@@ -996,7 +1000,7 @@ EncoderBase *EncoderFactory::create_float32_encoder(
                return new Float32LEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Float32LEEncoder( address, attr );
+            return new Float32LEEncoder( address );
          }
          break;
       }
@@ -1033,7 +1037,7 @@ EncoderBase *EncoderFactory::create_float64_encoder(
                return new Float64BEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Float64BEEncoder( address, attr );
+            return new Float64BEEncoder( address );
          }
          break;
       }
@@ -1047,7 +1051,7 @@ EncoderBase *EncoderFactory::create_float64_encoder(
                return new Float64LEVariableArrayEncoder( address, attr );
             }
          } else {
-            return new Float64LEEncoder( address, attr );
+            return new Float64LEEncoder( address );
          }
          break;
       }
@@ -1099,7 +1103,7 @@ EncoderBase *EncoderFactory::create_bool_encoder(
                return new BoolVariableArrayEncoder( address, attr );
             }
          } else {
-            return new BoolEncoder( address, attr );
+            return new BoolEncoder( address );
          }
          break;
       }
