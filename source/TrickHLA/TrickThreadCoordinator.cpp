@@ -37,6 +37,8 @@ thread data cycle time being longer than the main thread data cycle time.}
 */
 
 // System includes.
+#include <cstddef>
+#include <cstdint>
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -63,6 +65,7 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/TrickThreadCoordinator.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;

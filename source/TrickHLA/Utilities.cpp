@@ -31,7 +31,11 @@ NASA, Johnson Space Center\n
 #include <string>
 #include <time.h>
 
+// Trick includes.
+#include "trick/attributes.h"
+
 // TrickHLA includes.
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/Version.hh"
 

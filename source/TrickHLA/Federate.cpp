@@ -70,7 +70,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 // Access the Trick global objects for CheckPoint restart and the Clock.

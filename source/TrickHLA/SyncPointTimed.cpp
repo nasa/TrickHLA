@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"

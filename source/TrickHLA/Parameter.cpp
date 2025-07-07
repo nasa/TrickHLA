@@ -39,10 +39,15 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
+// Trick includes.
+#include "trick/attributes.h"
+
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
