@@ -104,3 +104,4 @@ Debug
 
 # valgrind related files
 *.exe.dSYM
+valgrind*.txt
