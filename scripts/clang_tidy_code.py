@@ -45,8 +45,13 @@ def main():
    #
    parser = argparse.ArgumentParser( prog = 'clang_tidy_code', \
                                      formatter_class = argparse.RawDescriptionHelpFormatter, \
-                                     description = 'Scan the TrickHLA source code using clang-tidy.' )
+                                     description = 'Scan the TrickHLA source code using clang-tidy.', \
+                                     epilog = textwrap.dedent( '''\n
+Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-bugprone''' ) )
 
+   parser.add_argument( '--apply-fixes', \
+                        help = 'Apply fixes.', \
+                        action = 'store_true', dest = 'apply_fixes' )
    parser.add_argument( '-a', '--all', \
                         help = 'Process all the source code.', \
                         action = 'store_true', dest = 'process_all' )
@@ -68,18 +73,21 @@ def main():
    parser.add_argument( '--models', \
                         help = 'Process the models source code.', \
                         action = 'store_true', dest = 'process_models' )
-   parser.add_argument( '--bugprone-checks', \
-                        help = 'Perform bugprone checks.', \
-                        action = 'store_true', dest = 'bugprone_checks' )
-   parser.add_argument( '--cppcoreguidelines-checks', \
-                        help = 'Perform cppcoreguidelines checks.', \
-                        action = 'store_true', dest = 'cppcoreguidelines_checks' )
-   parser.add_argument( '--misc-checks', \
-                        help = 'Perform misc checks.', \
-                        action = 'store_true', dest = 'misc_checks' )
-   parser.add_argument( '--portability-checks', \
-                        help = 'Perform portability checks.', \
-                        action = 'store_true', dest = 'portability_checks' )
+   parser.add_argument( '--check-bugprone', \
+                        help = 'Check for bugprone.', \
+                        action = 'store_true', dest = 'check_bugprone' )
+   parser.add_argument( '--check-cppcoreguidelines', \
+                        help = 'Check for cppcoreguidelines.', \
+                        action = 'store_true', dest = 'check_cppcoreguidelines' )
+   parser.add_argument( '--check-includes', \
+                        help = 'Check for includes.', \
+                        action = 'store_true', dest = 'check_includes' )
+   parser.add_argument( '--check-misc', \
+                        help = 'Check for misc.', \
+                        action = 'store_true', dest = 'check_misc' )
+   parser.add_argument( '--check-portability', \
+                        help = 'Check for portability.', \
+                        action = 'store_true', dest = 'check_portability' )
    parser.add_argument( '-b', '--bin', \
                         help = 'Path to clang-tidy binaries directory.', \
                         dest = 'bin_path' )
@@ -274,19 +282,22 @@ def main():
 
    # Configure the clang-tidy arguments.
    # List all checks: clang-tidy --checks='*' --dump-config --explain-config
-   if args.bugprone_checks:
+   if args.check_bugprone:
       clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,bugprone-*\'' )
-   elif args.cppcoreguidelines_checks:
+   elif args.check_cppcoreguidelines:
       clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,cppcoreguidelines-*\'' )
-   elif args.misc_checks:
-      clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,misc-*\'' )
-   elif args.portability_checks:
+   elif args.check_includes:
+      clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,bugprone-suspicious-include,llvm-include-order,misc-header-include-cycle,misc-include-cleaner,portability-restrict-system-includes,readability-duplicate-include\'' )
+   elif args.check_misc:
+      clang_tidy_args.append( '--checks=\'-*,misc-*\'' )
+   elif args.check_portability:
       clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,portability-*\'' )
    else:
       clang_tidy_args.append( '--checks=\'-*,clang-diagnostic-*,clang-analyzer-*,performance-*\'' )
 
-#   clang_tidy_args.append( '--fix-notes' )
-#   clang_tidy_args.append( '--fix-errors' )
+   if args.apply_fixes:
+      clang_tidy_args.append( '--fix-notes' )
+      #clang_tidy_args.append( '--fix-errors' )
 
    clang_tidy_args.append( '--header-filter=\'.*TrickHLA/.*\'' )
    clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )
