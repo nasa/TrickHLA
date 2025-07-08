@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
 #include <sstream>
-#include <string>
 
 // JEOD model includes.
 #include "environment/time/include/time_tt.hh"
@@ -52,6 +52,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameData.hh"
 
 // TrickHLA includes.

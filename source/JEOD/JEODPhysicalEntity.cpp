@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 #include "JEOD/JEODPhysicalEntity.hh"
 
 // SpaceFOM includes.
+#include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
