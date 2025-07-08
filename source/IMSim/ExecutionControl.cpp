@@ -41,11 +41,17 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include <float.h>
 #include <iomanip>
 #include <limits>
+#include <ostream>
 #include <set>
 #include <sstream>
+#include <string.h>
+#include <string>
 
 // Trick includes.
 #include "trick/Executive.hh"
@@ -71,11 +77,14 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/Timeline.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
+#include "TrickHLA/Types.hh"
 
 // IMSim includes.
 #include "IMSim/ExecutionControl.hh"
+#include "IMSim/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -83,8 +92,9 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
-#include RTI1516_HEADER
 #include "RTI/Handle.h"
+#include "RTI/LogicalTime.h"
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 // IMSim file level declarations.
