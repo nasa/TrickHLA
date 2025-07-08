@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
+#include "TrickHLA/Timeline.hh"
 
 using namespace TrickHLA;
 

@@ -56,7 +56,7 @@ TimeOfDayTimeline::~TimeOfDayTimeline()
 double const TimeOfDayTimeline::get_time()
 {
    struct timespec ts;
-   clock_gettime( CLOCK_REALTIME, &ts );
+   clock_gettime( CLOCK_REALTIME, &ts ); // NOLINT
    return ( (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 ) );
 }
 
@@ -67,6 +67,6 @@ double const TimeOfDayTimeline::get_time()
 double const TimeOfDayTimeline::get_min_resolution()
 {
    struct timespec ts;
-   clock_getres( CLOCK_REALTIME, &ts );
+   clock_getres( CLOCK_REALTIME, &ts ); // NOLINT
    return ( (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 ) );
 }

@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
 #include <sstream>
 #include <string>
 
@@ -45,6 +46,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
@@ -58,7 +61,8 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
+#include "RTI/Enums.h"
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

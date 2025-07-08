@@ -35,7 +35,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstring>
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -46,6 +45,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 using namespace std;
@@ -182,7 +182,9 @@ void OpaqueBuffer::push_to_buffer(
    }
 
    // Display a warning if an unsupported encoding is used.
-   if ( ( encoding != ENCODING_LITTLE_ENDIAN ) && ( encoding != ENCODING_BIG_ENDIAN ) && ( encoding != ENCODING_NONE ) ) {
+   if ( ( encoding != ENCODING_LITTLE_ENDIAN )
+        && ( encoding != ENCODING_BIG_ENDIAN )
+        && ( encoding != ENCODING_NONE ) ) {
       ostringstream errmsg;
       errmsg << "OpaqueBuffer::push_to_buffer():" << __LINE__
              << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"

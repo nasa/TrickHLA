@@ -39,11 +39,11 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <initializer_list>
+#include <cstddef>
 #include <limits>
 #include <sstream>
 #include <string>
-#include <vector>
+#include <utility>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -61,6 +61,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
+#include "TrickHLA/OwnershipItem.hh"
 #include "TrickHLA/Types.hh"
 
 using namespace std;

@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
+#include "trick/Clock.hh"
 #include "trick/realtimesync_proto.h"
 
 // TrickHLA includes.

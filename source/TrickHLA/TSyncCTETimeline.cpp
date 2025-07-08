@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/TSyncCTETimeline.hh"
 
 #if !defined( SWIG )

@@ -38,14 +38,16 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
 #include <cstring>
 #include <limits>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
+#include "trick/Clock.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
@@ -57,6 +59,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
@@ -64,6 +67,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -72,8 +76,8 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/Handle.h"
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 // Access the Trick global objects the Clock.

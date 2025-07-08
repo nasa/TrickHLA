@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -45,6 +46,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Object.hh"
 

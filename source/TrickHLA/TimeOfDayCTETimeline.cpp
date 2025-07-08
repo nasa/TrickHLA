@@ -61,7 +61,7 @@ using namespace TrickHLA;
 TimeOfDayCTETimeline::TimeOfDayCTETimeline()
    : CTETimelineBase( exec_get_time_tic_value(),
                       "TrickHLA::TimeOfDayCTETimeline - CLOCK_MONOTONIC" ),
-     clk_id( CLOCK_MONOTONIC )
+     clk_id( CLOCK_MONOTONIC ) // NOLINT
 {
    return;
 }
@@ -81,7 +81,7 @@ TimeOfDayCTETimeline::~TimeOfDayCTETimeline()
 double const TimeOfDayCTETimeline::get_min_resolution()
 {
    struct timespec ts;
-   clock_getres( clk_id, &ts );
+   clock_getres( clk_id, &ts ); // NOLINT
    return (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 );
 }
 
@@ -107,7 +107,7 @@ void TimeOfDayCTETimeline::set_clock_tics_per_sec(
 double const TimeOfDayCTETimeline::get_time()
 {
    struct timespec ts;
-   clock_gettime( clk_id, &ts );
+   clock_gettime( clk_id, &ts ); // NOLINT
    return (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 );
 }
 
@@ -133,7 +133,7 @@ int TimeOfDayCTETimeline::clock_init()
 long long TimeOfDayCTETimeline::wall_clock_time()
 {
    struct timespec ts;
-   clock_gettime( clk_id, &ts );
+   clock_gettime( clk_id, &ts ); // NOLINT
    return ( ts.tv_sec * clock_tics_per_sec )
           + ( ( ts.tv_nsec * clock_tics_per_sec ) / 1000000000LL );
 }
@@ -146,20 +146,20 @@ int TimeOfDayCTETimeline::clock_stop()
    return 0;
 }
 
-void TimeOfDayCTETimeline::set_clock_ID( clockid_t const id )
+void TimeOfDayCTETimeline::set_clock_ID( clockid_t const id ) // NOLINT
 {
    this->clk_id = id;
 
    switch ( id ) {
-      case CLOCK_REALTIME: {
+      case CLOCK_REALTIME: { // NOLINT
          this->name = "TrickHLA::TimeOfDayCTETimeline - CLOCK_REALTIME";
          break;
       }
-      case CLOCK_MONOTONIC: {
+      case CLOCK_MONOTONIC: { // NOLINT
          this->name = "TrickHLA::TimeOfDayCTETimeline - CLOCK_MONOTONIC";
          break;
       }
-      case CLOCK_MONOTONIC_RAW: {
+      case CLOCK_MONOTONIC_RAW: { // NOLINT
          this->name = "TrickHLA::TimeOfDayCTETimeline - CLOCK_MONOTONIC_RAW";
          break;
       }

@@ -30,7 +30,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <cstring>
-#include <string>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -48,7 +47,6 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #pragma GCC diagnostic pop
 

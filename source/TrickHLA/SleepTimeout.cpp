@@ -26,7 +26,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <limits>
 #include <time.h>
 
 // Trick includes.
@@ -101,7 +100,7 @@ void SleepTimeout::set(
 
 int const SleepTimeout::sleep() const
 {
-   return nanosleep( &sleep_time, NULL );
+   return nanosleep( &sleep_time, NULL ); // NOLINT
 }
 
 // Current time as an integer in microseconds.

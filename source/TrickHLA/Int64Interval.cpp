@@ -30,10 +30,12 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
 #include <sstream>
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/StandardsSupport.hh"
 
@@ -43,7 +45,8 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
+#include "RTI/LogicalTimeInterval.h"
+#include "RTI/time/HLAinteger64Interval.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

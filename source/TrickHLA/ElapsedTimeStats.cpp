@@ -27,8 +27,10 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <sstream>
+#include <string>
 
 // Trick includes.
 #include "trick/clock_proto.h"

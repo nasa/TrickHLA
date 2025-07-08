@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/attributes.h"
+#include "trick/trick_byteswap.h"
 
 // TrickHLA includes.
 #include "TrickHLA/Types.hh"
@@ -446,7 +447,7 @@ int Utilities::micro_sleep(
       sleep_time.tv_sec  = 0;
       sleep_time.tv_nsec = 0;
    }
-   return nanosleep( &sleep_time, NULL );
+   return nanosleep( &sleep_time, NULL ); // NOLINT
 }
 
 string const Utilities::get_version()

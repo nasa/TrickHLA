@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"
 
@@ -42,7 +43,6 @@ NASA, Johnson Space Center\n
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
-#include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #pragma GCC diagnostic pop

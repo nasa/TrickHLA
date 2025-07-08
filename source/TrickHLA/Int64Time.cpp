@@ -30,11 +30,13 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
 #include <cstring>
 #include <sstream>
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StandardsSupport.hh"
 
@@ -43,9 +45,10 @@ NASA, Johnson Space Center\n
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
-#include RTI1516_HEADER
+#include "RTI/LogicalTime.h"
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
+#include "RTI/time/HLAinteger64Time.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

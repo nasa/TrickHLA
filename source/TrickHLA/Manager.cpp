@@ -45,11 +45,12 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
 #include <cstring>
 #include <float.h>
 #include <map>
 #include <sstream>
-#include <vector>
+#include <string>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -85,7 +86,6 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/Exception.h"
 #include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"

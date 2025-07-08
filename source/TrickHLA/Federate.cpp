@@ -39,10 +39,12 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include <initializer_list>
 #include <iomanip>
+#include <iostream>
 #include <limits>
 #include <set>
 #include <sstream>
@@ -52,6 +54,7 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/CheckPointRestart.hh"
 #include "trick/CheckPointRestart_c_intf.hh"
+#include "trick/Flag.h"
 #include "trick/MemoryManager.hh"
 #include "trick/command_line_protos.h"
 #include "trick/exec_proto.h"
@@ -68,6 +71,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
@@ -84,13 +88,15 @@ extern Trick::CheckPointRestart *the_cpr;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
+#include "RTI/Enums.h"
 #include "RTI/Exception.h"
+#include "RTI/Handle.h"
+#include RTI1516_HEADER
 #include "RTI/RTIambassador.h"
 #include "RTI/RTIambassadorFactory.h"
+#include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
-#include "RTI/time/HLAinteger64Interval.h"
 #include "RTI/time/HLAinteger64Time.h"
 #pragma GCC diagnostic pop
 

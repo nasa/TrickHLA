@@ -34,13 +34,19 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
 #include <string>
+
+// Trick includes
+#include "trick/attributes.h"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 #include "TrickHLA/encoding/FixedRecordEncoder.hh"
 
@@ -50,8 +56,6 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
-#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/HLAfixedRecord.h"
 #pragma GCC diagnostic pop
 

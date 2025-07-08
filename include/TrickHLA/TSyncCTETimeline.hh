@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 extern "C" {
 #   include "tsync.h" // cppcheck-suppress [missingInclude]
 }
-#endif
+#endif // SWIG
 
 namespace TrickHLA
 {

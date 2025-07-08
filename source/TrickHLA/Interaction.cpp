@@ -46,7 +46,10 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
+#include "trick/MemoryManager.hh"
 #include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
@@ -72,13 +75,11 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
-#include "RTI/time/HLAinteger64Time.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

@@ -40,11 +40,12 @@ execution.
 */
 
 // System includes.
+#include <cstddef>
+#include <cstdint>
 #include <sstream>
 #include <string>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
@@ -59,15 +60,6 @@ execution.
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-// HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

@@ -49,6 +49,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstring>
 #include <map>
+#include <set>
 #include <sstream>
 #include <string>
 
@@ -77,11 +78,12 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 
 // HLA include files.
-#include RTI1516_HEADER
+#include "RTI/Enums.h"
 #include "RTI/Exception.h"
+#include "RTI/FederateAmbassador.h"
 #include "RTI/Handle.h"
+#include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
-#include "RTI/time/HLAinteger64Time.h"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <pthread.h>
+#include <sys/_pthread/_pthread_mutexattr_t.h>
 
 // TrickHLA includes.
 #include "TrickHLA/MutexLock.hh"

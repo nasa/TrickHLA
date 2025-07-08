@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <sstream>
 #include <string>
@@ -35,6 +36,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;

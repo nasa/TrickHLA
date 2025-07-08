@@ -29,9 +29,12 @@ NASA, Johnson Space Center\n
 
 */
 
+// System includes.
+#include <cstddef>
+
 // TrickHLA includes.
-#include "TrickHLA/ObjectDeleted.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectDeleted.hh"
 
 using namespace std;
 using namespace TrickHLA;

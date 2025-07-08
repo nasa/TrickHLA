@@ -27,12 +27,9 @@ NASA, Johnson Space Center\n
 
 */
 
-// System includes.
-#include <queue>
-
 // TrickHLA includes.
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/ReflectedAttributesQueue.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -41,7 +38,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;

@@ -38,9 +38,6 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
-// Trick includes.
-#include "trick/memorymanager_c_intf.h"
-
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"

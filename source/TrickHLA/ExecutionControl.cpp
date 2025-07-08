@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title
@@ -33,6 +34,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
+#include <cstdint>
 #include <sstream>
 #include <string>
 
@@ -49,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -57,7 +61,9 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
+#include "RTI/Handle.h"
+#include "RTI/LogicalTime.h"
+#include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 
 // Simple TrickHL::ExecutionControl file level declarations.

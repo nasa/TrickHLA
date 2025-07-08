@@ -44,7 +44,10 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
+#include <cstdlib>
 #include <cstring>
+#include <ostream>
 #include <pthread.h>
 #include <set>
 #include <sstream>
@@ -68,12 +71,14 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeleted.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -83,11 +88,11 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
+#include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"
-#include "RTI/VariableLengthData.h"
+#include "RTI/Typedefs.h"
 #include "RTI/time/HLAinteger64Time.h"
 #pragma GCC diagnostic pop
 
@@ -4215,7 +4220,7 @@ void *grant_push_pthread_function(
  */
 void Object::grant_push_request_pthread()
 {
-   pthread_t push;
+   pthread_t push; // NOLINT
 
    int ret = pthread_create( &push, NULL, grant_push_pthread_function, this );
 
