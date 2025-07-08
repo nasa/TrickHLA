@@ -28,7 +28,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/message_proto.h"
@@ -36,6 +35,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityDeleted.hh"
+#include "SpaceFOM/PhysicalEntityDeleted.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/Object.hh"

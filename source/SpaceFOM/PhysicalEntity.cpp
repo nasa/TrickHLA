@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -45,6 +44,8 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntity.hh"
+#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 

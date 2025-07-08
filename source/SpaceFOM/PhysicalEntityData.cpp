@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
 #include <ostream>
-#include <string>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -67,7 +67,7 @@ PhysicalEntityData::PhysicalEntityData( PhysicalEntityData const &source )
      status( NULL ),
      parent_frame( NULL )
 {
-   this->copy( source );
+   this->copy( source ); // NOLINT
 }
 
 /*!

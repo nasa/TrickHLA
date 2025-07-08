@@ -39,10 +39,12 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameConditionalBase.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 
 using namespace std;

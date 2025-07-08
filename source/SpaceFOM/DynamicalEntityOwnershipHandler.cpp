@@ -30,6 +30,10 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityOwnershipHandler.hh"
+#include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Object.hh"
 
 using namespace std;
 using namespace TrickHLA;

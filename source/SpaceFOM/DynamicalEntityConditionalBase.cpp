@@ -30,10 +30,16 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <string>
+#include <cstddef>
+
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/Object.hh"
 
 // SpaceFOM includes.
+#include "SpaceFOM/DynamicalEntityBase.hh"
 #include "SpaceFOM/DynamicalEntityConditionalBase.hh"
+#include "SpaceFOM/PhysicalEntityConditionalBase.hh"
 
 using namespace std;
 using namespace TrickHLA;

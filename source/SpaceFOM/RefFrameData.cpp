@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
+#include <ostream>
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/RefFrameData.hh"
+#include "SpaceFOM/RefFrameDataState.hh"
 
 using namespace SpaceFOM;
 
@@ -61,7 +62,7 @@ RefFrameData::RefFrameData( RefFrameData const &source )
      name( NULL ),
      parent_name( NULL )
 {
-   this->copy( source );
+   this->copy( source ); // NOLINT
 }
 
 /*!

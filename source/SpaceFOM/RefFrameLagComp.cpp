@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/Integrator.hh"
@@ -41,7 +41,9 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameLagComp.hh"
+#include "SpaceFOM/RefFrameLagCompInteg.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 // TrickHLA includes.

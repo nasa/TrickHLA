@@ -28,7 +28,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/message_proto.h"

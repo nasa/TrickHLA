@@ -30,8 +30,9 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/message_proto.h"
@@ -39,12 +40,15 @@ NASA, Johnson Space Center\n
 #include "trick/reference_frame.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/LagCompensation.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 
 using namespace std;

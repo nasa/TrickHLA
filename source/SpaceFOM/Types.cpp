@@ -28,6 +28,9 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <string>
 
+// TrickHLA includes.
+#include "TrickHLA/Types.hh"
+
 // SpaceFOM includes.
 #include "SpaceFOM/Types.hh"
 

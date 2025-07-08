@@ -42,8 +42,13 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
+#include <map>
+#include <ostream>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 // Trick includes.
 #include "trick/message_proto.h"
@@ -51,6 +56,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/LRTreeBase.hh"
+#include "SpaceFOM/LRTreeNodeBase.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
@@ -80,7 +86,7 @@ LRTreeBase::LRTreeBase()
 LRTreeBase::~LRTreeBase()
 {
    // Free the paths matrix.
-   this->free_paths();
+   this->free_paths(); // NOLINT
 
    return;
 }

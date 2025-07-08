@@ -28,6 +28,10 @@ NASA, Johnson Space Center\n
 
 */
 
+// TrickHLA includes.
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/OwnershipHandler.hh"
+
 // SpaceFOM includes.
 #include "SpaceFOM/RefFrameOwnershipHandler.hh"
 

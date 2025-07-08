@@ -30,15 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // C includes.
-#include <string.h>
-
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
-#include "trick/message_proto.h"
-
-// Trick HLA includes.
-#include "TrickHLA/CompileConfig.hh"
+#include <ostream>
 
 // SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityData.hh"
@@ -68,7 +60,7 @@ DynamicalEntityData::DynamicalEntityData()
  */
 DynamicalEntityData::DynamicalEntityData( DynamicalEntityData const &source )
 {
-   this->copy( source );
+   this->copy( source ); // NOLINT
 }
 
 /*!

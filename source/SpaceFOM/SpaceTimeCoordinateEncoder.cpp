@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -34,10 +35,12 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -46,7 +49,6 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
-#include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/EncodingExceptions.h"
 #pragma GCC diagnostic pop

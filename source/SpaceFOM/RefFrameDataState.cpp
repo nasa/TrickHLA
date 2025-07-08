@@ -29,8 +29,9 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/message_proto.h"
@@ -57,7 +58,7 @@ RefFrameDataState::RefFrameDataState()
  */
 RefFrameDataState::RefFrameDataState( RefFrameDataState const &source )
 {
-   this->copy( source );
+   this->copy( source ); // NOLINT
 }
 
 /*!

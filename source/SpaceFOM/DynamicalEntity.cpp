@@ -37,6 +37,10 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "SpaceFOM/DynamicalEntity.hh"
+#include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/DynamicalEntityData.hh"
+#include "SpaceFOM/PhysicalEntity.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"

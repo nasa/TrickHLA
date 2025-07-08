@@ -41,14 +41,18 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <iomanip>
 #include <limits>
 #include <math.h>
+#include <ostream>
 #include <sstream>
 #include <string>
 
 // Trick includes.
+#include "trick/Clock.hh"
 #include "trick/Executive.hh"
 #include "trick/attributes.h"
 #include "trick/exec_proto.h"
@@ -59,7 +63,9 @@ NASA, Johnson Space Center\n
 #include "trick/sim_mode.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/ExecutionControl.hh"
+#include "SpaceFOM/Types.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/CTETimelineBase.hh"
@@ -76,9 +82,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
-#include "TrickHLA/Timeline.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -88,8 +94,8 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/Handle.h"
+#include "RTI/LogicalTime.h"
 #include "RTI/Typedefs.h"
 #pragma GCC diagnostic pop
 

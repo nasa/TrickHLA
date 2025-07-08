@@ -32,7 +32,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <sstream>
-#include <string>
 
 // Trick includes.
 #include "trick/message_proto.h"
@@ -45,6 +44,7 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/LagCompensationInteg.hh"
 #include "TrickHLA/Types.hh"
 
 using namespace std;

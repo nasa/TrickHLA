@@ -30,13 +30,19 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <string>
+#include <cstddef>
+#include <ostream>
 
 // Trick includes.
 #include "trick/reference_frame.h"
 #include "trick/trick_math_proto.h"
 
+// TrickHLA includes.
+#include "TrickHLA/LagCompensation.hh"
+#include "TrickHLA/Object.hh"
+
 // SpaceFOM includes.
+#include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/RefFrameLagCompBase.hh"
 

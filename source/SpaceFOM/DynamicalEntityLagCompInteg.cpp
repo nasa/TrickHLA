@@ -31,13 +31,17 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <ostream>
 #include <sstream>
 
 // SpaceFOM includes.
+#include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/DynamicalEntityLagCompBase.hh"
 #include "SpaceFOM/DynamicalEntityLagCompInteg.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/LagCompensationInteg.hh"
 
 using namespace std;
 using namespace TrickHLA;

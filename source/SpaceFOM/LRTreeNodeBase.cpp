@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
-#include <string>
+#include <ostream>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -53,7 +53,6 @@ NASA, Johnson Space Center\n
 extern Trick::MemoryManager *trick_MM;
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
 

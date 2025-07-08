@@ -28,6 +28,9 @@ NASA, Johnson Space Center\n
 
 */
 
+// TrickHLA includes.
+#include "TrickHLA/Object.hh"
+
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterfaceOwnershipHandler.hh"
 

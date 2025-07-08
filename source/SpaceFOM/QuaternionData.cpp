@@ -29,11 +29,13 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cmath>
 #include <math.h>
 #include <ostream>
 
 // Trick includes.
 #include "trick/constant.h"
+#include "trick/reference_frame.h"
 #include "trick/trick_math_proto.h"
 #include "trick/vector_macros.h"
 

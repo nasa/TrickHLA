@@ -28,6 +28,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -37,7 +39,10 @@ NASA, Johnson Space Center\n
 #include "trick/vector_macros.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameTree.hh"
 #include "SpaceFOM/RelStateBase.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
