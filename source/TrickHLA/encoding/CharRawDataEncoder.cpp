@@ -3,9 +3,6 @@
 @ingroup TrickHLA
 @brief This class represents the char array raw data/none encoder implementation.
 
-\par<b>Assumptions and Limitations:</b>
-- Only primitive types and static arrays of primitive type are supported for now.
-
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
@@ -32,10 +29,18 @@ NASA, Johnson Space Center\n
 
 */
 
+// C++11 deprecated dynamic exception specifications for a function so we
+// need to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+
 // System include files.
 #include <cstddef>
+#include <cstring>
 #include <ostream>
 #include <sstream>
+#include <vector>
 
 // Trick include files.
 #include "trick/attributes.h"
@@ -47,16 +52,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/CharRawDataEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
-// C++11 deprecated dynamic exception specifications for a function so we
-// need to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
-#include "RTI/encoding/HLAfixedArray.h"
-#pragma GCC diagnostic pop
+#include "RTI/encoding/EncodingConfig.h"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -111,3 +110,27 @@ void CharRawDataEncoder::update_after_decode()
 {
    return;
 }
+
+void CharRawDataEncoder::decode( VariableLengthData const &inData ) throw( EncoderException )
+{
+   // Resize Trick array variable to match the decoded data size.
+   resize_trick_var( inData.size() );
+
+   memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
+}
+
+size_t CharRawDataEncoder::decodeFrom(
+   vector< Octet > const &buffer,
+   size_t                 index ) throw( EncoderException )
+{
+   ostringstream errmsg;
+   errmsg << "CharRawDataEncoder::decodeFrom():" << __LINE__
+          << " ERROR: Not supported!" << std::endl;
+   DebugHandler::terminate_with_message( errmsg.str() );
+   return index;
+}
+
+// C++11 deprecated dynamic exception specifications for a function so we
+// need to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic pop

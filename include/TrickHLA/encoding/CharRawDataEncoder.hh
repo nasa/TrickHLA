@@ -34,6 +34,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
 #define TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
 
+// System includes.
+#include <vector>
+
 // Trick includes.
 #include "trick/attributes.h"
 
@@ -46,12 +49,13 @@ NASA, Johnson Space Center\n
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
+
 // HLA include files.
 #include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
-#pragma GCC diagnostic pop
+#include "RTI/encoding/EncodingConfig.h"
 
 namespace TrickHLA
 {
@@ -79,6 +83,12 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
+   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException );
+
+   virtual size_t decodeFrom(
+      std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
+      size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException );
+
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharRawDataEncoder();
@@ -91,5 +101,10 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
 };
 
 } // namespace TrickHLA
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic pop
 
 #endif // TRICKHLA_CHAR_RAW_DATA_ENCODER_HH

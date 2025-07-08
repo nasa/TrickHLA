@@ -3,9 +3,6 @@
 @ingroup TrickHLA
 @brief This class represents the variable array base encoder implementation.
 
-\par<b>Assumptions and Limitations:</b>
-- Only primitive types and static arrays of primitive type are supported for now.
-
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
