@@ -987,6 +987,23 @@ bool const SyncPointList::is_synchronized(
    return ( ( sp != NULL ) && sp->is_synchronized() );
 }
 
+bool const SyncPointList::is_all_synchronized()
+{
+   MutexProtection auto_unlock_mutex( mutex );
+
+   bool all_synced = true;
+#if SYNC_POINT_TMM_ARRAY
+   for ( int i = 0; all_synced && ( i < list_count ); ++i ) {
+#else
+   for ( int i = 0; all_synced && ( i < list.size() ); ++i ) {
+#endif
+      if ( !list[i]->is_synchronized() ) {
+         all_synced = false;
+      }
+   }
+   return all_synced;
+}
+
 /*!
  * @job_class{initialization}
  */

@@ -457,7 +457,7 @@ void ExecutionControl::sync_point_announced(
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
                 << " ERROR: Failed to mark sync-point '" << label_str
-                << "' as announced.\n";
+                << "' as announced." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -481,6 +481,27 @@ void ExecutionControl::sync_point_announced(
                }
             }
          }
+      }
+
+      // For all non-Master federates, check that all the multiphase init
+      // sync-points are synchronized by the time we get the
+      // INIT_COMPLETED_SYNC_POINT announced.
+      if ( !is_master()
+           && ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 )
+           && contains_sync_point_list_name( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
+           && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) ) {
+         string init_syncpt_label;
+         StringUtilities::to_string( init_syncpt_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
+                << " ERROR: All the multiphase initialization sync-points must"
+                << " be synchronized by the time the '" << init_syncpt_label
+                << "' sync-point label is announced. Make sure the SpaceFOM"
+                << " Master federate is configured for all multiphase initialization"
+                << " sync-points. The state of the multiphase initialization"
+                << " sync-points configured for this federate:" << endl
+                << to_string( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
 }

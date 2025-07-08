@@ -2535,7 +2535,7 @@ void Federate::perform_checkpoint()
          // Replace all directory characters with an underscore.
          string save_name_str;
          StringUtilities::to_string( save_name_str, this->save_name );
-         string str_save_label = string( get_federation_name() ) + "_" + save_name_str;
+         string str_save_label = get_federation_name() + "_" + save_name_str;
          for ( int i = 0; i < (int)str_save_label.length(); ++i ) {
             if ( str_save_label[i] == '/' ) {
                str_save_label[i] = '_';
@@ -2602,7 +2602,7 @@ void Federate::setup_checkpoint()
          found = trick_filename.rfind( slash );
          if ( found != (int)string::npos ) {
             save_name_str              = trick_filename.substr( found + 1 );
-            string federation_name_str = string( get_federation_name() );
+            string federation_name_str = get_federation_name();
             if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
                // dir/federation_filename
                trick_filename.replace( found, slash.length(), slash + federation_name_str + "_" );
@@ -2621,7 +2621,7 @@ void Federate::setup_checkpoint()
          the_cpr->output_file = trick_filename;
 
          // federation_filename
-         str_save_label = string( get_federation_name() ) + "_" + save_name_str;
+         str_save_label = get_federation_name() + "_" + save_name_str;
 
          // Set the federate save_name to filename (without the federation name)
          // - this gets announced to other feds
@@ -2800,7 +2800,7 @@ void Federate::perform_restore()
          // Replace all directory characters with an underscore.
          string restore_name_str;
          StringUtilities::to_string( restore_name_str, restore_name );
-         string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
+         string str_restore_label = get_federation_name() + "_" + restore_name_str;
          for ( int i = 0; i < (int)str_restore_label.length(); ++i ) {
             if ( str_restore_label[i] == '/' ) {
                str_restore_label[i] = '_';
@@ -2858,7 +2858,7 @@ void Federate::setup_restore()
    // if I announced the restore, must initiate federation restore
    if ( this->announce_restore ) {
       string trick_filename;
-      string slash_fedname( "/" + string( get_federation_name() ) + "_" );
+      string slash_fedname( "/" + get_federation_name() + "_" );
       int    found;
 
       // Otherwise set restore_name_str using trick's file name
@@ -2874,7 +2874,7 @@ void Federate::setup_restore()
          restore_name_str = trick_filename;
       }
       // federation_filename
-      string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
+      string str_restore_label = get_federation_name() + "_" + restore_name_str;
 
       // make sure we have a save directory specified
       check_HLA_save_directory();
@@ -5833,7 +5833,7 @@ void Federate::set_federation_name(
       // Check for an empty (i.e. zero length) name.
       if ( !exec_name.empty() ) {
          // Set the federation execution name as a copy.
-         this->federation_name = string( exec_name );
+         this->federation_name = exec_name;
       } else {
          // Set to a default value if not already set in the input stream.
          if ( federation_name.empty() ) {
@@ -6307,8 +6307,8 @@ void Federate::add_a_single_entry_into_running_feds()
 
       // copy current running_feds entries into temporary structure...
       for ( int i = 0; i < running_feds_count; ++i ) {
-         temp_feds[i].MOM_instance_name = string( running_feds[i].MOM_instance_name );
-         temp_feds[i].name              = string( running_feds[i].name );
+         temp_feds[i].MOM_instance_name = running_feds[i].MOM_instance_name;
+         temp_feds[i].name              = running_feds[i].name;
          temp_feds[i].required          = running_feds[i].required;
       }
 
@@ -6401,7 +6401,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    for ( int i = 0; i < running_feds_count; ++i ) {
       if ( running_feds[i].MOM_instance_name != tMOMName ) {
          foundName = true;
-         tFedName  = string( running_feds[i].name );
+         tFedName  = running_feds[i].name;
       }
    }
 
@@ -6430,9 +6430,9 @@ void Federate::remove_MOM_HLAfederate_instance_id(
       // if the name is not the one we are looking for...
       if ( running_feds[i].name != tFedName ) {
          if ( running_feds[i].MOM_instance_name.empty() ) {
-            tmp_feds[tmp_feds_cnt].MOM_instance_name = string( running_feds[i].MOM_instance_name );
+            tmp_feds[tmp_feds_cnt].MOM_instance_name = running_feds[i].MOM_instance_name;
          }
-         tmp_feds[tmp_feds_cnt].name     = string( running_feds[i].name );
+         tmp_feds[tmp_feds_cnt].name     = running_feds[i].name;
          tmp_feds[tmp_feds_cnt].required = running_feds[i].required;
          ++tmp_feds_cnt;
       }
@@ -6575,7 +6575,7 @@ void Federate::restore_checkpoint(
 {
    string trick_filename = file_name;
    // DANNY2.7 prepend federation name to the filename (if it's not already prepended)
-   string federation_name_str = string( get_federation_name() );
+   string federation_name_str = get_federation_name();
    if ( trick_filename.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
       trick_filename = federation_name_str + "_" + file_name;
    }
@@ -6696,7 +6696,7 @@ void Federate::read_running_feds_file(
    ifstream file;
 
    // DANNY2.7 Prepend federation name to the filename (if it's not already prepended)
-   string federation_name_str = string( get_federation_name() );
+   string federation_name_str = get_federation_name();
    if ( file_name.compare( 0, federation_name_str.length(), federation_name_str ) == 0 ) {
       // Already prepended
       full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
@@ -6725,10 +6725,10 @@ void Federate::read_running_feds_file(
       string current_line;
       for ( int i = 0; i < this->known_feds_count; ++i ) {
          file >> current_line;
-         known_feds[i].MOM_instance_name = string( current_line );
+         known_feds[i].MOM_instance_name = current_line;
 
          file >> current_line;
-         known_feds[i].name = string( current_line );
+         known_feds[i].name = current_line;
 
          file >> current_line;
          known_feds[i].required = ( atoi( current_line.c_str() ) != 0 ); // flawfinder: ignore
@@ -6760,8 +6760,8 @@ void Federate::copy_running_feds_into_known_feds()
    // Copy everything from running_feds into known_feds...
    this->known_feds_count = 0;
    for ( int i = 0; i < this->running_feds_count; ++i ) {
-      known_feds[this->known_feds_count].MOM_instance_name = string( running_feds[i].MOM_instance_name );
-      known_feds[this->known_feds_count].name              = string( running_feds[i].name );
+      known_feds[this->known_feds_count].MOM_instance_name = running_feds[i].MOM_instance_name;
+      known_feds[this->known_feds_count].name              = running_feds[i].name;
       known_feds[this->known_feds_count].required          = running_feds[i].required;
       this->known_feds_count++;
    }

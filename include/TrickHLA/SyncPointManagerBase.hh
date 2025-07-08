@@ -152,6 +152,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    bool const is_sync_point_synchronized( std::wstring const &label );
 
+   bool const is_all_sync_points_synchronized( std::string const &list_name );
+
    bool const mark_sync_point_synchronized( std::wstring const &label );
 
    bool const wait_for_sync_point_synchronized( std::wstring const &label );
@@ -163,6 +165,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
    std::string to_string();
 
    std::string to_string( std::wstring const &label );
+
+   std::string to_string( std::string const &list_name );
 
    void print_sync_points();
 

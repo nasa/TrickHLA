@@ -623,6 +623,15 @@ bool const SyncPointManagerBase::is_sync_point_synchronized(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->is_synchronized( label ) );
 }
 
+bool const SyncPointManagerBase::is_all_sync_points_synchronized(
+   std::string const &list_name )
+{
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   int const index = get_list_index_for_list_name( list_name );
+   return ( ( index >= 0 ) && sync_pnt_lists[index]->is_all_synchronized() );
+}
+
 /*!
  * @job_class{initialization}
  */
@@ -758,6 +767,23 @@ string SyncPointManagerBase::to_string(
    msg << "SyncPointManagerBase::to_string():" << __LINE__
        << " Unknown sync-point label:'" << label_str << "'\n";
    return msg.str();
+}
+
+string SyncPointManagerBase::to_string(
+   string const &list_name )
+{
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   // Add the named list if it does not exist.
+   int const index = get_list_index_for_list_name( list_name );
+
+   if ( index >= 0 ) {
+      return sync_pnt_lists[index]->to_string();
+   }
+   return "SyncPointManagerBase::to_string():" + std::to_string( __LINE__ )
+          + " Unknown list name '" + list_name + "'";
 }
 
 void SyncPointManagerBase::print_sync_points()

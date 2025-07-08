@@ -156,6 +156,8 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    bool const is_synchronized( std::wstring const &label );
 
+   bool const is_all_synchronized();
+
    bool const mark_synchronized( std::wstring const &label );
 
    bool const wait_for_synchronized( std::wstring const &label );
