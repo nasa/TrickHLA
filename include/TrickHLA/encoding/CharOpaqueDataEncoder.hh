@@ -80,6 +80,13 @@ class CharOpaqueDataEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
+   virtual size_t const get_length()
+   {
+      return ( ( data_encoder != NULL )
+                  ? dynamic_cast< RTI1516_NAMESPACE::HLAopaqueData * >( data_encoder )->dataLength()
+                  : 0 );
+   }
+
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharOpaqueDataEncoder();
