@@ -125,7 +125,8 @@ size_t CharRawDataEncoder::decodeFrom(
 {
    ostringstream errmsg;
    errmsg << "CharRawDataEncoder::decodeFrom():" << __LINE__
-          << " ERROR: Not supported!" << std::endl;
+          << " ERROR: Encoding not supported for a field of an HLA Record!"
+          << std::endl;
    DebugHandler::terminate_with_message( errmsg.str() );
    return index;
 }
