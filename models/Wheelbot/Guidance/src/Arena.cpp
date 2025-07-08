@@ -1,6 +1,7 @@
 #include <iostream>
 #include <math.h>   // sqrt()
 #include <stdlib.h> // abs()
+#include <vector>
 
 #include "Wheelbot/Guidance/include/Arena.hh"
 #include "Wheelbot/Guidance/include/GridSquare.hh"

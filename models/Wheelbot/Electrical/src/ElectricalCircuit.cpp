@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Wheelbot/Battery/include/DCBattery.hh"
 #include "Wheelbot/Motor/include/DCMotor.hh"
 

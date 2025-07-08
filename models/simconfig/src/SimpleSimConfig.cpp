@@ -37,12 +37,12 @@ NASA, Johnson Space Center\n
 #include <iostream>
 #include <sstream>
 #include <stdlib.h>
-#include <string>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"

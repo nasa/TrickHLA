@@ -1,5 +1,4 @@
 #include <cmath>
-#include <iostream>
 
 #include "Wheelbot/Motor/include/DCMotor.hh"
 #include "Wheelbot/Motor/include/PWM.hh"

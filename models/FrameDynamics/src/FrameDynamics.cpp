@@ -30,18 +30,9 @@ NASA, Johnson Space Center\n
 
 */
 
-// System includes.
-#include <iostream>
-#include <sstream>
-
 // Trick includes.
 #include "trick/Integrator.hh"
-#include "trick/trick_math.h"
-
-// TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
+#include "trick/vector_macros.h"
 
 // Model includes.
 #include "FrameDynamics/include/FrameDynamics.hh"
@@ -50,7 +41,6 @@ NASA, Johnson Space Center\n
 extern Trick::Integrator *trick_curr_integ;
 
 using namespace std;
-using namespace TrickHLA;
 using namespace SpaceFOM;
 
 /*!

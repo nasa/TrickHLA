@@ -29,12 +29,13 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <iostream>
+#include <cstddef>
+#include <cstdlib>
 #include <string>
 
 // Trick include files.
-#include "trick/exec_proto.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"

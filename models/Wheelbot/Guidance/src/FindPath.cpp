@@ -1,9 +1,9 @@
 #include <algorithm> // std::find
+#include <iostream>
 #include <stdlib.h>
 #include <vector> // std::vector
 
 #include "Wheelbot/Guidance/include/Arena.hh"
-#include "Wheelbot/Guidance/include/FindPath.hh"
 #include "Wheelbot/Guidance/include/GridSquare.hh"
 #include "Wheelbot/Guidance/include/Point.hh"
 

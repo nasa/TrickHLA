@@ -1,6 +1,3 @@
-#include <cmath>
-#include <iostream>
-
 #include "Wheelbot/Motor/include/PWM.hh"
 
 using namespace TrickHLAModel;

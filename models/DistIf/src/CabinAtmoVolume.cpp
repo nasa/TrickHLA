@@ -26,13 +26,18 @@ NASA, Johnson Space Center\n
 
 */
 
+#include <algorithm>
 #include <cfloat>
+#include <cmath>
 #include <iostream>
+#include <string>
 
+#include "DistIf/include/CabinAtmoMixture.hh"
 #include "DistIf/include/CabinAtmoVolume.hh"
+#include "DistIf/include/Distributed2WayBusBase.hh"
 
 // Trick include for TMM
-#include "trick/compat/sim_services/MemoryManager/include/memorymanager_c_intf.h"
+#include "trick/memorymanager_c_intf.h"
 
 using namespace DistIf;
 

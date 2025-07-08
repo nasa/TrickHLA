@@ -36,12 +36,13 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Integrator.hh"
-#include "trick/trick_math.h"
+#include "trick/matrix_macros.h"
+#include "trick/trick_math_error.h"
+#include "trick/trick_math_proto.h"
+#include "trick/vector_macros.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
 
 // Model includes.
 #include "EntityDynamics/include/EntityDynamics.hh"

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <math.h> // for: sqrt(), atan2(), cos(), and sin()
 
 #include "Wheelbot/Guidance/include/Navigator.hh"

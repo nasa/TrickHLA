@@ -31,12 +31,14 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstddef>
 #include <iomanip>
 #include <math.h>
 #include <sstream>
 #include <string>
 
 // Sine model includes.
+#include "sine/include/SineData.hh"
 #include "sine/include/SinePacking.hh"
 
 // Trick includes.
@@ -46,6 +48,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 
 using namespace std;

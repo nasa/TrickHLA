@@ -1,4 +1,4 @@
-#include <iostream>
+#include <algorithm>
 
 #include "Wheelbot/Motor/include/DCMotor.hh"
 #include "Wheelbot/Motor/include/DCMotorSpeedController.hh"

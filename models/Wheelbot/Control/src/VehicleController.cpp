@@ -1,5 +1,6 @@
 // This file contains functions for controlling the movement of the vehicles.
 #include <iostream>
+#include <vector>
 
 #include "Wheelbot/Control/include/DifferentialDriveController.hh"
 #include "Wheelbot/Control/include/VehicleController.hh"

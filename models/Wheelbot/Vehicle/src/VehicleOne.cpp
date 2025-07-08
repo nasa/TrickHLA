@@ -5,9 +5,9 @@ PROGRAMMERS:
     (((John M. Penn) (L3 Communications) (June 2015) (Trick Refresher Project)))
     (((Andrew W. Young) (NASA/ER7) (July 2023) (--) (TrickHLA familiarization project.)))
 *******************************************************************************/
-#include <chrono>
 #include <iostream>
 #include <math.h>
+#include <vector>
 
 #include "trick/MemoryManager.hh"
 #include "trick/integrator_c_intf.h"

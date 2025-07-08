@@ -27,13 +27,15 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <iostream>
+#include <cmath>
+#include <cstdlib>
+#include <math.h>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
 #include "trick/integrator_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 #include "trick/trick_math.h"
 
 // Model include files.
