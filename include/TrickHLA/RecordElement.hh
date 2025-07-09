@@ -98,6 +98,11 @@ class RecordElement
       return trick_name;
    }
 
+   int const get_data_size()
+   {
+      return ( ( encoder != NULL ) ? encoder->get_data_size() : 0 );
+   }
+
    virtual std::string to_string();
 
   public:

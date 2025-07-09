@@ -121,3 +121,15 @@ void FixedRecordEncoder::update_after_decode(
       }
    }
 }
+
+int const FixedRecordEncoder::get_data_size()
+{
+   // TODO: Implement this function.
+
+   ostringstream errmsg;
+   errmsg << "FixedRecordEncoder::get_data_size():" << __LINE__
+          << " ERROR: Not Supported!" << std::endl;
+   DebugHandler::terminate_with_message( errmsg.str() );
+
+   return 0;
+}

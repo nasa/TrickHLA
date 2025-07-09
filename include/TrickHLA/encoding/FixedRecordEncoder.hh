@@ -80,6 +80,8 @@ class FixedRecordEncoder : public EncoderBase
 
    virtual void update_after_decode();
 
+   virtual int const get_data_size();
+
    void update_before_encode( RTI1516_NAMESPACE::HLAfixedRecord *fixed_rec );
 
    void update_after_decode( RTI1516_NAMESPACE::HLAfixedRecord *fixed_rec );

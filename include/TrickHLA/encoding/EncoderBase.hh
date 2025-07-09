@@ -84,6 +84,9 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
    virtual void update_after_decode() = 0;
 
+   /*! @brief Number of data bytes */
+   virtual int const get_data_size() = 0;
+
 #if !defined( SWIG )
    virtual std::auto_ptr< RTI1516_NAMESPACE::DataElement > clone() const
    {

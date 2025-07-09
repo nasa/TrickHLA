@@ -89,6 +89,12 @@ class VariableArrayEncoderBase : public EncoderBase
 
    virtual void update_after_decode();
 
+   virtual int const get_data_size()
+   {
+      // TODO: Handle std::string.
+      return ( ( address != NULL ) ? get_size( address ) : 0 );
+   }
+
    void calculate_var_element_count();
 
    void resize_trick_var( std::size_t const new_size );
@@ -116,11 +122,6 @@ class VariableArrayEncoderBase : public EncoderBase
    bool const is_static_in_size()
    {
       return ( !is_array() || is_static_array() );
-   }
-
-   int const get_data_size()
-   {
-      return ( ( address != NULL ) ? get_size( address ) : 0 );
    }
 
   protected:
