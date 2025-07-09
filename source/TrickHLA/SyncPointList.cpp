@@ -991,17 +991,18 @@ bool const SyncPointList::is_all_synchronized()
 {
    MutexProtection auto_unlock_mutex( mutex );
 
-   bool all_synced = true;
 #if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; all_synced && ( i < list_count ); ++i ) {
+   for ( int i = 0; i < list_count; ++i ) {
 #else
-   for ( int i = 0; all_synced && ( i < list.size() ); ++i ) {
+   for ( int i = 0; i < list.size(); ++i ) {
 #endif
       if ( !list[i]->is_synchronized() ) {
-         all_synced = false;
+         return false;
       }
    }
-   return all_synced;
+   // Can only be synchronized if the list was not empty and we had no
+   // unsynchronized sync-points.
+   return ( !empty() );
 }
 
 /*!

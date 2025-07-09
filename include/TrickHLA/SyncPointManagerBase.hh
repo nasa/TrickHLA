@@ -122,6 +122,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    bool const contains_sync_point_list_name( std::string const &list_name );
 
+   bool const is_sync_point_list_empty( std::string const &list_name );
+
    bool const is_sync_point_registered( std::wstring const &label );
 
    bool const mark_sync_point_registered( std::wstring const &label );

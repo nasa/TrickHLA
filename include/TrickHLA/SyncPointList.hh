@@ -112,6 +112,24 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    void clear();
 
+   bool const empty()
+   {
+#if SYNC_POINT_TMM_ARRAY
+      return ( list_count <= 0 );
+#else
+      return list.empty();
+#endif
+   }
+
+   int const size()
+   {
+#if SYNC_POINT_TMM_ARRAY
+      return ( ( list_count > 0 ) ? list_count : 0 );
+#else
+      return list.size();
+#endif
+   }
+
    SyncPoint *get( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
    bool const add( std::wstring const &label );

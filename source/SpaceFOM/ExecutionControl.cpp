@@ -494,7 +494,7 @@ void ExecutionControl::sync_point_announced(
       // INIT_COMPLETED_SYNC_POINT announced.
       if ( !is_master()
            && ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 )
-           && contains_sync_point_list_name( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
+           && !is_sync_point_list_empty( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
            && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) ) {
          string init_syncpt_label;
          StringUtilities::to_string( init_syncpt_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );

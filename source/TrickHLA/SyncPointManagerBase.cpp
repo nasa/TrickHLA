@@ -398,6 +398,15 @@ bool const SyncPointManagerBase::contains_sync_point_list_name(
    return ( get_list_index_for_list_name( list_name ) >= 0 );
 }
 
+bool const SyncPointManagerBase::is_sync_point_list_empty(
+   string const &list_name )
+{
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   int const index = get_list_index_for_list_name( list_name );
+   return ( ( index < 0 ) || sync_pnt_lists[index]->empty() );
+}
+
 bool const SyncPointManagerBase::is_sync_point_registered(
    wstring const &label )
 {
