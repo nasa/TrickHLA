@@ -501,8 +501,8 @@ void ExecutionControl::sync_point_announced(
          errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
                 << " ERROR: All multiphase initialization sync-points were not"
                 << " synchronized by the time the '" << init_complete_sp_label
-                << "' sync-point label was announced. Make sure the SpaceFOM"
-                << " Master federate is configured for all multiphase initialization"
+                << "' sync-point label was announced. Make sure all federates"
+                << " are configured to use all the multiphase initialization"
                 << " sync-points. The state of the multiphase initialization"
                 << " sync-points configured for this federate:" << endl
                 << to_string( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) << endl;
