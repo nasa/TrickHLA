@@ -89,7 +89,7 @@ namespace TrickHLA
                                                                                                                                      \
       virtual int const get_data_size()                                                                                              \
       {                                                                                                                              \
-         /* TODO: Handle std::string. */                                                                                             \
+         /* TODO: Handle std::string and std::wstring. */                                                                            \
          return ( ( data_encoder != NULL )                                                                                           \
                      ? ( sizeof( SimpleDataType ) * ( dynamic_cast< RTI1516_NAMESPACE::HLAfixedArray * >( data_encoder )->size() ) ) \
                      : 0 );                                                                                                          \

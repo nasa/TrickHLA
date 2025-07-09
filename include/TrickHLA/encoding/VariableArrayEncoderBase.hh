@@ -91,7 +91,7 @@ class VariableArrayEncoderBase : public EncoderBase
 
    virtual int const get_data_size()
    {
-      // TODO: Handle std::string.
+      // TODO: Handle std::string and std::wstring.
       return ( ( address != NULL ) ? get_size( address ) : 0 );
    }
 

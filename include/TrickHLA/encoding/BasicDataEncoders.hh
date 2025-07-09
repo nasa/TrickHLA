@@ -54,82 +54,80 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-#define DEFINE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType )                                      \
-                                                                                                               \
-   class EncoderClassName : public EncoderBase                                                                 \
-   {                                                                                                           \
-      /* Let the Trick input processor access protected and private data.  */                                  \
-      /* InputProcessor is really just a marker class (does not really     */                                  \
-      /* exists - at least yet). This friend statement just tells Trick    */                                  \
-      /* to go ahead and process the protected and private data as well    */                                  \
-      /* as the usual public data.                                         */                                  \
-      friend class InputProcessor;                                                                             \
-      /* IMPORTANT Note: you must have the following line too.             */                                  \
-      /* Syntax: friend void init_attr<namespace>__<class name>();         */                                  \
-      friend void init_attrTrickHLA__EncoderClassName();                                                       \
-                                                                                                               \
-     public:                                                                                                   \
-      explicit EncoderClassName( void *addr );                                                                 \
-                                                                                                               \
-      virtual ~EncoderClassName();                                                                             \
-                                                                                                               \
-      virtual void update_before_encode()                                                                      \
-      {                                                                                                        \
-         return;                                                                                               \
-      }                                                                                                        \
-                                                                                                               \
-      virtual void update_after_decode()                                                                       \
-      {                                                                                                        \
-         return;                                                                                               \
-      }                                                                                                        \
-                                                                                                               \
-      virtual int const get_data_size()                                                                        \
-      {                                                                                                        \
-         /* TODO: Handle std::string. */                                                                       \
-         return ( ( data_encoder != NULL )                                                                     \
-                     ? sizeof( dynamic_cast< RTI1516_NAMESPACE::EncodableDataType * >( data_encoder )->get() ) \
-                     : 0 );                                                                                    \
-      }                                                                                                        \
-                                                                                                               \
-     private:                                                                                                  \
-      /* Do not allow the default, copy constructor or assignment operator. */                                 \
-      EncoderClassName();                                                                                      \
-      /*! @brief Copy constructor for EncoderClassName class.                 */                               \
-      /*  @details This constructor is private to prevent inadvertent copies. */                               \
-      EncoderClassName( EncoderClassName const &rhs );                                                         \
-      /*! @brief Assignment operator for EncoderClassName class.                 */                            \
-      /*  @details Assignment operator is private to prevent inadvertent copies. */                            \
-      EncoderClassName &operator=( EncoderClassName const &rhs );                                              \
+#define DEFINE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType ) \
+                                                                                          \
+   class EncoderClassName : public EncoderBase                                            \
+   {                                                                                      \
+      /* Let the Trick input processor access protected and private data.  */             \
+      /* InputProcessor is really just a marker class (does not really     */             \
+      /* exists - at least yet). This friend statement just tells Trick    */             \
+      /* to go ahead and process the protected and private data as well    */             \
+      /* as the usual public data.                                         */             \
+      friend class InputProcessor;                                                        \
+      /* IMPORTANT Note: you must have the following line too.             */             \
+      /* Syntax: friend void init_attr<namespace>__<class name>();         */             \
+      friend void init_attrTrickHLA__EncoderClassName();                                  \
+                                                                                          \
+     public:                                                                              \
+      explicit EncoderClassName( void *addr );                                            \
+                                                                                          \
+      virtual ~EncoderClassName();                                                        \
+                                                                                          \
+      virtual void update_before_encode()                                                 \
+      {                                                                                   \
+         return;                                                                          \
+      }                                                                                   \
+                                                                                          \
+      virtual void update_after_decode()                                                  \
+      {                                                                                   \
+         return;                                                                          \
+      }                                                                                   \
+                                                                                          \
+      virtual int const get_data_size()                                                   \
+      {                                                                                   \
+         /* TODO: Handle std::string and std::wstring. */                                 \
+         return ( ( data_encoder != NULL ) ? sizeof( SimpleDataType ) : 0 );              \
+      }                                                                                   \
+                                                                                          \
+     private:                                                                             \
+      /* Do not allow the default, copy constructor or assignment operator. */            \
+      EncoderClassName();                                                                 \
+      /*! @brief Copy constructor for EncoderClassName class.                 */          \
+      /*  @details This constructor is private to prevent inadvertent copies. */          \
+      EncoderClassName( EncoderClassName const &rhs );                                    \
+      /*! @brief Assignment operator for EncoderClassName class.                 */       \
+      /*  @details Assignment operator is private to prevent inadvertent copies. */       \
+      EncoderClassName &operator=( EncoderClassName const &rhs );                         \
    };
 
-DEFINE_BASIC_ENCODER_CLASS( ASCIICharEncoder, HLAASCIIchar )
-DEFINE_BASIC_ENCODER_CLASS( ASCIIStringEncoder, HLAASCIIstring )
-DEFINE_BASIC_ENCODER_CLASS( BoolEncoder, HLAboolean )
-DEFINE_BASIC_ENCODER_CLASS( ByteEncoder, HLAbyte )
-DEFINE_BASIC_ENCODER_CLASS( Float32BEEncoder, HLAfloat32BE )
-DEFINE_BASIC_ENCODER_CLASS( Float32LEEncoder, HLAfloat32LE )
-DEFINE_BASIC_ENCODER_CLASS( Float64BEEncoder, HLAfloat64BE )
-DEFINE_BASIC_ENCODER_CLASS( Float64LEEncoder, HLAfloat64LE )
-DEFINE_BASIC_ENCODER_CLASS( Int16BEEncoder, HLAinteger16BE )
-DEFINE_BASIC_ENCODER_CLASS( Int16LEEncoder, HLAinteger16LE )
-DEFINE_BASIC_ENCODER_CLASS( Int32BEEncoder, HLAinteger32BE )
-DEFINE_BASIC_ENCODER_CLASS( Int32LEEncoder, HLAinteger32LE )
-DEFINE_BASIC_ENCODER_CLASS( Int64BEEncoder, HLAinteger64BE )
-DEFINE_BASIC_ENCODER_CLASS( Int64LEEncoder, HLAinteger64LE )
+DEFINE_BASIC_ENCODER_CLASS( ASCIICharEncoder, HLAASCIIchar, char )
+DEFINE_BASIC_ENCODER_CLASS( ASCIIStringEncoder, HLAASCIIstring, std::string )
+DEFINE_BASIC_ENCODER_CLASS( BoolEncoder, HLAboolean, bool )
+DEFINE_BASIC_ENCODER_CLASS( ByteEncoder, HLAbyte, RTI1516_NAMESPACE::Octet )
+DEFINE_BASIC_ENCODER_CLASS( Float32BEEncoder, HLAfloat32BE, float )
+DEFINE_BASIC_ENCODER_CLASS( Float32LEEncoder, HLAfloat32LE, float )
+DEFINE_BASIC_ENCODER_CLASS( Float64BEEncoder, HLAfloat64BE, double )
+DEFINE_BASIC_ENCODER_CLASS( Float64LEEncoder, HLAfloat64LE, double )
+DEFINE_BASIC_ENCODER_CLASS( Int16BEEncoder, HLAinteger16BE, RTI1516_NAMESPACE::Integer16 )
+DEFINE_BASIC_ENCODER_CLASS( Int16LEEncoder, HLAinteger16LE, RTI1516_NAMESPACE::Integer16 )
+DEFINE_BASIC_ENCODER_CLASS( Int32BEEncoder, HLAinteger32BE, RTI1516_NAMESPACE::Integer32 )
+DEFINE_BASIC_ENCODER_CLASS( Int32LEEncoder, HLAinteger32LE, RTI1516_NAMESPACE::Integer32 )
+DEFINE_BASIC_ENCODER_CLASS( Int64BEEncoder, HLAinteger64BE, RTI1516_NAMESPACE::Integer64 )
+DEFINE_BASIC_ENCODER_CLASS( Int64LEEncoder, HLAinteger64LE, RTI1516_NAMESPACE::Integer64 )
 
 #if defined( IEEE_1516_2025 )
-DEFINE_BASIC_ENCODER_CLASS( UInt16BEEncoder, HLAunsignedInteger16BE )
-DEFINE_BASIC_ENCODER_CLASS( UInt16LEEncoder, HLAunsignedInteger16LE )
-DEFINE_BASIC_ENCODER_CLASS( UInt32BEEncoder, HLAunsignedInteger32BE )
-DEFINE_BASIC_ENCODER_CLASS( UInt32LEEncoder, HLAunsignedInteger32LE )
-DEFINE_BASIC_ENCODER_CLASS( UInt64BEEncoder, HLAunsignedInteger64BE )
-DEFINE_BASIC_ENCODER_CLASS( UInt64LEEncoder, HLAunsignedInteger64LE )
+DEFINE_BASIC_ENCODER_CLASS( UInt16BEEncoder, HLAunsignedInteger16BE, RTI1516_NAMESPACE::UnsignedInteger16 )
+DEFINE_BASIC_ENCODER_CLASS( UInt16LEEncoder, HLAunsignedInteger16LE, RTI1516_NAMESPACE::UnsignedInteger16 )
+DEFINE_BASIC_ENCODER_CLASS( UInt32BEEncoder, HLAunsignedInteger32BE, RTI1516_NAMESPACE::UnsignedInteger32 )
+DEFINE_BASIC_ENCODER_CLASS( UInt32LEEncoder, HLAunsignedInteger32LE, RTI1516_NAMESPACE::UnsignedInteger32 )
+DEFINE_BASIC_ENCODER_CLASS( UInt64BEEncoder, HLAunsignedInteger64BE, RTI1516_NAMESPACE::UnsignedInteger64 )
+DEFINE_BASIC_ENCODER_CLASS( UInt64LEEncoder, HLAunsignedInteger64LE, RTI1516_NAMESPACE::UnsignedInteger64 )
 #endif // IEEE_1516_2025
 
-DEFINE_BASIC_ENCODER_CLASS( UnicodeCharEncoder, HLAunicodeChar )
+DEFINE_BASIC_ENCODER_CLASS( UnicodeCharEncoder, HLAunicodeChar, wchar_t )
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
-DEFINE_BASIC_ENCODER_CLASS( UnicodeStringEncoder, HLAunicodeString )
+DEFINE_BASIC_ENCODER_CLASS( UnicodeStringEncoder, HLAunicodeString, std::wstring )
 #endif // TRICK_WSTRING_MM_SUPPORT
 
 } // namespace TrickHLA
