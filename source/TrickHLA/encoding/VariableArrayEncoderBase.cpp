@@ -134,7 +134,7 @@ int const VariableArrayEncoderBase::get_data_size()
       case TRICK_WSTRING: {
          break;
       }
-      detault: {
+      default: {
          byte_count = get_size( address );
          break;
       }
