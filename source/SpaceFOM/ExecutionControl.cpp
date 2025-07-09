@@ -495,13 +495,13 @@ void ExecutionControl::sync_point_announced(
       if ( ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 )
            && !is_sync_point_list_empty( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
            && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) ) {
-         string init_syncpt_label;
-         StringUtilities::to_string( init_syncpt_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
+         string init_complete_sp_label;
+         StringUtilities::to_string( init_complete_sp_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
-                << " ERROR: All the multiphase initialization sync-points must"
-                << " be synchronized by the time the '" << init_syncpt_label
-                << "' sync-point label is announced. Make sure the SpaceFOM"
+                << " ERROR: All multiphase initialization sync-points were not"
+                << " synchronized by the time the '" << init_complete_sp_label
+                << "' sync-point label was announced. Make sure the SpaceFOM"
                 << " Master federate is configured for all multiphase initialization"
                 << " sync-points. The state of the multiphase initialization"
                 << " sync-points configured for this federate:" << endl
