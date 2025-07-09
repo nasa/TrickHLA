@@ -123,16 +123,24 @@ int const VariableArrayEncoderBase::get_data_size()
 
       switch ( type ) {
          case TRICK_STRING: {
-            string *str_array = *static_cast< std::string ** >( address );
-            for ( int i = 0; i < var_element_count; ++i ) {
-               byte_count += str_array[i].size();
+            if ( is_dynamic_array() ) {
+               string *str_array = *static_cast< std::string ** >( address );
+               for ( int i = 0; i < var_element_count; ++i ) {
+                  byte_count += str_array[i].size();
+               }
+            } else {
+               byte_count = var_element_count;
             }
             break;
          }
          case TRICK_WSTRING: {
-            wstring *wstr_array = *static_cast< std::wstring ** >( address );
-            for ( int i = 0; i < var_element_count; ++i ) {
-               byte_count += wstr_array[i].size();
+            if ( is_dynamic_array() ) {
+               wstring *wstr_array = *static_cast< std::wstring ** >( address );
+               for ( int i = 0; i < var_element_count; ++i ) {
+                  byte_count += wstr_array[i].size();
+               }
+            } else {
+               byte_count = var_element_count;
             }
             break;
          }
