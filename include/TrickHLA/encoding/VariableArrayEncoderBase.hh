@@ -89,11 +89,7 @@ class VariableArrayEncoderBase : public EncoderBase
 
    virtual void update_after_decode();
 
-   virtual int const get_data_size()
-   {
-      // TODO: Handle std::string and std::wstring.
-      return ( ( address != NULL ) ? get_size( address ) : 0 );
-   }
+   virtual int const get_data_size();
 
    void calculate_var_element_count();
 

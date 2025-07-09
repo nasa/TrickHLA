@@ -113,6 +113,35 @@ void VariableArrayEncoderBase::update_after_decode()
    return;
 }
 
+int const VariableArrayEncoderBase::get_data_size()
+{
+   if ( address == NULL ) {
+      return 0;
+   }
+
+   int byte_count = 0;
+
+   // TODO: Handle std::string and std::wstring.
+
+   switch ( type ) {
+      case TRICK_STRING: {
+         calculate_var_element_count();
+         for (int i = 0; i < var_element_count; ++i ) {
+
+         }
+         break;
+      }
+      case TRICK_WSTRING: {
+         break;
+      }
+      detault: {
+         byte_count = get_size( address );
+         break;
+      }
+   }
+   return byte_count;
+}
+
 void VariableArrayEncoderBase::calculate_var_element_count()
 {
    if ( is_dynamic_array() ) {

@@ -124,7 +124,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
       }
    }
 
-   if ( requested_size != capacity ) {
+   if ( requested_size > capacity ) {
       capacity = requested_size;
       if ( buffer == NULL ) {
          buffer = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", capacity ) );
