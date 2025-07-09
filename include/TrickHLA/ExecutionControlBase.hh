@@ -201,13 +201,6 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
     *  one of the predefined ExecutionControl synchronization points. */
    virtual void wait_for_all_multiphase_init_sync_points();
 
-   //*! @brief The RTI has announced the existence of a synchronization point.
-   //*  @param label             Sync-point label.
-   //*  @param user_supplied_tag Use supplied tag.*/
-   ///*  virtual void sync_point_announced(
-   //   std::wstring const     &label,
-   //   RTI1516_USERDATA const &user_supplied_tag ); */
-
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish() = 0;
    /*! Unpublish the ExecutionControl objects and interactions. */

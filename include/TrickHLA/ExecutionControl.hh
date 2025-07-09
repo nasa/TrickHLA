@@ -91,8 +91,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // Execution Control initialization routines.
    /*! @brief Execution Control initialization routine. */
    virtual void initialize();
-   /*! @brief Join federation execution process. */
-   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
@@ -118,12 +116,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  that have not been achieved and wait for the federation to be
     *  synchronized on it. */
    virtual void clear_multiphase_init_sync_points();
-   /*! @brief The RTI has announced the existence of a synchronization point.
-    *  @param label             Sync-point label.
-    *  @param user_supplied_tag Use supplied tag.*/
-   virtual void sync_point_announced( // cppcheck-suppress [uselessOverride]
-      std::wstring const     &label,
-      RTI1516_USERDATA const &user_supplied_tag );
 
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();

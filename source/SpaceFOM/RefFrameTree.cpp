@@ -81,22 +81,6 @@ bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 }
 
 /*!
- * @job_class{initialization}
- */
-bool RefFrameTree::build_tree()
-{
-   return ( LRTreeBase::build_tree() );
-}
-
-/*!
- * @job_class{initialization}
- */
-bool RefFrameTree::check_tree()
-{
-   return ( LRTreeBase::check_tree() );
-}
-
-/*!
  * @job_class{scheduled}
  */
 void RefFrameTree::print_tree( std::ostream &stream ) const

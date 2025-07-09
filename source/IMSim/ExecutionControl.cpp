@@ -255,18 +255,6 @@ void ExecutionControl::initialize()
 }
 
 /*!
-@details This routine implements the IMSim Join Federation Process described
-in section 7.2 and figure 7-3.
-
-@job_class{initialization}
-*/
-void ExecutionControl::join_federation_process()
-{
-   // The base class implementation is good enough for now.
-   TrickHLA::ExecutionControlBase::join_federation_process();
-}
-
-/*!
 @details This routine implements the IMSim pre multi-phase initialization process.
 
 @job_class{initialization}
@@ -1159,21 +1147,20 @@ void ExecutionControl::sync_point_announced(
    // However, this provides a place to implement if that changes.
    SyncPointManagerBase::sync_point_announced( label, user_supplied_tag );
 
-   // For all non-Master federates, check that all the multiphase init
+   // For all federates, check that all the multiphase init
    // sync-points are synchronized by the time we get the
    // INIT_COMPLETED_SYNC_POINT announced.
-   if ( !is_master()
-        && ( label.compare( IMSim::INIT_COMPLETE_SYNC_POINT ) == 0 )
+   if ( ( label.compare( IMSim::INIT_COMPLETE_SYNC_POINT ) == 0 )
         && !is_sync_point_list_empty( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
         && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) ) {
       string init_syncpt_label;
       StringUtilities::to_string( init_syncpt_label, IMSim::INIT_COMPLETE_SYNC_POINT );
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
+      errmsg << "IMSim::ExecutionControl::sync_point_announced():" << __LINE__
              << " ERROR: All the multiphase initialization sync-points must"
              << " be synchronized by the time the '" << init_syncpt_label
-             << "' sync-point label is announced. Make sure the IMSim"
-             << " Master federate is configured for all multiphase initialization"
+             << "' sync-point label is announced. Make sure the Master"
+             << " federate is configured for all multiphase initialization"
              << " sync-points. The state of the multiphase initialization"
              << " sync-points configured for this federate:" << endl
              << to_string( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) << endl;

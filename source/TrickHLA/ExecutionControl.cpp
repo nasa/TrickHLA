@@ -143,17 +143,6 @@ void ExecutionControl::initialize()
 }
 
 /*!
-@details This routine implements the TrickHLA Join Federation Process described.
-
-@job_class{initialization}
-*/
-void ExecutionControl::join_federation_process()
-{
-   // The base class implementation is good enough for now.
-   TrickHLA::ExecutionControlBase::join_federation_process();
-}
-
-/*!
 @details This routine implements the TrickHLA pre multi-phase initialization process.
 
 @job_class{initialization}
@@ -364,16 +353,6 @@ void ExecutionControl::clear_multiphase_init_sync_points()
              << " support multiphase initialization synchronization points.\n";
       message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
-}
-
-void ExecutionControl::sync_point_announced(
-   wstring const          &label,
-   RTI1516_USERDATA const &user_supplied_tag )
-{
-   // In this case the default SyncPointManagerBase::sync_point_announced()
-   // function works. Strictly speaking, we could just not define this.
-   // However, this provides a place to implement if that changes.
-   SyncPointManagerBase::sync_point_announced( label, user_supplied_tag );
 }
 
 void ExecutionControl::publish()

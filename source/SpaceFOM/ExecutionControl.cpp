@@ -434,7 +434,7 @@ void ExecutionControl::sync_point_announced(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         message_publish( MSG_NORMAL, "=========================== SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.\n",
+         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.\n",
                           __LINE__, label_str.c_str() );
       }
 
@@ -489,11 +489,10 @@ void ExecutionControl::sync_point_announced(
          }
       }
 
-      // For all non-Master federates, check that all the multiphase init
+      // For all federates, check that all the multiphase init
       // sync-points are synchronized by the time we get the
       // INIT_COMPLETED_SYNC_POINT announced.
-      if ( !is_master()
-           && ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 )
+      if ( ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 )
            && !is_sync_point_list_empty( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
            && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) ) {
          string init_syncpt_label;
@@ -626,18 +625,6 @@ bool ExecutionControl::receive_interaction(
 
    // Not processed
    return false;
-}
-
-/*!
-@details This routine implements the SpaceFOM Join Federation Process described
-in section 7.2 and figure 7-3.
-
-@job_class{initialization}
-*/
-void ExecutionControl::join_federation_process()
-{
-   // The base class implementation is good enough for now.
-   TrickHLA::ExecutionControlBase::join_federation_process();
 }
 
 /*!
