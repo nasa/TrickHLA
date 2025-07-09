@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 #include <ostream>
 #include <sstream>
 #include <stddef.h>
+#include <string>
 
 // Trick include files.
 #include "trick/attributes.h"
@@ -123,11 +124,13 @@ int const VariableArrayEncoderBase::get_data_size()
 
    // TODO: Handle std::string and std::wstring.
 
+   calculate_var_element_count();
+
    switch ( type ) {
       case TRICK_STRING: {
-         calculate_var_element_count();
+//         std::string *str_array = dynamic_cast< std::string * >( address );
          for (int i = 0; i < var_element_count; ++i ) {
-
+//            byte_count += str_array[i].size();
          }
          break;
       }
@@ -135,7 +138,7 @@ int const VariableArrayEncoderBase::get_data_size()
          break;
       }
       default: {
-         byte_count = get_size( address );
+         byte_count = var_element_count;
          break;
       }
    }
