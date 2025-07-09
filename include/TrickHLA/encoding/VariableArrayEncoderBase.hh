@@ -39,11 +39,12 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/attributes.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/parameter_types.h"
 
 // TrickHLA includes.
-#include "../StandardsSupport.hh"
-#include "EncoderBase.hh"
+#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -115,6 +116,11 @@ class VariableArrayEncoderBase : public EncoderBase
    bool const is_static_in_size()
    {
       return ( !is_array() || is_static_array() );
+   }
+
+   int const get_data_size()
+   {
+      return ( ( address != NULL ) ? get_size( address ) : 0 );
    }
 
   protected:

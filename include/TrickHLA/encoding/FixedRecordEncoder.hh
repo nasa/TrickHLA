@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_FIXED_RECORD_ENCODER_HH
 
 // TrickHLA includes.
-#include "../StandardsSupport.hh"
-#include "EncoderBase.hh"
+#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

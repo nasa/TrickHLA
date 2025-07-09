@@ -40,9 +40,9 @@ NASA, Johnson Space Center\n
 #include "trick/attributes.h"
 
 // TrickHLA includes.
-#include "../StandardsSupport.hh"
-#include "../Types.hh"
-#include "EncoderBase.hh"
+#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
