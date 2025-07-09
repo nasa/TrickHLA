@@ -116,30 +116,30 @@ void VariableArrayEncoderBase::update_after_decode()
 
 int const VariableArrayEncoderBase::get_data_size()
 {
-   if ( address == NULL ) {
-      return 0;
-   }
-
    int byte_count = 0;
 
-   // TODO: Handle std::string and std::wstring.
+   if ( address != NULL ) {
+      calculate_var_element_count();
 
-   calculate_var_element_count();
-
-   switch ( type ) {
-      case TRICK_STRING: {
-//         std::string *str_array = dynamic_cast< std::string * >( address );
-         for (int i = 0; i < var_element_count; ++i ) {
-//            byte_count += str_array[i].size();
+      switch ( type ) {
+         case TRICK_STRING: {
+            string *str_array = *static_cast< std::string ** >( address );
+            for ( int i = 0; i < var_element_count; ++i ) {
+               byte_count += str_array[i].size();
+            }
+            break;
          }
-         break;
-      }
-      case TRICK_WSTRING: {
-         break;
-      }
-      default: {
-         byte_count = var_element_count;
-         break;
+         case TRICK_WSTRING: {
+            wstring *wstr_array = *static_cast< std::wstring ** >( address );
+            for ( int i = 0; i < var_element_count; ++i ) {
+               byte_count += wstr_array[i].size();
+            }
+            break;
+         }
+         default: {
+            byte_count = var_element_count;
+            break;
+         }
       }
    }
    return byte_count;
