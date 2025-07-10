@@ -125,24 +125,14 @@ void InteractionHandler::receive_interaction(
 
 Int64Interval InteractionHandler::get_lookahead() const
 {
-   Int64Interval di;
-   if ( interaction != NULL ) {
-      di = interaction->get_lookahead();
-   } else {
-      di = Int64Interval( -1.0 );
-   }
-   return di;
+   return ( ( interaction != NULL ) ? interaction->get_lookahead() : Int64Interval( -1.0 ) );
 }
 
 Int64Time InteractionHandler::get_granted_time() const
 {
-   Int64Time dt;
-   if ( interaction != NULL ) {
-      dt = interaction->get_granted_time();
-   } else {
-      dt = Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
-   }
-   return dt;
+   return ( ( interaction != NULL )
+               ? interaction->get_granted_time()
+               : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() ) );
 }
 
 double InteractionHandler::get_sim_time()
