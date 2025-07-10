@@ -1219,7 +1219,7 @@ void Interaction::mark_unchanged()
 
    // Clear the change flag for each of the attributes as well.
    for ( int i = 0; i < param_count; ++i ) {
-      parameters[i].mark_unchanged();
+      parameters[i].mark_not_received();
    }
 }
 
@@ -1228,13 +1228,7 @@ void Interaction::mark_unchanged()
  */
 Int64Interval Interaction::get_lookahead() const
 {
-   Int64Interval i;
-   if ( manager != NULL ) {
-      i = manager->get_lookahead();
-   } else {
-      i = Int64Interval( -1.0 );
-   }
-   return i;
+   return ( ( manager != NULL ) ? manager->get_lookahead() : Int64Interval( -1.0 ) );
 }
 
 /*!
@@ -1243,13 +1237,9 @@ Int64Interval Interaction::get_lookahead() const
  */
 Int64Time Interaction::get_granted_time() const
 {
-   Int64Time t;
-   if ( manager != NULL ) {
-      t = manager->get_granted_time();
-   } else {
-      t = Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
-   }
-   return t;
+   return ( ( manager != NULL )
+               ? manager->get_granted_time()
+               : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() ) );
 }
 
 Federate *Interaction::get_federate()

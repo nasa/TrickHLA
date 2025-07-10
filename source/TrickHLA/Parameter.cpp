@@ -76,7 +76,7 @@ using namespace TrickHLA;
 Parameter::Parameter()
    : RecordElement(),
      FOM_name(),
-     value_changed( false ),
+     value_received( false ),
      interaction_FOM_name(),
      param_handle()
 {
@@ -174,7 +174,7 @@ void Parameter::initialize(
           << "  trick_name:'" << get_trick_name() << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
-          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
+          << "  received:" << ( is_received() ? "Yes" : "No" ) << '\n';
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -229,7 +229,7 @@ void Parameter::initialize(
           << "  trick_name:'" << get_trick_name() << "'\n"
           << "  ParameterHandle:" << param_handle_string << '\n'
           << "  rti_encoding:" << rti_encoding << '\n'
-          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << '\n';
+          << "  received:" << ( is_received() ? "Yes" : "No" ) << '\n';
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -277,10 +277,8 @@ bool const Parameter::decode(
                        __LINE__, get_FOM_name().c_str(), get_trick_name().c_str() );
    }
 
-   // Mark the attribute value as changed.
-   mark_changed();
-
-   // TODO: mark parameter as received.
+   // Mark the attribute value as received and changed.
+   mark_received();
 
    return true;
 }

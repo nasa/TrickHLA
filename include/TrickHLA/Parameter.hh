@@ -152,26 +152,19 @@ class Parameter : public RecordElement
     *  @return True if data has been received; False otherwise. */
    bool is_received() const
    {
-      return this->value_changed;
+      return this->value_received;
    }
 
-   /*! @brief Check if a parameter value has changed.
-    *  @return True if a parameter value has changed; False otherwise. */
-   bool is_changed() const
+   /*! @brief Mark the parameter as being received. */
+   void mark_received()
    {
-      return this->value_changed;
+      this->value_received = true;
    }
 
-   /*! @brief Mark the parameter as having changed. */
-   void mark_changed()
+   /*! @brief  Mark the parameter as having NOT being received. */
+   void mark_not_received()
    {
-      this->value_changed = true;
-   }
-
-   /*! @brief  Mark the parameter as having NOT changed. */
-   void mark_unchanged()
-   {
-      this->value_changed = false;
+      this->value_received = false;
    }
 
    /*! @brief Get the RTI encoding for this Parameter.
@@ -185,7 +178,7 @@ class Parameter : public RecordElement
    std::string FOM_name; ///< @trick_units{--} FOM name for the parameter.
 
   private:
-   bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
+   bool value_received; ///< @trick_units{--} Flag to indicate the paramter value was received.
 
    std::string interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
 
