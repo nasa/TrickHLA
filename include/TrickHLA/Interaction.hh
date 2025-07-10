@@ -237,6 +237,13 @@ class Interaction
       return parameters;
    }
 
+   /*! @brief Query if the interaction data has been received.
+    *  @return True if data has been received; False otherwise. */
+   bool is_received() const
+   {
+      return this->changed;
+   }
+
    // Used by TrickHLA to determine if the interaction data changed.
    /*! @brief Query if the interaction data has changed.
     *  @return True if data has changed; False otherwise. */

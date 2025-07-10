@@ -1112,8 +1112,6 @@ void Interaction::process_interaction()
          }
       }
 
-      mark_unchanged();
-
       // Unlock the mutex as the auto_unlock_mutex goes out of scope.
    }
 
@@ -1126,6 +1124,8 @@ void Interaction::process_interaction()
          handler->receive_interaction( RTI1516_USERDATA( NULL, 0 ) );
       }
    }
+
+   mark_unchanged();
 }
 
 bool Interaction::decode(
