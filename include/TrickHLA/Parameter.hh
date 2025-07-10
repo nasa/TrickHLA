@@ -148,6 +148,13 @@ class Parameter : public RecordElement
       this->param_handle = hdl;
    }
 
+   /*! @brief Check if the parameter data has been received.
+    *  @return True if data has been received; False otherwise. */
+   bool is_received() const
+   {
+      return this->value_changed;
+   }
+
    /*! @brief Check if a parameter value has changed.
     *  @return True if a parameter value has changed; False otherwise. */
    bool is_changed() const
