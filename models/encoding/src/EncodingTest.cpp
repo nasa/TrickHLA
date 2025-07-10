@@ -291,10 +291,10 @@ void EncodingTest::string_test(
    EncoderBase *data1_string_encoder = EncoderFactory::create(
       data1_trick_base_name + "._string", rti_encoding );
 
-   EncoderBase const *data1_vec3_string_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_string_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_string", basic_rti_encoding );
 
-   EncoderBase const *data1_m3x3_string_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_string_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_string", basic_rti_encoding );
 
    EncoderBase *data1_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -362,6 +362,34 @@ void EncodingTest::string_test(
       }
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
+
+   int const data1_string_size = data1_string_encoder->get_data_size();
+   int const data2_string_size = data2_string_encoder->get_data_size();
+   cout << "data1_string_encoder->get_data_size():"
+        << data1_string_size << endl
+        << "data2_string_encoder->get_data_size():"
+        << data2_string_size << endl;
+
+   int const data1_vec3_string_size = data1_vec3_string_encoder->get_data_size();
+   int const data2_vec3_string_size = data2_vec3_string_encoder->get_data_size();
+   cout << "data1_vec3_string_encoder->get_data_size():"
+        << data1_vec3_string_size << endl
+        << "data2_vec3_string_encoder->get_data_size():"
+        << data2_vec3_string_size << endl;
+
+   int const data1_m3x3_string_size = data1_m3x3_string_encoder->get_data_size();
+   int const data2_m3x3_string_size = data2_m3x3_string_encoder->get_data_size();
+   cout << "data1_m3x3_string_encoder->get_data_size():"
+        << data1_m3x3_string_size << endl
+        << "data2_m3x3_string_encoder->get_data_size():"
+        << data2_m3x3_string_size << endl;
+
+   int const data1_ptr_string_size = data1_ptr_string_encoder->get_data_size();
+   int const data2_ptr_string_size = data2_ptr_string_encoder->get_data_size();
+   cout << "data1_ptr_string_encoder->get_data_size():"
+        << data1_ptr_string_size << endl
+        << "data2_ptr_string_encoder->get_data_size():"
+        << data2_ptr_string_size << endl;
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;

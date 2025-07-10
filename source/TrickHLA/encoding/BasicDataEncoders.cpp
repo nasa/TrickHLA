@@ -29,7 +29,9 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstddef>
 #include <string>
+#include <typeinfo>
 
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
@@ -50,7 +52,7 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-#define DECLARE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType, TrickTypeEnum )                             \
+#define DECLARE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType )                                            \
                                                                                                                                       \
    EncoderClassName::EncoderClassName(                                                                                                \
       void *addr )                                                                                                                    \
@@ -62,34 +64,48 @@ using namespace TrickHLA;
    EncoderClassName::~EncoderClassName()                                                                                              \
    {                                                                                                                                  \
       return;                                                                                                                         \
+   }                                                                                                                                  \
+                                                                                                                                      \
+   int const EncoderClassName::get_data_size()                                                                                        \
+   {                                                                                                                                  \
+      if ( data_encoder != NULL ) {                                                                                                   \
+         if ( typeid( SimpleDataType ) == typeid( std::string ) ) {                                                                   \
+            return dynamic_cast< HLAASCIIstring * >( data_encoder )->get().size();                                                    \
+         } else if ( typeid( SimpleDataType ) == typeid( std::wstring ) ) {                                                           \
+            return ( sizeof( wchar_t ) * dynamic_cast< HLAunicodeString * >( data_encoder )->get().size() );                          \
+         } else {                                                                                                                     \
+            return sizeof( SimpleDataType );                                                                                          \
+         }                                                                                                                            \
+      }                                                                                                                               \
+      return 0;                                                                                                                       \
    }
 
-DECLARE_BASIC_ENCODER_CLASS( ASCIICharEncoder, HLAASCIIchar, char, TRICK_CHARACTER )
-DECLARE_BASIC_ENCODER_CLASS( ASCIIStringEncoder, HLAASCIIstring, std::string, TRICK_STRING )
-DECLARE_BASIC_ENCODER_CLASS( BoolEncoder, HLAboolean, bool, TRICK_BOOLEAN )
-DECLARE_BASIC_ENCODER_CLASS( ByteEncoder, HLAbyte, Octet, TRICK_CHARACTER )
-DECLARE_BASIC_ENCODER_CLASS( Float32BEEncoder, HLAfloat32BE, float, TRICK_FLOAT )
-DECLARE_BASIC_ENCODER_CLASS( Float32LEEncoder, HLAfloat32LE, float, TRICK_FLOAT )
-DECLARE_BASIC_ENCODER_CLASS( Float64BEEncoder, HLAfloat64BE, double, TRICK_DOUBLE )
-DECLARE_BASIC_ENCODER_CLASS( Float64LEEncoder, HLAfloat64LE, double, TRICK_DOUBLE )
-DECLARE_BASIC_ENCODER_CLASS( Int16BEEncoder, HLAinteger16BE, Integer16, TRICK_SHORT )
-DECLARE_BASIC_ENCODER_CLASS( Int16LEEncoder, HLAinteger16LE, Integer16, TRICK_SHORT )
-DECLARE_BASIC_ENCODER_CLASS( Int32BEEncoder, HLAinteger32BE, Integer32, TRICK_INTEGER )
-DECLARE_BASIC_ENCODER_CLASS( Int32LEEncoder, HLAinteger32LE, Integer32, TRICK_INTEGER )
-DECLARE_BASIC_ENCODER_CLASS( Int64BEEncoder, HLAinteger64BE, Integer64, TRICK_LONG_LONG )
-DECLARE_BASIC_ENCODER_CLASS( Int64LEEncoder, HLAinteger64LE, Integer64, TRICK_LONG_LONG )
+DECLARE_BASIC_ENCODER_CLASS( ASCIICharEncoder, HLAASCIIchar, char )
+DECLARE_BASIC_ENCODER_CLASS( ASCIIStringEncoder, HLAASCIIstring, std::string )
+DECLARE_BASIC_ENCODER_CLASS( BoolEncoder, HLAboolean, bool )
+DECLARE_BASIC_ENCODER_CLASS( ByteEncoder, HLAbyte, Octet )
+DECLARE_BASIC_ENCODER_CLASS( Float32BEEncoder, HLAfloat32BE, float )
+DECLARE_BASIC_ENCODER_CLASS( Float32LEEncoder, HLAfloat32LE, float )
+DECLARE_BASIC_ENCODER_CLASS( Float64BEEncoder, HLAfloat64BE, double )
+DECLARE_BASIC_ENCODER_CLASS( Float64LEEncoder, HLAfloat64LE, double )
+DECLARE_BASIC_ENCODER_CLASS( Int16BEEncoder, HLAinteger16BE, Integer16 )
+DECLARE_BASIC_ENCODER_CLASS( Int16LEEncoder, HLAinteger16LE, Integer16 )
+DECLARE_BASIC_ENCODER_CLASS( Int32BEEncoder, HLAinteger32BE, Integer32 )
+DECLARE_BASIC_ENCODER_CLASS( Int32LEEncoder, HLAinteger32LE, Integer32 )
+DECLARE_BASIC_ENCODER_CLASS( Int64BEEncoder, HLAinteger64BE, Integer64 )
+DECLARE_BASIC_ENCODER_CLASS( Int64LEEncoder, HLAinteger64LE, Integer64 )
 
 #if defined( IEEE_1516_2025 )
-DECLARE_BASIC_ENCODER_CLASS( UInt16BEEncoder, HLAunsignedInteger16BE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
-DECLARE_BASIC_ENCODER_CLASS( UInt16LEEncoder, HLAunsignedInteger16LE, UnsignedInteger16, TRICK_UNSIGNED_SHORT )
-DECLARE_BASIC_ENCODER_CLASS( UInt32BEEncoder, HLAunsignedInteger32BE, UnsignedInteger32, TRICK_UNSIGNED_INTEGER )
-DECLARE_BASIC_ENCODER_CLASS( UInt32LEEncoder, HLAunsignedInteger32LE, UnsignedInteger32, TRICK_UNSIGNED_INTEGER )
-DECLARE_BASIC_ENCODER_CLASS( UInt64BEEncoder, HLAunsignedInteger64BE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
-DECLARE_BASIC_ENCODER_CLASS( UInt64LEEncoder, HLAunsignedInteger64LE, UnsignedInteger64, TRICK_UNSIGNED_LONG_LONG )
+DECLARE_BASIC_ENCODER_CLASS( UInt16BEEncoder, HLAunsignedInteger16BE, UnsignedInteger16 )
+DECLARE_BASIC_ENCODER_CLASS( UInt16LEEncoder, HLAunsignedInteger16LE, UnsignedInteger16 )
+DECLARE_BASIC_ENCODER_CLASS( UInt32BEEncoder, HLAunsignedInteger32BE, UnsignedInteger32 )
+DECLARE_BASIC_ENCODER_CLASS( UInt32LEEncoder, HLAunsignedInteger32LE, UnsignedInteger32 )
+DECLARE_BASIC_ENCODER_CLASS( UInt64BEEncoder, HLAunsignedInteger64BE, UnsignedInteger64 )
+DECLARE_BASIC_ENCODER_CLASS( UInt64LEEncoder, HLAunsignedInteger64LE, UnsignedInteger64 )
 #endif // IEEE_1516_2025
 
-DECLARE_BASIC_ENCODER_CLASS( UnicodeCharEncoder, HLAunicodeChar, wchar_t, TRICK_WCHAR )
+DECLARE_BASIC_ENCODER_CLASS( UnicodeCharEncoder, HLAunicodeChar, wchar_t )
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
-DECLARE_BASIC_ENCODER_CLASS( UnicodeStringEncoder, HLAunicodeString, std::wstring, TRICK_WSTRING )
+DECLARE_BASIC_ENCODER_CLASS( UnicodeStringEncoder, HLAunicodeString, std::wstring )
 #endif // TRICK_WSTRING_MM_SUPPORT

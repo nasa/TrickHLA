@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 #include <cstddef>
 #include <cstdlib>
 #include <string>
+#include <typeinfo>
 
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
@@ -53,30 +54,52 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-#define DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType ) \
-                                                                                                       \
-   EncoderClassName::EncoderClassName(                                                                 \
-      SimpleDataType *array_data, /* NOLINT(bugprone-macro-parentheses) */                             \
-      size_t          length )                                                                         \
-      : EncoderBase()                                                                                  \
-   {                                                                                                   \
-      HLAfixedArray *array_encoder = new HLAfixedArray( EncodableDataType(), length );                 \
-      this->data_encoder           = array_encoder;                                                    \
-                                                                                                       \
-      /* Connect the users array data to the encoder array elements. */                                \
-      if ( array_data != NULL ) {                                                                      \
-         for ( size_t i = 0; i < length; ++i ) {                                                       \
-            const_cast< EncodableDataType & >( /* NOLINT(bugprone-macro-parentheses) */                \
-                                               dynamic_cast< EncodableDataType const & >(              \
-                                                  array_encoder->get( i ) ) )                          \
-               .setDataPointer( &array_data[i] );                                                      \
-         }                                                                                             \
-      }                                                                                                \
-   }                                                                                                   \
-                                                                                                       \
-   EncoderClassName::~EncoderClassName()                                                               \
-   {                                                                                                   \
-      return;                                                                                          \
+#define DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType )                                 \
+                                                                                                                                       \
+   EncoderClassName::EncoderClassName(                                                                                                 \
+      SimpleDataType *array_data, /* NOLINT(bugprone-macro-parentheses) */                                                             \
+      size_t          length )                                                                                                         \
+      : EncoderBase()                                                                                                                  \
+   {                                                                                                                                   \
+      HLAfixedArray *array_encoder = new HLAfixedArray( EncodableDataType(), length );                                                 \
+      this->data_encoder           = array_encoder;                                                                                    \
+                                                                                                                                       \
+      /* Connect the users array data to the encoder array elements. */                                                                \
+      if ( array_data != NULL ) {                                                                                                      \
+         for ( size_t i = 0; i < length; ++i ) {                                                                                       \
+            const_cast< EncodableDataType & >( /* NOLINT(bugprone-macro-parentheses) */                                                \
+                                               dynamic_cast< EncodableDataType const & >(                                              \
+                                                  array_encoder->get( i ) ) )                                                          \
+               .setDataPointer( &array_data[i] );                                                                                      \
+         }                                                                                                                             \
+      }                                                                                                                                \
+   }                                                                                                                                   \
+                                                                                                                                       \
+   EncoderClassName::~EncoderClassName()                                                                                               \
+   {                                                                                                                                   \
+      return;                                                                                                                          \
+   }                                                                                                                                   \
+                                                                                                                                       \
+   int const EncoderClassName::get_data_size()                                                                                         \
+   {                                                                                                                                   \
+      int byte_count = 0;                                                                                                              \
+      if ( data_encoder != NULL ) {                                                                                                    \
+         HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( data_encoder );                                         \
+         int const            array_size    = array_encoder->size();                                                                   \
+                                                                                                                                       \
+         if ( typeid( SimpleDataType ) == typeid( std::string ) ) {                                                                    \
+            for ( int i = 0; i < array_size; ++i ) {                                                                                   \
+               byte_count += dynamic_cast< HLAASCIIstring const & >( array_encoder->get( i ) ).get().size();                           \
+            }                                                                                                                          \
+         } else if ( typeid( SimpleDataType ) == typeid( std::wstring ) ) {                                                            \
+            for ( int i = 0; i < array_size; ++i ) {                                                                                   \
+               byte_count += ( sizeof( wchar_t ) * dynamic_cast< HLAunicodeString const & >( array_encoder->get( i ) ).get().size() ); \
+            }                                                                                                                          \
+         } else {                                                                                                                      \
+            byte_count = sizeof( SimpleDataType ) * array_size;                                                                        \
+         }                                                                                                                             \
+      }                                                                                                                                \
+      return byte_count;                                                                                                               \
    }
 
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIICharFixedArrayEncoder, HLAASCIIchar, char )

@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstddef>
 #include <string>
-#include <typeinfo>
 
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
@@ -49,6 +48,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/EncodingConfig.h"
 #include "RTI/encoding/HLAfixedArray.h"
@@ -57,66 +57,45 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-#define DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, SimpleDataType )                                                         \
-                                                                                                                                           \
-   class EncoderClassName : public EncoderBase                                                                                             \
-   {                                                                                                                                       \
-      /* Let the Trick input processor access protected and private data. */                                                               \
-      /* InputProcessor is really just a marker class (does not really    */                                                               \
-      /* exists - at least yet). This friend statement just tells Trick   */                                                               \
-      /* to go ahead and process the protected and private data as well   */                                                               \
-      /* as the usual public data.                                        */                                                               \
-      friend class InputProcessor;                                                                                                         \
-      /* IMPORTANT Note: you must have the following line too.            */                                                               \
-      /* Syntax: friend void init_attr<namespace>__<class name>();        */                                                               \
-      friend void init_attrTrickHLA__EncoderClassName();                                                                                   \
-                                                                                                                                           \
-     public:                                                                                                                               \
-      /*! @brief Default constructor for the TrickHLA EncoderClassName class. */                                                           \
-      EncoderClassName( SimpleDataType *array_data, size_t length );                                                                       \
-                                                                                                                                           \
-      /*! @brief Destructor for the TrickHLA EncoderClassName class. */                                                                    \
-      virtual ~EncoderClassName();                                                                                                         \
-                                                                                                                                           \
-      virtual void update_before_encode()                                                                                                  \
-      {                                                                                                                                    \
-         return;                                                                                                                           \
-      }                                                                                                                                    \
-                                                                                                                                           \
-      virtual void update_after_decode()                                                                                                   \
-      {                                                                                                                                    \
-         return;                                                                                                                           \
-      }                                                                                                                                    \
-                                                                                                                                           \
-      virtual int const get_data_size()                                                                                                    \
-      {                                                                                                                                    \
-         /* TODO: Handle std::string and std::wstring. */                                                                                  \
-         if ( data_encoder != NULL ) {                                                                                                     \
-            if ( typeid( SimpleDataType ) == typeid( std::string ) ) {                                                                     \
-               RTI1516_NAMESPACE::HLAfixedArray const *array_encoder = dynamic_cast< RTI1516_NAMESPACE::HLAfixedArray * >( data_encoder ); \
-                                                                                                                                           \
-               int array_size = array_encoder->size();                                                                                     \
-               int byte_count = 0;                                                                                                         \
-               for ( int i = 0; i < array_size; ++i ) {                                                                                    \
-                  std::string str = "";                                                                                                    \
-                  /* const_cast< RTI1516_NAMESPACE::DataElement const & >( */                                                              \
-                  /*    dynamic_cast< RTI1516_NAMESPACE::DataElement const & >( array_encoder->get(i) ) ); */                              \
-                  byte_count += str.size();                                                                                                \
-               }                                                                                                                           \
-               return byte_count;                                                                                                          \
-            } else {                                                                                                                       \
-               return ( sizeof( SimpleDataType ) * dynamic_cast< RTI1516_NAMESPACE::HLAfixedArray * >( data_encoder )->size() );           \
-            }                                                                                                                              \
-         }                                                                                                                                 \
-         return 0;                                                                                                                         \
-      }                                                                                                                                    \
-                                                                                                                                           \
-     private:                                                                                                                              \
-      /* Do not allow the default, copy constructor or assignment operator. */                                                             \
-      EncoderClassName();                                                                                                                  \
-      /*! @brief Assignment operator for EncoderClassName class.                 */                                                        \
-      /*  @details Assignment operator is private to prevent inadvertent copies. */                                                        \
-      EncoderClassName &operator=( EncoderClassName const &rhs );                                                                          \
+#define DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, SimpleDataType )  \
+                                                                                    \
+   class EncoderClassName : public EncoderBase                                      \
+   {                                                                                \
+      /* Let the Trick input processor access protected and private data. */        \
+      /* InputProcessor is really just a marker class (does not really    */        \
+      /* exists - at least yet). This friend statement just tells Trick   */        \
+      /* to go ahead and process the protected and private data as well   */        \
+      /* as the usual public data.                                        */        \
+      friend class InputProcessor;                                                  \
+      /* IMPORTANT Note: you must have the following line too.            */        \
+      /* Syntax: friend void init_attr<namespace>__<class name>();        */        \
+      friend void init_attrTrickHLA__EncoderClassName();                            \
+                                                                                    \
+     public:                                                                        \
+      /*! @brief Default constructor for the TrickHLA EncoderClassName class. */    \
+      EncoderClassName( SimpleDataType *array_data, size_t length );                \
+                                                                                    \
+      /*! @brief Destructor for the TrickHLA EncoderClassName class. */             \
+      virtual ~EncoderClassName();                                                  \
+                                                                                    \
+      virtual void update_before_encode()                                           \
+      {                                                                             \
+         return;                                                                    \
+      }                                                                             \
+                                                                                    \
+      virtual void update_after_decode()                                            \
+      {                                                                             \
+         return;                                                                    \
+      }                                                                             \
+                                                                                    \
+      virtual int const get_data_size();                                            \
+                                                                                    \
+     private:                                                                       \
+      /* Do not allow the default, copy constructor or assignment operator. */      \
+      EncoderClassName();                                                           \
+      /*! @brief Assignment operator for EncoderClassName class.                 */ \
+      /*  @details Assignment operator is private to prevent inadvertent copies. */ \
+      EncoderClassName &operator=( EncoderClassName const &rhs );                   \
    };
 
 DEFINE_BASIC_FIXED_ARRAY_ENCODER_CLASS( ASCIICharFixedArrayEncoder, char )

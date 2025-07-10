@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <iostream> // for cout
 #include <ostream>
 #include <sstream>
 #include <stddef.h>
@@ -123,12 +124,6 @@ int const VariableArrayEncoderBase::get_data_size()
 
       switch ( type ) {
          case TRICK_STRING: {
-            ostringstream errmsg;
-            errmsg << "VariableArrayEncoderBase::get_data_size():" << __LINE__
-                   << " ERROR: Not supported for std::string yet!" << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
-
-            // TODO: Test and get this working.
             if ( is_dynamic_array() ) {
                string *str_array = *static_cast< std::string ** >( address );
                for ( int i = 0; i < var_element_count; ++i ) {
@@ -140,16 +135,11 @@ int const VariableArrayEncoderBase::get_data_size()
             break;
          }
          case TRICK_WSTRING: {
-            ostringstream errmsg;
-            errmsg << "VariableArrayEncoderBase::get_data_size():" << __LINE__
-                   << " ERROR: Not supported for std::wstring yet!" << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
-
-            // TODO: Test and get this working.
             if ( is_dynamic_array() ) {
+               size_t   wchar_size = sizeof( wchar_t );
                wstring *wstr_array = *static_cast< std::wstring ** >( address );
                for ( int i = 0; i < var_element_count; ++i ) {
-                  byte_count += wstr_array[i].size();
+                  byte_count += ( wchar_size * wstr_array[i].size() );
                }
             } else {
                byte_count = var_element_count;
