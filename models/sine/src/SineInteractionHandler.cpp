@@ -115,7 +115,7 @@ void SineInteractionHandler::send_sine_interaction(
       string name_str   = name;
       user_supplied_tag = RTI1516_USERDATA( name_str.c_str(), name_str.size() );
    } else {
-      user_supplied_tag = RTI1516_USERDATA( 0, 0 );
+      user_supplied_tag = RTI1516_USERDATA( NULL, 0 );
    }
 
    // Get the HLA granted time and lookahead time.

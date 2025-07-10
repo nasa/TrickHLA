@@ -2074,7 +2074,7 @@ void Federate::request_attribute_update(
       // Request initial values.
       RTI_ambassador->requestAttributeValueUpdate( class_handle,
                                                    attribute_list,
-                                                   RTI1516_USERDATA( 0, 0 ) );
+                                                   RTI1516_USERDATA( NULL, 0 ) );
    } catch ( ObjectClassNotDefined const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::request_attribute_update():%d ObjectClassNotDefined: Attribute update request FAILED!\n",
@@ -2328,7 +2328,7 @@ void Federate::send_interaction(
 
    bool error_flag = false;
    try {
-      RTI_ambassador->sendInteraction( class_handle, parameter_list, RTI1516_USERDATA( 0, 0 ) );
+      RTI_ambassador->sendInteraction( class_handle, parameter_list, RTI1516_USERDATA( NULL, 0 ) );
    } catch ( InteractionClassNotPublished const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::send_interaction():%d InteractionClassNotPublished: Send interaction FAILED!\n",

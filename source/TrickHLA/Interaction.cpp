@@ -1123,7 +1123,7 @@ void Interaction::process_interaction()
       if ( user_supplied_tag_size > 0 ) {
          handler->receive_interaction( RTI1516_USERDATA( user_supplied_tag, user_supplied_tag_size ) );
       } else {
-         handler->receive_interaction( RTI1516_USERDATA( 0, 0 ) );
+         handler->receive_interaction( RTI1516_USERDATA( NULL, 0 ) );
       }
    }
 }

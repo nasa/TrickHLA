@@ -576,7 +576,7 @@ bool const SyncPointManagerBase::is_sync_point_achieved(
 bool const SyncPointManagerBase::achieve_sync_point(
    wstring const &label )
 {
-   return achieve_sync_point( label, RTI1516_USERDATA( 0, 0 ) );
+   return achieve_sync_point( label, RTI1516_USERDATA( NULL, 0 ) );
 }
 
 bool const SyncPointManagerBase::achieve_sync_point(

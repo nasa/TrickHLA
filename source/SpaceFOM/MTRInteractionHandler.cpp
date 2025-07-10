@@ -135,7 +135,7 @@ void MTRInteractionHandler::send_interaction(
    if ( !name.empty() ) {
       rti_user_supplied_tag = RTI1516_USERDATA( name.c_str(), name.size() );
    } else {
-      rti_user_supplied_tag = RTI1516_USERDATA( 0, 0 );
+      rti_user_supplied_tag = RTI1516_USERDATA( NULL, 0 );
    }
 
    // Get the current time line values.
