@@ -280,5 +280,7 @@ bool const Parameter::decode(
    // Mark the attribute value as changed.
    mark_changed();
 
+   // TODO: mark parameter as received.
+
    return true;
 }

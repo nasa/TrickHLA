@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -37,10 +38,14 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_HANDLER_HH
 #define TRICKHLA_INTERACTION_HANDLER_HH
 
-// TrickHLA include files.
+// System includes.
+#include <string>
+
+// TrickHLA includes.
 #include "Int64Interval.hh"
 #include "Int64Time.hh"
 #include "Interaction.hh"
+#include "Parameter.hh"
 #include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -125,6 +130,16 @@ class InteractionHandler
    /*! @brief Returns the current Central Timing Equipment (CTE) time.
     *  @return Current CTE time. */
    double get_cte_time();
+
+   /*! @brief Get the Parameter by FOM name.
+    *  @return Parameter for the given name.
+    *  @param param_FOM_name Parameter FOM name. */
+   Parameter *get_parameter( std::string const &param_FOM_name );
+
+   /*! @brief This function returns the Parameter for the given interaction FOM name.
+    *  @return Parameter for the given name.
+    *  @param param_FOM_name Parameter FOM name. */
+   Parameter *get_parameter_and_validate( std::string const &param_FOM_name );
 
    //-----------------------------------------------------------------
    // This is a virtual function and must be defined by a full class.

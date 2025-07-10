@@ -218,6 +218,11 @@ class Interaction
       this->class_handle = id;
    }
 
+   /*! @brief Gets the parameter for the given FOM name.
+    *  @return Associated TrickHLA::Parameter.
+    *  @param inter_FOM_name Parameter FOM name. */
+   Parameter *get_parameter( std::string const &inter_FOM_name );
+
    /*! @brief Get the parameter count for this interaction.
     *  @return The parameter count for this interaction. */
    int get_parameter_count() const

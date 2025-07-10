@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstddef>
 #include <string>
+#include <typeinfo>
 
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
@@ -90,9 +91,23 @@ namespace TrickHLA
       virtual int const get_data_size()                                                                                              \
       {                                                                                                                              \
          /* TODO: Handle std::string and std::wstring. */                                                                            \
-         return ( ( data_encoder != NULL )                                                                                           \
-                     ? ( sizeof( SimpleDataType ) * ( dynamic_cast< RTI1516_NAMESPACE::HLAfixedArray * >( data_encoder )->size() ) ) \
-                     : 0 );                                                                                                          \
+         if ( data_encoder != NULL ) {                                                                                               \
+            if ( typeid( SimpleDataType ) == typeid( std::string ) ) {                                                               \
+               int                               byte_count    = 0;                                                                  \
+               RTI1516_NAMESPACE::HLAfixedArray *array_encoder = dynamic_cast< RTI1516_NAMESPACE::HLAfixedArray * >( data_encoder ); \
+               int                               array_size    = array_encoder->size();                                              \
+               for ( int i = 0; i < array_size; ++i ) {                                                                              \
+                  std::string str = "";                                                                                              \
+                  /* const_cast< RTI1516_NAMESPACE::DataElement const & >( */                                                        \
+                  /*    dynamic_cast< RTI1516_NAMESPACE::DataElement const & >( array_encoder->get(i) ) ); */                        \
+                  byte_count += str.size();                                                                                          \
+               }                                                                                                                     \
+               return byte_count;                                                                                                    \
+            } else {                                                                                                                 \
+               return ( sizeof( SimpleDataType ) * dynamic_cast< RTI1516_NAMESPACE::HLAfixedArray * >( data_encoder )->size() );     \
+            }                                                                                                                        \
+         }                                                                                                                           \
+         return 0;                                                                                                                   \
       }                                                                                                                              \
                                                                                                                                      \
      private:                                                                                                                        \

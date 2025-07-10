@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionHandler.cpp}
+@trick_link_dependency{Parameter.cpp}
 
 @revs_title
 @revs_begin
@@ -35,12 +36,15 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <cstring>
 #include <limits>
+#include <sstream>
+#include <string>
 
 // Trick includes.
 #include <trick/message_proto.h>
 #include <trick/message_type.h>
 
 // TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
@@ -48,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
+#include "TrickHLA/Parameter.hh"
 #include "TrickHLA/StandardsSupport.hh"
 
 using namespace std;
@@ -81,30 +86,34 @@ void InteractionHandler::initialize_callback(
 
 bool InteractionHandler::send_interaction()
 {
-   return ( ( interaction != NULL ) ? interaction->send( RTI1516_USERDATA( 0, 0 ) )
-                                    : false );
+   return ( ( interaction != NULL )
+               ? interaction->send( RTI1516_USERDATA( NULL, 0 ) )
+               : false );
 }
 
 bool InteractionHandler::send_interaction(
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL ) ? interaction->send( the_user_supplied_tag )
-                                    : false );
+   return ( ( interaction != NULL )
+               ? interaction->send( the_user_supplied_tag )
+               : false );
 }
 
 bool InteractionHandler::send_interaction(
    double send_HLA_time )
 {
-   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, RTI1516_USERDATA( 0, 0 ) )
-                                    : false );
+   return ( ( interaction != NULL )
+               ? interaction->send( send_HLA_time, RTI1516_USERDATA( NULL, 0 ) )
+               : false );
 }
 
 bool InteractionHandler::send_interaction(
    double                  send_HLA_time,
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, the_user_supplied_tag )
-                                    : false );
+   return ( ( interaction != NULL )
+               ? interaction->send( send_HLA_time, the_user_supplied_tag )
+               : false );
 }
 
 void InteractionHandler::receive_interaction(
@@ -163,4 +172,49 @@ double InteractionHandler::get_cte_time()
       }
    }
    return -std::numeric_limits< double >::max();
+}
+
+/*!
+ * @brief Get the Parameter by FOM name.
+ * @return Parameter for the given name.
+ * @param param_FOM_name Parameter FOM name.
+ */
+Parameter *InteractionHandler::get_parameter(
+   string const &param_FOM_name )
+{
+   return interaction->get_parameter( param_FOM_name );
+}
+
+/*!
+ * @brief This function returns the Parameter for the given parameter FOM name.
+ * @return Parameter for the given name.
+ * @param param_FOM_name Parameter FOM name.
+ */
+Parameter *InteractionHandler::get_parameter_and_validate(
+   string const &param_FOM_name )
+{
+   // Make sure the FOM name is not NULL.
+   if ( param_FOM_name.empty() ) {
+      ostringstream errmsg;
+      errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
+             << " ERROR: Unexpected NULL parameter FOM name specified.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Get the parameter by FOM name.
+   Parameter *param = get_parameter( param_FOM_name );
+
+   // Make sure we have found the parameter.
+   if ( param == NULL ) {
+      ostringstream errmsg;
+      errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
+             << " ERROR: For FOM interaction '" << interaction->get_FOM_name()
+             << "', failed to find the TrickHLA Parameter for an parameter named"
+             << " '" << param_FOM_name << "'. Make sure the FOM parameter name is"
+             << " correct, the FOM contains an parameter named '"
+             << param_FOM_name << "' and that your input.py file is properly"
+             << " configured for this parameter.\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   return param;
 }

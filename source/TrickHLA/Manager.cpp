@@ -2439,11 +2439,10 @@ void Manager::process_interactions()
             }
             break;
          }
-
          default: {
             ostringstream errmsg;
             errmsg << "Manager::process_interactions():" << __LINE__
-                   << " FATAL ERROR: encountered an invalid interaction type: "
+                   << " ERROR: Encountered an invalid interaction type: "
                    << item->interaction_type
                    << ". Verify that you are specifying the correct interaction "
                    << "type defined in 'ManagerTypeOfInteractionEnum' enum "

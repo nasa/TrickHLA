@@ -1200,6 +1200,19 @@ bool Interaction::decode(
    return any_param_received;
 }
 
+Parameter *Interaction::get_parameter(
+   string const &inter_FOM_name )
+{
+   for ( int i = 0; i < param_count; ++i ) {
+      if ( !parameters[i].get_FOM_name().empty() ) {
+         if ( inter_FOM_name.compare( parameters[i].get_FOM_name() ) == 0 ) {
+            return ( &parameters[i] );
+         }
+      }
+   }
+   return NULL;
+}
+
 void Interaction::mark_unchanged()
 {
    this->changed = false;

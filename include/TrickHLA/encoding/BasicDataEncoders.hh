@@ -33,6 +33,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_BASIC_DATA_ENCODERS_HH
 #define TRICKHLA_BASIC_DATA_ENCODERS_HH
 
+// System includes.
+#include <string>
+#include <typeinfo>
+
 // Trick include files.
 #include "trick/attributes.h"
 
@@ -54,50 +58,59 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-#define DEFINE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType ) \
-                                                                                          \
-   class EncoderClassName : public EncoderBase                                            \
-   {                                                                                      \
-      /* Let the Trick input processor access protected and private data.  */             \
-      /* InputProcessor is really just a marker class (does not really     */             \
-      /* exists - at least yet). This friend statement just tells Trick    */             \
-      /* to go ahead and process the protected and private data as well    */             \
-      /* as the usual public data.                                         */             \
-      friend class InputProcessor;                                                        \
-      /* IMPORTANT Note: you must have the following line too.             */             \
-      /* Syntax: friend void init_attr<namespace>__<class name>();         */             \
-      friend void init_attrTrickHLA__EncoderClassName();                                  \
-                                                                                          \
-     public:                                                                              \
-      explicit EncoderClassName( void *addr );                                            \
-                                                                                          \
-      virtual ~EncoderClassName();                                                        \
-                                                                                          \
-      virtual void update_before_encode()                                                 \
-      {                                                                                   \
-         return;                                                                          \
-      }                                                                                   \
-                                                                                          \
-      virtual void update_after_decode()                                                  \
-      {                                                                                   \
-         return;                                                                          \
-      }                                                                                   \
-                                                                                          \
-      virtual int const get_data_size()                                                   \
-      {                                                                                   \
-         /* TODO: Handle std::string and std::wstring. */                                 \
-         return ( ( data_encoder != NULL ) ? sizeof( SimpleDataType ) : 0 );              \
-      }                                                                                   \
-                                                                                          \
-     private:                                                                             \
-      /* Do not allow the default, copy constructor or assignment operator. */            \
-      EncoderClassName();                                                                 \
-      /*! @brief Copy constructor for EncoderClassName class.                 */          \
-      /*  @details This constructor is private to prevent inadvertent copies. */          \
-      EncoderClassName( EncoderClassName const &rhs );                                    \
-      /*! @brief Assignment operator for EncoderClassName class.                 */       \
-      /*  @details Assignment operator is private to prevent inadvertent copies. */       \
-      EncoderClassName &operator=( EncoderClassName const &rhs );                         \
+#define DEFINE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType )                          \
+                                                                                                                   \
+   class EncoderClassName : public EncoderBase                                                                     \
+   {                                                                                                               \
+      /* Let the Trick input processor access protected and private data.  */                                      \
+      /* InputProcessor is really just a marker class (does not really     */                                      \
+      /* exists - at least yet). This friend statement just tells Trick    */                                      \
+      /* to go ahead and process the protected and private data as well    */                                      \
+      /* as the usual public data.                                         */                                      \
+      friend class InputProcessor;                                                                                 \
+      /* IMPORTANT Note: you must have the following line too.             */                                      \
+      /* Syntax: friend void init_attr<namespace>__<class name>();         */                                      \
+      friend void init_attrTrickHLA__EncoderClassName();                                                           \
+                                                                                                                   \
+     public:                                                                                                       \
+      explicit EncoderClassName( void *addr );                                                                     \
+                                                                                                                   \
+      virtual ~EncoderClassName();                                                                                 \
+                                                                                                                   \
+      virtual void update_before_encode()                                                                          \
+      {                                                                                                            \
+         return;                                                                                                   \
+      }                                                                                                            \
+                                                                                                                   \
+      virtual void update_after_decode()                                                                           \
+      {                                                                                                            \
+         return;                                                                                                   \
+      }                                                                                                            \
+                                                                                                                   \
+      virtual int const get_data_size()                                                                            \
+      {                                                                                                            \
+         /* TODO: Handle std::string and std::wstring. */                                                          \
+         if ( data_encoder != NULL ) {                                                                             \
+            if ( typeid( SimpleDataType ) == typeid( std::string ) ) {                                             \
+               return dynamic_cast< RTI1516_NAMESPACE::HLAASCIIstring * >( data_encoder )->get().size();           \
+            } else if ( typeid( SimpleDataType ) == typeid( std::wstring ) ) {                                     \
+               return ( 2 * dynamic_cast< RTI1516_NAMESPACE::HLAunicodeString * >( data_encoder )->get().size() ); \
+            } else {                                                                                               \
+               return sizeof( SimpleDataType );                                                                    \
+            }                                                                                                      \
+         }                                                                                                         \
+         return 0;                                                                                                 \
+      }                                                                                                            \
+                                                                                                                   \
+     private:                                                                                                      \
+      /* Do not allow the default, copy constructor or assignment operator. */                                     \
+      EncoderClassName();                                                                                          \
+      /*! @brief Copy constructor for EncoderClassName class.                 */                                   \
+      /*  @details This constructor is private to prevent inadvertent copies. */                                   \
+      EncoderClassName( EncoderClassName const &rhs );                                                             \
+      /*! @brief Assignment operator for EncoderClassName class.                 */                                \
+      /*  @details Assignment operator is private to prevent inadvertent copies. */                                \
+      EncoderClassName &operator=( EncoderClassName const &rhs );                                                  \
    };
 
 DEFINE_BASIC_ENCODER_CLASS( ASCIICharEncoder, HLAASCIIchar, char )
