@@ -525,8 +525,9 @@ EncoderBase *EncoderFactory::create_string_encoder(
                    << " ERROR: Trick attributes for the variable '" << attr->name
                    << "' is of type 'std::string', the specified HLA-encoding ("
                    << encoding_enum_to_string( hla_encoding )
-                   << ") is only supported for a primitive std::string value."
-                   << std::endl;
+                   << ") is only supported for a primitive std::string value for"
+                   << " now. Please contact the TrickHLA development team for"
+                   << " support." << std::endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
