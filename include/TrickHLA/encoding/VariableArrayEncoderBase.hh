@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <string>
 #include <vector>
 
 // Trick includes.
@@ -90,6 +91,11 @@ class VariableArrayEncoderBase : public EncoderBase
    virtual void update_after_decode();
 
    virtual int const get_data_size();
+
+   virtual std::string to_string()
+   {
+      return "VariableArrayEncoderBase";
+   }
 
    void calculate_var_element_count();
 

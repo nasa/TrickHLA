@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstddef>
 #include <memory>
+#include <string>
 #include <vector>
 
 // TrickHLA includes.
@@ -86,6 +87,11 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
    /*! @brief Number of data bytes */
    virtual int const get_data_size() = 0;
+
+   virtual std::string to_string()
+   {
+      return "EncoderBase";
+   }
 
 #if !defined( SWIG )
    virtual std::auto_ptr< RTI1516_NAMESPACE::DataElement > clone() const

@@ -82,6 +82,16 @@ class StringUnicodeStringEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
+   virtual int const get_data_size()
+   {
+      return ( sizeof( wchar_t ) * wstring_data.size() );
+   }
+
+   virtual std::string to_string()
+   {
+      return "StringUnicodeStringEncoder";
+   }
+
   protected:
    std::wstring wstring_data; ///< @trick_io{**} Wide string intermediate data.
 

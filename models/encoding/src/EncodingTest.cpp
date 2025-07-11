@@ -147,13 +147,13 @@ void EncodingTest::char_test(
       }
    }
 
-   EncoderBase const *data1_char_encoder = EncoderFactory::create(
+   EncoderBase *data1_char_encoder = EncoderFactory::create(
       data1_trick_base_name + "._char", char_rti_encoding );
 
-   EncoderBase const *data1_vec3_char_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_char_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_char", char_rti_encoding );
 
-   EncoderBase const *data1_m3x3_char_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_char_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_char", char_rti_encoding );
 
    EncoderBase *data1_ptr_char_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -171,7 +171,7 @@ void EncodingTest::char_test(
    EncoderBase *data2_ptr_char_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_char", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::char_test():" << __LINE__ << "\n"
@@ -312,7 +312,7 @@ void EncodingTest::string_test(
    EncoderBase *data2_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_string", basic_rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::string_test():" << __LINE__ << "\n"
@@ -363,12 +363,13 @@ void EncodingTest::string_test(
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
+#if 0
    int const data1_string_size = data1_string_encoder->get_data_size();
    int const data2_string_size = data2_string_encoder->get_data_size();
-   cout << "data1_string_encoder->get_data_size():"
-        << data1_string_size << endl
-        << "data2_string_encoder->get_data_size():"
-        << data2_string_size << endl;
+   cout << "data1_string_encoder->get_data_size():" << data1_string_size
+        << " data1._string.size():'" << data1._string.size() << "'" << endl
+        << "data2_string_encoder->get_data_size():" << data2_string_size
+        << " data2._string.size():'" << data2._string.size() << "'" << endl;
 
    int const data1_vec3_string_size = data1_vec3_string_encoder->get_data_size();
    int const data2_vec3_string_size = data2_vec3_string_encoder->get_data_size();
@@ -390,6 +391,7 @@ void EncodingTest::string_test(
         << data1_ptr_string_size << endl
         << "data2_ptr_string_encoder->get_data_size():"
         << data2_ptr_string_size << endl;
+#endif
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
@@ -420,13 +422,13 @@ void EncodingTest::wchar_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_wchar_encoder = EncoderFactory::create(
+   EncoderBase *data1_wchar_encoder = EncoderFactory::create(
       data1_trick_base_name + "._wchar", rti_encoding );
 
-   EncoderBase const *data1_vec3_wchar_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_wchar_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_wchar", rti_encoding );
 
-   EncoderBase const *data1_m3x3_wchar_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_wchar_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_wchar", rti_encoding );
 
    EncoderBase *data1_ptr_wchar_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -444,7 +446,7 @@ void EncodingTest::wchar_test(
    EncoderBase *data2_ptr_wchar_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_wchar", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::wchar_test():" << __LINE__ << "\n"
@@ -516,13 +518,13 @@ void EncodingTest::wstring_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_wstring_encoder = EncoderFactory::create(
+   EncoderBase *data1_wstring_encoder = EncoderFactory::create(
       data1_trick_base_name + "._wstring", rti_encoding );
 
-   EncoderBase const *data1_vec3_wstring_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_wstring_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_wstring", rti_encoding );
 
-   EncoderBase const *data1_m3x3_wstring_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_wstring_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_wstring", rti_encoding );
 
    EncoderBase *data1_ptr_wstring_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -540,7 +542,7 @@ void EncodingTest::wstring_test(
    EncoderBase *data2_ptr_wstring_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_wstring", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::wstring_test():" << __LINE__ << "\n"
@@ -612,13 +614,13 @@ void EncodingTest::int16_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_i16_encoder = EncoderFactory::create(
+   EncoderBase *data1_i16_encoder = EncoderFactory::create(
       data1_trick_base_name + ".i16", rti_encoding );
 
-   EncoderBase const *data1_vec3_i16_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_i16_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_i16", rti_encoding );
 
-   EncoderBase const *data1_m3x3_i16_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_i16_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_i16", rti_encoding );
 
    EncoderBase *data1_ptr_i16_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -636,7 +638,7 @@ void EncodingTest::int16_test(
    EncoderBase *data2_ptr_i16_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i16", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int16_test():" << __LINE__ << "\n"
@@ -708,13 +710,13 @@ void EncodingTest::int32_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_i32_encoder = EncoderFactory::create(
+   EncoderBase *data1_i32_encoder = EncoderFactory::create(
       data1_trick_base_name + ".i32", rti_encoding );
 
-   EncoderBase const *data1_vec3_i32_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_i32_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_i32", rti_encoding );
 
-   EncoderBase const *data1_m3x3_i32_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_i32_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_i32", rti_encoding );
 
    EncoderBase *data1_ptr_i32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -732,7 +734,7 @@ void EncodingTest::int32_test(
    EncoderBase *data2_ptr_i32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i32", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int32_test():" << __LINE__ << "\n"
@@ -804,13 +806,13 @@ void EncodingTest::int64_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_i64_encoder = EncoderFactory::create(
+   EncoderBase *data1_i64_encoder = EncoderFactory::create(
       data1_trick_base_name + ".i64", rti_encoding );
 
-   EncoderBase const *data1_vec3_i64_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_i64_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_i64", rti_encoding );
 
-   EncoderBase const *data1_m3x3_i64_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_i64_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_i64", rti_encoding );
 
    EncoderBase *data1_ptr_i64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -828,7 +830,7 @@ void EncodingTest::int64_test(
    EncoderBase *data2_ptr_i64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i64", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int64_test():" << __LINE__ << "\n"
@@ -900,13 +902,13 @@ void EncodingTest::long_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_long_encoder = EncoderFactory::create(
+   EncoderBase *data1_long_encoder = EncoderFactory::create(
       data1_trick_base_name + "._long", rti_encoding );
 
-   EncoderBase const *data1_vec3_long_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_long_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_long", rti_encoding );
 
-   EncoderBase const *data1_m3x3_long_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_long_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_long", rti_encoding );
 
    EncoderBase *data1_ptr_long_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -924,7 +926,7 @@ void EncodingTest::long_test(
    EncoderBase *data2_ptr_long_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_long", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::long_test():" << __LINE__ << "\n"
@@ -996,13 +998,13 @@ void EncodingTest::float32_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_f32_encoder = EncoderFactory::create(
+   EncoderBase *data1_f32_encoder = EncoderFactory::create(
       data1_trick_base_name + ".f32", rti_encoding );
 
-   EncoderBase const *data1_vec3_f32_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_f32_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_f32", rti_encoding );
 
-   EncoderBase const *data1_m3x3_f32_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_f32_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_f32", rti_encoding );
 
    EncoderBase *data1_ptr_f32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -1020,7 +1022,7 @@ void EncodingTest::float32_test(
    EncoderBase *data2_ptr_f32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_f32", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::float32_test():" << __LINE__ << "\n"
@@ -1092,13 +1094,13 @@ void EncodingTest::float64_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_f64_encoder = EncoderFactory::create(
+   EncoderBase *data1_f64_encoder = EncoderFactory::create(
       data1_trick_base_name + ".f64", rti_encoding );
 
-   EncoderBase const *data1_vec3_f64_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_f64_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_f64", rti_encoding );
 
-   EncoderBase const *data1_m3x3_f64_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_f64_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_f64", rti_encoding );
 
    EncoderBase *data1_ptr_f64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -1116,7 +1118,7 @@ void EncodingTest::float64_test(
    EncoderBase *data2_ptr_f64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_f64", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::float64_test():" << __LINE__ << "\n"
@@ -1188,13 +1190,13 @@ void EncodingTest::bool_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncoderBase const *data1_bool_encoder = EncoderFactory::create(
+   EncoderBase *data1_bool_encoder = EncoderFactory::create(
       data1_trick_base_name + "._bool", rti_encoding );
 
-   EncoderBase const *data1_vec3_bool_encoder = EncoderFactory::create(
+   EncoderBase *data1_vec3_bool_encoder = EncoderFactory::create(
       data1_trick_base_name + ".vec3_bool", rti_encoding );
 
-   EncoderBase const *data1_m3x3_bool_encoder = EncoderFactory::create(
+   EncoderBase *data1_m3x3_bool_encoder = EncoderFactory::create(
       data1_trick_base_name + ".m3x3_bool", rti_encoding );
 
    EncoderBase *data1_ptr_bool_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
@@ -1212,7 +1214,7 @@ void EncodingTest::bool_test(
    EncoderBase *data2_ptr_bool_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_bool", rti_encoding ) );
 
-#if 0
+#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::bool_test():" << __LINE__ << "\n"

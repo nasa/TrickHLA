@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
 
 // System includes.
+#include <string>
 #include <vector>
 
 // Trick includes.
@@ -88,6 +89,11 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
    virtual size_t decodeFrom(
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
       size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException );
+
+   virtual std::string to_string()
+   {
+      return "CharRawDataEncoder";
+   }
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */

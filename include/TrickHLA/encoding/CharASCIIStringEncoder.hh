@@ -81,6 +81,16 @@ class CharASCIIStringEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
+   virtual int const get_data_size()
+   {
+      return string_data.size();
+   }
+
+   virtual std::string to_string()
+   {
+      return "CharASCIIStringEncoder";
+   }
+
   protected:
    std::string string_data; ///< @trick_io{**} std::string intermediate data.
 

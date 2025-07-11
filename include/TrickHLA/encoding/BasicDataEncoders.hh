@@ -88,6 +88,11 @@ namespace TrickHLA
                                                                                     \
       virtual int const get_data_size();                                            \
                                                                                     \
+      virtual std::string to_string()                                               \
+      {                                                                             \
+         return #EncoderClassName;                                                  \
+      }                                                                             \
+                                                                                    \
      private:                                                                       \
       /* Do not allow the default, copy constructor or assignment operator. */      \
       EncoderClassName();                                                           \

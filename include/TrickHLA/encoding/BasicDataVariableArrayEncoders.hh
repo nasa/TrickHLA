@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <string>
 
 // Trick includes.
 #include "trick/attributes.h"
@@ -84,6 +85,11 @@ namespace TrickHLA
       virtual void update_before_encode();                                                            \
                                                                                                       \
       virtual void update_after_decode();                                                             \
+                                                                                                      \
+      virtual std::string to_string()                                                                 \
+      {                                                                                               \
+         return #EncoderClassName;                                                                    \
+      }                                                                                               \
                                                                                                       \
      protected:                                                                                       \
       void resize_data_elements( std::size_t new_size ) throw( RTI1516_NAMESPACE::EncoderException ); \

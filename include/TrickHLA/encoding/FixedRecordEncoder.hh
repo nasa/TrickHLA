@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_FIXED_RECORD_ENCODER_HH
 #define TRICKHLA_FIXED_RECORD_ENCODER_HH
 
+// System includes.
+#include <string>
+
 // TrickHLA includes.
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
@@ -85,6 +88,11 @@ class FixedRecordEncoder : public EncoderBase
    void update_before_encode( RTI1516_NAMESPACE::HLAfixedRecord *fixed_rec );
 
    void update_after_decode( RTI1516_NAMESPACE::HLAfixedRecord *fixed_rec );
+
+   virtual std::string to_string()
+   {
+      return "FixedRecordEncoder";
+   }
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
