@@ -103,7 +103,7 @@ class TestSimObj : public Trick::SimObject {
 
    TestSimObj()
    {
-      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_1_TRACE,
+      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_2_TRACE,
                                             TrickHLA::DEBUG_SOURCE_ALL_MODULES );
 
 #if 0

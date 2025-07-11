@@ -171,7 +171,6 @@ void EncodingTest::char_test(
    EncoderBase *data2_ptr_char_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_char", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::char_test():" << __LINE__ << "\n"
@@ -185,7 +184,6 @@ void EncodingTest::char_test(
            << " data2_ptr_char_encoder: " << data2_ptr_char_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    ostringstream encode_msg;
    encode_msg << "EncodingTest::char_test():" << __LINE__ << std::endl;
@@ -208,7 +206,6 @@ void EncodingTest::char_test(
               << " Encoded-length:" << data1_m3x3_char_encoder->getEncodedLength()
               << std::endl;
 
-#if 1
    data1_ptr_char_encoder->update_before_encode();
    VariableLengthData encoded_data1_ptr_char = data1_ptr_char_encoder->encode();
    data2_ptr_char_encoder->decode( encoded_data1_ptr_char );
@@ -221,7 +218,6 @@ void EncodingTest::char_test(
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       message_publish( MSG_NORMAL, encode_msg.str().c_str() );
    }
-#endif
 
    ostringstream compare_msg;
    if ( char_rti_encoding == rti_encoding ) {
@@ -312,7 +308,6 @@ void EncodingTest::string_test(
    EncoderBase *data2_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_string", basic_rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::string_test():" << __LINE__ << "\n"
@@ -326,7 +321,6 @@ void EncodingTest::string_test(
            << " data2_ptr_string_encoder: " << data2_ptr_string_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data1_string_encoder->update_before_encode();
    data2_string_encoder->decode( data1_string_encoder->encode() );
@@ -363,44 +357,51 @@ void EncodingTest::string_test(
       message_publish( MSG_ERROR, compare_msg.str().c_str() );
    }
 
-#if 0
-   int const data1_string_size = data1_string_encoder->get_data_size();
-   int const data2_string_size = data2_string_encoder->get_data_size();
-   cout << "data1_string_encoder->get_data_size():" << data1_string_size
-        << " data1._string.size():'" << data1._string.size() << "'" << endl
-        << "data2_string_encoder->get_data_size():" << data2_string_size
-        << " data2._string.size():'" << data2._string.size() << "'" << endl;
-
-   int const data1_vec3_string_size = data1_vec3_string_encoder->get_data_size();
-   int const data2_vec3_string_size = data2_vec3_string_encoder->get_data_size();
-   cout << "data1_vec3_string_encoder->get_data_size():"
-        << data1_vec3_string_size << endl
-        << "data2_vec3_string_encoder->get_data_size():"
-        << data2_vec3_string_size << endl;
-
-   int const data1_m3x3_string_size = data1_m3x3_string_encoder->get_data_size();
-   int const data2_m3x3_string_size = data2_m3x3_string_encoder->get_data_size();
-   cout << "data1_m3x3_string_encoder->get_data_size():"
-        << data1_m3x3_string_size << endl
-        << "data2_m3x3_string_encoder->get_data_size():"
-        << data2_m3x3_string_size << endl;
-
-   int const data1_ptr_string_size = data1_ptr_string_encoder->get_data_size();
-   int const data2_ptr_string_size = data2_ptr_string_encoder->get_data_size();
-   cout << "data1_ptr_string_encoder->get_data_size():"
-        << data1_ptr_string_size << endl
-        << "data2_ptr_string_encoder->get_data_size():"
-        << data2_ptr_string_size << endl;
-#endif
-
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
-      msg3 << "EncodingTest::string_test():" << __LINE__ << "\n"
+      msg3 << endl;
+
+      int const data1_string_size = data1_string_encoder->get_data_size();
+      int const data2_string_size = data2_string_encoder->get_data_size();
+      msg3 << data1_string_encoder->to_string() << endl
+           << "   data1_string_encoder->get_data_size():" << data1_string_size << endl
+           << "   data1._string.size():" << data1._string.size() << endl
+           << data2_string_encoder->to_string() << endl
+           << "   data2_string_encoder->get_data_size():" << data2_string_size << endl
+           << "   data2._string.size():" << data2._string.size() << endl;
+
+      int const data1_vec3_string_size = data1_vec3_string_encoder->get_data_size();
+      int const data2_vec3_string_size = data2_vec3_string_encoder->get_data_size();
+      msg3 << data1_vec3_string_encoder->to_string() << endl
+           << "   data1_vec3_string_encoder->get_data_size():" << data1_vec3_string_size << endl
+           << data2_vec3_string_encoder->to_string() << endl
+           << "   data2_vec3_string_encoder->get_data_size():" << data2_vec3_string_size << endl;
+
+      int const data1_m3x3_string_size = data1_m3x3_string_encoder->get_data_size();
+      int const data2_m3x3_string_size = data2_m3x3_string_encoder->get_data_size();
+      msg3 << data1_m3x3_string_encoder->to_string() << endl
+           << "   data1_m3x3_string_encoder->get_data_size():" << data1_m3x3_string_size << endl
+           << data2_m3x3_string_encoder->to_string() << endl
+           << "   data2_m3x3_string_encoder->get_data_size():" << data2_m3x3_string_size << endl;
+
+      int const data1_ptr_string_size = data1_ptr_string_encoder->get_data_size();
+      int const data2_ptr_string_size = data2_ptr_string_encoder->get_data_size();
+      msg3 << data1_ptr_string_encoder->to_string() << endl
+           << "   data1_ptr_string_encoder->get_data_size():" << data1_ptr_string_size << endl
+           << data2_ptr_string_encoder->to_string() << endl
+           << "   data2_ptr_string_encoder->get_data_size():" << data2_ptr_string_size << endl;
+
+      message_publish( MSG_DEBUG, msg3.str().c_str() );
+   }
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg4;
+      msg4 << "EncodingTest::string_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
            << "Data1: " << data1.to_string()
            << "-----------------------------\n"
            << "Data2: " << data2.to_string();
-      message_publish( MSG_NORMAL, msg3.str().c_str() );
+      message_publish( MSG_NORMAL, msg4.str().c_str() );
    }
 }
 
@@ -446,7 +447,6 @@ void EncodingTest::wchar_test(
    EncoderBase *data2_ptr_wchar_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_wchar", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::wchar_test():" << __LINE__ << "\n"
@@ -460,7 +460,6 @@ void EncodingTest::wchar_test(
            << " data2_ptr_wchar_encoder: " << data2_ptr_wchar_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_wchar_encoder->decode( data1_wchar_encoder->encode() );
    data2_vec3_wchar_encoder->decode( data1_vec3_wchar_encoder->encode() );
@@ -542,7 +541,6 @@ void EncodingTest::wstring_test(
    EncoderBase *data2_ptr_wstring_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_wstring", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::wstring_test():" << __LINE__ << "\n"
@@ -556,7 +554,6 @@ void EncodingTest::wstring_test(
            << " data2_ptr_wstring_encoder: " << data2_ptr_wstring_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_wstring_encoder->decode( data1_wstring_encoder->encode() );
    data2_vec3_wstring_encoder->decode( data1_vec3_wstring_encoder->encode() );
@@ -638,7 +635,6 @@ void EncodingTest::int16_test(
    EncoderBase *data2_ptr_i16_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i16", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int16_test():" << __LINE__ << "\n"
@@ -652,7 +648,6 @@ void EncodingTest::int16_test(
            << " data2_ptr_i16_encoder: " << data2_ptr_i16_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_i16_encoder->decode( data1_i16_encoder->encode() );
    data2_vec3_i16_encoder->decode( data1_vec3_i16_encoder->encode() );
@@ -734,7 +729,6 @@ void EncodingTest::int32_test(
    EncoderBase *data2_ptr_i32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i32", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int32_test():" << __LINE__ << "\n"
@@ -748,7 +742,6 @@ void EncodingTest::int32_test(
            << " data2_ptr_i32_encoder: " << data2_ptr_i32_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_i32_encoder->decode( data1_i32_encoder->encode() );
    data2_vec3_i32_encoder->decode( data1_vec3_i32_encoder->encode() );
@@ -830,7 +823,6 @@ void EncodingTest::int64_test(
    EncoderBase *data2_ptr_i64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i64", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::int64_test():" << __LINE__ << "\n"
@@ -844,7 +836,6 @@ void EncodingTest::int64_test(
            << " data2_ptr_i64_encoder: " << data2_ptr_i64_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_i64_encoder->decode( data1_i64_encoder->encode() );
    data2_vec3_i64_encoder->decode( data1_vec3_i64_encoder->encode() );
@@ -926,7 +917,6 @@ void EncodingTest::long_test(
    EncoderBase *data2_ptr_long_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_long", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::long_test():" << __LINE__ << "\n"
@@ -940,7 +930,6 @@ void EncodingTest::long_test(
            << " data2_ptr_long_encoder: " << data2_ptr_long_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_long_encoder->decode( data1_long_encoder->encode() );
    data2_vec3_long_encoder->decode( data1_vec3_long_encoder->encode() );
@@ -1022,7 +1011,6 @@ void EncodingTest::float32_test(
    EncoderBase *data2_ptr_f32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_f32", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::float32_test():" << __LINE__ << "\n"
@@ -1036,7 +1024,6 @@ void EncodingTest::float32_test(
            << " data2_ptr_f32_encoder: " << data2_ptr_f32_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_f32_encoder->decode( data1_f32_encoder->encode() );
    data2_vec3_f32_encoder->decode( data1_vec3_f32_encoder->encode() );
@@ -1118,7 +1105,6 @@ void EncodingTest::float64_test(
    EncoderBase *data2_ptr_f64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_f64", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::float64_test():" << __LINE__ << "\n"
@@ -1132,7 +1118,6 @@ void EncodingTest::float64_test(
            << " data2_ptr_f64_encoder: " << data2_ptr_f64_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_f64_encoder->decode( data1_f64_encoder->encode() );
    data2_vec3_f64_encoder->decode( data1_vec3_f64_encoder->encode() );
@@ -1214,7 +1199,6 @@ void EncodingTest::bool_test(
    EncoderBase *data2_ptr_bool_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_bool", rti_encoding ) );
 
-#if 1
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "EncodingTest::bool_test():" << __LINE__ << "\n"
@@ -1228,7 +1212,6 @@ void EncodingTest::bool_test(
            << " data2_ptr_bool_encoder: " << data2_ptr_bool_encoder->to_string() << "\n";
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
-#endif
 
    data2_bool_encoder->decode( data1_bool_encoder->encode() );
    data2_vec3_bool_encoder->decode( data1_vec3_bool_encoder->encode() );
@@ -1398,7 +1381,7 @@ void EncodingTest::fixed_record_test(
 
    // Test the encode/decode.
    top1_fixed_rec_encoder->update_before_encode();
-#if 0
+#if 0 // Two different techniques.
    VariableLengthData encoded_data = top1_fixed_rec_encoder->encode();
    top2_fixed_rec_encoder->decode( encoded_data );
 #else
