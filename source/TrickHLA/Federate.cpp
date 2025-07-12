@@ -94,6 +94,9 @@ extern Trick::CheckPointRestart *the_cpr;
 #include RTI1516_HEADER
 #include "RTI/RTIambassador.h"
 #include "RTI/RTIambassadorFactory.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/RtiConfiguration.h"
+#endif // IEEE_1516_2025
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
@@ -689,30 +692,48 @@ void Federate::create_RTI_ambassador_and_connect()
    }
 
    try {
-      // Create the RTI ambassador factory.
-      RTIambassadorFactory *rtiAmbassadorFactory = new RTIambassadorFactory();
+      // Create the RTI ambassador factory and then the ambassador.
+#if defined( IEEE_1516_2025 )
+      auto rti_amb_factory = std::make_unique< RTIambassadorFactory >();
+      this->RTI_ambassador = rti_amb_factory->createRTIambassador();
+#else
+      RTIambassadorFactory *rti_amb_factory = new RTIambassadorFactory();
 
-      // Create the RTI ambassador.
-      this->RTI_ambassador = rtiAmbassadorFactory->createRTIambassador();
+      this->RTI_ambassador = rti_amb_factory->createRTIambassador();
+#endif // IEEE_1516_2025
 
       if ( local_settings.empty() ) {
          // Use default vendor local settings.
          RTI_ambassador->connect( *federate_ambassador,
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE );
       } else {
+#if defined( IEEE_1516_2025 )
+         // TODO: Specify host seperate from local settings.
+         wstring local_settings_ws;
+         StringUtilities::to_wstring( local_settings_ws, local_settings );
+
+         RtiConfiguration rti_config = RtiConfiguration::createConfiguration().withRtiAddress( host );
+
+         RTI_ambassador->connect( *federate_ambassador,
+                                  RTI1516_NAMESPACE::HLA_IMMEDIATE,
+                                  rti_config );
+#else
          wstring local_settings_ws;
          StringUtilities::to_wstring( local_settings_ws, local_settings );
 
          RTI_ambassador->connect( *federate_ambassador,
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE,
                                   local_settings_ws );
+#endif // IEEE_1516_2025
       }
 
       // Reset the Federate shutdown-called flag now that we are connected.
       this->shutdown_called = false;
 
+#if defined( IEEE_1516_2010 )
       // Make sure we delete the factory now that we are done with it.
-      delete rtiAmbassadorFactory;
+      delete rti_amb_factory;
+#endif
 
    } catch ( ConnectionFailed const &e ) {
       // Macro to restore the saved FPU Control Word register value.

@@ -61,48 +61,48 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-#define DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName )                                 \
-                                                                                                      \
-   class EncoderClassName : public VariableArrayEncoderBase                                           \
-   {                                                                                                  \
-      /* Let the Trick input processor access protected and private data. */                          \
-      /* InputProcessor is really just a marker class (does not really    */                          \
-      /* exists - at least yet). This friend statement just tells Trick   */                          \
-      /* to go ahead and process the protected and private data as well   */                          \
-      /* as the usual public data.                                        */                          \
-      friend class InputProcessor;                                                                    \
-      /* IMPORTANT Note: you must have the following line too.            */                          \
-      /* Syntax: friend void init_attr<namespace>__<class name>();        */                          \
-      friend void init_attrTrickHLA__EncoderClassName();                                              \
-                                                                                                      \
-     public:                                                                                          \
-      /*! @brief Default constructor. */                                                              \
-      EncoderClassName( void *addr, ATTRIBUTES *attr );                                               \
-                                                                                                      \
-      /*! @brief Destructor for the TrickHLA EncoderClassName class. */                               \
-      virtual ~EncoderClassName();                                                                    \
-                                                                                                      \
-      virtual void update_before_encode();                                                            \
-                                                                                                      \
-      virtual void update_after_decode();                                                             \
-                                                                                                      \
-      virtual std::string to_string()                                                                 \
-      {                                                                                               \
-         return #EncoderClassName;                                                                    \
-      }                                                                                               \
-                                                                                                      \
-     protected:                                                                                       \
-      void resize_data_elements( std::size_t new_size ) throw( RTI1516_NAMESPACE::EncoderException ); \
-                                                                                                      \
-     private:                                                                                         \
-      /* Do not allow the default, copy constructor or assignment operator. */                        \
-      /* EncoderClassName(); */                                                                       \
-      /*! @brief Copy constructor for EncoderClassName class.                 */                      \
-      /*  @details This constructor is private to prevent inadvertent copies. */                      \
-      EncoderClassName( EncoderClassName const &rhs );                                                \
-      /*! @brief Assignment operator for EncoderClassName class.                 */                   \
-      /*  @details Assignment operator is private to prevent inadvertent copies. */                   \
-      EncoderClassName &operator=( EncoderClassName const &rhs );                                     \
+#define DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName )               \
+                                                                                    \
+   class EncoderClassName : public VariableArrayEncoderBase                         \
+   {                                                                                \
+      /* Let the Trick input processor access protected and private data. */        \
+      /* InputProcessor is really just a marker class (does not really    */        \
+      /* exists - at least yet). This friend statement just tells Trick   */        \
+      /* to go ahead and process the protected and private data as well   */        \
+      /* as the usual public data.                                        */        \
+      friend class InputProcessor;                                                  \
+      /* IMPORTANT Note: you must have the following line too.            */        \
+      /* Syntax: friend void init_attr<namespace>__<class name>();        */        \
+      friend void init_attrTrickHLA__EncoderClassName();                            \
+                                                                                    \
+     public:                                                                        \
+      /*! @brief Default constructor. */                                            \
+      EncoderClassName( void *addr, ATTRIBUTES *attr );                             \
+                                                                                    \
+      /*! @brief Destructor for the TrickHLA EncoderClassName class. */             \
+      virtual ~EncoderClassName();                                                  \
+                                                                                    \
+      virtual void update_before_encode();                                          \
+                                                                                    \
+      virtual void update_after_decode();                                           \
+                                                                                    \
+      virtual std::string to_string()                                               \
+      {                                                                             \
+         return #EncoderClassName;                                                  \
+      }                                                                             \
+                                                                                    \
+     protected:                                                                     \
+      void resize_data_elements( std::size_t new_size );                            \
+                                                                                    \
+     private:                                                                       \
+      /* Do not allow the default, copy constructor or assignment operator. */      \
+      /* EncoderClassName(); */                                                     \
+      /*! @brief Copy constructor for EncoderClassName class.                 */    \
+      /*  @details This constructor is private to prevent inadvertent copies. */    \
+      EncoderClassName( EncoderClassName const &rhs );                              \
+      /*! @brief Assignment operator for EncoderClassName class.                 */ \
+      /*  @details Assignment operator is private to prevent inadvertent copies. */ \
+      EncoderClassName &operator=( EncoderClassName const &rhs );                   \
    };
 
 DEFINE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( ASCIICharVariableArrayEncoder )

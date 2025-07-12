@@ -84,11 +84,21 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
+#if defined( IEEE_1516_2025 )
+   virtual RTI1516_NAMESPACE::DataElement &decode( RTI1516_NAMESPACE::VariableLengthData const &inData );
+#else
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException );
+#endif // IEEE_1516_2025
 
+#if defined( IEEE_1516_2025 )
+   virtual size_t decodeFrom(
+      std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
+      size_t                                         index );
+#else
    virtual size_t decodeFrom(
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
       size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException );
+#endif // IEEE_1516_2025
 
    virtual std::string to_string()
    {

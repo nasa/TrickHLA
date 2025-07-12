@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <map>
+#include <memory>
 #include <string>
 
 // Trick includes.
@@ -1272,10 +1273,15 @@ class Federate
 
    // Federation required associations.
    //
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-   TrickRTIAmbPtr RTI_ambassador; ///< @trick_io{**} RTI ambassador
-#pragma GCC diagnostic pop
+#if defined( IEEE_1516_2025 )
+   std::unique_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
+#else
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+   std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
+#   pragma GCC diagnostic pop
+#endif
+
    FedAmb               *federate_ambassador; ///< @trick_units{--} Federate ambassador.
    Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
    ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */

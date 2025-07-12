@@ -340,11 +340,6 @@ typedef enum {
 
 } TimeAdvanceStateEnum;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-typedef std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > TrickRTIAmbPtr;
-#pragma GCC diagnostic pop
-
 typedef std::queue< RTI1516_NAMESPACE::AttributeHandleValueMap > HLAAttributeMapQueue;
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, std::wstring > TrickHLAObjInstanceNameMap;

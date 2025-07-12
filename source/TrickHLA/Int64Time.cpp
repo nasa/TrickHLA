@@ -45,7 +45,11 @@ NASA, Johnson Space Center\n
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
-#include "RTI/LogicalTime.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/time/LogicalTime.h"
+#else
+#   include "RTI/LogicalTime.h"
+#endif // IEEE_1516_2025
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/time/HLAinteger64Time.h"

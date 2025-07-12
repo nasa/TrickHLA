@@ -111,17 +111,31 @@ void CharRawDataEncoder::update_after_decode()
    return;
 }
 
+#if defined( IEEE_1516_2025 )
+DataElement &decode( VariableLengthData const &inData );
+{
+   // Resize Trick array variable to match the decoded data size.
+   resize_trick_var( inData.size() );
+   memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
+
+   // TODO: Return a valid data element, which may not be possible for raw data.
+   return DataElement();
+}
+#else
 void CharRawDataEncoder::decode( VariableLengthData const &inData ) throw( EncoderException )
 {
    // Resize Trick array variable to match the decoded data size.
    resize_trick_var( inData.size() );
-
    memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
 }
+#endif // IEEE_1516_2025
 
 size_t CharRawDataEncoder::decodeFrom(
    vector< Octet > const &buffer,
-   size_t                 index ) throw( EncoderException )
+   size_t                 index )
+#if defined( IEEE_1516_2010 )
+   throw( EncoderException )
+#endif
 {
    ostringstream errmsg;
    errmsg << "CharRawDataEncoder::decodeFrom():" << __LINE__

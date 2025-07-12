@@ -45,7 +45,11 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include "RTI/LogicalTimeInterval.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/time/LogicalTimeInterval.h"
+#else
+#   include "RTI/LogicalTimeInterval.h"
+#endif // IEEE_1516_2025
 #include "RTI/time/HLAinteger64Interval.h"
 #pragma GCC diagnostic pop
 

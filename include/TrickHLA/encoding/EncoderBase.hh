@@ -94,46 +94,73 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    }
 
 #if !defined( SWIG )
+#   if defined( IEEE_1516_2025 )
+   virtual std::unique_ptr< RTI1516_NAMESPACE::DataElement > clone() const
+#   else
    virtual std::auto_ptr< RTI1516_NAMESPACE::DataElement > clone() const
+#   endif
    {
       return data_encoder->clone();
    }
 
-   virtual RTI1516_NAMESPACE::VariableLengthData encode() const throw( RTI1516_NAMESPACE::EncoderException )
+   virtual RTI1516_NAMESPACE::VariableLengthData encode() const
+#   if defined( IEEE_1516_2010 )
+      throw( RTI1516_NAMESPACE::EncoderException )
+#   endif
    {
       return ( data_encoder != NULL ) ? data_encoder->encode()
                                       : RTI1516_NAMESPACE::VariableLengthData();
    }
 
-   virtual void encode( RTI1516_NAMESPACE::VariableLengthData &inData ) const throw( RTI1516_NAMESPACE::EncoderException )
+   virtual void encode( RTI1516_NAMESPACE::VariableLengthData &inData ) const
+#   if defined( IEEE_1516_2010 )
+      throw( RTI1516_NAMESPACE::EncoderException )
+#   endif
    {
       if ( data_encoder != NULL ) {
          data_encoder->encode( inData );
       }
    }
 
-   virtual void encodeInto( std::vector< RTI1516_NAMESPACE::Octet > &buffer ) const throw( RTI1516_NAMESPACE::EncoderException )
+   virtual void encodeInto( std::vector< RTI1516_NAMESPACE::Octet > &buffer ) const
+#   if defined( IEEE_1516_2010 )
+      throw( RTI1516_NAMESPACE::EncoderException )
+#   endif
    {
       if ( data_encoder != NULL ) {
          data_encoder->encodeInto( buffer );
       }
    }
 
+#   if defined( IEEE_1516_2025 )
+   virtual RTI1516_NAMESPACE::DataElement &decode( RTI1516_NAMESPACE::VariableLengthData const &inData )
+   {
+      // TODO: Handle null data_encoder.
+      return data_encoder->decode( inData );
+   }
+#   else
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException )
    {
       if ( data_encoder != NULL ) {
          data_encoder->decode( inData );
       }
    }
+#   endif // IEEE_1516_2010
 
    virtual size_t decodeFrom(
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
-      size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException )
+      size_t                                         index )
+#   if defined( IEEE_1516_2010 )
+      throw( RTI1516_NAMESPACE::EncoderException )
+#   endif
    {
       return ( data_encoder != NULL ) ? data_encoder->decodeFrom( buffer, index ) : index;
    }
 
-   virtual size_t getEncodedLength() const throw( RTI1516_NAMESPACE::EncoderException )
+   virtual size_t getEncodedLength() const
+#   if defined( IEEE_1516_2010 )
+      throw( RTI1516_NAMESPACE::EncoderException )
+#   endif
    {
       return ( data_encoder != NULL ) ? data_encoder->getEncodedLength() : 0;
    }
