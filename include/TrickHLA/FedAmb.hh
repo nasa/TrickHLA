@@ -118,13 +118,13 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    virtual void initialize();
 
    // *****************************************************************
-   // The following methods fill out the required vitual methods of
-   // the RTI1516_NAMESPACE::FederateAmbassador abstract class to enable the
-   // FedAmb class to be instantiated. While this class is
-   // instantiable, for almost all practical applications, a
+   // The following methods fill out the required virtual methods of
+   // the RTI1516_NAMESPACE::FederateAmbassador abstract class to
+   // enable the FedAmb class to be instantiated. While this class can
+   // be instantiated, for almost all practical applications, a
    // simulation developer will want to overload the necessary
-   // attribute and interaction callback functions to make things
-   // work properly for their particular federation needs.
+   // attribute and interaction callback functions to make things work
+   // properly for their particular federation needs.
    // *****************************************************************
 
    ////////////////////////////////////
