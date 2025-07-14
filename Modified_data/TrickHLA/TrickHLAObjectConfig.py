@@ -149,12 +149,22 @@ class TrickHLAObjectConfig( object ):
       self.set_thread_IDs( self.hla_thread_IDs )
       self.set_blocking_cyclic_read( self.hla_blocking_cyclic_read )
 
+      # Set conditional if specified and not None.
+      if self.hla_conditional_instance != None:
+         self.set_conditional_instance( self.hla_conditional_instance )
+
+      # Set lag compensation if specified and not None.
       if self.hla_lag_comp_instance != None:
          self.set_lag_comp_instance( self.hla_lag_comp_instance )
          self.set_lag_comp_type( self.hla_lag_comp_type )
 
+      # Set ownership if specified and not None.
       if self.hla_ownership_instance != None:
          self.set_ownership_instance( self.hla_ownership_instance )
+
+      # Set deleted callback if specified and not None.
+      if self.hla_deleted_instance != None:
+         self.set_deleted_instance( self.hla_deleted_instance )
 
       # Allocate the federate object's attribute list.
       self.hla_object.attr_count = len( self.attributes )
