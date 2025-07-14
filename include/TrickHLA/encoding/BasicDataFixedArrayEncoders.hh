@@ -47,7 +47,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
+#include "RTI/RTI1516.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/EncodingConfig.h"

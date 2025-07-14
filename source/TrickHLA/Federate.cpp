@@ -91,7 +91,7 @@ extern Trick::CheckPointRestart *the_cpr;
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
 #include "RTI/Handle.h"
-#include RTI1516_HEADER
+#include "RTI/RTI1516.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/RTIambassadorFactory.h"
 #if defined( IEEE_1516_2025 )

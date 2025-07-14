@@ -66,9 +66,9 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic ignored "-Wdeprecated"
 
 // HLA include files.
-#include RTI1516_HEADER
 #include "RTI/Enums.h"
 #include "RTI/FederateAmbassador.h"
+#include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
 
 namespace TrickHLA

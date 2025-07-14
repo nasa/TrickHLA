@@ -44,13 +44,11 @@ NASA, Johnson Space Center\n
 
 #if ( defined( IEEE_1516_2010 ) )
 // Define the RTI header and namespace for "HLA Evolved" IEEE 1516-2010 Standard.
-#   define RTI1516_HEADER "RTI/RTI1516.h"
 #   define RTI1516_NAMESPACE rti1516e
 #   define RTI1516_USERDATA RTI1516_NAMESPACE::VariableLengthData
 #   define RTI1516_EXCEPTION RTI1516_NAMESPACE::Exception
 #elif ( defined( IEEE_1516_2025 ) )
-// Define the RTI header and namespace for "HLA 4" IEEE 1516-202X Standard.
-#   define RTI1516_HEADER "RTI/RTI1516.h"
+// Define the RTI header and namespace for "HLA 4" IEEE 1516-2025 Standard.
 #   define RTI1516_NAMESPACE rti1516_2025
 #   define RTI1516_USERDATA RTI1516_NAMESPACE::VariableLengthData
 #   define RTI1516_EXCEPTION RTI1516_NAMESPACE::Exception
