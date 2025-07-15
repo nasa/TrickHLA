@@ -158,9 +158,9 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
       std::wstring const                                                  &federationName,
       RTI1516_NAMESPACE::FederationExecutionMemberInformationVector const &report )
 
-   // 4.11
-   virtual void reportFederationExecutionDoesNotExist(
-      std::wstring const &federationName );
+      // 4.11
+      virtual void reportFederationExecutionDoesNotExist(
+         std::wstring const &federationName );
 
    // 4.13
    virtual void federateResigned(

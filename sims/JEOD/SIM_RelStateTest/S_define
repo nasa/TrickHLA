@@ -98,7 +98,7 @@ class MoonSimObject : public Moon_LP150Q_SimObject
    // This object is not copyable.
    MoonSimObject (const MoonSimObject&);
    MoonSimObject & operator = (const MoonSimObject&);
-   
+
    // Do not allow the default constructor.
    MoonSimObject();
 };
@@ -159,7 +159,7 @@ class VehicleSimObject: public Trick::SimObject
    // This object is not copyable
    VehicleSimObject (const VehicleSimObject&) = delete;
    VehicleSimObject & operator = (const VehicleSimObject&) = delete;
-   
+
    // Do not allow the default constructor.
    VehicleSimObject();
 
@@ -184,7 +184,7 @@ EntityRelStateSimObject relstate( dynamics.dyn_manager, relkin.rel_kin, veh.dyn_
 //==========================================================================
 
 // This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/CTETimelineBase.hh"
+##include "TrickHLA/TimeOfDayCTETimeline.hh"
 
 
 //==========================================================================

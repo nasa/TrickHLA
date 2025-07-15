@@ -1,6 +1,7 @@
 trick.frame_log_on()
 trick.real_time_enable()
 trick.exec_set_software_frame(0.250)
+trick.exec_set_freeze_frame(0.250)
 trick.itimer_enable()
 
 trick.exec_set_enable_freeze(True)

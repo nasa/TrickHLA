@@ -42,7 +42,7 @@
 // for inputfile instantiations.
 //==========================================================================
 // This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/CTETimelineBase.hh"
+##include "TrickHLA/TimeOfDayCTETimeline.hh"
 
 %header{
  using namespace TrickHLA;
@@ -64,7 +64,7 @@ class FrameDynamicsSimObject : public Trick::SimObject {
 
   public:
    FrameDynamics frame;
-   
+
    bool debug_frame_state;
 
   public:
@@ -98,7 +98,7 @@ class FrameDynamicsSimObject : public Trick::SimObject {
    // Private internal references to external object instances.
    // These MUST be assigned in the constructor at instantiation.
    ExecutionControlBase & execution_control;
-   
+
    // This object is not copyable.
    FrameDynamicsSimObject( FrameDynamicsSimObject const & rhs );
    FrameDynamicsSimObject & operator=( FrameDynamicsSimObject const & rhs );
@@ -113,14 +113,14 @@ class EntityDynamicsSimObject : public Trick::SimObject {
 
   public:
    EntityDynamics entity;
-   
+
    bool debug_entity_state;
 
   public:
    EntityDynamicsSimObject( ExecutionControlBase & exec_cntrl )
    : debug_entity_state( false ),
      execution_control(exec_cntrl)
-     
+
    {
       ("default_data")            entity.default_data();
       ("initialization")          entity.initialize();

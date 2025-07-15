@@ -73,7 +73,7 @@
 //==========================================================================
 
 // This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/CTETimelineBase.hh"
+##include "TrickHLA/TimeOfDayCTETimeline.hh"
 
 
 //==========================================================================

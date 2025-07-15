@@ -223,6 +223,11 @@ if hla:
    # federation execution.
    federate.set_least_common_time_step( 0.250 )
 
+   # NOTE: Need more than enough time padding for the MTR message
+   # to propagate to all federates in time for the coordinated CTE
+   # go to run message to have a valid pending CTE start time.
+   federate.set_time_padding( 1.0 )
+
    # Setup Time Management parameters.
    federate.set_time_regulating( True )
    federate.set_time_constrained( True )
@@ -233,7 +238,7 @@ if hla:
    # By setting this we are specifying the use of Common Timing Equipment (CTE)
    # for controlling the Mode Transitions for all federates using CTE.
    # Don't really need CTE for RRFP.
-   THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+   THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::TimeOfDayCTETimeline' )
 
    #==========================================================================
    # Configure the CRC.
