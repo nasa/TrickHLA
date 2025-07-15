@@ -192,7 +192,7 @@ void FedAmb::reportFederationExecutions(
    FederationExecutionInformationVector const &report )
 #else
 void FedAmb::reportFederationExecutions(
-   FederationExecutionInformationVector const &theFederationExecutionInformationList ) throw( FederateInternalError )
+   FederationExecutionInformationVector const &report ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -326,7 +326,7 @@ void FedAmb::federationSaved()
 }
 
 void FedAmb::federationNotSaved(
-   SaveFailureReason theSaveFailureReason )
+   SaveFailureReason reason )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -336,7 +336,7 @@ void FedAmb::federationNotSaved(
                        __LINE__ );
    }
 
-   federate->print_save_failure_reason( theSaveFailureReason );
+   federate->print_save_failure_reason( reason );
 
    // TODO: Do we need to the steps below to exit freeze mode?
    federate->set_start_to_save( false );
@@ -428,7 +428,7 @@ void FedAmb::federationRestored()
 }
 
 void FedAmb::federationNotRestored(
-   RestoreFailureReason theRestoreFailureReason )
+   RestoreFailureReason reason )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -438,11 +438,11 @@ void FedAmb::federationNotRestored(
                        __LINE__ );
    }
    federate->set_restore_failed();
-   federate->print_restore_failure_reason( theRestoreFailureReason );
+   federate->print_restore_failure_reason( reason );
 }
 
 void FedAmb::federationRestoreStatusResponse(
-   FederateRestoreStatusVector const &theFederateStatusVector )
+   FederateRestoreStatusVector const &response )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -453,10 +453,10 @@ void FedAmb::federationRestoreStatusResponse(
    }
    if ( !this->federation_restore_status_response_context_switch ) {
       // process
-      federate->process_requested_federation_restore_status( theFederateStatusVector );
+      federate->process_requested_federation_restore_status( response );
    } else {
       // echo
-      federate->print_requested_federation_restore_status( theFederateStatusVector );
+      federate->print_requested_federation_restore_status( response );
    }
 }
 
@@ -516,7 +516,7 @@ FedAmb::turnInteractionsOff():%d \n",
 
 // 6.3
 void FedAmb::objectInstanceNameReservationSucceeded(
-   wstring const &theObjectInstanceName )
+   wstring const &objectInstanceName )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -524,12 +524,12 @@ void FedAmb::objectInstanceNameReservationSucceeded(
    if ( manager != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
-         StringUtilities::to_string( instance_name, theObjectInstanceName );
+         StringUtilities::to_string( instance_name, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationSucceeded():%d '%s'\n",
                           __LINE__, instance_name.c_str() );
       }
 
-      manager->object_instance_name_reservation_succeeded( theObjectInstanceName );
+      manager->object_instance_name_reservation_succeeded( objectInstanceName );
    }
 }
 
@@ -1150,12 +1150,12 @@ FedAmb::reportInteractionTransportationType():%d \n",
 void FedAmb::requestAttributeOwnershipAssumption(
    ObjectInstanceHandle      theObject,
    AttributeHandleSet const &offeredAttributes,
-   VariableLengthData const &theUserSuppliedTag )
+   VariableLengthData const &userSuppliedTag )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
 {
-   char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
+   char const *tag = static_cast< char const * >( userSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipAssumption():%d push request received, tag='%s'\n",
                        __LINE__, tag );
@@ -1269,12 +1269,16 @@ Unknown object instance (ID:%s), push request rejected, tag='%s' \n",
    }
 }
 
+#if defined( IEEE_1516_2025 )
+void FedAmb::requestDivestitureConfirmation(
+   ObjectInstanceHandle const &theObject,
+   AttributeHandleSet const   &theAttributes,
+   VariableLengthData const   &userSuppliedTag )
+#else
 // 7.5
 void FedAmb::requestDivestitureConfirmation(
    ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &releasedAttributes )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+   AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif
 {
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
@@ -1681,7 +1685,7 @@ void FedAmb::timeAdvanceGrant(
 }
 
 void FedAmb::requestRetraction(
-   MessageRetractionHandle theHandle )
+   MessageRetractionHandle retraction )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif

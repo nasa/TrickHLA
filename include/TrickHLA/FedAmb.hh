@@ -149,8 +149,23 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    // 4.8
    virtual void reportFederationExecutions(
       RTI1516_NAMESPACE::FederationExecutionInformationVector const &
-         theFederationExecutionInformationList ) throw( RTI1516_NAMESPACE::FederateInternalError );
+         report ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
+
+#if defined( IEEE_1516_2025 )
+   // 4.10
+   virtual void reportFederationExecutionMembers(
+      std::wstring const                                                  &federationName,
+      RTI1516_NAMESPACE::FederationExecutionMemberInformationVector const &report )
+
+   // 4.11
+   virtual void reportFederationExecutionDoesNotExist(
+      std::wstring const &federationName );
+
+   // 4.13
+   virtual void federateResigned(
+      std::wstring const &reasonForResignDescription );
+#endif // IEEE_1516_2025
 
 #if defined( IEEE_1516_2025 )
    // 4.15
@@ -165,202 +180,257 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 #endif
 
 #if defined( IEEE_1516_2025 )
-   virtual void
-   synchronizationPointRegistrationFailed( std::wstring const                                  &label,
-                                           RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
-#else
-   virtual void
-   synchronizationPointRegistrationFailed( std::wstring const                                  &label,
-                                           RTI1516_NAMESPACE::SynchronizationPointFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError );
-#endif
-
-   // 4.8
-#if defined( IEEE_1516_2025 )
-   virtual void
-   announceSynchronizationPoint( std::wstring const                          &label,
-                                 RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
-#else
-   virtual void
-   announceSynchronizationPoint( std::wstring const                          &label,
-                                 RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
-#endif
-
-   // 4.10
-#if defined( IEEE_1516_2025 )
-   virtual void
-   federationSynchronized( std::wstring const                         &label,
-                           RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet );
-#else
-   virtual void
-   federationSynchronized( std::wstring const                         &label,
-                           RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet ) throw( RTI1516_NAMESPACE::FederateInternalError );
-#endif
-
-   // 4.12
-#if defined( IEEE_1516_2025 )
-   virtual void initiateFederateSave( std::wstring const &label );
-#else
-   virtual void initiateFederateSave( std::wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError );
-#endif
-
-#if defined( IEEE_1516_2025 )
-   virtual void
-   initiateFederateSave( std::wstring const                   &label,
-                         RTI1516_NAMESPACE::LogicalTime const &theTime );
-#else
-   virtual void
-   initiateFederateSave( std::wstring const                   &label,
-                         RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
-#endif
-
    // 4.15
+   virtual void
+   synchronizationPointRegistrationFailed(
+      std::wstring const                                  &label,
+      RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
+#else
+   // 4.7
+   virtual void
+   synchronizationPointRegistrationFailed(
+      std::wstring const                                  &label,
+      RTI1516_NAMESPACE::SynchronizationPointFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError );
+#endif
+
 #if defined( IEEE_1516_2025 )
+   // 4.16
+   virtual void
+   announceSynchronizationPoint(
+      std::wstring const                          &label,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
+#else
+   // 4.8
+   virtual void
+   announceSynchronizationPoint(
+      std::wstring const                          &label,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
+#endif
+
+#if defined( IEEE_1516_2025 )
+   // 4.18
+   virtual void
+   federationSynchronized(
+      std::wstring const                         &label,
+      RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet );
+#else
+   // 4.10
+   virtual void
+   federationSynchronized(
+      std::wstring const                         &label,
+      RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet ) throw( RTI1516_NAMESPACE::FederateInternalError );
+#endif
+
+#if defined( IEEE_1516_2025 )
+   // 4.20
+   virtual void initiateFederateSave(
+      std::wstring const &label );
+#else
+   // 4.12
+   virtual void initiateFederateSave(
+      std::wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError );
+#endif
+
+#if defined( IEEE_1516_2025 )
+   // 4.20
+   virtual void
+   initiateFederateSave(
+      std::wstring const                   &label,
+      RTI1516_NAMESPACE::LogicalTime const &theTime );
+#else
+   // 4.12
+   virtual void
+   initiateFederateSave(
+      std::wstring const                   &label,
+      RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
+#endif
+
+#if defined( IEEE_1516_2025 )
+   // 4.23
    virtual void federationSaved();
 #else
+   // 4.15
    virtual void federationSaved() throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
+   // 4.23
    virtual void
-   federationNotSaved( RTI1516_NAMESPACE::SaveFailureReason theSaveFailureReason );
+   federationNotSaved(
+      RTI1516_NAMESPACE::SaveFailureReason reason );
 #else
+   // 4.15
    virtual void
-   federationNotSaved( RTI1516_NAMESPACE::SaveFailureReason theSaveFailureReason ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   federationNotSaved(
+      RTI1516_NAMESPACE::SaveFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
+#if defined( IEEE_1516_2025 )
+   // 4.26
+   virtual void federationSaveStatusResponse(
+      RTI1516_NAMESPACE::FederateHandleSaveStatusPairVector const &
+         response );
+#else
    // 4.17
-#if defined( IEEE_1516_2025 )
    virtual void federationSaveStatusResponse(
       RTI1516_NAMESPACE::FederateHandleSaveStatusPairVector const &
-         theFederateStatusVector );
-#else
-   virtual void federationSaveStatusResponse(
-      RTI1516_NAMESPACE::FederateHandleSaveStatusPairVector const &
-         theFederateStatusVector ) throw( RTI1516_NAMESPACE::FederateInternalError );
+         response ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
+#if defined( IEEE_1516_2025 )
+   // 4.28
+   virtual void requestFederationRestoreSucceeded(
+      std::wstring const &label );
+#else
    // 4.19
-#if defined( IEEE_1516_2025 )
-   virtual void requestFederationRestoreSucceeded( std::wstring const &label );
-#else
-   virtual void requestFederationRestoreSucceeded( std::wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   virtual void requestFederationRestoreSucceeded(
+      std::wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
-   virtual void requestFederationRestoreFailed( std::wstring const &label );
+   // 4.28
+   virtual void requestFederationRestoreFailed(
+      std::wstring const &label );
 #else
-   virtual void requestFederationRestoreFailed( std::wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   // 4.19
+   virtual void requestFederationRestoreFailed(
+      std::wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
-   // 4.20
 #if defined( IEEE_1516_2025 )
+   // 4.29
    virtual void federationRestoreBegun();
 #else
+   // 4.20
    virtual void federationRestoreBegun() throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
-   // 4.21
 #if defined( IEEE_1516_2025 )
+   // 4.30
    virtual void
-   initiateFederateRestore( std::wstring const               &label,
-                            std::wstring const               &federateName,
-                            RTI1516_NAMESPACE::FederateHandle handle );
+   initiateFederateRestore(
+      std::wstring const               &label,
+      std::wstring const               &federateName,
+      RTI1516_NAMESPACE::FederateHandle handle );
 #else
+   // 4.21
    virtual void
-   initiateFederateRestore( std::wstring const               &label,
-                            std::wstring const               &federateName,
-                            RTI1516_NAMESPACE::FederateHandle handle ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   initiateFederateRestore(
+      std::wstring const               &label,
+      std::wstring const               &federateName,
+      RTI1516_NAMESPACE::FederateHandle handle ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
-   // 4.23
 #if defined( IEEE_1516_2025 )
+   // 4.32
    virtual void federationRestored();
 #else
+   // 4.23
    virtual void federationRestored() throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
+   // 4.32
    virtual void
-   federationNotRestored( RTI1516_NAMESPACE::RestoreFailureReason theRestoreFailureReason );
+   federationNotRestored(
+      RTI1516_NAMESPACE::RestoreFailureReason reason );
 #else
+   // 4.23
    virtual void
-   federationNotRestored( RTI1516_NAMESPACE::RestoreFailureReason theRestoreFailureReason ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   federationNotRestored(
+      RTI1516_NAMESPACE::RestoreFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
-   // 4.25
 #if defined( IEEE_1516_2025 )
+   // 4.35
    virtual void federationRestoreStatusResponse(
       RTI1516_NAMESPACE::FederateRestoreStatusVector const &
-         theFederateRestoreStatusVector );
+         response );
 #else
+   // 4.25
    virtual void federationRestoreStatusResponse(
       RTI1516_NAMESPACE::FederateRestoreStatusVector const &
-         theFederateRestoreStatusVector ) throw( RTI1516_NAMESPACE::FederateInternalError );
+         response ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    /////////////////////////////////////
    // Declaration Management Services //
    /////////////////////////////////////
 
+#if defined( IEEE_1516_2025 )
+   // 5.14
+   virtual void
+   startRegistrationForObjectClass(
+      RTI1516_NAMESPACE::ObjectClassHandle const &theClass );
+#else
    // 5.10
-#if defined( IEEE_1516_2025 )
    virtual void
-   startRegistrationForObjectClass( RTI1516_NAMESPACE::ObjectClassHandle theClass );
-#else
-   virtual void
-   startRegistrationForObjectClass( RTI1516_NAMESPACE::ObjectClassHandle theClass ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   startRegistrationForObjectClass(
+      RTI1516_NAMESPACE::ObjectClassHandle theClass ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
+#if defined( IEEE_1516_2025 )
+   // 5.15
+   virtual void
+   stopRegistrationForObjectClass(
+      RTI1516_NAMESPACE::ObjectClassHandle const &theClass );
+#else
    // 5.11
-#if defined( IEEE_1516_2025 )
    virtual void
-   stopRegistrationForObjectClass( RTI1516_NAMESPACE::ObjectClassHandle theClass );
-#else
-   virtual void
-   stopRegistrationForObjectClass( RTI1516_NAMESPACE::ObjectClassHandle theClass ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   stopRegistrationForObjectClass(
+      RTI1516_NAMESPACE::ObjectClassHandle theClass ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
+#if defined( IEEE_1516_2025 )
+   // 5.16
+   virtual void
+   turnInteractionsOn(
+      RTI1516_NAMESPACE::InteractionClassHandle const &theHandle );
+#else
    // 5.12
-#if defined( IEEE_1516_2025 )
    virtual void
-   turnInteractionsOn( RTI1516_NAMESPACE::InteractionClassHandle theHandle );
-#else
-   virtual void
-   turnInteractionsOn( RTI1516_NAMESPACE::InteractionClassHandle theHandle ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   turnInteractionsOn(
+      RTI1516_NAMESPACE::InteractionClassHandle theHandle ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
-   // 5.13
 #if defined( IEEE_1516_2025 )
+   // 5.17
    virtual void
-   turnInteractionsOff( RTI1516_NAMESPACE::InteractionClassHandle theHandle );
+   turnInteractionsOff(
+      RTI1516_NAMESPACE::InteractionClassHandle const &theHandle );
 #else
+   // 5.13
    virtual void
-   turnInteractionsOff( RTI1516_NAMESPACE::InteractionClassHandle theHandle ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   turnInteractionsOff(
+      RTI1516_NAMESPACE::InteractionClassHandle theHandle ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    ////////////////////////////////
    // Object Management Services //
    ////////////////////////////////
 
-   // 6.3
 #if defined( IEEE_1516_2025 )
+   // 6.3
    virtual void
-   objectInstanceNameReservationSucceeded( std::wstring const &
-                                              theObjectInstanceName );
+   objectInstanceNameReservationSucceeded(
+      std::wstring const &objectInstanceName );
 #else
+   // 6.3
    virtual void
-   objectInstanceNameReservationSucceeded( std::wstring const &
-                                              theObjectInstanceName ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   objectInstanceNameReservationSucceeded(
+      std::wstring const &objectInstanceName ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
+   // 6.3
    virtual void
-   objectInstanceNameReservationFailed( std::wstring const &
-                                           theObjectInstanceName );
+   objectInstanceNameReservationFailed(
+      std::wstring const &objectInstanceName );
 #else
+   // 6.3
    virtual void
-   objectInstanceNameReservationFailed( std::wstring const &
-                                           theObjectInstanceName ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   objectInstanceNameReservationFailed(
+      std::wstring const &objectInstanceName ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.6
@@ -401,468 +471,547 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   discoverObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                           RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
-                           std::wstring const                     &theObjectInstanceName,
-                           RTI1516_NAMESPACE::FederateHandle       producingFederate );
+   discoverObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
+      std::wstring const                     &theObjectInstanceName,
+      RTI1516_NAMESPACE::FederateHandle       producingFederate );
 #else
    virtual void
-   discoverObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                           RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
-                           std::wstring const                     &theObjectInstanceName,
-                           RTI1516_NAMESPACE::FederateHandle       producingFederate ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   discoverObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
+      std::wstring const                     &theObjectInstanceName,
+      RTI1516_NAMESPACE::FederateHandle       producingFederate ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    // 6.11
    virtual void
-   reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
-                           RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                           RTI1516_NAMESPACE::OrderType                      sentOrder,
-                           RTI1516_NAMESPACE::TransportationType             theType,
-                           RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo );
+   reflectAttributeValues(
+      RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
+      RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo );
 #else
    // 6.7
    virtual void
-   reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
-                           RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                           RTI1516_NAMESPACE::OrderType                      sentOrder,
-                           RTI1516_NAMESPACE::TransportationType             theType,
-                           RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   reflectAttributeValues(
+      RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
+      RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
-                           RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                           RTI1516_NAMESPACE::OrderType                      sentOrder,
-                           RTI1516_NAMESPACE::TransportationType             theType,
-                           RTI1516_NAMESPACE::LogicalTime const             &theTime,
-                           RTI1516_NAMESPACE::OrderType                      receivedOrder,
-                           RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo );
+   reflectAttributeValues(
+      RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
+      RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_NAMESPACE::OrderType                      receivedOrder,
+      RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo );
 #else
    virtual void
-   reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
-                           RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                           RTI1516_NAMESPACE::OrderType                      sentOrder,
-                           RTI1516_NAMESPACE::TransportationType             theType,
-                           RTI1516_NAMESPACE::LogicalTime const             &theTime,
-                           RTI1516_NAMESPACE::OrderType                      receivedOrder,
-                           RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   reflectAttributeValues(
+      RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
+      RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_NAMESPACE::OrderType                      receivedOrder,
+      RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
-                           RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                           RTI1516_NAMESPACE::OrderType                      sentOrder,
-                           RTI1516_NAMESPACE::TransportationType             theType,
-                           RTI1516_NAMESPACE::LogicalTime const             &theTime,
-                           RTI1516_NAMESPACE::OrderType                      receivedOrder,
-                           RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
-                           RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo );
+   reflectAttributeValues(
+      RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
+      RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_NAMESPACE::OrderType                      receivedOrder,
+      RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
+      RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo );
 #else
    virtual void
-   reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
-                           RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                           RTI1516_NAMESPACE::OrderType                      sentOrder,
-                           RTI1516_NAMESPACE::TransportationType             theType,
-                           RTI1516_NAMESPACE::LogicalTime const             &theTime,
-                           RTI1516_NAMESPACE::OrderType                      receivedOrder,
-                           RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
-                           RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   reflectAttributeValues(
+      RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
+      RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_NAMESPACE::OrderType                      receivedOrder,
+      RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
+      RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.9
 #if defined( IEEE_1516_2025 )
    virtual void
-   receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
-                       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                       RTI1516_NAMESPACE::OrderType                      sentOrder,
-                       RTI1516_NAMESPACE::TransportationType             theType,
-                       RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo );
+   receiveInteraction(
+      RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
+      RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo );
 #else
    virtual void
-   receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
-                       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                       RTI1516_NAMESPACE::OrderType                      sentOrder,
-                       RTI1516_NAMESPACE::TransportationType             theType,
-                       RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   receiveInteraction(
+      RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
+      RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
-                       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                       RTI1516_NAMESPACE::OrderType                      sentOrder,
-                       RTI1516_NAMESPACE::TransportationType             theType,
-                       RTI1516_NAMESPACE::LogicalTime const             &theTime,
-                       RTI1516_NAMESPACE::OrderType                      receivedOrder,
-                       RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo );
+   receiveInteraction(
+      RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
+      RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_NAMESPACE::OrderType                      receivedOrder,
+      RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo );
 #else
    virtual void
-   receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
-                       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                       RTI1516_NAMESPACE::OrderType                      sentOrder,
-                       RTI1516_NAMESPACE::TransportationType             theType,
-                       RTI1516_NAMESPACE::LogicalTime const             &theTime,
-                       RTI1516_NAMESPACE::OrderType                      receivedOrder,
-                       RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   receiveInteraction(
+      RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
+      RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_NAMESPACE::OrderType                      receivedOrder,
+      RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
-                       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                       RTI1516_NAMESPACE::OrderType                      sentOrder,
-                       RTI1516_NAMESPACE::TransportationType             theType,
-                       RTI1516_NAMESPACE::LogicalTime const             &theTime,
-                       RTI1516_NAMESPACE::OrderType                      receivedOrder,
-                       RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
-                       RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo );
+   receiveInteraction(
+      RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
+      RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_NAMESPACE::OrderType                      receivedOrder,
+      RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
+      RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo );
 #else
    virtual void
-   receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
-                       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-                       RTI1516_NAMESPACE::OrderType                      sentOrder,
-                       RTI1516_NAMESPACE::TransportationType             theType,
-                       RTI1516_NAMESPACE::LogicalTime const             &theTime,
-                       RTI1516_NAMESPACE::OrderType                      receivedOrder,
-                       RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
-                       RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   receiveInteraction(
+      RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
+      RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                      sentOrder,
+      RTI1516_NAMESPACE::TransportationType             theType,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_NAMESPACE::OrderType                      receivedOrder,
+      RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
+      RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.11
 #if defined( IEEE_1516_2025 )
    virtual void
-   removeObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                         RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
-                         RTI1516_NAMESPACE::OrderType                 sentOrder,
-                         RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo );
+   removeObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                 sentOrder,
+      RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo );
 #else
    virtual void
-   removeObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                         RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
-                         RTI1516_NAMESPACE::OrderType                 sentOrder,
-                         RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   removeObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                 sentOrder,
+      RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   removeObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                         RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
-                         RTI1516_NAMESPACE::OrderType                 sentOrder,
-                         RTI1516_NAMESPACE::LogicalTime const        &theTime,
-                         RTI1516_NAMESPACE::OrderType                 receivedOrder,
-                         RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo );
+   removeObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                 sentOrder,
+      RTI1516_NAMESPACE::LogicalTime const        &theTime,
+      RTI1516_NAMESPACE::OrderType                 receivedOrder,
+      RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo );
 #else
    virtual void
-   removeObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                         RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
-                         RTI1516_NAMESPACE::OrderType                 sentOrder,
-                         RTI1516_NAMESPACE::LogicalTime const        &theTime,
-                         RTI1516_NAMESPACE::OrderType                 receivedOrder,
-                         RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   removeObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                 sentOrder,
+      RTI1516_NAMESPACE::LogicalTime const        &theTime,
+      RTI1516_NAMESPACE::OrderType                 receivedOrder,
+      RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   removeObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                         RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
-                         RTI1516_NAMESPACE::OrderType                 sentOrder,
-                         RTI1516_NAMESPACE::LogicalTime const        &theTime,
-                         RTI1516_NAMESPACE::OrderType                 receivedOrder,
-                         RTI1516_NAMESPACE::MessageRetractionHandle   theHandle,
-                         RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo );
+   removeObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                 sentOrder,
+      RTI1516_NAMESPACE::LogicalTime const        &theTime,
+      RTI1516_NAMESPACE::OrderType                 receivedOrder,
+      RTI1516_NAMESPACE::MessageRetractionHandle   theHandle,
+      RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo );
 #else
    virtual void
-   removeObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                         RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
-                         RTI1516_NAMESPACE::OrderType                 sentOrder,
-                         RTI1516_NAMESPACE::LogicalTime const        &theTime,
-                         RTI1516_NAMESPACE::OrderType                 receivedOrder,
-                         RTI1516_NAMESPACE::MessageRetractionHandle   theHandle,
-                         RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   removeObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
+      RTI1516_NAMESPACE::OrderType                 sentOrder,
+      RTI1516_NAMESPACE::LogicalTime const        &theTime,
+      RTI1516_NAMESPACE::OrderType                 receivedOrder,
+      RTI1516_NAMESPACE::MessageRetractionHandle   theHandle,
+      RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.15
 #if defined( IEEE_1516_2025 )
    virtual void
-   attributesInScope( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
+   attributesInScope(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 #else
    virtual void
-   attributesInScope( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   attributesInScope(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.16
 #if defined( IEEE_1516_2025 )
    virtual void
-   attributesOutOfScope( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                         RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
+   attributesOutOfScope(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 #else
    virtual void
-   attributesOutOfScope( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                         RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   attributesOutOfScope(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.18
 #if defined( IEEE_1516_2025 )
    virtual void
-   provideAttributeValueUpdate( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
+   provideAttributeValueUpdate(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
 #else
    virtual void
-   provideAttributeValueUpdate( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   provideAttributeValueUpdate(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.19
 #if defined( IEEE_1516_2025 )
    virtual void
-   turnUpdatesOnForObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                   RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
+   turnUpdatesOnForObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 #else
    virtual void
-   turnUpdatesOnForObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                   RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   turnUpdatesOnForObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   turnUpdatesOnForObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                   RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                   std::wstring const                          &updateRateDesignator );
+   turnUpdatesOnForObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
+      std::wstring const                          &updateRateDesignator );
 #else
    virtual void
-   turnUpdatesOnForObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                   RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                   std::wstring const                          &updateRateDesignator ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   turnUpdatesOnForObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
+      std::wstring const                          &updateRateDesignator ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.20
 #if defined( IEEE_1516_2025 )
    virtual void
-   turnUpdatesOffForObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
+   turnUpdatesOffForObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 #else
    virtual void
-   turnUpdatesOffForObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   turnUpdatesOffForObjectInstance(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.24
 #if defined( IEEE_1516_2025 )
    virtual void
-   confirmAttributeTransportationTypeChange( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                                             RTI1516_NAMESPACE::AttributeHandleSet   theAttributes,
-                                             RTI1516_NAMESPACE::TransportationType   theTransportation );
+   confirmAttributeTransportationTypeChange(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet   theAttributes,
+      RTI1516_NAMESPACE::TransportationType   theTransportation );
 #else
    virtual void
-   confirmAttributeTransportationTypeChange( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                                             RTI1516_NAMESPACE::AttributeHandleSet   theAttributes,
-                                             RTI1516_NAMESPACE::TransportationType   theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   confirmAttributeTransportationTypeChange(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet   theAttributes,
+      RTI1516_NAMESPACE::TransportationType   theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.26
 #if defined( IEEE_1516_2025 )
    virtual void
-   reportAttributeTransportationType( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                                      RTI1516_NAMESPACE::AttributeHandle      theAttribute,
-                                      RTI1516_NAMESPACE::TransportationType   theTransportation );
+   reportAttributeTransportationType(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandle      theAttribute,
+      RTI1516_NAMESPACE::TransportationType   theTransportation );
 #else
    virtual void
-   reportAttributeTransportationType( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                                      RTI1516_NAMESPACE::AttributeHandle      theAttribute,
-                                      RTI1516_NAMESPACE::TransportationType   theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   reportAttributeTransportationType(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandle      theAttribute,
+      RTI1516_NAMESPACE::TransportationType   theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.28
 #if defined( IEEE_1516_2025 )
    virtual void
-   confirmInteractionTransportationTypeChange( RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
-                                               RTI1516_NAMESPACE::TransportationType     theTransportation );
+   confirmInteractionTransportationTypeChange(
+      RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
+      RTI1516_NAMESPACE::TransportationType     theTransportation );
 #else
    virtual void
-   confirmInteractionTransportationTypeChange( RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
-                                               RTI1516_NAMESPACE::TransportationType     theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   confirmInteractionTransportationTypeChange(
+      RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
+      RTI1516_NAMESPACE::TransportationType     theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 6.30
 #if defined( IEEE_1516_2025 )
    virtual void
-   reportInteractionTransportationType( RTI1516_NAMESPACE::FederateHandle         federateHandle,
-                                        RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
-                                        RTI1516_NAMESPACE::TransportationType     theTransportation );
+   reportInteractionTransportationType(
+      RTI1516_NAMESPACE::FederateHandle         federateHandle,
+      RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
+      RTI1516_NAMESPACE::TransportationType     theTransportation );
 #else
    virtual void
-   reportInteractionTransportationType( RTI1516_NAMESPACE::FederateHandle         federateHandle,
-                                        RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
-                                        RTI1516_NAMESPACE::TransportationType     theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   reportInteractionTransportationType(
+      RTI1516_NAMESPACE::FederateHandle         federateHandle,
+      RTI1516_NAMESPACE::InteractionClassHandle theInteraction,
+      RTI1516_NAMESPACE::TransportationType     theTransportation ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    ///////////////////////////////////
    // Ownership Management Services //
    ///////////////////////////////////
 
-   // 7.4
 #if defined( IEEE_1516_2025 )
+   // 7.4
    virtual void
-   requestAttributeOwnershipAssumption( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                        RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                        RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
+   requestAttributeOwnershipAssumption(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const &userSuppliedTag );
 #else
+   // 7.4
    virtual void
-   requestAttributeOwnershipAssumption( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                        RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                        RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   requestAttributeOwnershipAssumption(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const &userSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
-   // 7.5
 #if defined( IEEE_1516_2025 )
+   // 7.5
    virtual void
-   requestDivestitureConfirmation( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                   RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
+   requestDivestitureConfirmation(
+      RTI1516_NAMESPACE::ObjectInstanceHandle const &theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const   &releasedAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const   &userSuppliedTag );
 #else
+   // 7.5
    virtual void
-   requestDivestitureConfirmation( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                   RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   requestDivestitureConfirmation(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &releasedAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 7.7
 #if defined( IEEE_1516_2025 )
    virtual void
-   attributeOwnershipAcquisitionNotification( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                              RTI1516_NAMESPACE::AttributeHandleSet const &securedAttributes,
-                                              RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
+   attributeOwnershipAcquisitionNotification(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &securedAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
 #else
    virtual void
-   attributeOwnershipAcquisitionNotification( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                              RTI1516_NAMESPACE::AttributeHandleSet const &securedAttributes,
-                                              RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   attributeOwnershipAcquisitionNotification(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &securedAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 7.10
 #if defined( IEEE_1516_2025 )
    virtual void
-   attributeOwnershipUnavailable( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                  RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
+   attributeOwnershipUnavailable(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 #else
    virtual void
-   attributeOwnershipUnavailable( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                  RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   attributeOwnershipUnavailable(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 7.11
 #if defined( IEEE_1516_2025 )
    virtual void
-   requestAttributeOwnershipRelease( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                     RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                     RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
+   requestAttributeOwnershipRelease(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
 #else
    virtual void
-   requestAttributeOwnershipRelease( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                     RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                     RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   requestAttributeOwnershipRelease(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
+      RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 7.15
 #if defined( IEEE_1516_2025 )
    virtual void
-   confirmAttributeOwnershipAcquisitionCancellation( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                                     RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
+   confirmAttributeOwnershipAcquisitionCancellation(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 #else
    virtual void
-   confirmAttributeOwnershipAcquisitionCancellation( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
-                                                     RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   confirmAttributeOwnershipAcquisitionCancellation(
+      RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
+      RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    // 7.17
 #if defined( IEEE_1516_2025 )
    irtual void
-   informAttributeOwnership( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                             RTI1516_NAMESPACE::AttributeHandle      theAttribute,
-                             RTI1516_NAMESPACE::FederateHandle       theOwner );
+   informAttributeOwnership(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandle      theAttribute,
+      RTI1516_NAMESPACE::FederateHandle       theOwner );
 #else
    virtual void
-   informAttributeOwnership( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                             RTI1516_NAMESPACE::AttributeHandle      theAttribute,
-                             RTI1516_NAMESPACE::FederateHandle       theOwner ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   informAttributeOwnership(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandle      theAttribute,
+      RTI1516_NAMESPACE::FederateHandle       theOwner ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   attributeIsNotOwned( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                        RTI1516_NAMESPACE::AttributeHandle      theAttribute );
+   attributeIsNotOwned(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandle      theAttribute );
 #else
    virtual void
-   attributeIsNotOwned( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                        RTI1516_NAMESPACE::AttributeHandle      theAttribute ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   attributeIsNotOwned(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandle      theAttribute ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
 #if defined( IEEE_1516_2025 )
    virtual void
-   attributeIsOwnedByRTI( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                          RTI1516_NAMESPACE::AttributeHandle      theAttribute );
+   attributeIsOwnedByRTI(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandle      theAttribute );
 #else
    virtual void
-   attributeIsOwnedByRTI( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
-                          RTI1516_NAMESPACE::AttributeHandle      theAttribute ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   attributeIsOwnedByRTI(
+      RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
+      RTI1516_NAMESPACE::AttributeHandle      theAttribute ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    //////////////////////////////
    // Time Management Services //
    //////////////////////////////
 
+#if defined( IEEE_1516_2025 )
    // 8.3
-#if defined( IEEE_1516_2025 )
    virtual void
-   timeRegulationEnabled( RTI1516_NAMESPACE::LogicalTime const &theFederateTime );
+   timeRegulationEnabled(
+      RTI1516_NAMESPACE::LogicalTime const &theFederateTime );
 #else
+   // 8.3
    virtual void
-   timeRegulationEnabled( RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   timeRegulationEnabled(
+      RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
+#if defined( IEEE_1516_2025 )
    // 8.6
-#if defined( IEEE_1516_2025 )
    virtual void
-   timeConstrainedEnabled( RTI1516_NAMESPACE::LogicalTime const &theFederateTime );
+   timeConstrainedEnabled(
+      RTI1516_NAMESPACE::LogicalTime const &theFederateTime );
 #else
+   // 8.6
    virtual void
-   timeConstrainedEnabled( RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   timeConstrainedEnabled(
+      RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
+#if defined( IEEE_1516_2025 )
    // 8.13
-#if defined( IEEE_1516_2025 )
-   virtual void
-   timeAdvanceGrant( RTI1516_NAMESPACE::LogicalTime const &theTime );
-#else
-   virtual void
-   timeAdvanceGrant( RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   virtual void flushQueueGrant(
+      LogicalTime const &time, LogicalTime const &optimisticTime );
 #endif
 
-   // 8.22
 #if defined( IEEE_1516_2025 )
+   // 8.14
    virtual void
-   requestRetraction( RTI1516_NAMESPACE::MessageRetractionHandle theHandle );
+   timeAdvanceGrant(
+      RTI1516_NAMESPACE::LogicalTime const &theTime );
 #else
+   // 8.13
    virtual void
-   requestRetraction( RTI1516_NAMESPACE::MessageRetractionHandle theHandle ) throw( RTI1516_NAMESPACE::FederateInternalError );
+   timeAdvanceGrant(
+      RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
+#endif
+
+#if defined( IEEE_1516_2025 )
+   // 8.23
+   virtual void
+   requestRetraction(
+      RTI1516_NAMESPACE::MessageRetractionHandle retraction );
+#else
+   // 8.22
+   virtual void
+   requestRetraction(
+      RTI1516_NAMESPACE::MessageRetractionHandle retraction ) throw( RTI1516_NAMESPACE::FederateInternalError );
 #endif
 
    /*! @brief Switch to echo (versus process) in a federationRestoreStatusResponse() callback... */

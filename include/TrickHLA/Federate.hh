@@ -1274,7 +1274,9 @@ class Federate
    // Federation required associations.
    //
 #if defined( IEEE_1516_2025 )
+#if !defined( SWIG )
    std::unique_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
+#endif // SWIG
 #else
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated"
