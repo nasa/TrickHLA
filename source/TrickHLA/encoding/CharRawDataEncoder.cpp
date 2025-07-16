@@ -112,7 +112,7 @@ void CharRawDataEncoder::update_after_decode()
 }
 
 #if defined( IEEE_1516_2025 )
-DataElement &decode( VariableLengthData const &inData );
+DataElement &decode( VariableLengthData const &inData )
 {
    // Resize Trick array variable to match the decoded data size.
    resize_trick_var( inData.size() );

@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Edwin Z. Crues, Titan Systems Corp., DIS, Feb 2002, --, HLA Ball Sim.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2025, --, Add HLA 4 support}
 @revs_end
 
 */
@@ -60,7 +61,6 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
@@ -71,11 +71,17 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
+#if defined( IEEE_1516_2025 )
+#   include "TrickHLA/FedAmbHLA4.hh"
+#else
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+
+#   include "TrickHLA/FedAmbHLA3.hh"
+#endif // IEEE_1516_2025
 
 // HLA include files.
 #include "RTI/Enums.h"
@@ -84,6 +90,9 @@ NASA, Johnson Space Center\n
 #include "RTI/Handle.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/time/LogicalTime.h"
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -112,7 +121,7 @@ FedAmb::FedAmb()
 /*!
  * @job_class{shutdown}
  */
-FedAmb::~FedAmb() throw()
+FedAmb::~FedAmb()
 {
    return;
 }
@@ -177,28 +186,53 @@ void FedAmb::connectionLost(
    throw( FederateInternalError )
 #endif
 {
-   string faultMsg;
-   StringUtilities::to_string( faultMsg, faultDescription );
+   string fault_msg;
+   StringUtilities::to_string( fault_msg, faultDescription );
    ostringstream errmsg;
    errmsg << "FedAmb::connectionLost():" << __LINE__
           << " ERROR: Lost the connection to the Central RTI Component (CRC)."
-          << " Reason:'" << faultMsg << "'."
+          << " Reason:'" << fault_msg << "'."
           << " Terminating the simulation!\n";
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
-#if defined( IEEE_1516_2025 )
 void FedAmb::reportFederationExecutions(
    FederationExecutionInformationVector const &report )
-#else
-void FedAmb::reportFederationExecutions(
-   FederationExecutionInformationVector const &report ) throw( FederateInternalError )
+#if defined( IEEE_1516_2010 )
+   throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::reportFederationExecutions():%d \n",
                     federate->get_federate_name().c_str(), __LINE__ );
 }
+
+#if defined( IEEE_1516_2025 )
+void FedAmb::reportFederationExecutionMembers(
+   std::wstring const                               &federationName,
+   FederationExecutionMemberInformationVector const &report )
+{
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
+FedAmb::reportFederationExecutionMembers():%d \n",
+                    federate->get_federate_name().c_str(), __LINE__ );
+}
+
+void FedAmb::reportFederationExecutionDoesNotExist(
+   std::wstring const &federationName )
+{
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
+FedAmb::reportFederationExecutionDoesNotExist():%d \n",
+                    federate->get_federate_name().c_str(), __LINE__ );
+}
+
+void FedAmb::federateResigned(
+   std::wstring const &reasonForResignDescription )
+{
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
+FedAmb::federateResigned():%d \n",
+                    federate->get_federate_name().c_str(), __LINE__ );
+}
+#endif // IEEE_1516_2025
 
 void FedAmb::synchronizationPointRegistrationSucceeded(
    wstring const &label )
@@ -234,7 +268,7 @@ void FedAmb::synchronizationPointRegistrationFailed(
 
 void FedAmb::announceSynchronizationPoint(
    wstring const            &label,
-   VariableLengthData const &theUserSuppliedTag )
+   VariableLengthData const &userSuppliedTag )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -245,7 +279,7 @@ void FedAmb::announceSynchronizationPoint(
       message_publish( MSG_NORMAL, "FedAmb::announceSynchronizationPoint():%d Label:'%s'\n",
                        __LINE__, label_str.c_str() );
    }
-   federate->announce_sync_point( label, theUserSuppliedTag );
+   federate->announce_sync_point( label, userSuppliedTag );
 }
 
 void FedAmb::federationSynchronized(
@@ -296,16 +330,16 @@ void FedAmb::initiateFederateSave(
 
 void FedAmb::initiateFederateSave(
    wstring const     &label,
-   LogicalTime const &theTime )
+   LogicalTime const &time )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      Int64Time time;
-      time.set( theTime );
+      Int64Time i64time;
+      i64time.set( time );
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d HLA-time:%.12G seconds.\n",
-                       __LINE__, time.get_time_in_seconds() );
+                       __LINE__, i64time.get_time_in_seconds() );
    }
    federate->set_save_name( label );
    federate->set_start_to_save( true );
@@ -345,7 +379,7 @@ void FedAmb::federationNotSaved(
 }
 
 void FedAmb::federationSaveStatusResponse(
-   FederateHandleSaveStatusPairVector const &theFederateStatusVector )
+   FederateHandleSaveStatusPairVector const &response )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -354,7 +388,7 @@ void FedAmb::federationSaveStatusResponse(
       message_publish( MSG_NORMAL, "FedAmb::federationSaveStatusResponse():%d \n",
                        __LINE__ );
    }
-   federate->process_requested_federation_save_status( theFederateStatusVector );
+   federate->process_requested_federation_save_status( response );
 }
 
 void FedAmb::requestFederationRestoreSucceeded(
@@ -398,11 +432,14 @@ void FedAmb::federationRestoreBegun()
 }
 
 void FedAmb::initiateFederateRestore(
+#if defined( IEEE_1516_2025 )
+   wstring const        &label,
+   wstring const        &federateName,
+   FederateHandle const &postRestoreFederateHandle )
+#else
    wstring const &label,
    wstring const &federateName,
-   FederateHandle handle )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+   FederateHandle postRestoreFederateHandle ) throw( FederateInternalError )
 #endif
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -465,9 +502,10 @@ void FedAmb::federationRestoreStatusResponse(
 /////////////////////////////////////
 
 void FedAmb::startRegistrationForObjectClass(
-   ObjectClassHandle theClass )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectClassHandle const &objectClass )
+#else
+   ObjectClassHandle objectClass ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -476,9 +514,10 @@ FedAmb::startRegistrationForObjectClass():%d \n",
 }
 
 void FedAmb::stopRegistrationForObjectClass(
-   ObjectClassHandle theClass )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectClassHandle const &objectClass )
+#else
+   ObjectClassHandle objectClass ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -487,27 +526,27 @@ FedAmb::stopRegistrationForObjectClass():%d \n",
 }
 
 void FedAmb::turnInteractionsOn(
-   InteractionClassHandle theHandle )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   InteractionClassHandle const &interactionClass )
+#else
+   InteractionClassHandle interactionClass ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnInteractionsOn():%d \n",
-                    federate->get_federate_name().c_str(),
-                    __LINE__ );
+                    federate->get_federate_name().c_str(), __LINE__ );
 }
 
 void FedAmb::turnInteractionsOff(
-   InteractionClassHandle theHandle )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   InteractionClassHandle const &interactionClass )
+#else
+   InteractionClassHandle interactionClass ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnInteractionsOff():%d \n",
-                    federate->get_federate_name().c_str(),
-                    __LINE__ );
+                    federate->get_federate_name().c_str(), __LINE__ );
 }
 
 ////////////////////////////////
@@ -535,7 +574,7 @@ void FedAmb::objectInstanceNameReservationSucceeded(
 
 // 6.3
 void FedAmb::objectInstanceNameReservationFailed(
-   wstring const &theObjectInstanceName )
+   wstring const &objectInstanceName )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -543,18 +582,18 @@ void FedAmb::objectInstanceNameReservationFailed(
    if ( manager != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
-         StringUtilities::to_string( instance_name, theObjectInstanceName );
+         StringUtilities::to_string( instance_name, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationFailed():%d FAILED '%s'\n",
                           __LINE__, instance_name.c_str() );
       }
 
-      manager->object_instance_name_reservation_failed( theObjectInstanceName );
+      manager->object_instance_name_reservation_failed( objectInstanceName );
    }
 }
 
 // 6.6
 void FedAmb::multipleObjectInstanceNameReservationSucceeded(
-   set< wstring > const &theObjectInstanceNames )
+   set< wstring > const &objectInstanceNames )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -562,8 +601,8 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
    if ( manager != NULL ) {
 
       set< wstring >::const_iterator iter;
-      for ( iter = theObjectInstanceNames.begin();
-            iter != theObjectInstanceNames.end(); ++iter ) {
+      for ( iter = objectInstanceNames.begin();
+            iter != objectInstanceNames.end(); ++iter ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string instance_name;
             StringUtilities::to_string( instance_name, *iter );
@@ -577,7 +616,7 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
 }
 
 void FedAmb::multipleObjectInstanceNameReservationFailed(
-   set< wstring > const &theObjectInstanceNames )
+   set< wstring > const &objectInstanceNames )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -585,8 +624,8 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
    if ( manager != NULL ) {
 
       set< wstring >::const_iterator iter;
-      for ( iter = theObjectInstanceNames.begin();
-            iter != theObjectInstanceNames.end(); ++iter ) {
+      for ( iter = objectInstanceNames.begin();
+            iter != objectInstanceNames.end(); ++iter ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string instance_name;
             StringUtilities::to_string( instance_name, *iter );
@@ -599,19 +638,16 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
    }
 }
 
-// 6.5
-void FedAmb::discoverObjectInstance(
-   ObjectInstanceHandle theObject,
-   ObjectClassHandle    theObjectClass,
-   wstring const       &theObjectInstanceName )
 #if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+void FedAmb::discoverObjectInstance(
+   ObjectInstanceHandle objectInstance,
+   ObjectClassHandle    objectClass,
+   wstring const       &objectInstanceName ) throw( FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string id_str, name_str;
-      StringUtilities::to_string( id_str, theObject );
-      StringUtilities::to_string( name_str, theObjectInstanceName );
+      StringUtilities::to_string( id_str, objectInstance );
+      StringUtilities::to_string( name_str, objectInstanceName );
       message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d DISCOVERED '%s' Instance-ID:%s\n",
                        __LINE__, name_str.c_str(), id_str.c_str() );
    }
@@ -619,30 +655,35 @@ void FedAmb::discoverObjectInstance(
    if ( manager == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str, name_str;
-         StringUtilities::to_string( id_str, theObject );
-         StringUtilities::to_string( name_str, theObjectInstanceName );
+         StringUtilities::to_string( id_str, objectInstance );
+         StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
 NULL Manager! Can't do anything with discovered object '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
       }
-   } else if ( !manager->discover_object_instance( theObject, theObjectClass, theObjectInstanceName ) ) {
+   } else if ( !manager->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str, name_str;
-         StringUtilities::to_string( id_str, theObject );
-         StringUtilities::to_string( name_str, theObjectInstanceName );
+         StringUtilities::to_string( id_str, objectInstance );
+         StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_WARNING, "FedAmb::discoverObjectInstance():%d Object '%s' with Instance-ID:%s is UNKNOWN to me!\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
       }
    }
 }
+#endif // IEEE_1516_2010
 
 void FedAmb::discoverObjectInstance(
-   ObjectInstanceHandle theObject,
-   ObjectClassHandle    theObjectClass,
-   wstring const       &theObjectInstanceName,
-   FederateHandle       producingFederate )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   ObjectClassHandle const    &objectClass,
+   wstring const              &objectInstanceName,
+   FederateHandle const       &producingFederate )
+#else
+   ObjectInstanceHandle objectInstance,
+   ObjectClassHandle    objectClass,
+   wstring const       &objectInstanceName,
+   FederateHandle       producingFederate ) throw( FederateInternalError )
 #endif
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -653,23 +694,45 @@ federate '%s'):%d calling 'discoverObjectInstance' to finish the discovery.\n",
                        fed_id.c_str(), __LINE__ );
    }
 
-   discoverObjectInstance( theObject, theObjectClass, theObjectInstanceName );
+   if ( manager == NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+         string id_str, name_str;
+         StringUtilities::to_string( id_str, objectInstance );
+         StringUtilities::to_string( name_str, objectInstanceName );
+         message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
+NULL Manager! Can't do anything with discovered object '%s' Instance-ID:%s\n",
+                          __LINE__, name_str.c_str(), id_str.c_str() );
+      }
+   } else if ( !manager->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+         string id_str, name_str;
+         StringUtilities::to_string( id_str, objectInstance );
+         StringUtilities::to_string( name_str, objectInstanceName );
+         message_publish( MSG_WARNING, "FedAmb::discoverObjectInstance():%d Object '%s' with Instance-ID:%s is UNKNOWN to me!\n",
+                          __LINE__, name_str.c_str(), id_str.c_str() );
+      }
+   }
 }
 
-// 6.7
 void FedAmb::reflectAttributeValues(
-   ObjectInstanceHandle           theObject,
-   AttributeHandleValueMap const &theAttributeValues,
-   VariableLengthData const      &theUserSuppliedTag,
-   OrderType                      sentOrder,
-   TransportationType             theType,
-   SupplementalReflectInfo        theReflectInfo )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const     &objectInstance,
+   AttributeHandleValueMap const  &attributeValues,
+   VariableLengthData const       &userSuppliedTag,
+   TransportationTypeHandle const &transportationType,
+   FederateHandle const           &producingFederate,
+   RegionHandleSet const          *optionalSentRegions )
+#else
+   ObjectInstanceHandle           objectInstance,
+   AttributeHandleValueMap const &attributeValues,
+   VariableLengthData const      &userSuppliedTag,
+   OrderType                      sentOrderType,
+   TransportationType             transportationType,
+   SupplementalReflectInfo        reflectInfo ) throw( FederateInternalError )
 #endif
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
+   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -677,44 +740,44 @@ void FedAmb::reflectAttributeValues(
                           __LINE__, trickhla_obj->get_name().c_str() );
       }
 
-      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
-   } else if ( ( federate != NULL ) && federate->is_federate_instance_id( theObject ) ) {
+   } else if ( ( federate != NULL ) && federate->is_federate_instance_id( objectInstance ) ) {
 
       if ( federation_restored_rebuild_federate_handle_set ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
-            StringUtilities::to_string( id_str, theObject );
+            StringUtilities::to_string( id_str, objectInstance );
             message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues(%d elements):%d Rebuilding federate handle for Federate ID:%s\n",
-                             (int)theAttributeValues.size(),
+                             (int)attributeValues.size(),
                              __LINE__, id_str.c_str() );
          }
-         federate->rebuild_federate_handles( theObject, theAttributeValues );
+         federate->rebuild_federate_handles( objectInstance, attributeValues );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
-            StringUtilities::to_string( id_str, theObject );
+            StringUtilities::to_string( id_str, objectInstance );
             message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues():%d Setting name for Federate ID:%s\n",
                              __LINE__, id_str.c_str() );
          }
-         federate->set_MOM_HLAfederate_instance_attributes( theObject, theAttributeValues );
+         federate->set_MOM_HLAfederate_instance_attributes( objectInstance, attributeValues );
       }
-   } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_instance_id( theObject ) ) {
+   } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_instance_id( objectInstance ) ) {
       // This was an instance-ID for the Federation and not a federate.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
-         StringUtilities::to_string( id_str, theObject );
+         StringUtilities::to_string( id_str, objectInstance );
          message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues():%d Setting name for Federation ID:%s\n",
                           __LINE__, id_str.c_str() );
       }
-      federate->set_MOM_HLAfederation_instance_attributes( theObject, theAttributeValues );
+      federate->set_MOM_HLAfederation_instance_attributes( objectInstance, attributeValues );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string handle_str;
-         StringUtilities::to_string( handle_str, theObject );
+         StringUtilities::to_string( handle_str, objectInstance );
 
          ostringstream summary;
          summary << "FedAmb::reflectAttributeValues():" << __LINE__
@@ -722,8 +785,8 @@ void FedAmb::reflectAttributeValues(
                  << handle_str << '\n';
 
          AttributeHandleValueMap::const_iterator attr_iter;
-         for ( attr_iter = theAttributeValues.begin();
-               attr_iter != theAttributeValues.end();
+         for ( attr_iter = attributeValues.begin();
+               attr_iter != attributeValues.end();
                ++attr_iter ) {
             StringUtilities::to_string( handle_str, attr_iter->first );
             summary << "   + Attribute-Handle:" << handle_str << '\n';
@@ -733,73 +796,82 @@ void FedAmb::reflectAttributeValues(
    }
 }
 
-void FedAmb::reflectAttributeValues(
-   ObjectInstanceHandle           theObject,
-   AttributeHandleValueMap const &theAttributeValues,
-   VariableLengthData const      &theUserSuppliedTag,
-   OrderType                      sentOrder,
-   TransportationType             theType,
-   LogicalTime const             &theTime,
-   OrderType                      receivedOrder,
-   SupplementalReflectInfo        theReflectInfo )
 #if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+void FedAmb::reflectAttributeValues(
+   ObjectInstanceHandle           objectInstance,
+   AttributeHandleValueMap const &attributeValues,
+   VariableLengthData const      &userSuppliedTag,
+   OrderType                      sentOrderType,
+   TransportationType             transportationType,
+   LogicalTime const             &time,
+   OrderType                      receivedOrderType,
+   SupplementalReflectInfo        reflectInfo ) throw( FederateInternalError )
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
+   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         Int64Time time;
-         time.set( theTime );
+         Int64Time i64time;
+         i64time.set( time );
          message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
-                          __LINE__, trickhla_obj->get_name().c_str(), time.get_time_in_seconds() );
+                          __LINE__, trickhla_obj->get_name().c_str(), i64time.get_time_in_seconds() );
       }
 
-      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
 
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#   ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
-#endif
+#   endif
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
-         StringUtilities::to_string( id_str, theObject );
+         StringUtilities::to_string( id_str, objectInstance );
          message_publish( MSG_WARNING, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s\n",
                           __LINE__, id_str.c_str() );
       }
    }
 }
+#endif // IEEE_1516_2010
 
 void FedAmb::reflectAttributeValues(
-   ObjectInstanceHandle           theObject,
-   AttributeHandleValueMap const &theAttributeValues,
-   VariableLengthData const      &theUserSuppliedTag,
-   OrderType                      sentOrder,
-   TransportationType             theType,
-   LogicalTime const             &theTime,
-   OrderType                      receivedOrder,
-   MessageRetractionHandle        theHandle,
-   SupplementalReflectInfo        theReflectInfo )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const     &objectInstance,
+   AttributeHandleValueMap const  &attributeValues,
+   VariableLengthData const       &userSuppliedTag,
+   TransportationTypeHandle const &transportationType,
+   FederateHandle const           &producingFederate,
+   RegionHandleSet const          *optionalSentRegions,
+   LogicalTime const              &time,
+   OrderType                       sentOrderType,
+   OrderType                       receivedOrderType,
+   MessageRetractionHandle const  *optionalRetraction )
+#else
+   ObjectInstanceHandle           objectInstance,
+   AttributeHandleValueMap const &attributeValues,
+   VariableLengthData const      &userSuppliedTag,
+   OrderType                      sentOrderType,
+   TransportationType             transportationType,
+   LogicalTime const             &time,
+   OrderType                      receivedOrderType,
+   MessageRetractionHandle        optionalRetraction,
+   SupplementalReflectInfo        reflectInfo ) throw( FederateInternalError )
+#endif // IEEE_1516_2025
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
+   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         Int64Time time;
-         time.set( theTime );
+         Int64Time i64time;
+         i64time.set( time );
          message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
-                          __LINE__, trickhla_obj->get_name().c_str(), time.get_time_in_seconds() );
+                          __LINE__, trickhla_obj->get_name().c_str(), i64time.get_time_in_seconds() );
       }
 
-      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
@@ -807,7 +879,7 @@ void FedAmb::reflectAttributeValues(
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
-         StringUtilities::to_string( id_str, theObject );
+         StringUtilities::to_string( id_str, objectInstance );
          message_publish( MSG_WARNING, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s\n",
                           __LINE__, id_str.c_str() );
       }
@@ -815,15 +887,21 @@ void FedAmb::reflectAttributeValues(
 }
 
 void FedAmb::receiveInteraction(
-   InteractionClassHandle         theInteraction,
-   ParameterHandleValueMap const &theParameterValues,
-   VariableLengthData const      &theUserSuppliedTag,
-   OrderType                      sentOrder,
-   TransportationType             theType,
-   SupplementalReceiveInfo        theReceiveInfo )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+#if defined( IEEE_1516_2025 )
+   InteractionClassHandle const   &interactionClass,
+   ParameterHandleValueMap const  &parameterValues,
+   VariableLengthData const       &userSuppliedTag,
+   TransportationTypeHandle const &transportationType,
+   FederateHandle const           &producingFederate,
+   RegionHandleSet const          *optionalSentRegions )
+#else
+   InteractionClassHandle         interactionClass,
+   ParameterHandleValueMap const &parameterValues,
+   VariableLengthData const      &userSuppliedTag,
+   OrderType                      sentOrderType,
+   TransportationType             transportationType,
+   SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
+#endif // IEEE_1516_2025
 {
    if ( manager == NULL ) {
       message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
@@ -837,26 +915,24 @@ void FedAmb::receiveInteraction(
       }
 
       // Process the interaction.
-      manager->receive_interaction( theInteraction,
-                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
-                                    theUserSuppliedTag,
+      manager->receive_interaction( interactionClass,
+                                    const_cast< ParameterHandleValueMap & >( parameterValues ),
+                                    userSuppliedTag,
                                     dummyTime.get(),
                                     false );
    }
 }
 
-void FedAmb::receiveInteraction(
-   InteractionClassHandle         theInteraction,
-   ParameterHandleValueMap const &theParameterValues,
-   VariableLengthData const      &theUserSuppliedTag,
-   OrderType                      sentOrder,
-   TransportationType             theType,
-   LogicalTime const             &theTime,
-   OrderType                      receivedOrder,
-   SupplementalReceiveInfo        theReceiveInfo )
 #if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+void FedAmb::receiveInteraction(
+   InteractionClassHandle         interactionClass,
+   ParameterHandleValueMap const &parameterValues,
+   VariableLengthData const      &userSuppliedTag,
+   OrderType                      sentOrderType,
+   TransportationType             transportationType,
+   LogicalTime const             &time,
+   OrderType                      receivedOrderType,
+   SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
 {
    if ( manager == NULL ) {
       message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
@@ -864,161 +940,215 @@ void FedAmb::receiveInteraction(
    } else {
       // Process the interaction.
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         Int64Time time;
-         time.set( theTime );
+         Int64Time i64time;
+         i64time.set( time );
          message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.\n",
-                          __LINE__, time.get_time_in_seconds() );
+                          __LINE__, i64time.get_time_in_seconds() );
       }
 
-      manager->receive_interaction( theInteraction,
-                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
-                                    theUserSuppliedTag,
-                                    theTime,
-                                    ( receivedOrder == TIMESTAMP ) );
+      manager->receive_interaction( interactionClass,
+                                    const_cast< ParameterHandleValueMap & >( parameterValues ),
+                                    userSuppliedTag,
+                                    time,
+                                    ( receivedOrderType == RTI1516_NAMESPACE::TIMESTAMP ) );
    }
 }
+#endif // IEEE_1516_2010
 
 void FedAmb::receiveInteraction(
-   InteractionClassHandle         theInteraction,
-   ParameterHandleValueMap const &theParameterValues,
-   VariableLengthData const      &theUserSuppliedTag,
-   OrderType                      sentOrder,
-   TransportationType             theType,
-   LogicalTime const             &theTime,
-   OrderType                      receivedOrder,
-   MessageRetractionHandle        theHandle,
-   SupplementalReceiveInfo        theReceiveInfo )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+#if defined( IEEE_1516_2025 )
+   InteractionClassHandle const   &interactionClass,
+   ParameterHandleValueMap const  &parameterValues,
+   VariableLengthData const       &userSuppliedTag,
+   TransportationTypeHandle const &transportationType,
+   FederateHandle const           &producingFederate,
+   RegionHandleSet const          *optionalSentRegions,
+   LogicalTime const              &time,
+   OrderType                       sentOrderType,
+   OrderType                       receivedOrderType,
+   MessageRetractionHandle const  *optionalRetraction )
+#else
+   InteractionClassHandle         interactionClass,
+   ParameterHandleValueMap const &parameterValues,
+   VariableLengthData const      &userSuppliedTag,
+   OrderType                      sentOrderType,
+   TransportationType             transportationType,
+   LogicalTime const             &time,
+   OrderType                      receivedOrderType,
+   MessageRetractionHandle        optionalRetraction,
+   SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
+#endif // IEEE_1516_2025
 {
    if ( manager == NULL ) {
       message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
                        __LINE__ );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         Int64Time time;
-         time.set( theTime );
+         Int64Time i64time;
+         i64time.set( time );
          message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.\n",
-                          __LINE__, time.get_time_in_seconds() );
+                          __LINE__, i64time.get_time_in_seconds() );
       }
 
       // Process the interaction.
-      manager->receive_interaction( theInteraction,
-                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
-                                    theUserSuppliedTag,
-                                    theTime,
-                                    ( receivedOrder == TIMESTAMP ) );
+      manager->receive_interaction( interactionClass,
+                                    const_cast< ParameterHandleValueMap & >( parameterValues ),
+                                    userSuppliedTag,
+                                    time,
+                                    ( receivedOrderType == RTI1516_NAMESPACE::TIMESTAMP ) );
    }
 }
+
+#if defined( IEEE_1516_2025 )
+void FedAmb::receiveDirectedInteraction(
+   InteractionClassHandle const   &interactionClass,
+   ObjectInstanceHandle const     &objectInstance,
+   ParameterHandleValueMap const  &parameterValues,
+   VariableLengthData const       &userSuppliedTag,
+   TransportationTypeHandle const &transportationType,
+   FederateHandle const           &producingFederate )
+{
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
+FedAmb::receiveDirectedInteraction():%d \n",
+                    federate->get_federate_name().c_str(), __LINE__ );
+}
+
+void FedAmb::receiveDirectedInteraction(
+   InteractionClassHandle const   &interactionClass,
+   ObjectInstanceHandle const     &objectInstance,
+   ParameterHandleValueMap const  &parameterValues,
+   VariableLengthData const       &userSuppliedTag,
+   TransportationTypeHandle const &transportationType,
+   FederateHandle const           &producingFederate,
+   LogicalTime const              &time,
+   OrderType                       sentOrderType,
+   OrderType                       receivedOrderType,
+   MessageRetractionHandle const  *optionalRetraction )
+{
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
+FedAmb::receiveDirectedInteraction():%d \n",
+                    federate->get_federate_name().c_str(), __LINE__ );
+}
+#endif // IEEE_1516_2025
 
 void FedAmb::removeObjectInstance(
-   ObjectInstanceHandle      theObject,
-   VariableLengthData const &theUserSuppliedTag,
-   OrderType                 sentOrder,
-   SupplementalRemoveInfo    theRemoveInfo )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   VariableLengthData const   &userSuppliedTag,
+   FederateHandle const       &producingFederate )
+#else
+   ObjectInstanceHandle      objectInstance,
+   VariableLengthData const &userSuppliedTag,
+   OrderType                 sentOrderType,
+   SupplementalRemoveInfo    removeInfo ) throw( FederateInternalError )
+#endif // IEEE_1516_2025
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string id_str;
-      StringUtilities::to_string( id_str, theObject );
+      StringUtilities::to_string( id_str, objectInstance );
 
-      if ( theUserSuppliedTag.size() > 0 ) {
-         char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
+      if ( userSuppliedTag.size() > 0 ) {
+         char const *tag = static_cast< char const * >( userSuppliedTag.data() );
          message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d User-Supplied-Tag='%s' Instance-ID:%s Valid-ID:%s \n",
                           __LINE__, tag, id_str.c_str(),
-                          ( theObject.isValid() ? "Yes" : "No" ) );
+                          ( objectInstance.isValid() ? "Yes" : "No" ) );
       } else {
          message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s Valid-ID:%s \n",
                           __LINE__, id_str.c_str(),
-                          ( theObject.isValid() ? "Yes" : "No" ) );
+                          ( objectInstance.isValid() ? "Yes" : "No" ) );
       }
    }
 
    // Remove the instance ID for a federate, which this function will test for.
-   federate->remove_MOM_HLAfederate_instance_id( theObject );
+   federate->remove_MOM_HLAfederate_instance_id( objectInstance );
 
    // Mark this object as deleted from the RTI.
-   manager->mark_object_as_deleted_from_federation( theObject );
+   manager->mark_object_as_deleted_from_federation( objectInstance );
 }
 
-void FedAmb::removeObjectInstance(
-   ObjectInstanceHandle      theObject,
-   VariableLengthData const &theUserSuppliedTag,
-   OrderType                 sentOrder,
-   LogicalTime const        &theTime,
-   OrderType                 receivedOrder,
-   SupplementalRemoveInfo    theRemoveInfo )
 #if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+void FedAmb::removeObjectInstance(
+   ObjectInstanceHandle      objectInstance,
+   VariableLengthData const &userSuppliedTag,
+   OrderType                 sentOrderType,
+   LogicalTime const        &time,
+   OrderType                 receivedOrderType,
+   SupplementalRemoveInfo    removeInfo ) throw( FederateInternalError )
 {
    // Remove the instance ID for a federate, which this function will test for.
-   federate->remove_MOM_HLAfederate_instance_id( theObject );
+   federate->remove_MOM_HLAfederate_instance_id( objectInstance );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string id_str;
-      StringUtilities::to_string( id_str, theObject );
-      Int64Time time;
-      time.set( theTime );
+      StringUtilities::to_string( id_str, objectInstance );
+      Int64Time i64time;
+      i64time.set( time );
 
-      if ( theUserSuppliedTag.size() > 0 ) {
-         char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
+      if ( userSuppliedTag.size() > 0 ) {
+         char const *tag = static_cast< char const * >( userSuppliedTag.data() );
          message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.\n",
-                          __LINE__, tag, id_str.c_str(), time.get_time_in_seconds() );
+                          __LINE__, tag, id_str.c_str(), i64time.get_time_in_seconds() );
       } else {
          message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.\n",
-                          __LINE__, id_str.c_str(), time.get_time_in_seconds() );
+                          __LINE__, id_str.c_str(), i64time.get_time_in_seconds() );
       }
    }
 
    // Mark this object as deleted from the RTI.
-   manager->mark_object_as_deleted_from_federation( theObject );
+   manager->mark_object_as_deleted_from_federation( objectInstance );
 }
+#endif // IEEE_1516_2010
 
 void FedAmb::removeObjectInstance(
-   ObjectInstanceHandle      theObject,
-   VariableLengthData const &theUserSuppliedTag,
-   OrderType                 sentOrder,
-   LogicalTime const        &theTime,
-   OrderType                 receivedOrder,
-   MessageRetractionHandle   theHandle,
-   SupplementalRemoveInfo    theRemoveInfo )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
-#endif
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const    &objectInstance,
+   VariableLengthData const      &userSuppliedTag,
+   FederateHandle const          &producingFederate,
+   LogicalTime const             &time,
+   OrderType                      sentOrderType,
+   OrderType                      receivedOrderType,
+   MessageRetractionHandle const *optionalRetraction )
+#else
+   ObjectInstanceHandle      objectInstance,
+   VariableLengthData const &userSuppliedTag,
+   OrderType                 sentOrderType,
+   LogicalTime const        &time,
+   OrderType                 receivedOrderType,
+   MessageRetractionHandle   optionalRetraction,
+   SupplementalRemoveInfo    removeInfo ) throw( FederateInternalError )
+#endif // IEEE_1516_2025
 {
    // Remove the instance ID for a federate, which this function will test for.
-   federate->remove_MOM_HLAfederate_instance_id( theObject );
+   federate->remove_MOM_HLAfederate_instance_id( objectInstance );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string id_str;
-      StringUtilities::to_string( id_str, theObject );
+      StringUtilities::to_string( id_str, objectInstance );
 
-      Int64Time time;
-      time.set( theTime );
+      Int64Time i64time;
+      i64time.set( time );
 
-      if ( theUserSuppliedTag.size() > 0 ) {
-         char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
+      if ( userSuppliedTag.size() > 0 ) {
+         char const *tag = static_cast< char const * >( userSuppliedTag.data() );
          message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.\n",
-                          __LINE__, tag, id_str.c_str(), time.get_time_in_seconds() );
+                          __LINE__, tag, id_str.c_str(), i64time.get_time_in_seconds() );
       } else {
          message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.\n",
-                          __LINE__, id_str.c_str(), time.get_time_in_seconds() );
+                          __LINE__, id_str.c_str(), i64time.get_time_in_seconds() );
       }
    }
 
    // Mark this object as deleted from the RTI.
-   manager->mark_object_as_deleted_from_federation( theObject );
+   manager->mark_object_as_deleted_from_federation( objectInstance );
 }
 
 void FedAmb::attributesInScope(
-   ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &theAttributes )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes )
+#else
+   ObjectInstanceHandle      objectInstance,
+   AttributeHandleSet const &attributes ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1028,10 +1158,12 @@ FedAmb::attributesInScope():%d \n",
 }
 
 void FedAmb::attributesOutOfScope(
-   ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &theAttributes )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes )
+#else
+   ObjectInstanceHandle      objectInstance,
+   AttributeHandleSet const &attributes ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1041,24 +1173,29 @@ FedAmb::attributesOutOfScope():%d \n",
 }
 
 void FedAmb::provideAttributeValueUpdate(
-   ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &theAttributes,
-   VariableLengthData const &theUserSuppliedTag )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes,
+   VariableLengthData const   &userSuppliedTag )
+#else
+   ObjectInstanceHandle      objectInstance,
+   AttributeHandleSet const &attributes,
+   VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
 #endif
 {
    if ( manager != NULL ) {
-      manager->provide_attribute_update( theObject,
-                                         const_cast< AttributeHandleSet & >( theAttributes ) );
+      manager->provide_attribute_update( objectInstance,
+                                         const_cast< AttributeHandleSet & >( attributes ) );
    }
 }
 
 void FedAmb::turnUpdatesOnForObjectInstance(
-   ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &theAttributes )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes )
+#else
+   ObjectInstanceHandle      objectInstance,
+   AttributeHandleSet const &attributes ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1067,11 +1204,14 @@ FedAmb::turnUpdatesOnForObjectInstance():%d \n",
 }
 
 void FedAmb::turnUpdatesOnForObjectInstance(
-   ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &theAttributes,
-   wstring const            &updateRateDesignator )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes,
+   wstring const              &updateRateDesignator )
+#else
+   ObjectInstanceHandle      objectInstance,
+   AttributeHandleSet const &attributes,
+   wstring const            &updateRateDesignator ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1080,10 +1220,12 @@ FedAmb::turnUpdatesOnForObjectInstance():%d \n",
 }
 
 void FedAmb::turnUpdatesOffForObjectInstance(
-   ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &theAttributes )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes )
+#else
+   ObjectInstanceHandle      objectInstance,
+   AttributeHandleSet const &attributes ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1092,11 +1234,14 @@ FedAmb::turnUpdatesOffForObjectInstance():%d \n",
 }
 
 void FedAmb::confirmAttributeTransportationTypeChange(
-   ObjectInstanceHandle theObject,
-   AttributeHandleSet   theAttributes,
-   TransportationType   theTransportation )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const     &objectInstance,
+   AttributeHandleSet const       &attributes,
+   TransportationTypeHandle const &transportationType )
+#else
+   ObjectInstanceHandle objectInstance,
+   AttributeHandleSet   attributes,
+   TransportationType   transportationType ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1105,11 +1250,14 @@ FedAmb::confirmAttributeTransportationTypeChange():%d \n",
 }
 
 void FedAmb::reportAttributeTransportationType(
-   ObjectInstanceHandle theObject,
-   AttributeHandle      theAttribute,
-   TransportationType   theTransportation )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const     &objectInstance,
+   AttributeHandle const          &attribute,
+   TransportationTypeHandle const &transportationType )
+#else
+   ObjectInstanceHandle objectInstance,
+   AttributeHandle      attribute,
+   TransportationType   transportationType ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1118,10 +1266,12 @@ FedAmb::reportAttributeTransportationType():%d \n",
 }
 
 void FedAmb::confirmInteractionTransportationTypeChange(
-   InteractionClassHandle theInteraction,
-   TransportationType     theTransportation )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   InteractionClassHandle const   &interactionClass,
+   TransportationTypeHandle const &transportationType )
+#else
+   InteractionClassHandle interactionClass,
+   TransportationType     transportationType ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1130,11 +1280,14 @@ FedAmb::confirmInteractionTransportationTypeChange():%d \n",
 }
 
 void FedAmb::reportInteractionTransportationType(
+#if defined( IEEE_1516_2025 )
+   FederateHandle const           &federateHandle,
+   InteractionClassHandle const   &interactionClass,
+   TransportationTypeHandle const &transportationType )
+#else
    FederateHandle         federateHandle,
-   InteractionClassHandle theInteraction,
-   TransportationType     theTransportation )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+   InteractionClassHandle interactionClass,
+   TransportationType     transportationType ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1146,13 +1299,15 @@ FedAmb::reportInteractionTransportationType():%d \n",
 // Ownership Management Services //
 ///////////////////////////////////
 
-// 7.4
 void FedAmb::requestAttributeOwnershipAssumption(
-   ObjectInstanceHandle      theObject,
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &offeredAttributes,
+   VariableLengthData const   &userSuppliedTag )
+#else
+   ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &offeredAttributes,
-   VariableLengthData const &userSuppliedTag )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+   VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
 #endif
 {
    char const *tag = static_cast< char const * >( userSuppliedTag.data() );
@@ -1161,7 +1316,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
                        __LINE__, tag );
    }
 
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
+   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
@@ -1260,7 +1415,7 @@ Attribute for Object is not published." );
 
    } else {
       string id_str;
-      StringUtilities::to_string( id_str, theObject );
+      StringUtilities::to_string( id_str, objectInstance );
       message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Unknown object instance (ID:%s), push request rejected, tag='%s' \n",
                        __LINE__, id_str.c_str(), tag );
@@ -1269,23 +1424,21 @@ Unknown object instance (ID:%s), push request rejected, tag='%s' \n",
    }
 }
 
-#if defined( IEEE_1516_2025 )
 void FedAmb::requestDivestitureConfirmation(
-   ObjectInstanceHandle const &theObject,
-   AttributeHandleSet const   &theAttributes,
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &releasedAttributes,
    VariableLengthData const   &userSuppliedTag )
 #else
-// 7.5
-void FedAmb::requestDivestitureConfirmation(
-   ObjectInstanceHandle      theObject,
+   ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif
 {
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
+   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj == NULL ) {
       string id_str;
-      StringUtilities::to_string( id_str, theObject );
+      StringUtilities::to_string( id_str, objectInstance );
       message_publish( MSG_NORMAL, "FedAmb::requestDivestitureConfirmation():%d Unknown \
 object instance (ID:%s), push request rejected.\n",
                        __LINE__, id_str.c_str() );
@@ -1367,13 +1520,15 @@ Attribute for Object Not Owned." );
    }
 }
 
-// 7.7
 void FedAmb::attributeOwnershipAcquisitionNotification(
-   ObjectInstanceHandle      theObject,
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &securedAttributes,
+   VariableLengthData const   &userSuppliedTag )
+#else
+   ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &securedAttributes,
-   VariableLengthData const &theUserSuppliedTag )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+   VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
 #endif
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -1381,7 +1536,7 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
                        __LINE__ );
    }
 
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
+   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
@@ -1481,12 +1636,14 @@ Ownership acquisition rejected (object not found)\n",
    }
 }
 
-// 7.10
 void FedAmb::attributeOwnershipUnavailable(
-   ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &releasedAttributes )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes,
+   VariableLengthData const   &userSuppliedTag )
+#else
+   ObjectInstanceHandle      objectInstance,
+   AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1494,21 +1651,23 @@ FedAmb::attributeOwnershipUnavailable():%d \n",
                     federate->get_federate_name().c_str(), __LINE__ );
 }
 
-// 7.11
 void FedAmb::requestAttributeOwnershipRelease(
-   ObjectInstanceHandle      theObject,
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &candidateAttributes,
+   VariableLengthData const   &userSuppliedTag )
+#else
+   ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &candidateAttributes,
-   VariableLengthData const &theUserSuppliedTag )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+   VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
 #endif
 {
-   char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
+   char const *tag = static_cast< char const * >( userSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipRelease():%d pull request received, tag='%s'\n",
                        __LINE__, tag );
    }
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
+   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
@@ -1591,12 +1750,13 @@ Attribute for Object Not Owned." );
    }
 }
 
-// 7.15
 void FedAmb::confirmAttributeOwnershipAcquisitionCancellation(
-   ObjectInstanceHandle      theObject,
-   AttributeHandleSet const &releasedAttributes )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes )
+#else
+   ObjectInstanceHandle      objectInstance,
+   AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1604,13 +1764,15 @@ FedAmb::confirmAttributeOwnershipAcquisitionCancellation():%d \n",
                     federate->get_federate_name().c_str(), __LINE__ );
 }
 
-// 7.17
 void FedAmb::informAttributeOwnership(
-   ObjectInstanceHandle theObject,
-   AttributeHandle      theAttribute,
-   FederateHandle       theOwner )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes,
+   FederateHandle const       &owner )
+#else
+   ObjectInstanceHandle objectInstance,
+   AttributeHandle      attribute,
+   FederateHandle       owner ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1618,12 +1780,13 @@ FedAmb::informAttributeOwnership():%d \n",
                     federate->get_federate_name().c_str(), __LINE__ );
 }
 
-// 7.17
 void FedAmb::attributeIsNotOwned(
-   ObjectInstanceHandle theObject,
-   AttributeHandle      theAttribute )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes )
+#else
+   ObjectInstanceHandle objectInstance,
+   AttributeHandle      attribute ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1631,12 +1794,13 @@ FedAmb::attributeIsNotOwned():%d \n",
                     federate->get_federate_name().c_str(), __LINE__ );
 }
 
-// 7.17
 void FedAmb::attributeIsOwnedByRTI(
-   ObjectInstanceHandle theObject,
-   AttributeHandle      theAttribute )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   ObjectInstanceHandle const &objectInstance,
+   AttributeHandleSet const   &attributes )
+#else
+   ObjectInstanceHandle objectInstance,
+   AttributeHandle      attribute ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1649,7 +1813,7 @@ FedAmb::attributeIsOwnedByRTI():%d \n",
 //////////////////////////////
 
 void FedAmb::timeRegulationEnabled(
-   LogicalTime const &theFederateTime )
+   LogicalTime const &time )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -1658,11 +1822,11 @@ void FedAmb::timeRegulationEnabled(
       message_publish( MSG_NORMAL, "FedAmb::timeRegulationEnabled():%d Federate \"%s\" \n",
                        __LINE__, federate->get_federate_name().c_str() );
    }
-   federate->set_time_regulation_enabled( theFederateTime );
+   federate->set_time_regulation_enabled( time );
 }
 
 void FedAmb::timeConstrainedEnabled(
-   LogicalTime const &theFederateTime )
+   LogicalTime const &time )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
@@ -1672,22 +1836,34 @@ void FedAmb::timeConstrainedEnabled(
                        __LINE__, federate->get_federate_name().c_str(),
                        federate->get_granted_time().get_time_in_seconds() );
    }
-   federate->set_time_constrained_enabled( theFederateTime );
+   federate->set_time_constrained_enabled( time );
 }
 
+#if defined( IEEE_1516_2025 )
+void FedAmb::flushQueueGrant(
+   LogicalTime const &time,
+   LogicalTime const &optimisticTime )
+{
+   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
+FedAmb::flushQueueGrant():%d \n",
+                    federate->get_federate_name().c_str(), __LINE__ );
+}
+#endif // IEEE_1516_2025
+
 void FedAmb::timeAdvanceGrant(
-   LogicalTime const &theTime )
+   LogicalTime const &time )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
 #endif
 {
-   federate->set_time_advance_granted( theTime );
+   federate->set_time_advance_granted( time );
 }
 
 void FedAmb::requestRetraction(
-   MessageRetractionHandle retraction )
-#if defined( IEEE_1516_2010 )
-   throw( FederateInternalError )
+#if defined( IEEE_1516_2025 )
+   MessageRetractionHandle const &retraction )
+#else
+   MessageRetractionHandle retraction ) throw( FederateInternalError )
 #endif
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -1695,7 +1871,9 @@ FedAmb::requestRetraction():%d \n",
                     federate->get_federate_name().c_str(), __LINE__ );
 }
 
+#if !defined( IEEE_1516_2025 )
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic pop
+#   pragma GCC diagnostic pop
+#endif

@@ -66,7 +66,6 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/KnownFederate.hh"
@@ -78,6 +77,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+
+#if defined( IEEE_1516_2025 )
+#   include "TrickHLA/FedAmbHLA4.hh"
+#else
+#   include "TrickHLA/FedAmbHLA3.hh"
+#endif // IEEE_1516_2025
 
 // Access the Trick global objects for CheckPoint restart and the Clock.
 extern Trick::CheckPointRestart *the_cpr;
@@ -203,7 +208,9 @@ Federate::Federate()
      joined_federate_handles(),
      joined_federate_names(),
      thread_coordinator(),
+#if defined( IEEE_1516_2010 )
      RTI_ambassador( NULL ),
+#endif
      federate_ambassador( NULL ),
      manager( NULL ),
      execution_control( NULL )
@@ -750,6 +757,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << "' with local_settings: '" << local_settings
              << "' with EXCEPTION: ConnectionFailed: '" << rti_err_msg << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+#if defined( IEEE_1516_2010 )
    } catch ( InvalidLocalSettingsDesignator const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -766,6 +774,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << "' with EXCEPTION: InvalidLocalSettingsDesignator: '"
              << rti_err_msg << "'.\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+#endif // IEEE_1516_2010
    } catch ( UnsupportedCallbackModel const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -3462,7 +3471,11 @@ void Federate::create_federation()
          message_publish( MSG_NORMAL, "Federate::create_federation():%d Federation already exists for '%s'\n",
                           __LINE__, get_federation_name().c_str() );
       }
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::CouldNotOpenFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::CouldNotOpenFDD const &e ) {
+#endif
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -3479,7 +3492,12 @@ void Federate::create_federation()
       }
       errmsg << ", RTI Exception: " << rti_err_msg << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
+
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::ErrorReadingFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::ErrorReadingFDD const &e ) {
+#endif
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -3665,36 +3683,51 @@ void Federate::join_federation(
              << get_federate_name() << "\"\n";
 
       DebugHandler::terminate_with_message( errmsg.str() );
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::InconsistentFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::InconsistentFDD const &e ) {
+#endif
+
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: InconsistentFDD! FOM-modules:\""
+             << " EXCEPTION: Inconsistent FOM! FOM-modules:\""
              << FOM_modules << "\"\n";
 
       DebugHandler::terminate_with_message( errmsg.str() );
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::ErrorReadingFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::ErrorReadingFDD const &e ) {
+#endif
+
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: ErrorReadingFDD! FOM-modules:\""
+             << " EXCEPTION: Error Reading FOM! FOM-modules:\""
              << FOM_modules << "\"\n";
 
       DebugHandler::terminate_with_message( errmsg.str() );
+
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::CouldNotOpenFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::CouldNotOpenFDD const &e ) {
+#endif
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: CouldNotOpenFDD! FOM-modules:\""
+             << " EXCEPTION: Could Not Open FOM! FOM-modules:\""
              << FOM_modules << "\"\n";
 
       DebugHandler::terminate_with_message( errmsg.str() );
