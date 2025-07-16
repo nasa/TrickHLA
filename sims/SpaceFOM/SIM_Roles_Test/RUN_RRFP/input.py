@@ -319,6 +319,7 @@ root_frame = SpaceFOMRefFrameObject(
 root_ref_frame.frame_packing.debug = verbose
 
 # Set the root frame for the federate.
+# This also adds it to the list of managed objects.
 federate.set_root_frame( root_frame )
 
 #---------------------------------------------------------------------------

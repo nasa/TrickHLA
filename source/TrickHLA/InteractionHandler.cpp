@@ -62,7 +62,8 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 InteractionHandler::InteractionHandler() // RETURN: -- None.
-   : interaction( NULL )
+   : initialized( False ),
+     interaction( NULL )
 {
    return;
 }
@@ -82,6 +83,26 @@ void InteractionHandler::initialize_callback(
    Interaction *inter )
 {
    this->interaction = inter;
+}
+
+/*!
+ * @job_class{default_data}
+ */
+void InteractionHandler::set_interaction( TrickHLA::Interaction *inter )
+{
+   // Check for initialization.
+   if ( initialized ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::InteractionHandler::set_interaction():" << __LINE__
+             << " ERROR: The initialize() function has already been called\n";
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Assign the object.
+   this->interaction = inter;
+
+   return;
 }
 
 bool InteractionHandler::send_interaction()

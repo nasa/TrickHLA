@@ -67,12 +67,13 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
         lag_comp_base_ptr( NULL ),
         conditional_base_ptr( NULL ),
         ownership_base_ptr( NULL ),
-        deleted_base_ptr( NULL )
+        deleted_base_ptr( NULL ),
+        thla_object( NULL )
    {
       //
-      // Desfault data jobs
+      // Default data jobs
       //
-      ("default_data") default_config();
+      P_INIT ("default_data") default_config();
 
       //
       // Initialization jobs
@@ -92,21 +93,60 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       }
 
       // Get the associated TrickHLA manager object.
-      TrickHLA::Object * mngr_obj_ptr = packing_base_ptr->get_object();
-
-      // If the manager object is set, then configure the auxiliary services.
-      // This will probably only be true for configuring with defualt data.
-      if ( mngr_obj_ptr != NULL ) {
-
-         // Setup lag compensation.
-         mngr_obj_ptr->lag_comp      = lag_comp_base_ptr;
-         mngr_obj_ptr->lag_comp_type = TrickHLA::LAG_COMPENSATION_NONE;
-
-         // Setup the auxiliary object management services.
-         mngr_obj_ptr->conditional = conditional_base_ptr;
-         mngr_obj_ptr->ownership   = ownership_base_ptr;
-         mngr_obj_ptr->deleted     = deleted_base_ptr;
+      TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
+      
+      // Check if the TrickHLA Object associated with the packing function
+      // has been instantiated and assigned.
+      if ( thla_object != NULL ) {
+         
+         // Check if the packing object is already assigned.
+         if ( pkg_obj_ptr != NULL ) {
+            
+            // Both are set and they MUST match!
+            if ( thla_object != pkg_obj_ptr ) {
+               std::ostringstream errmsg;
+               errmsg << "TrickHLAPackingBaseSimObject::default_config():" << __LINE__
+                      << " ERROR: Object references do NOT match!\n";
+               // Print message and terminate.
+               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+            }
+            
+         }
+         else {
+            
+            // The packing object is not set; so, assign the thla_object.
+            packing_base_ptr->set_object( thla_object );
+            
+         }
+         
       }
+      else if ( pkg_obj_ptr != NULL ) {
+         
+         // The thla_object reference is not set but the packing object is.
+         // So, we'll use that.
+         thla_object = pkg_obj_ptr;
+         
+      }
+      else{
+         
+         // Neither is set; so, we must be configuring at initialization.
+         // We're probably using the input file.
+         // So, just return.
+         return( 0 );
+         
+      }
+
+      // The packing object is set; so, configure the auxiliary services.
+      // This will probably only be true for configuring with defualt data.
+
+      // Setup lag compensation.
+      thla_object->lag_comp      = lag_comp_base_ptr;
+      thla_object->lag_comp_type = TrickHLA::LAG_COMPENSATION_NONE;
+
+      // Setup the auxiliary object management services.
+      thla_object->conditional = conditional_base_ptr;
+      thla_object->ownership   = ownership_base_ptr;
+      thla_object->deleted     = deleted_base_ptr;
 
       return( 0 );
    }
@@ -124,6 +164,53 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
          packing_base_ptr->initialize();
       }
 
+      // Get the associated TrickHLA manager object.
+      TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
+      
+      // Check if the TrickHLA Object associated with the packing function
+      // has been instantiated and assigned.
+      if ( thla_object != NULL ) {
+         
+         // Check if the packing object is already assigned.
+         if ( pkg_obj_ptr != NULL ) {
+            
+            // Both are set and they MUST match!
+            if ( thla_object != pkg_obj_ptr ) {
+               std::ostringstream errmsg;
+               errmsg << "TrickHLAPackingBaseSimObject::initialize():" << __LINE__
+                      << " ERROR: Object references do NOT match!\n";
+               // Print message and terminate.
+               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+            }
+            
+         }
+         else {
+            
+            // The packing object is not set; so, assign the thla_object.
+            packing_base_ptr->set_object( thla_object );
+            
+         }
+         
+      }
+      else if ( pkg_obj_ptr != NULL ) {
+         
+         // The thla_object reference is not set but the packing object is.
+         // So, we'll use that.
+         thla_object = pkg_obj_ptr;
+         
+      }
+      else{
+         
+         // Neither is set.  This is an ERROR!
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAPackingBaseSimObject::initialize(): ERROR: " << std::endl
+                << "\tThe TrickHLA::Object associated with object \'" << name << "\' is NULL." << std::endl;
+         // Print message and terminate.
+         //TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         
+      }
+
       // Check for a Lag Compensation object.
       if ( lag_comp_base_ptr != NULL ){
          lag_comp_base_ptr->initialize();
@@ -136,6 +223,14 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
 
       return( 0 );
    }
+   
+ public:
+  TrickHLA::Object * thla_object;
+  
+ protected:
+  // Scaring for future work.
+  //bool        publishes;
+  //std::string sim_object_name;
 
  private:
    // This object is not copyable
