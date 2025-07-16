@@ -795,17 +795,12 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
             if ( is_static_array ) {
                return new UInt16BEFixedArrayEncoder(
                   static_cast< UnsignedInteger16 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt16BEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt16BEEncoder( address );
-#   else
-            return new HLAunsignedInteger16BE( static_cast< UnsignedInteger16 * >( address ) );
-#   endif
          }
          break;
       }
@@ -814,17 +809,12 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
             if ( is_static_array ) {
                return new UInt16LEFixedArrayEncoder(
                   static_cast< UnsignedInteger16 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt16LEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt16LEEncoder( address );
-#   else
-            return new HLAunsignedInteger16LE( static_cast< UnsignedInteger16 * >( address ) );
-#   endif
          }
          break;
       }
@@ -856,17 +846,12 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
             if ( is_static_array ) {
                return new UInt32BEFixedArrayEncoder(
                   static_cast< UnsignedInteger32 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt32BEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt32BEEncoder( address );
-#   else
-            return new HLAunsignedInteger32BE( static_cast< UnsignedInteger32 * >( address ) );
-#   endif
          }
          break;
       }
@@ -875,17 +860,12 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
             if ( is_static_array ) {
                return new UInt32LEFixedArrayEncoder(
                   static_cast< UnsignedInteger32 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt32LEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt32LEEncoder( address );
-#   else
-            return new HLAunsignedInteger32LE( static_cast< UnsignedInteger32 * >( address ) );
-#   endif
          }
          break;
       }
@@ -917,17 +897,12 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
             if ( is_static_array ) {
                return new UInt64BEFixedArrayEncoder(
                   static_cast< UnsignedInteger64 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt64BEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt64BEEncoder( address );
-#   else
-            return new HLAunsignedInteger64BE( static_cast< UnsignedInteger64 * >( address ) );
-#   endif
          }
          break;
       }
@@ -936,17 +911,12 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
             if ( is_static_array ) {
                return new UInt64LEFixedArrayEncoder(
                   static_cast< UnsignedInteger64 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt64LEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt64LEEncoder( address );
-#   else
-            return new HLAunsignedInteger64LE( static_cast< UnsignedInteger64 * >( address ) );
-#   endif
          }
          break;
       }
