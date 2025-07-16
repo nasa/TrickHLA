@@ -47,7 +47,7 @@ def main():
                                      formatter_class = argparse.RawDescriptionHelpFormatter, \
                                      description = 'Scan the TrickHLA source code using clang-tidy.', \
                                      epilog = textwrap.dedent( '''\n
-Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes''' ) )
+Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --hla3\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3''' ) )
 
    parser.add_argument( '--apply-fixes', \
                         help = 'Apply fixes.', \
@@ -97,6 +97,12 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --Trick
    parser.add_argument( '-b', '--bin', \
                         help = 'Path to clang-tidy binaries directory.', \
                         dest = 'bin_path' )
+   parser.add_argument( '--hla3', \
+                        help = 'Check against HLA 3 (default), IEEE 1516-2010', \
+                        action = 'store_true', dest = 'hla3' )
+   parser.add_argument( '--hla4', \
+                        help = 'Check against HLA 4, IEEE 1516-2025', \
+                        action = 'store_true', dest = 'hla4' )
    parser.add_argument( '--jeod-home', \
                         help = 'Provide a path to the JEOD installation directory.', \
                         dest = 'jeod_home' )
@@ -149,6 +155,11 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --Trick
    if required_arg_cnt == 0:
       arg_error = True
       TrickHLAMessage.warning( 'You must specify at least one of \'-a\', \'--TrickHLA\', \'--SpaceFOM\', \'--IMSim\', \'--JEOD\', \'--models\'!' )
+
+   # Can only specify one of --hla3 or --hla4.
+   if args.hla3 and args.hla4:
+      arg_error = True
+      TrickHLAMessage.warning( 'Only specify one of \'--hla3\' or \'--hla4\'!' )
 
    if arg_error:
       TrickHLAMessage.failure( 'Error detected in parsing command arguments!' )
@@ -205,7 +216,10 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --Trick
       TrickHLAMessage.status( 'Path to HLA RTI: ' + rti_home )
 
    # Determine the path to the HLA RTI include directory.
-   rti_include = rti_home + '/api/cpp/HLA_1516-2010'
+   if args.hla4:
+      rti_include = rti_home + '/api/cpp/HLA_1516-2025'
+   else:
+      rti_include = rti_home + '/api/cpp/HLA_1516-2010'
    if os.path.isdir( rti_include ) is False:
       rti_include = rti_home + '/include'
       if os.path.isdir( rti_include ) is False:
@@ -220,7 +234,10 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v\n  clang_tidy_code --Trick
 
    # Define preprocessor symbols we use for TrickHLA and set the TRICK_VER based on the
    # version of the Trick simulation environment we found in our Path.
-   trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2010', '-DFPU_CW_PROTECTION' ]
+   if args.hla4:
+      trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2025', '-DFPU_CW_PROTECTION' ]
+   else:
+      trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2010', '-DFPU_CW_PROTECTION' ]
 
    # Form relative paths to all the include directories used by TrickHLA.
    include_dirs.extend( ['-I./include'] )

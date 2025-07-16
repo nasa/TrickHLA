@@ -58,8 +58,11 @@ NASA, Johnson Space Center\n
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
 #if defined( IEEE_1516_2025 )
 #   include "RTI/time/LogicalTime.h"
@@ -68,7 +71,10 @@ NASA, Johnson Space Center\n
 #endif // IEEE_1516_2025
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
-#pragma GCC diagnostic pop
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

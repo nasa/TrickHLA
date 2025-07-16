@@ -46,12 +46,18 @@ NASA, Johnson Space Center\n
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA Encoder helper includes.
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/EncodingExceptions.h"
-#pragma GCC diagnostic pop
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -153,7 +159,7 @@ void SpaceTimeCoordinateEncoder::encode()
    // Encode the STC data into the VariableLengthData encoded data.
    try {
       encoder.encode( encoded_data );
-   } catch ( rti1516e::EncoderException &e ) {
+   } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
       ostringstream errmsg;
       std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
@@ -197,7 +203,7 @@ void SpaceTimeCoordinateEncoder::decode()
    // directly into the STC data instance passed into the constructor.
    try {
       encoder.decode( encoded_data );
-   } catch ( rti1516e::EncoderException &e ) {
+   } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
       ostringstream errmsg;
       std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );

@@ -43,15 +43,21 @@ NASA, Johnson Space Center\n
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
 #include "RTI/RTI1516.h"
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/HLAfixedArray.h"
 #include "RTI/encoding/HLAfixedRecord.h"
-#pragma GCC diagnostic pop
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 // Put this class in the SpaceFOM namespace.
 namespace SpaceFOM
@@ -90,12 +96,12 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
    QuaternionData &data; ///< @trick_units{--} Quaternion transmission data.
 
    // Data encoding helpers.
-   rti1516e::HLAfloat64LE   scalar_encoder; ///< @trick_io{**} Quaternion scalar encoder
-   rti1516e::HLAfloat64LE   vector[3];      ///< @trick_io{**} HLAfloat64LE quaternion vector
-   rti1516e::HLAfixedArray  vector_encoder; ///< @trick_io{**} Quaternion vector encoder
-   rti1516e::HLAfixedRecord encoder;        ///< @trick_io{**} Attitude quaternion encoder
+   RTI1516_NAMESPACE::HLAfloat64LE   scalar_encoder; ///< @trick_io{**} Quaternion scalar encoder
+   RTI1516_NAMESPACE::HLAfloat64LE   vector[3];      ///< @trick_io{**} HLAfloat64LE quaternion vector
+   RTI1516_NAMESPACE::HLAfixedArray  vector_encoder; ///< @trick_io{**} Quaternion vector encoder
+   RTI1516_NAMESPACE::HLAfixedRecord encoder;        ///< @trick_io{**} Attitude quaternion encoder
 
-   rti1516e::VariableLengthData encoded_data; ///< @trick_io{**} Variable length encode/decode data.
+   RTI1516_NAMESPACE::VariableLengthData encoded_data; ///< @trick_io{**} Variable length encode/decode data.
 
   private:
    // This object is not copyable

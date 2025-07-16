@@ -71,11 +71,17 @@ NASA, Johnson Space Center\n
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
 #include "RTI/encoding/EncodingConfig.h"
-#pragma GCC diagnostic pop
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -161,11 +167,7 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_UNSIGNED_CHARACTER: {
          // (unsigned char)
-#if defined( IEEE_1516_2025 )
-         encoder = create_uchar_encoder( address, attr, hla_encoding );
-#else
          encoder = create_char_encoder( address, attr, hla_encoding );
-#endif
          break;
       }
       case TRICK_STRING: {
@@ -795,17 +797,12 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
             if ( is_static_array ) {
                return new UInt16BEFixedArrayEncoder(
                   static_cast< UnsignedInteger16 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt16BEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt16BEEncoder( address );
-#   else
-            return new HLAunsignedInteger16BE( static_cast< UnsignedInteger16 * >( address ) );
-#   endif
          }
          break;
       }
@@ -814,17 +811,12 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
             if ( is_static_array ) {
                return new UInt16LEFixedArrayEncoder(
                   static_cast< UnsignedInteger16 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt16LEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt16LEEncoder( address );
-#   else
-            return new HLAunsignedInteger16LE( static_cast< UnsignedInteger16 * >( address ) );
-#   endif
          }
          break;
       }
@@ -856,17 +848,12 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
             if ( is_static_array ) {
                return new UInt32BEFixedArrayEncoder(
                   static_cast< UnsignedInteger32 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt32BEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt32BEEncoder( address );
-#   else
-            return new HLAunsignedInteger32BE( static_cast< UnsignedInteger32 * >( address ) );
-#   endif
          }
          break;
       }
@@ -875,17 +862,12 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
             if ( is_static_array ) {
                return new UInt32LEFixedArrayEncoder(
                   static_cast< UnsignedInteger32 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt32LEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt32LEEncoder( address );
-#   else
-            return new HLAunsignedInteger32LE( static_cast< UnsignedInteger32 * >( address ) );
-#   endif
          }
          break;
       }
@@ -917,17 +899,12 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
             if ( is_static_array ) {
                return new UInt64BEFixedArrayEncoder(
                   static_cast< UnsignedInteger64 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt64BEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt64BEEncoder( address );
-#   else
-            return new HLAunsignedInteger64BE( static_cast< UnsignedInteger64 * >( address ) );
-#   endif
          }
          break;
       }
@@ -936,17 +913,12 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
             if ( is_static_array ) {
                return new UInt64LEFixedArrayEncoder(
                   static_cast< UnsignedInteger64 * >( address ),
-                  Utilities::get_static_var_element_count( attr ),
-                  attr->name );
+                  Utilities::get_static_var_element_count( attr ) );
             } else {
                return new UInt64LEVariableArrayEncoder( address, attr );
             }
          } else {
-#   if 1
             return new UInt64LEEncoder( address );
-#   else
-            return new HLAunsignedInteger64LE( static_cast< UnsignedInteger64 * >( address ) );
-#   endif
          }
          break;
       }

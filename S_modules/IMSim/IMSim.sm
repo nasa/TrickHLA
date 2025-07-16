@@ -29,7 +29,12 @@
 ##include "trick/exec_proto.h"
 
 // TrickHLA include files.
-##include "TrickHLA/FedAmb.hh"
+##include "TrickHLA/StandardsSupport.hh"
+#if defined( IEEE_1516_2025 )
+##include "TrickHLA/FedAmbHLA4.hh"
+#else
+##include "TrickHLA/FedAmbHLA3.hh"
+#endif // IEEE_1516_2025
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
 

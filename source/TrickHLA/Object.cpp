@@ -85,8 +85,11 @@ NASA, Johnson Space Center\n
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
@@ -94,7 +97,10 @@ NASA, Johnson Space Center\n
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
 #include "RTI/time/HLAinteger64Time.h"
-#pragma GCC diagnostic pop
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -4136,11 +4142,18 @@ void Object::grant_pull_request()
       AttributeHandleSet *divested_attrs = new AttributeHandleSet();
 
       try {
+#if defined( IEEE_1516_2025 )
+         // IEEE 1516.1-2025 section 7.13
+         rti_amb->attributeOwnershipDivestitureIfWanted( this->instance_handle,
+                                                         attrs_to_divest,
+                                                         VariableLengthData( NULL, 0 ),
+                                                         *divested_attrs );
+#else
          // IEEE 1516.1-2010 section 7.12
          rti_amb->attributeOwnershipDivestitureIfWanted( this->instance_handle,
                                                          attrs_to_divest,
                                                          *divested_attrs );
-
+#endif
          // Divest ownership only if we have attributes we need to do this for.
          if ( divested_attrs->empty() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {

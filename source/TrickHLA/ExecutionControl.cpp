@@ -56,8 +56,11 @@ NASA, Johnson Space Center\n
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
 #include "RTI/Handle.h"
 #if defined( IEEE_1516_2025 )
@@ -66,7 +69,10 @@ NASA, Johnson Space Center\n
 #   include "RTI/LogicalTime.h"
 #endif // IEEE_1516_2025
 #include "RTI/Typedefs.h"
-#pragma GCC diagnostic pop
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 // Simple TrickHL::ExecutionControl file level declarations.
 namespace TrickHLA
