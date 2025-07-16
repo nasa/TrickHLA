@@ -78,6 +78,7 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       //
       // Initialization jobs
       //
+      P_INIT ("initialization") configure();
       P_INIT ("initialization") initialize();
    }
 
@@ -148,6 +149,20 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       thla_object->ownership   = ownership_base_ptr;
       thla_object->deleted     = deleted_base_ptr;
 
+      return( 0 );
+   }
+
+   virtual int configure()
+   {
+      // We must have a Packing object.
+      if ( packing_base_ptr == NULL ){
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAPackingBaseSimObject::configure():" << __LINE__
+                << " ERROR: Unexpected NULL Packing object!\n";
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      
       return( 0 );
    }
 
