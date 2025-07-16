@@ -32,8 +32,10 @@ NASA, Johnson Space Center\n
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
 
 // System include files.
 #include <cstddef>
@@ -112,14 +114,14 @@ void CharRawDataEncoder::update_after_decode()
 }
 
 #if defined( IEEE_1516_2025 )
-DataElement &decode( VariableLengthData const &inData )
+DataElement &CharRawDataEncoder::decode( VariableLengthData const &inData )
 {
    // Resize Trick array variable to match the decoded data size.
    resize_trick_var( inData.size() );
    memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
 
    // TODO: Return a valid data element, which may not be possible for raw data.
-   return DataElement();
+   return *data_elements[0];
 }
 #else
 void CharRawDataEncoder::decode( VariableLengthData const &inData ) throw( EncoderException )
@@ -148,4 +150,6 @@ size_t CharRawDataEncoder::decodeFrom(
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic pop
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif

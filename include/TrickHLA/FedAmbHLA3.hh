@@ -57,24 +57,22 @@ NASA, Johnson Space Center\n
 #include <set>
 #include <string>
 
-// TrickHLA inlcudes.
+// TrickHLA includes.
 #include "StandardsSupport.hh"
+
+#if defined( IEEE_1516_2010 )
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
 
 // HLA include files.
-#include "RTI/Enums.h"
-#include "RTI/FederateAmbassador.h"
-#include "RTI/RTI1516.h"
-#include "RTI/Typedefs.h"
-
-#if !defined( IEEE_1516_2010 )
-#   error This FedAmb header file is only valid for IEEE 1516-2010!
-#endif
+#   include "RTI/Enums.h"
+#   include "RTI/FederateAmbassador.h"
+#   include "RTI/RTI1516.h"
+#   include "RTI/Typedefs.h"
 
 namespace TrickHLA
 {
@@ -559,6 +557,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 
 } // namespace TrickHLA
 
-#pragma GCC diagnostic pop
+#   pragma GCC diagnostic pop
+#endif // IEEE_1516_2010
 
 #endif // TRICKHLA_FED_AMB_HLA3_HH -- Do NOT put anything after this line.

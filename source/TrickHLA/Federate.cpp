@@ -90,8 +90,11 @@ extern Trick::CheckPointRestart *the_cpr;
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
@@ -106,7 +109,10 @@ extern Trick::CheckPointRestart *the_cpr;
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/time/HLAinteger64Time.h"
-#pragma GCC diagnostic pop
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -715,9 +721,11 @@ void Federate::create_RTI_ambassador_and_connect()
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE );
       } else {
 #if defined( IEEE_1516_2025 )
-         // TODO: Specify host seperate from local settings.
+         // TODO: Specify host separate from local settings.
          wstring local_settings_ws;
          StringUtilities::to_wstring( local_settings_ws, local_settings );
+
+         wstring host = L"localhost:8989"; // TEMP
 
          RtiConfiguration rti_config = RtiConfiguration::createConfiguration().withRtiAddress( host );
 

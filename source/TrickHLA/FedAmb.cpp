@@ -1871,9 +1871,9 @@ FedAmb::requestRetraction():%d \n",
                     federate->get_federate_name().c_str(), __LINE__ );
 }
 
-#if !defined( IEEE_1516_2025 )
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
+#if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
 #endif

@@ -53,20 +53,18 @@ NASA, Johnson Space Center\n
 #include <set>
 #include <string>
 
-// TrickHLA inlcudes.
+// TrickHLA includes.
 #include "StandardsSupport.hh"
 
-// HLA include files.
-#include "RTI/Enums.h"
-#include "RTI/FederateAmbassador.h"
-#include "RTI/Handle.h"
-#include "RTI/RTI1516.h"
-#include "RTI/Typedefs.h"
-#include "RTI/time/LogicalTime.h"
+#if defined( IEEE_1516_2025 )
 
-#if !defined( IEEE_1516_2025 )
-#   error This FedAmb header file is only valid for IEEE 1516-2025!
-#endif
+// HLA include files.
+#   include "RTI/Enums.h"
+#   include "RTI/FederateAmbassador.h"
+#   include "RTI/Handle.h"
+#   include "RTI/RTI1516.h"
+#   include "RTI/Typedefs.h"
+#   include "RTI/time/LogicalTime.h"
 
 namespace TrickHLA
 {
@@ -516,5 +514,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 };
 
 } // namespace TrickHLA
+
+#endif // IEEE_1516_2025
 
 #endif // TRICKHLA_FED_AMB_HLA4_HH -- Do NOT put anything after this line.
