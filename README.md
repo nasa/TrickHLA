@@ -18,11 +18,11 @@ Federate simulation and then running it.
 ### Dependencies
 
 TrickHLA requires the Trick Simulation Environment and a fully compliant 
-IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function. 
+IEEE 1516-2010 or IEEE 1516-2025 Runtime Infrastructure (RTI) in order to function. 
 
 1) Install the Trick Simulation Environment by following the [Trick Install Guide](https://nasa.github.io/trick/documentation/install_guide/Install-Guide).
 
-2) Install an IEEE 1516-2010 RTI using the installer and instructions provided by the vendor.
+2) Install an IEEE 1516-2010 or IEEE 1516-2025 RTI using the installer and instructions provided by the vendor.
 
 ### Getting TrickHLA
 Clone TrickHLA from the master branch.
@@ -56,7 +56,7 @@ solves a sine wave using both an analytic and a propagated solution.
 The [SISO SpaceFOM International Standard](https://cdn.ymaws.com/www.sisostandards.org/resource/resmgr/standards_products/siso-std-018-2020_srfom.pdf) is used
 in this example for execution control.
 
-1) Make sure a fully compliant IEEE 1516-2010 RTI is running on the local host.
+1) Make sure a fully compliant IEEE 1516-2010 or IEEE 1516-2025 RTI is running on the local host.
 
 2) From a terminal, run the Analytic solution Federate:<br/>
 ./S_main*.exe RUN_a_side_mpr/input.py --verbose on
