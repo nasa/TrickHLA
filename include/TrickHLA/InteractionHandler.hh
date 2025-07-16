@@ -93,9 +93,21 @@ class InteractionHandler
    virtual ~InteractionHandler();
 
   public:
+   // Initialize the Interaction handler.
+   /*! @brief Finish the initialization of the TrickHLA Initialization handler. */
+   virtual void initialize() { initialized = true; }
+
    /*! @brief Initializes the callback to the interaction.
     *  @param inter Associated interaction for this handler. */
    virtual void initialize_callback( Interaction *inter );
+
+   /*! @brief Set the TrickHLA managed Interaction associated with this handler.
+    *  @param inter Pointer to the associated TrickHLA Interaction. */
+   virtual void set_interaction( TrickHLA::Interaction *inter );
+
+   /*! @brief Get the TrickHLA managed Interaction associated with this handler.
+    *  @return Pointer to the associated TrickHLA Interaction. */
+   virtual TrickHLA::Interaction *get_interaction() { return interaction; }
 
    /*! @brief Sends the interaction to to RTI using Receive Order.
     *  @return True if the interaction was sent; False otherwise. */
@@ -155,6 +167,7 @@ class InteractionHandler
    virtual void receive_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
 
   protected:
+   bool         initialized; ///< @trick_units{--} Initialization status flag.
    Interaction *interaction; ///< @trick_io{**} Pointer to the TrickHLA interaction.
 
   private:
