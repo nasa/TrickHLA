@@ -189,8 +189,6 @@ trick.exec_set_stack_trace( False )
 trick.sim_control_panel_set_enabled( True )
 trick.var_server_set_port( 7000 )
 
-fix_var_server_source_address()
-
 # =========================================================================
 # Set up the HLA interfaces.
 # =========================================================================
