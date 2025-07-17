@@ -92,6 +92,10 @@ CharRawDataEncoder::CharRawDataEncoder(
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
+
+#if defined( IEEE_1516_2025 )
+   this->data_encoder = new HLAASCIIchar(); // TEMP
+#endif
 }
 
 CharRawDataEncoder::~CharRawDataEncoder()
@@ -121,7 +125,7 @@ DataElement &CharRawDataEncoder::decode( VariableLengthData const &inData )
    memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
 
    // TODO: Return a valid data element, which may not be possible for raw data.
-   return *data_elements[0];
+   return *data_encoder; // TEMP
 }
 #else
 void CharRawDataEncoder::decode( VariableLengthData const &inData ) throw( EncoderException )

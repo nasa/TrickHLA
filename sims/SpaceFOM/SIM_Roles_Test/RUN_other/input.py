@@ -317,7 +317,7 @@ leaf_ref_frame.lag_compensation.debug = False
 leaf_ref_frame.lag_compensation.set_integ_tolerance( 1.0e-6 )
 leaf_ref_frame.lag_compensation.set_integ_dt( 0.025 )
 
-# frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
 frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
