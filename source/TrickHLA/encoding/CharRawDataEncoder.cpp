@@ -58,6 +58,9 @@ NASA, Johnson Space Center\n
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/EncodingConfig.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/encoding/HLAfixedArray.h"
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -92,10 +95,6 @@ CharRawDataEncoder::CharRawDataEncoder(
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-
-#if defined( IEEE_1516_2025 )
-   this->data_encoder = new HLAASCIIchar(); // TEMP
-#endif
 }
 
 CharRawDataEncoder::~CharRawDataEncoder()
@@ -124,8 +123,11 @@ DataElement &CharRawDataEncoder::decode( VariableLengthData const &inData )
    resize_trick_var( inData.size() );
    memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
 
-   // TODO: Return a valid data element, which may not be possible for raw data.
-   return *data_encoder; // TEMP
+   // Workaround for needing to return a DataElement.
+   if ( data_encoder == NULL ) {
+      data_encoder = new HLAfixedArray( HLAbyte(), 0 );
+   }
+   return *data_encoder;
 }
 #else
 void CharRawDataEncoder::decode( VariableLengthData const &inData ) throw( EncoderException )
