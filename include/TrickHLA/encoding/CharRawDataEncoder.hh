@@ -59,6 +59,9 @@ NASA, Johnson Space Center\n
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/EncodingConfig.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/encoding/HLAfixedArray.h"
+#endif
 
 namespace TrickHLA
 {
@@ -92,12 +95,11 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException );
 #endif // IEEE_1516_2025
 
-#if defined( IEEE_1516_2025 )
    virtual size_t decodeFrom(
+#if defined( IEEE_1516_2025 )
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
       size_t                                         index );
 #else
-   virtual size_t decodeFrom(
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
       size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException );
 #endif // IEEE_1516_2025
@@ -106,6 +108,11 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
    {
       return "CharRawDataEncoder";
    }
+
+#if defined( IEEE_1516_2025 )
+  protected:
+   RTI1516_NAMESPACE::HLAfixedArray data_element; ///< @trick_io{**} Needed for decode call.
+#endif
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */

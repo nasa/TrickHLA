@@ -70,6 +70,10 @@ CharRawDataEncoder::CharRawDataEncoder(
    void       *addr,
    ATTRIBUTES *attr )
    : VariableArrayEncoderBase( addr, attr )
+#if defined( IEEE_1516_2025 )
+     ,
+     data_element( HLAbyte(), 0 )
+#endif
 {
    if ( ( this->type != TRICK_CHARACTER )
         && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
@@ -123,11 +127,8 @@ DataElement &CharRawDataEncoder::decode( VariableLengthData const &inData )
    resize_trick_var( inData.size() );
    memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
 
-   // Workaround for needing to return a DataElement.
-   if ( data_encoder == NULL ) {
-      data_encoder = new HLAfixedArray( HLAbyte(), 0 );
-   }
-   return *data_encoder;
+   // Workaround, send a dummy DataElement.
+   return data_element;
 }
 #else
 void CharRawDataEncoder::decode( VariableLengthData const &inData ) throw( EncoderException )
