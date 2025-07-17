@@ -202,6 +202,9 @@ federate = SpaceFOMFederateConfig(
    thla_federate_name   = federate_name,
    thla_enabled         = True )
 
+# Check to see if we need to fix the Trick variable server address.
+federate.fix_var_server_source_address()
+
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
 # to configure the ExCO. This is only needed for input file configuration.
