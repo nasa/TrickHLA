@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -59,6 +60,10 @@ NASA, Johnson Space Center\n
 #include "RTI/Handle.h"
 #include "RTI/RTI1516.h"
 #include "RTI/VariableLengthData.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/Enums.h"
+#   include "RTI/Typedefs.h"
+#endif
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -91,13 +96,13 @@ class StringUtilities
    StringUtilities()
    {
       return;
-   };
+   }
 
    /*! @brief Destructor for the TrickHLA StringUtilities class. */
    virtual ~StringUtilities()
    {
       return;
-   };
+   }
 
   public:
    /*! @brief Wide character string (i.e. wchar_t *) duplication in Trick memory.
@@ -196,6 +201,63 @@ class StringUtilities
    {
       output.assign( static_cast< char const * >( data.data() ), data.size() );
    }
+
+#if defined( IEEE_1516_2025 )
+   static std::string to_string(
+      RTI1516_NAMESPACE::RtiConfiguration const &rti_config )
+   {
+      std::string config_name;
+      StringUtilities::to_string( config_name, rti_config.configurationName() );
+
+      std::string config_rti_addr;
+      StringUtilities::to_string( config_rti_addr, rti_config.rtiAddress() );
+
+      std::string config_addl_settings;
+      StringUtilities::to_string( config_addl_settings, rti_config.additionalSettings() );
+
+      std::ostringstream msg;
+      msg << " RTI Configuration" << std::endl
+          << "         RTI config name: '" << config_name << "'" << std::endl
+          << "  RTI config rti-address: '" << config_rti_addr << "'" << std::endl
+          << "RTI config addl-settings: '" << config_addl_settings << "'";
+      return msg.str();
+   }
+
+   static std::string to_string(
+      RTI1516_NAMESPACE::ConfigurationResult const &config_result )
+   {
+      std::string additional_result_msg;
+      switch ( config_result.additionalSettingsResult ) {
+         case RTI1516_NAMESPACE::SETTINGS_IGNORED: {
+            additional_result_msg = "SETTINGS_IGNORED";
+            break;
+         }
+         case RTI1516_NAMESPACE::SETTINGS_FAILED_TO_PARSE: {
+            additional_result_msg = "SETTINGS_FAILED_TO_PARSE";
+            break;
+         }
+         case RTI1516_NAMESPACE::SETTINGS_APPLIED: {
+            additional_result_msg = "SETTINGS_APPLIED";
+            break;
+         }
+         default: {
+            additional_result_msg = "SETTINGS_UNKNOWN";
+            break;
+         }
+      }
+
+      std::string result_msg;
+      StringUtilities::to_string( result_msg, config_result.message );
+
+      std::ostringstream msg;
+      msg << " RTI Configuration Result" << std::endl
+          << "        configuration used: " << ( config_result.configurationUsed ? "Yes" : "No" ) << std::endl
+          << "              address used: " << ( config_result.addressUsed ? "Yes" : "No" ) << std::endl
+          << "additional-settings result: " << additional_result_msg << std::endl
+          << "     config result message: '" << result_msg << "'";
+      return msg.str();
+   }
+#endif // IEEE_1516_2025
 
    /*! @brief Convert a federate handle to a C string representation.
     *  @param output The output C++ string.

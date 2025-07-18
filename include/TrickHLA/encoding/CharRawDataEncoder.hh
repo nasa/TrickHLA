@@ -109,11 +109,6 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
       return "CharRawDataEncoder";
    }
 
-#if defined( IEEE_1516_2025 )
-  protected:
-   RTI1516_NAMESPACE::HLAfixedArray data_element; ///< @trick_io{**} Needed for decode call.
-#endif
-
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharRawDataEncoder();

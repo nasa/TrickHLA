@@ -128,6 +128,8 @@ class Federate
    std::string type;            ///< @trick_units{--} The federate type.
    std::string federation_name; ///< @trick_units{--} Federation execution name.
 
+   std::string rti_address; ///< @trick_units{--} RTI address of the form host:port.
+
    std::string local_settings; /**< @trick_units{--}
       Vendor specific HLA-Evolved local settings for the connect API.
       Pitch RTI: "crcHost = 192.168.1.1\ncrcPort = 8989" \n

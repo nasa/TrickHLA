@@ -240,6 +240,7 @@ else:
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
+#THLA.federate.rti_address = 'localhost:8989'
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 
 #--------------------------------------------------------------------------

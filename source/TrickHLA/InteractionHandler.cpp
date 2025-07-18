@@ -62,7 +62,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 InteractionHandler::InteractionHandler() // RETURN: -- None.
-   : initialized( False ),
+   : initialized( false ),
      interaction( NULL )
 {
    return;

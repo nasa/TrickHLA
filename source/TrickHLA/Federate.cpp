@@ -102,17 +102,16 @@ extern Trick::CheckPointRestart *the_cpr;
 #include "RTI/RTI1516.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/RTIambassadorFactory.h"
-#if defined( IEEE_1516_2025 )
-#   include "RTI/RtiConfiguration.h"
-#endif // IEEE_1516_2025
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/time/HLAinteger64Time.h"
 
-#if defined( IEEE_1516_2010 )
+#if defined( IEEE_1516_2025 )
+#   include "RTI/RtiConfiguration.h"
+#else
 #   pragma GCC diagnostic pop
-#endif
+#endif // IEEE_1516_2025
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -132,6 +131,7 @@ Federate::Federate()
    : name(),
      type(),
      federation_name(),
+     rti_address(),
      local_settings(),
      FOM_modules(),
      MIM_module(),
@@ -685,6 +685,27 @@ void Federate::create_RTI_ambassador_and_connect()
       exec_set_trap_sigfpe( false );
    }
 
+#if defined( IEEE_1516_2025 )
+   RtiConfiguration rti_config = RtiConfiguration::createConfiguration();
+   if ( !rti_address.empty() ) {
+      wstring rti_address_ws;
+      StringUtilities::to_wstring( rti_address_ws, rti_address );
+      rti_config = rti_config.withRtiAddress( rti_address_ws );
+   }
+   if ( !local_settings.empty() ) {
+      wstring local_settings_ws;
+      StringUtilities::to_wstring( local_settings_ws, local_settings );
+      rti_config = rti_config.withAdditionalSettings( local_settings_ws );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
+          << StringUtilities::to_string( rti_config ) << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
+#else
    // For HLA-Evolved, the user can set a vendor specific local settings for
    // the connect() API.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -692,63 +713,68 @@ void Federate::create_RTI_ambassador_and_connect()
          ostringstream msg;
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " WARNING: Local settings designator 'THLA.federate.local_settings'"
-             << " for the RTI-Ambassador connection was not specified in the"
-             << " input.py file, using HLA-Evolved vendor defaults.\n";
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+             << " for the RTI was not specified in the input.py file. Using"
+             << " vendor defaults." << endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
       } else {
          ostringstream msg;
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " Local settings designator for RTI-Ambassador connection:\n'"
-             << local_settings << "'\n";
+             << " Local settings designator for RTI connection:"
+             << "'" << local_settings << "'" << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
 
+   if ( !rti_address.empty() ) {
+      ostringstream msg;
+      msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
+          << " WARNING: The 'THLA.federate.rti_address' setting is ignored"
+          << " when using IEEE 1516-2010." << endl;
+      message_publish( MSG_WARNING, msg.str().c_str() );
+   }
+#endif // IEEE_1516_2025
+
+   // Create the RTI ambassador factory, RTI-ambassador, and then connect.
    try {
-      // Create the RTI ambassador factory and then the ambassador.
+
 #if defined( IEEE_1516_2025 )
       auto rti_amb_factory = std::make_unique< RTIambassadorFactory >();
       this->RTI_ambassador = rti_amb_factory->createRTIambassador();
+
+      ConfigurationResult config_result;
+      config_result = RTI_ambassador->connect( *federate_ambassador,
+                                               RTI1516_NAMESPACE::HLA_IMMEDIATE,
+                                               rti_config );
+
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         ostringstream msg;
+         msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
+             << StringUtilities::to_string( config_result ) << endl;
+         message_publish( MSG_NORMAL, msg.str().c_str() );
+      }
 #else
       RTIambassadorFactory *rti_amb_factory = new RTIambassadorFactory();
-
-      this->RTI_ambassador = rti_amb_factory->createRTIambassador();
-#endif // IEEE_1516_2025
+      this->RTI_ambassador                  = rti_amb_factory->createRTIambassador();
 
       if ( local_settings.empty() ) {
          // Use default vendor local settings.
          RTI_ambassador->connect( *federate_ambassador,
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE );
       } else {
-#if defined( IEEE_1516_2025 )
-         // TODO: Specify host separate from local settings.
-         wstring local_settings_ws;
-         StringUtilities::to_wstring( local_settings_ws, local_settings );
-
-         wstring host = L"localhost:8989"; // TEMP
-
-         RtiConfiguration rti_config = RtiConfiguration::createConfiguration().withRtiAddress( host );
-
-         RTI_ambassador->connect( *federate_ambassador,
-                                  RTI1516_NAMESPACE::HLA_IMMEDIATE,
-                                  rti_config );
-#else
          wstring local_settings_ws;
          StringUtilities::to_wstring( local_settings_ws, local_settings );
 
          RTI_ambassador->connect( *federate_ambassador,
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE,
                                   local_settings_ws );
-#endif // IEEE_1516_2025
       }
+
+      // Make sure we delete the factory now that we are done with it.
+      delete rti_amb_factory;
+#endif // IEEE_1516_2025
 
       // Reset the Federate shutdown-called flag now that we are connected.
       this->shutdown_called = false;
-
-#if defined( IEEE_1516_2010 )
-      // Make sure we delete the factory now that we are done with it.
-      delete rti_amb_factory;
-#endif
 
    } catch ( ConnectionFailed const &e ) {
       // Macro to restore the saved FPU Control Word register value.
