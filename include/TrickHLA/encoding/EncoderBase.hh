@@ -137,8 +137,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 #   if defined( IEEE_1516_2025 )
    virtual RTI1516_NAMESPACE::DataElement &decode( RTI1516_NAMESPACE::VariableLengthData const &inData )
    {
-      // TODO: Handle null data_encoder.
-      return data_encoder->decode( inData );
+      return ( ( data_encoder != NULL ) ? data_encoder->decode( inData ) : *this );
    }
 #   else
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException )
