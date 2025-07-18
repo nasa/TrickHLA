@@ -93,6 +93,7 @@ NASA, Johnson Space Center\n
 #include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -1384,7 +1385,7 @@ void Manager::setup_object_RTI_handles(
              << " ERROR: RTIinternalError: '"
              << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1392,7 +1393,7 @@ void Manager::setup_object_RTI_handles(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: RTI1516_EXCEPTION for '"
+             << " ERROR: Exception for '"
              << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -1576,7 +1577,7 @@ void Manager::setup_interaction_RTI_handles(
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: RTIinternalError: '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -2260,7 +2261,7 @@ void Manager::set_object_instance_handles_by_name(
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: RTIinternalError: '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -2269,7 +2270,7 @@ void Manager::set_object_instance_handles_by_name(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: RTI1516_EXCEPTION for '"
+             << " ERROR: Exception for '"
              << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -2472,7 +2473,7 @@ void Manager::process_interactions()
 void Manager::receive_interaction(
    InteractionClassHandle const  &theInteraction,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const        &theUserSuppliedTag,
+   VariableLengthData const      &theUserSuppliedTag,
    LogicalTime const             &theTime,
    bool const                     received_as_TSO )
 {

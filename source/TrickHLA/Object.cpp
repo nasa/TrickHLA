@@ -96,6 +96,7 @@ NASA, Johnson Space Center\n
 #include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 #include "RTI/time/HLAinteger64Time.h"
 
 #if defined( IEEE_1516_2010 )
@@ -619,11 +620,11 @@ void Object::remove()
                   if ( federate->in_time_regulating_state() ) {
                      Int64Time update_time( get_granted_time() + get_lookahead() );
                      rti_amb->deleteObjectInstance( instance_handle,
-                                                    RTI1516_USERDATA( NULL, 0 ),
+                                                    VariableLengthData( NULL, 0 ),
                                                     update_time.get() );
                   } else {
                      rti_amb->deleteObjectInstance( instance_handle,
-                                                    RTI1516_USERDATA( NULL, 0 ) );
+                                                    VariableLengthData( NULL, 0 ) );
                   }
                }
             }
@@ -669,7 +670,7 @@ instance '%s' from RTI because of NotConnected Exception: '%s'\n",
             message_publish( MSG_WARNING, "Object.remove():%d Could not delete object \
 instance '%s' from RTI because of RTIinternalError Exception: '%s'\n",
                              __LINE__, get_name().c_str(), rti_err_msg.c_str() );
-         } catch ( RTI1516_EXCEPTION const &e ) {
+         } catch ( RTI1516_NAMESPACE::Exception const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
             message_publish( MSG_WARNING, "Object.remove():%d Could not delete object \
@@ -852,7 +853,7 @@ void Object::publish_object_attributes()
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::publish_object_attributes():%d RTIinternalError : '%s'\n",
                           __LINE__, rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::publish_object_attributes():%d class attributes exception for '%s'\n",
@@ -928,7 +929,7 @@ void Object::unpublish_all_object_attributes()
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::unpublish_all_object_attributes():%d RTIinternalError '%s'.\n",
                           __LINE__, rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::unpublish_all_object_attributes():%d exception '%s'.\n",
@@ -1017,7 +1018,7 @@ void Object::subscribe_to_object_attributes()
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::subscribe_to_object_attributes():%d RTIinternalError : '%s'.\n",
                           __LINE__, rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::subscribe_to_object_attributes():%d exception '%s'.\n",
@@ -1089,7 +1090,7 @@ void Object::unsubscribe_all_object_attributes()
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::unsubscribe_all_object_attributes():%d RTIinternalError '%s'.\n",
                           __LINE__, rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::unsubscribe_all_object_attributes():%d exception '%s'.\n",
@@ -1167,7 +1168,7 @@ Requesting reservation of Object instance name '%s'.\n",
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::reserve_object_name_with_RTI():%d RTIinternalError: '%s'\n",
                           __LINE__, rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1334,7 +1335,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d % RTIinternalError: '%s'\n",
                           __LINE__, get_name().c_str(), rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1377,7 +1378,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             StringUtilities::to_string( rti_err_msg, e.what() );
             message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: RTIinternalError: '%s'\n",
                              __LINE__, rti_err_msg.c_str() );
-         } catch ( RTI1516_EXCEPTION const &e ) {
+         } catch ( RTI1516_NAMESPACE::Exception const &e ) {
             // Macro to restore the saved FPU Control Word register value.
             TRICKHLA_RESTORE_FPU_CONTROL_WORD;
             TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1586,7 +1587,7 @@ void Object::setup_preferred_order_with_RTI()
       StringUtilities::to_string( id_str, instance_handle );
       message_publish( MSG_WARNING, "Object::setup_preferred_order_with_RTI():%d RTI internal error for '%s' and instance_id=%s\n",
                        __LINE__, get_name().c_str(), id_str.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
       string rti_err_msg;
@@ -1627,7 +1628,7 @@ void Object::request_attribute_value_update()
    try {
       rti_amb->requestAttributeValueUpdate( this->instance_handle,
                                             attr_handle_set,
-                                            RTI1516_USERDATA( NULL, 0 ) );
+                                            VariableLengthData( NULL, 0 ) );
       // Must free the memory
       attr_handle_set.clear();
 
@@ -1666,7 +1667,7 @@ void Object::request_attribute_value_update()
       StringUtilities::to_string( id_str, instance_handle );
       message_publish( MSG_WARNING, "Object::request_attribute_value_update():%d RTI internal error for '%s' and instance_id=%s\n",
                        __LINE__, get_name().c_str(), id_str.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
       string rti_err_msg;
@@ -1819,7 +1820,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             // Send as Timestamp Order
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            RTI1516_USERDATA( NULL, 0 ),
+                                            VariableLengthData( NULL, 0 ),
                                             update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -1830,7 +1831,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             // Send as Receive Order
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            RTI1516_USERDATA( NULL, 0 ) );
+                                            VariableLengthData( NULL, 0 ) );
          }
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
@@ -1964,7 +1965,7 @@ exception for '%s' with error message '%s'.\n",
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
              << "  update_time=" << update_time.get_time_in_seconds() << '\n';
       message_publish( MSG_WARNING, errmsg.str().c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
       string rti_err_msg;
@@ -1973,7 +1974,7 @@ exception for '%s' with error message '%s'.\n",
                        __LINE__, rti_err_msg.c_str() );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
-             << " RTI1516_EXCEPTION\n"
+             << " Exception\n"
              << "  instance_id=" << id_str << '\n'
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2071,7 +2072,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Timestamp Order
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               RTI1516_USERDATA( NULL, 0 ),
+                                               VariableLengthData( NULL, 0 ),
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2082,7 +2083,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Receive Order (i.e. with no timestamp).
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               RTI1516_USERDATA( NULL, 0 ) );
+                                               VariableLengthData( NULL, 0 ) );
             }
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -2215,7 +2216,7 @@ exception for '%s' with error message '%s'.\n",
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
                 << "  update_time=" << update_time.get_time_in_seconds() << '\n';
          message_publish( MSG_WARNING, errmsg.str().c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          string rti_err_msg;
@@ -2224,7 +2225,7 @@ exception for '%s' with error message '%s'.\n",
                           __LINE__, rti_err_msg.c_str() );
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
-                << " RTI1516_EXCEPTION\n"
+                << " Exception\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2340,7 +2341,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Timestamp Order
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               RTI1516_USERDATA( NULL, 0 ),
+                                               VariableLengthData( NULL, 0 ),
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2352,7 +2353,7 @@ Object '%s', Receive Order (RO) Attribute update.\n",
                // Send as Receive Order (i.e. with no timestamp).
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               RTI1516_USERDATA( NULL, 0 ) );
+                                               VariableLengthData( NULL, 0 ) );
             }
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -2486,7 +2487,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
                 << "  update_time=" << update_time.get_time_in_seconds() << '\n';
          message_publish( MSG_WARNING, errmsg.str().c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          string rti_err_msg;
@@ -2495,7 +2496,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                           __LINE__, rti_err_msg.c_str() );
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                << " RTI1516_EXCEPTION\n"
+                << " Exception\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n'
@@ -2599,7 +2600,7 @@ Object '%s', Receive Order (RO) Attribute update.\n",
             // Send as Receive Order (i.e. with no timestamp).
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            RTI1516_USERDATA( NULL, 0 ) );
+                                            VariableLengthData( NULL, 0 ) );
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -2722,7 +2723,7 @@ exception for '%s' with error message '%s'.\n",
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
          message_publish( MSG_WARNING, errmsg.str().c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          string rti_err_msg;
@@ -2731,7 +2732,7 @@ exception for '%s' with error message '%s'.\n",
                           __LINE__, rti_err_msg.c_str() );
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
-                << " RTI1516_EXCEPTION\n"
+                << " Exception\n"
                 << "  instance_id=" << id_str << '\n'
                 << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
@@ -3081,7 +3082,7 @@ void Object::send_init_data()
          // so no need to store it.
          rti_amb->updateAttributeValues( this->instance_handle,
                                          *attribute_values_map,
-                                         RTI1516_USERDATA( NULL, 0 ) );
+                                         VariableLengthData( NULL, 0 ) );
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
 #endif
@@ -3201,7 +3202,7 @@ void Object::send_init_data()
              << "  granted=" << get_granted_time().get_time_in_seconds() << '\n'
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << '\n';
       message_publish( MSG_WARNING, errmsg.str().c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
       string rti_err_msg;
@@ -3556,7 +3557,7 @@ void Object::release_ownership()
       // IEEE 1516.1-2010 section 7.6
       rti_amb->confirmDivestiture( this->instance_handle,
                                    attrs,
-                                   RTI1516_USERDATA( NULL, 0 ) );
+                                   VariableLengthData( NULL, 0 ) );
 
       AttributeHandleSet::iterator divest_iter;
 
@@ -3642,7 +3643,7 @@ RTIAmbassador::confirmDivestiture() generated NotConnected: '%s'\n",
       message_publish( MSG_WARNING, "Object::release_ownership():%d call to \
 RTIAmbassador::confirmDivestiture() generated RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "Object::release_ownership():%d call to \
@@ -3815,9 +3816,9 @@ for Attributes of object '%s'.\n",
          rti_amb->attributeOwnershipAcquisition(
             this->instance_handle,
             attr_hdl_set,
-            RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
+            VariableLengthData( get_name().c_str(), get_name().size() ) );
 
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::pull_ownership():%d Unable to pull attributes of \
@@ -3941,9 +3942,9 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
          rti_amb->attributeOwnershipAcquisition(
             this->instance_handle,
             attr_hdl_set,
-            RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
+            VariableLengthData( get_name().c_str(), get_name().size() ) );
 
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::pull_ownership_at_init():%d Unable to pull attributes of \
@@ -4188,7 +4189,7 @@ No attributes Divested since no federate wanted them for object '%s'.\n",
                }
             }
          }
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          message_publish( MSG_WARNING, "Object::grant_pull_request():%d Unable to grant \
 pull request for Trick-HLA-Object '%s'\n",
                           __LINE__, get_name().c_str() );
@@ -4301,14 +4302,14 @@ void Object::grant_push_request()
             rti_amb->attributeOwnershipAcquisition(
                this->instance_handle,
                attrs,
-               RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
+               VariableLengthData( get_name().c_str(), get_name().size() ) );
          } catch ( FederateOwnsAttributes const &e ) {
             //            set_locally_owned();
 
             message_publish( MSG_NORMAL, "Object::grant_push_request():%d Already owns \
 the attribute for object '%s'.\n",
                              __LINE__, get_name().c_str() );
-         } catch ( RTI1516_EXCEPTION const &e ) {
+         } catch ( RTI1516_NAMESPACE::Exception const &e ) {
             message_publish( MSG_WARNING, "Object::grant_push_request():%d Unable to grant \
 push request for object '%s'.\n",
                              __LINE__, get_name().c_str() );
@@ -4386,7 +4387,7 @@ void Object::negotiated_attribute_ownership_divestiture(
          rti_amb->negotiatedAttributeOwnershipDivestiture(
             this->instance_handle,
             *attr_hdl_set,
-            RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
+            VariableLengthData( get_name().c_str(), get_name().size() ) );
       } catch ( ObjectInstanceNotKnown const &e ) {
          message_publish( MSG_WARNING, "Object::negotiated_attribute_ownership_divestiture():%d ObjectInstanceNotKnown \n", __LINE__ );
       } catch ( AttributeNotDefined const &e ) {
@@ -4417,7 +4418,7 @@ void Object::negotiated_attribute_ownership_divestiture(
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::negotiated_attribute_ownership_divestiture():%d RTIinternalError: '%s'\n",
                           __LINE__, rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::negotiated_attribute_ownership_divestiture():%d Unable to push for '%s': '%s'\n",
@@ -5282,9 +5283,9 @@ for Attributes of object '%s'.\n",
          rti_amb->attributeOwnershipAcquisition(
             this->instance_handle,
             attr_hdl_set,
-            RTI1516_USERDATA( get_name().c_str(), get_name().size() ) );
+            VariableLengthData( get_name().c_str(), get_name().size() ) );
 
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \

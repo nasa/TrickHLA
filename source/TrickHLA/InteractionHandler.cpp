@@ -55,8 +55,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/StandardsSupport.hh"
 
+// HLA includes.
+#include "RTI/VariableLengthData.h"
+
 using namespace std;
 using namespace TrickHLA;
+using namespace RTI1516_NAMESPACE;
 
 /*!
  * @job_class{initialization}
@@ -108,12 +112,12 @@ void InteractionHandler::set_interaction( TrickHLA::Interaction *inter )
 bool InteractionHandler::send_interaction()
 {
    return ( ( interaction != NULL )
-               ? interaction->send( RTI1516_USERDATA( NULL, 0 ) )
+               ? interaction->send( VariableLengthData( NULL, 0 ) )
                : false );
 }
 
 bool InteractionHandler::send_interaction(
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   VariableLengthData const &the_user_supplied_tag )
 {
    return ( ( interaction != NULL )
                ? interaction->send( the_user_supplied_tag )
@@ -124,13 +128,13 @@ bool InteractionHandler::send_interaction(
    double send_HLA_time )
 {
    return ( ( interaction != NULL )
-               ? interaction->send( send_HLA_time, RTI1516_USERDATA( NULL, 0 ) )
+               ? interaction->send( send_HLA_time, VariableLengthData( NULL, 0 ) )
                : false );
 }
 
 bool InteractionHandler::send_interaction(
-   double                  send_HLA_time,
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   double                    send_HLA_time,
+   VariableLengthData const &the_user_supplied_tag )
 {
    return ( ( interaction != NULL )
                ? interaction->send( send_HLA_time, the_user_supplied_tag )
@@ -138,7 +142,7 @@ bool InteractionHandler::send_interaction(
 }
 
 void InteractionHandler::receive_interaction(
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   VariableLengthData const &the_user_supplied_tag )
 {
    message_publish( MSG_NORMAL, "InteractionHandler::receive_interaction():%d \n",
                     __LINE__ );

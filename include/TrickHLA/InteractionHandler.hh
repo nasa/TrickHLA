@@ -58,6 +58,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -116,7 +117,7 @@ class InteractionHandler
    /*! @brief Sends the interaction to to RTI using Receive Order.
     *  @return True if the interaction was sent; False otherwise.
     *  @param the_user_supplied_tag Users tag. */
-   bool send_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
+   bool send_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    /*! @brief Sends the interaction to to RTI using Timestamp Order.
     *  @return True if the interaction was sent; False otherwise.
@@ -127,7 +128,7 @@ class InteractionHandler
     *  @return True if the interaction was sent; False otherwise.
     *  @param send_HLA_time User specified HLA logical time to send the interaction.
     *  @param the_user_supplied_tag Users tag. */
-   bool send_interaction( double send_HLA_time, RTI1516_USERDATA const &the_user_supplied_tag );
+   bool send_interaction( double send_HLA_time, RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    /*! @brief Return a copy of the interactions lookahead time.
     *  @return A copy of the federation lookahead time. */
@@ -164,7 +165,7 @@ class InteractionHandler
    //-----------------------------------------------------------------
    /*! @brief Called when the interaction is received from the RTI.
     *  @param the_user_supplied_tag Users tag. */
-   virtual void receive_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
+   virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
   protected:
    bool         initialized; ///< @trick_units{--} Initialization status flag.

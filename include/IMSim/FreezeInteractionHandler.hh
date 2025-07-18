@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -93,7 +94,7 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Called when the interaction is received from the RTI.
     *  @param theUserSuppliedTag User tag. */
-   void receive_interaction( RTI1516_USERDATA const &theUserSuppliedTag );
+   void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
 
    // FIXME: This is not a good thing to do. Why have the data private?
    /*! @brief Get the address of the interaction time.

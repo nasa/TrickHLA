@@ -106,7 +106,7 @@ InteractionItem::InteractionItem(
    int const                      param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const        &theUserSuppliedTag )
+   VariableLengthData const      &theUserSuppliedTag )
    : index( inter_index ),
      parameter_queue(),
      interaction_type( inter_type ),
@@ -128,7 +128,7 @@ InteractionItem::InteractionItem(
    int const                      param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const        &theUserSuppliedTag,
+   VariableLengthData const      &theUserSuppliedTag,
    LogicalTime const             &theTime )
    : index( inter_index ),
      parameter_queue(),
@@ -169,7 +169,7 @@ void InteractionItem::initialize(
    int const                      param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const        &theUserSuppliedTag )
+   VariableLengthData const      &theUserSuppliedTag )
 {
    this->interaction_type = inter_type;
 

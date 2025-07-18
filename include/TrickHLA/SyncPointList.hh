@@ -60,6 +60,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -162,7 +163,7 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    bool const is_announced( std::wstring const &label );
 
-   bool const mark_announced( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
+   bool const mark_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    bool const wait_for_announced( std::wstring const &label );
 

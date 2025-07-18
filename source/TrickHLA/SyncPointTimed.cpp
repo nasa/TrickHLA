@@ -98,13 +98,13 @@ SyncPointTimed::~SyncPointTimed()
    return;
 }
 
-RTI1516_USERDATA const SyncPointTimed::encode_user_supplied_tag()
+VariableLengthData const SyncPointTimed::encode_user_supplied_tag()
 {
    return time.encode();
 }
 
 void SyncPointTimed::decode_user_supplied_tag(
-   RTI1516_USERDATA const &supplied_tag )
+   VariableLengthData const &supplied_tag )
 {
    time.decode( supplied_tag );
 }

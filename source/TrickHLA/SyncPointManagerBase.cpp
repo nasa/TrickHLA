@@ -66,6 +66,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/Enums.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -519,8 +520,8 @@ bool const SyncPointManagerBase::is_sync_point_announced(
 }
 
 bool const SyncPointManagerBase::mark_sync_point_announced(
-   wstring const          &label,
-   RTI1516_USERDATA const &user_supplied_tag )
+   wstring const            &label,
+   VariableLengthData const &user_supplied_tag )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -582,12 +583,12 @@ bool const SyncPointManagerBase::is_sync_point_achieved(
 bool const SyncPointManagerBase::achieve_sync_point(
    wstring const &label )
 {
-   return achieve_sync_point( label, RTI1516_USERDATA( NULL, 0 ) );
+   return achieve_sync_point( label, VariableLengthData( NULL, 0 ) );
 }
 
 bool const SyncPointManagerBase::achieve_sync_point(
-   std::wstring const     &label,
-   RTI1516_USERDATA const &user_supplied_tag )
+   std::wstring const       &label,
+   VariableLengthData const &user_supplied_tag )
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
@@ -886,8 +887,8 @@ void SyncPointManagerBase::sync_point_registration_failed(
 
 // Callback from FedAmb.
 void SyncPointManagerBase::sync_point_announced(
-   wstring const          &label,
-   RTI1516_USERDATA const &user_supplied_tag )
+   wstring const            &label,
+   VariableLengthData const &user_supplied_tag )
 {
    // Unrecognized sync-point label if not seen before or if it is in the
    // Unknown list (i.e. seen before but still unrecognized).

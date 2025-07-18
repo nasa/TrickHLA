@@ -81,6 +81,7 @@ NASA, Johnson Space Center\n
 #include "RTI/Handle.h"
 #include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -243,8 +244,8 @@ class Federate
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
-   void announce_sync_point( std::wstring const     &label,
-                             RTI1516_USERDATA const &user_supplied_tag );
+   void announce_sync_point( std::wstring const                          &label,
+                             RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    /*! @brief Marks a synchronization point as registered in the federation.
     *  @param label Sync-point label. */

@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "Int64Time.hh"
+#include "RTI/VariableLengthData.h"
 #include "StandardsSupport.hh"
 #include "SyncPoint.hh"
 
@@ -110,11 +111,11 @@ class SyncPointTimed : public TrickHLA::SyncPoint
 
    /*! @brief Encode the user supplied tag data.
     *  @return The encoded user supplied tag. */
-   virtual RTI1516_USERDATA const encode_user_supplied_tag();
+   virtual RTI1516_NAMESPACE::VariableLengthData const encode_user_supplied_tag();
 
    /*! @brief Decode the user supplied data.
     *  @param supplied_tag The supplied tag to decode as the user supplied tag. */
-   virtual void decode_user_supplied_tag( RTI1516_USERDATA const &supplied_tag );
+   virtual void decode_user_supplied_tag( RTI1516_NAMESPACE::VariableLengthData const &supplied_tag );
 
    // Utility functions.
    /*! @brief Create a string with the synchronization point label and current state.

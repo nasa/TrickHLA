@@ -78,6 +78,7 @@ NASA, Johnson Space Center\n
 using namespace std;
 using namespace SpaceFOM;
 using namespace TrickHLA;
+using namespace RTI1516_NAMESPACE;
 
 /*!
  * @job_class{initialization}
@@ -137,11 +138,11 @@ void MTRInteractionHandler::send_interaction(
    mtr_mode_int = mtr_enum_to_int16( mode_request );
 
    // Create a User Supplied Tag based off the name in this example.
-   RTI1516_USERDATA rti_user_supplied_tag;
+   VariableLengthData rti_user_supplied_tag;
    if ( !name.empty() ) {
-      rti_user_supplied_tag = RTI1516_USERDATA( name.c_str(), name.size() );
+      rti_user_supplied_tag = VariableLengthData( name.c_str(), name.size() );
    } else {
-      rti_user_supplied_tag = RTI1516_USERDATA( NULL, 0 );
+      rti_user_supplied_tag = VariableLengthData( NULL, 0 );
    }
 
    // Get the current time line values.
@@ -215,7 +216,7 @@ void MTRInteractionHandler::send_interaction(
 }
 
 void MTRInteractionHandler::receive_interaction(
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   VariableLengthData const &the_user_supplied_tag )
 {
    // Make sure that the federate reference has been set.
    if ( this->interaction == NULL ) {

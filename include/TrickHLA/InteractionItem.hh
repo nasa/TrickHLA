@@ -58,6 +58,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -125,7 +126,7 @@ class InteractionItem : public Item
                     int const                                         param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag );
+                    RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag );
 
    /*! @brief Initialization constructor for the TrickHLA InteractionItem class.
     *  @param inter_index        Interaction index.
@@ -140,7 +141,7 @@ class InteractionItem : public Item
                     int const                                         param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag,
+                    RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                     RTI1516_NAMESPACE::LogicalTime const             &theTime );
 
    /*! @brief Destructor for the TrickHLA InteractionItem class. */
@@ -181,7 +182,7 @@ class InteractionItem : public Item
                     int const                                         param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag );
+                    RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag );
 
   private:
    // Do not allow the copy constructor or assignment operator.

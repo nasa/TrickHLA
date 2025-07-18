@@ -57,6 +57,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -102,7 +103,7 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Receive the HLA interaction.
     *  @param the_user_supplied_tag User supplied interaction tag. */
-   virtual void receive_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
+   virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    // Public utility functions.
    /*! @brief Set the associated name for this interaction handler.

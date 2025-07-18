@@ -66,6 +66,7 @@ NASA, Johnson Space Center\n
 // HLA Encoder helper includes.
 #include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -296,7 +297,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    virtual bool receive_interaction(
       RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const                           &theUserSuppliedTag,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool                                              received_as_TSO ) = 0;
    /*! @brief Send a mode transition request to the Master federate.

@@ -71,6 +71,7 @@ class FreezeInteractionHandler;
 // HLA Encoder helper includes.
 #include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -147,8 +148,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
    virtual void sync_point_announced(
-      std::wstring const     &label,
-      RTI1516_USERDATA const &user_supplied_tag );
+      std::wstring const                          &label,
+      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
@@ -171,7 +172,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool receive_interaction(
       RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const                           &theUserSuppliedTag,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool const                                        received_as_TSO );
 

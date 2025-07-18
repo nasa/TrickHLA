@@ -102,6 +102,7 @@ NASA, Johnson Space Center\n
 #   include "RTI/LogicalTime.h"
 #endif // IEEE_1516_2025
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -1149,8 +1150,8 @@ void ExecutionControl::add_initialization_sync_points()
 }
 
 void ExecutionControl::sync_point_announced(
-   wstring const          &label,
-   RTI1516_USERDATA const &user_supplied_tag )
+   wstring const            &label,
+   VariableLengthData const &user_supplied_tag )
 {
    // In this case the default SyncPointManagerBase::sync_point_announced()
    // function works. Strictly speaking, we could just not define this.
@@ -1270,7 +1271,7 @@ void ExecutionControl::unsubscribe()
 bool ExecutionControl::receive_interaction(
    InteractionClassHandle const  &theInteraction,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const        &theUserSuppliedTag,
+   VariableLengthData const      &theUserSuppliedTag,
    LogicalTime const             &theTime,
    bool const                     received_as_TSO )
 {

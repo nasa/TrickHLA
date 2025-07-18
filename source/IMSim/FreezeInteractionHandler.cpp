@@ -56,10 +56,13 @@ NASA, Johnson Space Center\n
 #include "IMSim/ExecutionControl.hh"
 #include "IMSim/FreezeInteractionHandler.hh"
 
-using namespace RTI1516_NAMESPACE;
+// HLA includes.
+#include "RTI/VariableLengthData.h"
+
 using namespace std;
 using namespace TrickHLA;
 using namespace IMSim;
+using namespace RTI1516_NAMESPACE;
 
 #define THLA_FREEZE_INTERACTION_DEBUG 0
 
@@ -278,7 +281,7 @@ new freeze HLA time:%lf \n",
 }
 
 void FreezeInteractionHandler::receive_interaction(
-   RTI1516_USERDATA const &theUserSuppliedTag )
+   VariableLengthData const &theUserSuppliedTag )
 {
    ostringstream msg;
    msg << "IMSim::FreezeInteractionHandler::receive_interaction():"

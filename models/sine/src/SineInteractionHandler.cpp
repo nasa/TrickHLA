@@ -62,6 +62,7 @@ NASA, Johnson Space Center\n
 using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
+using namespace RTI1516_NAMESPACE;
 
 // Set to 1 to send interaction as Timestamp Order (TSO), 0 for Receive Order (RO).
 #define SINE_SEND_INTERACTION_TSO 1
@@ -110,12 +111,12 @@ void SineInteractionHandler::send_sine_interaction(
    message = trick_MM->mm_strdup( msg.str().c_str() );
 
    // Create a User Supplied Tag based off the name in this example.
-   RTI1516_USERDATA user_supplied_tag;
+   VariableLengthData user_supplied_tag;
    if ( name != NULL ) {
       string name_str   = name;
-      user_supplied_tag = RTI1516_USERDATA( name_str.c_str(), name_str.size() );
+      user_supplied_tag = VariableLengthData( name_str.c_str(), name_str.size() );
    } else {
-      user_supplied_tag = RTI1516_USERDATA( NULL, 0 );
+      user_supplied_tag = VariableLengthData( NULL, 0 );
    }
 
    // Get the HLA granted time and lookahead time.
@@ -187,7 +188,7 @@ void SineInteractionHandler::send_sine_interaction(
 }
 
 void SineInteractionHandler::receive_interaction(
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   VariableLengthData const &the_user_supplied_tag )
 {
    ++receive_cnt;
 

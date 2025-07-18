@@ -74,6 +74,7 @@ NASA, Johnson Space Center\n
 #include "RTI/Exception.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -539,7 +540,7 @@ bool const SyncPointList::register_sync_point(
 
       registered = true;
 
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -601,7 +602,7 @@ bool const SyncPointList::register_sync_point(
 
       registered = true;
 
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -637,8 +638,8 @@ bool const SyncPointList::is_announced(
  * @job_class{initialization}
  */
 bool const SyncPointList::mark_announced(
-   wstring const          &label,
-   RTI1516_USERDATA const &user_supplied_tag )
+   wstring const            &label,
+   VariableLengthData const &user_supplied_tag )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.

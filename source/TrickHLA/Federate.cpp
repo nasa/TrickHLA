@@ -1263,7 +1263,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
              << " RTIinternalError: '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1278,7 +1278,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " ERROR: RTI1516_EXCEPTION for '" << rti_err_msg << "'\n";
+             << " ERROR: Exception for '" << rti_err_msg << "'\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1356,7 +1356,7 @@ void Federate::determine_federate_MOM_object_instance_names()
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -2138,7 +2138,7 @@ void Federate::request_attribute_update(
       // Request initial values.
       RTI_ambassador->requestAttributeValueUpdate( class_handle,
                                                    attribute_list,
-                                                   RTI1516_USERDATA( NULL, 0 ) );
+                                                   VariableLengthData( NULL, 0 ) );
    } catch ( ObjectClassNotDefined const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::request_attribute_update():%d ObjectClassNotDefined: Attribute update request FAILED!\n",
@@ -2392,7 +2392,7 @@ void Federate::send_interaction(
 
    bool error_flag = false;
    try {
-      RTI_ambassador->sendInteraction( class_handle, parameter_list, RTI1516_USERDATA( NULL, 0 ) );
+      RTI_ambassador->sendInteraction( class_handle, parameter_list, VariableLengthData( NULL, 0 ) );
    } catch ( InteractionClassNotPublished const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::send_interaction():%d InteractionClassNotPublished: Send interaction FAILED!\n",
@@ -2437,8 +2437,8 @@ void Federate::send_interaction(
 }
 
 void Federate::announce_sync_point(
-   wstring const          &label,
-   RTI1516_USERDATA const &user_supplied_tag )
+   wstring const            &label,
+   VariableLengthData const &user_supplied_tag )
 {
    // Delegate to the Execution Control to handle the FedAmb callback. It will
    // check for any synchronization points that require special handling.
@@ -3584,7 +3584,7 @@ void Federate::create_federation()
       errmsg << "Federate::create_federation():" << __LINE__
              << " RTI Internal Error: " << rti_err_msg << '\n';
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -3956,7 +3956,7 @@ void Federate::enable_async_delivery()
              << " EXCEPTION: RTIinternalError: '" << rti_err_msg << "'\n";
 
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -4222,7 +4222,7 @@ void Federate::setup_time_constrained()
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": ERROR: RTIinternalError : '%s'\n",
                        __LINE__, get_federation_name().c_str(), rti_err_msg.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -4432,7 +4432,7 @@ void Federate::setup_time_regulation()
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: RTIinternalError: '%s'\n",
                        __LINE__, get_federation_name().c_str(), rti_err_msg.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5351,7 +5351,7 @@ void Federate::shutdown_time_constrained()
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": RTIinternalError EXCEPTION: '%s'\n",
                           __LINE__, get_federation_name().c_str(), rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": Unexpected RTI EXCEPTION!\n",
                           __LINE__, get_federation_name().c_str() );
       }
@@ -5412,7 +5412,7 @@ void Federate::shutdown_time_regulating()
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": RTIinternalError EXCEPTION: '%s'\n",
                           __LINE__, get_federation_name().c_str(), rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
+      } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": Unexpected RTI EXCEPTION!\n",
                           __LINE__, get_federation_name().c_str() );
       }
@@ -5561,7 +5561,7 @@ void Federate::resign()
              << rti_err_msg << '\n';
 
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5700,7 +5700,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << rti_err_msg << '\n';
 
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5805,7 +5805,7 @@ void Federate::destroy()
          message_publish( MSG_WARNING, "Federate::destroy():%d Federation '%s' destroy failed because we are NOT CONNECTED to the federation.\n",
                           __LINE__, get_federation_name().c_str() );
       }
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5846,7 +5846,7 @@ void Federate::destroy()
          message_publish( MSG_WARNING, "Federate::destroy():%d Cannot disconnect from RTI because this federate is still joined.\n",
                           __LINE__ );
       }
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5901,7 +5901,7 @@ void Federate::destroy_orphaned_federation()
          message_publish( MSG_NORMAL, "Federate::destroy_orphaned_federation():%d Successfully Destroyed Orphaned Federation '%s'.\n",
                           __LINE__, get_federation_name().c_str() );
       }
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Ignore any exception since we are just removing an orphaned federation.
    }
    // Macro to restore the saved FPU Control Word register value.

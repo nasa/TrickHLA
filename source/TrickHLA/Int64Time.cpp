@@ -120,13 +120,13 @@ Int64Time::~Int64Time()
    return;
 }
 
-RTI1516_USERDATA Int64Time::encode() const
+VariableLengthData Int64Time::encode() const
 {
    return hla_time.encode();
 }
 
 void Int64Time::decode(
-   RTI1516_USERDATA const &user_supplied_tag )
+   VariableLengthData const &user_supplied_tag )
 {
    hla_time.decode( user_supplied_tag );
 }

@@ -41,6 +41,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 
+// HLA includes.
+#include "RTI/VariableLengthData.h"
+
 using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
@@ -121,13 +124,13 @@ bool const SyncPoint::is_error() const
             && ( this->state != TrickHLA::SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
-RTI1516_USERDATA const SyncPoint::encode_user_supplied_tag()
+VariableLengthData const SyncPoint::encode_user_supplied_tag()
 {
    return this->user_supplied_tag;
 }
 
 void SyncPoint::decode_user_supplied_tag(
-   RTI1516_USERDATA const &supplied_tag )
+   VariableLengthData const &supplied_tag )
 {
    this->user_supplied_tag = supplied_tag;
 }

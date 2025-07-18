@@ -181,8 +181,8 @@ class StringUtilities
     *  @param output The output C++ string with only printable characters.
     *  @param data   User supplied tag */
    static void to_printable_string(
-      std::string            &output,
-      RTI1516_USERDATA const &data )
+      std::string                                 &output,
+      RTI1516_NAMESPACE::VariableLengthData const &data )
    {
       output.assign( static_cast< char const * >( data.data() ), data.size() );
       for ( size_t i = 0; i < output.size(); ++i ) {
@@ -196,8 +196,8 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param data   User supplied tag */
    static void to_string(
-      std::string            &output,
-      RTI1516_USERDATA const &data )
+      std::string                                 &output,
+      RTI1516_NAMESPACE::VariableLengthData const &data )
    {
       output.assign( static_cast< char const * >( data.data() ), data.size() );
    }

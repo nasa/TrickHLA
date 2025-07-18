@@ -59,6 +59,7 @@ NASA, Johnson Space Center\n
 #include "RTI/Enums.h"
 #include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -144,7 +145,7 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    bool const is_sync_point_announced( std::wstring const &label );
 
-   bool const mark_sync_point_announced( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
+   bool const mark_sync_point_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    bool const wait_for_sync_point_announced( std::wstring const &label );
 
@@ -154,7 +155,7 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    bool const achieve_sync_point( std::wstring const &label );
 
-   bool const achieve_sync_point( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
+   bool const achieve_sync_point( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    bool const achieve_all_sync_points( std::string const &list_name );
 
@@ -184,8 +185,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
    virtual void sync_point_registration_failed( std::wstring const                                  &label,
                                                 RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
-   virtual void sync_point_announced( std::wstring const     &label,
-                                      RTI1516_USERDATA const &user_supplied_tag );
+   virtual void sync_point_announced( std::wstring const                          &label,
+                                      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 

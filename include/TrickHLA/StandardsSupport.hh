@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA/ER7, TrickHLA, February 2009, --, HLA Standards Support}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, June 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, September 2024, --, Updated HLA 4 support}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2025, --, Added HLA 4 support}
 @revs_end
 
 */
@@ -43,15 +43,11 @@ NASA, Johnson Space Center\n
 #endif
 
 #if ( defined( IEEE_1516_2010 ) )
-// Define the RTI header and namespace for "HLA Evolved" IEEE 1516-2010 Standard.
+// Define the namespace for "HLA Evolved" IEEE 1516-2010 Standard.
 #   define RTI1516_NAMESPACE rti1516e
-#   define RTI1516_USERDATA RTI1516_NAMESPACE::VariableLengthData
-#   define RTI1516_EXCEPTION RTI1516_NAMESPACE::Exception
 #elif ( defined( IEEE_1516_2025 ) )
-// Define the RTI header and namespace for "HLA 4" IEEE 1516-2025 Standard.
+// Define the namespace for "HLA 4" IEEE 1516-2025 Standard.
 #   define RTI1516_NAMESPACE rti1516_2025
-#   define RTI1516_USERDATA RTI1516_NAMESPACE::VariableLengthData
-#   define RTI1516_EXCEPTION RTI1516_NAMESPACE::Exception
 #else
 #   error "ERROR: Unsupported HLA IEEE 1516 Standard!"
 #endif

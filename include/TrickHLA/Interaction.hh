@@ -67,6 +67,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/Handle.h"
 #include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -170,14 +171,14 @@ class Interaction
    /*! @brief Sends the interaction to the RTI using Receive Order.
     *  @return True if interaction was sent; False otherwise.
     *  @param the_user_supplied_tag Users tag. */
-   bool send( RTI1516_USERDATA const &the_user_supplied_tag );
+   bool send( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    /*! @brief ends the interaction to the RTI using Timestamp Order.
     *  @return True if interaction was sent; False otherwise.
     *  @param send_HLA_time The HLA logical time the user wants to send the interaction.
     *  @param the_user_supplied_tag Users tag. */
-   bool send( double                  send_HLA_time,
-              RTI1516_USERDATA const &the_user_supplied_tag );
+   bool send( double                                       send_HLA_time,
+              RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    /*! @brief Process the interaction by decoding the parameter data into the
     * users simulation variables and calling the users interaction-handler. */

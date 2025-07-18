@@ -37,6 +37,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 
+// HLA includes.
+#include "RTI/VariableLengthData.h"
+
 #define SINE_MSG_SIZE 2
 
 namespace TrickHLAModel
@@ -75,7 +78,7 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Receive the HLA interaction.
     *  @param the_user_supplied_tag User tag. */
-   virtual void receive_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
+   virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
   protected:
    double time; ///< @trick_units{s}  Example of floating-point data.

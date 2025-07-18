@@ -53,6 +53,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -149,11 +150,11 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
 
    /*! @brief Encode the user supplied tag data.
     *  @return The encoded user supplied tag. */
-   virtual RTI1516_USERDATA const encode_user_supplied_tag();
+   virtual RTI1516_NAMESPACE::VariableLengthData const encode_user_supplied_tag();
 
    /*! @brief Decode the user supplied data.
     *  @param supplied_tag supplied_tag The supplied tag to decode as the user supplied tag. */
-   virtual void decode_user_supplied_tag( RTI1516_USERDATA const &supplied_tag );
+   virtual void decode_user_supplied_tag( RTI1516_NAMESPACE::VariableLengthData const &supplied_tag );
 
    // Utility functions.
    /*! @brief Create a C++ string with the synchronization point label and
@@ -174,7 +175,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    std::wstring    label; ///< @trick_io{**} Sync-point name.
    SyncPtStateEnum state; ///< @trick_units{--} Sync-point state.
 
-   RTI1516_USERDATA user_supplied_tag; ///< @trick_io{**} Sync-point user supplied data.
+   RTI1516_NAMESPACE::VariableLengthData user_supplied_tag; ///< @trick_io{**} Sync-point user supplied data.
 
    char *label_chkpt; ///< @trick_units{--} Trick memory allocated label that is checkpointable.
 };
