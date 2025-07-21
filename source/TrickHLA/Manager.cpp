@@ -682,7 +682,7 @@ federate so this call will be ignored.\n",
  * @job_class{initialization}
  */
 void Manager::receive_init_data(
-   std::string const &instance_name )
+   string const &instance_name )
 {
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
