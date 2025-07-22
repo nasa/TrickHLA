@@ -128,7 +128,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *         0 -- normal execution (neither late joiner nor federate restore),\n
     *         1 -- late joiner,\n
     *         2 -- federate restore. */
-   TrickHLA::FederateJoinEnum determine_if_late_joining_or_restoring_federate();
+   TrickHLA::FederateJoinConstraintsEnum determine_if_late_joining_or_restoring_federate();
 
    //
    // Execution Control support routines.routines.

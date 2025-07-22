@@ -209,6 +209,8 @@ class THLAInitSimObject : public Trick::SimObject {
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
                               TrickHLA::Federate & thla_fed,
                               unsigned int         _MPI_1   = 100,
+                              unsigned int         _MPI_2   = 101,
+                              unsigned int         _MPI_3   = 102,
                               unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
       : sim_timeline(),
         scenario_timeline( sim_timeline, 0.0, 0.0 ),
@@ -231,17 +233,17 @@ class THLAInitSimObject : public Trick::SimObject {
       // Analytic sine data from Federate: "P" owned attributes is sent.
 
       // Receive the Analytic sine data from Federate: "P" owned attributes.
-      P_MPI_END ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
+      P_MPI_2 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
-      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase1" );
+      P_MPI_2 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase1" );
 
 
       // Send the Analytic sine data from Federate: "A"
-      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
+      P_MPI_3 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
-      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase2" );
+      P_MPI_3 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase2" );
 
 
       // Receive the Propagated sine data.

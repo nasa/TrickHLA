@@ -142,7 +142,6 @@ using namespace SpaceFOM;
  */
 ExecutionControl::ExecutionControl()
    : TrickHLA::ExecutionControlBase(),
-     designated_late_joiner( false ),
      pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
@@ -159,7 +158,6 @@ ExecutionControl::ExecutionControl()
 ExecutionControl::ExecutionControl(
    SpaceFOM::ExecutionConfiguration &exec_config )
    : TrickHLA::ExecutionControlBase( exec_config ),
-     designated_late_joiner( false ),
      pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
@@ -505,7 +503,9 @@ void ExecutionControl::sync_point_announced(
       // INIT_COMPLETED_SYNC_POINT announced.
       if ( ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 )
            && !is_sync_point_list_empty( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
-           && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) ) {
+           && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
+           && ( ( is_late_joiner_determined() && !is_late_joiner() )
+                || ( federate->get_join_constraint() == TrickHLA::FEDERATE_JOIN_EARLY ) ) ) {
          string init_complete_sp_label;
          StringUtilities::to_string( init_complete_sp_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
          ostringstream errmsg;

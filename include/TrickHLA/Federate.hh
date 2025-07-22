@@ -150,6 +150,8 @@ class Federate
    bool time_constrained; ///< @trick_units{--} HLA Time Constrained flag (default: true).
    bool time_management;  ///< @trick_units{--} Enable HLA Time Management flag (default: true).
 
+   FederateJoinConstraintsEnum join_constraint; ///< @trick_units{--} The Join constraints for this federate.
+
    // The Federates known to be in the Federation, and specified in the input files.
    // TODO: change this to be an STL Array.
    bool           enable_known_feds; ///< @trick_units{--} Enable use of known Federates list (default: true)
@@ -206,6 +208,16 @@ class Federate
 
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
    void initialize();
+
+   FederateJoinConstraintsEnum const get_join_constraint()
+   {
+      return this->join_constraint;
+   }
+
+   void set_join_constraint( FederateJoinConstraintsEnum const fed_join_constraint )
+   {
+      this->join_constraint = fed_join_constraint;
+   }
 
    /*! @brief Get the HLA time advance cycle time.
     *  @return HLA cycle time in seconds. */

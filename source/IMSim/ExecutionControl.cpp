@@ -824,7 +824,7 @@ Simulation has started and is now running...\n",
 /*!
  * @job_class{initialization}
  */
-FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
+FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
 {
    int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
@@ -1163,7 +1163,9 @@ void ExecutionControl::sync_point_announced(
    // INIT_COMPLETED_SYNC_POINT announced.
    if ( ( label.compare( IMSim::INIT_COMPLETE_SYNC_POINT ) == 0 )
         && !is_sync_point_list_empty( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
-        && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) ) {
+        && !is_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST )
+        && ( ( is_late_joiner_determined() && !is_late_joiner() )
+             || ( federate->get_join_constraint() == TrickHLA::FEDERATE_JOIN_EARLY ) ) ) {
       string init_complete_sp_label;
       StringUtilities::to_string( init_complete_sp_label, IMSim::INIT_COMPLETE_SYNC_POINT );
       ostringstream errmsg;

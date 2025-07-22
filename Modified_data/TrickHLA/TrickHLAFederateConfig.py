@@ -422,6 +422,13 @@ class TrickHLAFederateConfig( object ):
       return
 
 
+   def set_join_constraint( self, join_constraint ):
+
+      self.federate.set_join_constraint( join_constraint )
+
+      return
+
+
    def set_debug_level( self, debug_level ):
 
       self.federate.debug_level = debug_level

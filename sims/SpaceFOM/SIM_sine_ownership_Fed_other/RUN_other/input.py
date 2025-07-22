@@ -283,7 +283,6 @@ sine_A = SineObject(
    sine_conditional        = A.conditional,
    sine_lag_comp           = A.lag_compensation,
    sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_ownership          = A.ownership_handler,
    sine_deleted            = A.obj_deleted,
    sine_attribute_publish  = False )
 

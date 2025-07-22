@@ -86,7 +86,10 @@ class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
       if self.initialized:
          print( 'SpaceFOMFederateConfig.set_designated_late_joiner(): Warning, already initialized, function ignored!' )
       else:
-         self.control.designated_late_joiner = designated_late_joiner
+         if designated_late_joiner:
+            self.federate.set_join_constraint( trick.TrickHLA.FEDERATE_JOIN_LATE )
+         else:
+            self.federate.set_join_constraint( trick.TrickHLA.FEDERATE_JOIN_EARLY_OR_LATE )
 
       return
 

@@ -139,6 +139,7 @@ Federate::Federate()
      time_regulating( true ),
      time_constrained( true ),
      time_management( true ),
+     join_constraint( FEDERATE_JOIN_EARLY_OR_LATE ),
      enable_known_feds( true ),
      known_feds_count( 0 ),
      known_feds( NULL ),

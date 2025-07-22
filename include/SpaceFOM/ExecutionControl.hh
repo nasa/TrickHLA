@@ -88,9 +88,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    friend void init_attrSpaceFOM__ExecutionControl();
 
   public:
-   bool designated_late_joiner; /**< @trick_units{--} Flag set by the user to
-      indicate this federate is a designated late joiner, default is false. */
-
    // These are the execution control roles available to a federate.
    bool pacing; /**< @trick_units{--} Is true when this federate is
                      the "pacing". (default: false) */
@@ -293,7 +290,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @return true if a designated later joiner federate. */
    bool is_designated_late_joiner()
    {
-      return this->designated_late_joiner;
+      return ( federate->get_join_constraint() == TrickHLA::FEDERATE_JOIN_LATE );
    }
 
    //

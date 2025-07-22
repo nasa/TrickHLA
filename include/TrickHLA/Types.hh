@@ -223,20 +223,18 @@ typedef enum {
 } DebugSourceEnum;
 
 /*!
-@enum FederateJoinEnum
+@enum FederateJoinConstraintsEnum
 @brief Define the TrickHLA federate join enumeration values.
 */
 typedef enum {
 
-   FEDERATE_JOIN_FIRST_VALUE = 0, ///< Set to the First value in the enumeration.
-   FEDERATE_JOIN_NOMINAL     = 0, ///< Normal Federate Execution (neither late joiner nor federate restore).
-   FEDERATE_JOIN_EARLY       = 0, ///< Early joining Federate.
-   FEDERATE_JOIN_LATE        = 1, ///< Late Joining Federate
-   FEDERATE_JOIN_RESTORING   = 2, ///< Federate Restore
-   FEDERATE_JOIN_UNKNOWN     = 3, ///< Unknown Federate state
-   FEDERATE_JOIN_LAST_VALUE  = 3  ///< Set to the Last value in the enumeration.
+   FEDERATE_JOIN_FIRST_VALUE   = 1, ///< Set to the First value in the enumeration.
+   FEDERATE_JOIN_EARLY         = 1, ///< Early joining Federate Only.
+   FEDERATE_JOIN_LATE          = 2, ///< Late Joining Federate Only.
+   FEDERATE_JOIN_EARLY_OR_LATE = 3, ///< Early or Late Joining Federate.
+   FEDERATE_JOIN_LAST_VALUE    = 3  ///< Set to the Last value in the enumeration.
 
-} FederateJoinEnum;
+} FederateJoinConstraintsEnum;
 
 /*!
 @emum InteractionTypeEnum
