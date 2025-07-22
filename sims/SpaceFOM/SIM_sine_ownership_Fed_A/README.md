@@ -21,7 +21,7 @@ with split ownership multiphase initialization data updates.
 Multiphase Initialization Steps<br>
 |Federate "A"                 |Federate "P"                 |Federate "Other"             |
 |:---------------------------:|:---------------------------:|:---------------------------:|
-|Handle-Pull-Ownership:<br>A-side-Federate.Sine|Pull-Ownership:<br>A-side-Federate.Sine:<br>Attributes: "Name, Tolerance"| Do-nothing |
+|handle_pulled_ownership_at_init:<br>A-side-Federate.Sine|pull_ownership_at_init:<br>A-side-Federate.Sine:<br>Attributes: "Name, Tolerance"| Do-nothing |
 |wait_for_init_sync_point:<br>"Ownership_transfer_init_phase"|wait_for_init_sync_point:<br>"Ownership_transfer_init_phase"|wait_for_init_sync_point:<br>"Ownership_transfer_init_phase"|
 |receive_init_data:<br>A-side-Federate.Sine|send_init_data:<br>A-side-Federate.Sine|receive_init_data:<br>A-side-Federate.Sine|
 |wait_for_init_sync_point:<br>"Analytic_init_phase1"|wait_for_init_sync_point:<br>"Analytic_init_phase1"|wait_for_init_sync_point:<br>"Analytic_init_phase1"|
