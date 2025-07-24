@@ -2836,8 +2836,6 @@ federate so the data will not be sent for '%s'.\n",
  */
 void ExecutionControl::send_root_ref_frame()
 {
-   TrickHLA::Object *rrf_obj;
-
    // Only the root reference frame publisher (RRFP) can publish the root frame.
    if ( !is_root_frame_publisher() ) {
       return;
@@ -2851,7 +2849,17 @@ void ExecutionControl::send_root_ref_frame()
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-   rrf_obj = root_ref_frame->get_object(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+
+   TrickHLA::Object *rrf_obj = root_ref_frame->get_object(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+
+   if ( rrf_obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
+             << " ERROR: Unexpected null Root Reference Frame object from"
+             << " call to root_ref_frame->get_object()!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::send_root_ref_frame():%d\n",
@@ -2905,6 +2913,15 @@ void ExecutionControl::receive_root_ref_frame()
 
    // Get the Object associated with the root reference frame.
    TrickHLA::Object *rrf_object = root_ref_frame->get_object();
+
+   if ( rrf_object == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
+             << " ERROR: Unexpected null Root Reference Frame object from"
+             << " call to root_ref_frame->get_object()!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
 
    // The root reference frame publisher (RRFP) only publishes the root frame.
    if ( is_root_frame_publisher() ) {
