@@ -605,7 +605,7 @@ Simulation has started and is now running...\n",
 
       // Determine if the federate is a late-joiner or was instructed to restore
       // the federation.
-      if ( determine_if_late_joining_or_restoring_federate() == FEDERATE_JOIN_RESTORING ) {
+      if ( determine_if_late_joining_or_restoring_federate() == TrickHLA::FEDERATE_JOIN_RESTORING ) {
 
          // make sure that we have a valid absolute path to the files.
          federate->check_HLA_save_directory();
@@ -919,7 +919,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   return TrickHLA::FEDERATE_JOIN_NOMINAL;
+   return TrickHLA::FEDERATE_JOIN_EARLY_OR_LATE;
 }
 
 /*!

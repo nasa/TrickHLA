@@ -232,7 +232,8 @@ typedef enum {
    FEDERATE_JOIN_EARLY         = 1, ///< Early joining Federate Only.
    FEDERATE_JOIN_LATE          = 2, ///< Late Joining Federate Only.
    FEDERATE_JOIN_EARLY_OR_LATE = 3, ///< Early or Late Joining Federate.
-   FEDERATE_JOIN_LAST_VALUE    = 3  ///< Set to the Last value in the enumeration.
+   FEDERATE_JOIN_RESTORING     = 4, ///< Federate restoring from startup.
+   FEDERATE_JOIN_LAST_VALUE    = 4  ///< Set to the Last value in the enumeration.
 
 } FederateJoinConstraintsEnum;
 
