@@ -79,14 +79,11 @@ class EncoderFactory
    // Public member functions.
    //--------------------------------------------------------------------------
   public:
-   //
-   // Public constructors and destructor.
-   //
-   /*! @brief Default constructor for the TrickHLA EncoderFactory class. */
-   EncoderFactory();
-
    /*! @brief Destructor for the TrickHLA EncoderFactory class. */
-   virtual ~EncoderFactory();
+   virtual ~EncoderFactory()
+   {
+      return;
+   }
 
    static EncoderBase *create(
       std::string const           &trick_name,
@@ -169,9 +166,13 @@ class EncoderFactory
 
   private:
    // Do not allow the copy constructor or assignment operator.
+   /*! @brief Default constructor for the TrickHLA EncoderFactory class. */
+   EncoderFactory();
+
    /*! @brief Copy constructor for EncoderFactory class.
     *  @details This constructor is private to prevent inadvertent copies. */
    EncoderFactory( EncoderFactory const &rhs );
+
    /*! @brief Assignment operator for EncoderFactory class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    EncoderFactory &operator=( EncoderFactory const &rhs );

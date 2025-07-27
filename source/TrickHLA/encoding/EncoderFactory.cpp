@@ -87,16 +87,6 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-EncoderFactory::EncoderFactory()
-{
-   return;
-}
-
-EncoderFactory::~EncoderFactory()
-{
-   return;
-}
-
 EncoderBase *EncoderFactory::create(
    std::string const &trick_name,
    EncodingEnum const hla_encoding )

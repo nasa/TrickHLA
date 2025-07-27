@@ -137,15 +137,6 @@ class Utilities
    friend void init_attrTrickHLA__Utilities();
 
   public:
-   //
-   // Public constructors and destructor.
-   //
-   /*! @brief Default constructor for the TrickHLA Utilities class. */
-   Utilities()
-   {
-      return;
-   }
-
    /*! @brief Destructor for the TrickHLA Utilities class. */
    virtual ~Utilities()
    {
@@ -254,6 +245,9 @@ class Utilities
 
   private:
    // Do not allow the copy constructor or assignment operator.
+   /*! @brief Default constructor for the TrickHLA Utilities class. */
+   Utilities();
+
    /*! @brief Copy constructor for Utilities class.
     *  @details This constructor is private to prevent inadvertent copies. */
    Utilities( Utilities const &rhs );

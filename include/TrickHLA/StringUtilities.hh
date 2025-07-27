@@ -89,22 +89,12 @@ class StringUtilities
    friend void init_attrTrickHLA__StringUtilities();
 
   public:
-   //
-   // Public constructors and destructor.
-   //
-   /*! @brief Default constructor for the TrickHLA StringUtilities class. */
-   StringUtilities()
-   {
-      return;
-   }
-
    /*! @brief Destructor for the TrickHLA StringUtilities class. */
    virtual ~StringUtilities()
    {
       return;
    }
 
-  public:
    /*! @brief Wide character string (i.e. wchar_t *) duplication in Trick memory.
     *  @param s The input wide string.
     *  @return The duplicate wide string.*/
@@ -459,6 +449,9 @@ class StringUtilities
 
   private:
    // Do not allow the copy constructor or assignment operator.
+   /*! @brief Default constructor for the TrickHLA StringUtilities class. */
+   StringUtilities();
+
    /*! @brief Copy constructor for StringUtilities class.
     *  @details This constructor is private to prevent inadvertent copies. */
    StringUtilities( StringUtilities const &rhs );

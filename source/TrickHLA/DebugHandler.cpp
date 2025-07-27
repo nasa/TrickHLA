@@ -47,22 +47,6 @@ using namespace TrickHLA;
 DebugLevelEnum  DebugHandler::debug_level  = DEBUG_LEVEL_NO_TRACE;
 DebugSourceEnum DebugHandler::code_section = DEBUG_SOURCE_ALL_MODULES;
 
-/*!
- * @job_class{initialization}
- */
-DebugHandler::DebugHandler()
-{
-   set( DEBUG_LEVEL_NO_TRACE, DEBUG_SOURCE_ALL_MODULES );
-}
-
-/*!
- * @job_class{shutdown}
- */
-DebugHandler::~DebugHandler() // RETURN: -- None.
-{
-   return;
-}
-
 bool const DebugHandler::show(
    DebugLevelEnum const  level,
    DebugSourceEnum const code )

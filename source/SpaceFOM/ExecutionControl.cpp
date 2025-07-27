@@ -2850,9 +2850,9 @@ void ExecutionControl::send_root_ref_frame()
       return;
    }
 
-   TrickHLA::Object *rrf_obj = root_ref_frame->get_object(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   TrickHLA::Object *rrf_object = root_ref_frame->get_object();
 
-   if ( rrf_obj == NULL ) {
+   if ( rrf_object == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
              << " ERROR: Unexpected null Root Reference Frame object from"
@@ -2867,10 +2867,10 @@ void ExecutionControl::send_root_ref_frame()
    }
 
    // Make sure we have at least one piece of ExCO data we can send.
-   if ( rrf_obj->any_locally_owned_published_init_attribute() ) {
+   if ( rrf_object->any_locally_owned_published_init_attribute() ) {
 
       // Send the reference frame data to the other federates.
-      rrf_obj->send_init_data();
+      rrf_object->send_init_data();
 
    } else {
       ostringstream errmsg;
