@@ -63,11 +63,10 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
                     DynamicalEntityData &dynamics_data_ref ); // Initialization constructor.
    virtual ~DynamicalEntity();                                // Destructor.
 
-   /*! @brief Set the reference to the physical entity data.
-    *  @param physical_data_ptr Pointer to the PhysicalEntityData instance.
-    *  @param dynamics_data_ptr Pointer to the DynamicalEntityData instance. */
-   void configure( PhysicalEntityData  *physical_data_ptr,
-                   DynamicalEntityData *dynamics_data_ptr );
+   /*! @brief Function to begin the configuration/initialization of the
+    *  DynamicalEntity.
+    *  This function needs to be called prior to TrickHLA initialization. */
+   virtual void configure();
 
    /*! @brief Initialize the packing object. */
    virtual void initialize();
@@ -81,6 +80,12 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
     *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
+
+   /*! @brief Set the reference to the dynamical entity data.
+    *  @param physical_data_ptr Pointer to the PhysicalEntityData instance.
+    *  @param dynamical_data_ptr Pointer to the DynamicalEntityData instance. */
+   void set_data( PhysicalEntityData  *physical_data_ptr,
+                  DynamicalEntityData *dynamical_data_ptr );
 
   protected:
    DynamicalEntityData *dynamical_data; ///< @trick_units{--} Dynamical entity data.

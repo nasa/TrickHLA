@@ -22,13 +22,13 @@ import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 # Load the sine specific Sine object.
-from Modified_data.sine.SineObject import *
+from TrickHLA_data.sine.SineObject import *
 
 
 def print_usage_message():

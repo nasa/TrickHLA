@@ -53,12 +53,14 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
 
    // The _INIT phasing variable needs to occure before THLA initialization.
    TrickHLAInteractionHandlerBaseSimObject( bool                 publish_inter,
+                                            bool                 subscribe_inter,
                                             std::string          sim_obj_name,
                                             InteractionHandler * handler,
                                             unsigned short       _INIT = P_HLA_INIT  )
       : handler_base_ptr( handler ),
         thla_interaction( NULL ),
-        publishes( publish_inter ),
+        publish( publish_inter ),
+        subscribe( subscribe_inter ),
         sim_object_name( sim_obj_name )
    {
       //
@@ -134,6 +136,17 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
 
    virtual int configure()
    {
+      // We must have an InteractionHandler.
+      if ( handler_base_ptr == NULL ){
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAInteractionHandlerBaseSimObject::configure():" << __LINE__
+                << " ERROR: Unexpected NULL InteractionHandler!\n";
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      else {
+         handler_base_ptr->configure();
+      }
       return( 0 );
    }
 
@@ -204,7 +217,8 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
   TrickHLA::Interaction * thla_interaction;
   
  protected:
-  bool        publishes;
+  bool        publish;
+  bool        subscribe;
   std::string sim_object_name;
 
  private:

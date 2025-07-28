@@ -21,14 +21,14 @@ import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 # Load TrickHLAObjectConfig and TrickHLAAttributeConfig
-from Modified_data.TrickHLA.TrickHLAObjectConfig import *
-from Modified_data.TrickHLA.TrickHLAAttributeConfig import *
+from TrickHLA_data.TrickHLA.TrickHLAObjectConfig import *
+from TrickHLA_data.TrickHLA.TrickHLAAttributeConfig import *
 
 exec( open( "Modified_data/realtime.py" ).read() )
 exec( open( "Modified_data/vehicleState.dr" ).read() )

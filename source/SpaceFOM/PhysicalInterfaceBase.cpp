@@ -76,20 +76,6 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
  */
 PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 {
-   if ( this->packing_data.name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
-                          __LINE__ );
-      }
-      this->packing_data.name = NULL;
-   }
-   if ( this->packing_data.parent_name != (char *)NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d WARNING failed to delete Trick Memory for 'this->parent'\n",
-                          __LINE__ );
-      }
-      this->packing_data.parent_name = NULL;
-   }
    initialized   = false;
    name_attr     = NULL;
    position_attr = NULL;
@@ -101,32 +87,35 @@ PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
  * @job_class{initialization}
  */
 void PhysicalInterfaceBase::base_config(
-   char const       *sim_obj_name,
-   char const       *interface_obj_name,
-   char const       *interface_name,
-   char const       *interface_parent_name,
-   bool              publishes,
-   TrickHLA::Object *mngr_object )
+   bool                create,
+   std::string const & sim_obj_name,
+   std::string const & interface_pkg_name,
+   std::string const & interface_fed_name,
+   TrickHLA::Object  * mngr_object )
 {
-   string interface_name_str = string( sim_obj_name ) + "." + string( interface_obj_name );
-   string trick_name_str;
+   string interface_full_name_str = sim_obj_name + "." + interface_pkg_name;
 
-   // Associate the instantiated Manager object with this packing object.
-   this->object = mngr_object;
-
-   // Set the parent frame name.
-   if ( interface_parent_name != NULL ) {
-      this->packing_data.parent_name = trick_MM->mm_strdup( interface_parent_name );
+   // Make sure that the TrickHLA::Object pointer is not NULL.
+   // If NULL, this it means this object has not been allocated yet.
+   // If not allocated, there are two options:
+   // 1). We are configuring in the input file, which is okay.
+   // 2). We are configuring in default_data but forgot to allocate and
+   //     assign the associated object in the 'create_connections()' routine.
+   if ( mngr_object == NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         ostringstream errmsg;
+         errmsg << "PhysicalInterfaceBase::base_config() Warning: " << std::endl
+                << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is NULL." << std::endl
+                << "\tEither of the two things are possible:" << std::endl
+                << "\t1). We are configuring in the input file, which is okay." << std::endl
+                << "\t2). We are configuring in default_data but forgot to allocate and" << std::endl
+                << "\t    assign the associated object in the 'create_connections()' routine.";
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+      return;
    } else {
-      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
-   }
-   if ( interface_name != NULL ) {
-      this->packing_data.name = trick_MM->mm_strdup( interface_name );
-   } else {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance PhysicalInterface name!\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
+      // Associate the instantiated Manager object with this packing object.
+      this->object = mngr_object;
    }
 
    //---------------------------------------------------------
@@ -134,8 +123,8 @@ void PhysicalInterfaceBase::base_config(
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
    object->FOM_name            = "PhysicalInterface";
-   object->name                = interface_name;
-   object->create_HLA_instance = publishes;
+   object->name                = interface_fed_name;
+   object->create_HLA_instance = create;
    object->packing             = this;
    // Allocate the attributes for the PhysicalInterface HLA object.
    object->attr_count = 9;
@@ -145,39 +134,35 @@ void PhysicalInterfaceBase::base_config(
    // Specify the Reference Frame attributes.
    //
    object->attributes[0].FOM_name      = "name";
-   trick_name_str                      = interface_name_str + string( ".packing_data.name" );
-   object->attributes[0].trick_name    = trick_name_str;
+   object->attributes[0].trick_name    = interface_full_name_str + string( ".packing_data.name" );;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[0].publish       = publishes;
-   object->attributes[0].subscribe     = !publishes;
-   object->attributes[0].locally_owned = publishes;
+   object->attributes[0].publish       = create;
+   object->attributes[0].subscribe     = !create;
+   object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[1].FOM_name      = "parent_name";
-   trick_name_str                      = interface_name_str + string( ".packing_data.parent_name" );
-   object->attributes[1].trick_name    = trick_name_str;
+   object->attributes[1].trick_name    = interface_full_name_str + string( ".packing_data.parent_name" );;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[1].publish       = publishes;
-   object->attributes[1].subscribe     = !publishes;
-   object->attributes[1].locally_owned = publishes;
+   object->attributes[1].publish       = create;
+   object->attributes[1].subscribe     = !create;
+   object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[2].FOM_name      = "position";
-   trick_name_str                      = interface_name_str + string( ".packing_data.position" );
-   object->attributes[2].trick_name    = trick_name_str;
+   object->attributes[2].trick_name    = interface_full_name_str + string( ".packing_data.position" );;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[2].publish       = publishes;
-   object->attributes[2].subscribe     = !publishes;
-   object->attributes[2].locally_owned = publishes;
+   object->attributes[2].publish       = create;
+   object->attributes[2].subscribe     = !create;
+   object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[3].FOM_name      = "attitude";
-   trick_name_str                      = interface_name_str + string( ".quat_encoder.buffer" );
-   object->attributes[3].trick_name    = trick_name_str;
+   object->attributes[3].trick_name    = interface_full_name_str + string( ".quat_encoder.buffer" );;
    object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[3].publish       = publishes;
-   object->attributes[3].subscribe     = !publishes;
-   object->attributes[3].locally_owned = publishes;
+   object->attributes[3].publish       = create;
+   object->attributes[3].subscribe     = !create;
+   object->attributes[3].locally_owned = create;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_NONE;
 
    return;
@@ -188,25 +173,34 @@ void PhysicalInterfaceBase::base_config(
  */
 void PhysicalInterfaceBase::configure()
 {
-   // Must have federation instance name.
-   if ( this->packing_data.name == NULL ) {
+   // Check for a NULL object pointer.
+   if ( this->object == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL interface name!"
-             << "  Setting frame name to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->packing_data.name = trick_MM->mm_strdup( "" );
+      errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
+             << " WARNING: Unexpected NULL TrickHLA Object pointer!" << std::endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Must have federation instance parent_ref_frame.
-   if ( this->packing_data.parent_name == NULL ) {
+   // Check for empty federation instance name.
+   if (    this->object->create_HLA_instance
+        && this->packing_data.name.empty() ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL interface parent!"
-             << "  Setting parent_ref_frame to empty string.\n";
+      errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
+             << " WARNING: Unexpected empty interface name!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
+
+   // Check for empty federation instance parent_ref_frame.
+   if (    this->object->create_HLA_instance
+        && this->packing_data.parent_name.empty() ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
+             << " WARNING: Unexpected empty interface parent!" << std::endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+   }
+
+   // Call the base class function.
+   TrickHLA::Packing::configure();
 
    return;
 }
@@ -217,24 +211,21 @@ void PhysicalInterfaceBase::configure()
 void PhysicalInterfaceBase::initialize()
 {
    // Must have interface instance name.
-   if ( this->packing_data.name == NULL ) {
+   if (    this->object->create_HLA_instance
+        && this->packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL interface name!"
-             << "  Setting frame name to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->packing_data.name = trick_MM->mm_strdup( "" );
+             << " WARNING: Unexpected empty interface name!" << std::endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Should have interface parent specified if creating this interface.
-   if ( this->object->create_HLA_instance
-        && this->packing_data.parent_name == NULL ) {
+   if (    this->object->create_HLA_instance
+        && this->packing_data.parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL interface parent!"
-             << "  Setting parent_ref_frame to empty string.\n";
+             << " WARNING: Unexpected empty interface parent!" << std::endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
 
    // Mark this as initialized.
@@ -276,30 +267,34 @@ void PhysicalInterfaceBase::initialize_callback(
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterfaceBase::set_name( char const *new_name )
+void PhysicalInterfaceBase::set_name( std::string const & new_name )
 {
-   if ( this->packing_data.name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterfaceBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'\n",
-                          __LINE__ );
-      }
+   if (    this->object != NULL
+        && this->object->create_HLA_instance
+        && new_name.empty() ){
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::PhysicalInterfaceBase::set_name():" << __LINE__
+             << " WARNING: Unexpected empty interface name!" << std::endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
-   this->packing_data.name = trick_MM->mm_strdup( new_name );
+   this->packing_data.name = new_name;
    return;
 }
 
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
+void PhysicalInterfaceBase::set_parent( std::string const & new_parent_name )
 {
-   if ( this->packing_data.parent_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::PhysicalInterfaceBase::set_parent():%d WARNING failed to delete Trick Memory for 'this->parent_frame'\n",
-                          __LINE__ );
-      }
+   if (    this->object != NULL
+        && this->object->create_HLA_instance
+        && new_parent_name.empty() ){
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::PhysicalInterfaceBase::set_parent():" << __LINE__
+             << " WARNING: Unexpected empty parent name!" << std::endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
-   this->packing_data.parent_name = trick_MM->mm_strdup( new_parent_name );
+   this->packing_data.parent_name = new_parent_name;
 
    return;
 }
@@ -373,8 +368,8 @@ void PhysicalInterfaceBase::print_data( std::ostream &stream ) const
    stream.precision( 15 );
 
    stream << "\tObject-Name: '" << object->get_name() << "'\n"
-          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'\n"
-          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'\n";
+          << "\tname:   '" << packing_data.name << "'\n"
+          << "\tparent: '" << packing_data.parent_name << "'\n";
    stream << "\tposition: "
           << "\t\t" << packing_data.position[0] << ", "
           << "\t\t" << packing_data.position[1] << ", "

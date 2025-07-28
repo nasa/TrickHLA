@@ -203,14 +203,22 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
 // PhysicalEntity instance.
-SpaceFOMPhysicalEntitySimObject physical_entity( pe_dynamics.entity.pe_data );
+SpaceFOMPhysicalEntitySimObject physical_entity( true,
+                                                 "physical_entity",
+                                                 "PhysicalEntityName",
+                                                 pe_dynamics.entity.pe_data );
 
 // DynamicalEntity instance.
-SpaceFOMDynamicalEntitySimObject dynamical_entity( de_dynamics.entity.pe_data,
+SpaceFOMDynamicalEntitySimObject dynamical_entity( true,
+                                                   "dynamical_entity",
+                                                   "DynamicalEntityName",
+                                                   de_dynamics.entity.pe_data,
                                                    de_dynamics.entity.de_data );
 
 // PhysicalInterface instance.
-SpaceFOMPhysicalInterfaceSimObject physical_interface;
+SpaceFOMPhysicalInterfaceSimObject physical_interface( true,
+                                                       "physical_interface",
+                                                       "PhysicalINterfaceName" );
 
 // Place the entities in the integration loop.
 //IntegLoop dyn_integloop (0.125) pe_dynamics, de_dynamics;

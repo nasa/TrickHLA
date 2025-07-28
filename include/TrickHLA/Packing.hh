@@ -85,9 +85,23 @@ class Packing
    // Helper functions.
    //-----------------------------------------------------------------
 
+   // Configure the packing object.
+   /*! @brief Configure the TrickHLA Packing object. */
+   virtual void configure() { configured = true; }
+
+   /*! @brief Check if the TrickHLA Packing object is configured.
+    *  @param status Configuration status. */
+   virtual void set_configured( bool status = true ) { configured = status; }
+
+   /*! @brief Check if the TrickHLA Packing object is configured. */
+   virtual bool is_configured() { return( configured ); }
+
    // Initialize the packing object.
    /*! @brief Finish the initialization of the TrickHLA Packing object. */
-   virtual void initialize() { initialized = true; }
+   virtual void initialize();
+
+   /*! @brief Check if the TrickHLA Packing object is initialized. */
+   virtual bool is_initialized() { return( initialized ); }
 
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */
@@ -120,6 +134,7 @@ class Packing
    double get_cte_time();
 
   protected:
+   bool    configured;  ///< @trick_units{--} Configured status flag.
    bool    initialized; ///< @trick_units{--} Initialization status flag.
    Object *object;      ///< @trick_io{**} Object associated with this class.
 

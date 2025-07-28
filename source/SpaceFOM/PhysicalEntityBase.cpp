@@ -81,11 +81,6 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
    //
    // Initialize the PhysicalEntity packing data structure.
    //
-   // String name parameters.
-   pe_packing_data.name         = NULL;
-   pe_packing_data.type         = NULL;
-   pe_packing_data.status       = NULL;
-   pe_packing_data.parent_frame = NULL;
 
    // Setup the Space-Time-Coordinate data.
    V_INIT( pe_packing_data.state.pos );
@@ -103,6 +98,8 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
    // The body to structural orientation quaternion.
    pe_packing_data.body_wrt_struct.scalar = 1.0;
    V_INIT( pe_packing_data.body_wrt_struct.vector );
+
+   return;
 }
 
 /*!
@@ -110,38 +107,12 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
  */
 PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
 {
-   if ( this->pe_packing_data.name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->name'\n",
-                          __LINE__ );
-      }
-      this->pe_packing_data.name = NULL;
-   }
-   if ( this->pe_packing_data.type != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.type ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->type'\n",
-                          __LINE__ );
-      }
-      this->pe_packing_data.type = NULL;
-   }
-   if ( this->pe_packing_data.status != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.status ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->status'\n",
-                          __LINE__ );
-      }
-      this->pe_packing_data.status = NULL;
-   }
-   if ( this->pe_packing_data.parent_frame != (char *)NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.parent_frame ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING deleting Trick Memory for 'this->parent_frame'\n",
-                          __LINE__ );
-      }
-      this->pe_packing_data.parent_frame = NULL;
-   }
    initialized     = false;
    name_attr       = NULL;
    state_attr      = NULL;
    body_frame_attr = NULL;
+
+   return;
 }
 
 /*!
@@ -149,32 +120,45 @@ PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
  * @job_class{initialization}
  */
 void PhysicalEntityBase::base_config(
-   char const       *sim_obj_name,
-   char const       *entity_obj_name,
-   char const       *entity_name,
-   char const       *parent_ref_frame_name,
-   bool              publishes,
-   TrickHLA::Object *mngr_object )
+   bool                create,
+   std::string const & sim_obj_name,
+   std::string const & entity_pkg_name,
+   std::string const & entity_fed_name,
+   TrickHLA::Object  * mngr_object )
 {
-   string entity_name_str = string( sim_obj_name ) + "." + string( entity_obj_name );
-   string trick_name_str;
+   string entity_full_name_str = sim_obj_name + "." + entity_pkg_name;
 
-   // Associate the instantiated Manager object with this packing object.
-   this->object = mngr_object;
-
-   // Set the parent frame name.
-   if ( parent_ref_frame_name != NULL ) {
-      pe_packing_data.parent_frame = trick_MM->mm_strdup( parent_ref_frame_name );
+   // Make sure that the TrickHLA::Object pointer is not NULL.
+   // If NULL, this it means this object has not been allocated yet.
+   // If not allocated, there are two options:
+   // 1). We are configuring in the input file, which is okay.
+   // 2). We are configuring in default_data but forgot to allocate and
+   //     assign the associated object in the 'create_connections()' routine.
+   if ( mngr_object == NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         ostringstream errmsg;
+         errmsg << "PhysicalEntityBase::base_config() Warning: " << std::endl
+                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL." << std::endl
+                << "\tEither of the two things are possible:" << std::endl
+                << "\t1). We are configuring in the input file, which is okay." << std::endl
+                << "\t2). We are configuring in default_data but forgot to allocate and" << std::endl
+                << "\t    assign the associated object in the 'create_connections()' routine.";
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+      return;
    } else {
-      pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
+      // Associate the instantiated Manager object with this packing object.
+      this->object = mngr_object;
    }
-   if ( entity_name != NULL ) {
-      pe_packing_data.name = trick_MM->mm_strdup( entity_name );
-   } else {
+
+   // Set the entity name.
+   if ( entity_fed_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::base_config():" << __LINE__
-             << " ERROR: Unexpected NULL federation instance PhysicalEntity name!\n";
+             << " WARNING: Unexpected empty federation instance frame name!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
+   } else {
+      set_name( entity_fed_name );
    }
 
    //---------------------------------------------------------
@@ -182,8 +166,8 @@ void PhysicalEntityBase::base_config(
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
    object->FOM_name            = "PhysicalEntity";
-   object->name                = entity_name;
-   object->create_HLA_instance = publishes;
+   object->name                = entity_fed_name;
+   object->create_HLA_instance = create;
    object->packing             = this;
    // Allocate the attributes for the PhysicalEntity HLA object.
    object->attr_count = 9;
@@ -193,84 +177,75 @@ void PhysicalEntityBase::base_config(
    // Specify the Reference Frame attributes.
    //
    object->attributes[0].FOM_name      = "name";
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.name" );
-   object->attributes[0].trick_name    = trick_name_str;
+   object->attributes[0].trick_name    = entity_full_name_str + string( ".pe_packing_data.name" );;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[0].publish       = publishes;
-   object->attributes[0].subscribe     = !publishes;
-   object->attributes[0].locally_owned = publishes;
+   object->attributes[0].publish       = create;
+   object->attributes[0].subscribe     = !create;
+   object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[1].FOM_name      = "type";
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.type" );
-   object->attributes[1].trick_name    = trick_name_str;
+   object->attributes[1].trick_name    = entity_full_name_str + string( ".pe_packing_data.type" );;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[1].publish       = publishes;
-   object->attributes[1].subscribe     = !publishes;
-   object->attributes[1].locally_owned = publishes;
+   object->attributes[1].publish       = create;
+   object->attributes[1].subscribe     = !create;
+   object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[2].FOM_name      = "status";
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.status" );
-   object->attributes[2].trick_name    = trick_name_str;
+   object->attributes[2].trick_name    = entity_full_name_str + string( ".pe_packing_data.status" );;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[2].publish       = publishes;
-   object->attributes[2].subscribe     = !publishes;
-   object->attributes[2].locally_owned = publishes;
+   object->attributes[2].publish       = create;
+   object->attributes[2].subscribe     = !create;
+   object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[3].FOM_name      = "parent_reference_frame";
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.parent_frame" );
-   object->attributes[3].trick_name    = trick_name_str;
+   object->attributes[3].trick_name    = entity_full_name_str + string( ".pe_packing_data.parent_frame" );;
    object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[3].publish       = publishes;
-   object->attributes[3].subscribe     = !publishes;
-   object->attributes[3].locally_owned = publishes;
+   object->attributes[3].publish       = create;
+   object->attributes[3].subscribe     = !create;
+   object->attributes[3].locally_owned = create;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[4].FOM_name      = "state";
-   trick_name_str                      = entity_name_str + string( ".stc_encoder.buffer" );
-   object->attributes[4].trick_name    = trick_name_str;
+   object->attributes[4].trick_name    = entity_full_name_str + string( ".stc_encoder.buffer" );;
    object->attributes[4].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[4].publish       = publishes;
-   object->attributes[4].subscribe     = !publishes;
-   object->attributes[4].locally_owned = publishes;
+   object->attributes[4].publish       = create;
+   object->attributes[4].subscribe     = !create;
+   object->attributes[4].locally_owned = create;
    object->attributes[4].rti_encoding  = TrickHLA::ENCODING_NONE;
 
    object->attributes[5].FOM_name      = "acceleration";
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.accel" );
-   object->attributes[5].trick_name    = trick_name_str;
+   object->attributes[5].trick_name    = entity_full_name_str + string( ".pe_packing_data.accel" );;
    object->attributes[5].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[5].publish       = publishes;
-   object->attributes[5].subscribe     = !publishes;
-   object->attributes[5].locally_owned = publishes;
+   object->attributes[5].publish       = create;
+   object->attributes[5].subscribe     = !create;
+   object->attributes[5].locally_owned = create;
    object->attributes[5].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[6].FOM_name      = "rotational_acceleration";
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.ang_accel" );
-   object->attributes[6].trick_name    = trick_name_str;
+   object->attributes[6].trick_name    = entity_full_name_str + string( ".pe_packing_data.ang_accel" );;
    object->attributes[6].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[6].publish       = publishes;
-   object->attributes[6].subscribe     = !publishes;
-   object->attributes[6].locally_owned = publishes;
+   object->attributes[6].publish       = create;
+   object->attributes[6].subscribe     = !create;
+   object->attributes[6].locally_owned = create;
    object->attributes[6].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[7].FOM_name      = "center_of_mass";
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.cm" );
-   object->attributes[7].trick_name    = trick_name_str;
+   object->attributes[7].trick_name    = entity_full_name_str + string( ".pe_packing_data.cm" );;
    object->attributes[7].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[7].publish       = publishes;
-   object->attributes[7].subscribe     = !publishes;
-   object->attributes[7].locally_owned = publishes;
+   object->attributes[7].publish       = create;
+   object->attributes[7].subscribe     = !create;
+   object->attributes[7].locally_owned = create;
    object->attributes[7].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[8].FOM_name      = "body_wrt_structural";
-   trick_name_str                      = entity_name_str + string( ".quat_encoder.buffer" );
-   object->attributes[8].trick_name    = trick_name_str;
+   object->attributes[8].trick_name    = entity_full_name_str + string( ".quat_encoder.buffer" );;
    object->attributes[8].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[8].publish       = publishes;
-   object->attributes[8].subscribe     = !publishes;
-   object->attributes[8].locally_owned = publishes;
+   object->attributes[8].publish       = create;
+   object->attributes[8].subscribe     = !create;
+   object->attributes[8].locally_owned = create;
    object->attributes[8].rti_encoding  = TrickHLA::ENCODING_NONE;
 
    return;
@@ -281,45 +256,30 @@ void PhysicalEntityBase::base_config(
  */
 void PhysicalEntityBase::configure()
 {
+
    // Must have federation instance name.
-   if ( pe_packing_data.name == NULL ) {
+   if ( pe_packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
-             << " WARNING: Unexpected NULL entity name!"
-             << " Setting frame name to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->pe_packing_data.name = trick_MM->mm_strdup( "" );
-   }
-
-   // Must have federation instance type.
-   if ( pe_packing_data.type == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
-             << " WARNING: Unexpected NULL entity type!"
-             << " Setting type to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->pe_packing_data.type = trick_MM->mm_strdup( "" );
-   }
-
-   // Must have federation instance status.
-   if ( pe_packing_data.status == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
-             << " WARNING: Unexpected NULL entity status!"
-             << " Setting status to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->pe_packing_data.status = trick_MM->mm_strdup( "" );
+             << " ERROR: Unexpected empty federation instance name!"
+             << std::endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Must have federation instance parent_ref_frame.
-   if ( pe_packing_data.parent_frame == NULL ) {
+   if ( pe_packing_data.parent_frame.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
-             << " Setting parent_ref_frame to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
+             << " Setting parent_ref_frame to empty string."
+             << std::endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
+
+   // Call the base class function.
+   TrickHLA::Packing::configure();
 
    // Return to calling routine.
    return;
@@ -330,44 +290,26 @@ void PhysicalEntityBase::configure()
  */
 void PhysicalEntityBase::initialize()
 {
+
    // Must have federation instance name.
-   if ( pe_packing_data.name == NULL ) {
+   if ( pe_packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL entity name!"
-             << " Setting frame name to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->pe_packing_data.name = trick_MM->mm_strdup( "" );
-   }
-
-   // Must have federation instance type.
-   if ( pe_packing_data.type == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL entity type!"
-             << " Setting type to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->pe_packing_data.type = trick_MM->mm_strdup( "" );
-   }
-
-   // Must have federation instance status.
-   if ( pe_packing_data.status == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL entity status!"
-             << " Setting status to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->pe_packing_data.status = trick_MM->mm_strdup( "" );
+             << " ERROR: Unexpected empty federation instance name!"
+             << std::endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Must have federation instance parent_ref_frame.
-   if ( pe_packing_data.parent_frame == NULL ) {
+   if ( pe_packing_data.parent_frame.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
-             << " Setting parent_ref_frame to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
+             << " Setting parent_ref_frame to empty string."
+             << std::endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -417,7 +359,7 @@ void PhysicalEntityBase::initialize_callback(
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityBase::set_name( char const *new_name )
+void PhysicalEntityBase::set_name( std::string const &new_name )
 {
    pe_packing_data.set_name( new_name );
    return;
@@ -426,7 +368,7 @@ void PhysicalEntityBase::set_name( char const *new_name )
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityBase::set_type( char const *new_type )
+void PhysicalEntityBase::set_type( std::string const &new_type )
 {
    pe_packing_data.set_type( new_type );
    return;
@@ -435,7 +377,7 @@ void PhysicalEntityBase::set_type( char const *new_type )
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityBase::set_status( char const *new_status )
+void PhysicalEntityBase::set_status( std::string const &new_status )
 {
    pe_packing_data.set_status( new_status );
    return;
@@ -444,7 +386,7 @@ void PhysicalEntityBase::set_status( char const *new_status )
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityBase::set_parent_frame( char const *new_frame )
+void PhysicalEntityBase::set_parent_frame( std::string const &new_frame )
 {
    pe_packing_data.set_parent_frame( new_frame );
    return;

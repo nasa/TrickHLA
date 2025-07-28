@@ -18,10 +18,10 @@ import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
@@ -30,6 +30,7 @@ def print_usage_message():
    print( 'SpaceFOM Reference Frame Simulation Command Line Configuration Options:' )
    print( '  -c --case [name]     : Set the name for the case definition file.' )
    print( '  -d                   : Pass the input file debug option on to Trick.' )
+   print( '  --default_data       : Use default_data to configure the objects.' )
    print( '  -e --express [frame] : Set express frame for the relative state.' )
    print( '  -f --frames [file]   : Set the name for the frames definition file.' )
    print( '  -h --help            : Print this help message.' )
@@ -94,6 +95,10 @@ def parse_command_line():
       elif ( str( argv[index] ) == '-d' ):
          # Catch the Trick debug command line option an do NOT terminate.
          print( 'DEBUG: Specified input file debug option to Trick.' )
+
+      elif ( str( argv[index] ) == '--default_data_config' ):
+         # Catch the default_data configure command line option an do NOT terminate.
+         print( 'NOTE: Configuring with default_data option.' )
 
       elif ( ( str( argv[index] ) == '-e' ) | ( str( argv[index] ) == '--express' ) ):
          index = index + 1

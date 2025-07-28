@@ -52,7 +52,8 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Packing::Packing()
-   : initialized( false ),
+   : configured( false ),
+     initialized( false ),
      object( NULL )
 {
    return;
@@ -63,6 +64,37 @@ Packing::Packing()
  */
 Packing::~Packing()
 {
+   return;
+}
+
+/*!
+ * @job_class{default_data}
+ */
+void Packing::initialize()
+{
+   if ( !configured ){
+
+      // Check to see if the TrickHLA object has been set.
+      if ( object != NULL ) {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::Packing::initialize():" << __LINE__
+                << " ERROR: The packing function has not been configured for object: '"
+                << object->name << "'!" << std::endl;
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      else {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::Packing::initialize():" << __LINE__
+                << " ERROR: The packing function has not been configured!\n";
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+   }
+
+   initialized = true;
+
    return;
 }
 

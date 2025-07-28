@@ -77,19 +77,17 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
 
    // Default data.
    /*! @brief Sets up the attributes for a PhysicalInterface using default values.
+    *  @param create                Does this federate create this PhysicalInterface instance.
     *  @param sim_obj_name          Name of SimObject containing this PhysicalInterface.
-    *  @param interface_obj_name    Name of the PhysicalInterface object in the SimObject.
-    *  @param interface_name        Name of the PhysicalInterface instance.
-    *  @param interface_parent_name Name of the parent PhysicalEntity or PhysicalInterface for this PhysicalInterface instance.
-    *  @param publishes             Does this federate publish this PhysicalInterface.
+    *  @param interface_pkg_name    Name of the PhysicalInterface object in the SimObject.
+    *  @param interface_fed_name    Name of the PhysicalInterface instance.
     *  @param mngr_object           TrickHLA::Object associated with this PhysicalInterface.
     *  */
-   virtual void base_config( char const       *sim_obj_name,
-                             char const       *interface_obj_name,
-                             char const       *interface_name,
-                             char const       *interface_parent_name,
-                             bool              publishes,
-                             TrickHLA::Object *mngr_object = NULL );
+   virtual void base_config( bool                create,
+                             std::string const & sim_obj_name,
+                             std::string const & interface_pkg_name,
+                             std::string const & interface_fed_name,
+                             TrickHLA::Object  * mngr_object = NULL );
 
    // Pre-initialize the packing object.
    /*! @brief Function to begin the initialization/configuration of the
@@ -97,7 +95,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
     *  This function needs to be called prior to TrickHLA initialization if
     *  the PhysicalInterface object is not being configured with an
     *  initialization constructor. */
-   void configure(); // cppcheck-suppress [duplInheritedMember]
+   virtual void configure(); // cppcheck-suppress [duplInheritedMember]
 
    /*! @brief Interface instance initialization routine. */
    virtual void initialize();
@@ -109,11 +107,11 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    // Access functions.
    /*! @brief Set the name of the PhysicalInterface object instance.
     *  @param new_name Name of the PhysicalInterface object instance. */
-   virtual void set_name( char const *new_name );
+   virtual void set_name( std::string const & new_name );
 
    /*! @brief Get the name of the PhysicalInterface object instance.
     *  @return Name of the PhysicalInterface object instance. */
-   virtual char const *get_name()
+   virtual std::string const & get_name()
    {
       return packing_data.name;
    }
@@ -121,11 +119,11 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    /*! @brief Set the name of the parent reference frame for the PhysicalInterface.
     *  @param new_parent_name The name of the parent reference frame associated
     *  with the PhysicalInterface. */
-   virtual void set_parent( char const *new_parent_name );
+   virtual void set_parent( std::string const & new_parent_name );
 
    /*! @brief Get the name of the parent reference frame associated with the PhysicalInterface.
     *  @return Name of the parent reference frame associated with the PhysicalInterface. */
-   virtual char const *get_parent()
+   virtual std::string const & get_parent()
    {
       return packing_data.parent_name;
    }

@@ -61,10 +61,13 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOM::RefFrameDeleted deleted_callback;
 
    // SimObject constructor.
-   SpaceFOMRefFrameSimObject( SpaceFOM::RefFrameTree & frame_tree_ref,
+   SpaceFOMRefFrameSimObject( bool                     create_object,
+                              std::string const      & sim_obj_name,
+                              std::string const      & frame_fed_name,
+                              SpaceFOM::RefFrameTree & frame_tree_ref,
                               SpaceFOM::RefFrameData & frame_data_ref,   
                               unsigned short           _INIT = P_HLA_INIT )
-      : TrickHLAPackingBaseSimObject( _INIT ),
+      : TrickHLAPackingBaseSimObject( create_object, sim_obj_name, "frame_packing", frame_fed_name, _INIT ),
         frame_packing( frame_data_ref ),
         lag_compensation( frame_packing ),
         conditional( frame_packing ),
@@ -78,12 +81,64 @@ class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
       deleted_base_ptr     = &deleted_callback;
       
       //
-      // Initialization jobs
+      // Default data jobs.
       //
-      P_INIT ("initialization") frame_tree.add_frame( &frame_packing );
+      // See TrickHLAPackingBaseSimObject:
+      // The base class default_config function will run the local function.
+
+      //
+      // Initialization jobs.
+      //
+      // See TrickHLAPackingBaseSimObject:
+      // The base class configure function will run the local function.
+      // The base class intialize function will run the local function.
    }
 
-  private:
+  protected:
+    virtual int default_config()
+    {
+       int value;
+
+       // Call the Light packing base_config function first.
+       frame_packing.base_config( create,
+                                  sim_object_name,
+                                  object_packing_name,
+                                  object_fed_name,
+                                  thla_object );
+       
+       // Now call the base class default config function.
+       value = TrickHLAPackingBaseSimObject::default_config();
+       
+       return( value );
+    }
+
+    virtual int configure()
+    {
+       int value;
+       
+       // Now call the base class default config function.
+       // NOTE: This will call the packing class configure() function.
+       value = TrickHLAPackingBaseSimObject::configure();
+       
+       return( value );
+    }
+
+    virtual int initialize()
+    {
+       int value;
+       
+       // Add the frame to the frame tree.
+       frame_tree.add_frame( &frame_packing );
+       
+       // Now call the base class default config function.
+       // NOTE: This will call the packing class initialize() function.
+       value = TrickHLAPackingBaseSimObject::initialize();
+       
+       return( value );
+    }
+
+  protected:
+   
    // Reference to the frame tree manager.
    SpaceFOM::RefFrameTree & frame_tree;
 

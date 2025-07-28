@@ -68,11 +68,6 @@ class RefFrameState : public SpaceFOM::RefFrameBase
    /*! @brief Destructor for the SpaceFOM RefFrameState class. */
    virtual ~RefFrameState();
 
-   // Initialize the packing object.
-   /*! @brief Set the reference to the reference frame data.
-    *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
-   void configure( RefFrameData *ref_frame_data_ptr );
-
    /*! @brief Finish the initialization of the RefFrame. */
    virtual void initialize();
 
@@ -85,6 +80,17 @@ class RefFrameState : public SpaceFOM::RefFrameBase
     *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
+
+   /*! @brief Get reference to working data.
+    *  @return Reference to the working data. */
+   virtual RefFrameData *get_data()
+   {
+      return ( ref_frame_data );
+   }
+
+   /*! @brief Set the reference to the reference frame data.
+    *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
+   virtual void set_data( RefFrameData *ref_frame_data );
 
   protected:
    RefFrameData *ref_frame_data; ///< @trick_units{--} Reference frame data.

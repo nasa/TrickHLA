@@ -91,11 +91,9 @@ RefFrameState::~RefFrameState()
 /*!
  * @job_class{initialization}
  */
-void RefFrameState::configure(
+void RefFrameState::set_data(
    RefFrameData *ref_frame_data_ptr )
 {
-   // First call the base class pre_initialize function.
-   RefFrameBase::configure();
 
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
@@ -106,6 +104,9 @@ void RefFrameState::configure(
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->ref_frame_data = ref_frame_data_ptr;
+
+   // Now call the base class pre_initialize function.
+   RefFrameBase::configure();
 
    // Return to calling routine.
    return;
@@ -139,30 +140,14 @@ void RefFrameState::pack_from_working_data()
 {
    int iinc;
 
-   // Check for parent frame change.
-   if ( ref_frame_data->parent_name != NULL ) {
-      if ( packing_data.parent_name != NULL ) {
-         // We have a parent frame; so, check to see if frame names are different.
-         if ( strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
-            // Frames are different, so reassign the new frame string.
-            if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
-               message_publish( MSG_WARNING, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
-                                __LINE__ );
-            }
-            packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
-         }
-      } else {
-         packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
-      }
-   } else {
-      if ( packing_data.parent_name != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
-            message_publish( MSG_WARNING, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
-                             __LINE__ );
-         }
-         // For a NULL parent frame, we must pack an 'empty' string.
-         packing_data.parent_name = trick_MM->mm_strdup( "" );
-      }
+   // Copy frame name.
+   if ( packing_data.name != ref_frame_data->name ){
+      packing_data.name = ref_frame_data->name;
+   }
+
+   // Copy parent frame name.
+   if ( packing_data.parent_name != ref_frame_data->parent_name ){
+      packing_data.parent_name = ref_frame_data->parent_name;
    }
 
    // Pack the data.
@@ -201,38 +186,11 @@ void RefFrameState::unpack_into_working_data()
 
    // Set the reference frame name and parent frame name.
    if ( name_attr->is_received() ) {
-      if ( ref_frame_data->name != NULL ) {
-         if ( !strcmp( ref_frame_data->name, packing_data.name ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( ref_frame_data->name ) ) ) {
-               message_publish( MSG_WARNING, "RefFrameState::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ref_frame_data->name'\n",
-                                __LINE__ );
-            }
-            ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
-         }
-      } else {
-         ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
-      }
+      ref_frame_data->name = packing_data.name;
    }
 
    if ( parent_name_attr->is_received() ) {
-      if ( ref_frame_data->parent_name != NULL ) {
-         if ( !strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( ref_frame_data->parent_name ) ) ) {
-               message_publish( MSG_WARNING, "RefFrameState::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ref_frame_data->parent_name'\n",
-                                __LINE__ );
-            }
-
-            if ( packing_data.parent_name[0] != '\0' ) {
-               ref_frame_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
-            } else {
-               ref_frame_data->parent_name = NULL;
-            }
-         }
-      } else {
-         if ( packing_data.parent_name[0] != '\0' ) {
-            ref_frame_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
-         }
-      }
+      ref_frame_data->parent_name = packing_data.parent_name;
    }
 
    // Unpack the ReferenceFrame space-time coordinate state.

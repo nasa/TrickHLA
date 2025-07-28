@@ -65,10 +65,13 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOM::DynamicalEntityDeleted deleted_callback;
 
    // SimObject constructor.
-   SpaceFOMDynamicalEntitySimObject( PhysicalEntityData  & pe,
+   SpaceFOMDynamicalEntitySimObject( bool                  create_object,
+                                     std::string const   & sim_obj_name,
+                                     std::string const   & obj_fed_name,
+                                     PhysicalEntityData  & pe,
                                      DynamicalEntityData & de,
                                      unsigned short        _INIT = P_HLA_INIT  )
-      : TrickHLAPackingBaseSimObject( _INIT ),
+      : TrickHLAPackingBaseSimObject( create_object, sim_obj_name, "entity_packing", obj_fed_name, _INIT ),
         pe_data(pe),
         de_data(de),
         entity_packing( pe, de ),

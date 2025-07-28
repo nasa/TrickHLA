@@ -21,10 +21,10 @@ import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
@@ -177,8 +177,6 @@ trick.exec_set_stack_trace( True )
 
 trick.sim_control_panel_set_enabled( True )
 trick.var_server_set_port( 7000 )
-
-#fix_var_server_source_address()
 
 # =========================================================================
 # Set up the HLA interfaces.

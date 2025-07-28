@@ -19,15 +19,15 @@ import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 # Load the SpaceFOM specific entity configuration objects.
-from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
-from Modified_data.SpaceFOM.SpaceFOMPhysicalInterfaceObject import *
-from Modified_data.SpaceFOM.SpaceFOMDynamicalEntityObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMPhysicalInterfaceObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMDynamicalEntityObject import *
 
 
 def print_usage_message():
@@ -200,8 +200,8 @@ if ( print_usage == True ):
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe( True )
-trick.checkpoint_pre_init( 1 )
-trick.checkpoint_post_init( 1 )
+#trick.checkpoint_pre_init( 1 )
+#trick.checkpoint_post_init( 1 )
 # trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 # trick.checkpoint_end(1)
 
@@ -316,8 +316,8 @@ federate = SpaceFOMFederateConfig(
 
 # Set the debug output level.
 if ( verbose == True ):
-   # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
    federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
    # federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else:

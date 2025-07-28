@@ -131,26 +131,8 @@ bool RefFrameConditionalBase::should_send(
    // Check for Name change.
    if ( attr == name_attr ) {
 
-      if ( frame.packing_data.name != NULL ) {
-         if ( prev_data.name != NULL ) {
-            if ( strcmp( frame.packing_data.name, prev_data.name ) ) {
-               if ( trick_MM->delete_var( static_cast< void * >( prev_data.name ) ) ) {
-                  message_publish( MSG_WARNING,
-                                   "RefFrameConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'\n",
-                                   __LINE__ );
-               }
-               // Update the previous value.
-               prev_data.name = trick_MM->mm_strdup( frame.packing_data.name );
-               // Mark to send.
-               send_attr = true;
-            }
-         } else {
-            // Update the previous value.
-            prev_data.name = trick_MM->mm_strdup( frame.packing_data.name );
-            // Mark to send.
-            send_attr = true;
-         }
-      } else {
+      // A reference frame must have a none empty name.
+      if ( frame.packing_data.name.empty() ){
          ostringstream errmsg;
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
                 << " ERROR: Unexpected NULL Name for RefFrame!\n";
@@ -158,39 +140,19 @@ bool RefFrameConditionalBase::should_send(
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-   } else if ( attr == parent_name_attr ) {
+      if( frame.packing_data.name != prev_data.name ) {
+         // Mark to send.
+         send_attr = true;
+      }
+
+   }
+   else if ( attr == parent_name_attr ) {
+
       // Check for Parent Frame change.
 
-      if ( frame.packing_data.parent_name != NULL ) {
-         if ( prev_data.parent_name != NULL ) {
-            if ( strcmp( frame.packing_data.parent_name, prev_data.parent_name ) ) {
-               if ( trick_MM->delete_var( static_cast< void * >( prev_data.parent_name ) ) ) {
-                  message_publish( MSG_WARNING,
-                                   "RefFrameConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_name'\n",
-                                   __LINE__ );
-               }
-               // Update the previous value.
-               prev_data.parent_name = trick_MM->mm_strdup( frame.packing_data.parent_name );
-               // Mark to send.
-               send_attr = true;
-            }
-         } else {
-            // Update the previous value.
-            prev_data.parent_name = trick_MM->mm_strdup( frame.packing_data.parent_name );
-            // Mark to send.
-            send_attr = true;
-         }
-      } else {
-         ostringstream errmsg;
-         if ( frame.packing_data.name != NULL ) {
-            errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
-                   << " ERROR: Unexpected NULL Parent Frame for RefFrame '" << frame.packing_data.name << "'!\n";
-         } else {
-            errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
-                   << " ERROR: Unexpected NULL Parent Frame for RefFrame!\n";
-         }
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      if( frame.packing_data.parent_name != prev_data.parent_name ) {
+         // Mark to send.
+         send_attr = true;
       }
 
    } else if ( attr == state_attr ) {

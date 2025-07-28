@@ -60,6 +60,9 @@ class TrickHLAInteractionConfig( object ):
 
       # Still need to set the object attributes but this is left to the
       # specific implementation classes.
+      
+      # Mark the InteractionHandler as configured.
+      self.hla_handler_instance.set_configured( True )
 
       return
 
@@ -81,7 +84,7 @@ class TrickHLAInteractionConfig( object ):
       self.set_subscribe( self.hla_subscribe )
       self.set_handler_instance( self.hla_handler_instance )
 
-      # Allocate the federate object's attribute list.
+      # Allocate the federate interaction's parameter list.
       self.hla_manager_interaction.param_count = len( self.parameters )
       if ( self.hla_manager_interaction.param_count > 0 ):
          self.hla_manager_interaction.parameters = \

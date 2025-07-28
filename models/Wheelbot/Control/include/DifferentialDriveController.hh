@@ -3,8 +3,7 @@ PURPOSE: (DifferentialDriveController class)
 
 LIBRARY DEPENDENCY:
     ((Control/src/DifferentialDriveController.cpp)
-     (Control/src/PIDController.cpp)
-     (Motor/src/MotorSpeedController.cpp))
+     (Control/src/PIDController.cpp))
 *******************************************************************************/
 #ifndef DIFFERENTIAL_DRIVE_CONTROLER_HH
 #define DIFFERENTIAL_DRIVE_CONTROLER_HH

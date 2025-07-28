@@ -141,7 +141,8 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") frame_packing.configure( ref_frame_data_ptr );
+      P_INIT ("initialization") frame_packing.set_data( ref_frame_data_ptr );
+      P_INIT ("initialization") frame_packing.configure();
       P_INIT ("initialization") frame_packing.initialize();
    }
 

@@ -2893,7 +2893,7 @@ void ExecutionControl::receive_init_root_ref_frame()
    if ( manager->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::receive_init_root_ref_frame():%d Late joining federate so skipping data for '%s'\n",
-                          __LINE__, root_ref_frame->get_name() );
+                          __LINE__, root_ref_frame->get_name().c_str() );
       }
       return;
    }

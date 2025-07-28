@@ -19,19 +19,19 @@ import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 # Load the SpaceFOM/JEOD specific reference frame tree configuration object.
-from Modified_data.JEOD.JEODRefFrameTreeObject import *
+from TrickHLA_data.JEOD.JEODRefFrameTreeObject import *
 
 # Load the SpaceFOM vehicle PhysicalEntity configuration object.
-from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
 
 # Load the SpaceFOM vehicle PhysicalInterface configuration object.
-from Modified_data.SpaceFOM.SpaceFOMPhysicalInterfaceObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMPhysicalInterfaceObject import *
 
 
 def print_usage_message():

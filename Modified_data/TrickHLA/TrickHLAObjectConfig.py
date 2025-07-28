@@ -126,6 +126,10 @@ class TrickHLAObjectConfig( object ):
 
       # Still need to set the object attributes but this is left to the
       # specific implementation classes.
+      
+      # Mark the Packing object as configured.
+      if self.hla_packing_instance != None:
+         self.hla_packing_instance.set_configured( True )
 
       return
 

@@ -62,12 +62,20 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
    TrickHLA::ObjectDeleted * deleted_base_ptr;
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
-   TrickHLAPackingBaseSimObject( unsigned short _INIT = P_HLA_INIT  )
+   TrickHLAPackingBaseSimObject( bool                create_object,
+                                 std::string const & sim_obj_name,
+                                 std::string const & obj_packing_name,
+                                 std::string const & obj_fed_name,
+                                 unsigned short      _INIT = P_HLA_INIT  )
       : packing_base_ptr( NULL ),
         lag_comp_base_ptr( NULL ),
         conditional_base_ptr( NULL ),
         ownership_base_ptr( NULL ),
         deleted_base_ptr( NULL ),
+        create( create_object ),
+        sim_object_name( sim_obj_name ),
+        object_packing_name( obj_packing_name ),
+        object_fed_name( obj_fed_name ),
         thla_object( NULL )
    {
       //
@@ -80,6 +88,29 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       //
       P_INIT ("initialization") configure();
       P_INIT ("initialization") initialize();
+   }
+
+   virtual void set_object( TrickHLA::Object * object )
+   {
+      if ( packing_base_ptr == NULL ){
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAPackingBaseSimObject::default_config():" << __LINE__
+                << " ERROR: Unexpected NULL Packing object!\n";
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      
+      if ( object == NULL ){
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAPackingBaseSimObject::set_object(): ERROR: " << std::endl
+                << "\tThe TrickHLA::Object associated with object \'" << name << "\' is NULL." << std::endl;
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      
+      // Set the references to the TrickHLA manager object.
+      thla_object = object;
+      packing_base_ptr->set_object( object );
    }
 
  protected:
@@ -162,6 +193,9 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
+      else {
+         packing_base_ptr->configure();
+      }
       
       return( 0 );
    }
@@ -221,8 +255,7 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
          errmsg << "TrickHLAPackingBaseSimObject::initialize(): ERROR: " << std::endl
                 << "\tThe TrickHLA::Object associated with object \'" << name << "\' is NULL." << std::endl;
          // Print message and terminate.
-         //TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
          
       }
 
@@ -238,14 +271,13 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
 
       return( 0 );
    }
-   
- public:
-  TrickHLA::Object * thla_object;
   
  protected:
-  // Scaring for future work.
-  //bool        publishes;
-  //std::string sim_object_name;
+  bool        create;
+  std::string sim_object_name;
+  std::string object_packing_name;
+  std::string object_fed_name;
+  TrickHLA::Object * thla_object;
 
  private:
    // This object is not copyable

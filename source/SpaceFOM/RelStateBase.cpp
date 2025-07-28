@@ -66,10 +66,6 @@ RelStateBase::RelStateBase(
      express_frame( &wrt_frame ),
      frame_tree( &tree )
 {
-   this->name         = NULL;
-   this->type         = NULL;
-   this->status       = NULL;
-   this->parent_frame = NULL;
 
    this->accel[0] = 0.0;
    this->accel[1] = 0.0;
@@ -198,7 +194,7 @@ bool RelStateBase::compute_state(
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not find subject frame: %s!" << endl;
-         message_publish( MSG_WARNING, entity->parent_frame, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, entity->parent_frame.c_str(), errmsg.str().c_str() );
       }
       return ( false );
    }
@@ -233,7 +229,7 @@ bool RelStateBase::compute_state(
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!" << endl;
-         message_publish( MSG_WARNING, entity->parent_frame, express_frame->name, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, entity->parent_frame.c_str(), express_frame->name.c_str(), errmsg.str().c_str() );
       }
       return ( false );
    }

@@ -86,10 +86,31 @@ PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntity::configure( PhysicalEntityData *physical_data_ptr )
+void PhysicalEntity::configure()
 {
+
+   // Set the reference to the PhysicalEntity data.
+   if ( physical_data == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL PhysicalEntityData: "
+             << pe_packing_data.name << '\n';
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // First call the base class pre_initialize function.
    PhysicalEntityBase::configure();
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalEntity::set_data( PhysicalEntityData *physical_data_ptr )
+{
 
    // Set the reference to the PhysicalEntity data.
    if ( physical_data_ptr == NULL ) {
@@ -141,109 +162,23 @@ void PhysicalEntity::pack_from_working_data()
    // state.
 
    // Check for name change.
-   if ( physical_data->name != NULL ) {
-
-      if ( pe_packing_data.name != NULL ) {
-
-         // Compare names.
-         if ( strcmp( physical_data->name, pe_packing_data.name ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.name ) ) ) {
-               message_publish( MSG_WARNING, "PhysicalEntity::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'pe_packing_data.name'\n",
-                                __LINE__ );
-            }
-            pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
-         }
-
-      } else {
-         // No name to compare so copy name.
-
-         pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
-      }
-
-   } else {
-      // This is bad scoobies so just punt.
-
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
-             << " ERROR: Unexpected NULL name for PhysicalEntity!\n";
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   if ( pe_packing_data.name != physical_data->name ) {
+      pe_packing_data.name = physical_data->name;
    }
 
    // Check for type change.
-   if ( physical_data->type != NULL ) {
-      if ( pe_packing_data.type != NULL ) {
-         if ( strcmp( physical_data->type, pe_packing_data.type ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.type ) ) ) {
-               message_publish( MSG_WARNING, "PhysicalEntity::copy_working_data():%d WARNING failed to delete Trick Memory for 'pe_packing_data.type'\n",
-                                __LINE__ );
-            }
-            pe_packing_data.type = trick_MM->mm_strdup( physical_data->type );
-         }
-      } else {
-         pe_packing_data.type = trick_MM->mm_strdup( physical_data->type );
-      }
-   } else {
-      if ( pe_packing_data.type != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.type ) ) ) {
-            message_publish( MSG_WARNING, "PhysicalEntity::copy_working_data():%d WARNING failed to delete Trick Memory for 'pe_packing_data.type'\n",
-                             __LINE__ );
-         }
-         pe_packing_data.type = NULL;
-      }
+   if ( pe_packing_data.type != physical_data->type ) {
+      pe_packing_data.type = physical_data->type;
    }
 
    // Check for status change.
-   if ( physical_data->status != NULL ) {
-      if ( pe_packing_data.status != NULL ) {
-         if ( strcmp( physical_data->status, pe_packing_data.status ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.status ) ) ) {
-               message_publish( MSG_WARNING, "PhysicalEntity::copy_working_data():%d WARNING failed to delete Trick Memory for 'pe_packing_data.status'\n",
-                                __LINE__ );
-            }
-            pe_packing_data.status = trick_MM->mm_strdup( physical_data->status );
-         }
-      } else {
-         pe_packing_data.status = trick_MM->mm_strdup( physical_data->status );
-      }
-   } else {
-      if ( pe_packing_data.status != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.status ) ) ) {
-            message_publish( MSG_WARNING, "PhysicalEntity::copy_working_data():%d WARNING failed to delete Trick Memory for 'pe_packing_data.status'\n",
-                             __LINE__ );
-         }
-         pe_packing_data.status = NULL;
-      }
+   if ( pe_packing_data.status != physical_data->status ) {
+      pe_packing_data.status = physical_data->status;
    }
 
    // Check for parent frame change.
-   if ( physical_data->parent_frame != NULL ) {
-
-      if ( pe_packing_data.parent_frame != NULL ) {
-
-         // We have a parent frame; so, check to see if frame names are different.
-         if ( strcmp( physical_data->parent_frame, pe_packing_data.parent_frame ) ) {
-            // Frames are different, so reassign the new frame string.
-            if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.parent_frame ) ) ) {
-               message_publish( MSG_WARNING, "PhysicalEntity::copy_working_data():%d WARNING failed to delete Trick Memory for 'pe_packing_data.parent_frame'\n",
-                                __LINE__ );
-            }
-            pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
-         }
-
-      } else {
-         // No parent frame name to compare so copy name.
-         pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
-      }
-
-   } else {
-      // This is bad scoobies so just punt.
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
-             << " ERROR: Unexpected NULL parent frame for PhysicalEntity: "
-             << physical_data->name << '\n';
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   if ( pe_packing_data.parent_frame != physical_data->parent_frame ) {
+      pe_packing_data.parent_frame = physical_data->parent_frame;
    }
 
    // Pack the state time coordinate data.
@@ -303,65 +238,19 @@ void PhysicalEntity::unpack_into_working_data()
 
    // Set the entity name, type, status, and parent frame name.
    if ( name_attr->is_received() ) {
-      if ( physical_data->name != NULL ) {
-         if ( !strcmp( physical_data->name, pe_packing_data.name ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( physical_data->name ) ) ) {
-               message_publish( MSG_WARNING, "PhysicalEntity::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'physical_data->name'\n",
-                                __LINE__ );
-            }
-            physical_data->name = trick_MM->mm_strdup( pe_packing_data.name );
-         }
-      } else {
-         physical_data->name = trick_MM->mm_strdup( pe_packing_data.name );
-      }
+      physical_data->name = pe_packing_data.name;
    }
 
    if ( type_attr->is_received() ) {
-      if ( physical_data->type != NULL ) {
-         if ( !strcmp( physical_data->type, pe_packing_data.type ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( physical_data->type ) ) ) {
-               message_publish( MSG_WARNING, "PhysicalEntity::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'physical_data->type'\n",
-                                __LINE__ );
-            }
-            physical_data->type = trick_MM->mm_strdup( pe_packing_data.type );
-         }
-      } else {
-         physical_data->type = trick_MM->mm_strdup( pe_packing_data.type );
-      }
+      physical_data->type = pe_packing_data.type;
    }
 
    if ( status_attr->is_received() ) {
-      if ( physical_data->status != NULL ) {
-         if ( !strcmp( physical_data->status, pe_packing_data.status ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( physical_data->status ) ) ) {
-               message_publish( MSG_WARNING, "PhysicalEntity::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'physical_data->status'\n",
-                                __LINE__ );
-            }
-            physical_data->status = trick_MM->mm_strdup( pe_packing_data.status );
-         }
-      } else {
-         physical_data->status = trick_MM->mm_strdup( pe_packing_data.status );
-      }
+      physical_data->status = pe_packing_data.status;
    }
 
    if ( parent_frame_attr->is_received() ) {
-      if ( physical_data->parent_frame != NULL ) {
-         if ( !strcmp( physical_data->parent_frame, pe_packing_data.parent_frame ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( physical_data->parent_frame ) ) ) {
-               message_publish( MSG_WARNING, "PhysicalEntity::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'physical_data->parent_frame'\n",
-                                __LINE__ );
-            }
-            if ( pe_packing_data.parent_frame[0] != '\0' ) {
-               physical_data->parent_frame = trick_MM->mm_strdup( pe_packing_data.parent_frame );
-            } else {
-               physical_data->parent_frame = NULL;
-            }
-         }
-      } else {
-         if ( pe_packing_data.parent_frame[0] != '\0' ) {
-            physical_data->parent_frame = trick_MM->mm_strdup( pe_packing_data.parent_frame );
-         }
-      }
+      physical_data->parent_frame = pe_packing_data.parent_frame;
    }
 
    // Unpack the space-time coordinate state data.
