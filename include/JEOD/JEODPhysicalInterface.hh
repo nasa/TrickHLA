@@ -75,21 +75,7 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
    virtual ~JEODPhysicalInterface();                               // Destructor.
 
    /*! @brief Make sure that the JEODPhysicalInterface is configured properly. */
-   void configure();
-
-   /*! @brief Set the DynBody references.
-    *  @param dyn_body_ptr Pointer to the associated DynBody. */
-   void configure( jeod::DynBody *dyn_body_ptr );
-
-   /*! @brief Set the Vehicle Point references.
-    *  @param vehicle_point_ptr Pointer to the associated BodyRefFrame. */
-   void configure( jeod::BodyRefFrame *vehicle_point_ptr );
-
-   /*! @brief Set the DynBody and Vehicle Point references.
-    *  @param dyn_body_ptr      Pointer to the associated DynBody.
-    *  @param vehicle_point_ptr Pointer to the associated BodyRefFrame. */
-   void configure( jeod::DynBody      *dyn_body_ptr,
-                   jeod::BodyRefFrame *vehicle_point_ptr );
+   virtual void configure();
 
    // Initialize the packing object.
    /*! @brief Initialize the class assuming that the vehicle point data is set. */
@@ -110,13 +96,19 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
     *  DynBody to be associated with this SpaceFOM::PhysicalInterface. */
    virtual void set_vehicle_point_id( char const *new_id );
 
-   /*! @brief Set the reference to the JEOD vehicle point data.
-    *  @param vehicle_point_ptr Pointer to the vehicle point data instance. */
-   virtual void set_data( jeod::BodyRefFrame const *vehicle_point_ptr )
-   {
-      vehicle_point_data = vehicle_point_ptr;
-      return;
-   }
+   /*! @brief Set the DynBody references.
+    *  @param dyn_body_ptr Pointer to the associated DynBody. */
+   void set_data( jeod::DynBody *dyn_body_ptr );
+
+   /*! @brief Set the Vehicle Point references.
+    *  @param vehicle_point_ptr Pointer to the associated BodyRefFrame. */
+   void set_data( jeod::BodyRefFrame *vehicle_point_ptr );
+
+   /*! @brief Set the DynBody and Vehicle Point references.
+    *  @param dyn_body_ptr      Pointer to the associated DynBody.
+    *  @param vehicle_point_ptr Pointer to the associated BodyRefFrame. */
+   void set_data( jeod::DynBody      *dyn_body_ptr,
+                  jeod::BodyRefFrame *vehicle_point_ptr );
 
    /*! @brief Get the reference to the JEOD vehicle point data.
     *  @return Pointer to the vehicle point data. */

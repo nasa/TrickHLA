@@ -96,15 +96,6 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
    // Configure the reference frame tree.
    void configure_tree()
    {
-      // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
-         std::ostringstream errmsg;
-         errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
-                << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-      }
-
       // Configure the default Earth-Moon-Mars reference frame tree.
       sun_frame_ptr->set_parent_frame( ssbary_frame_ptr );
       embary_frame_ptr->set_parent_frame( ssbary_frame_ptr );
@@ -121,6 +112,14 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
    // called in the SpaceFOMRefFrameTreeBaseSimObject base class.
    void initialize()
    {
+      // Check for objects allocation.
+      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
+         std::ostringstream errmsg;
+         errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
+                << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
 
       // Check to see if the root reference frame is actualy being configured.
       // If not, don't tell the ExecutionControl about it.

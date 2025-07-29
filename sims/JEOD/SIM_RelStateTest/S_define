@@ -216,7 +216,11 @@ EntityRelStateSimObject relstate( dynamics.dyn_manager, relkin.rel_kin, veh.dyn_
 
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject veh_physical_entity( veh.dyn_body, P_HLA_INIT );
+JEODPhysicalEntiySimObject veh_physical_entity( true,
+                                                "veh_physical_entity",
+                                                "test_vehicle",
+                                                veh.dyn_body,
+                                                P_HLA_INIT );
 
 
 //==========================================================================

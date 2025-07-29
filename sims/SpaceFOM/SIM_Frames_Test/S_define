@@ -246,6 +246,7 @@ SpaceFOMRefFrameSimObject solar_system_barycenter(
    ref_frame_tree.frame_tree,
    ssbary_frame.frame.data,
    P_HLA_INIT );
+
 SpaceFOMRefFrameSimObject sun_inertial(
    true,
    "sun_inertial",
@@ -253,6 +254,7 @@ SpaceFOMRefFrameSimObject sun_inertial(
    ref_frame_tree.frame_tree,
    sun_frame.frame.data,
    P_HLA_INIT );
+
 SpaceFOMRefFrameSimObject earth_moon_barycenter(
    true,
    "earth_moon_barycenter",
@@ -260,6 +262,7 @@ SpaceFOMRefFrameSimObject earth_moon_barycenter(
    ref_frame_tree.frame_tree,
    embary_frame.frame.data,
    P_HLA_INIT );
+
 SpaceFOMRefFrameSimObject earth_centered_inertial(
    true,
    "earth_centered_inertial",
@@ -267,6 +270,7 @@ SpaceFOMRefFrameSimObject earth_centered_inertial(
    ref_frame_tree.frame_tree,
    earth_inertial_frame.frame.data,
    P_HLA_INIT );
+
 SpaceFOMRefFrameSimObject moon_centered_inertial(
    true,
    "moon_centered_inertial",
@@ -274,6 +278,7 @@ SpaceFOMRefFrameSimObject moon_centered_inertial(
    ref_frame_tree.frame_tree,
    moon_inertial_frame.frame.data,
    P_HLA_INIT );
+
 SpaceFOMRefFrameSimObject mars_centered_inertial(
    true,
    "mars_centered_inertial",
@@ -281,6 +286,7 @@ SpaceFOMRefFrameSimObject mars_centered_inertial(
    ref_frame_tree.frame_tree,
    mars_inertial_frame.frame.data,
    P_HLA_INIT );
+
 SpaceFOMRefFrameSimObject earth_centered_fixed(
    true,
    "earth_centered_fixed",
@@ -288,6 +294,7 @@ SpaceFOMRefFrameSimObject earth_centered_fixed(
    ref_frame_tree.frame_tree,
    earth_fixed_frame.frame.data,
    P_HLA_INIT );
+
 SpaceFOMRefFrameSimObject moon_centered_fixed(
    true,
    "moon_centered_fixed",
@@ -295,6 +302,7 @@ SpaceFOMRefFrameSimObject moon_centered_fixed(
    ref_frame_tree.frame_tree,
    moon_fixed_frame.frame.data,
    P_HLA_INIT );
+
 SpaceFOMRefFrameSimObject mars_centered_fixed(
    true,
    "mars_centered_fixed",

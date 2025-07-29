@@ -87,22 +87,23 @@ JEODPhysicalEntity::~JEODPhysicalEntity()
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalEntity::configure(
-   jeod::DynBody *dyn_body_ptr )
+void JEODPhysicalEntity::configure()
 {
-   // First call the base class pre_initialize function.
-   PhysicalEntityBase::configure();
 
    // Set the reference to the JEODPhysicalEntity data.
-   if ( dyn_body_ptr == NULL ) {
+   if ( dyn_body_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
+             << " ERROR: Unexpected NULL JEOD::DynBody: "
              << this->pe_packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
-   this->dyn_body_data = dyn_body_ptr;
+
+   // Now call the base class pre_initialize function.
+   PhysicalEntityBase::configure();
+
+   return;
 }
 
 /*!
@@ -258,4 +259,25 @@ void JEODPhysicalEntity::unpack_into_working_data()
          dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc] = this->pe_packing_data.body_wrt_struct.vector[iinc];
       }
    }
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void JEODPhysicalEntity::set_data(
+   jeod::DynBody *dyn_body_data_ptr )
+{
+
+   // Set the reference to the JEODPhysicalEntity data.
+   if ( dyn_body_data_ptr == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::JEODPhysicalEntity::set_data():" << __LINE__
+             << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
+             << this->pe_packing_data.name << '\n';
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->dyn_body_data = dyn_body_data_ptr;
+
+   return;
 }

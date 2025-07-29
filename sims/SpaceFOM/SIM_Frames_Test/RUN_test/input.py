@@ -364,6 +364,15 @@ vehicle_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
 
+# Check for object allocation.
+# Probably did not trigger the default_data allocation.
+if THLA.federate.get_manager().obj_count <= 0:
+   trick.exec_terminate_with_return( -1,
+                                     sys._getframe( 0 ).f_code.co_filename,
+                                     sys._getframe( 0 ).f_lineno,
+                                     'TrickHLA::Manager objects have not been allocated!' )
+   
+
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose
 sun_inertial.frame_packing.debug = verbose

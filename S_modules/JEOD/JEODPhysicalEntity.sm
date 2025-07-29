@@ -58,10 +58,13 @@ class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
    /* HLA Deleted object. */
    SpaceFOM::PhysicalEntityDeleted deleted_callback;
 
-   JEODPhysicalEntiySimObject( jeod::DynBody & dyn_body_ref,
-                               unsigned short _INIT = 59 )
-      : TrickHLAPackingBaseSimObject( _INIT ),
-        entity_packing(dyn_body_ref),
+   JEODPhysicalEntiySimObject( bool                create_object,
+                               std::string const & sim_obj_name,
+                               std::string const & obj_fed_name,
+                               jeod::DynBody     & dyn_body_ref,
+                               unsigned short      _INIT = 59 )
+      : TrickHLAPackingBaseSimObject( create_object, sim_obj_name, "entity_packing", obj_fed_name, _INIT ),
+        entity_packing( dyn_body_ref ),
         lag_compensation( entity_packing ),
         conditional( entity_packing ),
         dyn_body(dyn_body_ref)
@@ -72,10 +75,63 @@ class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
+      
+      //
+      // Default data jobs.
+      //
+      // See TrickHLAPackingBaseSimObject:
+      // The base class default_config function will run the local function.
 
       //
-      // Initialization jobs
+      // Initialization jobs.
       //
+      // See TrickHLAPackingBaseSimObject:
+      // The base class configure function will run the local function.
+      // The base class intialize function will run the local function.
+      
+   }
+
+  protected:
+   virtual int default_config()
+   {
+      int value;
+
+      // Call the PhysicalEntity packing base_config function first.
+      entity_packing.base_config( create,
+                                  sim_object_name,
+                                  object_packing_name,
+                                  object_fed_name,
+                                  thla_object );
+        
+      // Now call the base class default config function.
+      value = TrickHLAPackingBaseSimObject::default_config();
+        
+      return( value );
+   }
+
+   virtual int configure()
+   {
+      int value;
+      
+      // Make sure the reference to the JEOD::DynBody is set.
+      entity_packing.set_data( &dyn_body );
+        
+      // Now call the base class default config function.
+      // NOTE: This will call the packing class configure() function.
+      value = TrickHLAPackingBaseSimObject::configure();
+        
+      return( value );
+   }
+
+   virtual int initialize()
+   {
+      int value;
+        
+      // Now call the base class default config function.
+      // NOTE: This will call the packing class initialize() function.
+      value = TrickHLAPackingBaseSimObject::initialize();
+        
+      return( value );
    }
 
   protected:

@@ -78,11 +78,8 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    /*! @brief Destructor for the SpaceFOM JEODRefFrameState class. */
    virtual ~JEODRefFrameState();
 
-   /*! @brief Set the references to time and the reference frame data.
-    *  @param time_tt_in Pointer to the jeod::TimeTT instance.
-    *  @param ref_frame_state_ptr Pointer to the RefFrameState instance. */
-   void configure( jeod::TimeTT        *time_tt_in,
-                   jeod::RefFrameState *ref_frame_state_ptr );
+   /*! @brief Configure the JEOD reference frame data. */
+   virtual void configure();
 
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data. */
@@ -111,6 +108,12 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
     *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
+
+   /*! @brief Set the references to time and the reference frame data.
+    *  @param time_tt_in Pointer to the jeod::TimeTT instance.
+    *  @param ref_frame_state_ptr Pointer to the RefFrameState instance. */
+   void set_data( jeod::TimeTT        *time_tt_in,
+                  jeod::RefFrameState *ref_frame_state_ptr );
 
   protected:
    jeod::TimeTT        *time_tt;         ///< trick_units{--}  JEOD TT time standard.
