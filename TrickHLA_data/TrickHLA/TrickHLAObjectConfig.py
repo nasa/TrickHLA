@@ -154,14 +154,18 @@ class TrickHLAObjectConfig( object ):
       self.set_blocking_cyclic_read( self.hla_blocking_cyclic_read )
 
       # Set the object reference for the packing instance.
-      # There MUST be a packing instance!
+      # There SHOULD be a packing instance!
       if self.hla_packing_instance != None:
          self.hla_packing_instance.set_object(self.hla_object)
       else:
-         trick.exec_terminate_with_return( -1,
-                                           sys._getframe( 0 ).f_code.co_filename,
-                                           sys._getframe( 0 ).f_lineno,
-                                           'TrickHLA::Object \'' + self.hla_object.name + '\' has no Packing object set.' )
+         message_string = str(sys._getframe( 0 ).f_code.co_filename) + ':'
+         message_string += str(sys._getframe( 0 ).f_lineno) + ' WARNING: '
+         message_string += 'TrickHLA::Object \'' + self.hla_object.name + '\' has no Packing object set.\n'
+         trick.message_publish( 2, message_string )
+      #   trick.exec_terminate_with_return( -1,
+      #                                     sys._getframe( 0 ).f_code.co_filename,
+      #                                     sys._getframe( 0 ).f_lineno,
+      #                                     'TrickHLA::Object \'' + self.hla_object.name + '\' has no Packing object set.' )
 
       # Set conditional if specified and not None.
       if self.hla_conditional_instance != None:

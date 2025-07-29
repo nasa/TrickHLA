@@ -212,7 +212,8 @@ Federation_name = "FLUID_DIST_IF_DEMO"
 Federate_name   = "FED_2"
 
 # THLA configuration
-from Modified_data.TrickHLA.TrickHLAFederateConfig import *
+sys.path.append( '../../../' )
+from TrickHLA_data.TrickHLA.TrickHLAFederateConfig import *
 federate = TrickHLAFederateConfig(
    thla_federate        = THLA.federate,
    thla_manager         = THLA.manager,
