@@ -84,6 +84,60 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
+      
+      //
+      // Default data jobs.
+      //
+      // See TrickHLAPackingBaseSimObject:
+      // The base class default_config function will run the local function.
+
+      //
+      // Initialization jobs.
+      //
+      // See TrickHLAPackingBaseSimObject:
+      // The base class configure function will run the local function.
+      // The base class intialize function will run the local function.
+      
+   }
+
+  protected:
+   virtual int default_config()
+   {
+      int value;
+
+      // Call the PhysicalEntity packing base_config function first.
+      entity_packing.base_config( create,
+                                  sim_object_name,
+                                  object_packing_name,
+                                  object_fed_name,
+                                  thla_object );
+        
+      // Now call the base class default config function.
+      value = TrickHLAPackingBaseSimObject::default_config();
+        
+      return( value );
+   }
+
+   virtual int configure()
+   {
+      int value;
+        
+      // Now call the base class default config function.
+      // NOTE: This will call the packing class configure() function.
+      value = TrickHLAPackingBaseSimObject::configure();
+        
+      return( value );
+   }
+
+   virtual int initialize()
+   {
+      int value;
+        
+      // Now call the base class default config function.
+      // NOTE: This will call the packing class initialize() function.
+      value = TrickHLAPackingBaseSimObject::initialize();
+        
+      return( value );
    }
 
   private:

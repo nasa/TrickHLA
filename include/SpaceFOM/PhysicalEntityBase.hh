@@ -87,11 +87,11 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  @param entity_fed_name Name of the PhysicalEntity instance.
     *  @param mngr_object TrickHLA::Object associated with this PhysicalEntity.
     *  */
-   virtual void base_config( bool                create,
-                             std::string const & sim_obj_name,
-                             std::string const & entity_pkg_name,
-                             std::string const & entity_fed_name,
-                             TrickHLA::Object  * mngr_object = NULL );
+   void base_config( bool                create,
+                     std::string const & sim_obj_name,
+                     std::string const & entity_pkg_name,
+                     std::string const & entity_fed_name,
+                     TrickHLA::Object  * mngr_object = NULL );
 
    /*! @brief Function to begin the configuration/initialization of the
     *  PhysicalEntity.

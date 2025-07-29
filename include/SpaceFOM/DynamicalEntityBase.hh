@@ -74,15 +74,13 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
     *  @param sim_obj_name Name of SimObject containing this DynamicalEntity.
     *  @param entity_pkg_name Name of the DynamicalEntity object in the SimObject.
     *  @param entity_fed_name Name of the DynamicalEntity instance.
-    *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this DynamicalEntity instance.
     *  @param mngr_object TrickHLA::Object associated with this DynamicalEntity.
     *  */
-   virtual void base_config( bool                create,
-                             std::string const & sim_obj_name,
-                             std::string const & entity_pkg_name,
-                             std::string const & entity_fed_name,
-                             std::string const & parent_ref_frame_name,
-                             TrickHLA::Object  * mngr_object = NULL );
+   void base_config( bool                create,
+                     std::string const & sim_obj_name,
+                     std::string const & entity_pkg_name,
+                     std::string const & entity_fed_name,
+                     TrickHLA::Object  * mngr_object = NULL );
 
    /*! @brief Function to begin the configuration/initialization of the
     *  DynamicalEntity.

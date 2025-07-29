@@ -98,7 +98,6 @@ void DynamicalEntityBase::base_config(
    std::string const & sim_obj_name,
    std::string const & entity_pkg_name,
    std::string const & entity_fed_name,
-   std::string const & parent_ref_frame_name,
    TrickHLA::Object  * mngr_object )
 {
    string entity_full_name_str = sim_obj_name + "." + entity_pkg_name;
@@ -126,11 +125,7 @@ void DynamicalEntityBase::base_config(
       this->object = mngr_object;
    }
 
-   // Set the frame name and parent frame name.
-   if ( parent_ref_frame_name.empty() ) {
-   } else {
-      pe_packing_data.parent_frame = parent_ref_frame_name;
-   }
+   // Set the entity name from the entity federation name.
    if ( entity_fed_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
