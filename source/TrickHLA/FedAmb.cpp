@@ -61,6 +61,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/FedAmbBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
@@ -110,10 +111,7 @@ using namespace TrickHLA;
  */
 FedAmb::FedAmb()
    : FederateAmbassador(),
-     federate( NULL ),
-     manager( NULL ),
-     federation_restore_status_response_context_switch( false ), // process, not echo.
-     federation_restored_rebuild_federate_handle_set( false )
+     FedAmbBase()
 {
    return;
 }
@@ -124,18 +122,6 @@ FedAmb::FedAmb()
 FedAmb::~FedAmb()
 {
    return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void FedAmb::setup(
-   Federate &federate,
-   Manager  &manager )
-{
-   // Set the associated TrickHLA Federate and Manager references.
-   this->federate = &federate;
-   this->manager  = &manager;
 }
 
 /*!

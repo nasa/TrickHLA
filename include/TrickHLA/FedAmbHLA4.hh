@@ -54,6 +54,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "FedAmbBase.hh"
 #include "StandardsSupport.hh"
 
 #if defined( IEEE_1516_2025 )
@@ -69,13 +70,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-// Forward Declared Classes: Since these classes are only used as references
-// through pointers, these classes are included as forward declarations. This
-// helps to limit issues with recursive includes.
-class Federate;
-class Manager;
-
-class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
+class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -87,26 +82,11 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__FedAmb();
 
-  protected:
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
-   Manager  *manager;  ///< @trick_units{--} Associated TrickHLA::Manager.
-
   public:
    /*! @brief Default constructor for the TrickHLA FedAmb class. */
    FedAmb();
    /*! @brief Destructor for the TrickHLA FedAmb class. */
    virtual ~FedAmb();
-
-   Manager *get_manager()
-   {
-      return this->manager;
-   }
-
-   /*! @brief Setup the required class instance associations.
-    *  @param federate  Associated TrickHLA::Federate class instance.
-    *  @param manager   Associated TrickHLA::Manager class instance. */
-   void setup( Federate &federate,
-               Manager  &manager );
 
    /*! @brief Initialize the TrickHLA Federate Ambassador instance for this
     *  Federation Execution. */
@@ -478,32 +458,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    virtual void requestRetraction(
       RTI1516_NAMESPACE::MessageRetractionHandle const &retraction );
 
-   /*! @brief Switch to echo (versus process) in a federationRestoreStatusResponse() callback... */
-   void set_federation_restore_status_response_to_echo()
-   {
-      federation_restore_status_response_context_switch = true;
-   }
-   /*! @brief Switch to process (versus echo) in a federationRestoreStatusResponse() callback... */
-   void set_federation_restore_status_response_to_process()
-   {
-      federation_restore_status_response_context_switch = false;
-   }
-
-   /*! @brief Enable the option to rebuild the federate handle set after a federation restore. */
-   void set_federation_restored_rebuild_federate_handle_set()
-   {
-      federation_restored_rebuild_federate_handle_set = true;
-   }
-   /*! @brief Disable the option to rebuild the federate handle set after a federation restore. */
-   void reset_federation_restored_rebuild_federate_handle_set()
-   {
-      federation_restored_rebuild_federate_handle_set = false;
-   }
-
   private:
-   bool federation_restore_status_response_context_switch;
-   bool federation_restored_rebuild_federate_handle_set;
-
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for FedAmb class.
     *  @details This constructor is private to prevent inadvertent copies. */

@@ -1405,8 +1405,8 @@ bool Federate::is_joined_federate(
 bool Federate::is_joined_federate(
    wstring const &federate_name )
 {
-   for ( int i = 0; i < (int)joined_federate_names.size(); ++i ) {
-      if ( federate_name == joined_federate_names[i] ) {
+   for ( size_t i = 0; i < joined_federate_names.size(); ++i ) {
+      if ( federate_name == joined_federate_names[i] ) { // cppcheck-suppress [useStlAlgorithm]
          return true;
       }
    }
