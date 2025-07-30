@@ -37,11 +37,6 @@ NASA, Johnson Space Center\n
 #include <cstring>
 #include <sstream>
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
@@ -102,6 +97,7 @@ void RefFrameState::set_data(
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    this->ref_frame_data = ref_frame_data_ptr;
 
@@ -124,6 +120,7 @@ void RefFrameState::initialize()
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Mark this as initialized.

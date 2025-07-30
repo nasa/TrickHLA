@@ -32,11 +32,6 @@ NASA, Johnson Space Center\n
 #include <cstddef>
 #include <ostream>
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityData.hh"
 

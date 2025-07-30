@@ -37,11 +37,6 @@ NASA, Johnson Space Center\n
 #include <cstring>
 #include <sstream>
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntity.hh"
 #include "SpaceFOM/PhysicalEntityBase.hh"
@@ -97,6 +92,7 @@ void PhysicalEntity::configure()
              << pe_packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // First call the base class pre_initialize function.
@@ -120,6 +116,7 @@ void PhysicalEntity::set_data( PhysicalEntityData *physical_data_ptr )
              << pe_packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    this->physical_data = physical_data_ptr;
 
@@ -140,6 +137,7 @@ void PhysicalEntity::initialize()
              << pe_packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Mark this as initialized.

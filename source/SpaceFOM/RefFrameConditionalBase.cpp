@@ -33,11 +33,6 @@ NASA, Johnson Space Center\n
 #include <cstring>
 #include <sstream>
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // SpaceFOM includes.
 #include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameConditionalBase.hh"

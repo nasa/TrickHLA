@@ -37,11 +37,6 @@ NASA, Johnson Space Center\n
 #include <ostream>
 #include <sstream>
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterface.hh"
 #include "SpaceFOM/PhysicalInterfaceBase.hh"
@@ -97,6 +92,7 @@ void PhysicalInterface::configure()
              << packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Call the base class pre_initialize function.
@@ -119,6 +115,7 @@ void PhysicalInterface::initialize()
              << packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Mark this as initialized.
@@ -249,6 +246,7 @@ void PhysicalInterface::set_data( PhysicalInterfaceData *interface_data_ptr )
              << packing_data.name << '\n';
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    this->interface_data = interface_data_ptr;
 
