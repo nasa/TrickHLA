@@ -64,7 +64,7 @@ class PhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
     *  This function needs to be called prior to TrickHLA initialization if
     *  the PhysicalInterface object is not being configured with an
     *  initialization constructor. */
-   virtual void configure(); // cppcheck-suppress [duplInheritedMember]
+   virtual void configure();
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data. */

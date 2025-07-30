@@ -94,7 +94,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
     *  This function needs to be called prior to TrickHLA initialization if
     *  the Ball object is not being configured with an
     *  initialization constructor. */
-   void configure(); // cppcheck-suppress [duplInheritedMember]
+   void configure();
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
