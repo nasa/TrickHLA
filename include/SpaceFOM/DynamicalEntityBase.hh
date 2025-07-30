@@ -76,11 +76,11 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
     *  @param entity_fed_name Name of the DynamicalEntity instance.
     *  @param mngr_object TrickHLA::Object associated with this DynamicalEntity.
     *  */
-   void base_config( bool               create,
-                     std::string const &sim_obj_name,
-                     std::string const &entity_pkg_name,
-                     std::string const &entity_fed_name,
-                     TrickHLA::Object  *mngr_object = NULL );
+   virtual void base_config( bool               create,
+                             std::string const &sim_obj_name,
+                             std::string const &entity_pkg_name,
+                             std::string const &entity_fed_name,
+                             TrickHLA::Object  *mngr_object = NULL );
 
    /*! @brief Function to begin the configuration/initialization of the
     *  DynamicalEntity.
