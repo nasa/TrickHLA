@@ -141,12 +141,12 @@ void RefFrameState::pack_from_working_data()
    int iinc;
 
    // Copy frame name.
-   if ( packing_data.name != ref_frame_data->name ){
+   if ( packing_data.name != ref_frame_data->name ) {
       packing_data.name = ref_frame_data->name;
    }
 
    // Copy parent frame name.
-   if ( packing_data.parent_name != ref_frame_data->parent_name ){
+   if ( packing_data.parent_name != ref_frame_data->parent_name ) {
       packing_data.parent_name = ref_frame_data->parent_name;
    }
 

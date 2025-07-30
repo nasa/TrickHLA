@@ -78,7 +78,7 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
    // Access functions.
    /*! @brief Access function to set the name for the reference frame.
     *  @param new_name Name for this reference frame. */
-   virtual void set_name( std::string const & new_name )
+   virtual void set_name( std::string const &new_name )
    {
       this->name = new_name;
       return;
@@ -86,14 +86,14 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
 
    /*! @brief Access function to get the name for the reference frame.
     *  @return Name for this reference frame. */
-   virtual std::string const & get_name()
+   virtual std::string const &get_name()
    {
       return name;
    }
 
    /*! @brief Access function to set the name for the parent reference frame.
     *  @param name Name for the parent reference frame. */
-   virtual void set_parent_name( std::string const & name )
+   virtual void set_parent_name( std::string const &name )
    {
       this->parent_name = name;
       return;
@@ -101,7 +101,7 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
 
    /*! @brief Access function to get the name for the parent reference frame.
     *  @return Name for the parent reference frame. */
-   virtual std::string const & get_parent_name()
+   virtual std::string const &get_parent_name()
    {
       return parent_name;
    }

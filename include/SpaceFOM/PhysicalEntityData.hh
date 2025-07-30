@@ -82,7 +82,7 @@ class PhysicalEntityData
    // Access functions.
    /*! @brief Set the name of the PhysicalEntityData instance.
     *  @param new_name Name of the PhysicalEntityData instance. */
-   virtual void set_name( std::string const & new_name )
+   virtual void set_name( std::string const &new_name )
    {
       name = new_name;
       return;
@@ -90,7 +90,7 @@ class PhysicalEntityData
 
    /*! @brief Set the type string of the PhysicalEntityData.
     *  @param new_type Type string associated with the PhysicalEntityData. */
-   virtual void set_type( std::string const & new_type )
+   virtual void set_type( std::string const &new_type )
    {
       type = new_type;
       return;
@@ -98,7 +98,7 @@ class PhysicalEntityData
 
    /*! @brief Set the status string of the PhysicalEntityData.
     *  @param new_status Status string associated with the PhysicalEntityData. */
-   virtual void set_status( std::string const & new_status )
+   virtual void set_status( std::string const &new_status )
    {
       status = new_status;
       return;
@@ -107,7 +107,7 @@ class PhysicalEntityData
    /*! @brief Set the name of the parent reference frame for the PhysicalEntityData.
     *  @param new_frame The name of the parent reference frame associated
     *  with the PhysicalEntityData. */
-   virtual void set_parent_frame( std::string const & new_frame )
+   virtual void set_parent_frame( std::string const &new_frame )
    {
       parent_frame = new_frame;
       return;

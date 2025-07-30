@@ -77,8 +77,8 @@ class LRTreeNodeBase
    /*! @brief Initialization constructor.
     *  @param node_name The name of the node to be constructed.
     *  @param node_parent The parent node in the tree for the constructed node. */
-   LRTreeNodeBase( std::string const & node_name,
-                   LRTreeNodeBase    * node_parent );
+   LRTreeNodeBase( std::string const &node_name,
+                   LRTreeNodeBase    *node_parent );
 
    /*! @brief Destructor. */
    virtual ~LRTreeNodeBase();
@@ -92,7 +92,7 @@ class LRTreeNodeBase
 
    /*! @brief Set the name of the node.
     *  @param node_name Name of the node. */
-   virtual void set_name( std::string const & node_name )
+   virtual void set_name( std::string const &node_name )
    {
       this->name = node_name;
       return;

@@ -94,14 +94,14 @@ class Packing
    virtual void set_configured( bool status = true ) { configured = status; }
 
    /*! @brief Check if the TrickHLA Packing object is configured. */
-   virtual bool is_configured() { return( configured ); }
+   virtual bool is_configured() { return ( configured ); }
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the TrickHLA Packing object. */
    virtual void initialize();
 
    /*! @brief Check if the TrickHLA Packing object is initialized. */
-   virtual bool is_initialized() { return( initialized ); }
+   virtual bool is_initialized() { return ( initialized ); }
 
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */

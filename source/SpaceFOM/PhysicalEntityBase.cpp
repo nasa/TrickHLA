@@ -120,11 +120,11 @@ PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
  * @job_class{initialization}
  */
 void PhysicalEntityBase::base_config(
-   bool                create,
-   std::string const & sim_obj_name,
-   std::string const & entity_pkg_name,
-   std::string const & entity_fed_name,
-   TrickHLA::Object  * mngr_object )
+   bool               create,
+   std::string const &sim_obj_name,
+   std::string const &entity_pkg_name,
+   std::string const &entity_fed_name,
+   TrickHLA::Object  *mngr_object )
 {
    string entity_full_name_str = sim_obj_name + "." + entity_pkg_name;
 
@@ -176,72 +176,81 @@ void PhysicalEntityBase::base_config(
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name      = "name";
-   object->attributes[0].trick_name    = entity_full_name_str + string( ".pe_packing_data.name" );;
+   object->attributes[0].FOM_name   = "name";
+   object->attributes[0].trick_name = entity_full_name_str + string( ".pe_packing_data.name" );
+   ;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = create;
    object->attributes[0].subscribe     = !create;
    object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name      = "type";
-   object->attributes[1].trick_name    = entity_full_name_str + string( ".pe_packing_data.type" );;
+   object->attributes[1].FOM_name   = "type";
+   object->attributes[1].trick_name = entity_full_name_str + string( ".pe_packing_data.type" );
+   ;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = create;
    object->attributes[1].subscribe     = !create;
    object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[2].FOM_name      = "status";
-   object->attributes[2].trick_name    = entity_full_name_str + string( ".pe_packing_data.status" );;
+   object->attributes[2].FOM_name   = "status";
+   object->attributes[2].trick_name = entity_full_name_str + string( ".pe_packing_data.status" );
+   ;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = create;
    object->attributes[2].subscribe     = !create;
    object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[3].FOM_name      = "parent_reference_frame";
-   object->attributes[3].trick_name    = entity_full_name_str + string( ".pe_packing_data.parent_frame" );;
+   object->attributes[3].FOM_name   = "parent_reference_frame";
+   object->attributes[3].trick_name = entity_full_name_str + string( ".pe_packing_data.parent_frame" );
+   ;
    object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = create;
    object->attributes[3].subscribe     = !create;
    object->attributes[3].locally_owned = create;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[4].FOM_name      = "state";
-   object->attributes[4].trick_name    = entity_full_name_str + string( ".stc_encoder.buffer" );;
+   object->attributes[4].FOM_name   = "state";
+   object->attributes[4].trick_name = entity_full_name_str + string( ".stc_encoder.buffer" );
+   ;
    object->attributes[4].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[4].publish       = create;
    object->attributes[4].subscribe     = !create;
    object->attributes[4].locally_owned = create;
    object->attributes[4].rti_encoding  = TrickHLA::ENCODING_NONE;
 
-   object->attributes[5].FOM_name      = "acceleration";
-   object->attributes[5].trick_name    = entity_full_name_str + string( ".pe_packing_data.accel" );;
+   object->attributes[5].FOM_name   = "acceleration";
+   object->attributes[5].trick_name = entity_full_name_str + string( ".pe_packing_data.accel" );
+   ;
    object->attributes[5].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[5].publish       = create;
    object->attributes[5].subscribe     = !create;
    object->attributes[5].locally_owned = create;
    object->attributes[5].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[6].FOM_name      = "rotational_acceleration";
-   object->attributes[6].trick_name    = entity_full_name_str + string( ".pe_packing_data.ang_accel" );;
+   object->attributes[6].FOM_name   = "rotational_acceleration";
+   object->attributes[6].trick_name = entity_full_name_str + string( ".pe_packing_data.ang_accel" );
+   ;
    object->attributes[6].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[6].publish       = create;
    object->attributes[6].subscribe     = !create;
    object->attributes[6].locally_owned = create;
    object->attributes[6].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[7].FOM_name      = "center_of_mass";
-   object->attributes[7].trick_name    = entity_full_name_str + string( ".pe_packing_data.cm" );;
+   object->attributes[7].FOM_name   = "center_of_mass";
+   object->attributes[7].trick_name = entity_full_name_str + string( ".pe_packing_data.cm" );
+   ;
    object->attributes[7].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[7].publish       = create;
    object->attributes[7].subscribe     = !create;
    object->attributes[7].locally_owned = create;
    object->attributes[7].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[8].FOM_name      = "body_wrt_structural";
-   object->attributes[8].trick_name    = entity_full_name_str + string( ".quat_encoder.buffer" );;
+   object->attributes[8].FOM_name   = "body_wrt_structural";
+   object->attributes[8].trick_name = entity_full_name_str + string( ".quat_encoder.buffer" );
+   ;
    object->attributes[8].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[8].publish       = create;
    object->attributes[8].subscribe     = !create;

@@ -132,7 +132,7 @@ bool RefFrameConditionalBase::should_send(
    if ( attr == name_attr ) {
 
       // A reference frame must have a none empty name.
-      if ( frame.packing_data.name.empty() ){
+      if ( frame.packing_data.name.empty() ) {
          ostringstream errmsg;
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
                 << " ERROR: Unexpected NULL Name for RefFrame!\n";
@@ -140,17 +140,16 @@ bool RefFrameConditionalBase::should_send(
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      if( frame.packing_data.name != prev_data.name ) {
+      if ( frame.packing_data.name != prev_data.name ) {
          // Mark to send.
          send_attr = true;
       }
 
-   }
-   else if ( attr == parent_name_attr ) {
+   } else if ( attr == parent_name_attr ) {
 
       // Check for Parent Frame change.
 
-      if( frame.packing_data.parent_name != prev_data.parent_name ) {
+      if ( frame.packing_data.parent_name != prev_data.parent_name ) {
          // Mark to send.
          send_attr = true;
       }

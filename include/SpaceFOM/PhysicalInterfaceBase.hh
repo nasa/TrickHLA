@@ -83,11 +83,11 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
     *  @param interface_fed_name    Name of the PhysicalInterface instance.
     *  @param mngr_object           TrickHLA::Object associated with this PhysicalInterface.
     *  */
-   virtual void base_config( bool                create,
-                             std::string const & sim_obj_name,
-                             std::string const & interface_pkg_name,
-                             std::string const & interface_fed_name,
-                             TrickHLA::Object  * mngr_object = NULL );
+   virtual void base_config( bool               create,
+                             std::string const &sim_obj_name,
+                             std::string const &interface_pkg_name,
+                             std::string const &interface_fed_name,
+                             TrickHLA::Object  *mngr_object = NULL );
 
    // Pre-initialize the packing object.
    /*! @brief Function to begin the initialization/configuration of the
@@ -107,11 +107,11 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    // Access functions.
    /*! @brief Set the name of the PhysicalInterface object instance.
     *  @param new_name Name of the PhysicalInterface object instance. */
-   virtual void set_name( std::string const & new_name );
+   virtual void set_name( std::string const &new_name );
 
    /*! @brief Get the name of the PhysicalInterface object instance.
     *  @return Name of the PhysicalInterface object instance. */
-   virtual std::string const & get_name()
+   virtual std::string const &get_name()
    {
       return packing_data.name;
    }
@@ -119,11 +119,11 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    /*! @brief Set the name of the parent reference frame for the PhysicalInterface.
     *  @param new_parent_name The name of the parent reference frame associated
     *  with the PhysicalInterface. */
-   virtual void set_parent( std::string const & new_parent_name );
+   virtual void set_parent( std::string const &new_parent_name );
 
    /*! @brief Get the name of the parent reference frame associated with the PhysicalInterface.
     *  @return Name of the parent reference frame associated with the PhysicalInterface. */
-   virtual std::string const & get_parent()
+   virtual std::string const &get_parent()
    {
       return packing_data.parent_name;
    }

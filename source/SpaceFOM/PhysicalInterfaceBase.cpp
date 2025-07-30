@@ -87,11 +87,11 @@ PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
  * @job_class{initialization}
  */
 void PhysicalInterfaceBase::base_config(
-   bool                create,
-   std::string const & sim_obj_name,
-   std::string const & interface_pkg_name,
-   std::string const & interface_fed_name,
-   TrickHLA::Object  * mngr_object )
+   bool               create,
+   std::string const &sim_obj_name,
+   std::string const &interface_pkg_name,
+   std::string const &interface_fed_name,
+   TrickHLA::Object  *mngr_object )
 {
    string interface_full_name_str = sim_obj_name + "." + interface_pkg_name;
 
@@ -133,32 +133,36 @@ void PhysicalInterfaceBase::base_config(
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name      = "name";
-   object->attributes[0].trick_name    = interface_full_name_str + string( ".packing_data.name" );;
+   object->attributes[0].FOM_name   = "name";
+   object->attributes[0].trick_name = interface_full_name_str + string( ".packing_data.name" );
+   ;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = create;
    object->attributes[0].subscribe     = !create;
    object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name      = "parent_name";
-   object->attributes[1].trick_name    = interface_full_name_str + string( ".packing_data.parent_name" );;
+   object->attributes[1].FOM_name   = "parent_name";
+   object->attributes[1].trick_name = interface_full_name_str + string( ".packing_data.parent_name" );
+   ;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = create;
    object->attributes[1].subscribe     = !create;
    object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[2].FOM_name      = "position";
-   object->attributes[2].trick_name    = interface_full_name_str + string( ".packing_data.position" );;
+   object->attributes[2].FOM_name   = "position";
+   object->attributes[2].trick_name = interface_full_name_str + string( ".packing_data.position" );
+   ;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = create;
    object->attributes[2].subscribe     = !create;
    object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[3].FOM_name      = "attitude";
-   object->attributes[3].trick_name    = interface_full_name_str + string( ".quat_encoder.buffer" );;
+   object->attributes[3].FOM_name   = "attitude";
+   object->attributes[3].trick_name = interface_full_name_str + string( ".quat_encoder.buffer" );
+   ;
    object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = create;
    object->attributes[3].subscribe     = !create;
@@ -182,7 +186,7 @@ void PhysicalInterfaceBase::configure()
    }
 
    // Check for empty federation instance name.
-   if (    this->object->create_HLA_instance
+   if ( this->object->create_HLA_instance
         && this->packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
@@ -191,7 +195,7 @@ void PhysicalInterfaceBase::configure()
    }
 
    // Check for empty federation instance parent_ref_frame.
-   if (    this->object->create_HLA_instance
+   if ( this->object->create_HLA_instance
         && this->packing_data.parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
@@ -211,7 +215,7 @@ void PhysicalInterfaceBase::configure()
 void PhysicalInterfaceBase::initialize()
 {
    // Must have interface instance name.
-   if (    this->object->create_HLA_instance
+   if ( this->object->create_HLA_instance
         && this->packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
@@ -220,7 +224,7 @@ void PhysicalInterfaceBase::initialize()
    }
 
    // Should have interface parent specified if creating this interface.
-   if (    this->object->create_HLA_instance
+   if ( this->object->create_HLA_instance
         && this->packing_data.parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
@@ -267,11 +271,11 @@ void PhysicalInterfaceBase::initialize_callback(
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterfaceBase::set_name( std::string const & new_name )
+void PhysicalInterfaceBase::set_name( std::string const &new_name )
 {
-   if (    this->object != NULL
+   if ( this->object != NULL
         && this->object->create_HLA_instance
-        && new_name.empty() ){
+        && new_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::set_name():" << __LINE__
              << " WARNING: Unexpected empty interface name!" << std::endl;
@@ -284,11 +288,11 @@ void PhysicalInterfaceBase::set_name( std::string const & new_name )
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterfaceBase::set_parent( std::string const & new_parent_name )
+void PhysicalInterfaceBase::set_parent( std::string const &new_parent_name )
 {
-   if (    this->object != NULL
+   if ( this->object != NULL
         && this->object->create_HLA_instance
-        && new_parent_name.empty() ){
+        && new_parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::set_parent():" << __LINE__
              << " WARNING: Unexpected empty parent name!" << std::endl;

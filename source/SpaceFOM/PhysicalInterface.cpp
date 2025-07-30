@@ -86,7 +86,7 @@ PhysicalInterface::~PhysicalInterface()
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterface::configure( )
+void PhysicalInterface::configure()
 {
 
    // Check the reference to the PhysicalInterface data.
@@ -146,7 +146,7 @@ void PhysicalInterface::pack_from_working_data()
    }
 
    // Check for parent name change.
-   if ( interface_data->parent_name!= packing_data.parent_name ) {
+   if ( interface_data->parent_name != packing_data.parent_name ) {
       packing_data.parent_name = interface_data->parent_name;
    }
 
@@ -210,7 +210,7 @@ void PhysicalInterface::unpack_into_working_data()
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterface::set_name( std::string const & new_name )
+void PhysicalInterface::set_name( std::string const &new_name )
 {
    // Call the base class method.
    PhysicalInterfaceBase::set_name( new_name );
@@ -224,7 +224,7 @@ void PhysicalInterface::set_name( std::string const & new_name )
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterface::set_parent( std::string const & new_parent_name )
+void PhysicalInterface::set_parent( std::string const &new_parent_name )
 {
    // Call the base class method.
    PhysicalInterfaceBase::set_parent( new_parent_name );

@@ -123,7 +123,6 @@ void JEODRefFrameState::configure()
 
    // Now call the base class pre_initialize function.
    RefFrameBase::configure();
-
 }
 
 /*!
@@ -292,5 +291,4 @@ void JEODRefFrameState::set_data(
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    time_tt = time_tt_in;
-
 }

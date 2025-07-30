@@ -90,7 +90,7 @@ RefFrameData &RefFrameData::operator=(
 void RefFrameData::copy( RefFrameData const &source )
 {
    // Copy the names.
-   this->name = source.name;
+   this->name        = source.name;
    this->parent_name = source.parent_name;
 
    // Copy the reference frame data state.

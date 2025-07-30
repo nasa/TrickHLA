@@ -110,11 +110,11 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
     *  @param ref_frame_parent      Reference to parent frame for this ReferenceFrame instance.
     *  @param mngr_object           TrickHLA::Object associated with this reference frame.
     *  */
-   virtual void base_config( bool                create,
-                             std::string const & sim_obj_name,
-                             std::string const & ref_frame_pkg_name,
-                             std::string const & ref_frame_fed_name,
-                             TrickHLA::Object  * mngr_object = NULL );
+   virtual void base_config( bool               create,
+                             std::string const &sim_obj_name,
+                             std::string const &ref_frame_pkg_name,
+                             std::string const &ref_frame_fed_name,
+                             TrickHLA::Object  *mngr_object = NULL );
 
    // Pre-initialize the packing object.
    /*! @brief Function to begin the configuration/initialization of the RefFrame.
@@ -138,7 +138,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Access function to get the HLA federation instance name for the reference frame.
     *  @return Object instance name for this reference frame. */
-   virtual std::string const & get_name() const
+   virtual std::string const &get_name() const
    {
       return packing_data.name;
    }
@@ -149,7 +149,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Access function to get the HLA federation instance name for the parent reference frame.
     *  @return Object instance name for the parent reference frame. */
-   virtual std::string const & get_parent_name() const
+   virtual std::string const &get_parent_name() const
    {
       return packing_data.parent_name;
    }

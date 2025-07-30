@@ -142,24 +142,27 @@ void RefFrameBase::base_config(
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name      = "name";
-   object->attributes[0].trick_name    = ref_frame_full_name + string( ".packing_data.name" );;
+   object->attributes[0].FOM_name   = "name";
+   object->attributes[0].trick_name = ref_frame_full_name + string( ".packing_data.name" );
+   ;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = create;
    object->attributes[0].subscribe     = !create;
    object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name      = "parent_name";
-   object->attributes[1].trick_name    = ref_frame_full_name + string( ".packing_data.parent_name" );;
+   object->attributes[1].FOM_name   = "parent_name";
+   object->attributes[1].trick_name = ref_frame_full_name + string( ".packing_data.parent_name" );
+   ;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = create;
    object->attributes[1].subscribe     = !create;
    object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[2].FOM_name      = "state";
-   object->attributes[2].trick_name    = ref_frame_full_name + string( ".stc_encoder.buffer" );;
+   object->attributes[2].FOM_name   = "state";
+   object->attributes[2].trick_name = ref_frame_full_name + string( ".stc_encoder.buffer" );
+   ;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = create;
    object->attributes[2].subscribe     = !create;
@@ -189,8 +192,8 @@ void RefFrameBase::configure()
    if ( this->object == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
-            << " WARNING: Unexpected NULL THLAManager object for ReferenceFrame \""
-            << this->packing_data.name << "\"!\n";
+             << " WARNING: Unexpected NULL THLAManager object for ReferenceFrame \""
+             << this->packing_data.name << "\"!\n";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -223,13 +226,11 @@ void RefFrameBase::configure()
 
       // Mark as NOT a root reference frame.
       this->is_root_node = false;
-
    }
 
    // Check to see if the parent reference frame has been set if this frame
    // is NOT the root frame.
-   if (    ( !this->packing_data.parent_name.empty() )
-        && ( this->parent_frame == NULL )              ) {
+   if ( !this->packing_data.parent_name.empty() && ( this->parent_frame == NULL ) ) {
       ostringstream errmsg;
 
       string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
@@ -306,13 +307,11 @@ void RefFrameBase::initialize()
 
       // Mark as NOT a root reference frame.
       this->is_root_node = false;
-
    }
 
    // Check to see if the parent reference frame has been set if this frame
    // is NOT the root frame.
-   if (    ( !this->packing_data.parent_name.empty() )
-        && ( this->parent_frame == NULL )              ) {
+   if ( !this->packing_data.parent_name.empty() && ( this->parent_frame == NULL ) ) {
       ostringstream errmsg;
 
       string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
@@ -371,7 +370,7 @@ void RefFrameBase::initialize_callback(
 /*!
  * @job_class{initialization}
  */
-void RefFrameBase::set_name( std::string const & new_name )
+void RefFrameBase::set_name( std::string const &new_name )
 {
    // Check for initialization.
    if ( initialized ) {
@@ -384,7 +383,7 @@ void RefFrameBase::set_name( std::string const & new_name )
 
    // Set the names.
    this->packing_data.name = new_name;
-   this->name = new_name;
+   this->name              = new_name;
 
    return;
 }
@@ -392,7 +391,7 @@ void RefFrameBase::set_name( std::string const & new_name )
 /*!
  * @job_class{initialization}
  */
-void RefFrameBase::set_parent_name( std::string const & name )
+void RefFrameBase::set_parent_name( std::string const &name )
 {
    // Check for initialization.
    if ( initialized ) {
@@ -407,8 +406,7 @@ void RefFrameBase::set_parent_name( std::string const & name )
    this->packing_data.parent_name = name;
    if ( this->packing_data.parent_name.empty() ) {
       this->is_root_node = true;
-   }
-   else {
+   } else {
       this->is_root_node = false;
    }
 
@@ -455,12 +453,11 @@ bool RefFrameBase::set_root( bool root_status )
       if ( this->parent_frame == NULL ) {
 
          // Check to make sure the parent name is empty.
-         if ( this->packing_data.parent_name.empty() ){
+         if ( this->packing_data.parent_name.empty() ) {
             // Set the is_root_node state to true.
             this->is_root_node = true;
             return ( true );
-         }
-         else {
+         } else {
             // Note that we DO NOT change the is_root_node state.
             return ( false );
          }

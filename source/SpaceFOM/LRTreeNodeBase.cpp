@@ -76,8 +76,8 @@ LRTreeNodeBase::LRTreeNodeBase()
  * @job_class{initialization}
  */
 LRTreeNodeBase::LRTreeNodeBase(
-   std::string const & node_name,
-   LRTreeNodeBase    * node_parent )
+   std::string const &node_name,
+   LRTreeNodeBase    *node_parent )
    : name( node_name ),
      parent( node_parent ),
      debug( false ),

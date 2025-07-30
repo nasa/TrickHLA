@@ -72,7 +72,7 @@ Packing::~Packing()
  */
 void Packing::initialize()
 {
-   if ( !configured ){
+   if ( !configured ) {
 
       // Check to see if the TrickHLA object has been set.
       if ( object != NULL ) {
@@ -82,15 +82,13 @@ void Packing::initialize()
                 << object->name << "'!" << std::endl;
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-      }
-      else {
+      } else {
          ostringstream errmsg;
          errmsg << "TrickHLA::Packing::initialize():" << __LINE__
                 << " ERROR: The packing function has not been configured!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
-
    }
 
    initialized = true;

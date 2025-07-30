@@ -94,7 +94,6 @@ class InteractionHandler
    virtual ~InteractionHandler();
 
   public:
-
    /*! @brief Configure the TrickHLA Interaction. */
    virtual void configure() { configured = true; }
 
@@ -103,7 +102,7 @@ class InteractionHandler
    virtual void set_configured( bool status = true ) { configured = status; }
 
    /*! @brief Check if the TrickHLA Interaction is configured. */
-   virtual bool is_configured() { return( configured ); }
+   virtual bool is_configured() { return ( configured ); }
 
    // Initialize the Interaction handler.
    /*! @brief Finish the initialization of the TrickHLA Initialization handler. */
