@@ -46,6 +46,11 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntityData::PhysicalEntityData()
+   : name(),
+     type(),
+     status(),
+     parent_frame(),
+     state()
 {
    for ( unsigned int iinc = 0; iinc < 3; iinc++ ) {
       this->accel[iinc]     = 0.0;
@@ -58,10 +63,6 @@ PhysicalEntityData::PhysicalEntityData()
  * @job_class{initialization}
  */
 PhysicalEntityData::PhysicalEntityData( PhysicalEntityData const &source )
-   : name( NULL ),
-     type( NULL ),
-     status( NULL ),
-     parent_frame( NULL )
 {
    this->copy( source ); // NOLINT
 }
