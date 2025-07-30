@@ -83,14 +83,14 @@ Available here https://github.com/terryyin/lizard' )
       TrickHLAMessage.failure( 'Could not find the \'source\' directory!' )
    if not os.path.isdir( 'models' ):
       TrickHLAMessage.failure( 'Could not find the \'models\' directory!' )
-   if not os.path.isdir( 'Modified_data' ):
-      TrickHLAMessage.failure( 'Could not find the \'Modified_data\' directory!' )
+   if not os.path.isdir( 'TrickHLA_data' ):
+      TrickHLAMessage.failure( 'Could not find the \'TrickHLA_data\' directory!' )
 
    # Form relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./include/'] )
    trickhla_source_dirs.extend ( ['./source/'] )
    trickhla_source_dirs.extend ( ['./models/'] )
-   trickhla_source_dirs.extend ( ['./Modified_data/'] )
+   trickhla_source_dirs.extend ( ['./TrickHLA_data/'] )
 
    # Add the source code paths.
    lizard_args.extend( trickhla_source_dirs )
