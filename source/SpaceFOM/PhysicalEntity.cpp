@@ -161,25 +161,17 @@ void PhysicalEntity::pack_from_working_data()
    // in the unpack() function, since we don't run the risk of corrupting our
    // state.
 
-   // Check for name change.
-   if ( pe_packing_data.name != physical_data->name ) {
-      pe_packing_data.name = physical_data->name;
-   }
+   // Copy the name.
+   pe_packing_data.name = physical_data->name;
 
-   // Check for type change.
-   if ( pe_packing_data.type != physical_data->type ) {
-      pe_packing_data.type = physical_data->type;
-   }
+   // Copy the type.
+   pe_packing_data.type = physical_data->type;
 
-   // Check for status change.
-   if ( pe_packing_data.status != physical_data->status ) {
-      pe_packing_data.status = physical_data->status;
-   }
+   // Copy the status.
+   pe_packing_data.status = physical_data->status;
 
-   // Check for parent frame change.
-   if ( pe_packing_data.parent_frame != physical_data->parent_frame ) {
-      pe_packing_data.parent_frame = physical_data->parent_frame;
-   }
+   // Copy the parent frame.
+   pe_packing_data.parent_frame = physical_data->parent_frame;
 
    // Pack the state time coordinate data.
    // Position and velocity vectors.

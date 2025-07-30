@@ -183,6 +183,7 @@ void PhysicalInterfaceBase::configure()
       errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
              << " WARNING: Unexpected NULL TrickHLA Object pointer!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Check for empty federation instance name.
