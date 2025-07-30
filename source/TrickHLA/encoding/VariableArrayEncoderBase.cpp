@@ -126,8 +126,8 @@ int const VariableArrayEncoderBase::get_data_size()
          case TRICK_STRING: {
             if ( is_dynamic_array() ) {
                string *str_array = *static_cast< std::string ** >( address );
-               for ( int i = 0; i < var_element_count; ++i ) {
-                  byte_count += str_array[i].size();
+               for ( size_t i = 0; i < var_element_count; ++i ) {
+                  byte_count += str_array[i].size(); // cppcheck-suppress [useStlAlgorithm]
                }
             } else {
                byte_count = var_element_count;
@@ -138,8 +138,8 @@ int const VariableArrayEncoderBase::get_data_size()
             if ( is_dynamic_array() ) {
                size_t   wchar_size = sizeof( wchar_t );
                wstring *wstr_array = *static_cast< std::wstring ** >( address );
-               for ( int i = 0; i < var_element_count; ++i ) {
-                  byte_count += ( wchar_size * wstr_array[i].size() );
+               for ( size_t i = 0; i < var_element_count; ++i ) {
+                  byte_count += ( wchar_size * wstr_array[i].size() ); // cppcheck-suppress [useStlAlgorithm]
                }
             } else {
                byte_count = var_element_count;
