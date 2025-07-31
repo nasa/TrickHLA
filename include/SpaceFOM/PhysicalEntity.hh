@@ -90,7 +90,7 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
    /*! @brief Get the reference to the physical entity data.
     *  @return Pointer to the PhysicalEntity data. */
-   virtual PhysicalEntityData *get_data()
+   PhysicalEntityData *get_data()
    {
       return ( physical_data );
    }

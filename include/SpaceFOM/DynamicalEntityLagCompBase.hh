@@ -23,11 +23,11 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/SpaceFOM/DynamicalEntityLagCompBase.cpp}
-@trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
+@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/SpaceFOM/DynamicalEntityLagCompBase.cpp}
+@trick_link_dependency{../source/SpaceFOM/QuaternionData.cpp}
 
 @revs_title
 @revs_begin

@@ -67,6 +67,7 @@ using namespace SpaceFOM;
  */
 SpaceTimeCoordinatePacking::SpaceTimeCoordinatePacking()
    : debug( false ),
+     test( true ),
      working_data( NULL ),
      stc_attr( NULL ),
      packing_data(),
@@ -154,6 +155,8 @@ void SpaceTimeCoordinatePacking::base_config(
  */
 void SpaceTimeCoordinatePacking::configure()
 {
+   // Call the base class configure function.
+   TrickHLA::Packing::configure();
    return;
 }
 
@@ -165,7 +168,10 @@ void SpaceTimeCoordinatePacking::initialize()
 
    // Check to make sure the working data has been set.
    if ( working_data == NULL ){
-
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::SpaceTimeCoordinatePacking::initialize():" << __LINE__
+             << " ERROR: NULL latitude reference!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Initialize from the initial state of the working data.
@@ -298,6 +304,11 @@ void SpaceTimeCoordinatePacking::unpack()
    // Transfer the packing data into the working data.
    unpack_into_working_data();
 
+   // Check to see if testing incoming values.
+   if ( test ) {
+      unpack_test();
+   }
+
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
@@ -371,6 +382,102 @@ void SpaceTimeCoordinatePacking::unpack_into_working_data()
       }
       // Time tag for this state data.
       working_data->time = packing_data.time;
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void SpaceTimeCoordinatePacking::unpack_test()
+{
+   double tol = 4.0 * std::numeric_limits< double >::min();
+
+   // Position
+   if (     (abs( test_stc.pos[0] - packing_data.pos[0] ) > tol )
+         || (abs( test_stc.pos[1] - packing_data.pos[1] ) > tol )
+         || (abs( test_stc.pos[2] - packing_data.pos[2] ) > tol ) ) {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Failed position test!" << std::endl;
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   } else {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Passed position test!" << std::endl;
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
+
+   // Velocity
+   if (     (abs( test_stc.vel[0] - packing_data.vel[0] ) > tol )
+         || (abs( test_stc.vel[1] - packing_data.vel[1] ) > tol )
+         || (abs( test_stc.vel[2] - packing_data.vel[2] ) > tol ) ) {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Failed velocity test!" << std::endl;
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   } else {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Passed velocity test!" << std::endl;
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
+
+   // Quaternion scalar
+   if ( abs( test_stc.att.scalar - packing_data.att.scalar ) > tol ) {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Failed quaternion scalar test!" << std::endl;
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   } else {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Passed quaternion scalar test!" << std::endl;
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
+
+   // Quaternion vector
+   if (     (abs( test_stc.att.vector[0] - packing_data.att.vector[0] ) > tol )
+         || (abs( test_stc.att.vector[1] - packing_data.att.vector[1] ) > tol )
+         || (abs( test_stc.att.vector[2] - packing_data.att.vector[2] ) > tol ) ) {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Failed quaternion vector test!" << std::endl;
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   } else {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Passed quaternion vector test!" << std::endl;
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
+
+   // Angular velocity
+   if (     (abs( test_stc.ang_vel[0] - packing_data.ang_vel[0] ) > tol )
+         || (abs( test_stc.ang_vel[1] - packing_data.ang_vel[1] ) > tol )
+         || (abs( test_stc.ang_vel[2] - packing_data.ang_vel[2] ) > tol ) ) {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Failed angular velocity test!" << std::endl;
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   } else {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Passed angular velocity test!" << std::endl;
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
+
+   // Time
+   if ( abs( test_stc.time - packing_data.time ) > tol ) {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Failed time test!" << std::endl;
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   } else {
+      ostringstream msg;
+      msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
+          << " : Passed time test!" << std::endl;
+      message_publish( MSG_INFO, msg.str().c_str() );
    }
 
    return;

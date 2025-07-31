@@ -73,6 +73,9 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
    friend void init_attrSpaceFOM__SpaceTimeCoordinatePacking();
 
   public:
+   SpaceTimeCoordinateData test_stc;  ///< @trick_units{--} Test STC.
+
+  public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the SpaceFOM SpaceTimeCoordinatePacking class. */
    SpaceTimeCoordinatePacking();
@@ -139,12 +142,16 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
 
+   /*! @brief A routine to test the unpacked values against the test values. */
+   virtual void unpack_test();
+
    /*! @brief Print out the data values.
     *  @param stream Output stream. */
    virtual void print_data( std::ostream &stream = std::cout ) const;
 
   public:
    bool debug; ///< @trick_units{--} Debug output flag.
+   bool test;  ///< @trick_units{--} Flag to enable testing.
 
   protected:
    SpaceFOM::SpaceTimeCoordinateData * working_data; ///< @trick_units{--} Working data.

@@ -79,6 +79,8 @@ quat_encoder_test.packing.subscribe()
 
 quat_encoder_test.data.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 
+quat_encoder_test.packing.test_data.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [45.0, 30.0, 10.0] )
+
 
 #---------------------------------------------------------------------------
 # Set the SpaceTimeCoordinateState test information.
@@ -91,6 +93,12 @@ stc_encoder_test.data.vel = [ 0.0, 0.0, 0.0 ]
 stc_encoder_test.data.att.scalar = 0.0
 stc_encoder_test.data.att.vector = [ 0.0, 0.0, 0.0 ]
 stc_encoder_test.data.ang_vel = [ 0.00, 0.00, 0.00 ]
+
+stc_encoder_test.packing.test_stc.pos = [ 1.0, 2.0, 3.0 ]
+stc_encoder_test.packing.test_stc.vel = [ 0.1, 0.2, 0.3 ]
+stc_encoder_test.packing.test_stc.att.scalar = 1.0
+stc_encoder_test.packing.test_stc.att.vector = [ 0.0, 0.0, 0.0 ]
+stc_encoder_test.packing.test_stc.ang_vel = [ 0.01, 0.02, 0.03 ]
 
 
 #---------------------------------------------------------------------------

@@ -67,6 +67,7 @@ using namespace SpaceFOM;
  */
 QuaternionPacking::QuaternionPacking()
    : debug( false ),
+     test( true ),
      working_data( NULL ),
      quat_attr( NULL ),
      packing_data(),
@@ -154,6 +155,8 @@ void QuaternionPacking::base_config(
  */
 void QuaternionPacking::configure()
 {
+   // Call the base class configure function.
+   TrickHLA::Packing::configure();
    return;
 }
 
@@ -165,7 +168,10 @@ void QuaternionPacking::initialize()
 
    // Check to make sure the working data has been set.
    if ( working_data == NULL ){
-
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::QuaternionPacking::initialize():" << __LINE__
+             << " ERROR: NULL latitude reference!\n";
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Initialize from the initial state of the working data.
@@ -298,6 +304,11 @@ void QuaternionPacking::unpack()
    // Transfer the packing data into the working data.
    unpack_into_working_data();
 
+   // Check to see if testing incoming values.
+   if ( test ) {
+      unpack_test();
+   }
+
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
@@ -355,6 +366,44 @@ void QuaternionPacking::unpack_into_working_data()
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          working_data->vector[iinc] = packing_data.vector[iinc];
       }
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionPacking::unpack_test()
+{
+   double tol = 4.0 * std::numeric_limits< double >::min();
+
+   // Scalar
+   if ( abs( test_data.scalar - packing_data.scalar ) > tol ) {
+      ostringstream msg;
+      msg << "QuaternionPacking::unpack_test(): " << __LINE__
+          << " : Failed scalar test!" << std::endl;
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   } else {
+      ostringstream msg;
+      msg << "QuaternionPacking::unpack_test(): " << __LINE__
+          << " : Passed scalar test!" << std::endl;
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
+
+   // Vector
+   if (     (abs( test_data.vector[0] - packing_data.vector[0] ) > tol )
+         || (abs( test_data.vector[1] - packing_data.vector[1] ) > tol )
+         || (abs( test_data.vector[2] - packing_data.vector[2] ) > tol ) ) {
+      ostringstream msg;
+      msg << "QuaternionPacking::unpack_test(): " << __LINE__
+          << " : Failed vector test!" << std::endl;
+      message_publish( MSG_ERROR, msg.str().c_str() );
+   } else {
+      ostringstream msg;
+      msg << "QuaternionPacking::unpack_test(): " << __LINE__
+          << " : Passed vector test!" << std::endl;
+      message_publish( MSG_INFO, msg.str().c_str() );
    }
 
    return;

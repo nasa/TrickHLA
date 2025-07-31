@@ -129,12 +129,12 @@ void DynamicalEntityData::print_data( std::ostream &stream ) const
           << "\t\t" << torque[2] << '\n';
    stream << "\tinertia: \n"
           << "\t\t" << inertia[0][0] << ", " << inertia[1][0] << ", " << inertia[2][0] << '\n'
-          << "\t\t" << inertia[0][0] << ", " << inertia[1][0] << ", " << inertia[2][0] << '\n'
-          << "\t\t" << inertia[0][0] << ", " << inertia[1][0] << ", " << inertia[2][0] << '\n';
+          << "\t\t" << inertia[0][1] << ", " << inertia[1][1] << ", " << inertia[2][1] << '\n'
+          << "\t\t" << inertia[0][2] << ", " << inertia[1][2] << ", " << inertia[2][2] << '\n';
    stream << "\tinertia rate: \n"
           << "\t\t" << inertia_rate[0][0] << ", " << inertia_rate[1][0] << ", " << inertia_rate[2][0] << '\n'
-          << "\t\t" << inertia_rate[0][0] << ", " << inertia_rate[1][0] << ", " << inertia_rate[2][0] << '\n'
-          << "\t\t" << inertia_rate[0][0] << ", " << inertia_rate[1][0] << ", " << inertia_rate[2][0] << '\n';
+          << "\t\t" << inertia_rate[0][1] << ", " << inertia_rate[1][1] << ", " << inertia_rate[2][1] << '\n'
+          << "\t\t" << inertia_rate[0][2] << ", " << inertia_rate[1][2] << ", " << inertia_rate[2][2] << '\n';
 
    return;
 }
