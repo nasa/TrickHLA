@@ -178,7 +178,8 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
-                << "' is of type 'unsigned short', and is not supported."
+                << "' is of type 'unsigned short', and the IEEE 1516-2010"
+                << " standard does not support encoding unsigned integers."
                 << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif
@@ -197,7 +198,8 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
-                << "' is of type 'unsigned int', and is not supported."
+                << "' is of type 'unsigned int', and the IEEE 1516-2010"
+                << " standard does not support encoding unsigned integers."
                 << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif
@@ -236,7 +238,8 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
-                << "' is of type 'unsigned long', and is not supported."
+                << "' is of type 'unsigned long', and the IEEE 1516-2010"
+                << " standard does not support encoding unsigned integers."
                 << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif
@@ -285,7 +288,8 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << attr->name
-                << "' is of type 'unsigned long long', and is not supported."
+                << "' is of type 'unsigned long long', and the IEEE 1516-2010"
+                << " standard does not support encoding unsigned integers."
                 << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif
