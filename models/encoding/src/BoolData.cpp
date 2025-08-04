@@ -47,7 +47,7 @@ BoolData::BoolData()
 }
 
 BoolData::BoolData(
-   int const offset )
+   unsigned int const offset )
 {
    _bool = ( ( ( 1 + offset ) % 2 ) == 0 );
 

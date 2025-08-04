@@ -48,7 +48,7 @@ Float32Data::Float32Data()
 }
 
 Float32Data::Float32Data(
-   int const offset )
+   unsigned int const offset )
 {
    f32 = 1.0 + offset;
 

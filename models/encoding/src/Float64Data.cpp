@@ -48,7 +48,7 @@ Float64Data::Float64Data()
 }
 
 Float64Data::Float64Data(
-   int const offset )
+   unsigned int const offset )
 {
    f64 = 1.0 + offset;
 

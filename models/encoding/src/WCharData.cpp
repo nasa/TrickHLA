@@ -48,7 +48,7 @@ WCharData::WCharData()
 }
 
 WCharData::WCharData(
-   int const offset )
+   unsigned int const offset )
 {
    _wchar = 1 + offset;
 

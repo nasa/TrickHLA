@@ -60,7 +60,7 @@ class StringData
    /*! @brief Default constructor for the TrickHLAModel StringData class. */
    StringData();
 
-   explicit StringData( int const offset );
+   explicit StringData( unsigned int const offset );
 
    /*! @brief Destructor for the TrickHLAModel StringData class. */
    virtual ~StringData();

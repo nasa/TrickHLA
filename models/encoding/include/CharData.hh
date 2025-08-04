@@ -60,7 +60,7 @@ class CharData
    /*! @brief Default constructor for the TrickHLAModel CharData class. */
    CharData();
 
-   explicit CharData( int const offset );
+   explicit CharData( unsigned int const offset );
 
    /*! @brief Destructor for the TrickHLAModel CharData class. */
    virtual ~CharData();

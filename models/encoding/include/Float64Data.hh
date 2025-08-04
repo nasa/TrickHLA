@@ -60,7 +60,7 @@ class Float64Data
    /*! @brief Default constructor for the TrickHLAModel Float64Data class. */
    Float64Data();
 
-   explicit Float64Data( int const offset );
+   explicit Float64Data( unsigned int const offset );
 
    /*! @brief Destructor for the TrickHLAModel Float64Data class. */
    virtual ~Float64Data();

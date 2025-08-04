@@ -181,7 +181,7 @@ EncoderBase *EncoderFactory::create(
             ostringstream errmsg;
             errmsg << "EncoderFactory::create():" << __LINE__
                    << " WARNING: Trick attributes for the variable '" << attr->name
-                   << "' is of type 'unsigned short', and the IEEE 1516-2010"
+                   << "' is of type 'unsigned short', but the IEEE 1516-2010"
                    << " standard does not support encoding unsigned integers."
                    << " Using int16 encoder instead." << std::endl;
             message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -204,7 +204,7 @@ EncoderBase *EncoderFactory::create(
             ostringstream errmsg;
             errmsg << "EncoderFactory::create():" << __LINE__
                    << " WARNING: Trick attributes for the variable '" << attr->name
-                   << "' is of type 'unsigned int', and the IEEE 1516-2010"
+                   << "' is of type 'unsigned int', but the IEEE 1516-2010"
                    << " standard does not support encoding unsigned integers."
                    << " Using int32 encoder instead." << std::endl;
             message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -249,7 +249,7 @@ EncoderBase *EncoderFactory::create(
                   ostringstream errmsg;
                   errmsg << "EncoderFactory::create():" << __LINE__
                          << " WARNING: Trick attributes for the variable '" << attr->name
-                         << "' is of type 'unsigned long', and the IEEE 1516-2010"
+                         << "' is of type 'unsigned long', but the IEEE 1516-2010"
                          << " standard does not support encoding unsigned integers."
                          << " Using int32 encoder instead." << std::endl;
                   message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -263,7 +263,7 @@ EncoderBase *EncoderFactory::create(
                   ostringstream errmsg;
                   errmsg << "EncoderFactory::create():" << __LINE__
                          << " WARNING: Trick attributes for the variable '" << attr->name
-                         << "' is of type 'unsigned long', and the IEEE 1516-2010"
+                         << "' is of type 'unsigned long', but the IEEE 1516-2010"
                          << " standard does not support encoding unsigned integers."
                          << " Using int64 encoder instead." << std::endl;
                   message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -319,7 +319,7 @@ EncoderBase *EncoderFactory::create(
             ostringstream errmsg;
             errmsg << "EncoderFactory::create():" << __LINE__
                    << " WARNING: Trick attributes for the variable '" << attr->name
-                   << "' is of type 'unsigned long long', and the IEEE 1516-2010"
+                   << "' is of type 'unsigned long long', but the IEEE 1516-2010"
                    << " standard does not support encoding unsigned integers."
                    << " Using int64 encoder instead." << std::endl;
             message_publish( MSG_WARNING, errmsg.str().c_str() );

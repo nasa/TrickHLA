@@ -60,7 +60,7 @@ class Float32Data
    /*! @brief Default constructor for the TrickHLAModel Float32Data class. */
    Float32Data();
 
-   explicit Float32Data( int const offset );
+   explicit Float32Data( unsigned int const offset );
 
    /*! @brief Destructor for the TrickHLAModel Float32Data class. */
    virtual ~Float32Data();

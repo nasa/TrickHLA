@@ -48,7 +48,7 @@ StringData::StringData()
 }
 
 StringData::StringData(
-   int const offset )
+   unsigned int const offset )
 {
    int value = 1 + offset;
    _string   = "string-" + std::to_string( value ); // cppcheck-suppress [useInitializationList]
@@ -67,7 +67,7 @@ StringData::StringData(
       }
    }
 
-   int num_items = 1 + offset; // Number of std::string in array.
+   int num_items = 1 + ( ( offset < 10 ) ? offset : 10 ); // Number of std::string in array.
    ptr_string    = static_cast< std::string * >( TMM_declare_var_1d( "std::string", num_items ) );
    for ( int i = 0; i < num_items; ++i ) {
       value         = i + 1 + offset;

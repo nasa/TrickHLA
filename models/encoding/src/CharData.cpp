@@ -54,7 +54,7 @@ CharData::CharData()
 }
 
 CharData::CharData(
-   int const offset )
+   unsigned int const offset )
 {
    _char = 1 + offset;
 

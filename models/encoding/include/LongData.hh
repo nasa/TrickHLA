@@ -60,7 +60,7 @@ class LongData
    /*! @brief Default constructor for the TrickHLAModel LongData class. */
    LongData();
 
-   explicit LongData( int const offset );
+   explicit LongData( unsigned long const offset );
 
    /*! @brief Destructor for the TrickHLAModel LongData class. */
    virtual ~LongData();

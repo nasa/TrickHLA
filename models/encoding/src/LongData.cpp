@@ -48,7 +48,7 @@ LongData::LongData()
 }
 
 LongData::LongData(
-   int const offset )
+   unsigned long const offset )
 {
    _long = 1 + offset;
 

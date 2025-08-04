@@ -60,7 +60,7 @@ class WStringData
    /*! @brief Default constructor for the TrickHLAModel WStringData class. */
    WStringData();
 
-   explicit WStringData( int const offset );
+   explicit WStringData( unsigned int const offset );
 
    /*! @brief Destructor for the TrickHLAModel WStringData class. */
    virtual ~WStringData();

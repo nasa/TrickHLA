@@ -60,7 +60,7 @@ class BoolData
    /*! @brief Default constructor for the TrickHLAModel BoolData class. */
    BoolData();
 
-   explicit BoolData( int const offset );
+   explicit BoolData( unsigned int const offset );
 
    /*! @brief Destructor for the TrickHLAModel BoolData class. */
    virtual ~BoolData();
