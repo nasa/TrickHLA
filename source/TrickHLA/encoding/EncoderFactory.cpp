@@ -251,8 +251,7 @@ EncoderBase *EncoderFactory::create(
                          << " WARNING: Trick attributes for the variable '" << attr->name
                          << "' is of type 'unsigned long', and the IEEE 1516-2010"
                          << " standard does not support encoding unsigned integers."
-                         << " Using int32 encoder instead."
-                         << std::endl;
+                         << " Using int32 encoder instead." << std::endl;
                   message_publish( MSG_WARNING, errmsg.str().c_str() );
                }
                encoder = create_int32_encoder( address, attr, hla_encoding );
@@ -266,8 +265,7 @@ EncoderBase *EncoderFactory::create(
                          << " WARNING: Trick attributes for the variable '" << attr->name
                          << "' is of type 'unsigned long', and the IEEE 1516-2010"
                          << " standard does not support encoding unsigned integers."
-                         << " Using int64 encoder instead."
-                         << std::endl;
+                         << " Using int64 encoder instead." << std::endl;
                   message_publish( MSG_WARNING, errmsg.str().c_str() );
                }
                encoder = create_int64_encoder( address, attr, hla_encoding );
