@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{encoding/src/UInt32Data.cpp}
 @trick_link_dependency{encoding/src/UInt64Data.cpp}
 @trick_link_dependency{encoding/src/LongData.cpp}
+@trick_link_dependency{encoding/src/ULongData.cpp}
 @trick_link_dependency{encoding/src/StringData.cpp}
 @trick_link_dependency{encoding/src/WCharData.cpp}
 @trick_link_dependency{encoding/src/WStringData.cpp}
@@ -67,6 +68,7 @@ NASA, Johnson Space Center\n
 #include "UInt16Data.hh"
 #include "UInt32Data.hh"
 #include "UInt64Data.hh"
+#include "ULongData.hh"
 #include "WCharData.hh"
 #include "WStringData.hh"
 
@@ -161,6 +163,12 @@ class EncodingTest
                    std::string const           &data2_trick_base_name,
                    LongData                    &data2,
                    TrickHLA::EncodingEnum const rti_encoding );
+
+   void ulong_test( std::string const           &data1_trick_base_name,
+                    ULongData                   &data1,
+                    std::string const           &data2_trick_base_name,
+                    ULongData                   &data2,
+                    TrickHLA::EncodingEnum const rti_encoding );
 
    void float32_test( std::string const           &data1_trick_base_name,
                       Float32Data                 &data1,

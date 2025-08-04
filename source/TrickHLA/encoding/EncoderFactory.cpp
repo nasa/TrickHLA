@@ -243,7 +243,7 @@ EncoderBase *EncoderFactory::create(
             }
          }
 #else
-         switch ( sizeof( long ) ) {
+         switch ( sizeof( unsigned long ) ) {
             case 4: {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
                   ostringstream errmsg;

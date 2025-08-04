@@ -21,6 +21,7 @@
 ##include "encoding/include/UInt32Data.hh"
 ##include "encoding/include/UInt64Data.hh"
 ##include "encoding/include/LongData.hh"
+##include "encoding/include/ULongData.hh"
 ##include "encoding/include/StringData.hh"
 ##include "encoding/include/WCharData.hh"
 ##include "encoding/include/WStringData.hh"
@@ -99,6 +100,11 @@ class TestSimObj : public Trick::SimObject {
    LongData long_data2 = LongData( 10 );
    LongData long_data3 = LongData( 0 );
    LongData long_data4 = LongData( 10 );
+
+   ULongData ulong_data1 = ULongData( 0 );
+   ULongData ulong_data2 = ULongData( 10 );
+   ULongData ulong_data3 = ULongData( (unsigned long)LONG_MAX + 1 );
+   ULongData ulong_data4 = ULongData( (unsigned long)LONG_MAX + 1 + 10 );
 
    Float32Data float32_data1 = Float32Data( 0 );
    Float32Data float32_data2 = Float32Data( 10 );
@@ -209,6 +215,13 @@ class TestSimObj : public Trick::SimObject {
       ("initialization") encoder_test.long_test( "T.long_data3", long_data3,
                                                  "T.long_data4", long_data4,
                                                  TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.ulong_test( "T.ulong_data1", ulong_data1,
+                                                  "T.ulong_data2", ulong_data2,
+                                                  TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.ulong_test( "T.ulong_data3", ulong_data3,
+                                                  "T.ulong_data4", ulong_data4,
+                                                  TrickHLA::ENCODING_BIG_ENDIAN );
 
       ("initialization") encoder_test.float32_test( "T.float32_data1", float32_data1,
                                                     "T.float32_data2", float32_data2,

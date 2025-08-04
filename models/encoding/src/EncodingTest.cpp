@@ -1263,6 +1263,100 @@ void EncodingTest::long_test(
    }
 }
 
+void EncodingTest::ulong_test(
+   string const      &data1_trick_base_name,
+   ULongData         &data1,
+   string const      &data2_trick_base_name,
+   ULongData         &data2,
+   EncodingEnum const rti_encoding )
+{
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg1;
+      msg1 << "========================================\n"
+           << "EncodingTest::ulong_test():" << __LINE__ << "\n"
+           << "BEFORE encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------" << "\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg1.str().c_str() );
+   }
+
+   EncoderBase *data1_ulong_encoder = EncoderFactory::create(
+      data1_trick_base_name + "._ulong", rti_encoding );
+
+   EncoderBase *data1_vec3_ulong_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".vec3_ulong", rti_encoding );
+
+   EncoderBase *data1_m3x3_ulong_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".m3x3_ulong", rti_encoding );
+
+   EncoderBase *data1_ptr_ulong_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data1_trick_base_name + ".ptr_ulong", rti_encoding ) );
+
+   EncoderBase *data2_ulong_encoder = EncoderFactory::create(
+      data2_trick_base_name + "._ulong", rti_encoding );
+
+   EncoderBase *data2_vec3_ulong_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".vec3_ulong", rti_encoding );
+
+   EncoderBase *data2_m3x3_ulong_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".m3x3_ulong", rti_encoding );
+
+   EncoderBase *data2_ptr_ulong_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data2_trick_base_name + ".ptr_ulong", rti_encoding ) );
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg2;
+      msg2 << "EncodingTest::ulong_test():" << __LINE__ << "\n"
+           << "     data1_ulong_encoder: " << data1_ulong_encoder->to_string() << "\n"
+           << "data1_vec3_ulong_encoder: " << data1_vec3_ulong_encoder->to_string() << "\n"
+           << "data1_m3x3_ulong_encoder: " << data1_m3x3_ulong_encoder->to_string() << "\n"
+           << " data1_ptr_ulong_encoder: " << data1_ptr_ulong_encoder->to_string() << "\n"
+           << "     data2_ulong_encoder: " << data2_ulong_encoder->to_string() << "\n"
+           << "data2_vec3_ulong_encoder: " << data2_vec3_ulong_encoder->to_string() << "\n"
+           << "data2_m3x3_ulong_encoder: " << data2_m3x3_ulong_encoder->to_string() << "\n"
+           << " data2_ptr_ulong_encoder: " << data2_ptr_ulong_encoder->to_string() << "\n";
+      message_publish( MSG_NORMAL, msg2.str().c_str() );
+   }
+
+   data2_ulong_encoder->decode( data1_ulong_encoder->encode() );
+   data2_vec3_ulong_encoder->decode( data1_vec3_ulong_encoder->encode() );
+   data2_m3x3_ulong_encoder->decode( data1_m3x3_ulong_encoder->encode() );
+
+   data1_ptr_ulong_encoder->update_before_encode();
+   data2_ptr_ulong_encoder->decode( data1_ptr_ulong_encoder->encode() );
+   data2_ptr_ulong_encoder->update_after_decode();
+
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
+      compare_msg << "ulong_data1 == ulong_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
+   } else {
+      compare_msg << "ulong_data1 != ulong_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
+   }
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg3;
+      msg3 << "EncodingTest::ulong_test():" << __LINE__ << "\n"
+           << "AFTER encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg3.str().c_str() );
+   }
+}
+
 void EncodingTest::float32_test(
    string const      &data1_trick_base_name,
    Float32Data       &data1,
