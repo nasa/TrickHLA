@@ -60,7 +60,7 @@ class Int16Data
    /*! @brief Default constructor for the TrickHLAModel Int16Data class. */
    Int16Data();
 
-   explicit Int16Data( int const offset );
+   explicit Int16Data( unsigned short const offset );
 
    /*! @brief Destructor for the TrickHLAModel Int16Data class. */
    virtual ~Int16Data();

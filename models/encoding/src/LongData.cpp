@@ -64,7 +64,7 @@ LongData::LongData(
       }
    }
 
-   int const ptr_long_size = 5 + offset;
+   int const ptr_long_size = 5 + ( ( offset < 10 ) ? offset : 10 );
 
    ptr_long = static_cast< long * >( TMM_declare_var_1d( "long", ptr_long_size ) );
    for ( int i = 0; i < ptr_long_size; ++i ) {

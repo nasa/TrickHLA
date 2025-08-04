@@ -63,7 +63,7 @@ BoolData::BoolData(
       }
    }
 
-   int const ptr_bool_size = 5 + offset;
+   int const ptr_bool_size = 5 + ( ( offset < 10 ) ? offset : 10 );
 
    ptr_bool = static_cast< bool * >( TMM_declare_var_1d( "bool", ptr_bool_size ) );
    for ( int i = 0; i < ptr_bool_size; ++i ) {

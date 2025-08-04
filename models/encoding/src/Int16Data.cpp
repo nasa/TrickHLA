@@ -48,7 +48,7 @@ Int16Data::Int16Data()
 }
 
 Int16Data::Int16Data(
-   int const offset )
+   unsigned short const offset )
 {
    i16 = 1 + offset;
 
@@ -56,7 +56,7 @@ Int16Data::Int16Data(
       vec3_i16[i] = i + 1 + offset;
    }
 
-   int value = 1;
+   short value = 1;
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          m3x3_i16[row][col] = value + offset;
@@ -64,7 +64,7 @@ Int16Data::Int16Data(
       }
    }
 
-   int const ptr_i16_size = 5 + offset;
+   int const ptr_i16_size = 5 + ( ( offset < 10 ) ? offset : 10 );
 
    ptr_i16 = static_cast< short * >( TMM_declare_var_1d( "short", ptr_i16_size ) );
    for ( int i = 0; i < ptr_i16_size; ++i ) {

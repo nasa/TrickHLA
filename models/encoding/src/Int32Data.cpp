@@ -48,7 +48,7 @@ Int32Data::Int32Data()
 }
 
 Int32Data::Int32Data(
-   int const offset )
+   unsigned int const offset )
 {
    i32 = 1 + offset;
 
@@ -64,7 +64,7 @@ Int32Data::Int32Data(
       }
    }
 
-   int const ptr_i32_size = 5 + offset;
+   int const ptr_i32_size = 5 + ( ( offset < 10 ) ? offset : 10 );
 
    ptr_i32 = static_cast< int * >( TMM_declare_var_1d( "int", ptr_i32_size ) );
    for ( int i = 0; i < ptr_i32_size; ++i ) {

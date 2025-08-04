@@ -64,7 +64,7 @@ Float32Data::Float32Data(
       }
    }
 
-   int const ptr_f32_size = 5 + offset;
+   int const ptr_f32_size = 5 + ( ( offset < 10 ) ? offset : 10 );
 
    ptr_f32 = static_cast< float * >( TMM_declare_var_1d( "float", ptr_f32_size ) );
    for ( int i = 0; i < ptr_f32_size; ++i ) {

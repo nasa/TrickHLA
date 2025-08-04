@@ -31,6 +31,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{encoding/src/Int16Data.cpp}
 @trick_link_dependency{encoding/src/Int32Data.cpp}
 @trick_link_dependency{encoding/src/Int64Data.cpp}
+@trick_link_dependency{encoding/src/UInt16Data.cpp}
+@trick_link_dependency{encoding/src/UInt32Data.cpp}
+@trick_link_dependency{encoding/src/UInt64Data.cpp}
 @trick_link_dependency{encoding/src/LongData.cpp}
 @trick_link_dependency{encoding/src/StringData.cpp}
 @trick_link_dependency{encoding/src/WCharData.cpp}
@@ -77,6 +80,9 @@ NASA, Johnson Space Center\n
 #include "encoding/include/Int64Data.hh"
 #include "encoding/include/LongData.hh"
 #include "encoding/include/StringData.hh"
+#include "encoding/include/UInt16Data.hh"
+#include "encoding/include/UInt32Data.hh"
+#include "encoding/include/UInt64Data.hh"
 #include "encoding/include/WCharData.hh"
 #include "encoding/include/WStringData.hh"
 
@@ -693,6 +699,100 @@ void EncodingTest::int16_test(
    }
 }
 
+void EncodingTest::uint16_test(
+   string const      &data1_trick_base_name,
+   UInt16Data        &data1,
+   string const      &data2_trick_base_name,
+   UInt16Data        &data2,
+   EncodingEnum const rti_encoding )
+{
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg1;
+      msg1 << "========================================\n"
+           << "EncodingTest::uint16_test():" << __LINE__ << "\n"
+           << "BEFORE encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------" << "\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg1.str().c_str() );
+   }
+
+   EncoderBase *data1_ui16_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".ui16", rti_encoding );
+
+   EncoderBase *data1_vec3_ui16_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".vec3_ui16", rti_encoding );
+
+   EncoderBase *data1_m3x3_ui16_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".m3x3_ui16", rti_encoding );
+
+   EncoderBase *data1_ptr_ui16_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data1_trick_base_name + ".ptr_ui16", rti_encoding ) );
+
+   EncoderBase *data2_ui16_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".ui16", rti_encoding );
+
+   EncoderBase *data2_vec3_ui16_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".vec3_ui16", rti_encoding );
+
+   EncoderBase *data2_m3x3_ui16_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".m3x3_ui16", rti_encoding );
+
+   EncoderBase *data2_ptr_ui16_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data2_trick_base_name + ".ptr_ui16", rti_encoding ) );
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg2;
+      msg2 << "EncodingTest::uint16_test():" << __LINE__ << "\n"
+           << "     data1_ui16_encoder: " << data1_ui16_encoder->to_string() << "\n"
+           << "data1_vec3_ui16_encoder: " << data1_vec3_ui16_encoder->to_string() << "\n"
+           << "data1_m3x3_ui16_encoder: " << data1_m3x3_ui16_encoder->to_string() << "\n"
+           << " data1_ptr_ui16_encoder: " << data1_ptr_ui16_encoder->to_string() << "\n"
+           << "     data2_ui16_encoder: " << data2_ui16_encoder->to_string() << "\n"
+           << "data2_vec3_ui16_encoder: " << data2_vec3_ui16_encoder->to_string() << "\n"
+           << "data2_m3x3_ui16_encoder: " << data2_m3x3_ui16_encoder->to_string() << "\n"
+           << " data2_ptr_ui16_encoder: " << data2_ptr_ui16_encoder->to_string() << "\n";
+      message_publish( MSG_NORMAL, msg2.str().c_str() );
+   }
+
+   data2_ui16_encoder->decode( data1_ui16_encoder->encode() );
+   data2_vec3_ui16_encoder->decode( data1_vec3_ui16_encoder->encode() );
+   data2_m3x3_ui16_encoder->decode( data1_m3x3_ui16_encoder->encode() );
+
+   data1_ptr_ui16_encoder->update_before_encode();
+   data2_ptr_ui16_encoder->decode( data1_ptr_ui16_encoder->encode() );
+   data1_ptr_ui16_encoder->update_after_decode();
+
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
+      compare_msg << "uint16_data1 == uint16_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
+   } else {
+      compare_msg << "uint16_data1 != uint16_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
+   }
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg3;
+      msg3 << "EncodingTest::uint16_test():" << __LINE__ << "\n"
+           << "AFTER encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg3.str().c_str() );
+   }
+}
+
 void EncodingTest::int32_test(
    string const      &data1_trick_base_name,
    Int32Data         &data1,
@@ -787,6 +887,100 @@ void EncodingTest::int32_test(
    }
 }
 
+void EncodingTest::uint32_test(
+   string const      &data1_trick_base_name,
+   UInt32Data        &data1,
+   string const      &data2_trick_base_name,
+   UInt32Data        &data2,
+   EncodingEnum const rti_encoding )
+{
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg1;
+      msg1 << "========================================\n"
+           << "EncodingTest::uint32_test():" << __LINE__ << "\n"
+           << "BEFORE encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------" << "\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg1.str().c_str() );
+   }
+
+   EncoderBase *data1_ui32_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".ui32", rti_encoding );
+
+   EncoderBase *data1_vec3_ui32_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".vec3_ui32", rti_encoding );
+
+   EncoderBase *data1_m3x3_ui32_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".m3x3_ui32", rti_encoding );
+
+   EncoderBase *data1_ptr_ui32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data1_trick_base_name + ".ptr_ui32", rti_encoding ) );
+
+   EncoderBase *data2_ui32_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".ui32", rti_encoding );
+
+   EncoderBase *data2_vec3_ui32_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".vec3_ui32", rti_encoding );
+
+   EncoderBase *data2_m3x3_ui32_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".m3x3_ui32", rti_encoding );
+
+   EncoderBase *data2_ptr_ui32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data2_trick_base_name + ".ptr_ui32", rti_encoding ) );
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg2;
+      msg2 << "EncodingTest::uint32_test():" << __LINE__ << "\n"
+           << "     data1_ui32_encoder: " << data1_ui32_encoder->to_string() << "\n"
+           << "data1_vec3_ui32_encoder: " << data1_vec3_ui32_encoder->to_string() << "\n"
+           << "data1_m3x3_ui32_encoder: " << data1_m3x3_ui32_encoder->to_string() << "\n"
+           << " data1_ptr_ui32_encoder: " << data1_ptr_ui32_encoder->to_string() << "\n"
+           << "     data2_ui32_encoder: " << data2_ui32_encoder->to_string() << "\n"
+           << "data2_vec3_ui32_encoder: " << data2_vec3_ui32_encoder->to_string() << "\n"
+           << "data2_m3x3_ui32_encoder: " << data2_m3x3_ui32_encoder->to_string() << "\n"
+           << " data2_ptr_ui32_encoder: " << data2_ptr_ui32_encoder->to_string() << "\n";
+      message_publish( MSG_NORMAL, msg2.str().c_str() );
+   }
+
+   data2_ui32_encoder->decode( data1_ui32_encoder->encode() );
+   data2_vec3_ui32_encoder->decode( data1_vec3_ui32_encoder->encode() );
+   data2_m3x3_ui32_encoder->decode( data1_m3x3_ui32_encoder->encode() );
+
+   data1_ptr_ui32_encoder->update_before_encode();
+   data2_ptr_ui32_encoder->decode( data1_ptr_ui32_encoder->encode() );
+   data2_ptr_ui32_encoder->update_after_decode();
+
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
+      compare_msg << "uint32_data1 == uint32_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
+   } else {
+      compare_msg << "uint32_data1 != uint32_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
+   }
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg3;
+      msg3 << "EncodingTest::uint32_test():" << __LINE__ << "\n"
+           << "AFTER encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg3.str().c_str() );
+   }
+}
+
 void EncodingTest::int64_test(
    string const      &data1_trick_base_name,
    Int64Data         &data1,
@@ -873,6 +1067,100 @@ void EncodingTest::int64_test(
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::int64_test():" << __LINE__ << "\n"
+           << "AFTER encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg3.str().c_str() );
+   }
+}
+
+void EncodingTest::uint64_test(
+   string const      &data1_trick_base_name,
+   UInt64Data        &data1,
+   string const      &data2_trick_base_name,
+   UInt64Data        &data2,
+   EncodingEnum const rti_encoding )
+{
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg1;
+      msg1 << "========================================\n"
+           << "EncodingTest::uint64_test():" << __LINE__ << "\n"
+           << "BEFORE encode/decode:\n"
+           << "Data1: " << data1.to_string()
+           << "-----------------------------" << "\n"
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg1.str().c_str() );
+   }
+
+   EncoderBase *data1_ui64_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".ui64", rti_encoding );
+
+   EncoderBase *data1_vec3_ui64_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".vec3_ui64", rti_encoding );
+
+   EncoderBase *data1_m3x3_ui64_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".m3x3_ui64", rti_encoding );
+
+   EncoderBase *data1_ptr_ui64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data1_trick_base_name + ".ptr_ui64", rti_encoding ) );
+
+   EncoderBase *data2_ui64_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".ui64", rti_encoding );
+
+   EncoderBase *data2_vec3_ui64_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".vec3_ui64", rti_encoding );
+
+   EncoderBase *data2_m3x3_ui64_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".m3x3_ui64", rti_encoding );
+
+   EncoderBase *data2_ptr_ui64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data2_trick_base_name + ".ptr_ui64", rti_encoding ) );
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg2;
+      msg2 << "EncodingTest::uint64_test():" << __LINE__ << "\n"
+           << "     data1_ui64_encoder: " << data1_ui64_encoder->to_string() << "\n"
+           << "data1_vec3_ui64_encoder: " << data1_vec3_ui64_encoder->to_string() << "\n"
+           << "data1_m3x3_ui64_encoder: " << data1_m3x3_ui64_encoder->to_string() << "\n"
+           << " data1_ptr_ui64_encoder: " << data1_ptr_ui64_encoder->to_string() << "\n"
+           << "     data2_ui64_encoder: " << data2_ui64_encoder->to_string() << "\n"
+           << "data2_vec3_ui64_encoder: " << data2_vec3_ui64_encoder->to_string() << "\n"
+           << "data2_m3x3_ui64_encoder: " << data2_m3x3_ui64_encoder->to_string() << "\n"
+           << " data2_ptr_ui64_encoder: " << data2_ptr_ui64_encoder->to_string() << "\n";
+      message_publish( MSG_NORMAL, msg2.str().c_str() );
+   }
+
+   data2_ui64_encoder->decode( data1_ui64_encoder->encode() );
+   data2_vec3_ui64_encoder->decode( data1_vec3_ui64_encoder->encode() );
+   data2_m3x3_ui64_encoder->decode( data1_m3x3_ui64_encoder->encode() );
+
+   data1_ptr_ui64_encoder->update_before_encode();
+   data2_ptr_ui64_encoder->decode( data1_ptr_ui64_encoder->encode() );
+   data2_ptr_ui64_encoder->update_after_decode();
+
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
+      compare_msg << "uint64_data1 == uint64_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
+   } else {
+      compare_msg << "uint64_data1 != uint64_data2\n";
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
+   }
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg3;
+      msg3 << "EncodingTest::uint64_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
            << "Data1: " << data1.to_string()
            << "-----------------------------\n"

@@ -64,7 +64,7 @@ WCharData::WCharData(
       }
    }
 
-   int const ptr_wchar_size = 5 + offset;
+   int const ptr_wchar_size = 5 + ( ( offset < 10 ) ? offset : 10 );
 
    ptr_wchar = static_cast< wchar_t * >( TMM_declare_var_1d( "wchar_t", ptr_wchar_size ) );
    for ( int i = 0; i < ptr_wchar_size; ++i ) {

@@ -48,7 +48,7 @@ Int64Data::Int64Data()
 }
 
 Int64Data::Int64Data(
-   int const offset )
+   unsigned long long const offset )
 {
    i64 = 1 + offset;
 
@@ -56,7 +56,7 @@ Int64Data::Int64Data(
       vec3_i64[i] = i + 1 + offset;
    }
 
-   int value = 1;
+   long long value = 1;
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          m3x3_i64[row][col] = value + offset;
@@ -64,7 +64,7 @@ Int64Data::Int64Data(
       }
    }
 
-   int const ptr_i64_size = 5 + offset;
+   int const ptr_i64_size = 5 + ( ( offset < 10 ) ? offset : 10 );
 
    ptr_i64 = static_cast< long long * >( TMM_declare_var_1d( "long long", ptr_i64_size ) );
    for ( int i = 0; i < ptr_i64_size; ++i ) {

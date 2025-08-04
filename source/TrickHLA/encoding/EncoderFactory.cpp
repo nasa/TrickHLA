@@ -48,6 +48,8 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/attributes.h"
 #include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h"
+#include "trick/message_type.h"
 #include "trick/parameter_types.h"
 #include "trick/reference.h"
 
@@ -175,13 +177,16 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
          encoder = create_uint16_encoder( address, attr, hla_encoding );
 #else
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << attr->name
-                << "' is of type 'unsigned short', and the IEEE 1516-2010"
-                << " standard does not support encoding unsigned integers."
-                << std::endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create():" << __LINE__
+                   << " WARNING: Trick attributes for the variable '" << attr->name
+                   << "' is of type 'unsigned short', and the IEEE 1516-2010"
+                   << " standard does not support encoding unsigned integers."
+                   << " Using int16 encoder instead." << std::endl;
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
+         }
+         encoder = create_int16_encoder( address, attr, hla_encoding );
 #endif
          break;
       }
@@ -195,13 +200,16 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
          encoder = create_uint32_encoder( address, attr, hla_encoding );
 #else
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << attr->name
-                << "' is of type 'unsigned int', and the IEEE 1516-2010"
-                << " standard does not support encoding unsigned integers."
-                << std::endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create():" << __LINE__
+                   << " WARNING: Trick attributes for the variable '" << attr->name
+                   << "' is of type 'unsigned int', and the IEEE 1516-2010"
+                   << " standard does not support encoding unsigned integers."
+                   << " Using int32 encoder instead." << std::endl;
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
+         }
+         encoder = create_int32_encoder( address, attr, hla_encoding );
 #endif
          break;
       }
@@ -235,13 +243,37 @@ EncoderBase *EncoderFactory::create(
             }
          }
 #else
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << attr->name
-                << "' is of type 'unsigned long', and the IEEE 1516-2010"
-                << " standard does not support encoding unsigned integers."
-                << std::endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         switch ( sizeof( long ) ) {
+            case 4: {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
+                  ostringstream errmsg;
+                  errmsg << "EncoderFactory::create():" << __LINE__
+                         << " WARNING: Trick attributes for the variable '" << attr->name
+                         << "' is of type 'unsigned long', and the IEEE 1516-2010"
+                         << " standard does not support encoding unsigned integers."
+                         << " Using int32 encoder instead."
+                         << std::endl;
+                  message_publish( MSG_WARNING, errmsg.str().c_str() );
+               }
+               encoder = create_int32_encoder( address, attr, hla_encoding );
+               break;
+            }
+            case 8:
+            default: {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
+                  ostringstream errmsg;
+                  errmsg << "EncoderFactory::create():" << __LINE__
+                         << " WARNING: Trick attributes for the variable '" << attr->name
+                         << "' is of type 'unsigned long', and the IEEE 1516-2010"
+                         << " standard does not support encoding unsigned integers."
+                         << " Using int64 encoder instead."
+                         << std::endl;
+                  message_publish( MSG_WARNING, errmsg.str().c_str() );
+               }
+               encoder = create_int64_encoder( address, attr, hla_encoding );
+               break;
+            }
+         }
 #endif
          break;
       }
@@ -285,13 +317,16 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
          encoder = create_uint64_encoder( address, attr, hla_encoding );
 #else
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << attr->name
-                << "' is of type 'unsigned long long', and the IEEE 1516-2010"
-                << " standard does not support encoding unsigned integers."
-                << std::endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create():" << __LINE__
+                   << " WARNING: Trick attributes for the variable '" << attr->name
+                   << "' is of type 'unsigned long long', and the IEEE 1516-2010"
+                   << " standard does not support encoding unsigned integers."
+                   << " Using int64 encoder instead." << std::endl;
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
+         }
+         encoder = create_int64_encoder( address, attr, hla_encoding );
 #endif
          break;
       }

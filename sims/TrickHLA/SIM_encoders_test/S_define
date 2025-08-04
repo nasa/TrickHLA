@@ -1,6 +1,8 @@
 
 #include "sim_objects/default_trick_sys.sm"
 
+##include <climits>
+
 ##include "TrickHLA/CompileConfig.hh" // for TRICK_WSTRING_MM_SUPPORT
 ##include "TrickHLA/DebugHandler.hh"
 ##include "TrickHLA/Manager.hh"
@@ -15,6 +17,9 @@
 ##include "encoding/include/Int16Data.hh"
 ##include "encoding/include/Int32Data.hh"
 ##include "encoding/include/Int64Data.hh"
+##include "encoding/include/UInt16Data.hh"
+##include "encoding/include/UInt32Data.hh"
+##include "encoding/include/UInt64Data.hh"
 ##include "encoding/include/LongData.hh"
 ##include "encoding/include/StringData.hh"
 ##include "encoding/include/WCharData.hh"
@@ -65,15 +70,30 @@ class TestSimObj : public Trick::SimObject {
    Int16Data int16_data3 = Int16Data( 0 );
    Int16Data int16_data4 = Int16Data( 0 );
 
+   UInt16Data uint16_data1 = UInt16Data( 0 );
+   UInt16Data uint16_data2 = UInt16Data( 0 );
+   UInt16Data uint16_data3 = UInt16Data( (unsigned short)SHRT_MAX + 1 );
+   UInt16Data uint16_data4 = UInt16Data( (unsigned short)SHRT_MAX + 1 );
+
    Int32Data int32_data1 = Int32Data( 0 );
    Int32Data int32_data2 = Int32Data( 10 );
    Int32Data int32_data3 = Int32Data( 0 );
    Int32Data int32_data4 = Int32Data( 10 );
 
+   UInt32Data uint32_data1 = UInt32Data( 0 );
+   UInt32Data uint32_data2 = UInt32Data( 10 );
+   UInt32Data uint32_data3 = UInt32Data( (unsigned int)INT_MAX + 1 );
+   UInt32Data uint32_data4 = UInt32Data( (unsigned int)INT_MAX + 1 + 10 );
+
    Int64Data int64_data1 = Int64Data( 10 );
    Int64Data int64_data2 = Int64Data( 0 );
    Int64Data int64_data3 = Int64Data( 10 );
    Int64Data int64_data4 = Int64Data( 0 );
+
+   UInt64Data uint64_data1 = UInt64Data( 10 );
+   UInt64Data uint64_data2 = UInt64Data( 0 );
+   UInt64Data uint64_data3 = UInt64Data( (unsigned long long)LLONG_MAX + 1 + 10 );
+   UInt64Data uint64_data4 = UInt64Data( (unsigned long long)LLONG_MAX + 1 );
 
    LongData long_data1 = LongData( 0 );
    LongData long_data2 = LongData( 10 );
@@ -103,7 +123,7 @@ class TestSimObj : public Trick::SimObject {
 
    TestSimObj()
    {
-      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_2_TRACE,
+      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_1_TRACE,
                                             TrickHLA::DEBUG_SOURCE_ALL_MODULES );
 
 #if 0
@@ -148,6 +168,13 @@ class TestSimObj : public Trick::SimObject {
                                                   "T.int16_data4", int16_data4,
                                                   TrickHLA::ENCODING_BIG_ENDIAN );
 
+      ("initialization") encoder_test.uint16_test( "T.uint16_data1", uint16_data1,
+                                                   "T.uint16_data2", uint16_data2,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.uint16_test( "T.uint16_data3", uint16_data3,
+                                                   "T.uint16_data4", uint16_data4,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+
       ("initialization") encoder_test.int32_test( "T.int32_data1", int32_data1,
                                                   "T.int32_data2", int32_data2,
                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
@@ -155,12 +182,26 @@ class TestSimObj : public Trick::SimObject {
                                                   "T.int32_data4", int32_data4,
                                                   TrickHLA::ENCODING_BIG_ENDIAN );
 
+      ("initialization") encoder_test.uint32_test( "T.uint32_data1", uint32_data1,
+                                                   "T.uint32_data2", uint32_data2,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.uint32_test( "T.uint32_data3", uint32_data3,
+                                                   "T.uint32_data4", uint32_data4,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+
       ("initialization") encoder_test.int64_test( "T.int64_data1", int64_data1,
                                                   "T.int64_data2", int64_data2,
                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
       ("initialization") encoder_test.int64_test( "T.int64_data3", int64_data3,
                                                   "T.int64_data4", int64_data4,
                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.uint64_test( "T.uint64_data1", uint64_data1,
+                                                   "T.uint64_data2", uint64_data2,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.uint64_test( "T.uint64_data3", uint64_data3,
+                                                   "T.uint64_data4", uint64_data4,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
 
       ("initialization") encoder_test.long_test( "T.long_data1", long_data1,
                                                  "T.long_data2", long_data2,

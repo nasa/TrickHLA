@@ -60,7 +60,7 @@ class Int32Data
    /*! @brief Default constructor for the TrickHLAModel Int32Data class. */
    Int32Data();
 
-   explicit Int32Data( int const offset );
+   explicit Int32Data( unsigned int const offset );
 
    /*! @brief Destructor for the TrickHLAModel Int32Data class. */
    virtual ~Int32Data();
