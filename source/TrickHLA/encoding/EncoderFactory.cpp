@@ -132,8 +132,10 @@ EncoderBase *EncoderFactory::create(
 
    string data_name;
    if ( !trick_name.empty() ) {
+      // Fully qualified Trick variable name of the form 'SimObjName.var_name'.
       data_name = trick_name;
    } else if ( attr->name != NULL ) {
+      // Short variable name of the form 'var_name'.
       data_name = attr->name;
    } else {
       data_name = "";
