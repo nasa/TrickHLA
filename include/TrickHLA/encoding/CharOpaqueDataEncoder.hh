@@ -80,7 +80,9 @@ class CharOpaqueDataEncoder : public VariableArrayEncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharOpaqueDataEncoder( void *addr, ATTRIBUTES *attr );
+   CharOpaqueDataEncoder( void              *addr,
+                          ATTRIBUTES        *attr,
+                          std::string const &name );
 
    /*! @brief Destructor for the TrickHLA CharOpaqueDataEncoder class. */
    virtual ~CharOpaqueDataEncoder();
@@ -98,7 +100,7 @@ class CharOpaqueDataEncoder : public VariableArrayEncoderBase
 
    virtual std::string to_string()
    {
-      return "CharASCIIStringEncoder";
+      return "CharOpaqueDataEncoder[" + data_name + "]";
    }
 
   private:

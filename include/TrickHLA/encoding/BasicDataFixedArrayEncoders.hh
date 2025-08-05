@@ -37,6 +37,9 @@ NASA, Johnson Space Center\n
 #include <cstddef>
 #include <string>
 
+// Trick includes.
+#include "trick/attributes.h"
+
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
@@ -79,7 +82,9 @@ namespace TrickHLA
                                                                                     \
      public:                                                                        \
       /*! @brief Default constructor for the TrickHLA EncoderClassName class. */    \
-      EncoderClassName( SimpleDataType *array_data, size_t length );                \
+      EncoderClassName( void              *addr,                                    \
+                        ATTRIBUTES        *attr,                                    \
+                        std::string const &name );                                  \
                                                                                     \
       /*! @brief Destructor for the TrickHLA EncoderClassName class. */             \
       virtual ~EncoderClassName();                                                  \
@@ -98,7 +103,7 @@ namespace TrickHLA
                                                                                     \
       virtual std::string to_string()                                               \
       {                                                                             \
-         return #EncoderClassName;                                                  \
+         return std::string( #EncoderClassName ) + "[" + data_name + "]";           \
       }                                                                             \
                                                                                     \
      private:                                                                       \

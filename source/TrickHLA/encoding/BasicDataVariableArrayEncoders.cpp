@@ -55,15 +55,15 @@ NASA, Johnson Space Center\n
 #include "RTI/encoding/HLAvariableArray.h"
 
 using namespace RTI1516_NAMESPACE;
-using namespace std;
 using namespace TrickHLA;
 
 #define DECLARE_BASIC_VARIABLE_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType )                      \
                                                                                                                                \
    EncoderClassName::EncoderClassName(                                                                                         \
-      void       *addr,                                                                                                        \
-      ATTRIBUTES *attr )                                                                                                       \
-      : VariableArrayEncoderBase( addr, attr )                                                                                 \
+      void              *addr,                                                                                                 \
+      ATTRIBUTES        *attr,                                                                                                 \
+      std::string const &name )                                                                                                \
+      : VariableArrayEncoderBase( addr, attr, name )                                                                           \
    {                                                                                                                           \
       this->data_encoder = new HLAvariableArray( EncodableDataType() );                                                        \
       resize_data_elements( var_element_count );                                                                               \

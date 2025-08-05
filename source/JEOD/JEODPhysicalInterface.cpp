@@ -115,9 +115,8 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalInterface::configure() // cppcheck-suppress [duplInheritedMember]
+void JEODPhysicalInterface::configure()
 {
-
    // Make sure that we have an associated JEOD::DynBody.
    if ( dyn_body == NULL ) {
       ostringstream errmsg;

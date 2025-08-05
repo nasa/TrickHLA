@@ -80,7 +80,9 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharRawDataEncoder( void *addr, ATTRIBUTES *attr );
+   CharRawDataEncoder( void              *addr,
+                       ATTRIBUTES        *attr,
+                       std::string const &name );
 
    /*! @brief Destructor for the TrickHLA CharRawDataEncoder class. */
    virtual ~CharRawDataEncoder();
@@ -106,7 +108,7 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
 
    virtual std::string to_string()
    {
-      return "CharRawDataEncoder";
+      return "CharRawDataEncoder[" + data_name + "]";
    }
 
   private:

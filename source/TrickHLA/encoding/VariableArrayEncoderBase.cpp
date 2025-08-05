@@ -53,9 +53,10 @@ using namespace std;
 using namespace TrickHLA;
 
 VariableArrayEncoderBase::VariableArrayEncoderBase(
-   void       *addr,
-   ATTRIBUTES *attr )
-   : EncoderBase(),
+   void         *addr,
+   ATTRIBUTES   *attr,
+   string const &name )
+   : EncoderBase( name ),
      address( addr ),
      type( ( attr != NULL ) ? attr->type : TRICK_VOID ),
      var_element_count( 0 ),
@@ -81,10 +82,8 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
       ostringstream errmsg;
       errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
              << " ERROR: The variable address is NULL for variable '"
-             << ( ( attr->name != NULL ) ? attr->name : "" )
-             << "'. Please make sure the Trick variable"
-             << " is allocated memory by the Trick Memory Manager."
-             << std::endl;
+             << data_name << "'. Please make sure the Trick variable"
+             << " is allocated memory by the Trick Memory Manager." << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -204,7 +203,7 @@ void VariableArrayEncoderBase::resize_trick_var(
          ostringstream errmsg;
          errmsg << "VariableArrayEncoderBase::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"
-                << " with type '"
+                << " '" << data_name << "' with type '"
                 << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
                 << "' for " << new_size << " elements!" << std::endl;
          DebugHandler::terminate_with_message( errmsg.str() );

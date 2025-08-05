@@ -80,6 +80,10 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    /*! @brief Default constructor for the TrickHLA EncoderBase class. */
    EncoderBase();
 
+   /*! @brief Constructor for the TrickHLA EncoderBase class.
+    * @param name The name for the data. */
+   explicit EncoderBase( std::string const &name );
+
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
    virtual ~EncoderBase();
 
@@ -92,7 +96,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
    virtual std::string to_string()
    {
-      return "EncoderBase";
+      return "EncoderBase[" + data_name + "]";
    }
 
 #if !defined( SWIG )
@@ -185,6 +189,8 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    RTI1516_NAMESPACE::DataElement *data_encoder; ///< @trick_io{**} Data encoder.
 
    RTI1516_NAMESPACE::VariableLengthData data; ///< @trick_io{**} Holds HLA encoded data.
+
+   std::string data_name; ///< @trick_units{--} Name for the data.
 
   private:
    // Do not allow the copy constructor or assignment operator.

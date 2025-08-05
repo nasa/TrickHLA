@@ -78,7 +78,9 @@ namespace TrickHLA
       friend void init_attrTrickHLA__EncoderClassName();                            \
                                                                                     \
      public:                                                                        \
-      explicit EncoderClassName( void *addr );                                      \
+      EncoderClassName( void              *addr,                                    \
+                        ATTRIBUTES        *attr,                                    \
+                        std::string const &name );                                  \
                                                                                     \
       virtual ~EncoderClassName();                                                  \
                                                                                     \
@@ -96,7 +98,7 @@ namespace TrickHLA
                                                                                     \
       virtual std::string to_string()                                               \
       {                                                                             \
-         return #EncoderClassName;                                                  \
+         return std::string( #EncoderClassName ) + "[" + data_name + "]";           \
       }                                                                             \
                                                                                     \
      private:                                                                       \

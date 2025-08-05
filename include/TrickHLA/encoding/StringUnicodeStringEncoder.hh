@@ -79,7 +79,9 @@ class StringUnicodeStringEncoder : public VariableArrayEncoderBase
 
   public:
    /*! @brief Default constructor. */
-   StringUnicodeStringEncoder( void *addr, ATTRIBUTES *attr );
+   StringUnicodeStringEncoder( void              *addr,
+                               ATTRIBUTES        *attr,
+                               std::string const &name );
 
    /*! @brief Destructor for the TrickHLA StringUnicodeStringEncoder class. */
    virtual ~StringUnicodeStringEncoder();
@@ -95,7 +97,7 @@ class StringUnicodeStringEncoder : public VariableArrayEncoderBase
 
    virtual std::string to_string()
    {
-      return "StringUnicodeStringEncoder";
+      return "StringUnicodeStringEncoder[" + data_name + "]";
    }
 
   protected:

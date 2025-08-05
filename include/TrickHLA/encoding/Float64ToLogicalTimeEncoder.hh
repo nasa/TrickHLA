@@ -80,7 +80,9 @@ class Float64ToLogicalTimeEncoder : public VariableArrayEncoderBase
 
   public:
    /*! @brief Default constructor. */
-   Float64ToLogicalTimeEncoder( void *addr, ATTRIBUTES *attr );
+   Float64ToLogicalTimeEncoder( void              *addr,
+                                ATTRIBUTES        *attr,
+                                std::string const &name );
 
    /*! @brief Destructor for the TrickHLA Float64ToLogicalTimeEncoder class. */
    virtual ~Float64ToLogicalTimeEncoder();
@@ -96,7 +98,7 @@ class Float64ToLogicalTimeEncoder : public VariableArrayEncoderBase
 
    virtual std::string to_string()
    {
-      return "Float64ToLogicalTimeEncoder";
+      return "Float64ToLogicalTimeEncoder[" + data_name + "]";
    }
 
   protected:

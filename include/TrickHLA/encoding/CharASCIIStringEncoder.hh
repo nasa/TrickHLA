@@ -78,7 +78,9 @@ class CharASCIIStringEncoder : public VariableArrayEncoderBase
 
   public:
    /*! @brief Default constructor. */
-   CharASCIIStringEncoder( void *addr, ATTRIBUTES *attr );
+   CharASCIIStringEncoder( void              *addr,
+                           ATTRIBUTES        *attr,
+                           std::string const &name );
 
    /*! @brief Destructor for the TrickHLA CharASCIIStringEncoder class. */
    virtual ~CharASCIIStringEncoder();
@@ -94,7 +96,7 @@ class CharASCIIStringEncoder : public VariableArrayEncoderBase
 
    virtual std::string to_string()
    {
-      return "CharASCIIStringEncoder";
+      return "CharASCIIStringEncoder[" + data_name + "]";
    }
 
   protected:

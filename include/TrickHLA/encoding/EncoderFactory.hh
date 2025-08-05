@@ -92,77 +92,91 @@ class EncoderFactory
    static EncoderBase *create(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &trick_name = "" );
 
   protected:
    static EncoderBase *create_char_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
    static EncoderBase *create_string_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
    static EncoderBase *create_wchar_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
 #if defined( TRICK_WSTRING_MM_SUPPORT )
    static EncoderBase *create_wstring_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 #endif
 
    static EncoderBase *create_int16_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
    static EncoderBase *create_int32_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
    static EncoderBase *create_int64_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
 #if defined( IEEE_1516_2025 )
    static EncoderBase *create_uint16_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
    static EncoderBase *create_uint32_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
    static EncoderBase *create_uint64_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 #endif
 
    static EncoderBase *create_float32_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
    static EncoderBase *create_float64_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
    static EncoderBase *create_bool_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
-      TrickHLA::EncodingEnum const hla_encoding );
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include <cstring>
 #include <ostream>
 #include <sstream>
+#include <string>
 #include <vector>
 
 // Trick include files.
@@ -67,16 +68,16 @@ using namespace std;
 using namespace TrickHLA;
 
 CharRawDataEncoder::CharRawDataEncoder(
-   void       *addr,
-   ATTRIBUTES *attr )
-   : VariableArrayEncoderBase( addr, attr )
+   void         *addr,
+   ATTRIBUTES   *attr,
+   string const &name )
+   : VariableArrayEncoderBase( addr, attr, name )
 {
    if ( ( this->type != TRICK_CHARACTER )
         && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
       errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
-             << " ERROR: Trick type for the '"
-             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
+             << " ERROR: Trick type for the '" << data_name
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
@@ -89,8 +90,7 @@ CharRawDataEncoder::CharRawDataEncoder(
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
       errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '"
-             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
+             << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a dynamic variable array!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;

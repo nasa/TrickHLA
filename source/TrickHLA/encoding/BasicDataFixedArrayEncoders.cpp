@@ -34,8 +34,12 @@ NASA, Johnson Space Center\n
 #include <string>
 #include <typeinfo>
 
+// Trick include files.
+#include "trick/attributes.h"
+
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 
@@ -57,21 +61,23 @@ NASA, Johnson Space Center\n
 #endif
 
 using namespace RTI1516_NAMESPACE;
-using namespace std;
 using namespace TrickHLA;
 
 #define DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType )                                 \
                                                                                                                                        \
    EncoderClassName::EncoderClassName(                                                                                                 \
-      SimpleDataType *array_data, /* NOLINT(bugprone-macro-parentheses) */                                                             \
-      size_t          length )                                                                                                         \
-      : EncoderBase()                                                                                                                  \
+      void              *addr,                                                                                                         \
+      ATTRIBUTES        *attr,                                                                                                         \
+      std::string const &name )                                                                                                        \
+      : EncoderBase( name )                                                                                                            \
    {                                                                                                                                   \
+      size_t const   length        = Utilities::get_static_var_element_count( attr );                                                  \
       HLAfixedArray *array_encoder = new HLAfixedArray( EncodableDataType(), length );                                                 \
       this->data_encoder           = array_encoder;                                                                                    \
                                                                                                                                        \
       /* Connect the users array data to the encoder array elements. */                                                                \
-      if ( array_data != NULL ) {                                                                                                      \
+      if ( addr != NULL ) {                                                                                                            \
+         SimpleDataType *array_data = static_cast< SimpleDataType * >( addr );                                                         \
          for ( size_t i = 0; i < length; ++i ) {                                                                                       \
             const_cast< EncodableDataType & >( /* NOLINT(bugprone-macro-parentheses) */                                                \
                                                dynamic_cast< EncodableDataType const & >(                                              \

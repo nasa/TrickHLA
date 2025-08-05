@@ -87,7 +87,9 @@ class VariableArrayEncoderBase : public EncoderBase
    // Public constructors and destructor.
    //
    /*! @brief Constructor for the TrickHLA VariableArrayEncoderBase class. */
-   VariableArrayEncoderBase( void *addr, ATTRIBUTES *attr );
+   VariableArrayEncoderBase( void              *addr,
+                             ATTRIBUTES        *attr,
+                             std::string const &name );
 
    /*! @brief Destructor for the TrickHLA VariableArrayEncoderBase class. */
    virtual ~VariableArrayEncoderBase();
@@ -100,7 +102,7 @@ class VariableArrayEncoderBase : public EncoderBase
 
    virtual std::string to_string()
    {
-      return "VariableArrayEncoderBase";
+      return "VariableArrayEncoderBase[" + data_name + "]";
    }
 
    void calculate_var_element_count();

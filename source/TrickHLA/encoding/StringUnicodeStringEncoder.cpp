@@ -30,7 +30,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstdio>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -65,16 +64,16 @@ using namespace std;
 using namespace TrickHLA;
 
 StringUnicodeStringEncoder::StringUnicodeStringEncoder(
-   void       *addr,
-   ATTRIBUTES *attr )
-   : VariableArrayEncoderBase( addr, attr ),
+   void         *addr,
+   ATTRIBUTES   *attr,
+   string const &name )
+   : VariableArrayEncoderBase( addr, attr, name ),
      wstring_data()
 {
    if ( this->type != TRICK_STRING ) {
       ostringstream errmsg;
       errmsg << "StringUnicodeStringEncoder::StringUnicodeStringEncoder():" << __LINE__
-             << " ERROR: Trick type for the '"
-             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
+             << " ERROR: Trick type for the '" << data_name
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
@@ -87,8 +86,7 @@ StringUnicodeStringEncoder::StringUnicodeStringEncoder(
    if ( is_array() ) {
       ostringstream errmsg;
       errmsg << "StringUnicodeStringEncoder::StringUnicodeStringEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '"
-             << ( ( ( attr != NULL ) && ( attr->name != NULL ) ) ? attr->name : "" )
+             << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a std::string and not an array!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;

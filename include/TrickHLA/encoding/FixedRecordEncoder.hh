@@ -97,7 +97,7 @@ class FixedRecordEncoder : public EncoderBase
 
    virtual std::string to_string()
    {
-      return "FixedRecordEncoder";
+      return "FixedRecordEncoder[" + data_name + "]";
    }
 
   private:

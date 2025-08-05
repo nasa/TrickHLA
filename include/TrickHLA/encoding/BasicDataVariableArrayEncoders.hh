@@ -79,7 +79,9 @@ namespace TrickHLA
                                                                                     \
      public:                                                                        \
       /*! @brief Default constructor. */                                            \
-      EncoderClassName( void *addr, ATTRIBUTES *attr );                             \
+      EncoderClassName( void              *addr,                                    \
+                        ATTRIBUTES        *attr,                                    \
+                        std::string const &name );                                  \
                                                                                     \
       /*! @brief Destructor for the TrickHLA EncoderClassName class. */             \
       virtual ~EncoderClassName();                                                  \
@@ -90,7 +92,7 @@ namespace TrickHLA
                                                                                     \
       virtual std::string to_string()                                               \
       {                                                                             \
-         return #EncoderClassName;                                                  \
+         return std::string( #EncoderClassName ) + "[" + data_name + "]";           \
       }                                                                             \
                                                                                     \
      protected:                                                                     \

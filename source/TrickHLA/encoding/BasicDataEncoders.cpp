@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 #include <string>
 #include <typeinfo>
 
+// Trick include files.
+#include "trick/attributes.h"
+
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/encoding/BasicDataEncoders.hh"
@@ -55,14 +58,15 @@ NASA, Johnson Space Center\n
 #endif
 
 using namespace RTI1516_NAMESPACE;
-using namespace std;
 using namespace TrickHLA;
 
 #define DECLARE_BASIC_ENCODER_CLASS( EncoderClassName, EncodableDataType, SimpleDataType )                                            \
                                                                                                                                       \
    EncoderClassName::EncoderClassName(                                                                                                \
-      void *addr )                                                                                                                    \
-      : EncoderBase()                                                                                                                 \
+      void              *addr,                                                                                                        \
+      ATTRIBUTES        *attr,                                                                                                        \
+      std::string const &name )                                                                                                       \
+      : EncoderBase( name )                                                                                                           \
    {                                                                                                                                  \
       this->data_encoder = new EncodableDataType( static_cast< SimpleDataType * >( addr ) ); /* NOLINT(bugprone-macro-parentheses) */ \
    }                                                                                                                                  \

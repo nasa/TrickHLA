@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
+#include <string>
 
 // TrickHLA include files.
 #include "TrickHLA/encoding/EncoderBase.hh"
@@ -52,7 +53,17 @@ using namespace TrickHLA;
 
 EncoderBase::EncoderBase()
    : data_encoder( NULL ),
-     data()
+     data(),
+     data_name()
+{
+   return;
+}
+
+EncoderBase::EncoderBase(
+   std::string const &name )
+   : data_encoder( NULL ),
+     data(),
+     data_name( name )
 {
    return;
 }
