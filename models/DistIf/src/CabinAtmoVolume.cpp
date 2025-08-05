@@ -44,6 +44,8 @@ using namespace DistIf;
 /// @details Universal gas constant, J/mol/K.
 double const CabinAtmoVolume::R_UNIV = 8.314472;
 
+#define NO_DISTIF_USE_EXTERNAL_MEMORY
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @param[in] volume        (m3)      Air volume.
 /// @param[in] temperature   (K)       Air temperature.
@@ -149,19 +151,39 @@ void CabinAtmoVolume::initialize(
    ///   dynamic arrays as target variables for a FOM if TMM doesn't know about them.
    std::string allocSpec = "double " + mName + ".mIf.mInData.mMoleFractions";
    convertNameForTmm( allocSpec );
+#if defined( DISTIF_USE_EXTERNAL_MEMORY )
    TMM_declare_ext_var_1d( mIf.mInData.mMoleFractions, allocSpec.c_str(), CabinAtmoMixture::NFOMBULK );
+#else
+   mIf.mInData.mMoleFractions = static_cast< double * >(
+      TMM_declare_var_1d( allocSpec.c_str(), CabinAtmoMixture::NFOMBULK ) );
+#endif
 
    allocSpec = "double " + mName + ".mIf.mInData.mTcMoleFractions";
    convertNameForTmm( allocSpec );
+#if defined( DISTIF_USE_EXTERNAL_MEMORY )
    TMM_declare_ext_var_1d( mIf.mInData.mTcMoleFractions, allocSpec.c_str(), CabinAtmoMixture::NFOMTC );
+#else
+   mIf.mInData.mTcMoleFractions = static_cast< double * >(
+      TMM_declare_var_1d( allocSpec.c_str(), CabinAtmoMixture::NFOMBULK ) );
+#endif
 
    allocSpec = "double " + mName + ".mIf.mOutData.mMoleFractions";
    convertNameForTmm( allocSpec );
+#if defined( DISTIF_USE_EXTERNAL_MEMORY )
    TMM_declare_ext_var_1d( mIf.mOutData.mMoleFractions, allocSpec.c_str(), CabinAtmoMixture::NFOMBULK );
+#else
+   mIf.mOutData.mMoleFractions = static_cast< double * >(
+      TMM_declare_var_1d( allocSpec.c_str(), CabinAtmoMixture::NFOMBULK ) );
+#endif
 
    allocSpec = "double " + mName + ".mIf.mOutData.mTcMoleFractions";
    convertNameForTmm( allocSpec );
+#if defined( DISTIF_USE_EXTERNAL_MEMORY )
    TMM_declare_ext_var_1d( mIf.mOutData.mTcMoleFractions, allocSpec.c_str(), CabinAtmoMixture::NFOMTC );
+#else
+   mIf.mOutData.mTcMoleFractions = static_cast< double * >(
+      TMM_declare_var_1d( allocSpec.c_str(), CabinAtmoMixture::NFOMBULK ) );
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
