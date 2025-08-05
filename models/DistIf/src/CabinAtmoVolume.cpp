@@ -164,7 +164,7 @@ void CabinAtmoVolume::initialize(
    TMM_declare_ext_var_1d( mIf.mInData.mTcMoleFractions, allocSpec.c_str(), CabinAtmoMixture::NFOMTC );
 #else
    mIf.mInData.mTcMoleFractions = static_cast< double * >(
-      TMM_declare_var_1d( allocSpec.c_str(), CabinAtmoMixture::NFOMBULK ) );
+      TMM_declare_var_1d( allocSpec.c_str(), CabinAtmoMixture::NFOMTC ) );
 #endif
 
    allocSpec = "double " + mName + ".mIf.mOutData.mMoleFractions";
@@ -182,7 +182,7 @@ void CabinAtmoVolume::initialize(
    TMM_declare_ext_var_1d( mIf.mOutData.mTcMoleFractions, allocSpec.c_str(), CabinAtmoMixture::NFOMTC );
 #else
    mIf.mOutData.mTcMoleFractions = static_cast< double * >(
-      TMM_declare_var_1d( allocSpec.c_str(), CabinAtmoMixture::NFOMBULK ) );
+      TMM_declare_var_1d( allocSpec.c_str(), CabinAtmoMixture::NFOMTC ) );
 #endif
 }
 
