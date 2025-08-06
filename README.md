@@ -39,7 +39,7 @@ git clone https://github.com/nasa/TrickHLA.git
 
 4) Define $RTI_HOME to point to your RTI install directory.
 
-5) Define $RTI_VENDOR to be one of either <i>Pitch_HLA_Evolved</i> or <i>MAK_HLA_Evolved</i> depending on the RTI you are using.
+5) Define $RTI_VENDOR to be one of either <i>Pitch_HLA_4</i>, <i>Pitch_HLA_Evolved</i>, or <i>MAK_HLA_Evolved</i> depending on the RTI you are using.
 
 6) Optionally, define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if it uses one.
 
