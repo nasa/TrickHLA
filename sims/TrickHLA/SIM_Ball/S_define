@@ -71,7 +71,7 @@ class ballSimObject : public Trick::SimObject {
       // SCHEDULED JOBS
       (0.1 , "scheduled") ball_print( &state ) ;
    }
-   
+
 };
 
 #define NUM_BALLS 3
@@ -79,27 +79,27 @@ class ballSimObject : public Trick::SimObject {
 class ensembleSimObject : public Trick::SimObject {
 
   public:
-   
-   BallWalls            walls;
-   const unsigned int   num_balls;
-   BallState          * states[NUM_BALLS];
-   
+
+   BallWalls      walls;
+   unsigned int   num_balls;
+   BallState    * states[NUM_BALLS];
+
    ensembleSimObject ()
    : num_balls( NUM_BALLS )
    {
-      
+
       // DATA STRUCTURE DECLARATIONS
       ("default_data") ball_walls_default_data( &walls );
-      
+
       // INIALIZATION JOBS
       ("initialization") ensemble_init();
-      
+
       // EOM DERIVATIVE, STATE INTEGRATION, AND DYNAMIC EVENT JOBS
       ("integration") trick_ret = ball_ensemble_integ( num_balls, states );
       ("dynamic_event") ball_ensemble_collision( &walls, num_balls, states );
-      
+
    }
-   
+
    void ensemble_init()
    {
       std::ostringstream errmsg;
@@ -110,16 +110,16 @@ class ensembleSimObject : public Trick::SimObject {
          errmsg << "ensembleSimObject:ensemble_init(): ERROR!\n";
          errmsg << "\tNumber of balls at initialization (" << num_balls
                 << ") do not match number allocated (" << NUM_BALLS << "!\n";
-         error = true;  
+         error = true;
       }
 
       if ( error ) {
          exec_terminate( __FILE__, errmsg.str().c_str() );
       }
-      
+
       return;
    }
-   
+
 };
 
 // Instantiations
@@ -140,7 +140,7 @@ IntegLoop my_integ_loop (0.01) ball1, ball2, ball3, ensemble;
 
 // Connect objects
 void create_connections() {
-   
+
    // Place the balls in the ensemble integration array.
    ensemble.states[0] = &(ball1.state);
    ensemble.states[1] = &(ball2.state);
