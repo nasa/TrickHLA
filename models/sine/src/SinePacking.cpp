@@ -371,7 +371,6 @@ void SinePacking::unpack()
    }
 }
 
-
 /*!
  * @job_class{initialization}
  */
