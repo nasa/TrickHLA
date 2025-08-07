@@ -67,7 +67,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [d3.0.0] - 2024-11-22
 
 
-[unreleased]: https://github.com/nasa/TrickHLA/compare/v3.1.18...HEAD
+[unreleased]: https://github.com/nasa/TrickHLA/compare/v3.1.18...encoding
 [v3.1.18]: https://github.com/nasa/TrickHLA/compare/v3.1.17...v3.1.18
 [v3.1.17]: https://github.com/nasa/TrickHLA/compare/v3.1.16...v3.1.17
 [v3.1.16]: https://github.com/nasa/TrickHLA/compare/v3.1.15...v3.1.16
