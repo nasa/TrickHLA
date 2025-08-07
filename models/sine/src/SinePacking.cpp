@@ -96,17 +96,6 @@ SinePacking::~SinePacking()
 /*!
  * @job_class{initialization}
  */
-void SinePacking::configure(
-   SineData *sim_data )
-{
-   this->sim_data = sim_data;
-
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void SinePacking::initialize()
 {
    // Mark this as initialized.
@@ -380,4 +369,16 @@ void SinePacking::unpack()
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
+}
+
+
+/*!
+ * @job_class{initialization}
+ */
+void SinePacking::set_sim_data(
+   SineData *sim_data )
+{
+   this->sim_data = sim_data;
+
+   return;
 }

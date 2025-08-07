@@ -184,6 +184,10 @@ void WallsPacking::base_config(
  */
 void WallsPacking::configure()
 {
+
+   // Call the Packing configure function.
+   TrickHLA::Packing::configure();
+
    // Return to calling routine.
    return;
 }

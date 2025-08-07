@@ -69,15 +69,6 @@ FixedRecPacking::~FixedRecPacking()
    return;
 }
 
-/*!
- * @job_class{initialization}
- */
-void FixedRecPacking::configure(
-   FixedRecData *sim_data )
-{
-   this->sim_data = sim_data;
-}
-
 void FixedRecPacking::pack()
 {
    if ( !initialized ) {
@@ -158,4 +149,13 @@ void FixedRecPacking::unpack()
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void FixedRecPacking::set_sim_data(
+   FixedRecData *sim_data )
+{
+   this->sim_data = sim_data;
 }

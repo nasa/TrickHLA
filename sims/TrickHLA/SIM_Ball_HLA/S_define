@@ -254,7 +254,8 @@ class BallHLASimObject : public Trick::SimObject {
       //P_INIT ("initialization") lag_compensation.configure( &packing );
       //P_INIT ("initialization") lag_compensation.initialize();
 
-      //P_INIT ("initialization") packing.configure( &lag_compensation );
+      //P_INIT ("initialization") packing.set_sim_data( &lag_compensation );
+      P_INIT ("initialization") packing.configure();
       P_INIT ("initialization") packing.initialize();
 
       //P_INIT ("initialization") conditional.configure( &packing );
@@ -321,7 +322,8 @@ class WallsHLASimObject : public Trick::SimObject {
       //P_INIT ("initialization") lag_compensation.configure( &packing );
       //P_INIT ("initialization") lag_compensation.initialize();
 
-      //P_INIT ("initialization") packing.configure( &lag_compensation );
+      //P_INIT ("initialization") packing.set_sim_data( &lag_compensation );
+      P_INIT ("initialization") packing.configure();
       P_INIT ("initialization") packing.initialize();
 
       //P_INIT ("initialization") conditional.configure( &packing );

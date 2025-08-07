@@ -256,6 +256,9 @@ void BallPacking::configure()
       this->name = trick_MM->mm_strdup( "" );
    }
 
+   // Call the Packing configure function.
+   TrickHLA::Packing::configure();
+
    // Return to calling routine.
    return;
 }

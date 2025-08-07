@@ -100,7 +100,8 @@ class ZeroLookaheadAnalyticSineSimObj : public THLAFedSimObject {
       //
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
@@ -148,7 +149,8 @@ class ZeroLookaheadPropagatedSineSimObj : public THLAFedSimObject {
       //
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
@@ -206,7 +208,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
       //
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
@@ -243,7 +246,8 @@ class PropagatedSineSimObj : public Trick::SimObject {
       //
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       /*

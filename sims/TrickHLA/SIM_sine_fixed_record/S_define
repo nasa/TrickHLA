@@ -77,7 +77,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
       P50 ("initialization") lag_compensation.configure( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_sim_data( &lag_compensation );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       P50 ("initialization") conditional.configure( &packing );
@@ -129,7 +130,8 @@ class PropagatedSineSimObj : public Trick::SimObject {
       P50 ("initialization") lag_compensation.configure( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_sim_data( &lag_compensation );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       P50 ("initialization") conditional.configure( &packing );
@@ -176,7 +178,8 @@ class FixedRecordSimObj : public Trick::SimObject {
 
    FixedRecordSimObj()
    {
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
    }
 

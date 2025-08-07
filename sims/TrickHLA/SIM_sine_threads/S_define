@@ -71,7 +71,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
       P50 ("initialization") lag_compensation.configure( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_sim_data( &lag_compensation );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       C1 (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
@@ -122,7 +123,8 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
       P50 ("initialization") lag_compensation.configure( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_sim_data( &lag_compensation );
+      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       /*
