@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added support for IEEE 1516-2025 (HLA 4).
 - Added support for Fixed Records.
 
+### Breaking Additions
+
+- Configure and initialize TrickHLA from default data instead of the input file.
+
 ### Breaking Changes
 
 - Using std::string for TrickHLA settings instead of char *.
@@ -18,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - This CHANGELOG file.
+- Ball simulation based off of the Trick tutorial Ball simulation.
 
 ### Changed
 
