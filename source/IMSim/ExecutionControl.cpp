@@ -526,7 +526,7 @@ Simulation has started and is now running...\n",
 
          // Setup all the RTI handles for the objects, attributes and interaction
          // parameters.
-         manager->setup_all_RTI_handles();
+         manager->setup_all_RTI_handles(); // NOLINT
 
          // Make sure all required federates have joined the federation.
          federate->wait_for_required_federates_to_join();

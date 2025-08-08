@@ -623,7 +623,7 @@ void ExecutionConfiguration::setup_ref_attributes(
            sizeof( ATTRIBUTES ) );
 
    // Initialize the attribute.
-   attributes[0].initialize( get_FOM_name(), 0, 0 );
+   attributes[0].initialize( get_FOM_name(), 0, 0 ); // NOLINT
 
    // Initialize the TrickHLA Attribute. Since we built the attributes
    // in-line, and not via the Trick input.py file, use the alternate version of
