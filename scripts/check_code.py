@@ -411,6 +411,11 @@ Examples:\n  check_code -s -o -v --exhaustive --hla3\n  check_code -i -o -v --ex
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
          trickhla_ignore.append( '--suppress=returnByReference:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
          trickhla_ignore.append( '--suppress=syntaxError:' + jeod_home + '/models/dynamics/mass/include/mass_point_init.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/environment/time/include/time_tt.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/utils/sim_interface/include/checkpoint_input_manager.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/dynamics/dyn_body/include/dyn_body.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/dynamics/mass/include/mass.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/utils/ref_frames/include/ref_frame.hh' )
          trickhla_ignore.append( '--suppress=uselessOverride:' + jeod_home + '/models/utils/sim_interface/include/jeod_integrator_interface.hh' )
 
    if args.suppress_cstylecasts:
