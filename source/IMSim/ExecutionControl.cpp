@@ -50,7 +50,7 @@ NASA, Johnson Space Center\n
 #include <ostream>
 #include <set>
 #include <sstream>
-#include <string.h>
+#include <string.h> // NOLINT
 #include <string>
 
 // Trick includes.
@@ -349,7 +349,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    char *tRestoreName = NULL;
    if ( !manager->restore_file_name.empty() ) {
       // we don't want this to get wiped out when trick clears memory for load checkpoint, so don't allocate with TMM
-      tRestoreName = strdup( manager->restore_file_name.c_str() );
+      tRestoreName = strdup( manager->restore_file_name.c_str() ); // NOLINT
    }
 
    // Initialize the MOM interface handles.
