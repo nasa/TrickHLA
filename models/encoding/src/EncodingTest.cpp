@@ -83,6 +83,7 @@ NASA, Johnson Space Center\n
 #include "encoding/include/UInt16Data.hh"
 #include "encoding/include/UInt32Data.hh"
 #include "encoding/include/UInt64Data.hh"
+#include "encoding/include/ULongData.hh"
 #include "encoding/include/WCharData.hh"
 #include "encoding/include/WStringData.hh"
 
