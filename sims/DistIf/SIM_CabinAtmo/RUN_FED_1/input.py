@@ -223,6 +223,8 @@ federate = TrickHLAFederateConfig(
    thla_federate_name   = Federate_name,
    thla_enabled         = True )
 
+federate.fix_var_server_source_address()
+
 # Add required federates.
 federate.add_known_federate( True, "FED_1" )
 federate.add_known_federate( True, "FED_2" )
