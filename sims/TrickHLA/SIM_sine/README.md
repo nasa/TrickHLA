@@ -21,7 +21,7 @@ In the SIM_sine directory:
 ./S_main_*.exe RUN_a_side/input.py
 ```
 
-From a another console, in the SIM_sine directory:
+From another terminal, in the SIM_sine directory:
 
 ```
 ./S_main_*.exe RUN_p_side/input.py

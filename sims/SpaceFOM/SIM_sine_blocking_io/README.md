@@ -138,7 +138,7 @@ In the SIM_sine_blocking_io directory:
 ./S_main_*.exe RUN_a_side_mpr/input.py --verbose on
 ```
 
-From a another console, in the SIM_sine_blocking_io directory:
+From another terminal, in the SIM_sine_blocking_io directory:
 
 ```
 ./S_main_*.exe RUN_p_side/input.py --verbose on
