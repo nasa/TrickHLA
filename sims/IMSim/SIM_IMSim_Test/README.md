@@ -22,7 +22,7 @@ In the SIM_IMSim_Test directory:
 ./S_main_*.exe RUN_a_side/input.py
 ```
 
-From a another console, in the SIM_IMSim_Test directory:
+From another terminal, in the SIM_IMSim_Test directory:
 
 ```
 ./S_main_*.exe RUN_p_side/input.py
