@@ -152,6 +152,9 @@ void SineConditional::initialize_callback(
 bool SineConditional::should_send(
    TrickHLA::Attribute *attr )
 {
+   if ( attr == NULL ) {
+      return false;
+   }
    if ( this->sim_data == NULL ) {
       message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: Unexpected NULL sim_data!\n",
                        attr->get_FOM_name().c_str(), __LINE__ );
@@ -162,39 +165,39 @@ bool SineConditional::should_send(
 
    // Check the value of the current simulation variable versus the previous
    // value and return true if there was a change.
-   if ( attr == name_attr ) {
+   if ( ( attr == name_attr ) || ( attr->get_FOM_name() == name_attr->get_FOM_name() ) ) {
       send_attr = true; // Always send the name.
-   } else if ( attr == time_attr ) {
+   } else if ( ( attr == time_attr ) || ( attr->get_FOM_name() == time_attr->get_FOM_name() ) ) {
       if ( sim_data->get_time() != get_time() ) {
          send_attr = true;
          set_time( sim_data->get_time() ); // Update to the current state
       }
-   } else if ( attr == value_attr ) {
+   } else if ( ( attr == value_attr ) || ( attr->get_FOM_name() == value_attr->get_FOM_name() ) ) {
       if ( sim_data->get_value() != get_value() ) {
          send_attr = true;
          set_value( sim_data->get_value() ); // Update to the current state
       }
-   } else if ( attr == dvdt_attr ) {
+   } else if ( ( attr == dvdt_attr ) || ( attr->get_FOM_name() == dvdt_attr->get_FOM_name() ) ) {
       if ( sim_data->get_derivative() != get_derivative() ) {
          send_attr = true;
          set_derivative( sim_data->get_derivative() ); // Update to the current state
       }
-   } else if ( attr == phase_attr ) {
+   } else if ( ( attr == phase_attr ) || ( attr->get_FOM_name() == phase_attr->get_FOM_name() ) ) {
       if ( sim_data->get_phase() != get_phase() ) {
          send_attr = true;
          set_phase( sim_data->get_phase() ); // Update to the current state
       }
-   } else if ( attr == freq_attr ) {
+   } else if ( ( attr == freq_attr ) || ( attr->get_FOM_name() == freq_attr->get_FOM_name() ) ) {
       if ( sim_data->get_frequency() != get_frequency() ) {
          send_attr = true;
          set_frequency( sim_data->get_frequency() ); // Update to the current state
       }
-   } else if ( attr == amp_attr ) {
+   } else if ( ( attr == amp_attr ) || ( attr->get_FOM_name() == amp_attr->get_FOM_name() ) ) {
       if ( sim_data->get_amplitude() != get_amplitude() ) {
          send_attr = true;
          set_amplitude( sim_data->get_amplitude() ); // Update to the current state
       }
-   } else if ( attr == tol_attr ) {
+   } else if ( ( attr == tol_attr ) || ( attr->get_FOM_name() == tol_attr->get_FOM_name() ) ) {
       if ( sim_data->get_tolerance() != get_tolerance() ) {
          send_attr = true;
          set_tolerance( sim_data->get_tolerance() ); // Update to the current state
