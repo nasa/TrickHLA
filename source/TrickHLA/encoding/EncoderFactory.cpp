@@ -69,18 +69,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
 #include "TrickHLA/encoding/StringUnicodeStringEncoder.hh"
 
-// C++11 deprecated dynamic exception specifications for a function so we
-// need to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wdeprecated"
-#endif
-
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic pop
-#endif
-
 using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
