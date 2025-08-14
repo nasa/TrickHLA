@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Updated to use the IEEE 1516 HLA encoder helpers instead of custom encoders.
+- Changed over to use the IEEE 1516 HLA encoder helpers instead of custom written encoders.
 
 
 ## [v3.1.18] - 2025-04-10
