@@ -19,12 +19,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- This CHANGELOG file.
-- Ball simulation based off of the Trick tutorial Ball simulation.
+- Added this CHANGELOG file.
+- Added Ball simulation based off of the Trick tutorial Ball simulation.
 
 ### Changed
 
-- Updated to use the HLA encoder helpers.
+- Updated to use the IEEE 1516 HLA encoder helpers instead of custom encoders.
 
 
 ## [v3.1.18] - 2025-04-10
