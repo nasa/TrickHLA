@@ -49,6 +49,7 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic pop
 #endif
 
+using namespace std;
 using namespace TrickHLA;
 
 EncoderBase::EncoderBase()
@@ -60,7 +61,7 @@ EncoderBase::EncoderBase()
 }
 
 EncoderBase::EncoderBase(
-   std::string const &name )
+   string const &name )
    : data_encoder( NULL ),
      data(),
      data_name( name )

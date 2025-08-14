@@ -74,7 +74,7 @@ using namespace std;
 using namespace TrickHLA;
 
 EncoderBase *EncoderFactory::create(
-   std::string const &trick_name,
+   string const      &trick_name,
    EncodingEnum const hla_encoding )
 {
    REF2 *ref2 = ref_attributes( trick_name.c_str() );

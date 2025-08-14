@@ -117,7 +117,7 @@ void CharUnicodeStringEncoder::update_after_decode()
    // Include the null terminating char in the size comparison.
    if ( ( wstring_data.size() + 1 ) <= var_element_count ) {
       // Convert from wstring to string.
-      std::string str_data;
+      string str_data;
       str_data.assign( wstring_data.begin(), wstring_data.end() );
 
       // Copy value to existing Trick variable char* memory and include
