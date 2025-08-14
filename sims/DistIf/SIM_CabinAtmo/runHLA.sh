@@ -4,4 +4,3 @@
 ./S_main*.exe RUN_FED_1/input.py &
 sleep 1
 ./S_main*.exe RUN_FED_2/input.py &
-
