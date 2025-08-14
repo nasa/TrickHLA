@@ -3081,7 +3081,7 @@ void Manager::encode_checkpoint()
       // to ensure the restore process will wait for this object instance
       // to exist.
       if ( objects[n].is_instance_handle_valid() ) {
-         objects[n].mark_required();
+         objects[n].set_required( true );
       }
       // Setup the ownership handler checkpoint data structures.
       objects[n].encode_checkpoint();

@@ -980,7 +980,7 @@ void ExecutionControlBase::encode_checkpoint()
       // to ensure the restore process will wait for this object instance
       // to exist.
       if ( execution_configuration->is_instance_handle_valid() ) {
-         execution_configuration->mark_required();
+         execution_configuration->set_required( true );
       }
       execution_configuration->encode_checkpoint();
    }

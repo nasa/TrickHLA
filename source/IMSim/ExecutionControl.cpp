@@ -278,7 +278,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    }
 
    // Reset the sim-config required flag to make it required.
-   execution_configuration->mark_required();
+   execution_configuration->set_required( true );
 
    // Reset the sim-config preferred-order for attributes to Receive-Order.
    execution_configuration->reset_preferred_order();

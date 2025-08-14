@@ -1142,7 +1142,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    }
 
    // Reset the ExCO required flag to make it required.
-   ExCO->mark_required();
+   ExCO->set_required( true );
 
    // Reset the ExCO preferred-order for attributes to Receive-Order.
    ExCO->reset_preferred_order();

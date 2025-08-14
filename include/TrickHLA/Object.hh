@@ -472,10 +472,11 @@ class Object : public CheckpointConversionBase
       return this->required;
    }
 
-   /*! @brief Mark this object instance as required. */
-   void mark_required()
+   /*! @brief Set this object instance as required.
+    *  @param required_obj True if object instance is required, false otherwise. */
+   void set_required( bool const required_obj )
    {
-      this->required = true;
+      this->required = required_obj;
    }
 
    /*! @brief Stops publishing data for the object attributes by setting the
