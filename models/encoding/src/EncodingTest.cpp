@@ -199,25 +199,25 @@ void EncodingTest::char_test(
    }
 
    ostringstream encode_msg;
-   encode_msg << "EncodingTest::char_test():" << __LINE__ << std::endl;
+   encode_msg << "EncodingTest::char_test():" << __LINE__ << endl;
 
    VariableLengthData encoded_data1_char = data1_char_encoder->encode();
    data2_char_encoder->decode( encoded_data1_char );
    encode_msg << " Encoded data1_char size:" << encoded_data1_char.size()
               << " Encoded-length:" << data1_char_encoder->getEncodedLength()
-              << std::endl;
+              << endl;
 
    VariableLengthData encoded_data1_vec3 = data1_vec3_char_encoder->encode();
    data2_vec3_char_encoder->decode( encoded_data1_vec3 );
    encode_msg << " Encoded data1_vec3 size:" << encoded_data1_vec3.size()
               << " Encoded-length:" << data1_vec3_char_encoder->getEncodedLength()
-              << std::endl;
+              << endl;
 
    VariableLengthData encoded_data1_m3x3 = data1_m3x3_char_encoder->encode();
    data2_m3x3_char_encoder->decode( encoded_data1_m3x3 );
    encode_msg << " Encoded data1_m3x3 size:" << encoded_data1_m3x3.size()
               << " Encoded-length:" << data1_m3x3_char_encoder->getEncodedLength()
-              << std::endl;
+              << endl;
 
    data1_ptr_char_encoder->update_before_encode();
    VariableLengthData encoded_data1_ptr_char = data1_ptr_char_encoder->encode();
@@ -226,7 +226,7 @@ void EncodingTest::char_test(
 
    encode_msg << " Encoded data1_ptr_char size:" << encoded_data1_ptr_char.size()
               << " Encoded-length:" << data1_ptr_char_encoder->getEncodedLength()
-              << std::endl;
+              << endl;
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       message_publish( MSG_NORMAL, encode_msg.str().c_str() );

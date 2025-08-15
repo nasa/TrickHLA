@@ -111,11 +111,11 @@ void DynamicalEntityBase::base_config(
    if ( mngr_object == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityBase::base_config() Warning: " << std::endl
-                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL." << std::endl
-                << "\tEither of the two things are possible:" << std::endl
-                << "\t1). We are configuring in the input file, which is okay." << std::endl
-                << "\t2). We are configuring in default_data but forgot to allocate and" << std::endl
+         errmsg << "DynamicalEntityBase::base_config() Warning: " << endl
+                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL." << endl
+                << "\tEither of the two things are possible:" << endl
+                << "\t1). We are configuring in the input file, which is okay." << endl
+                << "\t2). We are configuring in default_data but forgot to allocate and" << endl
                 << "\t    assign the associated object in the 'create_connections()' routine.";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }

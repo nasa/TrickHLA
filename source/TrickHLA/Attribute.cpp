@@ -243,7 +243,7 @@ void Attribute::initialize(
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
-      msg << "Attribute::initialize():" << __LINE__ << std::endl;
+      msg << "Attribute::initialize():" << __LINE__ << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -279,7 +279,7 @@ VariableLengthData &Attribute::encode()
       errmsg << "Attribute::encode():" << __LINE__
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '" << get_FOM_name()
-             << "' with error: " << err_details << std::endl;
+             << "' with error: " << err_details << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -298,7 +298,7 @@ bool const Attribute::decode(
       errmsg << "Attribute::decode():" << __LINE__
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '" << get_FOM_name()
-             << "' with error: " << err_details << std::endl;
+             << "' with error: " << err_details << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

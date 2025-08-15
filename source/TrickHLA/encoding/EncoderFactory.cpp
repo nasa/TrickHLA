@@ -89,7 +89,7 @@ EncoderBase *EncoderFactory::create(
              << " correctly specified. If '" << trick_name
              << "' is an inherited variable then make sure the base class"
              << " uses either the 'public' or 'protected' access level for"
-             << " the variable." << std::endl;
+             << " the variable." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return NULL;
    }
@@ -114,7 +114,7 @@ EncoderBase *EncoderFactory::create(
       errmsg << "EncoderFactory::create():" << __LINE__
              << " ERROR: Unexpected NULL Trick attributes. Please make sure the"
              << " variable is allocated memory by the Trick Memory Manager."
-             << std::endl;
+             << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -135,7 +135,7 @@ EncoderBase *EncoderFactory::create(
              << " ERROR: The variable address is NULL for variable '"
              << data_name << "'. Please make sure the Trick variable"
              << " is allocated memory by the Trick Memory Manager."
-             << std::endl;
+             << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -147,7 +147,7 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type 'void', and is not supported." << std::endl;
+                << "' is of type 'void', and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -182,11 +182,11 @@ EncoderBase *EncoderFactory::create(
                    << " WARNING: Trick attributes for the variable '" << data_name
                    << "' is of type 'unsigned short', but the IEEE 1516-2010"
                    << " standard does not support encoding unsigned integers."
-                   << " Using int16 encoder instead." << std::endl;
+                   << " Using int16 encoder instead." << endl;
             message_publish( MSG_WARNING, errmsg.str().c_str() );
          }
          encoder = create_int16_encoder( address, attr, hla_encoding, data_name );
-#endif
+#endif // IEEE_1516_2025
          break;
       }
       case TRICK_INTEGER: {
@@ -205,11 +205,11 @@ EncoderBase *EncoderFactory::create(
                    << " WARNING: Trick attributes for the variable '" << data_name
                    << "' is of type 'unsigned int', but the IEEE 1516-2010"
                    << " standard does not support encoding unsigned integers."
-                   << " Using int32 encoder instead." << std::endl;
+                   << " Using int32 encoder instead." << endl;
             message_publish( MSG_WARNING, errmsg.str().c_str() );
          }
          encoder = create_int32_encoder( address, attr, hla_encoding, data_name );
-#endif
+#endif // IEEE_1516_2025
          break;
       }
       case TRICK_LONG: {
@@ -250,7 +250,7 @@ EncoderBase *EncoderFactory::create(
                          << " WARNING: Trick attributes for the variable '" << data_name
                          << "' is of type 'unsigned long', but the IEEE 1516-2010"
                          << " standard does not support encoding unsigned integers."
-                         << " Using int32 encoder instead." << std::endl;
+                         << " Using int32 encoder instead." << endl;
                   message_publish( MSG_WARNING, errmsg.str().c_str() );
                }
                encoder = create_int32_encoder( address, attr, hla_encoding, data_name );
@@ -264,14 +264,14 @@ EncoderBase *EncoderFactory::create(
                          << " WARNING: Trick attributes for the variable '" << data_name
                          << "' is of type 'unsigned long', but the IEEE 1516-2010"
                          << " standard does not support encoding unsigned integers."
-                         << " Using int64 encoder instead." << std::endl;
+                         << " Using int64 encoder instead." << endl;
                   message_publish( MSG_WARNING, errmsg.str().c_str() );
                }
                encoder = create_int64_encoder( address, attr, hla_encoding, data_name );
                break;
             }
          }
-#endif
+#endif // IEEE_1516_2025
          break;
       }
       case TRICK_FLOAT: {
@@ -290,7 +290,7 @@ EncoderBase *EncoderFactory::create(
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type bit-field 'int : 1', and is"
-                << " not supported." << std::endl;
+                << " not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -300,7 +300,7 @@ EncoderBase *EncoderFactory::create(
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type bit-field 'unsigned int : 1',"
-                << " and is not supported." << std::endl;
+                << " and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -320,11 +320,11 @@ EncoderBase *EncoderFactory::create(
                    << " WARNING: Trick attributes for the variable '" << data_name
                    << "' is of type 'unsigned long long', but the IEEE 1516-2010"
                    << " standard does not support encoding unsigned integers."
-                   << " Using int64 encoder instead." << std::endl;
+                   << " Using int64 encoder instead." << endl;
             message_publish( MSG_WARNING, errmsg.str().c_str() );
          }
          encoder = create_int64_encoder( address, attr, hla_encoding, data_name );
-#endif
+#endif // IEEE_1516_2025
          break;
       }
       case TRICK_FILE_PTR: {
@@ -332,7 +332,7 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type 'file *', and is not supported." << std::endl;
+                << "' is of type 'file *', and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -356,7 +356,7 @@ EncoderBase *EncoderFactory::create(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'std::wstring', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
 #endif // TRICK_WSTRING_MM_SUPPORT
          break;
@@ -366,7 +366,7 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type 'void *', and is not supported." << std::endl;
+                << "' is of type 'void *', and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -375,7 +375,7 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type 'enum', and is not supported." << std::endl;
+                << "' is of type 'enum', and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -385,7 +385,7 @@ EncoderBase *EncoderFactory::create(
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'struct' or class, and is not supported."
-                << std::endl;
+                << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -394,7 +394,7 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type 'opaque', and is not supported." << std::endl;
+                << "' is of type 'opaque', and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -403,7 +403,7 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type 'stl::type', and is not supported." << std::endl;
+                << "' is of type 'stl::type', and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -414,7 +414,7 @@ EncoderBase *EncoderFactory::create(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of unknown type ("
                 << trickTypeCharString( attr->type, "UNSUPPORTED_TYPE" )
-                << " = " << attr->type << "), and is not supported." << std::endl;
+                << " = " << attr->type << "), and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -444,7 +444,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << "' is of type 'char' for the specified"
                    << " ENCODING_UNICODE_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!"
-                   << std::endl;
+                   << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -459,7 +459,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << "' is of type 'char' for the specified"
                    << " ENCODING_ASCII_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!"
-                   << std::endl;
+                   << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -474,7 +474,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << "' is of type 'char' for the specified"
                    << " ENCODING_OPAQUE_DATA encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!"
-                   << std::endl;
+                   << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -489,7 +489,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << "' is of type 'char' for the specified"
                    << " ENCODING_NONE encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!"
-                   << std::endl;
+                   << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -512,7 +512,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'char', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -553,7 +553,7 @@ EncoderBase *EncoderFactory::create_string_encoder(
                    << encoding_enum_to_string( hla_encoding )
                    << ") is only supported for a primitive std::string value for"
                    << " now. Please contact the TrickHLA development team for"
-                   << " support." << std::endl;
+                   << " support." << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -564,7 +564,7 @@ EncoderBase *EncoderFactory::create_string_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'std::string', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -600,7 +600,7 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'wchar', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -641,7 +641,7 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'std::wstring', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -691,7 +691,7 @@ EncoderBase *EncoderFactory::create_int16_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'short', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -739,7 +739,7 @@ EncoderBase *EncoderFactory::create_int32_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'int', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -787,7 +787,7 @@ EncoderBase *EncoderFactory::create_int64_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'long long', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -836,7 +836,7 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'unsigned short', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -884,7 +884,7 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'unsigned int', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -932,14 +932,14 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'unsigned long long', the specified"
                 << " hla_encoding (" << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
    }
    return NULL;
 }
-#endif
+#endif // IEEE_1516_2025
 
 EncoderBase *EncoderFactory::create_float32_encoder(
    void              *address,
@@ -981,7 +981,7 @@ EncoderBase *EncoderFactory::create_float32_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'float', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -1033,7 +1033,7 @@ EncoderBase *EncoderFactory::create_float64_encoder(
                    << "' is of type 'double', the specified HLA-encoding ("
                    << encoding_enum_to_string( hla_encoding )
                    << ") is only supported for a primitive double value."
-                   << std::endl;
+                   << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -1044,7 +1044,7 @@ EncoderBase *EncoderFactory::create_float64_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'double', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -1080,7 +1080,7 @@ EncoderBase *EncoderFactory::create_bool_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'bool', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << std::endl;
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }

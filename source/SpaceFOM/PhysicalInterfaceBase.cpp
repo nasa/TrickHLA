@@ -104,11 +104,11 @@ void PhysicalInterfaceBase::base_config(
    if ( mngr_object == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "PhysicalInterfaceBase::base_config() Warning: " << std::endl
-                << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is NULL." << std::endl
-                << "\tEither of the two things are possible:" << std::endl
-                << "\t1). We are configuring in the input file, which is okay." << std::endl
-                << "\t2). We are configuring in default_data but forgot to allocate and" << std::endl
+         errmsg << "PhysicalInterfaceBase::base_config() Warning: " << endl
+                << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is NULL." << endl
+                << "\tEither of the two things are possible:" << endl
+                << "\t1). We are configuring in the input file, which is okay." << endl
+                << "\t2). We are configuring in default_data but forgot to allocate and" << endl
                 << "\t    assign the associated object in the 'create_connections()' routine.";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -181,7 +181,7 @@ void PhysicalInterfaceBase::configure()
    if ( this->object == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
-             << " WARNING: Unexpected NULL TrickHLA Object pointer!" << std::endl;
+             << " WARNING: Unexpected NULL TrickHLA Object pointer!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -191,7 +191,7 @@ void PhysicalInterfaceBase::configure()
         && this->packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
-             << " WARNING: Unexpected empty interface name!" << std::endl;
+             << " WARNING: Unexpected empty interface name!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -200,7 +200,7 @@ void PhysicalInterfaceBase::configure()
         && this->packing_data.parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
-             << " WARNING: Unexpected empty interface parent!" << std::endl;
+             << " WARNING: Unexpected empty interface parent!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -220,7 +220,7 @@ void PhysicalInterfaceBase::initialize()
         && this->packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected empty interface name!" << std::endl;
+             << " WARNING: Unexpected empty interface name!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -229,7 +229,7 @@ void PhysicalInterfaceBase::initialize()
         && this->packing_data.parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected empty interface parent!" << std::endl;
+             << " WARNING: Unexpected empty interface parent!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -279,7 +279,7 @@ void PhysicalInterfaceBase::set_name( std::string const &new_name )
         && new_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::set_name():" << __LINE__
-             << " WARNING: Unexpected empty interface name!" << std::endl;
+             << " WARNING: Unexpected empty interface name!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    this->packing_data.name = new_name;
@@ -296,7 +296,7 @@ void PhysicalInterfaceBase::set_parent( std::string const &new_parent_name )
         && new_parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::set_parent():" << __LINE__
-             << " WARNING: Unexpected empty parent name!" << std::endl;
+             << " WARNING: Unexpected empty parent name!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    this->packing_data.parent_name = new_parent_name;

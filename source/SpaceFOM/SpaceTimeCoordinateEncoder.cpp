@@ -164,7 +164,7 @@ void SpaceTimeCoordinateEncoder::encode()
       std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::encode():" << __LINE__
-             << " Error: Encoder exception!" << std::endl;
+             << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -208,7 +208,7 @@ void SpaceTimeCoordinateEncoder::decode()
       std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::decode():" << __LINE__
-             << " Error: Encoder exception!" << std::endl;
+             << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );

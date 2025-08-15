@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityData.hh"
 
-using namespace SpaceFOM;
+using namespace std : using namespace SpaceFOM;
 
 /*!
  * @job_class{initialization}
@@ -121,27 +121,27 @@ void PhysicalEntityData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tname:         '" << name << "'" << std::endl
-          << "\ttype:         '" << type << "'" << std::endl
-          << "\tstatus:       '" << status << "'" << std::endl
-          << "\tparent_frame: '" << parent_frame << "'" << std::endl;
+   stream << "\tname:         '" << name << "'" << endl
+          << "\ttype:         '" << type << "'" << endl
+          << "\tstatus:       '" << status << "'" << endl
+          << "\tparent_frame: '" << parent_frame << "'" << endl;
 
    state.print_data( stream );
 
    stream << "\tacceleration: "
           << "\t\t" << accel[0] << ", "
           << "\t\t" << accel[1] << ", "
-          << "\t\t" << accel[2] << std::endl;
+          << "\t\t" << accel[2] << endl;
 
    stream << "\tangular acceleration: "
           << "\t\t" << ang_accel[0] << ", "
           << "\t\t" << ang_accel[1] << ", "
-          << "\t\t" << ang_accel[2] << std::endl;
+          << "\t\t" << ang_accel[2] << endl;
 
    stream << "\tcenter of mass (cm): "
           << "\t\t" << cm[0] << ", "
           << "\t\t" << cm[1] << ", "
-          << "\t\t" << cm[2] << std::endl;
+          << "\t\t" << cm[2] << endl;
 
    stream << "\tBody frame orientation:\n";
    body_wrt_struct.print_data( stream );

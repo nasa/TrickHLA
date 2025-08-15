@@ -253,7 +253,7 @@ VariableLengthData &Parameter::encode()
       errmsg << "Parameter::encode():" << __LINE__
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '"
-             << get_FOM_name() << "' with error: " << err_details << std::endl;
+             << get_FOM_name() << "' with error: " << err_details << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -272,7 +272,7 @@ bool const Parameter::decode(
       errmsg << "Parameter::decode():" << __LINE__
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '"
-             << get_FOM_name() << "' with error: " << err_details << std::endl;
+             << get_FOM_name() << "' with error: " << err_details << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

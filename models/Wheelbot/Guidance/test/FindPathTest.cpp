@@ -9,6 +9,7 @@
 #include "Wheelbot/Guidance/include/GridSquare.hh"
 #include "Wheelbot/Guidance/include/Point.hh"
 
+using namespace std;
 using namespace TrickHLAModel;
 
 TEST( FindPathTest, FindPath_one )
@@ -30,12 +31,12 @@ TEST( FindPathTest, FindPath_one )
    arena.block( 6, 6 );
    arena.block( 8, 6 );
 
-   std::cout << std::endl;
+   std::cout << endl;
 
    std::vector< Point > returnvalue = FindPath( origin, goal, testarena );
 
-   std::cout << std::endl;
-   std::cout << std::endl;
+   std::cout << endl;
+   std::cout << endl;
 
    EXPECT_EQ( returnvalue.size(), 0 );
 }
@@ -131,10 +132,10 @@ TEST( FindPathTest, FindPath_four )
    arena.block( 6, 6 );
    arena.block( 7, 6 );
 
-   std::cout << std::endl;
+   std::cout << endl;
    std::vector< Point > returnvalue = FindPath( origin, goal, testarena );
-   std::cout << std::endl;
-   std::cout << std::endl;
+   std::cout << endl;
+   std::cout << endl;
 
    EXPECT_EQ( returnvalue.size(), 0 );
 }
@@ -166,12 +167,12 @@ TEST( FindPathTest, FindPath_five )
    arena.block( 6, 6 );
    arena.block( 7, 6 );
 
-   std::cout << std::endl;
+   std::cout << endl;
 
    std::vector< Point > returnvalue = FindPath( origin, goal, testarena );
 
-   std::cout << std::endl;
-   std::cout << std::endl;
+   std::cout << endl;
+   std::cout << endl;
 
    EXPECT_EQ( returnvalue.size(), 0 );
 }

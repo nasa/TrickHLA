@@ -212,15 +212,15 @@ bool FixedRecData::compare(
 string FixedRecData::to_string()
 {
    ostringstream msg;
-   msg << "FixedRecData::to_string():" << __LINE__ << std::endl
+   msg << "FixedRecData::to_string():" << __LINE__ << endl
        << "\t field_1_string:"
-       << ( ( field_1_string != NULL ) ? field_1_string : "NULL" ) << std::endl
-       << "\t field_2_float64:" << field_2_float64 << std::endl
+       << ( ( field_1_string != NULL ) ? field_1_string : "NULL" ) << endl
+       << "\t field_2_float64:" << field_2_float64 << endl
        << "\t elem_1_string:"
-       << ( ( elem_1_string != NULL ) ? elem_1_string : "NULL" ) << std::endl
-       << "\t elem_2_float64:" << elem_2_float64 << std::endl
-       << "\t element_1_count:" << element_1_count << std::endl
+       << ( ( elem_1_string != NULL ) ? elem_1_string : "NULL" ) << endl
+       << "\t elem_2_float64:" << elem_2_float64 << endl
+       << "\t element_1_count:" << element_1_count << endl
        << "\t element_2_name:"
-       << ( ( element_2_name != NULL ) ? element_2_name : "NULL" ) << std::endl;
+       << ( ( element_2_name != NULL ) ? element_2_name : "NULL" ) << endl;
    return msg.str();
 }

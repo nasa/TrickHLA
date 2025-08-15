@@ -112,7 +112,7 @@ void RecordElement::initialize_element_encoder()
                 << "', the 'element_count' is " << element_count
                 << " but no 'elements' are specified. Please check your input.py"
                 << " or modified-data files to make sure the attributes are"
-                << " correctly specified." << std::endl;
+                << " correctly specified." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
@@ -156,7 +156,7 @@ void RecordElement::initialize_element_encoder()
                 << " ERROR: The fixed record element has a missing Trick name."
                 << " Make sure the trick_name is set in either your input.py"
                 << " file or modified-data files is correctly specified."
-                << std::endl;
+                << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
@@ -174,7 +174,7 @@ void RecordElement::initialize_element_encoder(
       errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
              << " ERROR: For element with trick_name '" << get_trick_name()
              << "', this function does not support the ENCODING_FIXED_RECORD"
-             << " encoding for a given address and ATTRIBUTES." << std::endl;
+             << " encoding for a given address and ATTRIBUTES." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

@@ -7,6 +7,7 @@
 #include "Wheelbot/Guidance/include/GridSquare.hh"
 #include "Wheelbot/Guidance/include/Point.hh"
 
+using namespace std;
 using namespace TrickHLAModel;
 
 TEST( ArenaTest, one )
@@ -143,10 +144,10 @@ TEST( ArenaTest, getGridSquareCoordinates_one )
    Arena       arena( 10, 7 );
    GridSquare *agridSquare = arena.get_grid_square( 15, 10 );
    Point       coordinate;
-   std::cout << std::endl;
-   std::cout << "The following error message is expected from this test." << std::endl;
+   std::cout << endl;
+   std::cout << "The following error message is expected from this test." << endl;
    EXPECT_EQ( arena.get_grid_square_coordinates( agridSquare, coordinate ), 1 );
-   std::cout << std::endl;
+   std::cout << endl;
 }
 
 TEST( ArenaTest, getGridSquareCoordinates_two )
@@ -179,10 +180,10 @@ TEST( ArenaTest, movementCostEstimate_one )
    GridSquare *agridSquare       = arena.get_grid_square( 11, 3 );
    GridSquare *anothergridSquare = arena.get_grid_square( 12, 4 );
    int         cost_estimate;
-   std::cout << std::endl;
-   std::cout << "The following error messages are expected from this test." << std::endl;
+   std::cout << endl;
+   std::cout << "The following error messages are expected from this test." << endl;
    EXPECT_EQ( arena.movement_cost_estimate( agridSquare, anothergridSquare, cost_estimate ), 1 );
-   std::cout << std::endl;
+   std::cout << endl;
 }
 
 TEST( ArenaTest, movementCostEstimate_two )
@@ -215,10 +216,10 @@ TEST( ArenaTest, distanceBetween_one )
    GridSquare *agridSquare       = arena.get_grid_square( 11, 3 );
    GridSquare *anothergridSquare = arena.get_grid_square( 12, 4 );
    int         dist;
-   std::cout << std::endl;
-   std::cout << "The following error messages are expected from this test." << std::endl;
+   std::cout << endl;
+   std::cout << "The following error messages are expected from this test." << endl;
    EXPECT_EQ( arena.distance_between( agridSquare, anothergridSquare, dist ), 1 );
-   std::cout << std::endl;
+   std::cout << endl;
 }
 
 TEST( ArenaTest, distanceBetween_two )
@@ -268,15 +269,15 @@ TEST( ArenaTest, mark_one )
 TEST( ArenaTest, getNeighbors_one )
 {
    // Tests that error message displays when trying to
-   std::cout << std::endl;
-   std::cout << "The following error messages are expected from this test." << std::endl;
+   std::cout << endl;
+   std::cout << "The following error messages are expected from this test." << endl;
    Arena                       arena( 10, 7 );
    std::vector< GridSquare * > neighbors;
    GridSquare                 *agridSquare = arena.get_grid_square( 11, 22 );
    neighbors                               = arena.get_neighbors( agridSquare );
    int length                              = neighbors.size();
-   std::cout << std::endl;
-   std::cout << std::endl;
+   std::cout << endl;
+   std::cout << endl;
    EXPECT_EQ( length, 0 );
 }
 
@@ -334,7 +335,7 @@ TEST( ArenaTest, getNeighbors_four )
 
    Point point;
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
-   std::cout << point.getX() << " " << point.getY() << std::endl;
+   std::cout << point.getX() << " " << point.getY() << endl;
 
    EXPECT_EQ( n0_1_found_flag, true );
 
@@ -346,7 +347,7 @@ TEST( ArenaTest, getNeighbors_four )
    }
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
-   std::cout << point.getX() << " " << point.getY() << std::endl;
+   std::cout << point.getX() << " " << point.getY() << endl;
 
    EXPECT_EQ( n0_2_found_flag, true );
 
@@ -358,7 +359,7 @@ TEST( ArenaTest, getNeighbors_four )
    }
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
-   std::cout << point.getX() << " " << point.getY() << std::endl;
+   std::cout << point.getX() << " " << point.getY() << endl;
 
    EXPECT_EQ( n1_0_found_flag, true );
 
@@ -370,7 +371,7 @@ TEST( ArenaTest, getNeighbors_four )
    }
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
-   std::cout << point.getX() << " " << point.getY() << std::endl;
+   std::cout << point.getX() << " " << point.getY() << endl;
 
    EXPECT_EQ( n1_2_found_flag, true );
 
@@ -382,7 +383,7 @@ TEST( ArenaTest, getNeighbors_four )
    }
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
-   std::cout << point.getX() << " " << point.getY() << std::endl;
+   std::cout << point.getX() << " " << point.getY() << endl;
 
    EXPECT_EQ( n2_1_found_flag, true );
 }

@@ -9,6 +9,7 @@
 #define PI 3.14159265358979
 #define FP_TOLERANCE 0.000000001
 
+using namespace std;
 using namespace TrickHLAModel;
 
 TEST( NavigatorTest, distanceTo_one )
@@ -144,6 +145,6 @@ TEST( NavigatorTest, bearingTo_two )
    Point     map_point( 20, 20 );
    double    bearing;
    bearing = navigator.bearing_to( map_point );
-   std::cout << "bearing = " << bearing << std::endl;
+   std::cout << "bearing = " << bearing << endl;
    EXPECT_NEAR( bearing, ( -PI / 6 ), FP_TOLERANCE );
 }

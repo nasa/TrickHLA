@@ -81,7 +81,7 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_DOUBLE, "UNSUPPORTED_TYPE" )
-             << "'." << std::endl;
+             << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -91,7 +91,7 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
       ostringstream errmsg;
       errmsg << "Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
-             << "' the variable must be a double primitive!" << std::endl;
+             << "' the variable must be a double primitive!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

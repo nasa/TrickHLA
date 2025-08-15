@@ -15,12 +15,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Using std::string for TrickHLA settings instead of char *.
 - Configure and initialize TrickHLA from default data instead of the input file.
-  - Support for default data initialization will now require your Packing and LagCompenstation implementations to call its *configure* function before the *initialize* function is called.
+  - Support for default data initialization will now require the *Packing* implementation make a call to set the sim-data before calling the no-argument *configure()* and *initialize()* functions in the S_define file.
 
 ### Added
 
 - Added this CHANGELOG file.
-- Added Ball simulation based off of the Trick tutorial Ball simulation.
+- Added Ball simulation based off the Trick tutorial Ball simulation.
 
 ### Changed
 

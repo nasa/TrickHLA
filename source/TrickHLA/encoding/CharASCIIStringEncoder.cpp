@@ -82,7 +82,7 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_CHARACTER, "UNSUPPORTED_TYPE" )
-             << "'." << std::endl;
+             << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -91,7 +91,7 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
       ostringstream errmsg;
       errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
-             << "' the variable must be a dynamic variable array!" << std::endl;
+             << "' the variable must be a dynamic variable array!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

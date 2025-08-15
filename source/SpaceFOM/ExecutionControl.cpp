@@ -3040,7 +3040,7 @@ void ExecutionControl::set_least_common_time_step(
          ostringstream msg;
          msg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
              << " This is not a Master federate so this setting will be ignored."
-             << std::endl;
+             << endl;
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
    }

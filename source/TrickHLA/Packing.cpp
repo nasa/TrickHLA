@@ -80,7 +80,7 @@ void Packing::initialize()
          ostringstream errmsg;
          errmsg << "TrickHLA::Packing::initialize():" << __LINE__
                 << " ERROR: The packing function has not been configured for object: '"
-                << object->name << "'!" << std::endl;
+                << object->name << "'!" << endl;
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       } else {
