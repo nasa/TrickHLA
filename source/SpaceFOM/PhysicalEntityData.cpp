@@ -35,7 +35,8 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityData.hh"
 
-using namespace std : using namespace SpaceFOM;
+using namespace std;
+using namespace SpaceFOM;
 
 /*!
  * @job_class{initialization}
