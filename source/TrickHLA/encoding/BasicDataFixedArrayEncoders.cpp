@@ -38,7 +38,7 @@ NASA, Johnson Space Center\n
 #include "trick/attributes.h"
 
 // TrickHLA include files.
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"

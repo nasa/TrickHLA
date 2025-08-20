@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "ExecutionConfiguration.hh"
 #include "ExecutionControlBase.hh"
-#include "StandardsSupport.hh"
+#include "HLAStandardSupport.hh"
 #include "Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need

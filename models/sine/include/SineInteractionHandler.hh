@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH
 
 // TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionHandler.hh"
-#include "TrickHLA/StandardsSupport.hh"
 
 // HLA includes.
 #include "RTI/VariableLengthData.h"

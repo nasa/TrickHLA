@@ -29,7 +29,7 @@
 ##include "trick/exec_proto.h"
 
 // TrickHLA include files.
-##include "TrickHLA/StandardsSupport.hh"
+##include "TrickHLA/HLAStandardSupport.hh"
 #if defined( IEEE_1516_2025 )
 ##include "TrickHLA/FedAmbHLA4.hh"
 #else

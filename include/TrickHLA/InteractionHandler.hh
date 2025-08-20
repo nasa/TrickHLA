@@ -42,11 +42,11 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "HLAStandardSupport.hh"
 #include "Int64Interval.hh"
 #include "Int64Time.hh"
 #include "Interaction.hh"
 #include "Parameter.hh"
-#include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

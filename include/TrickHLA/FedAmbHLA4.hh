@@ -55,7 +55,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "FedAmbBase.hh"
-#include "StandardsSupport.hh"
+#include "HLAStandardSupport.hh"
 
 #if defined( IEEE_1516_2025 )
 

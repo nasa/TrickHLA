@@ -59,11 +59,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
 using namespace RTI1516_NAMESPACE;

@@ -56,12 +56,12 @@ NASA, Johnson Space Center\n
 #include "BasicClock.hh"
 #include "CheckpointConversionBase.hh"
 #include "ElapsedTimeStats.hh"
+#include "HLAStandardSupport.hh"
 #include "Int64Interval.hh"
 #include "Int64Time.hh"
 #include "MutexLock.hh"
 #include "MutexProtection.hh"
 #include "ReflectedAttributesQueue.hh"
-#include "StandardsSupport.hh"
 #include "StringUtilities.hh"
 #include "Types.hh"
 

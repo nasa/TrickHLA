@@ -41,9 +41,9 @@ NASA, Johnson Space Center\n
 // trickHLA includes.
 #include "CheckpointConversionBase.hh"
 #include "Federate.hh"
+#include "HLAStandardSupport.hh"
 #include "Int64Time.hh"
 #include "MutexLock.hh"
-#include "StandardsSupport.hh"
 #include "SyncPointList.hh"
 #include "Types.hh"
 

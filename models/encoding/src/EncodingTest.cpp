@@ -60,8 +60,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"

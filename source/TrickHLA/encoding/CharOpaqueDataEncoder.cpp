@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 

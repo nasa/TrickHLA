@@ -53,12 +53,12 @@ NASA, Johnson Space Center\n
 #include "trick/Flag.h"
 
 // TrickHLA includes.
+#include "HLAStandardSupport.hh"
 #include "Int64Interval.hh"
 #include "Int64Time.hh"
 #include "KnownFederate.hh"
 #include "MutexLock.hh"
 #include "MutexProtection.hh"
-#include "StandardsSupport.hh"
 #include "TrickThreadCoordinator.hh"
 #include "Types.hh"
 

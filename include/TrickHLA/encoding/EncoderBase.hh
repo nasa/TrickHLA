@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // TrickHLA includes.
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -141,7 +141,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 #   if defined( IEEE_1516_2025 )
    virtual RTI1516_NAMESPACE::DataElement &decode( RTI1516_NAMESPACE::VariableLengthData const &inData )
    {
-      return ( ( data_encoder != NULL ) ? data_encoder->decode( inData ) : *this );
+      return ( ( data_encoder != NULL ) ? data_encoder->decode( inData ) : *this ); // cppcheck-suppress [returnTempReference]
    }
 #   else
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException )
@@ -150,7 +150,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
          data_encoder->decode( inData );
       }
    }
-#   endif // IEEE_1516_2010
+#   endif // IEEE_1516_2025
 
    virtual size_t decodeFrom(
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,

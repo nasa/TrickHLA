@@ -49,9 +49,9 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "CTETimelineBase.hh"
+#include "HLAStandardSupport.hh"
 #include "ScenarioTimeline.hh"
 #include "SimTimeline.hh"
-#include "StandardsSupport.hh"
 #include "SyncPointManagerBase.hh"
 #include "Types.hh"
 

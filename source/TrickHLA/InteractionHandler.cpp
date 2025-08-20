@@ -47,13 +47,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/Parameter.hh"
-#include "TrickHLA/StandardsSupport.hh"
 
 // HLA includes.
 #include "RTI/VariableLengthData.h"

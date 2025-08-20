@@ -45,8 +45,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "../TrickHLA/ExecutionControlBase.hh"
+#include "../TrickHLA/HLAStandardSupport.hh"
 #include "../TrickHLA/Interaction.hh"
-#include "../TrickHLA/StandardsSupport.hh"
 #include "../TrickHLA/Types.hh"
 
 // IMSim includes.

@@ -42,9 +42,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "HLAStandardSupport.hh"
 #include "Int64BaseTime.hh"
 #include "Int64Interval.hh"
-#include "StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -57,7 +57,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/RTI1516.h"
 #include "RTI/VariableLengthData.h"
-#include <RTI/time/HLAinteger64Time.h>
+#include "RTI/time/HLAinteger64Time.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

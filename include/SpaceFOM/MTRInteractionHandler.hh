@@ -44,8 +44,8 @@ NASA, Johnson Space Center\n
 #include "Types.hh"
 
 // TrickHLA includes.
+#include "../TrickHLA/HLAStandardSupport.hh"
 #include "../TrickHLA/InteractionHandler.hh"
-#include "../TrickHLA/StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

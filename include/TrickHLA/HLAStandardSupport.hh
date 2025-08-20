@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/StandardsSupport.hh
+@file TrickHLA/HLAStandardSupport.hh
 @ingroup TrickHLA
 @brief This header file provides the TrickHLA support necessary to hide the
 differences between the different HLA Standards that implement the Runtime
@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_STANDARDS_SUPPORT_HH
-#define TRICKHLA_STANDARDS_SUPPORT_HH
+#ifndef TRICKHLA_HLA_STANDARD_SUPPORT_HH
+#define TRICKHLA_HLA_STANDARD_SUPPORT_HH
 
 // Default to the IEEE 1516-2010 Standard if no HLA standard is defined.
 #if !defined( IEEE_1516_2010 ) && !defined( IEEE_1516_2025 )
@@ -52,4 +52,4 @@ NASA, Johnson Space Center\n
 #   error "ERROR: Unsupported HLA IEEE 1516 Standard!"
 #endif
 
-#endif // TRICKHLA_STANDARDS_SUPPORT_HH
+#endif // TRICKHLA_HLA_STANDARD_SUPPORT_HH

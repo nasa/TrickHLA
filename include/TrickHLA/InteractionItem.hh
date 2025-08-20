@@ -41,10 +41,10 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_INTERACTION_ITEM_HH
 
 // TrickHLA includes.
+#include "HLAStandardSupport.hh"
 #include "Int64Time.hh"
 #include "Item.hh"
 #include "ItemQueue.hh"
-#include "StandardsSupport.hh"
 #include "Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need

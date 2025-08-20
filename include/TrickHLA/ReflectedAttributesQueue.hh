@@ -35,8 +35,8 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH
 
 // TrickHLA includes.
+#include "HLAStandardSupport.hh"
 #include "MutexLock.hh"
-#include "StandardsSupport.hh"
 #include "Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need

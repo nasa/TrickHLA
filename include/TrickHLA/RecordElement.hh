@@ -40,7 +40,7 @@ NASA, Johnson Space Center\n
 #include <trick/attributes.h>
 
 // TrickHLA includes.
-#include "StandardsSupport.hh"
+#include "HLAStandardSupport.hh"
 #include "Types.hh"
 #include "encoding/EncoderBase.hh"
 

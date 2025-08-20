@@ -50,8 +50,8 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Conditional.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 

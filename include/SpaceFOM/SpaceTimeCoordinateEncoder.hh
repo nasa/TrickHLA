@@ -33,8 +33,8 @@ v@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 #define SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH
 
 // TrickHLA includes.
+#include "../TrickHLA/HLAStandardSupport.hh"
 #include "../TrickHLA/OpaqueBuffer.hh"
-#include "../TrickHLA/StandardsSupport.hh"
 
 // SpaceFOM includes.
 #include "../SpaceFOM/SpaceTimeCoordinateData.hh"

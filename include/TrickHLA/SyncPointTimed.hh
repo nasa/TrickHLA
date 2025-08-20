@@ -40,9 +40,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "HLAStandardSupport.hh"
 #include "Int64Time.hh"
-#include "RTI/VariableLengthData.h"
-#include "StandardsSupport.hh"
 #include "SyncPoint.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -55,6 +54,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
