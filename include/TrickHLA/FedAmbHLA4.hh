@@ -8,7 +8,7 @@ RTI Ambassador. It provides methods called by the RTI Ambassador for
 simulation object, interaction and time management.
 
 The methods in this class fill out the required virtual methods of the
-RTI1516_NAMESPACE::FederateAmbassador abstract class to enable the FedAmb class
+rti1516_2025::FederateAmbassador abstract class to enable the FedAmb class
 to be instantiated. While this class is instantiable, for almost all practical
 applications, a simulation developer will want to overload the necessary
 attribute and interaction callback functions to make things work properly for
@@ -70,7 +70,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
+class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -94,7 +94,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // *****************************************************************
    // The following methods fill out the required virtual methods of
-   // the RTI1516_NAMESPACE::FederateAmbassador abstract class to
+   // the rti1516_2025::FederateAmbassador abstract class to
    // enable the FedAmb class to be instantiated. While this class can
    // be instantiated, for almost all practical applications, a
    // simulation developer will want to overload the necessary
@@ -112,12 +112,12 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // 4.8
    virtual void reportFederationExecutions(
-      RTI1516_NAMESPACE::FederationExecutionInformationVector const &report );
+      rti1516_2025::FederationExecutionInformationVector const &report );
 
    // 4.10
    virtual void reportFederationExecutionMembers(
-      std::wstring const                                                  &federationName,
-      RTI1516_NAMESPACE::FederationExecutionMemberInformationVector const &report );
+      std::wstring const                                             &federationName,
+      rti1516_2025::FederationExecutionMemberInformationVector const &report );
 
    // 4.11
    virtual void reportFederationExecutionDoesNotExist(
@@ -133,18 +133,18 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // 4.15
    virtual void synchronizationPointRegistrationFailed(
-      std::wstring const                                  &label,
-      RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
+      std::wstring const                             &label,
+      rti1516_2025::SynchronizationPointFailureReason reason );
 
    // 4.16
    virtual void announceSynchronizationPoint(
-      std::wstring const                          &label,
-      RTI1516_NAMESPACE::VariableLengthData const &userSuppliedTag );
+      std::wstring const                     &label,
+      rti1516_2025::VariableLengthData const &userSuppliedTag );
 
    // 4.18
    virtual void federationSynchronized(
-      std::wstring const                         &label,
-      RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet );
+      std::wstring const                    &label,
+      rti1516_2025::FederateHandleSet const &failedToSyncSet );
 
    // 4.20
    virtual void initiateFederateSave(
@@ -152,19 +152,19 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // 4.20
    virtual void initiateFederateSave(
-      std::wstring const                   &label,
-      RTI1516_NAMESPACE::LogicalTime const &time );
+      std::wstring const              &label,
+      rti1516_2025::LogicalTime const &time );
 
    // 4.23
    virtual void federationSaved();
 
    // 4.23
    virtual void federationNotSaved(
-      RTI1516_NAMESPACE::SaveFailureReason reason );
+      rti1516_2025::SaveFailureReason reason );
 
    // 4.26
    virtual void federationSaveStatusResponse(
-      RTI1516_NAMESPACE::FederateHandleSaveStatusPairVector const &response );
+      rti1516_2025::FederateHandleSaveStatusPairVector const &response );
 
    // 4.28
    virtual void requestFederationRestoreSucceeded(
@@ -179,20 +179,20 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // 4.30
    virtual void initiateFederateRestore(
-      std::wstring const                      &label,
-      std::wstring const                      &federateName,
-      RTI1516_NAMESPACE::FederateHandle const &postRestoreFederateHandle );
+      std::wstring const                 &label,
+      std::wstring const                 &federateName,
+      rti1516_2025::FederateHandle const &postRestoreFederateHandle );
 
    // 4.32
    virtual void federationRestored();
 
    // 4.32
    virtual void federationNotRestored(
-      RTI1516_NAMESPACE::RestoreFailureReason reason );
+      rti1516_2025::RestoreFailureReason reason );
 
    // 4.35
    virtual void federationRestoreStatusResponse(
-      RTI1516_NAMESPACE::FederateRestoreStatusVector const &response );
+      rti1516_2025::FederateRestoreStatusVector const &response );
 
    /////////////////////////////////////
    // Declaration Management Services //
@@ -200,19 +200,19 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // 5.14
    virtual void startRegistrationForObjectClass(
-      RTI1516_NAMESPACE::ObjectClassHandle const &objectClass );
+      rti1516_2025::ObjectClassHandle const &objectClass );
 
    // 5.15
    virtual void stopRegistrationForObjectClass(
-      RTI1516_NAMESPACE::ObjectClassHandle const &objectClass );
+      rti1516_2025::ObjectClassHandle const &objectClass );
 
    // 5.16
    virtual void turnInteractionsOn(
-      RTI1516_NAMESPACE::InteractionClassHandle const &interactionClass );
+      rti1516_2025::InteractionClassHandle const &interactionClass );
 
    // 5.17
    virtual void turnInteractionsOff(
-      RTI1516_NAMESPACE::InteractionClassHandle const &interactionClass );
+      rti1516_2025::InteractionClassHandle const &interactionClass );
 
    ////////////////////////////////
    // Object Management Services //
@@ -236,147 +236,147 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // 6.9
    virtual void discoverObjectInstance(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::ObjectClassHandle const    &objectClass,
-      std::wstring const                            &objectInstanceName,
-      RTI1516_NAMESPACE::FederateHandle const       &producingFederate );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::ObjectClassHandle const    &objectClass,
+      std::wstring const                       &objectInstanceName,
+      rti1516_2025::FederateHandle const       &producingFederate );
 
    // 6.11
    virtual void reflectAttributeValues(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const     &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleValueMap const  &attributeValues,
-      RTI1516_NAMESPACE::VariableLengthData const       &userSuppliedTag,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType,
-      RTI1516_NAMESPACE::FederateHandle const           &producingFederate,
-      RTI1516_NAMESPACE::RegionHandleSet const          *optionalSentRegions );
+      rti1516_2025::ObjectInstanceHandle const     &objectInstance,
+      rti1516_2025::AttributeHandleValueMap const  &attributeValues,
+      rti1516_2025::VariableLengthData const       &userSuppliedTag,
+      rti1516_2025::TransportationTypeHandle const &transportationType,
+      rti1516_2025::FederateHandle const           &producingFederate,
+      rti1516_2025::RegionHandleSet const          *optionalSentRegions );
 
    // 6.11
    virtual void reflectAttributeValues(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const     &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleValueMap const  &attributeValues,
-      RTI1516_NAMESPACE::VariableLengthData const       &userSuppliedTag,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType,
-      RTI1516_NAMESPACE::FederateHandle const           &producingFederate,
-      RTI1516_NAMESPACE::RegionHandleSet const          *optionalSentRegions,
-      RTI1516_NAMESPACE::LogicalTime const              &time,
-      RTI1516_NAMESPACE::OrderType                       sentOrderType,
-      RTI1516_NAMESPACE::OrderType                       receivedOrderType,
-      RTI1516_NAMESPACE::MessageRetractionHandle const  *optionalRetraction );
+      rti1516_2025::ObjectInstanceHandle const     &objectInstance,
+      rti1516_2025::AttributeHandleValueMap const  &attributeValues,
+      rti1516_2025::VariableLengthData const       &userSuppliedTag,
+      rti1516_2025::TransportationTypeHandle const &transportationType,
+      rti1516_2025::FederateHandle const           &producingFederate,
+      rti1516_2025::RegionHandleSet const          *optionalSentRegions,
+      rti1516_2025::LogicalTime const              &time,
+      rti1516_2025::OrderType                       sentOrderType,
+      rti1516_2025::OrderType                       receivedOrderType,
+      rti1516_2025::MessageRetractionHandle const  *optionalRetraction );
 
    // 6.13
    virtual void receiveInteraction(
-      RTI1516_NAMESPACE::InteractionClassHandle const   &interactionClass,
-      RTI1516_NAMESPACE::ParameterHandleValueMap const  &parameterValues,
-      RTI1516_NAMESPACE::VariableLengthData const       &userSuppliedTag,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType,
-      RTI1516_NAMESPACE::FederateHandle const           &producingFederate,
-      RTI1516_NAMESPACE::RegionHandleSet const          *optionalSentRegions );
+      rti1516_2025::InteractionClassHandle const   &interactionClass,
+      rti1516_2025::ParameterHandleValueMap const  &parameterValues,
+      rti1516_2025::VariableLengthData const       &userSuppliedTag,
+      rti1516_2025::TransportationTypeHandle const &transportationType,
+      rti1516_2025::FederateHandle const           &producingFederate,
+      rti1516_2025::RegionHandleSet const          *optionalSentRegions );
 
    // 6.13
    virtual void receiveInteraction(
-      RTI1516_NAMESPACE::InteractionClassHandle const   &interactionClass,
-      RTI1516_NAMESPACE::ParameterHandleValueMap const  &parameterValues,
-      RTI1516_NAMESPACE::VariableLengthData const       &userSuppliedTag,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType,
-      RTI1516_NAMESPACE::FederateHandle const           &producingFederate,
-      RTI1516_NAMESPACE::RegionHandleSet const          *optionalSentRegions,
-      RTI1516_NAMESPACE::LogicalTime const              &time,
-      RTI1516_NAMESPACE::OrderType                       sentOrderType,
-      RTI1516_NAMESPACE::OrderType                       receivedOrderType,
-      RTI1516_NAMESPACE::MessageRetractionHandle const  *optionalRetraction );
+      rti1516_2025::InteractionClassHandle const   &interactionClass,
+      rti1516_2025::ParameterHandleValueMap const  &parameterValues,
+      rti1516_2025::VariableLengthData const       &userSuppliedTag,
+      rti1516_2025::TransportationTypeHandle const &transportationType,
+      rti1516_2025::FederateHandle const           &producingFederate,
+      rti1516_2025::RegionHandleSet const          *optionalSentRegions,
+      rti1516_2025::LogicalTime const              &time,
+      rti1516_2025::OrderType                       sentOrderType,
+      rti1516_2025::OrderType                       receivedOrderType,
+      rti1516_2025::MessageRetractionHandle const  *optionalRetraction );
 
    // 6.15
    virtual void receiveDirectedInteraction(
-      RTI1516_NAMESPACE::InteractionClassHandle const   &interactionClass,
-      RTI1516_NAMESPACE::ObjectInstanceHandle const     &objectInstance,
-      RTI1516_NAMESPACE::ParameterHandleValueMap const  &parameterValues,
-      RTI1516_NAMESPACE::VariableLengthData const       &userSuppliedTag,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType,
-      RTI1516_NAMESPACE::FederateHandle const           &producingFederate );
+      rti1516_2025::InteractionClassHandle const   &interactionClass,
+      rti1516_2025::ObjectInstanceHandle const     &objectInstance,
+      rti1516_2025::ParameterHandleValueMap const  &parameterValues,
+      rti1516_2025::VariableLengthData const       &userSuppliedTag,
+      rti1516_2025::TransportationTypeHandle const &transportationType,
+      rti1516_2025::FederateHandle const           &producingFederate );
 
    // 6.15
    virtual void receiveDirectedInteraction(
-      RTI1516_NAMESPACE::InteractionClassHandle const   &interactionClass,
-      RTI1516_NAMESPACE::ObjectInstanceHandle const     &objectInstance,
-      RTI1516_NAMESPACE::ParameterHandleValueMap const  &parameterValues,
-      RTI1516_NAMESPACE::VariableLengthData const       &userSuppliedTag,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType,
-      RTI1516_NAMESPACE::FederateHandle const           &producingFederate,
-      RTI1516_NAMESPACE::LogicalTime const              &time,
-      RTI1516_NAMESPACE::OrderType                       sentOrderType,
-      RTI1516_NAMESPACE::OrderType                       receivedOrderType,
-      RTI1516_NAMESPACE::MessageRetractionHandle const  *optionalRetraction );
+      rti1516_2025::InteractionClassHandle const   &interactionClass,
+      rti1516_2025::ObjectInstanceHandle const     &objectInstance,
+      rti1516_2025::ParameterHandleValueMap const  &parameterValues,
+      rti1516_2025::VariableLengthData const       &userSuppliedTag,
+      rti1516_2025::TransportationTypeHandle const &transportationType,
+      rti1516_2025::FederateHandle const           &producingFederate,
+      rti1516_2025::LogicalTime const              &time,
+      rti1516_2025::OrderType                       sentOrderType,
+      rti1516_2025::OrderType                       receivedOrderType,
+      rti1516_2025::MessageRetractionHandle const  *optionalRetraction );
 
    // 6.17
    virtual void removeObjectInstance(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::VariableLengthData const   &userSuppliedTag,
-      RTI1516_NAMESPACE::FederateHandle const       &producingFederate );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::VariableLengthData const   &userSuppliedTag,
+      rti1516_2025::FederateHandle const       &producingFederate );
 
    // 6.17
    virtual void removeObjectInstance(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const    &objectInstance,
-      RTI1516_NAMESPACE::VariableLengthData const      &userSuppliedTag,
-      RTI1516_NAMESPACE::FederateHandle const          &producingFederate,
-      RTI1516_NAMESPACE::LogicalTime const             &time,
-      RTI1516_NAMESPACE::OrderType                      sentOrderType,
-      RTI1516_NAMESPACE::OrderType                      receivedOrderType,
-      RTI1516_NAMESPACE::MessageRetractionHandle const *optionalRetraction );
+      rti1516_2025::ObjectInstanceHandle const    &objectInstance,
+      rti1516_2025::VariableLengthData const      &userSuppliedTag,
+      rti1516_2025::FederateHandle const          &producingFederate,
+      rti1516_2025::LogicalTime const             &time,
+      rti1516_2025::OrderType                      sentOrderType,
+      rti1516_2025::OrderType                      receivedOrderType,
+      rti1516_2025::MessageRetractionHandle const *optionalRetraction );
 
    // 6.19
    virtual void attributesInScope(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes );
 
    // 6.20
    virtual void attributesOutOfScope(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes );
 
    // 6.22
    virtual void provideAttributeValueUpdate(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes,
-      RTI1516_NAMESPACE::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes,
+      rti1516_2025::VariableLengthData const   &userSuppliedTag );
 
    // 6.23
    virtual void turnUpdatesOnForObjectInstance(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes );
 
    // 6.23
    virtual void turnUpdatesOnForObjectInstance(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes,
-      std::wstring const                            &updateRateDesignator );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes,
+      std::wstring const                       &updateRateDesignator );
 
    // 6.24
    virtual void turnUpdatesOffForObjectInstance(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes );
 
    // 6.26
    virtual void confirmAttributeTransportationTypeChange(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const     &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const       &attributes,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType );
+      rti1516_2025::ObjectInstanceHandle const     &objectInstance,
+      rti1516_2025::AttributeHandleSet const       &attributes,
+      rti1516_2025::TransportationTypeHandle const &transportationType );
 
    // 6.29
    virtual void reportAttributeTransportationType(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const     &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandle const          &attribute,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType );
+      rti1516_2025::ObjectInstanceHandle const     &objectInstance,
+      rti1516_2025::AttributeHandle const          &attribute,
+      rti1516_2025::TransportationTypeHandle const &transportationType );
 
    // 6.31
    virtual void confirmInteractionTransportationTypeChange(
-      RTI1516_NAMESPACE::InteractionClassHandle const   &interactionClass,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType );
+      rti1516_2025::InteractionClassHandle const   &interactionClass,
+      rti1516_2025::TransportationTypeHandle const &transportationType );
 
    // 6.33
    virtual void reportInteractionTransportationType(
-      RTI1516_NAMESPACE::FederateHandle const           &federateHandle,
-      RTI1516_NAMESPACE::InteractionClassHandle const   &interactionClass,
-      RTI1516_NAMESPACE::TransportationTypeHandle const &transportationType );
+      rti1516_2025::FederateHandle const           &federateHandle,
+      rti1516_2025::InteractionClassHandle const   &interactionClass,
+      rti1516_2025::TransportationTypeHandle const &transportationType );
 
    ///////////////////////////////////
    // Ownership Management Services //
@@ -384,54 +384,54 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // 7.4
    virtual void requestAttributeOwnershipAssumption(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &offeredAttributes,
-      RTI1516_NAMESPACE::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &offeredAttributes,
+      rti1516_2025::VariableLengthData const   &userSuppliedTag );
 
    // 7.5
    virtual void requestDivestitureConfirmation(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &releasedAttributes,
-      RTI1516_NAMESPACE::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &releasedAttributes,
+      rti1516_2025::VariableLengthData const   &userSuppliedTag );
 
    // 7.7
    virtual void attributeOwnershipAcquisitionNotification(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &securedAttributes,
-      RTI1516_NAMESPACE::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &securedAttributes,
+      rti1516_2025::VariableLengthData const   &userSuppliedTag );
 
    // 7.10
    virtual void attributeOwnershipUnavailable(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes,
-      RTI1516_NAMESPACE::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes,
+      rti1516_2025::VariableLengthData const   &userSuppliedTag );
 
    // 7.11
    virtual void requestAttributeOwnershipRelease(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &candidateAttributes,
-      RTI1516_NAMESPACE::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &candidateAttributes,
+      rti1516_2025::VariableLengthData const   &userSuppliedTag );
 
    // 7.16
    virtual void confirmAttributeOwnershipAcquisitionCancellation(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes );
 
    // 7.18
    virtual void informAttributeOwnership(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes,
-      RTI1516_NAMESPACE::FederateHandle const       &owner );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes,
+      rti1516_2025::FederateHandle const       &owner );
 
    // 7.18
    virtual void attributeIsNotOwned(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes );
 
    // 7.18
    virtual void attributeIsOwnedByRTI(
-      RTI1516_NAMESPACE::ObjectInstanceHandle const &objectInstance,
-      RTI1516_NAMESPACE::AttributeHandleSet const   &attributes );
+      rti1516_2025::ObjectInstanceHandle const &objectInstance,
+      rti1516_2025::AttributeHandleSet const   &attributes );
 
    //////////////////////////////
    // Time Management Services //
@@ -439,24 +439,24 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador, public FedAmbBase
 
    // 8.3
    virtual void timeRegulationEnabled(
-      RTI1516_NAMESPACE::LogicalTime const &time );
+      rti1516_2025::LogicalTime const &time );
 
    // 8.6
    virtual void timeConstrainedEnabled(
-      RTI1516_NAMESPACE::LogicalTime const &time );
+      rti1516_2025::LogicalTime const &time );
 
    // 8.13
    virtual void flushQueueGrant(
-      RTI1516_NAMESPACE::LogicalTime const &time,
-      RTI1516_NAMESPACE::LogicalTime const &optimisticTime );
+      rti1516_2025::LogicalTime const &time,
+      rti1516_2025::LogicalTime const &optimisticTime );
 
    // 8.14
    virtual void timeAdvanceGrant(
-      RTI1516_NAMESPACE::LogicalTime const &time );
+      rti1516_2025::LogicalTime const &time );
 
    // 8.23
    virtual void requestRetraction(
-      RTI1516_NAMESPACE::MessageRetractionHandle const &retraction );
+      rti1516_2025::MessageRetractionHandle const &retraction );
 
   private:
    // Do not allow the copy constructor or assignment operator.

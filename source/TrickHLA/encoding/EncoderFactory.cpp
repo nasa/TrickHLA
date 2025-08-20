@@ -135,8 +135,7 @@ EncoderBase *EncoderFactory::create(
       errmsg << "EncoderFactory::create():" << __LINE__
              << " ERROR: The variable address is NULL for variable '"
              << data_name << "'. Please make sure the Trick variable"
-             << " is allocated memory by the Trick Memory Manager."
-             << endl;
+             << " is allocated memory by the Trick Memory Manager." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return NULL;
    }

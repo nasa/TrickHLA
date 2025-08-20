@@ -93,7 +93,7 @@ NASA, Johnson Space Center\n
 #include "RTI/VariableLengthData.h"
 #if defined( IEEE_1516_2025 )
 #   include "RTI/time/LogicalTime.h"
-#endif
+#endif // IEEE_1516_2025
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -170,7 +170,7 @@ void FedAmb::connectionLost(
    wstring const &faultDescription )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    string fault_msg;
    StringUtilities::to_string( fault_msg, faultDescription );
@@ -186,7 +186,7 @@ void FedAmb::reportFederationExecutions(
    FederationExecutionInformationVector const &report )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::reportFederationExecutions():%d \n",
@@ -224,7 +224,7 @@ void FedAmb::synchronizationPointRegistrationSucceeded(
    wstring const &label )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
@@ -241,7 +241,7 @@ void FedAmb::synchronizationPointRegistrationFailed(
    SynchronizationPointFailureReason reason )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
@@ -257,7 +257,7 @@ void FedAmb::announceSynchronizationPoint(
    VariableLengthData const &userSuppliedTag )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
@@ -273,7 +273,7 @@ void FedAmb::federationSynchronized(
    FederateHandleSet const &failedToSyncSet )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
@@ -304,7 +304,7 @@ void FedAmb::initiateFederateSave(
    wstring const &label )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d \n",
@@ -319,7 +319,7 @@ void FedAmb::initiateFederateSave(
    LogicalTime const &time )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       Int64Time i64time;
@@ -334,7 +334,7 @@ void FedAmb::initiateFederateSave(
 void FedAmb::federationSaved()
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::federationSaved():%d \n",
@@ -349,7 +349,7 @@ void FedAmb::federationNotSaved(
    SaveFailureReason reason )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::federationNotSaved():%d \n",
@@ -368,7 +368,7 @@ void FedAmb::federationSaveStatusResponse(
    FederateHandleSaveStatusPairVector const &response )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::federationSaveStatusResponse():%d \n",
@@ -381,7 +381,7 @@ void FedAmb::requestFederationRestoreSucceeded(
    wstring const &label )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreSucceeded():%d \n",
@@ -395,7 +395,7 @@ void FedAmb::requestFederationRestoreFailed(
    wstring const &label )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreFailed():%d \n",
@@ -408,7 +408,7 @@ void FedAmb::requestFederationRestoreFailed(
 void FedAmb::federationRestoreBegun()
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::federationRestoreBegun():%d \n",
@@ -426,7 +426,7 @@ void FedAmb::initiateFederateRestore(
    wstring const &label,
    wstring const &federateName,
    FederateHandle postRestoreFederateHandle ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string name;
@@ -441,7 +441,7 @@ void FedAmb::initiateFederateRestore(
 void FedAmb::federationRestored()
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::federationRestored():%d \n",
@@ -454,7 +454,7 @@ void FedAmb::federationNotRestored(
    RestoreFailureReason reason )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::federationNotRestored():%d \n",
@@ -468,7 +468,7 @@ void FedAmb::federationRestoreStatusResponse(
    FederateRestoreStatusVector const &response )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::federationRestoreStatusResponse():%d \n",
@@ -492,7 +492,7 @@ void FedAmb::startRegistrationForObjectClass(
    ObjectClassHandle const &objectClass )
 #else
    ObjectClassHandle objectClass ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::startRegistrationForObjectClass():%d \n",
@@ -504,7 +504,7 @@ void FedAmb::stopRegistrationForObjectClass(
    ObjectClassHandle const &objectClass )
 #else
    ObjectClassHandle objectClass ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::stopRegistrationForObjectClass():%d \n",
@@ -516,7 +516,7 @@ void FedAmb::turnInteractionsOn(
    InteractionClassHandle const &interactionClass )
 #else
    InteractionClassHandle interactionClass ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnInteractionsOn():%d \n",
@@ -528,7 +528,7 @@ void FedAmb::turnInteractionsOff(
    InteractionClassHandle const &interactionClass )
 #else
    InteractionClassHandle interactionClass ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnInteractionsOff():%d \n",
@@ -544,7 +544,7 @@ void FedAmb::objectInstanceNameReservationSucceeded(
    wstring const &objectInstanceName )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( manager != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -563,7 +563,7 @@ void FedAmb::objectInstanceNameReservationFailed(
    wstring const &objectInstanceName )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( manager != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -582,7 +582,7 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
    set< wstring > const &objectInstanceNames )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( manager != NULL ) {
 
@@ -605,7 +605,7 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
    set< wstring > const &objectInstanceNames )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( manager != NULL ) {
 
@@ -670,7 +670,7 @@ void FedAmb::discoverObjectInstance(
    ObjectClassHandle    objectClass,
    wstring const       &objectInstanceName,
    FederateHandle       producingFederate ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string fed_id;
@@ -715,7 +715,7 @@ void FedAmb::reflectAttributeValues(
    OrderType                      sentOrderType,
    TransportationType             transportationType,
    SupplementalReflectInfo        reflectInfo ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    // Get the TrickHLA object for the given Object Instance Handle.
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
@@ -1135,7 +1135,7 @@ void FedAmb::attributesInScope(
 #else
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &attributes ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributesInScope():%d \n",
@@ -1150,7 +1150,7 @@ void FedAmb::attributesOutOfScope(
 #else
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &attributes ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributesOutOfScope():%d \n",
@@ -1167,7 +1167,7 @@ void FedAmb::provideAttributeValueUpdate(
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &attributes,
    VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    if ( manager != NULL ) {
       manager->provide_attribute_update( objectInstance,
@@ -1182,7 +1182,7 @@ void FedAmb::turnUpdatesOnForObjectInstance(
 #else
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &attributes ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnUpdatesOnForObjectInstance():%d \n",
@@ -1198,7 +1198,7 @@ void FedAmb::turnUpdatesOnForObjectInstance(
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &attributes,
    wstring const            &updateRateDesignator ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnUpdatesOnForObjectInstance():%d \n",
@@ -1212,7 +1212,7 @@ void FedAmb::turnUpdatesOffForObjectInstance(
 #else
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &attributes ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::turnUpdatesOffForObjectInstance():%d \n",
@@ -1228,7 +1228,7 @@ void FedAmb::confirmAttributeTransportationTypeChange(
    ObjectInstanceHandle objectInstance,
    AttributeHandleSet   attributes,
    TransportationType   transportationType ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::confirmAttributeTransportationTypeChange():%d \n",
@@ -1244,7 +1244,7 @@ void FedAmb::reportAttributeTransportationType(
    ObjectInstanceHandle objectInstance,
    AttributeHandle      attribute,
    TransportationType   transportationType ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::reportAttributeTransportationType():%d \n",
@@ -1258,7 +1258,7 @@ void FedAmb::confirmInteractionTransportationTypeChange(
 #else
    InteractionClassHandle interactionClass,
    TransportationType     transportationType ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::confirmInteractionTransportationTypeChange():%d \n",
@@ -1274,7 +1274,7 @@ void FedAmb::reportInteractionTransportationType(
    FederateHandle         federateHandle,
    InteractionClassHandle interactionClass,
    TransportationType     transportationType ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::reportInteractionTransportationType():%d \n",
@@ -1294,7 +1294,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &offeredAttributes,
    VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    char const *tag = static_cast< char const * >( userSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -1418,7 +1418,7 @@ void FedAmb::requestDivestitureConfirmation(
 #else
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
 
@@ -1515,7 +1515,7 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &securedAttributes,
    VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::attributeOwnershipAcquisitionNotification():%d \n",
@@ -1630,7 +1630,7 @@ void FedAmb::attributeOwnershipUnavailable(
 #else
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributeOwnershipUnavailable():%d \n",
@@ -1646,7 +1646,7 @@ void FedAmb::requestAttributeOwnershipRelease(
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &candidateAttributes,
    VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    char const *tag = static_cast< char const * >( userSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -1743,7 +1743,7 @@ void FedAmb::confirmAttributeOwnershipAcquisitionCancellation(
 #else
    ObjectInstanceHandle      objectInstance,
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::confirmAttributeOwnershipAcquisitionCancellation():%d \n",
@@ -1759,7 +1759,7 @@ void FedAmb::informAttributeOwnership(
    ObjectInstanceHandle objectInstance,
    AttributeHandle      attribute,
    FederateHandle       owner ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::informAttributeOwnership():%d \n",
@@ -1773,7 +1773,7 @@ void FedAmb::attributeIsNotOwned(
 #else
    ObjectInstanceHandle objectInstance,
    AttributeHandle      attribute ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributeIsNotOwned():%d \n",
@@ -1787,7 +1787,7 @@ void FedAmb::attributeIsOwnedByRTI(
 #else
    ObjectInstanceHandle objectInstance,
    AttributeHandle      attribute ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::attributeIsOwnedByRTI():%d \n",
@@ -1802,7 +1802,7 @@ void FedAmb::timeRegulationEnabled(
    LogicalTime const &time )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::timeRegulationEnabled():%d Federate \"%s\" \n",
@@ -1815,7 +1815,7 @@ void FedAmb::timeConstrainedEnabled(
    LogicalTime const &time )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::timeConstrainedEnabled():%d Federate \"%s\" Time granted to: %.12G \n",
@@ -1840,7 +1840,7 @@ void FedAmb::timeAdvanceGrant(
    LogicalTime const &time )
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2010
 {
    federate->set_time_advance_granted( time );
 }
@@ -1850,7 +1850,7 @@ void FedAmb::requestRetraction(
    MessageRetractionHandle const &retraction )
 #else
    MessageRetractionHandle retraction ) throw( FederateInternalError )
-#endif
+#endif // IEEE_1516_2025
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::requestRetraction():%d \n",
@@ -1862,4 +1862,4 @@ FedAmb::requestRetraction():%d \n",
 // This should work for both GCC and Clang.
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
-#endif
+#endif // IEEE_1516_2010

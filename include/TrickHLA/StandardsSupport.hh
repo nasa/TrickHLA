@@ -33,20 +33,20 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_STANDARDS_SUPPORT_HH
 
 // Default to the IEEE 1516-2010 Standard if no HLA standard is defined.
-#if ( !defined( IEEE_1516_2010 ) && !defined( IEEE_1516_2025 ) )
+#if !defined( IEEE_1516_2010 ) && !defined( IEEE_1516_2025 )
 #   define IEEE_1516_2010
 #endif
 
 // Insert a compile time error if more than one HLA Standard is defined.
-#if ( defined( IEEE_1516_2010 ) && defined( IEEE_1516_2025 ) )
+#if defined( IEEE_1516_2010 ) && defined( IEEE_1516_2025 )
 #   error "ERROR: Only one of IEEE_1516_2010 or IEEE_1516_2025 can be defined!"
 #endif
 
-#if ( defined( IEEE_1516_2010 ) )
-// Define the namespace for "HLA Evolved" IEEE 1516-2010 Standard.
+#if defined( IEEE_1516_2010 )
+// Define the namespace for the "HLA Evolved" IEEE 1516-2010 Standard.
 #   define RTI1516_NAMESPACE rti1516e
-#elif ( defined( IEEE_1516_2025 ) )
-// Define the namespace for "HLA 4" IEEE 1516-2025 Standard.
+#elif defined( IEEE_1516_2025 )
+// Define the namespace for the "HLA 4" IEEE 1516-2025 Standard.
 #   define RTI1516_NAMESPACE rti1516_2025
 #else
 #   error "ERROR: Unsupported HLA IEEE 1516 Standard!"
