@@ -116,6 +116,7 @@ EncoderBase *EncoderFactory::create(
              << " variable is allocated memory by the Trick Memory Manager."
              << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return NULL;
    }
 
    string data_name;
@@ -137,6 +138,7 @@ EncoderBase *EncoderFactory::create(
              << " is allocated memory by the Trick Memory Manager."
              << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return NULL;
    }
 
    EncoderBase *encoder = NULL;
