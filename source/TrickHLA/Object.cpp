@@ -169,7 +169,7 @@ Object::Object()
      instance_handle(),
      elapsed_time_stats()
 {
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    this->send_count    = 0;
    this->receive_count = 0;
 #endif
@@ -1833,7 +1833,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                                             *attribute_values_map,
                                             VariableLengthData( NULL, 0 ) );
          }
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
 #endif
       }
@@ -2085,7 +2085,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                                                *attribute_values_map,
                                                VariableLengthData( NULL, 0 ) );
             }
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
 #endif
          }
@@ -2355,7 +2355,7 @@ Object '%s', Receive Order (RO) Attribute update.\n",
                                                *attribute_values_map,
                                                VariableLengthData( NULL, 0 ) );
             }
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
 #endif
          }
@@ -2602,7 +2602,7 @@ Object '%s', Receive Order (RO) Attribute update.\n",
                                             *attribute_values_map,
                                             VariableLengthData( NULL, 0 ) );
 
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
 #endif
          }
@@ -2822,7 +2822,7 @@ void Object::receive_cyclic_data()
    // Process the data now that it has been received (i.e. changed).
    if ( is_changed() ) {
 
-#ifdef THLA_CYCLIC_READ_TIME_STATS
+#ifdef TRICKHLA_CYCLIC_READ_TIME_STATS
       elapsed_time_stats.measure();
 #endif
 
@@ -3083,7 +3083,7 @@ void Object::send_init_data()
          rti_amb->updateAttributeValues( this->instance_handle,
                                          *attribute_values_map,
                                          VariableLengthData( NULL, 0 ) );
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
 #endif
       }

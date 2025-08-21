@@ -728,7 +728,7 @@ void FedAmb::reflectAttributeValues(
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
 
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
    } else if ( ( federate != NULL ) && federate->is_federate_instance_id( objectInstance ) ) {
@@ -807,7 +807,7 @@ void FedAmb::reflectAttributeValues(
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
 
-#   ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#   ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #   endif
    } else {
@@ -859,7 +859,7 @@ void FedAmb::reflectAttributeValues(
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
 
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
    } else {

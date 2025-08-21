@@ -64,6 +64,7 @@ NASA, Johnson Space Center\n
 #include "trick/sim_mode.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
@@ -220,7 +221,9 @@ Federate::Federate()
 #endif
      federate_ambassador( NULL ),
      manager( NULL ),
-     execution_control( NULL )
+     execution_control( NULL ),
+     tag_wait_sum( 0ULL ),
+     tag_wait_count( 0ULL )
 {
    TRICKHLA_INIT_FPU_CONTROL_WORD;
 
@@ -5098,6 +5101,11 @@ void Federate::wait_for_time_advance_grant()
       return;
    }
 
+#if defined( TRICKHLA_COLLECT_TAG_STATS )
+   ++tag_wait_count;
+   int64_t const tag_wait_start_time = clock_wall_time();
+#endif // TRICKHLA_COLLECT_TAG_STATS
+
    unsigned short state;
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -5107,6 +5115,11 @@ void Federate::wait_for_time_advance_grant()
    }
 
    if ( state == TIME_ADVANCE_RESET ) {
+
+#if defined( TRICKHLA_COLLECT_TAG_STATS )
+      tag_wait_sum += ( clock_wall_time() - tag_wait_start_time );
+#endif // TRICKHLA_COLLECT_TAG_STATS
+
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!\n",
                           __LINE__ );
@@ -5167,6 +5180,10 @@ void Federate::wait_for_time_advance_grant()
       } while ( state != TIME_ADVANCE_GRANTED );
    }
 
+#if defined( TRICKHLA_COLLECT_TAG_STATS )
+   tag_wait_sum += ( clock_wall_time() - tag_wait_start_time );
+#endif // TRICKHLA_COLLECT_TAG_STATS
+
    // Add the line number for a higher trace level.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.\n",
@@ -5212,26 +5229,40 @@ void Federate::shutdown()
          message_publish( MSG_NORMAL, "Federate::shutdown():%d \n", __LINE__ );
       }
 
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#if defined( TRICKHLA_COLLECT_TAG_STATS )
+      double const  tag_wait_time     = (double)tag_wait_sum / exec_get_time_tic_value();
+      double const  avg_tag_wait_time = ( tag_wait_count > 0 )
+                                           ? ( tag_wait_time / tag_wait_count )
+                                           : 0.0;
+      ostringstream tag_msg;
+      tag_msg << "Federate::shutdown():" << __LINE__ << endl
+              << "Total # waits for TAG:" << tag_wait_count << endl
+              << "  Total TAG wait time:" << tag_wait_time << " seconds" << endl
+              << "Average TAG wait time:" << avg_tag_wait_time << " seconds"
+              << endl;
+      message_publish( MSG_INFO, tag_msg.str().c_str() );
+#endif // TRICKHLA_COLLECT_TAG_STATS
+
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       for ( int i = 0; i < manager->obj_count; ++i ) {
-         ostringstream msg;
-         msg << "Federate::shutdown():" << __LINE__
-             << " Object[" << i << "]:'" << manager->objects[i].get_name() << "'"
-             << " send_count:" << manager->objects[i].send_count
-             << " receive_count:" << manager->objects[i].receive_count
-             << endl;
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         ostringstream msg1;
+         msg1 << "Federate::shutdown():" << __LINE__
+              << " Object[" << i << "]:'" << manager->objects[i].get_name() << "'"
+              << " send_count:" << manager->objects[i].send_count
+              << " receive_count:" << manager->objects[i].receive_count
+              << endl;
+         message_publish( MSG_INFO, msg1.str().c_str() );
       }
 #endif
 
-#ifdef THLA_CYCLIC_READ_TIME_STATS
+#ifdef TRICKHLA_CYCLIC_READ_TIME_STATS
       for ( int i = 0; i < manager->obj_count; ++i ) {
-         ostringstream msg;
-         msg << "Federate::shutdown():" << __LINE__
-             << " Object[" << i << "]:'" << manager->objects[i].get_name() << "' "
-             << manager->objects[i].elapsed_time_stats.to_string()
-             << endl;
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         ostringstream msg2;
+         msg2 << "Federate::shutdown():" << __LINE__
+              << " Object[" << i << "]:'" << manager->objects[i].get_name() << "' "
+              << manager->objects[i].elapsed_time_stats.to_string()
+              << endl;
+         message_publish( MSG_INFO, msg2.str().c_str() );
       }
 #endif
 

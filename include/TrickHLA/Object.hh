@@ -778,7 +778,7 @@ class Object : public CheckpointConversionBase
    RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
 
   public:
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    uint64_t send_count;    ///< @trick_units{--} Number of times data from this object was sent.
    uint64_t receive_count; ///< @trick_units{--} Number of times data for this object was received.
 #endif

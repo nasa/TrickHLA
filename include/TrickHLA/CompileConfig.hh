@@ -33,13 +33,17 @@ NASA, Johnson Space Center\n
 // Default: NO_TRICK_WSTRING_MM_SUPPORT
 #define NO_TRICK_WSTRING_MM_SUPPORT
 
+// Collect statistics on the wait times for the Time Advance Grant (TAG).
+// Default: NO_TRICKHLA_COLLECT_TAG_STATS
+#define NO_TRICKHLA_COLLECT_TAG_STATS
+
 // For blocking cyclic reads, do a check on the send and received data counts.
-// Default: NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
-#define NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+// Default: NO_TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#define NO_TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
 // Measure the elapsed time between cyclic data reads.
-// Default: NO_THLA_CYCLIC_READ_TIME_STATS
-#define NO_THLA_CYCLIC_READ_TIME_STATS
+// Default: NO_TRICKHLA_CYCLIC_READ_TIME_STATS
+#define NO_TRICKHLA_CYCLIC_READ_TIME_STATS
 
 // Insert a compile time error if an unsupported version of Trick 19 is used.
 // Minimum supported Trick 19 version: 19.0.0
