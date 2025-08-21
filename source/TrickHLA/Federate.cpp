@@ -5087,6 +5087,10 @@ void Federate::wait_to_receive_blocking_io_data(
  */
 void Federate::wait_for_time_advance_grant()
 {
+#if defined( TRICKHLA_COLLECT_TAG_STATS )
+   int64_t const tag_wait_start_time = clock_wall_time();
+#endif // TRICKHLA_COLLECT_TAG_STATS
+
    // Skip requesting time-advancement if time management is not enabled.
    if ( !this->time_management ) {
       return;
@@ -5101,11 +5105,6 @@ void Federate::wait_for_time_advance_grant()
       return;
    }
 
-#if defined( TRICKHLA_COLLECT_TAG_STATS )
-   ++tag_wait_count;
-   int64_t const tag_wait_start_time = clock_wall_time();
-#endif // TRICKHLA_COLLECT_TAG_STATS
-
    unsigned short state;
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -5115,11 +5114,6 @@ void Federate::wait_for_time_advance_grant()
    }
 
    if ( state == TIME_ADVANCE_RESET ) {
-
-#if defined( TRICKHLA_COLLECT_TAG_STATS )
-      tag_wait_sum += ( clock_wall_time() - tag_wait_start_time );
-#endif // TRICKHLA_COLLECT_TAG_STATS
-
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!\n",
                           __LINE__ );
@@ -5182,6 +5176,7 @@ void Federate::wait_for_time_advance_grant()
 
 #if defined( TRICKHLA_COLLECT_TAG_STATS )
    tag_wait_sum += ( clock_wall_time() - tag_wait_start_time );
+   ++tag_wait_count;
 #endif // TRICKHLA_COLLECT_TAG_STATS
 
    // Add the line number for a higher trace level.
