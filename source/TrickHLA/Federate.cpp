@@ -727,14 +727,14 @@ void Federate::create_RTI_ambassador_and_connect()
              << "'" << local_settings << "'" << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
-   }
 
-   if ( !rti_address.empty() ) {
-      ostringstream msg;
-      msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-          << " WARNING: The 'THLA.federate.rti_address' setting is ignored"
-          << " when using IEEE 1516-2010." << endl;
-      message_publish( MSG_WARNING, msg.str().c_str() );
+      if ( !rti_address.empty() ) {
+         ostringstream msg;
+         msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
+             << " WARNING: The 'THLA.federate.rti_address' setting is ignored"
+             << " when using IEEE 1516-2010." << endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
    }
 #endif // IEEE_1516_2025
 
