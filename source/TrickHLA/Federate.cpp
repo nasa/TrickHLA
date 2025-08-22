@@ -156,7 +156,7 @@ Federate::Federate()
      all_federates_joined( false ),
      lookahead( 0.0 ),
      HLA_cycle_time( 0.0 ),
-     HLA_cycle_time_in_base_time( 0LL ),
+     HLA_cycle_time_in_base_time( 0 ),
      shutdown_called( false ),
      HLA_save_directory( "" ),
      initiate_save_flag( false ),
@@ -222,8 +222,8 @@ Federate::Federate()
      federate_ambassador( NULL ),
      manager( NULL ),
      execution_control( NULL ),
-     tag_wait_sum( 0ULL ),
-     tag_wait_count( 0ULL )
+     tag_wait_sum( 0 ),
+     tag_wait_count( 0 )
 {
    TRICKHLA_INIT_FPU_CONTROL_WORD;
 
