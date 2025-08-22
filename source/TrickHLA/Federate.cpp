@@ -5226,15 +5226,14 @@ void Federate::shutdown()
 
 #if defined( TRICKHLA_COLLECT_TAG_STATS )
       double const  tag_wait_time     = (double)tag_wait_sum / exec_get_time_tic_value();
-      double const  avg_tag_wait_time = ( tag_wait_count > 0 )
+      double const  avg_tag_wait_time = ( tag_wait_count != 0 )
                                            ? ( tag_wait_time / tag_wait_count )
-                                           : 0.0;
+                                           : tag_wait_time;
       ostringstream tag_msg;
       tag_msg << "Federate::shutdown():" << __LINE__ << endl
               << "Total # waits for TAG:" << tag_wait_count << endl
               << "  Total TAG wait time:" << tag_wait_time << " seconds" << endl
-              << "Average TAG wait time:" << avg_tag_wait_time << " seconds"
-              << endl;
+              << "Average TAG wait time:" << avg_tag_wait_time << " seconds" << endl;
       message_publish( MSG_INFO, tag_msg.str().c_str() );
 #endif // TRICKHLA_COLLECT_TAG_STATS
 
@@ -5244,22 +5243,20 @@ void Federate::shutdown()
          msg1 << "Federate::shutdown():" << __LINE__
               << " Object[" << i << "]:'" << manager->objects[i].get_name() << "'"
               << " send_count:" << manager->objects[i].send_count
-              << " receive_count:" << manager->objects[i].receive_count
-              << endl;
+              << " receive_count:" << manager->objects[i].receive_count << endl;
          message_publish( MSG_INFO, msg1.str().c_str() );
       }
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
 #ifdef TRICKHLA_CYCLIC_READ_TIME_STATS
       for ( int i = 0; i < manager->obj_count; ++i ) {
          ostringstream msg2;
          msg2 << "Federate::shutdown():" << __LINE__
               << " Object[" << i << "]:'" << manager->objects[i].get_name() << "' "
-              << manager->objects[i].elapsed_time_stats.to_string()
-              << endl;
+              << manager->objects[i].elapsed_time_stats.to_string() << endl;
          message_publish( MSG_INFO, msg2.str().c_str() );
       }
-#endif
+#endif // TRICKHLA_CYCLIC_READ_TIME_STATS
 
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;

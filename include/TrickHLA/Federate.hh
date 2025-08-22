@@ -1315,8 +1315,8 @@ class Federate
    Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
    ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */
 
-   unsigned long long tag_wait_sum;   ///< @trick_units{--} Sum total of TAG wait wallclock time.
-   unsigned long long tag_wait_count; ///< @trick_units{--} Number of times we waited for TAG.
+   uint64_t tag_wait_sum;   ///< @trick_units{--} Sum of all the TAG wait wallclock times.
+   uint64_t tag_wait_count; ///< @trick_units{--} Number of times we waited for TAG.
 
   private:
    /*! @brief Dumps the contents of the running_feds object into the supplied
