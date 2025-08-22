@@ -5217,101 +5217,102 @@ bool Federate::is_execution_member()
 void Federate::shutdown()
 {
    // Guard against doing a shutdown more than once.
-   if ( !is_shutdown_called() ) {
-      this->shutdown_called = true;
+   if ( is_shutdown_called() ) {
+      return;
+   }
+   this->shutdown_called = true;
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::shutdown():%d \n", __LINE__ );
-      }
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      message_publish( MSG_NORMAL, "Federate::shutdown():%d \n", __LINE__ );
+   }
 
 #if defined( TRICKHLA_COLLECT_TAG_STATS )
-      double const  tag_wait_time     = (double)tag_wait_sum / exec_get_time_tic_value();
-      double const  avg_tag_wait_time = ( tag_wait_count != 0 )
-                                           ? ( tag_wait_time / tag_wait_count )
-                                           : tag_wait_time;
-      ostringstream tag_msg;
-      tag_msg << "Federate::shutdown():" << __LINE__ << endl
-              << "Total # waits for TAG:" << tag_wait_count << endl
-              << "  Total TAG wait time:" << tag_wait_time << " seconds" << endl
-              << "Average TAG wait time:" << avg_tag_wait_time << " seconds" << endl;
-      message_publish( MSG_INFO, tag_msg.str().c_str() );
+   double const  tag_wait_time     = (double)tag_wait_sum / exec_get_time_tic_value();
+   double const  avg_tag_wait_time = ( tag_wait_count != 0 )
+                                        ? ( tag_wait_time / tag_wait_count )
+                                        : tag_wait_time;
+   ostringstream tag_msg;
+   tag_msg << "Federate::shutdown():" << __LINE__ << endl
+           << "Total # waits for TAG:" << tag_wait_count << endl
+           << "  Total TAG wait time:" << tag_wait_time << " seconds" << endl
+           << "Average TAG wait time:" << avg_tag_wait_time << " seconds" << endl;
+   message_publish( MSG_INFO, tag_msg.str().c_str() );
 #endif // TRICKHLA_COLLECT_TAG_STATS
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
-      for ( int i = 0; i < manager->obj_count; ++i ) {
-         ostringstream msg1;
-         msg1 << "Federate::shutdown():" << __LINE__
-              << " Object[" << i << "]:'" << manager->objects[i].get_name() << "'"
-              << " send_count:" << manager->objects[i].send_count
-              << " receive_count:" << manager->objects[i].receive_count << endl;
-         message_publish( MSG_INFO, msg1.str().c_str() );
-      }
+   for ( int i = 0; i < manager->obj_count; ++i ) {
+      ostringstream msg1;
+      msg1 << "Federate::shutdown():" << __LINE__
+           << " Object[" << i << "]:'" << manager->objects[i].get_name() << "'"
+           << " send_count:" << manager->objects[i].send_count
+           << " receive_count:" << manager->objects[i].receive_count << endl;
+      message_publish( MSG_INFO, msg1.str().c_str() );
+   }
 #endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
 #ifdef TRICKHLA_CYCLIC_READ_TIME_STATS
-      for ( int i = 0; i < manager->obj_count; ++i ) {
-         ostringstream msg2;
-         msg2 << "Federate::shutdown():" << __LINE__
-              << " Object[" << i << "]:'" << manager->objects[i].get_name() << "' "
-              << manager->objects[i].elapsed_time_stats.to_string() << endl;
-         message_publish( MSG_INFO, msg2.str().c_str() );
-      }
+   for ( int i = 0; i < manager->obj_count; ++i ) {
+      ostringstream msg2;
+      msg2 << "Federate::shutdown():" << __LINE__
+           << " Object[" << i << "]:'" << manager->objects[i].get_name() << "' "
+           << manager->objects[i].elapsed_time_stats.to_string() << endl;
+      message_publish( MSG_INFO, msg2.str().c_str() );
+   }
 #endif // TRICKHLA_CYCLIC_READ_TIME_STATS
 
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-      // Check for Execution Control shutdown. If this is NULL, then we are
-      // probably shutting down prior to initialization.
-      if ( this->execution_control != NULL ) {
-         // Call Execution Control shutdown method.
-         execution_control->shutdown();
-      }
+   // Check for Execution Control shutdown. If this is NULL, then we are
+   // probably shutting down prior to initialization.
+   if ( this->execution_control != NULL ) {
+      // Call Execution Control shutdown method.
+      execution_control->shutdown();
+   }
 
-      // Disable Time Constrained and Time Regulation for this federate.
-      shutdown_time_management();
+   // Disable Time Constrained and Time Regulation for this federate.
+   shutdown_time_management();
 
-      // Resign from the federation.
-      // If the federate can rejoin, resign in a way so we can rejoin later...
-      if ( this->can_rejoin_federation ) {
-         resign_so_we_can_rejoin();
-      } else {
-         resign();
-      }
+   // Resign from the federation.
+   // If the federate can rejoin, resign in a way so we can rejoin later...
+   if ( this->can_rejoin_federation ) {
+      resign_so_we_can_rejoin();
+   } else {
+      resign();
+   }
 
-      // Attempt to destroy the federation.
-      destroy();
+   // Attempt to destroy the federation.
+   destroy();
 
-      // Remove the ExecutionConfiguration object.
-      if ( this->execution_control != NULL ) {
-         execution_control->remove_execution_configuration();
-      }
+   // Remove the ExecutionConfiguration object.
+   if ( this->execution_control != NULL ) {
+      execution_control->remove_execution_configuration();
+   }
 
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
 
 #if defined( FPU_CW_PROTECTION ) && ( defined( __i386__ ) || defined( __x86_64__ ) )
-      // As the last thing we do, check to see if we did a good job of
-      // protecting against FPU control-word precision-control changes by
-      // comparing the current precision-control value to the one at program
-      // startup (__fpu_control is automatically set for us, and the _fpu_cw
-      // variable comes from the TRICKHLA_SAVE_FPU_CONTROL_WORD macro). Print
-      // a warning message if they are different. Only support the Intel CPU's.
-      // NOTE: Don't use the TRICKHLA_VALIDATE_FPU_CONTROL_WORD because it can
-      // be disabled in the TrickHLA compile-config header file.
-      if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) ) {
-         message_publish( MSG_WARNING, "%s:%d WARNING: We have detected that the current \
+   // As the last thing we do, check to see if we did a good job of
+   // protecting against FPU control-word precision-control changes by
+   // comparing the current precision-control value to the one at program
+   // startup (__fpu_control is automatically set for us, and the _fpu_cw
+   // variable comes from the TRICKHLA_SAVE_FPU_CONTROL_WORD macro). Print
+   // a warning message if they are different. Only support the Intel CPU's.
+   // NOTE: Don't use the TRICKHLA_VALIDATE_FPU_CONTROL_WORD because it can
+   // be disabled in the TrickHLA compile-config header file.
+   if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) ) {
+      message_publish( MSG_WARNING, "%s:%d WARNING: We have detected that the current \
 Floating-Point Unit (FPU) Control-Word Precision-Control value (%#x: %s) does \
 not match the Precision-Control value at program startup (%#x: %s). The change \
 in FPU Control-Word Precision-Control could cause the numerical values in your \
 simulation to be slightly different in the 7th or 8th decimal place. Please \
 contact the TrickHLA team for support.\n",
-                          __FILE__, __LINE__,
-                          ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),
-                          ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ) );
-      }
-#endif
+                       __FILE__, __LINE__,
+                       ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),
+                       ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ) );
    }
+#endif // FPU_CW_PROTECTION
 }
 
 /*!
