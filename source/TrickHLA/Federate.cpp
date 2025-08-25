@@ -708,7 +708,6 @@ void Federate::create_RTI_ambassador_and_connect()
           << StringUtilities::to_string( rti_config ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
-
 #else
    // For HLA-Evolved, the user can set a vendor specific local settings for
    // the connect() API.
@@ -775,6 +774,7 @@ void Federate::create_RTI_ambassador_and_connect()
 
       // Make sure we delete the factory now that we are done with it.
       delete rti_amb_factory;
+
 #endif // IEEE_1516_2025
 
       // Reset the Federate shutdown-called flag now that we are connected.
