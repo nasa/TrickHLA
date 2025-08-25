@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "trick/attributes.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh" // NOLINT
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 

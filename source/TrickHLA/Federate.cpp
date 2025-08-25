@@ -64,7 +64,7 @@ NASA, Johnson Space Center\n
 #include "trick/sim_mode.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
