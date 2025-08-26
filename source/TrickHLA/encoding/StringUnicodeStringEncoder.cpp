@@ -87,7 +87,7 @@ StringUnicodeStringEncoder::StringUnicodeStringEncoder(
       ostringstream errmsg;
       errmsg << "StringUnicodeStringEncoder::StringUnicodeStringEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
-             << "' the variable must be a std::string and not an array!" << endl;
+             << "' the variable must be a 'std::string' and not an array!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }

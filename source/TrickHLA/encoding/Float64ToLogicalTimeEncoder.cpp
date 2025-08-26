@@ -86,12 +86,11 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
       return;
    }
 
-   // Is the attribute for an Trick variable that is an array.
    if ( is_array() ) {
       ostringstream errmsg;
       errmsg << "Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
-             << "' the variable must be a double primitive!" << endl;
+             << "' the variable must be a 'double' primitive type!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
