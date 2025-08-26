@@ -103,7 +103,7 @@ class Float64ToLogicalTimeEncoder : public VariableArrayEncoderBase
    }
 
   protected:
-   int64_t time_data; ///< @trick_io{--} Time in base time units.
+   long long time_data; ///< @trick_io{--} Time in base time units.
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
