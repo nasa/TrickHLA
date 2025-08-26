@@ -62,7 +62,7 @@ NASA, Johnson Space Center\n
 #include <trick/message_type.h>
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"

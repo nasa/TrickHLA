@@ -40,7 +40,7 @@ NASA, Johnson Space Center\n
 #include "trick/attributes.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"

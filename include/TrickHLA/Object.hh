@@ -55,7 +55,7 @@ NASA, Johnson Space Center\n
 #include "Attribute.hh"
 #include "BasicClock.hh"
 #include "CheckpointConversionBase.hh"
-#include "CompileConfig.hh" // NOLINT
+#include "CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "ElapsedTimeStats.hh"
 #include "HLAStandardSupport.hh"
 #include "Int64Interval.hh"

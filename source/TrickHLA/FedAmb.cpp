@@ -60,7 +60,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh" // NOLINT
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/FedAmbBase.hh"
 #include "TrickHLA/Federate.hh"
