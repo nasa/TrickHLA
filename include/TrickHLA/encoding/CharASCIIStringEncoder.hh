@@ -105,11 +105,11 @@ class CharASCIIStringEncoder : public VariableArrayEncoderBase
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharASCIIStringEncoder();
-   /*! @brief Copy constructor for CharASCIIStringEncoder class.           */
-   /*  @details This constructor is private to prevent inadvertent copies. */
+   /*! @brief Copy constructor for CharASCIIStringEncoder class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    CharASCIIStringEncoder( CharASCIIStringEncoder const &rhs );
-   /*! @brief Assignment operator for CharASCIIStringEncoder class.           */
-   /*  @details Assignment operator is private to prevent inadvertent copies. */
+   /*! @brief Assignment operator for CharASCIIStringEncoder class.
+    *  @details Assignment operator is private to prevent inadvertent copies. */
    CharASCIIStringEncoder &operator=( CharASCIIStringEncoder const &rhs );
 };
 

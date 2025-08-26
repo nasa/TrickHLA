@@ -57,8 +57,8 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 CTETimelineBase::CTETimelineBase(
-   unsigned long long const clock_tics_per_sec,
-   string const            &clock_name )
+   uint64_t const clock_tics_per_sec,
+   string const  &clock_name )
    : Clock( clock_tics_per_sec, clock_name )
 {
    // Change the Trick real time clock to this clock.

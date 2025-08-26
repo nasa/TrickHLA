@@ -106,11 +106,11 @@ class StringUnicodeStringEncoder : public VariableArrayEncoderBase
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    StringUnicodeStringEncoder();
-   /*! @brief Copy constructor for StringUnicodeStringEncoder class.         */
-   /*  @details This constructor is private to prevent inadvertent copies. */
+   /*! @brief Copy constructor for StringUnicodeStringEncoder class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    StringUnicodeStringEncoder( StringUnicodeStringEncoder const &rhs );
-   /*! @brief Assignment operator for StringUnicodeStringEncoder class.         */
-   /*  @details Assignment operator is private to prevent inadvertent copies. */
+   /*! @brief Assignment operator for StringUnicodeStringEncoder class.
+    *  @details Assignment operator is private to prevent inadvertent copies. */
    StringUnicodeStringEncoder &operator=( StringUnicodeStringEncoder const &rhs );
 };
 

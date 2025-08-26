@@ -267,7 +267,7 @@ HLABaseTimeEnum const Int64BaseTime::best_base_time_resolution(
    double const value )
 {
    int resolution = (int)HLA_BASE_TIME_SECONDS;
-   for ( long long multiplier = 1;
+   for ( int64_t multiplier = 1;
          ( resolution < (int)HLA_BASE_TIME_ATTOSECONDS )
          && exceeds_base_time_resolution( value, multiplier );
          ++resolution, multiplier *= 10LL ) {
@@ -297,7 +297,7 @@ bool const Int64BaseTime::exceeds_base_time_resolution(
  */
 bool const Int64BaseTime::exceeds_base_time_resolution(
    double const value,
-   long long    multiplier )
+   int64_t      multiplier )
 {
    double seconds;
    return ( modf( value * multiplier, &seconds ) != 0.0 );

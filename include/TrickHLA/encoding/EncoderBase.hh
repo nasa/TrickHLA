@@ -104,7 +104,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    virtual std::unique_ptr< RTI1516_NAMESPACE::DataElement > clone() const
 #   else
    virtual std::auto_ptr< RTI1516_NAMESPACE::DataElement > clone() const
-#   endif
+#   endif // IEEE_1516_2025
    {
       return data_encoder->clone();
    }
@@ -112,7 +112,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    virtual RTI1516_NAMESPACE::VariableLengthData encode() const
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
-#   endif
+#   endif // IEEE_1516_2010
    {
       return ( data_encoder != NULL ) ? data_encoder->encode()
                                       : RTI1516_NAMESPACE::VariableLengthData();
@@ -121,7 +121,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    virtual void encode( RTI1516_NAMESPACE::VariableLengthData &inData ) const
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
-#   endif
+#   endif // IEEE_1516_2010
    {
       if ( data_encoder != NULL ) {
          data_encoder->encode( inData );
@@ -131,7 +131,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    virtual void encodeInto( std::vector< RTI1516_NAMESPACE::Octet > &buffer ) const
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
-#   endif
+#   endif // IEEE_1516_2010
    {
       if ( data_encoder != NULL ) {
          data_encoder->encodeInto( buffer );
@@ -157,7 +157,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
       size_t                                         index )
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
-#   endif
+#   endif // IEEE_1516_2010
    {
       return ( data_encoder != NULL ) ? data_encoder->decodeFrom( buffer, index ) : index;
    }
@@ -165,7 +165,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    virtual size_t getEncodedLength() const
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
-#   endif
+#   endif // IEEE_1516_2010
    {
       return ( data_encoder != NULL ) ? data_encoder->getEncodedLength() : 0;
    }

@@ -114,11 +114,11 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharRawDataEncoder();
-   /*! @brief Copy constructor for CharRawDataEncoder class.            */
-   /*  @details This constructor is private to prevent inadvertent copies. */
+   /*! @brief Copy constructor for CharRawDataEncoder class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    CharRawDataEncoder( CharRawDataEncoder const &rhs );
-   /*! @brief Assignment operator for CharRawDataEncoder class.            */
-   /*  @details Assignment operator is private to prevent inadvertent copies. */
+   /*! @brief Assignment operator for CharRawDataEncoder class.
+    *  @details Assignment operator is private to prevent inadvertent copies. */
    CharRawDataEncoder &operator=( CharRawDataEncoder const &rhs );
 };
 

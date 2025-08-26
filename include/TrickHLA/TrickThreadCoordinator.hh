@@ -198,10 +198,10 @@ class TrickThreadCoordinator
 
    unsigned int *thread_state; ///< @trick_units{--} TrickHLA state of trick child threads being used.
 
-   long long *data_cycle_base_time_per_thread; ///< @trick_units{--} Data cycle times per thread in the base HLA Logical Time representation.
-   long long *data_cycle_base_time_per_obj;    ///< @trick_units{--} Data cycle times per object instance in the base HLA Logical Time representation.
+   int64_t *data_cycle_base_time_per_thread; ///< @trick_units{--} Data cycle times per thread in the base HLA Logical Time representation.
+   int64_t *data_cycle_base_time_per_obj;    ///< @trick_units{--} Data cycle times per object instance in the base HLA Logical Time representation.
 
-   long long main_thread_data_cycle_base_time; ///< @trick_units{--} Trick main thread data cycle time in the base HLA Logical Time representation.
+   int64_t main_thread_data_cycle_base_time; ///< @trick_units{--} Trick main thread data cycle time in the base HLA Logical Time representation.
 };
 
 } // namespace TrickHLA

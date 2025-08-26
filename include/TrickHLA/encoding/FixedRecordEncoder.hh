@@ -102,11 +102,11 @@ class FixedRecordEncoder : public EncoderBase
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
-   /*! @brief Copy constructor for FixedRecordEncoder class.           */
-   /*  @details This constructor is private to prevent inadvertent copies. */
+   /*! @brief Copy constructor for FixedRecordEncoder class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    FixedRecordEncoder( FixedRecordEncoder const &rhs );
-   /*! @brief Assignment operator for FixedRecordEncoder class.           */
-   /*  @details Assignment operator is private to prevent inadvertent copies. */
+   /*! @brief Assignment operator for FixedRecordEncoder class.
+    *  @details Assignment operator is private to prevent inadvertent copies. */
    FixedRecordEncoder &operator=( FixedRecordEncoder const &rhs );
 };
 

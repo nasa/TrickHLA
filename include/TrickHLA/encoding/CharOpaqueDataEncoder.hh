@@ -106,11 +106,11 @@ class CharOpaqueDataEncoder : public VariableArrayEncoderBase
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharOpaqueDataEncoder();
-   /*! @brief Copy constructor for CharOpaqueDataEncoder class.            */
-   /*  @details This constructor is private to prevent inadvertent copies. */
+   /*! @brief Copy constructor for CharOpaqueDataEncoder class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    CharOpaqueDataEncoder( CharOpaqueDataEncoder const &rhs );
-   /*! @brief Assignment operator for CharOpaqueDataEncoder class.            */
-   /*  @details Assignment operator is private to prevent inadvertent copies. */
+   /*! @brief Assignment operator for CharOpaqueDataEncoder class.
+    *  @details Assignment operator is private to prevent inadvertent copies. */
    CharOpaqueDataEncoder &operator=( CharOpaqueDataEncoder const &rhs );
 };
 

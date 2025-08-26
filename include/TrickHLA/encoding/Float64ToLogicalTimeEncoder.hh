@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_FLOAT64_TO_LOGICAL_TIME_ENCODER_HH
 
 // System includes.
+#include <cstdint>
 #include <string>
 
 // Trick includes.
@@ -102,16 +103,16 @@ class Float64ToLogicalTimeEncoder : public VariableArrayEncoderBase
    }
 
   protected:
-   long long time_data; ///< @trick_io{--} Time in base time units.
+   int64_t time_data; ///< @trick_io{--} Time in base time units.
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    Float64ToLogicalTimeEncoder();
-   /*! @brief Copy constructor for Float64ToLogicalTimeEncoder class.           */
-   /*  @details This constructor is private to prevent inadvertent copies. */
+   /*! @brief Copy constructor for Float64ToLogicalTimeEncoder class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    Float64ToLogicalTimeEncoder( Float64ToLogicalTimeEncoder const &rhs );
-   /*! @brief Assignment operator for Float64ToLogicalTimeEncoder class.           */
-   /*  @details Assignment operator is private to prevent inadvertent copies. */
+   /*! @brief Assignment operator for Float64ToLogicalTimeEncoder class.
+    *  @details Assignment operator is private to prevent inadvertent copies. */
    Float64ToLogicalTimeEncoder &operator=( Float64ToLogicalTimeEncoder const &rhs );
 };
 

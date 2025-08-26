@@ -3236,8 +3236,8 @@ void Federate::refresh_HLA_time_constants()
 
 void Federate::scale_trick_tics_to_base_time_units()
 {
-   long long time_res  = Int64BaseTime::get_base_time_multiplier();
-   long long tic_value = exec_get_time_tic_value();
+   int64_t time_res  = Int64BaseTime::get_base_time_multiplier();
+   int64_t tic_value = exec_get_time_tic_value();
 
    // Scale up the Trick time Tic value to support the HLA base time units.
    // Trick Time Tics is limited to a value of 2^31.

@@ -2701,7 +2701,7 @@ void ExecutionControl::exit_freeze()
    // job waits an indeterminate amount of time to synchronize the mtr_goto_run
    // mode transition. This is particularly true when using the CTE clock and a
    // large mode transition padding time that controls when we go to run.
-   long long ref;
+   int64_t ref;
    if ( does_cte_timeline_exist() ) {
       ExecutionConfiguration *ExCO = get_execution_configuration();
 
@@ -2711,8 +2711,8 @@ void ExecutionControl::exit_freeze()
       // clock reference to account for this to keep it's clock reference
       // aligned with the other federates.
       ref = the_exec->get_time_tics()
-            + (long long)( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
-                           * the_exec->get_time_tic_value() );
+            + (int64_t)( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
+                         * the_exec->get_time_tic_value() );
    } else {
       ref = the_exec->get_time_tics();
    }
@@ -3144,9 +3144,9 @@ void ExecutionControl::set_time_padding(
 void ExecutionControl::print_clock_summary(
    string const &message )
 {
-   long long const clk_time = the_clock->clock_time();
-   long long const wc_time  = the_clock->wall_clock_time();
-   ostringstream   msg;
+   int64_t const clk_time = the_clock->clock_time();
+   int64_t const wc_time  = the_clock->wall_clock_time();
+   ostringstream msg;
    msg << message
        << "      global-clock-name: '" << the_clock->get_name() << "'\n";
    if ( does_cte_timeline_exist() ) {

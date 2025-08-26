@@ -250,7 +250,7 @@ void TrickThreadCoordinator::initialize(
          // Convert the string to an integer.
          stringstream sstream;
          sstream << thread_id_vec[k];
-         long long thread_id;
+         int64_t thread_id;
          sstream >> thread_id;
 
          if ( ( thread_id >= 1 ) && ( thread_id < thread_cnt ) ) {
@@ -285,7 +285,7 @@ void TrickThreadCoordinator::initialize(
    }
 
    // Allocate memory for the data cycle times per each thread.
-   data_cycle_base_time_per_thread = static_cast< long long * >( TMM_declare_var_1d( "long long", thread_cnt ) );
+   data_cycle_base_time_per_thread = static_cast< int64_t * >( TMM_declare_var_1d( "long long", thread_cnt ) );
    if ( data_cycle_base_time_per_thread == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
@@ -300,7 +300,7 @@ void TrickThreadCoordinator::initialize(
 
    // Allocate memory for the data cycle times per each object instance.
    if ( manager->obj_count > 0 ) {
-      data_cycle_base_time_per_obj = static_cast< long long * >( TMM_declare_var_1d( "long long", manager->obj_count ) );
+      data_cycle_base_time_per_obj = static_cast< int64_t * >( TMM_declare_var_1d( "long long", manager->obj_count ) );
       if ( data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize():" << __LINE__

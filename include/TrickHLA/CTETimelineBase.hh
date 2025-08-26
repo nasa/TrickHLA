@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_CTE_TIMELINE_BASE_HH
 
 // System includes.
+#include <cstdint>
 #include <string>
 
 // Trick includes.
@@ -73,8 +74,8 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Constructor for the TrickHLA CTETimelineBase class. */
-   CTETimelineBase( unsigned long long const clock_tics_per_sec,
-                    std::string const       &clock_name );
+   CTETimelineBase( uint64_t const     clock_tics_per_sec,
+                    std::string const &clock_name );
    /*! @brief Destructor for the TrickHLA CTETimelineBase class. */
    virtual ~CTETimelineBase();
 

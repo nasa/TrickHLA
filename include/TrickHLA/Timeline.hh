@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cfloat>
+#include <cstdint>
 
 namespace TrickHLA
 {
@@ -106,7 +107,7 @@ class Timeline
       double const min_resolution = get_min_resolution();
       if ( min_resolution > DBL_MIN ) {
          // Compute the time in tics, which truncates to a fixed-point number.
-         long long const time_tics = (long long)( value / min_resolution );
+         int64_t const time_tics = (int64_t)( value / min_resolution );
 
          // Convert to a time in seconds with the minimum time resolution.
          return (double)( time_tics * min_resolution );

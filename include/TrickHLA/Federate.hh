@@ -1309,7 +1309,7 @@ class Federate
 #   pragma GCC diagnostic ignored "-Wdeprecated"
    std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
 #   pragma GCC diagnostic pop
-#endif
+#endif // IEEE_1516_2025
 
    FedAmb               *federate_ambassador; ///< @trick_units{--} Federate ambassador.
    Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.

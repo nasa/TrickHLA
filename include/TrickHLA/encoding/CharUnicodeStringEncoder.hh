@@ -106,11 +106,11 @@ class CharUnicodeStringEncoder : public VariableArrayEncoderBase
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
    CharUnicodeStringEncoder();
-   /*! @brief Copy constructor for CharUnicodeStringEncoder class.         */
-   /*  @details This constructor is private to prevent inadvertent copies. */
+   /*! @brief Copy constructor for CharUnicodeStringEncoder class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    CharUnicodeStringEncoder( CharUnicodeStringEncoder const &rhs );
-   /*! @brief Assignment operator for CharUnicodeStringEncoder class.         */
-   /*  @details Assignment operator is private to prevent inadvertent copies. */
+   /*! @brief Assignment operator for CharUnicodeStringEncoder class.
+    *  @details Assignment operator is private to prevent inadvertent copies. */
    CharUnicodeStringEncoder &operator=( CharUnicodeStringEncoder const &rhs );
 };
 

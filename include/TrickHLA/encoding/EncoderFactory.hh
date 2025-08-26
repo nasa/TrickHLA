@@ -121,7 +121,7 @@ class EncoderFactory
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding,
       std::string const           &data_name );
-#endif
+#endif // TRICK_WSTRING_MM_SUPPORT
 
    static EncoderBase *create_int16_encoder(
       void                        *address,
@@ -159,7 +159,7 @@ class EncoderFactory
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding,
       std::string const           &data_name );
-#endif
+#endif // IEEE_1516_2025
 
    static EncoderBase *create_float32_encoder(
       void                        *address,

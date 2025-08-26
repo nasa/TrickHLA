@@ -128,7 +128,7 @@ class Int64BaseTime
     *  @return True if the value exceeds the resolution of the base time.
     *  @param value Time value as a floating point double in seconds.
     *  @param multiplier Base time multiplier. */
-   static bool const exceeds_base_time_resolution( double const value, long long multiplier );
+   static bool const exceeds_base_time_resolution( double const value, int64_t multiplier );
 
    /*! @brief Converts the given floating point time to an integer representing
     *  the time in the HLA Logical base time.

@@ -5449,7 +5449,7 @@ void Object::initialize_thread_ID_array()
          // Convert the string to an integer.
          stringstream sstream;
          sstream << thread_id_vec[k];
-         long long id;
+         int64_t id;
          sstream >> id;
 
          if ( ( id >= 0 ) && ( id < this->thread_ids_array_count ) ) {
