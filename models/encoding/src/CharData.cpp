@@ -99,22 +99,22 @@ bool CharData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "CharData::compare():" << __LINE__ << "\n";
+   msg << "CharData::compare():" << __LINE__ << endl;
 
    if ( this->_char == data._char ) {
-      msg << "this->char (" << (int)this->_char << ") == (" << (int)data._char << ") data.char\n";
+      msg << "this->char (" << (int)this->_char << ") == (" << (int)data._char << ") data.char" << endl;
    } else {
-      msg << "this->char (" << (int)this->_char << ") != (" << (int)data._char << ") data.char\n";
+      msg << "this->char (" << (int)this->_char << ") != (" << (int)data._char << ") data.char" << endl;
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_char[i] == data.vec3_char[i] ) {
          msg << "this->vec3_char[" << i << "] (" << (int)this->vec3_char[i]
-             << ") == (" << (int)data.vec3_char[i] << ") data.vec3_char[" << i << "]\n";
+             << ") == (" << (int)data.vec3_char[i] << ") data.vec3_char[" << i << "]" << endl;
       } else {
          msg << "this->vec3_char[" << i << "] (" << (int)this->vec3_char[i]
-             << ") != (" << (int)data.vec3_char[i] << ") data.vec3_char[" << i << "]\n";
+             << ") != (" << (int)data.vec3_char[i] << ") data.vec3_char[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -123,10 +123,10 @@ bool CharData::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_char[row][col] == data.m3x3_char[row][col] ) {
             msg << "this->m3x3_char[" << row << "][" << col << "] (" << (int)this->m3x3_char[row][col]
-                << ") == (" << (int)data.m3x3_char[row][col] << ") data.m3x3_char[" << row << "][" << col << "]\n";
+                << ") == (" << (int)data.m3x3_char[row][col] << ") data.m3x3_char[" << row << "][" << col << "]" << endl;
          } else {
             msg << "this->m3x3_char[" << row << "][" << col << "] (" << (int)this->m3x3_char[row][col]
-                << ") != (" << (int)data.m3x3_char[row][col] << ") data.m3x3_char[" << row << "][" << col << "]\n";
+                << ") != (" << (int)data.m3x3_char[row][col] << ") data.m3x3_char[" << row << "][" << col << "]" << endl;
             equal_values = false;
          }
       }
@@ -139,11 +139,11 @@ bool CharData::compare(
                                 : data2_ptr_char_size;
    if ( data1_ptr_char_size != data2_ptr_char_size ) {
       msg << "this->ptr_char size (" << data1_ptr_char_size
-          << ") != (" << data2_ptr_char_size << ") data.ptr_char size\n";
+          << ") != (" << data2_ptr_char_size << ") data.ptr_char size" << endl;
       equal_values = false;
    } else {
       msg << "this->ptr_char size (" << data1_ptr_char_size
-          << ") == (" << data2_ptr_char_size << ") data.ptr_char size\n";
+          << ") == (" << data2_ptr_char_size << ") data.ptr_char size" << endl;
    }
    for ( int i = 0; i < min_ptr_char_size; ++i ) {
       if ( this->ptr_char[i] == data.ptr_char[i] ) {
@@ -151,13 +151,13 @@ bool CharData::compare(
              << ( std::isprint( this->ptr_char[i] ) ? this->ptr_char[i] : ' ' )
              << ") == ("
              << ( std::isprint( data.ptr_char[i] ) ? data.ptr_char[i] : ' ' )
-             << ") data.ptr_char[" << i << "]\n";
+             << ") data.ptr_char[" << i << "]" << endl;
       } else {
          msg << "this->ptr_char[" << i << "] ("
              << ( std::isprint( this->ptr_char[i] ) ? this->ptr_char[i] : ' ' )
              << ") != ("
              << ( std::isprint( data.ptr_char[i] ) ? data.ptr_char[i] : ' ' )
-             << ") data.ptr_char[" << i << "]\n";
+             << ") data.ptr_char[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -170,27 +170,27 @@ bool CharData::compare(
 string CharData::to_string()
 {
    ostringstream msg;
-   msg << "CharData::to_string():" << __LINE__ << "\n"
-       << "char:" << (int)_char << "\n";
+   msg << "CharData::to_string():" << __LINE__ << endl
+       << "char:" << (int)_char << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_char[" << i << "]:" << (int)vec3_char[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_char[" << row << "][" << col << "]:" << (int)m3x3_char[row][col] << " ";
       }
    }
-   msg << "\n";
+   msg << endl;
 
    int ptr_char_size = get_size( ptr_char );
-   msg << "ptr_char size:" << ptr_char_size << "\n";
+   msg << "ptr_char size:" << ptr_char_size << endl;
    for ( int i = 0; i < ptr_char_size; ++i ) {
       msg << "ptr_char[" << i << "]:" << (int)ptr_char[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    return msg.str();
 }

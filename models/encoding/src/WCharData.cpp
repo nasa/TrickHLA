@@ -87,22 +87,22 @@ bool WCharData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "WCharData::compare():" << __LINE__ << "\n";
+   msg << "WCharData::compare():" << __LINE__ << endl;
 
    if ( this->_wchar == data._wchar ) {
-      msg << "this->char (" << (int)this->_wchar << ") == (" << (int)data._wchar << ") data.char\n";
+      msg << "this->char (" << (int)this->_wchar << ") == (" << (int)data._wchar << ") data.char" << endl;
    } else {
-      msg << "this->char (" << (int)this->_wchar << ") != (" << (int)data._wchar << ") data.char\n";
+      msg << "this->char (" << (int)this->_wchar << ") != (" << (int)data._wchar << ") data.char" << endl;
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_wchar[i] == data.vec3_wchar[i] ) {
          msg << "this->vec3_wchar[" << i << "] (" << (int)this->vec3_wchar[i]
-             << ") == (" << (int)data.vec3_wchar[i] << ") data.vec3_wchar[" << i << "]\n";
+             << ") == (" << (int)data.vec3_wchar[i] << ") data.vec3_wchar[" << i << "]" << endl;
       } else {
          msg << "this->vec3_wchar[" << i << "] (" << (int)this->vec3_wchar[i]
-             << ") != (" << (int)data.vec3_wchar[i] << ") data.vec3_wchar[" << i << "]\n";
+             << ") != (" << (int)data.vec3_wchar[i] << ") data.vec3_wchar[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -111,10 +111,10 @@ bool WCharData::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_wchar[row][col] == data.m3x3_wchar[row][col] ) {
             msg << "this->m3x3_wchar[" << row << "][" << col << "] (" << (int)this->m3x3_wchar[row][col]
-                << ") == (" << (int)data.m3x3_wchar[row][col] << ") data.m3x3_wchar[" << row << "][" << col << "]\n";
+                << ") == (" << (int)data.m3x3_wchar[row][col] << ") data.m3x3_wchar[" << row << "][" << col << "]" << endl;
          } else {
             msg << "this->m3x3_wchar[" << row << "][" << col << "] (" << (int)this->m3x3_wchar[row][col]
-                << ") != (" << (int)data.m3x3_wchar[row][col] << ") data.m3x3_wchar[" << row << "][" << col << "]\n";
+                << ") != (" << (int)data.m3x3_wchar[row][col] << ") data.m3x3_wchar[" << row << "][" << col << "]" << endl;
             equal_values = false;
          }
       }
@@ -127,19 +127,19 @@ bool WCharData::compare(
                                  : data2_ptr_wchar_size;
    if ( data1_ptr_wchar_size != data2_ptr_wchar_size ) {
       msg << "this->ptr_wchar size (" << data1_ptr_wchar_size
-          << ") != (" << data2_ptr_wchar_size << ") data.ptr_wchar size\n";
+          << ") != (" << data2_ptr_wchar_size << ") data.ptr_wchar size" << endl;
       equal_values = false;
    } else {
       msg << "this->ptr_wchar size (" << data1_ptr_wchar_size
-          << ") == (" << data2_ptr_wchar_size << ") data.ptr_wchar size\n";
+          << ") == (" << data2_ptr_wchar_size << ") data.ptr_wchar size" << endl;
    }
    for ( int i = 0; i < min_ptr_wchar_size; ++i ) {
       if ( this->ptr_wchar[i] == data.ptr_wchar[i] ) {
          msg << "this->ptr_wchar[" << i << "] (" << (int)this->ptr_wchar[i]
-             << ") == (" << (int)data.ptr_wchar[i] << ") data.ptr_wchar[" << i << "]\n";
+             << ") == (" << (int)data.ptr_wchar[i] << ") data.ptr_wchar[" << i << "]" << endl;
       } else {
          msg << "this->ptr_wchar[" << i << "] (" << (int)this->ptr_wchar[i]
-             << ") != (" << (int)data.ptr_wchar[i] << ") data.ptr_wchar[" << i << "]\n";
+             << ") != (" << (int)data.ptr_wchar[i] << ") data.ptr_wchar[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -152,27 +152,27 @@ bool WCharData::compare(
 string WCharData::to_string()
 {
    ostringstream msg;
-   msg << "WCharData::to_string():" << __LINE__ << "\n"
-       << "wchar:" << (int)_wchar << "\n";
+   msg << "WCharData::to_string():" << __LINE__ << endl
+       << "wchar:" << (int)_wchar << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_wchar[" << i << "]:" << (int)vec3_wchar[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_wchar[" << row << "][" << col << "]:" << (int)m3x3_wchar[row][col] << " ";
       }
    }
-   msg << "\n";
+   msg << endl;
 
    int ptr_wchar_size = get_size( ptr_wchar );
-   msg << "ptr_wchar size:" << ptr_wchar_size << "\n";
+   msg << "ptr_wchar size:" << ptr_wchar_size << endl;
    for ( int i = 0; i < ptr_wchar_size; ++i ) {
       msg << "ptr_wchar[" << i << "]:" << (int)ptr_wchar[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    return msg.str();
 }

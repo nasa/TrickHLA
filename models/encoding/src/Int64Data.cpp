@@ -87,22 +87,22 @@ bool Int64Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Int64Data::compare():" << __LINE__ << "\n";
+   msg << "Int64Data::compare():" << __LINE__ << endl;
 
    if ( this->i64 == data.i64 ) {
-      msg << "this->i64 (" << this->i64 << ") == (" << data.i64 << ") data.i64\n";
+      msg << "this->i64 (" << this->i64 << ") == (" << data.i64 << ") data.i64" << endl;
    } else {
-      msg << "this->i64 (" << this->i64 << ") != (" << data.i64 << ") data.i64\n";
+      msg << "this->i64 (" << this->i64 << ") != (" << data.i64 << ") data.i64" << endl;
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_i64[i] == data.vec3_i64[i] ) {
          msg << "this->vec3_i64[" << i << "] (" << this->vec3_i64[i]
-             << ") == (" << data.vec3_i64[i] << ") data.vec3_i64[" << i << "]\n";
+             << ") == (" << data.vec3_i64[i] << ") data.vec3_i64[" << i << "]" << endl;
       } else {
          msg << "this->vec3_i64[" << i << "] (" << this->vec3_i64[i]
-             << ") != (" << data.vec3_i64[i] << ") data.vec3_i64[" << i << "]\n";
+             << ") != (" << data.vec3_i64[i] << ") data.vec3_i64[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -111,10 +111,10 @@ bool Int64Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_i64[row][col] == data.m3x3_i64[row][col] ) {
             msg << "this->m3x3_i64[" << row << "][" << col << "] (" << this->m3x3_i64[row][col]
-                << ") == (" << data.m3x3_i64[row][col] << ") data.m3x3_i64[" << row << "][" << col << "]\n";
+                << ") == (" << data.m3x3_i64[row][col] << ") data.m3x3_i64[" << row << "][" << col << "]" << endl;
          } else {
             msg << "this->m3x3_i64[" << row << "][" << col << "] (" << this->m3x3_i64[row][col]
-                << ") != (" << data.m3x3_i64[row][col] << ") data.m3x3_i64[" << row << "][" << col << "]\n";
+                << ") != (" << data.m3x3_i64[row][col] << ") data.m3x3_i64[" << row << "][" << col << "]" << endl;
             equal_values = false;
          }
       }
@@ -124,19 +124,19 @@ bool Int64Data::compare(
    int data2_ptr_i64_size = get_size( data.ptr_i64 );
    if ( data1_ptr_i64_size != data2_ptr_i64_size ) {
       msg << "this->ptr_i64 size (" << data1_ptr_i64_size
-          << ") != (" << data2_ptr_i64_size << ") data.ptr_i64 size\n";
+          << ") != (" << data2_ptr_i64_size << ") data.ptr_i64 size" << endl;
       equal_values = false;
    } else {
       msg << "this->ptr_i64 size (" << data1_ptr_i64_size
-          << ") == (" << data2_ptr_i64_size << ") data.ptr_i64 size\n";
+          << ") == (" << data2_ptr_i64_size << ") data.ptr_i64 size" << endl;
 
       for ( int i = 0; i < data1_ptr_i64_size; ++i ) {
          if ( this->ptr_i64[i] == data.ptr_i64[i] ) {
             msg << "this->ptr_i64[" << i << "] (" << this->ptr_i64[i]
-                << ") == (" << data.ptr_i64[i] << ") data.ptr_i64[" << i << "]\n";
+                << ") == (" << data.ptr_i64[i] << ") data.ptr_i64[" << i << "]" << endl;
          } else {
             msg << "this->ptr_i64[" << i << "] (" << this->ptr_i64[i]
-                << ") != (" << data.ptr_i64[i] << ") data.ptr_i64[" << i << "]\n";
+                << ") != (" << data.ptr_i64[i] << ") data.ptr_i64[" << i << "]" << endl;
             equal_values = false;
          }
       }
@@ -150,27 +150,27 @@ bool Int64Data::compare(
 string Int64Data::to_string()
 {
    ostringstream msg;
-   msg << "Int64Data::to_string():" << __LINE__ << "\n"
-       << "i64:" << i64 << "\n";
+   msg << "Int64Data::to_string():" << __LINE__ << endl
+       << "i64:" << i64 << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_i64[" << i << "]:" << vec3_i64[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_i64[" << row << "][" << col << "]:" << m3x3_i64[row][col] << " ";
       }
    }
-   msg << "\n";
+   msg << endl;
 
    int ptr_i64_size = get_size( ptr_i64 );
-   msg << "ptr_i64 size:" << ptr_i64_size << "\n";
+   msg << "ptr_i64 size:" << ptr_i64_size << endl;
    for ( int i = 0; i < ptr_i64_size; ++i ) {
       msg << "ptr_i64[" << i << "]:" << ptr_i64[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    return msg.str();
 }

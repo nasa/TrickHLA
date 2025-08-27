@@ -87,22 +87,22 @@ bool LongData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "LongData::compare():" << __LINE__ << "\n";
+   msg << "LongData::compare():" << __LINE__ << endl;
 
    if ( this->_long == data._long ) {
-      msg << "this->long (" << this->_long << ") == (" << data._long << ") data.long\n";
+      msg << "this->long (" << this->_long << ") == (" << data._long << ") data.long" << endl;
    } else {
-      msg << "this->long (" << this->_long << ") != (" << data._long << ") data.long\n";
+      msg << "this->long (" << this->_long << ") != (" << data._long << ") data.long" << endl;
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_long[i] == data.vec3_long[i] ) {
          msg << "this->vec3_long[" << i << "] (" << this->vec3_long[i]
-             << ") == (" << data.vec3_long[i] << ") data.vec3_long[" << i << "]\n";
+             << ") == (" << data.vec3_long[i] << ") data.vec3_long[" << i << "]" << endl;
       } else {
          msg << "this->vec3_long[" << i << "] (" << this->vec3_long[i]
-             << ") != (" << data.vec3_long[i] << ") data.vec3_long[" << i << "]\n";
+             << ") != (" << data.vec3_long[i] << ") data.vec3_long[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -111,10 +111,10 @@ bool LongData::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_long[row][col] == data.m3x3_long[row][col] ) {
             msg << "this->m3x3_long[" << row << "][" << col << "] (" << this->m3x3_long[row][col]
-                << ") == (" << data.m3x3_long[row][col] << ") data.m3x3_long[" << row << "][" << col << "]\n";
+                << ") == (" << data.m3x3_long[row][col] << ") data.m3x3_long[" << row << "][" << col << "]" << endl;
          } else {
             msg << "this->m3x3_long[" << row << "][" << col << "] (" << this->m3x3_long[row][col]
-                << ") != (" << data.m3x3_long[row][col] << ") data.m3x3_long[" << row << "][" << col << "]\n";
+                << ") != (" << data.m3x3_long[row][col] << ") data.m3x3_long[" << row << "][" << col << "]" << endl;
             equal_values = false;
          }
       }
@@ -124,19 +124,19 @@ bool LongData::compare(
    int data2_ptr_long_size = get_size( data.ptr_long );
    if ( data1_ptr_long_size != data2_ptr_long_size ) {
       msg << "this->ptr_long size (" << data1_ptr_long_size
-          << ") != (" << data2_ptr_long_size << ") data.ptr_long size\n";
+          << ") != (" << data2_ptr_long_size << ") data.ptr_long size" << endl;
       equal_values = false;
    } else {
       msg << "this->ptr_long size (" << data1_ptr_long_size
-          << ") == (" << data2_ptr_long_size << ") data.ptr_long size\n";
+          << ") == (" << data2_ptr_long_size << ") data.ptr_long size" << endl;
 
       for ( int i = 0; i < data1_ptr_long_size; ++i ) {
          if ( this->ptr_long[i] == data.ptr_long[i] ) {
             msg << "this->ptr_long[" << i << "] (" << this->ptr_long[i]
-                << ") == (" << data.ptr_long[i] << ") data.ptr_long[" << i << "]\n";
+                << ") == (" << data.ptr_long[i] << ") data.ptr_long[" << i << "]" << endl;
          } else {
             msg << "this->ptr_long[" << i << "] (" << this->ptr_long[i]
-                << ") != (" << data.ptr_long[i] << ") data.ptr_long[" << i << "]\n";
+                << ") != (" << data.ptr_long[i] << ") data.ptr_long[" << i << "]" << endl;
             equal_values = false;
          }
       }
@@ -150,27 +150,27 @@ bool LongData::compare(
 string LongData::to_string()
 {
    ostringstream msg;
-   msg << "LongData::to_string():" << __LINE__ << "\n"
-       << "long:" << _long << "\n";
+   msg << "LongData::to_string():" << __LINE__ << endl
+       << "long:" << _long << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_long[" << i << "]:" << vec3_long[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_long[" << row << "][" << col << "]:" << m3x3_long[row][col] << " ";
       }
    }
-   msg << "\n";
+   msg << endl;
 
    int ptr_long_size = get_size( ptr_long );
-   msg << "ptr_long size:" << ptr_long_size << "\n";
+   msg << "ptr_long size:" << ptr_long_size << endl;
    for ( int i = 0; i < ptr_long_size; ++i ) {
       msg << "ptr_long[" << i << "]:" << ptr_long[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    return msg.str();
 }

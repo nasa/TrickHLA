@@ -197,6 +197,11 @@ class EncodingTest
                                      FixedRecData      &data1,
                                      std::string const &data2_trick_base_name,
                                      FixedRecData      &data2 );
+
+   void float64_logical_time_test( std::string const &data1_trick_base_name,
+                                   Float64Data       &data1,
+                                   std::string const &data2_trick_base_name,
+                                   Float64Data       &data2 );
 };
 
 } // namespace TrickHLAModel

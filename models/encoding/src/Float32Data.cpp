@@ -87,22 +87,22 @@ bool Float32Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Float32Data::compare():" << __LINE__ << "\n";
+   msg << "Float32Data::compare():" << __LINE__ << endl;
 
    if ( this->f32 == data.f32 ) {
-      msg << "this->f32 (" << this->f32 << ") == (" << data.f32 << ") data.f32\n";
+      msg << "this->f32 (" << this->f32 << ") == (" << data.f32 << ") data.f32" << endl;
    } else {
-      msg << "this->f32 (" << this->f32 << ") != (" << data.f32 << ") data.f32\n";
+      msg << "this->f32 (" << this->f32 << ") != (" << data.f32 << ") data.f32" << endl;
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_f32[i] == data.vec3_f32[i] ) {
          msg << "this->vec3_f32[" << i << "] (" << this->vec3_f32[i]
-             << ") == (" << data.vec3_f32[i] << ") data.vec3_f32[" << i << "]\n";
+             << ") == (" << data.vec3_f32[i] << ") data.vec3_f32[" << i << "]" << endl;
       } else {
          msg << "this->vec3_f32[" << i << "] (" << this->vec3_f32[i]
-             << ") != (" << data.vec3_f32[i] << ") data.vec3_f32[" << i << "]\n";
+             << ") != (" << data.vec3_f32[i] << ") data.vec3_f32[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -111,10 +111,10 @@ bool Float32Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_f32[row][col] == data.m3x3_f32[row][col] ) {
             msg << "this->m3x3_f32[" << row << "][" << col << "] (" << this->m3x3_f32[row][col]
-                << ") == (" << data.m3x3_f32[row][col] << ") data.m3x3_f32[" << row << "][" << col << "]\n";
+                << ") == (" << data.m3x3_f32[row][col] << ") data.m3x3_f32[" << row << "][" << col << "]" << endl;
          } else {
             msg << "this->m3x3_f32[" << row << "][" << col << "] (" << this->m3x3_f32[row][col]
-                << ") != (" << data.m3x3_f32[row][col] << ") data.m3x3_f32[" << row << "][" << col << "]\n";
+                << ") != (" << data.m3x3_f32[row][col] << ") data.m3x3_f32[" << row << "][" << col << "]" << endl;
             equal_values = false;
          }
       }
@@ -124,19 +124,19 @@ bool Float32Data::compare(
    int data2_ptr_f32_size = get_size( data.ptr_f32 );
    if ( data1_ptr_f32_size != data2_ptr_f32_size ) {
       msg << "this->ptr_f32 size (" << data1_ptr_f32_size
-          << ") != (" << data2_ptr_f32_size << ") data.ptr_f32 size\n";
+          << ") != (" << data2_ptr_f32_size << ") data.ptr_f32 size" << endl;
       equal_values = false;
    } else {
       msg << "this->ptr_f32 size (" << data1_ptr_f32_size
-          << ") == (" << data2_ptr_f32_size << ") data.ptr_f32 size\n";
+          << ") == (" << data2_ptr_f32_size << ") data.ptr_f32 size" << endl;
 
       for ( int i = 0; i < data1_ptr_f32_size; ++i ) {
          if ( this->ptr_f32[i] == data.ptr_f32[i] ) {
             msg << "this->ptr_f32[" << i << "] (" << this->ptr_f32[i]
-                << ") == (" << data.ptr_f32[i] << ") data.ptr_f32[" << i << "]\n";
+                << ") == (" << data.ptr_f32[i] << ") data.ptr_f32[" << i << "]" << endl;
          } else {
             msg << "this->ptr_f32[" << i << "] (" << this->ptr_f32[i]
-                << ") != (" << data.ptr_f32[i] << ") data.ptr_f32[" << i << "]\n";
+                << ") != (" << data.ptr_f32[i] << ") data.ptr_f32[" << i << "]" << endl;
             equal_values = false;
          }
       }
@@ -150,27 +150,27 @@ bool Float32Data::compare(
 string Float32Data::to_string()
 {
    ostringstream msg;
-   msg << "Float32Data::to_string():" << __LINE__ << "\n"
-       << "f32:" << f32 << "\n";
+   msg << "Float32Data::to_string():" << __LINE__ << endl
+       << "f32:" << f32 << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_f32[" << i << "]:" << vec3_f32[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_f32[" << row << "][" << col << "]:" << m3x3_f32[row][col] << " ";
       }
    }
-   msg << "\n";
+   msg << endl;
 
    int ptr_f32_size = get_size( ptr_f32 );
-   msg << "ptr_f32 size:" << ptr_f32_size << "\n";
+   msg << "ptr_f32 size:" << ptr_f32_size << endl;
    for ( int i = 0; i < ptr_f32_size; ++i ) {
       msg << "ptr_f32[" << i << "]:" << ptr_f32[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    return msg.str();
 }

@@ -125,6 +125,9 @@ class TestSimObj : public Trick::SimObject {
    FixedRecData fixed_rec_data3 = FixedRecData();
    FixedRecData fixed_rec_data4 = FixedRecData();
 
+   Float64Data float64_logical_time_data1 = Float64Data( 10 );
+   Float64Data float64_logical_time_data2 = Float64Data( 0 );
+
    EncodingTest encoder_test;
 
    TestSimObj()
@@ -246,6 +249,9 @@ class TestSimObj : public Trick::SimObject {
 
       ("initialization") encoder_test.fixed_record_attribute_test( "T.fixed_rec_data3", fixed_rec_data3,
                                                                    "T.fixed_rec_data4", fixed_rec_data4 );
+
+      ("initialization") encoder_test.float64_logical_time_test( "T.float64_logical_time_data1", float64_logical_time_data1,
+                                                                 "T.float64_logical_time_data2", float64_logical_time_data2 );
 
       ("initialization") exec_terminate( __FILE__, "Done" );
    }

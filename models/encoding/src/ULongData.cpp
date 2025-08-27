@@ -87,22 +87,22 @@ bool ULongData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "ULongData::compare():" << __LINE__ << "\n";
+   msg << "ULongData::compare():" << __LINE__ << endl;
 
    if ( this->_ulong == data._ulong ) {
-      msg << "this->long (" << this->_ulong << ") == (" << data._ulong << ") data.long\n";
+      msg << "this->long (" << this->_ulong << ") == (" << data._ulong << ") data.long" << endl;
    } else {
-      msg << "this->long (" << this->_ulong << ") != (" << data._ulong << ") data.long\n";
+      msg << "this->long (" << this->_ulong << ") != (" << data._ulong << ") data.long" << endl;
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_ulong[i] == data.vec3_ulong[i] ) {
          msg << "this->vec3_ulong[" << i << "] (" << this->vec3_ulong[i]
-             << ") == (" << data.vec3_ulong[i] << ") data.vec3_ulong[" << i << "]\n";
+             << ") == (" << data.vec3_ulong[i] << ") data.vec3_ulong[" << i << "]" << endl;
       } else {
          msg << "this->vec3_ulong[" << i << "] (" << this->vec3_ulong[i]
-             << ") != (" << data.vec3_ulong[i] << ") data.vec3_ulong[" << i << "]\n";
+             << ") != (" << data.vec3_ulong[i] << ") data.vec3_ulong[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -111,10 +111,10 @@ bool ULongData::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_ulong[row][col] == data.m3x3_ulong[row][col] ) {
             msg << "this->m3x3_ulong[" << row << "][" << col << "] (" << this->m3x3_ulong[row][col]
-                << ") == (" << data.m3x3_ulong[row][col] << ") data.m3x3_ulong[" << row << "][" << col << "]\n";
+                << ") == (" << data.m3x3_ulong[row][col] << ") data.m3x3_ulong[" << row << "][" << col << "]" << endl;
          } else {
             msg << "this->m3x3_ulong[" << row << "][" << col << "] (" << this->m3x3_ulong[row][col]
-                << ") != (" << data.m3x3_ulong[row][col] << ") data.m3x3_ulong[" << row << "][" << col << "]\n";
+                << ") != (" << data.m3x3_ulong[row][col] << ") data.m3x3_ulong[" << row << "][" << col << "]" << endl;
             equal_values = false;
          }
       }
@@ -124,19 +124,19 @@ bool ULongData::compare(
    int data2_ptr_ulong_size = get_size( data.ptr_ulong );
    if ( data1_ptr_ulong_size != data2_ptr_ulong_size ) {
       msg << "this->ptr_ulong size (" << data1_ptr_ulong_size
-          << ") != (" << data2_ptr_ulong_size << ") data.ptr_ulong size\n";
+          << ") != (" << data2_ptr_ulong_size << ") data.ptr_ulong size" << endl;
       equal_values = false;
    } else {
       msg << "this->ptr_ulong size (" << data1_ptr_ulong_size
-          << ") == (" << data2_ptr_ulong_size << ") data.ptr_ulong size\n";
+          << ") == (" << data2_ptr_ulong_size << ") data.ptr_ulong size" << endl;
 
       for ( int i = 0; i < data1_ptr_ulong_size; ++i ) {
          if ( this->ptr_ulong[i] == data.ptr_ulong[i] ) {
             msg << "this->ptr_ulong[" << i << "] (" << this->ptr_ulong[i]
-                << ") == (" << data.ptr_ulong[i] << ") data.ptr_ulong[" << i << "]\n";
+                << ") == (" << data.ptr_ulong[i] << ") data.ptr_ulong[" << i << "]" << endl;
          } else {
             msg << "this->ptr_ulong[" << i << "] (" << this->ptr_ulong[i]
-                << ") != (" << data.ptr_ulong[i] << ") data.ptr_ulong[" << i << "]\n";
+                << ") != (" << data.ptr_ulong[i] << ") data.ptr_ulong[" << i << "]" << endl;
             equal_values = false;
          }
       }
@@ -150,27 +150,27 @@ bool ULongData::compare(
 string ULongData::to_string()
 {
    ostringstream msg;
-   msg << "ULongData::to_string():" << __LINE__ << "\n"
-       << "long:" << _ulong << "\n";
+   msg << "ULongData::to_string():" << __LINE__ << endl
+       << "long:" << _ulong << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_ulong[" << i << "]:" << vec3_ulong[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_ulong[" << row << "][" << col << "]:" << m3x3_ulong[row][col] << " ";
       }
    }
-   msg << "\n";
+   msg << endl;
 
    int ptr_ulong_size = get_size( ptr_ulong );
-   msg << "ptr_ulong size:" << ptr_ulong_size << "\n";
+   msg << "ptr_ulong size:" << ptr_ulong_size << endl;
    for ( int i = 0; i < ptr_ulong_size; ++i ) {
       msg << "ptr_ulong[" << i << "]:" << ptr_ulong[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    return msg.str();
 }

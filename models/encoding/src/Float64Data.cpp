@@ -87,22 +87,22 @@ bool Float64Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Float64Data::compare():" << __LINE__ << "\n";
+   msg << "Float64Data::compare():" << __LINE__ << endl;
 
    if ( this->f64 == data.f64 ) {
-      msg << "this->f64 (" << this->f64 << ") == (" << data.f64 << ") data.f64\n";
+      msg << "this->f64 (" << this->f64 << ") == (" << data.f64 << ") data.f64" << endl;
    } else {
-      msg << "this->f64 (" << this->f64 << ") != (" << data.f64 << ") data.f64\n";
+      msg << "this->f64 (" << this->f64 << ") != (" << data.f64 << ") data.f64" << endl;
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_f64[i] == data.vec3_f64[i] ) {
          msg << "this->vec3_f64[" << i << "] (" << this->vec3_f64[i]
-             << ") == (" << data.vec3_f64[i] << ") data.vec3_f64[" << i << "]\n";
+             << ") == (" << data.vec3_f64[i] << ") data.vec3_f64[" << i << "]" << endl;
       } else {
          msg << "this->vec3_f64[" << i << "] (" << this->vec3_f64[i]
-             << ") != (" << data.vec3_f64[i] << ") data.vec3_f64[" << i << "]\n";
+             << ") != (" << data.vec3_f64[i] << ") data.vec3_f64[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -111,10 +111,10 @@ bool Float64Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_f64[row][col] == data.m3x3_f64[row][col] ) {
             msg << "this->m3x3_f64[" << row << "][" << col << "] (" << this->m3x3_f64[row][col]
-                << ") == (" << data.m3x3_f64[row][col] << ") data.m3x3_f64[" << row << "][" << col << "]\n";
+                << ") == (" << data.m3x3_f64[row][col] << ") data.m3x3_f64[" << row << "][" << col << "]" << endl;
          } else {
             msg << "this->m3x3_f64[" << row << "][" << col << "] (" << this->m3x3_f64[row][col]
-                << ") != (" << data.m3x3_f64[row][col] << ") data.m3x3_f64[" << row << "][" << col << "]\n";
+                << ") != (" << data.m3x3_f64[row][col] << ") data.m3x3_f64[" << row << "][" << col << "]" << endl;
             equal_values = false;
          }
       }
@@ -124,19 +124,19 @@ bool Float64Data::compare(
    int data2_ptr_f64_size = get_size( data.ptr_f64 );
    if ( data1_ptr_f64_size != data2_ptr_f64_size ) {
       msg << "this->ptr_f64 size (" << data1_ptr_f64_size
-          << ") != (" << data2_ptr_f64_size << ") data.ptr_f64 size\n";
+          << ") != (" << data2_ptr_f64_size << ") data.ptr_f64 size" << endl;
       equal_values = false;
    } else {
       msg << "this->ptr_f64 size (" << data1_ptr_f64_size
-          << ") == (" << data2_ptr_f64_size << ") data.ptr_f64 size\n";
+          << ") == (" << data2_ptr_f64_size << ") data.ptr_f64 size" << endl;
 
       for ( int i = 0; i < data1_ptr_f64_size; ++i ) {
          if ( this->ptr_f64[i] == data.ptr_f64[i] ) {
             msg << "this->ptr_f64[" << i << "] (" << this->ptr_f64[i]
-                << ") == (" << data.ptr_f64[i] << ") data.ptr_f64[" << i << "]\n";
+                << ") == (" << data.ptr_f64[i] << ") data.ptr_f64[" << i << "]" << endl;
          } else {
             msg << "this->ptr_f64[" << i << "] (" << this->ptr_f64[i]
-                << ") != (" << data.ptr_f64[i] << ") data.ptr_f64[" << i << "]\n";
+                << ") != (" << data.ptr_f64[i] << ") data.ptr_f64[" << i << "]" << endl;
             equal_values = false;
          }
       }
@@ -150,27 +150,27 @@ bool Float64Data::compare(
 string Float64Data::to_string()
 {
    ostringstream msg;
-   msg << "Float64Data::to_string():" << __LINE__ << "\n"
-       << "f64:" << f64 << "\n";
+   msg << "Float64Data::to_string():" << __LINE__ << endl
+       << "f64:" << f64 << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_f64[" << i << "]:" << vec3_f64[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_f64[" << row << "][" << col << "]:" << m3x3_f64[row][col] << " ";
       }
    }
-   msg << "\n";
+   msg << endl;
 
    int ptr_f64_size = get_size( ptr_f64 );
-   msg << "ptr_f64 size:" << ptr_f64_size << "\n";
+   msg << "ptr_f64 size:" << ptr_f64_size << endl;
    for ( int i = 0; i < ptr_f64_size; ++i ) {
       msg << "ptr_f64[" << i << "]:" << ptr_f64[i] << " ";
    }
-   msg << "\n";
+   msg << endl;
 
    return msg.str();
 }
