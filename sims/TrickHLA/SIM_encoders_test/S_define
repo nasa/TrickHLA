@@ -116,6 +116,9 @@ class TestSimObj : public Trick::SimObject {
    Float64Data float64_data3 = Float64Data( 10 );
    Float64Data float64_data4 = Float64Data( 0 );
 
+   Float64Data float64_logical_time_data1 = Float64Data( 10 );
+   Float64Data float64_logical_time_data2 = Float64Data( 0 );
+
    BoolData bool_data1 = BoolData( 0 );
    BoolData bool_data2 = BoolData( 1 );
 
@@ -124,9 +127,6 @@ class TestSimObj : public Trick::SimObject {
 
    FixedRecData fixed_rec_data3 = FixedRecData();
    FixedRecData fixed_rec_data4 = FixedRecData();
-
-   Float64Data float64_logical_time_data1 = Float64Data( 10 );
-   Float64Data float64_logical_time_data2 = Float64Data( 0 );
 
    EncodingTest encoder_test;
 
@@ -240,6 +240,9 @@ class TestSimObj : public Trick::SimObject {
                                                     "T.float64_data4", float64_data4,
                                                     TrickHLA::ENCODING_BIG_ENDIAN );
 
+      ("initialization") encoder_test.float64_logical_time_test( "T.float64_logical_time_data1", float64_logical_time_data1,
+                                                                 "T.float64_logical_time_data2", float64_logical_time_data2 );
+
       ("initialization") encoder_test.bool_test( "T.bool_data1", bool_data1,
                                                  "T.bool_data2", bool_data2,
                                                  TrickHLA::ENCODING_BOOLEAN );
@@ -249,9 +252,6 @@ class TestSimObj : public Trick::SimObject {
 
       ("initialization") encoder_test.fixed_record_attribute_test( "T.fixed_rec_data3", fixed_rec_data3,
                                                                    "T.fixed_rec_data4", fixed_rec_data4 );
-
-      ("initialization") encoder_test.float64_logical_time_test( "T.float64_logical_time_data1", float64_logical_time_data1,
-                                                                 "T.float64_logical_time_data2", float64_logical_time_data2 );
 
       ("initialization") exec_terminate( __FILE__, "Done" );
    }
