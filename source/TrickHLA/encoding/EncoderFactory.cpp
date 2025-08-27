@@ -221,9 +221,18 @@ EncoderBase *EncoderFactory::create(
                encoder = create_int32_encoder( address, attr, hla_encoding, data_name );
                break;
             }
-            case 8:
-            default: {
+            case 8: {
                encoder = create_int64_encoder( address, attr, hla_encoding, data_name );
+               break;
+            }
+            default: {
+               ostringstream errmsg;
+               errmsg << "EncoderFactory::create():" << __LINE__
+                      << " ERROR: Trick attributes for the variable '"
+                      << data_name << "' is of type 'long', but has"
+                      << " an unrecognized size of " << sizeof( long )
+                      << " bytes." << endl;
+               DebugHandler::terminate_with_message( errmsg.str() );
                break;
             }
          }
@@ -237,10 +246,18 @@ EncoderBase *EncoderFactory::create(
                encoder = create_uint32_encoder( address, attr, hla_encoding, data_name );
                break;
             }
-            case 8:
-            default: {
+            case 8: {
                encoder = create_uint64_encoder( address, attr, hla_encoding, data_name );
                break;
+            }
+            default: {
+               ostringstream errmsg;
+               errmsg << "EncoderFactory::create():" << __LINE__
+                      << " ERROR: Trick attributes for the variable '"
+                      << data_name << "' is of type 'unsigned long', but has"
+                      << " an unrecognized size of " << sizeof( unsigned long )
+                      << " bytes." << endl;
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
 #else
@@ -258,8 +275,7 @@ EncoderBase *EncoderFactory::create(
                encoder = create_int32_encoder( address, attr, hla_encoding, data_name );
                break;
             }
-            case 8:
-            default: {
+            case 8: {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
                   ostringstream errmsg;
                   errmsg << "EncoderFactory::create():" << __LINE__
@@ -270,6 +286,16 @@ EncoderBase *EncoderFactory::create(
                   message_publish( MSG_WARNING, errmsg.str().c_str() );
                }
                encoder = create_int64_encoder( address, attr, hla_encoding, data_name );
+               break;
+            }
+            default: {
+               ostringstream errmsg;
+               errmsg << "EncoderFactory::create():" << __LINE__
+                      << " ERROR: Trick attributes for the variable '"
+                      << data_name << "' is of type 'unsigned long', but has"
+                      << " an unrecognized size of " << sizeof( unsigned long )
+                      << " bytes." << endl;
+               DebugHandler::terminate_with_message( errmsg.str() );
                break;
             }
          }
