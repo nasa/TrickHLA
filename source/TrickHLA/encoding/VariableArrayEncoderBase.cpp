@@ -30,7 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <iostream> // for cout
+#include <iostream>
 #include <ostream>
 #include <sstream>
 #include <stddef.h>
