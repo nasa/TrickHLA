@@ -86,7 +86,7 @@ void Packing::initialize()
       } else {
          ostringstream errmsg;
          errmsg << "TrickHLA::Packing::initialize():" << __LINE__
-                << " ERROR: The packing function has not been configured!\n";
+                << " ERROR: The packing function has not been configured!" << endl;
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -116,7 +116,7 @@ void Packing::set_object( TrickHLA::Object *mngr_obj )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::Packing::set_object():" << __LINE__
-             << " ERROR: The initialize() function has already been called\n";
+             << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -150,7 +150,7 @@ Attribute *Packing::get_attribute_and_validate(
    if ( attr_FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Packing::get_attribute_and_validate():" << __LINE__
-             << " ERROR: Unexpected NULL attribute FOM name specified.\n";
+             << " ERROR: Unexpected NULL attribute FOM name specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -166,7 +166,7 @@ Attribute *Packing::get_attribute_and_validate(
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input.py file is properly"
-             << " configured for this attribute.\n";
+             << " configured for this attribute." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return attr;

@@ -136,7 +136,7 @@ void FedAmb::initialize()
    if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Federate.\n";
+             << " ERROR: Unexpected NULL TrickHLA::Federate." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -144,7 +144,7 @@ void FedAmb::initialize()
    if ( manager == NULL ) {
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager.\n";
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -156,7 +156,7 @@ void FedAmb::initialize()
    if ( federate->get_federate_name().empty() ) {
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
-             << " ERROR: Unexpected empty federate name.\n";
+             << " ERROR: Unexpected empty federate name." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -179,7 +179,7 @@ void FedAmb::connectionLost(
    errmsg << "FedAmb::connectionLost():" << __LINE__
           << " ERROR: Lost the connection to the Central RTI Component (CRC)."
           << " Reason:'" << fault_msg << "'."
-          << " Terminating the simulation!\n";
+          << " Terminating the simulation!" << endl;
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 

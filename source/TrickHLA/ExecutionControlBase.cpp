@@ -246,7 +246,7 @@ void ExecutionControlBase::initialize()
                 << " ERROR: The CTE timeline is specified but it is not"
                 << " configured as the Trick real time clock! Make sure"
                 << " the CTETimelineBase class constructor is calling"
-                << " real_time_change_clock( this );\n";
+                << " real_time_change_clock( this );" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -283,7 +283,7 @@ void ExecutionControlBase::initialize()
    if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::initialize():" << __LINE__
-             << " ERROR: Time constraints verification failed!\n";
+             << " ERROR: Time constraints verification failed!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -300,7 +300,7 @@ Trick simulation time as the default scenario-timeline.\n",
       if ( scenario_timeline == NULL ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
-                << " FAILED to allocate enough memory for ScenarioTimeline class!\n";
+                << " FAILED to allocate enough memory for ScenarioTimeline class!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
@@ -412,7 +412,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          errmsg << "ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
                 << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
-                << "'! This conflicts with this being the designated Master federate!\n";
+                << "'! This conflicts with this being the designated Master federate!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -498,7 +498,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::add_multiphase_init_sync_points:" << __LINE__
                 << " ERROR: User specified multiphase init sync-point label '"
-                << user_sync_pt_labels[i] << "' already added!\n";
+                << user_sync_pt_labels[i] << "' already added!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
          add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
@@ -595,7 +595,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to send at least one object attribute. Make"
              << " sure at least one ExecutionConfiguration attribute has 'publish = true'"
              << " set. Please check your input or modified-data files to make"
-             << " sure the 'publish' value is correctly specified.\n";
+             << " sure the 'publish' value is correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -653,7 +653,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                         << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -681,7 +681,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one ExecutionConfiguration attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified.\n";
+             << " files to make sure the 'subscribe' value is correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -863,7 +863,7 @@ double ExecutionControlBase::get_sim_time()
       errmsg << "ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
-             << " file. Returning Trick simulation time instead!\n";
+             << " file. Returning Trick simulation time instead!" << endl;
       message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
    return exec_get_sim_time();
@@ -880,7 +880,7 @@ double ExecutionControlBase::get_scenario_time()
       errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
-             << " file. Returning Trick simulation time instead!\n";
+             << " file. Returning Trick simulation time instead!" << endl;
       message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
 

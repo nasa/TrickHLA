@@ -262,10 +262,12 @@ void ExecutionConfigurationBase::wait_for_registration()
          // Build the summary as an output string stream.
          ostringstream summary;
          summary << "ExecutionConfigurationBase::wait_for_registration()"
-                 << __LINE__ << "\nOBJECTS: " << total_obj_cnt;
+                 << __LINE__ << endl
+                 << "OBJECTS: " << total_obj_cnt;
 
          // Execution-Configuration object
-         summary << "\n  1:Object instance '" << get_name() << "' ";
+         summary << endl
+                 << "  1:Object instance '" << get_name() << "' ";
 
          if ( is_instance_handle_valid() ) {
             string id_str;
@@ -276,7 +278,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( is_required() ? "REQUIRED" : "not required" )
                  << " and is "
                  << ( is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
-                 << '\n';
+                 << endl;
          // Display the summary.
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
@@ -305,7 +307,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                         << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -362,7 +364,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                         << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -390,7 +392,8 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified.\n";
+             << " files to make sure the 'subscribe' value is correctly specified."
+             << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

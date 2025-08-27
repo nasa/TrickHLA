@@ -120,7 +120,7 @@ void Parameter::initialize(
              << " parameter. Make sure 'THLA.manager.interactions["
              << interaction_index << "].parameters[" << parameter_index
              << "].FOM_name' in either your input.py file or modified-data files"
-             << " is correctly specified.\n";
+             << " is correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -134,7 +134,7 @@ void Parameter::initialize(
                 << " Trick name for the parameter. Make sure 'THLA.manager.interactions["
                 << interaction_index << "].parameters[" << parameter_index
                 << "].trick_name' in either your input.py file or modified-data files"
-                << " is correctly specified.\n";
+                << " is correctly specified." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -149,7 +149,7 @@ void Parameter::initialize(
              << rti_encoding << " which is out of the valid range of "
              << ENCODING_FIRST_VALUE << " to " << ENCODING_LAST_VALUE
              << ". Please check your input or modified-data files to make sure"
-             << " the value for the 'rti_encoding' is correctly specified.\n";
+             << " the value for the 'rti_encoding' is correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -161,7 +161,7 @@ void Parameter::initialize(
       errmsg << "Parameter::initialize():" << __LINE__
              << " ERROR: Unexpected NULL encoder for Trick variable '"
              << get_trick_name() << "' with an 'rti_encoding' value of "
-             << rti_encoding << ".\n";
+             << rti_encoding << "." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -172,15 +172,15 @@ void Parameter::initialize(
       string param_handle_string;
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
-      msg << "Parameter::initialize():" << __LINE__ << '\n'
-          << "========================================================\n"
-          //        << "  Encoder:" << this->encoder->to_string() << "\n"
-          << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
-          << "  FOM_name:'" << get_FOM_name() << "'\n"
-          << "  trick_name:'" << get_trick_name() << "'\n"
-          << "  ParameterHandle:" << param_handle_string << '\n'
-          << "  rti_encoding:" << rti_encoding << '\n'
-          << "  received:" << ( is_received() ? "Yes" : "No" ) << '\n';
+      msg << "Parameter::initialize():" << __LINE__ << endl
+          << "========================================================" << endl
+          //        << "  Encoder:" << this->encoder->to_string() << "" << endl
+          << "  interaction_FOM_name:'" << interaction_FOM_name << "'" << endl
+          << "  FOM_name:'" << get_FOM_name() << "'" << endl
+          << "  trick_name:'" << get_trick_name() << "'" << endl
+          << "  ParameterHandle:" << param_handle_string << endl
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  received:" << ( is_received() ? "Yes" : "No" ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -197,14 +197,14 @@ void Parameter::initialize(
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
-             << "'. Unexpected NULL trick variable address.\n";
+             << "'. Unexpected NULL trick variable address." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    if ( attr == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
-             << "'. Unexpected NULL ATTRIBUTES pointer.\n";
+             << "'. Unexpected NULL ATTRIBUTES pointer." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -219,7 +219,7 @@ void Parameter::initialize(
       errmsg << "Parameter::initialize():" << __LINE__
              << " ERROR: Unexpected NULL encoder for Trick variable '"
              << attr->name << "' with an 'rti_encoding' value of "
-             << rti_encoding << ".\n";
+             << rti_encoding << "." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -227,15 +227,15 @@ void Parameter::initialize(
       string param_handle_string;
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
-      msg << "Parameter::initialize():" << __LINE__ << '\n'
-          << "========================================================\n"
-          << "  Encoder:\n"
-          << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
-          << "  FOM_name:'" << get_FOM_name() << "'\n"
-          << "  trick_name:'" << get_trick_name() << "'\n"
-          << "  ParameterHandle:" << param_handle_string << '\n'
-          << "  rti_encoding:" << rti_encoding << '\n'
-          << "  received:" << ( is_received() ? "Yes" : "No" ) << '\n';
+      msg << "Parameter::initialize():" << __LINE__ << endl
+          << "========================================================" << endl
+          << "  Encoder:" << endl
+          << "  interaction_FOM_name:'" << interaction_FOM_name << "'" << endl
+          << "  FOM_name:'" << get_FOM_name() << "'" << endl
+          << "  trick_name:'" << get_trick_name() << "'" << endl
+          << "  ParameterHandle:" << param_handle_string << endl
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  received:" << ( is_received() ? "Yes" : "No" ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

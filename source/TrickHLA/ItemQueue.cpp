@@ -181,7 +181,7 @@ void ItemQueue::dump_linked_list(
    for ( Item *item = head; item != NULL; item = item->next ) {
       msg << item << "->";
    }
-   msg << "NULL\n";
+   msg << "NULL" << endl;
 
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }

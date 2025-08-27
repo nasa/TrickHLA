@@ -80,7 +80,7 @@ int LagCompensationInteg::integrate(
       ostringstream msg;
       msg << "LagCompensationInteg::integrate(): " << __LINE__
           << " Compensate: t_begin, t_end, dt_go: "
-          << t_begin << ", " << t_end << ", " << dt_go << '\n';
+          << t_begin << ", " << t_end << ", " << dt_go << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -99,7 +99,7 @@ int LagCompensationInteg::integrate(
          msg << "LagCompensationInteg::integrate(): " << __LINE__
              << "Integ dt, tol, t, dt_go: "
              << this->integ_dt << ", " << this->integ_tol << ", "
-             << integ_t << ", " << dt_go << '\n';
+             << integ_t << ", " << dt_go << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 

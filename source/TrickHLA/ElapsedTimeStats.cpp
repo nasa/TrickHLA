@@ -145,7 +145,7 @@ double const ElapsedTimeStats::confidence_to_Z(
 std::string const ElapsedTimeStats::to_string()
 {
    stringstream msg;
-   msg << "ElapsedTimeStats::to_string():" << __LINE__ << '\n';
+   msg << "ElapsedTimeStats::to_string():" << __LINE__ << endl;
 
    if ( count > 0 ) {
       double mean = time_sum / (double)count; // milliseconds
@@ -193,25 +193,25 @@ std::string const ElapsedTimeStats::to_string()
       // We have to double escape the % sign so that message_publish() will
       // print the percent character '%' correctly and not as a c-string
       // formating code.
-      msg << "    sample-count: " << count << '\n'
-          << "             min: " << min << " milliseconds\n"
-          << "             max: " << max << " milliseconds\n"
-          << "            mean: " << mean << " milliseconds\n"
-          << "  sample-std-dev: " << std_dev << " milliseconds\n"
+      msg << "    sample-count: " << count << endl
+          << "             min: " << min << " milliseconds" << endl
+          << "             max: " << max << " milliseconds" << endl
+          << "            mean: " << mean << " milliseconds" << endl
+          << "  sample-std-dev: " << std_dev << " milliseconds" << endl
           << " margin-of-error: " << ( moe_percent * 100.0 )
           << "%%%% (" << moe << " milliseconds) with "
-          << ( confidence * 100.0 ) << "%%%% confidence\n"
-          << " min-sample-size: " << min_sample_size << '\n'
+          << ( confidence * 100.0 ) << "%%%% confidence" << endl
+          << " min-sample-size: " << min_sample_size << endl
           << "        guidance: To estimate the average elapsed time between reads to within a "
           << ( M_percent * 100.0 ) << "%%%% ("
           << M << " milliseconds) margin of error with a "
           << ( confidence * 100.0 ) << "%%%% confidence level we need at least "
           << min_sample_size << " samples based on the statistics.";
    } else {
-      msg << "    sample-count: " << count << '\n'
-          << "             min: N/A\n"
-          << "             max: N/A\n"
-          << "            mean: N/A\n"
+      msg << "    sample-count: " << count << endl
+          << "             min: N/A" << endl
+          << "             max: N/A" << endl
+          << "            mean: N/A" << endl
           << "  sample-std-dev: N/A";
    }
    return msg.str();
