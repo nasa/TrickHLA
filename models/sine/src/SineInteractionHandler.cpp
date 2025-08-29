@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -99,7 +100,7 @@ void SineInteractionHandler::send_sine_interaction(
    ostringstream msg;
    msg << "SineInteractionHandler::send_sine_interaction():" << __LINE__
        << " Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" )
-       << "\" Send-count:" << ( send_cnt + 1 ) << '\n';
+       << "\" Send-count:" << ( send_cnt + 1 ) << endl;
    message_publish( MSG_NORMAL, msg.str().c_str() );
 
    if ( message != NULL ) {
@@ -151,23 +152,23 @@ void SineInteractionHandler::send_sine_interaction(
 #else
               << "Receive Order):"
 #endif
-              << __LINE__ << '\n'
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-              << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
-              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n' // flawfinder: ignore
-              << "  user-supplied-tag:'" << user_supplied_tag_string << "'\n"
-              << "  user-supplied-tag-size:" << user_supplied_tag.size() << '\n'
+              << __LINE__ << endl
+              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
+              << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl
+              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << endl // flawfinder: ignore
+              << "  user-supplied-tag:'" << user_supplied_tag_string << "'" << endl
+              << "  user-supplied-tag-size:" << user_supplied_tag.size() << endl
               << "  hla_granted_time:" << send_time << " ("
-              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_units() << ")\n"
+              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_units() << ")" << endl
               << "  send_time:" << send_time << " ("
-              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_units() << ")\n"
+              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_units() << ")" << endl
               << "  lookahead_time:" << lookahead_time << " ("
-              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_units() << ")\n"
+              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_units() << ")" << endl
               << "  timestamp:" << timestamp << " ("
-              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_units() << ")\n"
-              << "  time:" << time << '\n'
-              << "  year:" << year << '\n'
-              << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << "  time:" << time << endl
+              << "  year:" << year << endl
+              << "  send_cnt:" << ( send_cnt + 1 ) << endl;
          message_publish( MSG_NORMAL, msg2.str().c_str() );
       }
 
@@ -180,8 +181,8 @@ void SineInteractionHandler::send_sine_interaction(
          // The interaction was Not sent.
          ostringstream msg2;
          msg2 << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
-              << __LINE__ << '\n'
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n";
+              << __LINE__ << endl
+              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl;
          message_publish( MSG_NORMAL, msg2.str().c_str() );
       }
    }
@@ -201,16 +202,16 @@ void SineInteractionHandler::receive_interaction(
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       ostringstream msg;
       msg << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
-          << __LINE__ << '\n'
-          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-          << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
-          << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n' // flawfinder: ignore
-          << "  user-supplied-tag:'" << user_tag_string << "'\n"
-          << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << '\n'
-          << "  scenario_time:" << get_scenario_time() << '\n'
-          << "  time:" << time << '\n'
-          << "  year:" << year << '\n'
-          << "  receive_cnt:" << receive_cnt << '\n';
+          << __LINE__ << endl
+          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
+          << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl
+          << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << endl // flawfinder: ignore
+          << "  user-supplied-tag:'" << user_tag_string << "'" << endl
+          << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << endl
+          << "  scenario_time:" << get_scenario_time() << endl
+          << "  time:" << time << endl
+          << "  year:" << year << endl
+          << "  receive_cnt:" << receive_cnt << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

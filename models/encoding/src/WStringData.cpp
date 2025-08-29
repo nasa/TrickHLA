@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <ostream>
 #include <sstream>
 #include <string>
 

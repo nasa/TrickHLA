@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <ostream>
 #include <sstream>
 
 // Trick include files.
@@ -40,6 +41,7 @@ NASA, Johnson Space Center\n
 // Model include files.
 #include "sine/include/SineObjectDeleted.hh"
 
+using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
 
@@ -62,8 +64,9 @@ SineObjectDeleted::~SineObjectDeleted()
 
 void SineObjectDeleted::deleted()
 {
-   std::ostringstream msg;
+   ostringstream msg;
    msg << "SineObjectDeleted::deleted():" << __LINE__
-       << " Object '" << object->get_name() << "' deleted from the federation.\n";
+       << " Object '" << object->get_name() << "' deleted from the federation."
+       << endl;
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }

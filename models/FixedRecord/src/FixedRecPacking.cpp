@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -74,7 +75,7 @@ void FixedRecPacking::pack()
    if ( !initialized ) {
       ostringstream msg;
       msg << "FixedRecPacking::pack():" << __LINE__
-          << " ERROR: The initialize() function has not been called!\n";
+          << " ERROR: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
    }
 
@@ -112,7 +113,7 @@ void FixedRecPacking::unpack()
    if ( !initialized ) {
       ostringstream msg;
       msg << "FixedRecPacking::unpack():" << __LINE__
-          << " ERROR: The initialize() function has not been called!\n";
+          << " ERROR: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
    }
 
@@ -141,8 +142,8 @@ void FixedRecPacking::unpack()
       string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
-      msg << "FixedRecPacking::unpack():" << __LINE__ << '\n'
-          << "Object-Name:'" << obj_name << "'\n"
+      msg << "FixedRecPacking::unpack():" << __LINE__ << endl
+          << "Object-Name:'" << obj_name << "'" << endl
           << "\t sim_data:" << sim_data->to_string()
           << "\t ----------" << endl
           << "\t unpack:" << to_string();
