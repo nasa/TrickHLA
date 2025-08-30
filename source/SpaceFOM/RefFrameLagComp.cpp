@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <ostream>
 #include <sstream>
 
 // Trick includes.
@@ -105,7 +106,7 @@ void RefFrameLagComp::initialize()
    if ( this->integrator == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!\n";
+             << " ERROR: Unexpected NULL Trick integrator!" << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

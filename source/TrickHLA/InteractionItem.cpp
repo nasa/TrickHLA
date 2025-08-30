@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <cstring>
 #include <map>
+#include <ostream>
 #include <sstream>
 #include <time.h>
 

@@ -123,7 +123,7 @@ void RefFrameBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::base_config():" << __LINE__
-             << " WARNING: Unexpected empty federation instance frame name!\n";
+             << " WARNING: Unexpected empty federation instance frame name!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -193,7 +193,7 @@ void RefFrameBase::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
              << " WARNING: Unexpected NULL THLAManager object for ReferenceFrame \""
-             << this->packing_data.name << "\"!\n";
+             << this->packing_data.name << "\"!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -272,7 +272,7 @@ void RefFrameBase::initialize()
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
              << "', detected unexpected NULL federation instance name!"
-             << '\n';
+             << endl;
 
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -375,7 +375,7 @@ void RefFrameBase::set_name( std::string const &new_name )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
-             << " ERROR: The initialize() function has already been called\n";
+             << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -396,7 +396,7 @@ void RefFrameBase::set_parent_name( std::string const &name )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
-             << " ERROR: The initialize() function has already been called\n";
+             << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -421,7 +421,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
-             << " ERROR: The initialize() function has already been called\n";
+             << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -503,7 +503,7 @@ void RefFrameBase::publish()
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!\n";
+             << " WARNING: Ignoring, reference frame already initialized!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = true;
@@ -529,7 +529,7 @@ void RefFrameBase::subscribe()
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!\n";
+             << " WARNING: Ignoring, reference frame already initialized!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = false;
@@ -557,7 +557,7 @@ void RefFrameBase::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::pack() Warning: The initialize() function has not"
-                << " been called!\n";
+                << " been called!" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -570,7 +570,7 @@ void RefFrameBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "RefFrameBase::pack():" << __LINE__ << '\n';
+      msg << "RefFrameBase::pack():" << __LINE__ << endl;
       print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -590,7 +590,7 @@ void RefFrameBase::unpack()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::unpack():" << __LINE__
-                << " Warning: The initialize() function has not been called!\n";
+                << " Warning: The initialize() function has not been called!" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -604,7 +604,7 @@ void RefFrameBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "RefFrameBase::unpack():" << __LINE__ << '\n';
+      msg << "RefFrameBase::unpack():" << __LINE__ << endl;
       print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -620,10 +620,10 @@ void RefFrameBase::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'\n";
-   stream << "\ttime:   " << packing_data.state.time << '\n';
+   stream << "\tObject-Name: '" << object->get_name() << "'" << endl;
+   stream << "\ttime:   " << packing_data.state.time << endl;
    packing_data.print_data( stream );
-   stream << '\n';
+   stream << endl;
 
    return;
 }

@@ -177,7 +177,8 @@ bool PhysicalInterfaceConditionalBase::should_send(
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
-             << "ERROR: Could not find the data for the specified FOM attribute!\n";
+             << "ERROR: Could not find the data for the specified FOM attribute!"
+             << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <cstring>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -126,7 +127,7 @@ void MTRInteractionHandler::send_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
-             << " ERROR: Unexpected NULL Interaction!\n";
+             << " ERROR: Unexpected NULL Interaction!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -165,20 +166,20 @@ void MTRInteractionHandler::send_interaction(
          ostringstream msg;
 
          msg << "++++SENDING++++ MTRInteractionHandler::send_interaction("
-             << "Receive Order):" << __LINE__ << '\n'
-             << "  name: '" << name << "'\n"
-             << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
-             << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << '\n'
-             << "  mode request: " << mtr_enum_to_string( mtr_mode ) << '\n'
-             << "  Scenario time: " << scenario_time << '\n'
-             << "  Simulation time: " << sim_time << '\n';
+             << "Receive Order):" << __LINE__ << endl
+             << "  name: '" << name << "'" << endl
+             << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'" << endl
+             << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << endl
+             << "  mode request: " << mtr_enum_to_string( mtr_mode ) << endl
+             << "  Scenario time: " << scenario_time << endl
+             << "  Simulation time: " << sim_time << endl;
          if ( exco_base->does_cte_timeline_exist() ) {
-            msg << "  CTE time: " << cte_time << '\n';
+            msg << "  CTE time: " << cte_time << endl;
          }
          msg << "  HLA grant time: " << granted_time << " ("
              << Int64BaseTime::to_base_time( granted_time ) << " "
-             << Int64BaseTime::get_units() << ")\n"
-             << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+             << Int64BaseTime::get_units() << ")" << endl
+             << "  send_cnt:" << ( send_cnt + 1 ) << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
@@ -200,16 +201,16 @@ void MTRInteractionHandler::send_interaction(
          // The interaction was Not sent.
          ostringstream msg;
          msg << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
-             << __LINE__ << '\n'
-             << "  name:'" << name << "'\n"
-             << "  Scenario time: " << scenario_time << '\n'
-             << "  Simulation time: " << sim_time << '\n';
+             << __LINE__ << endl
+             << "  name:'" << name << "'" << endl
+             << "  Scenario time: " << scenario_time << endl
+             << "  Simulation time: " << sim_time << endl;
          if ( exco_base->does_cte_timeline_exist() ) {
-            msg << "  CTE time: " << cte_time << '\n';
+            msg << "  CTE time: " << cte_time << endl;
          }
          msg << "  HLA grant time: " << granted_time << " ("
              << Int64BaseTime::to_base_time( granted_time ) << " "
-             << Int64BaseTime::get_units() << ")\n";
+             << Int64BaseTime::get_units() << ")" << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
@@ -222,7 +223,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << " ERROR: Unexpected NULL Interaction!\n";
+             << " ERROR: Unexpected NULL Interaction!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -231,7 +232,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( exco == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!\n";
+             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       exit( 1 );
    }
@@ -268,20 +269,20 @@ void MTRInteractionHandler::receive_interaction(
 
       ostringstream msg;
       msg << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
-          << __LINE__ << '\n'
-          << "  name:'" << name << "'\n"
-          << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
-          << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << '\n'
-          << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << '\n'
-          << "  Scenario time: " << this->scenario_time << '\n'
-          << "  Simulation time: " << this->sim_time << '\n';
+          << __LINE__ << endl
+          << "  name:'" << name << "'" << endl
+          << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
+          << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << endl
+          << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << endl
+          << "  Scenario time: " << this->scenario_time << endl
+          << "  Simulation time: " << this->sim_time << endl;
       if ( exco->does_cte_timeline_exist() ) {
-         msg << "  CTE time: " << this->cte_time << '\n';
+         msg << "  CTE time: " << this->cte_time << endl;
       }
       msg << "  HLA grant time: " << this->granted_time << " ("
           << Int64BaseTime::to_base_time( this->granted_time ) << " "
-          << Int64BaseTime::get_units() << ")\n"
-          << "  receive_cnt:" << ( receive_cnt + 1 ) << '\n';
+          << Int64BaseTime::get_units() << ")" << endl
+          << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 

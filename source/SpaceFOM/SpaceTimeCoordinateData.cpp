@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
+using namespace std;
 using namespace SpaceFOM;
 
 /*!
@@ -165,20 +166,20 @@ void SpaceTimeCoordinateData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\ttime: " << time << '\n';
+   stream << "\ttime: " << time << endl;
    stream << "\tposition: "
           << "\t\t" << pos[0] << ", "
           << "\t\t" << pos[1] << ", "
-          << "\t\t" << pos[2] << '\n';
+          << "\t\t" << pos[2] << endl;
    stream << "\tvelocity: "
           << "\t\t" << vel[0] << ", "
           << "\t\t" << vel[1] << ", "
-          << "\t\t" << vel[2] << '\n';
+          << "\t\t" << vel[2] << endl;
    att.print_data( stream );
    stream << "\tangular velocity: "
           << "\t\t" << ang_vel[0] << ", "
           << "\t\t" << ang_vel[1] << ", "
-          << "\t\t" << ang_vel[2] << '\n';
+          << "\t\t" << ang_vel[2] << endl;
 
    return;
 }

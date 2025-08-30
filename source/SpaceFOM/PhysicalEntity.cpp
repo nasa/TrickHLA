@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <cstring>
+#include <ostream>
 #include <sstream>
 
 // SpaceFOM includes.
@@ -89,7 +90,7 @@ void PhysicalEntity::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: "
-             << pe_packing_data.name << '\n';
+             << pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -113,7 +114,7 @@ void PhysicalEntity::set_data( PhysicalEntityData *physical_data_ptr )
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: "
-             << pe_packing_data.name << '\n';
+             << pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -134,7 +135,7 @@ void PhysicalEntity::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: "
-             << pe_packing_data.name << '\n';
+             << pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       return;

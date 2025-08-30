@@ -144,7 +144,7 @@ void PhysicalEntityData::print_data( std::ostream &stream ) const
           << "\t\t" << cm[1] << ", "
           << "\t\t" << cm[2] << endl;
 
-   stream << "\tBody frame orientation:\n";
+   stream << "\tBody frame orientation:" << endl;
    body_wrt_struct.print_data( stream );
 
    return;

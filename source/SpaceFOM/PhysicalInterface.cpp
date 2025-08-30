@@ -89,7 +89,7 @@ void PhysicalInterface::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::configure():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
-             << packing_data.name << '\n';
+             << packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -112,7 +112,7 @@ void PhysicalInterface::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
-             << packing_data.name << '\n';
+             << packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -243,7 +243,7 @@ void PhysicalInterface::set_data( PhysicalInterfaceData *interface_data_ptr )
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
-             << packing_data.name << '\n';
+             << packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       return;

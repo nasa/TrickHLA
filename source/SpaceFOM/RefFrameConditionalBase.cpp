@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
+#include <ostream>
 #include <sstream>
 
 // SpaceFOM includes.
@@ -130,7 +131,7 @@ bool RefFrameConditionalBase::should_send(
       if ( frame.packing_data.name.empty() ) {
          ostringstream errmsg;
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Name for RefFrame!\n";
+                << " ERROR: Unexpected NULL Name for RefFrame!" << endl;
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -167,7 +168,7 @@ bool RefFrameConditionalBase::should_send(
       errmsg << "RefFrameConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
              << "ERROR: Could not find the data for the specified FOM attribute!"
-             << '\n';
+             << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

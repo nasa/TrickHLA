@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <cstring>
+#include <ostream>
 #include <sstream>
 
 // SpaceFOM includes.
@@ -94,7 +95,7 @@ void RefFrameState::set_data(
    if ( ref_frame_data_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -117,7 +118,7 @@ void RefFrameState::initialize()
    if ( ref_frame_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       return;

@@ -49,6 +49,7 @@ NASA, Johnson Space Center\n
 #include <cstring>
 #include <float.h>
 #include <map>
+#include <ostream>
 #include <sstream>
 #include <string>
 

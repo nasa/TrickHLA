@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -122,7 +123,7 @@ void JEODPhysicalInterface::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_ptr: for interface "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -132,7 +133,7 @@ void JEODPhysicalInterface::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_id for interface "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -155,7 +156,7 @@ void JEODPhysicalInterface::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body reference: for interface "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -165,7 +166,7 @@ void JEODPhysicalInterface::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_id for interface "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -181,7 +182,7 @@ void JEODPhysicalInterface::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_data for interface "
-             << vehicle_point_id << '\n';
+             << vehicle_point_id << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -210,7 +211,7 @@ void JEODPhysicalInterface::pack_from_working_data()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "JEODPhysicalInterface::pack() ERROR: The initialize() function has not"
-             << " been called!\n";
+             << " been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -320,7 +321,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_id for interface "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -330,7 +331,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_ptr: for interface "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    } else {
@@ -342,7 +343,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_data for interface "
-             << vehicle_point_id << '\n';
+             << vehicle_point_id << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -361,7 +362,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_ptr: "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -382,7 +383,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_ptr: for interface "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    } else {
@@ -394,7 +395,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_ptr: "
-             << this->packing_data.name << '\n';
+             << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    } else {

@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <ostream>
 #include <sstream>
 
 // Trick inlcudes.
@@ -108,7 +109,7 @@ void DynamicalEntityLagComp::initialize()
       ostringstream errmsg;
 
       errmsg << "SpaceFOM::DynamicalEntityLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!\n";
+             << " ERROR: Unexpected NULL Trick integrator!" << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

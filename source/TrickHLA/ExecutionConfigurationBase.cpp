@@ -42,6 +42,7 @@ execution.
 // System includes.
 #include <cstddef>
 #include <cstdint>
+#include <ostream>
 #include <sstream>
 #include <string>
 

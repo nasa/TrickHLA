@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
+#include <ostream>
 #include <sstream>
 
 // SpaceFOM includes.
@@ -253,7 +254,8 @@ bool PhysicalEntityConditionalBase::should_send(
 
       errmsg << "PhysicalEntityConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
-             << "ERROR: Could not find the data for the specified FOM attribute!\n";
+             << "ERROR: Could not find the data for the specified FOM attribute!"
+             << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

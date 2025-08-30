@@ -129,7 +129,7 @@ void DynamicalEntityBase::base_config(
    if ( entity_fed_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
-             << " WARNING: Unexpected empty federation instance DynamicalEntity name!\n";
+             << " WARNING: Unexpected empty federation instance DynamicalEntity name!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
       set_name( entity_fed_name );
@@ -339,14 +339,14 @@ void DynamicalEntityBase::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
-             << " been called!\n";
+             << " been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "DynamicalEntityBase::pack():" << __LINE__ << '\n';
+      msg << "DynamicalEntityBase::pack():" << __LINE__ << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -364,15 +364,15 @@ void DynamicalEntityBase::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!\n";
+             << " ERROR: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "DynamicalEntityBase::unpack():" << __LINE__ << '\n'
-          << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << '\n';
+      msg << "DynamicalEntityBase::unpack():" << __LINE__ << endl
+          << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
    }
 

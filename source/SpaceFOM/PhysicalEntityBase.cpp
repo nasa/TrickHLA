@@ -155,7 +155,7 @@ void PhysicalEntityBase::base_config(
    if ( entity_fed_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::base_config():" << __LINE__
-             << " WARNING: Unexpected empty federation instance frame name!\n";
+             << " WARNING: Unexpected empty federation instance frame name!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
       set_name( entity_fed_name );
@@ -420,7 +420,7 @@ void PhysicalEntityBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalEntityBase::pack():" << __LINE__ << "\n";
+      msg << "PhysicalEntityBase::pack():" << __LINE__ << endl;
       debug_print( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -454,7 +454,7 @@ void PhysicalEntityBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalEntityBase::unpack():" << __LINE__ << "\n";
+      msg << "PhysicalEntityBase::unpack():" << __LINE__ << endl;
       debug_print( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -473,7 +473,7 @@ void PhysicalEntityBase::debug_print( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'\n";
+   stream << "\tObject-Name: '" << object->get_name() << "'" << endl;
 
    pe_packing_data.print_data( stream );
 

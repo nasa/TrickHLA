@@ -180,34 +180,34 @@ void RefFrameLagCompBase::print_lag_comp_data( std::ostream &stream ) const
    // Compute the attitude Euler angles.
    euler_quat( euler_angles, quat, 1, Pitch_Yaw_Roll );
 
-   stream << "\tScenario time: " << get_scenario_time() << '\n';
-   stream << "\tLag comp time: " << this->lag_comp_data.time << '\n';
+   stream << "\tScenario time: " << get_scenario_time() << endl;
+   stream << "\tLag comp time: " << this->lag_comp_data.time << endl;
    stream << "\tposition: "
           << "\t\t" << this->lag_comp_data.pos[0] << ", "
           << "\t\t" << this->lag_comp_data.pos[1] << ", "
-          << "\t\t" << this->lag_comp_data.pos[2] << '\n';
+          << "\t\t" << this->lag_comp_data.pos[2] << endl;
    stream << "\tvelocity: "
           << "\t\t" << this->lag_comp_data.vel[0] << ", "
           << "\t\t" << this->lag_comp_data.vel[1] << ", "
-          << "\t\t" << this->lag_comp_data.vel[2] << '\n';
+          << "\t\t" << this->lag_comp_data.vel[2] << endl;
    stream << "\tattitude (s;v): "
           << "\t\t" << this->lag_comp_data.att.scalar << "; "
           << "\t\t" << this->lag_comp_data.att.vector[0] << ", "
           << "\t\t" << this->lag_comp_data.att.vector[1] << ", "
-          << "\t\t" << this->lag_comp_data.att.vector[2] << '\n';
+          << "\t\t" << this->lag_comp_data.att.vector[2] << endl;
    stream << "\tattitude (PYR): "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
+          << "\t\t" << euler_angles[2] << endl;
    stream << "\tangular velocity: "
           << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
           << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "
-          << "\t\t" << this->lag_comp_data.ang_vel[2] << '\n';
+          << "\t\t" << this->lag_comp_data.ang_vel[2] << endl;
    stream << "\tattitude rate (s;v): "
           << "\t\t" << this->Q_dot.scalar << "; "
           << "\t\t" << this->Q_dot.vector[0] << ", "
           << "\t\t" << this->Q_dot.vector[1] << ", "
-          << "\t\t" << this->Q_dot.vector[2] << '\n';
+          << "\t\t" << this->Q_dot.vector[2] << endl;
 
    // Return to the calling routine.
    return;

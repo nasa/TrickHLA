@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
 
+using namespace std;
 using namespace SpaceFOM;
 
 /*!
@@ -131,11 +132,11 @@ void QuaternionData::print_data( std::ostream &stream ) const
           << "\t\t" << scalar << "; "
           << "\t\t" << vector[0] << ", "
           << "\t\t" << vector[1] << ", "
-          << "\t\t" << vector[2] << '\n';
+          << "\t\t" << vector[2] << endl;
    stream << "\tattitude (RPY){deg}: "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
+          << "\t\t" << euler_angles[2] << endl;
 
    return;
 }

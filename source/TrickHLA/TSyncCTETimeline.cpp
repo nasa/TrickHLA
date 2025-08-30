@@ -33,7 +33,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstdint>
 #include <sstream>
 #include <string>
 #include <time.h>

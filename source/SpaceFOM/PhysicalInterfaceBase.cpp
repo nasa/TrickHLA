@@ -310,7 +310,7 @@ void PhysicalInterfaceBase::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
-             << " been called!\n";
+             << " been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -322,7 +322,7 @@ void PhysicalInterfaceBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalInterfaceBase::pack():" << __LINE__ << '\n';
+      msg << "PhysicalInterfaceBase::pack():" << __LINE__ << endl;
       print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -338,7 +338,7 @@ void PhysicalInterfaceBase::unpack()
    if ( !initialized ) {
       ostringstream msg;
       msg << "PhysicalInterfaceBase::unpack():" << __LINE__
-          << " ERROR: The initialize() function has not been called!\n";
+          << " ERROR: The initialize() function has not been called!" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -351,7 +351,7 @@ void PhysicalInterfaceBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalInterfaceBase::unpack():" << __LINE__ << '\n';
+      msg << "PhysicalInterfaceBase::unpack():" << __LINE__ << endl;
       print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -372,23 +372,23 @@ void PhysicalInterfaceBase::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'\n"
-          << "\tname:   '" << packing_data.name << "'\n"
-          << "\tparent: '" << packing_data.parent_name << "'\n";
+   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
+          << "\tname:   '" << packing_data.name << "'" << endl
+          << "\tparent: '" << packing_data.parent_name << "'" << endl;
    stream << "\tposition: "
           << "\t\t" << packing_data.position[0] << ", "
           << "\t\t" << packing_data.position[1] << ", "
-          << "\t\t" << packing_data.position[2] << '\n';
+          << "\t\t" << packing_data.position[2] << endl;
    stream << "\tattitude (s,v): "
           << "\t\t" << packing_data.attitude.scalar << "; "
           << "\t\t" << packing_data.attitude.vector[0] << ", "
           << "\t\t" << packing_data.attitude.vector[1] << ", "
-          << "\t\t" << packing_data.attitude.vector[2] << '\n';
+          << "\t\t" << packing_data.attitude.vector[2] << endl;
    stream << "\tattitude (RPY){deg}: "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
-   stream << '\n';
+          << "\t\t" << euler_angles[2] << endl;
+   stream << endl;
 
    return;
 }

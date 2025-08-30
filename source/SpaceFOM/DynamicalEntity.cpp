@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdlib>
+#include <ostream>
 #include <sstream>
 
 // Trick includes.
@@ -90,7 +91,7 @@ void DynamicalEntity::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::configure():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << '\n';
+             << pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -115,7 +116,7 @@ void DynamicalEntity::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << '\n';
+             << pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -138,7 +139,7 @@ void DynamicalEntity::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << '\n';
+             << pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

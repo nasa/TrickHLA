@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstddef>
 #include <cstdint>
+#include <ostream>
 #include <sstream>
 #include <string>
 

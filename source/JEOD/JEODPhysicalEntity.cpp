@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdlib>
+#include <ostream>
 #include <sstream>
 
 // JEOD model includes.
@@ -95,7 +96,7 @@ void JEODPhysicalEntity::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL JEOD::DynBody: "
-             << this->pe_packing_data.name << '\n';
+             << this->pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -116,7 +117,7 @@ void JEODPhysicalEntity::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_data: "
-             << this->pe_packing_data.name << '\n';
+             << this->pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -273,7 +274,7 @@ void JEODPhysicalEntity::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::set_data():" << __LINE__
              << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
-             << this->pe_packing_data.name << '\n';
+             << this->pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

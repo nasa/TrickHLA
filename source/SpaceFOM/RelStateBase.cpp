@@ -112,7 +112,7 @@ bool RelStateBase::set_frame(
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!\n";
+             << wrt_frame << " not found!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -138,7 +138,7 @@ bool RelStateBase::set_frame(
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!\n";
+             << wrt_frame << " not found!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -208,8 +208,8 @@ bool RelStateBase::compute_state(
       // Print out the path transformation if debug is set.
       if ( debug ) {
          ostringstream msg;
-         msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
-         msg << "Path transformation for " << entity->name << "\n";
+         msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << endl;
+         msg << "Path transformation for " << entity->name << endl;
          path_transform.print_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -318,8 +318,8 @@ bool RelStateBase::compute_state(
    // Print out the path transformation if debug is set.
    if ( debug ) {
       ostringstream msg;
-      msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
-      msg << "\tPath transform: \n";
+      msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << endl;
+      msg << "\tPath transform:" << endl;
       path_transform.print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

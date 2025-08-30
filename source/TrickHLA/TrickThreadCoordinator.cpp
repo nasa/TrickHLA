@@ -40,6 +40,7 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include <cstddef>
 #include <cstdint>
 #include <iomanip>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>

@@ -230,8 +230,8 @@ bool RefFrameTree::build_transform(
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                ostringstream errmsg;
-               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_parent:\n"
-                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
+               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_parent:" << endl
+                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << endl;
                out_frame_data.print_data( errmsg );
                message_publish( MSG_NORMAL, errmsg.str().c_str() );
             }
@@ -251,8 +251,8 @@ bool RefFrameTree::build_transform(
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                ostringstream errmsg;
-               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_child:\n"
-                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
+               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_child:" << endl
+                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << endl;
                out_frame_data.print_data( errmsg );
                message_publish( MSG_NORMAL, errmsg.str().c_str() );
             }
