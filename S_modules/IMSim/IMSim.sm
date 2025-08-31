@@ -27,6 +27,8 @@
 
 // Trick include files.
 ##include "trick/exec_proto.h"
+##include "trick/message_proto.h"
+##include "trick/message_type.h"
 
 // TrickHLA include files.
 ##include "TrickHLA/HLAStandardSupport.hh"
@@ -72,7 +74,7 @@ class IMSimSimObject : public Trick::SimObject {
    double const       CHECK_PAUSE_DELTA;
 
    IMSimSimObject( double main_thread_data_cycle,
-                   double main_thread_interaction_cycle,
+                   double main_thread_interaction_cycle = 0.0,
                    unsigned short _1ST  = 1,
                    unsigned short _INIT = 60,
                    unsigned short _LAST = 65534 ) 
@@ -84,7 +86,20 @@ class IMSimSimObject : public Trick::SimObject {
          exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > 0.0!" );
       }
       if ( main_thread_interaction_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "IMSimSimObject() main_thread_interaction_cycle must be > 0.0!" );
+         main_thread_interaction_cycle = main_thread_data_cycle;
+         message_publish( MSG_WARNING, "IMSimSimObject() WARNING: Setting interaction_cycle to data_cycle time '%f'.\n", main_thread_interaction_cycle );
+      }
+      if ( main_thread_interaction_cycle != data_cycle ) {
+         long long inter_cycle_basetime = main_thread_interaction_cycle * exec_get_time_tic_value();
+         long long data_cycle_basetime  = main_thread_data_cycle * exec_get_time_tic_value();
+         if ( ( inter_cycle_basetime > data_cycle_basetime ) && ( ( inter_cycle_basetime % data_cycle_basetime ) != 0 ) ) {
+            message_publish( MSG_ERROR, "IMSimSimObject() ERROR: interaction_cycle time '%f' is not an integer multiple of the data_cycle time '%f'!\n", main_thread_interaction_cycle, main_thread_data_cycle );
+            exec_terminate( __FILE__, "IMSimSimObject() ERROR: interaction_cycle time is not an integer multiple of the data_cycle time!\n" );
+         }
+         if ( ( inter_cycle_basetime < data_cycle_basetime ) && ( ( data_cycle_basetime % inter_cycle_basetime ) != 0 ) ) {
+            message_publish( MSG_ERROR, "IMSimSimObject() ERROR: data_cycle time '%f' is not an integer multiple of the interaction_cycle time '%f'!\n", main_thread_data_cycle, main_thread_interaction_cycle );
+            exec_terminate( __FILE__, "IMSimSimObject() ERROR: data_cycle time is not an integer multiple of the interaction_cycle time!\n" );
+         }
       }
 
       // Calculate and validate the check-pause job offset time.
@@ -199,7 +214,7 @@ class IMSimSimObject : public Trick::SimObject {
    }
 
  protected:
-    double      data_cycle_time;
+    double  data_cycle_time;
  
  private:
    // Do not allow the implicit copy constructor or assignment operator.

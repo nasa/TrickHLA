@@ -33,6 +33,8 @@
 
 // Trick include files.
 ##include "trick/exec_proto.h"
+##include "trick/message_proto.h"
+##include "trick/message_type.h"
 
 // TrickHLA include files.
 ##include "TrickHLA/HLAStandardSupport.hh"
@@ -72,22 +74,33 @@ class THLABaseSimObject : public Trick::SimObject {
    TrickHLA::Manager  manager;
    
    double data_cycle_time;
-   double interaction_cycle_time;
 
    THLABaseSimObject( double data_cycle,
-                      double interaction_cycle,
+                      double interaction_cycle = 0.0,
                       unsigned short _1ST  = 1,
                       unsigned short _INIT = 60,
                       unsigned short _LAST = 65534 )
-      : data_cycle_time( data_cycle ),
-        interaction_cycle_time( interaction_cycle )
+      : data_cycle_time( data_cycle )
    {
       // Validate the data and interaction cycle times.
       if ( data_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "THLABaseSimObject() data_cycle must be > 0.0!" );
+         exec_terminate( __FILE__, "THLABaseSimObject() ERROR: data_cycle must be > 0.0!\n" );
       }
       if ( interaction_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "THLABaseSimObject() interaction_cycle must be > 0.0!" );
+         interaction_cycle = data_cycle;
+         message_publish( MSG_WARNING, "THLABaseSimObject() WARNING: Setting interaction_cycle to data_cycle time '%f'.\n", interaction_cycle );
+      }
+      if ( interaction_cycle != data_cycle ) {
+         long long inter_cycle_basetime = interaction_cycle * exec_get_time_tic_value();
+         long long data_cycle_basetime  = data_cycle * exec_get_time_tic_value();
+         if ( ( inter_cycle_basetime > data_cycle_basetime ) && ( ( inter_cycle_basetime % data_cycle_basetime ) != 0 ) ) {
+            message_publish( MSG_ERROR, "THLABaseSimObject() ERROR: interaction_cycle time '%f' is not an integer multiple of the data_cycle time '%f'!\n", interaction_cycle, data_cycle );
+            exec_terminate( __FILE__, "THLABaseSimObject() ERROR: interaction_cycle time is not an integer multiple of the data_cycle time!\n" );
+         }
+         if ( ( inter_cycle_basetime < data_cycle_basetime ) && ( ( data_cycle_basetime % inter_cycle_basetime ) != 0 ) ) {
+            message_publish( MSG_ERROR, "THLABaseSimObject() ERROR: data_cycle time '%f' is not an integer multiple of the interaction_cycle time '%f'!\n", data_cycle, interaction_cycle );
+            exec_terminate( __FILE__, "THLABaseSimObject() ERROR: data_cycle time is not an integer multiple of the interaction_cycle time!\n" );
+         }
       }
 
       //-----------------------

@@ -54,7 +54,7 @@ class IMSimSimObject : public THLABaseSimObject {
    double const check_pause_delta;
 
    IMSimSimObject( double main_thread_data_cycle,
-                   double main_thread_interaction_cycle,
+                   double main_thread_interaction_cycle = 0.0,
                    unsigned short _1ST  = 1,
                    unsigned short _INIT = 60,
                    unsigned short _LAST = 65534,
