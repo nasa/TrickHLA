@@ -81,24 +81,37 @@ class IMSimSimObject : public Trick::SimObject {
       : data_cycle_time( main_thread_data_cycle ),
         CHECK_PAUSE_DELTA( 0.000001 )
    {
-      // Validate the data and interaction cycle times.
+      // Verify the data and interaction cycle times.
       if ( main_thread_data_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > 0.0!" );
+         message_publish( MSG_ERROR, "%s:IMSimSimObject():%d ERROR: data_cycle time must be > 0.0!\n", __FILE__, __LINE__ );
+         exit( -1 );
       }
       if ( main_thread_interaction_cycle <= 0.0 ) {
          main_thread_interaction_cycle = main_thread_data_cycle;
-         message_publish( MSG_WARNING, "IMSimSimObject() WARNING: Setting interaction_cycle to data_cycle time '%f'.\n", main_thread_interaction_cycle );
+         message_publish( MSG_WARNING, "IMSimSimObject():%d WARNING: Setting main_thread_interaction_cycle to data_cycle time '%f'.\n",
+                          __LINE__, main_thread_interaction_cycle );
       }
-      if ( main_thread_interaction_cycle != data_cycle ) {
+      if ( main_thread_interaction_cycle != main_thread_data_cycle ) {
          long long inter_cycle_basetime = main_thread_interaction_cycle * exec_get_time_tic_value();
          long long data_cycle_basetime  = main_thread_data_cycle * exec_get_time_tic_value();
          if ( ( inter_cycle_basetime > data_cycle_basetime ) && ( ( inter_cycle_basetime % data_cycle_basetime ) != 0 ) ) {
-            message_publish( MSG_ERROR, "IMSimSimObject() ERROR: interaction_cycle time '%f' is not an integer multiple of the data_cycle time '%f'!\n", main_thread_interaction_cycle, main_thread_data_cycle );
-            exec_terminate( __FILE__, "IMSimSimObject() ERROR: interaction_cycle time is not an integer multiple of the data_cycle time!\n" );
+            std::ostringstream errmsg;
+            errmsg << __FILE__ << ":IMSimSimObject():" << __LINE__
+                   << " ERROR: interaction_cycle time '" << main_thread_interaction_cycle
+                   << "' is not an integer multiple of the data_cycle time '"
+                   << main_thread_data_cycle << "'!" << std::endl;
+            message_publish( MSG_ERROR, errmsg.str().c_str() );
+            exit( -1 );
          }
          if ( ( inter_cycle_basetime < data_cycle_basetime ) && ( ( data_cycle_basetime % inter_cycle_basetime ) != 0 ) ) {
-            message_publish( MSG_ERROR, "IMSimSimObject() ERROR: data_cycle time '%f' is not an integer multiple of the interaction_cycle time '%f'!\n", main_thread_data_cycle, main_thread_interaction_cycle );
-            exec_terminate( __FILE__, "IMSimSimObject() ERROR: data_cycle time is not an integer multiple of the interaction_cycle time!\n" );
+            std::ostringstream errmsg;
+            errmsg << __FILE__ << ":IMSimSimObject():" << __LINE__
+                   << " ERROR: data_cycle time '" << main_thread_data_cycle
+                   << "' divided by the interaction_cycle time '"
+                   << main_thread_interaction_cycle << "' must be an integer!"
+                   << std::endl;
+            message_publish( MSG_ERROR, errmsg.str().c_str() );
+            exit( -1 );
          }
       }
 
