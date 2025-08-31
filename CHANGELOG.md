@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Notable Additions
 
 - Added support for IEEE 1516-2025 (HLA 4).
-- Added support for Fixed Records.
+- Added support for Fixed Records including direct encoding and decoding of Trick simulation variables from memory.
 
 ### Breaking Changes
 
@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Added this CHANGELOG file.
 - Added Ball simulation based off the Trick tutorial Ball simulation.
+- Added a check to the THLABaseSimObject to set the interaction cycle time to the data cycle time if a time is not set.
+- Added a check to the THLABaseSimObject to verify the interaction cycle time is an integer multiple of the data cycle time.
 
 ### Changed
 
