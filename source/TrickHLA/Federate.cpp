@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <ostream>
 #include <set>
 #include <sstream>
 #include <string>
@@ -280,7 +281,7 @@ void Federate::print_version() const
       StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
 
       ostringstream msg;
-      msg << "Federate::print_version()::" << __LINE__ << endl
+      msg << "Federate::print_version():" << __LINE__ << endl
           << "     TrickHLA-version:'" << Utilities::get_version() << "'" << endl
           << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'" << endl
           << "             RTI-name:'" << rti_name << "'" << endl
