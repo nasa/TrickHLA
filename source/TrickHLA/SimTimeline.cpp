@@ -28,7 +28,7 @@ NASA, Johnson Space Center\n
 */
 
 // Trick includes.
-#include <trick/exec_proto.h>
+#include "trick/exec_proto.h"
 
 // TrickHLA includes.
 #include "TrickHLA/SimTimeline.hh"

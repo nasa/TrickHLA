@@ -55,11 +55,11 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick includes.
-#include <trick/MemoryManager.hh>
-#include <trick/exec_proto.h>
-#include <trick/memorymanager_c_intf.h>
-#include <trick/message_proto.h>
-#include <trick/message_type.h>
+#include "trick/MemoryManager.hh"
+#include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)

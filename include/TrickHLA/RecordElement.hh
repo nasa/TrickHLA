@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include <trick/attributes.h>
+#include "trick/attributes.h"
 
 // TrickHLA includes.
 #include "HLAStandardSupport.hh"
