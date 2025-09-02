@@ -16,7 +16,7 @@
 #include "sim_objects/default_trick_sys.sm"
 
 //==========================================================================
-// Define the Trick HLA job cycle times.
+// Define the TrickHLA job cycle times.
 //==========================================================================
 #define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
 #define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
@@ -33,7 +33,7 @@
 
 
 //==========================================================================
-// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
 // for input file instantiations.
 //==========================================================================
 // This is needed for CTE timeline instantiation in the input file.

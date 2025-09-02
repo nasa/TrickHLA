@@ -22,7 +22,7 @@
 #define LOG_CYCLE 0.250 // Data Logging Rate.
 
 //==========================================================================
-// Define the Trick HLA job cycle times.
+// Define the TrickHLA job cycle times.
 //==========================================================================
 #define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
 #define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
@@ -41,7 +41,7 @@
 #define NO_TSYNC_CTE
 
 //==========================================================================
-// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
 // for input file instantiations.
 //==========================================================================
 ##include "trick/integrator_c_intf.h"

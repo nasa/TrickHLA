@@ -21,7 +21,7 @@
 #define INTEG_STEP_TIME 0.025 // State integration time step.
 
 //==========================================================================
-// Define the Trick HLA job cycle times.
+// Define the TrickHLA job cycle times.
 //==========================================================================
 #define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
 #define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
@@ -38,7 +38,7 @@
 
 
 //==========================================================================
-// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
 // for inputfile instantiations.
 //==========================================================================
 // This is needed for CTE timeline instantiation in the input file.
@@ -168,7 +168,7 @@ class EntityDynamicsSimObject : public Trick::SimObject {
 class THLAInitSimObject : public Trick::SimObject {
 
  public:
-   
+
    bool config_with_default_data;
 
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
@@ -351,13 +351,13 @@ IntegLoop vehicle_loop (INTEG_STEP_TIME) vehicle;
 // Create the THLA connections for the SpaceFOM Reference Frame Tree.
 //==========================================================================
 void create_connections() {
-   
+
    int     argc = command_line_args_get_argc();
    char ** argv = command_line_args_get_argv();
-   
+
    // Choose to configure with default data or not.  The default is 'false'.
    THLA_INIT.config_with_default_data = false;
-   
+
    // Let's check for default data configurations with command line arguments.
    for ( int iinc = 0 ; iinc < argc ; iinc++ ){
       if ( !strcmp( argv[iinc], "--default_data_config" ) ) {
@@ -375,7 +375,7 @@ void create_connections() {
    ref_frame_tree.earth_pfix_frame_ptr = &earth_centered_fixed.frame_packing;
    ref_frame_tree.moon_pfix_frame_ptr = &moon_centered_fixed.frame_packing;
    ref_frame_tree.mars_pfix_frame_ptr = &mars_centered_fixed.frame_packing;
-   
+
    // Allocate THLA objects and interactions here if using default_data
    // to configure the TrickHLA objects and interactions.
    if ( THLA_INIT.config_with_default_data ) {
@@ -398,7 +398,7 @@ void create_connections() {
       earth_centered_fixed.set_object(&(THLA.manager.objects[6]));
       moon_centered_fixed.set_object(&(THLA.manager.objects[7]));
       mars_centered_fixed.set_object(&(THLA.manager.objects[8]));
-      
+
    }
 
 }

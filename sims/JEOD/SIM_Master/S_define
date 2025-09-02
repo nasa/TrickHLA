@@ -25,7 +25,7 @@
 #define DYNAMICS       0.03125 // Vehicle and planetary dynamics interval (32Hz)
 
 //==========================================================================
-// Define the Trick HLA job cycle times.
+// Define the TrickHLA job cycle times.
 //==========================================================================
 #define THLA_DATA_CYCLE_TIME        HIGH_RATE_ENV // HLA data communication cycle time.
 #define THLA_INTERACTION_CYCLE_TIME DYNAMICS      // HLA Interaction cycle time.
@@ -68,7 +68,7 @@
 #include "mars_MRO110B2.sm"
 
 //==========================================================================
-// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
 // for input file instantiations.
 //==========================================================================
 
