@@ -1,7 +1,7 @@
 ##############################################################################
 # PURPOSE:
-#    (This is a Python input file for configuring the HLA Time participating
-#      Federate.)
+#    (This is a Python input file for configuring the simple HLA time managed
+#     federate.)
 #
 # REFERENCE:
 #    (Trick 19 documentation.)
@@ -31,7 +31,7 @@ from TrickHLA_data.sine.SineObject import *
 def print_usage_message():
 
    print( ' ' )
-   print( 'TrickHLA SpaceFOM HLA Time Participating Simulation Command Line Configuration Options:' )
+   print( 'TrickHLA SpaceFOM HLA Time Managed Simulation Command Line Configuration Options:' )
    print( '  -h --help              : Print this help message.' )
    print( '  -f --fed_name [name]   : Name of the Federate, default is Simple-Time-Fed.' )
    print( '  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine.' )

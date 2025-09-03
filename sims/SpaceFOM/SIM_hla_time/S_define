@@ -1,9 +1,9 @@
 //==========================================================================
-// Space Reference FOM: Sine wave simulation to test the TrickHLA APIs.
+// Space Reference FOM: Simple HLA time managed federate.
 //==========================================================================
 // Description:
 // This is a simulation definition file (S_define) that provides an example
-// of an SpaceFOM compliant federate that services all SpaceFOM roles.
+// of an SpaceFOM compliant federate that uses the HLA time management APIs.
 //==========================================================================
 
 //==========================================================================
