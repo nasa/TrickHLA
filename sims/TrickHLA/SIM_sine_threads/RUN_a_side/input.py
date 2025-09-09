@@ -81,7 +81,7 @@ THLA.federate.lookahead_time = 0.250
 
 # We need more HLA Logical Time resolution because the lookahead time cannot
 # be represented by the default microsecond resolution.
-THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_100_NANOSECONDS )
+THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Scale the Trick Time Tic value based on the HLA base time units.
 THLA.federate.scale_trick_tics_to_base_time_units()

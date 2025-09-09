@@ -33,6 +33,7 @@ def print_usage_message():
    print( ' ' )
    print( 'TrickHLA SpaceFOM HLA Time Managed Simulation Command Line Configuration Options:' )
    print( '  -h --help              : Print this help message.' )
+   print( '  --cte [on|off]         : on: Use Central Timing Equipment (CTE), off: no CTE (Default)' )
    print( '  -f --fed_name [name]   : Name of the Federate, default is Simple-Time-Fed.' )
    print( '  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine.' )
    print( '  --nostop               : Set no stop time on simulation.' )
@@ -50,6 +51,7 @@ def print_usage_message():
 def parse_command_line():
 
    global print_usage
+   global enable_cte
    global run_duration
    global verbose
    global federate_name
@@ -66,6 +68,20 @@ def parse_command_line():
 
       if ( ( str( argv[index] ) == '-h' ) | ( str( argv[index] ) == '--help' ) ):
          print_usage = True
+
+      elif ( str( argv[index] ) == '--cte' ):
+         index = index + 1
+         if ( index < argc ):
+            if ( str( argv[index] ) == 'on' ):
+               enable_cte = True
+            elif ( str( argv[index] ) == 'off' ):
+               enable_cte = False
+            else:
+               print( 'ERROR: Unknown --cte argument: ' + str( argv[index] ) )
+               print_usage = True
+         else:
+            print( 'ERROR: Missing --cte [on|off] argument.' )
+            print_usage = True
 
       elif ( ( str( argv[index] ) == '-f' ) | ( str( argv[index] ) == '--fed_name' ) ):
          index = index + 1
@@ -122,6 +138,9 @@ def parse_command_line():
 
 # Default: Don't show usage.
 print_usage = False
+
+# Default is to not use CTE.
+enable_cte = False
 
 # Set the default run duration.
 run_duration = 10.0
@@ -203,6 +222,13 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Set up federate time related parameters.
 #--------------------------------------------------------------------------
+# Set the simulation timeline to be used for time computations.
+THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
+
+if ( enable_cte == True ):
+   # Set the CTE timeline and change the Trick real time clock to use it.
+   THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
+
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 

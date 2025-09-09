@@ -239,7 +239,7 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
 
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
-federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_100_NANOSECONDS )
+federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Scale the Trick Time Tic value based on the HLA base time units.
 federate.scale_trick_tics_to_base_time_units()

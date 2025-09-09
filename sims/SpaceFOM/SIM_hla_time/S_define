@@ -30,6 +30,11 @@
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/SimTimeline.hh"
 ##include "TrickHLA/ScenarioTimeline.hh"
+#ifdef TSYNC_CTE
+##include "TrickHLA/TSyncCTETimeline.hh"
+#else
+##include "TrickHLA/TimeOfDayCTETimeline.hh"
+#endif
 
 %header{
  using namespace TrickHLA;
@@ -50,11 +55,23 @@
 class THLAInitSimObject : public Trick::SimObject {
 
  public:
+   TrickHLA::SimTimeline            sim_timeline;
+   TrickHLA::ScenarioTimeline       scenario_timeline;
+
+#ifdef TSYNC_CTE
+   TrickHLA::TSyncCTETimeline       cte_timeline;
+#else
+   TrickHLA::TimeOfDayCTETimeline   cte_timeline;
+#endif
+
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
                       TrickHLA::Federate & thla_fed,
                       unsigned int         _MPI_1   = 100,
                       unsigned int         _MPI_END = 500 )
-      : thla_manager( thla_mngr ),
+      : sim_timeline(),
+        scenario_timeline( sim_timeline, 0.0, 0.0 ),
+        cte_timeline(),
+        thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       //--------------------------------------------------------------------
