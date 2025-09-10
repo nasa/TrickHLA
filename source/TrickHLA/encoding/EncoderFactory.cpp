@@ -563,11 +563,12 @@ EncoderBase *EncoderFactory::create_string_encoder(
             ostringstream errmsg;
             errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
                    << " ERROR: Trick attributes for the variable '" << data_name
-                   << "' is of type 'std::string', the specified HLA-encoding ("
+                   << "' is an array of type 'std::string', the specified HLA-encoding ("
                    << encoding_enum_to_string( hla_encoding )
-                   << ") is only supported for a primitive std::string value for"
-                   << " now. Please contact the TrickHLA development team for"
-                   << " support." << endl;
+                   << ") is only supported for a primitive std::string"
+                   << " (i.e. not an array of std::string) for now. Please"
+                   << " contact the TrickHLA development team for support."
+                   << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
@@ -1044,10 +1045,10 @@ EncoderBase *EncoderFactory::create_float64_encoder(
             ostringstream errmsg;
             errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
                    << " ERROR: Trick attributes for the variable '" << data_name
-                   << "' is of type 'double', the specified HLA-encoding ("
+                   << "' is an array of type 'double', the specified HLA-encoding ("
                    << encoding_enum_to_string( hla_encoding )
-                   << ") is only supported for a primitive double value."
-                   << endl;
+                   << ") is only supported for a primitive double value"
+                   << " (i.e. not an array)." << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
