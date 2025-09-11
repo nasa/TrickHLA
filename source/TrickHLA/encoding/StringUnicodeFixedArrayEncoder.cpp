@@ -101,11 +101,11 @@ StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder(
    this->data_encoder           = array_encoder;
    string const *array_data     = static_cast< std::string * >( addr );
 
-   std::wstring wstr;
    for ( size_t i = 0; i < var_element_count; ++i ) {
       // Convert from string to wide-string.
-      wstr.assign( array_data[i].begin(), array_data[i].end() );
-      array_encoder->set( i, HLAunicodeString( wstr ) );
+      wstring wstring_data;
+      wstring_data.assign( array_data[i].begin(), array_data[i].end() );
+      array_encoder->set( i, HLAunicodeString( wstring_data ) );
    }
 }
 
@@ -116,18 +116,18 @@ StringUnicodeFixedArrayEncoder::~StringUnicodeFixedArrayEncoder()
 
 void StringUnicodeFixedArrayEncoder::update_before_encode()
 {
-   HLAfixedArray *array_encoder = dynamic_cast< HLAfixedArray * >( data_encoder );
-   string        *array_data    = static_cast< std::string * >( address ); // NOLINT(bugprone-macro-parentheses)
-   std::wstring   wstr;
+   HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( data_encoder );
+   string const        *array_data    = static_cast< std::string * >( address ); // NOLINT(bugprone-macro-parentheses)
 
    for ( size_t i = 0; i < var_element_count; ++i ) {
       // Convert from string to wide-string.
-      wstr.assign( array_data[i].begin(), array_data[i].end() );
+      wstring wstring_data;
+      wstring_data.assign( array_data[i].begin(), array_data[i].end() );
 
       const_cast< HLAunicodeString & >( // NOLINT(bugprone-macro-parentheses)
          dynamic_cast< HLAunicodeString const & >(
             array_encoder->get( i ) ) )
-         .set( wstr );
+         .set( wstring_data );
    }
 }
 
@@ -138,10 +138,10 @@ void StringUnicodeFixedArrayEncoder::update_after_decode()
 
    // Copy the decoded data element values to the Trick array.
    for ( size_t i = 0; i < var_element_count; ++i ) {
-      wstring wstr = dynamic_cast< HLAunicodeString const & >( array_encoder->get( i ) ).get();
+      wstring wstring_data = dynamic_cast< HLAunicodeString const & >( array_encoder->get( i ) ).get();
 
       // Convert from wide-string to string.
-      array_data[i].assign( wstr.begin(), wstr.end() );
+      array_data[i].assign( wstring_data.begin(), wstring_data.end() );
    }
 }
 
