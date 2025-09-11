@@ -119,13 +119,13 @@ void StringUnicodeVariableArrayEncoder::update_before_encode()
    for ( size_t i = 0; i < var_element_count; ++i ) {
 
       // Convert from string to wide-string.
-      std::wstring wstr;
-      wstr.assign( array_data[i].begin(), array_data[i].end() );
+      std::wstring wstring_data;
+      wstring_data.assign( array_data[i].begin(), array_data[i].end() );
 
       const_cast< HLAunicodeString & >( // NOLINT(bugprone-macro-parentheses)
          dynamic_cast< HLAunicodeString const & >(
             array_encoder->get( i ) ) )
-         .set( wstr );
+         .set( wstring_data );
    }
 }
 
@@ -140,11 +140,11 @@ void StringUnicodeVariableArrayEncoder::update_after_decode()
 
    // Copy the decoded data element values to the Trick array.
    for ( size_t i = 0; i < var_element_count; ++i ) {
-      std::wstring wstr;
-      wstr = dynamic_cast< HLAunicodeString const & >( array_encoder->get( i ) ).get();
+      std::wstring wstring_data;
+      wstring_data = dynamic_cast< HLAunicodeString const & >( array_encoder->get( i ) ).get();
 
       // Convert from wide-string to string.
-      array_data[i].assign( wstr.begin(), wstr.end() );
+      array_data[i].assign( wstring_data.begin(), wstring_data.end() );
    }
 }
 
