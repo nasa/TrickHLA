@@ -100,7 +100,7 @@ StringUnicodeStringFixedArrayEncoder::StringUnicodeStringFixedArrayEncoder(
    this->data_encoder           = array_encoder;
 
    // Create the array of wstring's that holds the data that will be encoded.
-   wstring_data = static_cast< std::wstring * >( malloc( var_element_count * sizeof( std::wstring ) ) );
+   this->wstring_data = static_cast< std::wstring * >( malloc( var_element_count * sizeof( std::wstring ) ) );
 
    // Connect the users array data to the encoder array elements.
    if ( addr != NULL ) {
