@@ -303,10 +303,10 @@ void EncodingTest::string_test(
       data1_trick_base_name + "._string", rti_encoding );
 
    EncoderBase *data1_vec3_string_encoder = EncoderFactory::create(
-      data1_trick_base_name + ".vec3_string", basic_rti_encoding );
+      data1_trick_base_name + ".vec3_string", rti_encoding );
 
    EncoderBase *data1_m3x3_string_encoder = EncoderFactory::create(
-      data1_trick_base_name + ".m3x3_string", basic_rti_encoding );
+      data1_trick_base_name + ".m3x3_string", rti_encoding );
 
    EncoderBase *data1_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data1_trick_base_name + ".ptr_string", basic_rti_encoding ) );
@@ -315,10 +315,10 @@ void EncodingTest::string_test(
       data2_trick_base_name + "._string", rti_encoding );
 
    EncoderBase *data2_vec3_string_encoder = EncoderFactory::create(
-      data2_trick_base_name + ".vec3_string", basic_rti_encoding );
+      data2_trick_base_name + ".vec3_string", rti_encoding );
 
    EncoderBase *data2_m3x3_string_encoder = EncoderFactory::create(
-      data2_trick_base_name + ".m3x3_string", basic_rti_encoding );
+      data2_trick_base_name + ".m3x3_string", rti_encoding );
 
    EncoderBase *data2_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_string", basic_rti_encoding ) );
@@ -343,8 +343,13 @@ void EncodingTest::string_test(
    data2_string_encoder->decode( data1_string_encoder->encode() );
    data2_string_encoder->update_after_decode();
 
+   data1_vec3_string_encoder->update_before_encode();
    data2_vec3_string_encoder->decode( data1_vec3_string_encoder->encode() );
+   data2_vec3_string_encoder->update_after_decode();
+
+   data1_m3x3_string_encoder->update_before_encode();
    data2_m3x3_string_encoder->decode( data1_m3x3_string_encoder->encode() );
+   data2_m3x3_string_encoder->update_after_decode();
 
    data1_ptr_string_encoder->update_before_encode();
    data2_ptr_string_encoder->decode( data1_ptr_string_encoder->encode() );
