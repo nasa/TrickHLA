@@ -114,7 +114,7 @@ using namespace TrickHLA;
    }                                                                                                                           \
                                                                                                                                \
    void EncoderClassName::resize_data_elements(                                                                                \
-      size_t new_size )                                                                                                        \
+      size_t const new_size )                                                                                                  \
    {                                                                                                                           \
       HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( data_encoder );                                    \
       if ( new_size != array_encoder->size() ) {                                                                               \

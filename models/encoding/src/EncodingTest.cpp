@@ -287,18 +287,6 @@ void EncodingTest::string_test(
       message_publish( MSG_NORMAL, msg1.str().c_str() );
    }
 
-   EncodingEnum basic_rti_encoding;
-   switch ( rti_encoding ) {
-      case TrickHLA::ENCODING_UNICODE_STRING: {
-         basic_rti_encoding = TrickHLA::ENCODING_ASCII_STRING;
-         break;
-      }
-      default: {
-         basic_rti_encoding = rti_encoding;
-         break;
-      }
-   }
-
    EncoderBase *data1_string_encoder = EncoderFactory::create(
       data1_trick_base_name + "._string", rti_encoding );
 
@@ -309,7 +297,7 @@ void EncodingTest::string_test(
       data1_trick_base_name + ".m3x3_string", rti_encoding );
 
    EncoderBase *data1_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
-      data1_trick_base_name + ".ptr_string", basic_rti_encoding ) );
+      data1_trick_base_name + ".ptr_string", rti_encoding ) );
 
    EncoderBase *data2_string_encoder = EncoderFactory::create(
       data2_trick_base_name + "._string", rti_encoding );
@@ -321,7 +309,7 @@ void EncodingTest::string_test(
       data2_trick_base_name + ".m3x3_string", rti_encoding );
 
    EncoderBase *data2_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
-      data2_trick_base_name + ".ptr_string", basic_rti_encoding ) );
+      data2_trick_base_name + ".ptr_string", rti_encoding ) );
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
@@ -356,12 +344,7 @@ void EncodingTest::string_test(
    data2_ptr_string_encoder->update_after_decode();
 
    ostringstream compare_msg;
-   if ( basic_rti_encoding == rti_encoding ) {
-      compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
-   } else {
-      compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ", "
-                  << encoding_enum_to_string( basic_rti_encoding ) << ") ";
-   }
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
 
    string explanation;
 

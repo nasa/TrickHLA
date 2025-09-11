@@ -27,6 +27,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Float64ToLogicalTimeEncoder.cpp}
 @trick_link_dependency{StringUnicodeStringEncoder.cpp}
 @trick_link_dependency{StringUnicodeStringFixedArrayEncoder.cpp}
+@trick_link_dependency{StringUnicodeStringVariableArrayEncoder.cpp}
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
@@ -71,6 +72,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
 #include "TrickHLA/encoding/StringUnicodeStringEncoder.hh"
 #include "TrickHLA/encoding/StringUnicodeStringFixedArrayEncoder.hh"
+#include "TrickHLA/encoding/StringUnicodeStringVariableArrayEncoder.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -563,15 +565,7 @@ EncoderBase *EncoderFactory::create_string_encoder(
             if ( is_static_array ) {
                return new StringUnicodeStringFixedArrayEncoder( address, attr, data_name );
             } else {
-               ostringstream errmsg;
-               errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
-                      << " ERROR: Trick attributes for the variable '" << data_name
-                      << "' is a dynamic array of type 'std::string', the specified HLA-encoding ("
-                      << encoding_enum_to_string( hla_encoding )
-                      << ") is only supported for a static array of std::string"
-                      << " for now. Please contact the TrickHLA development team"
-                      << " for support." << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               return new StringUnicodeStringVariableArrayEncoder( address, attr, data_name );
             }
          } else {
             return new StringUnicodeStringEncoder( address, attr, data_name );

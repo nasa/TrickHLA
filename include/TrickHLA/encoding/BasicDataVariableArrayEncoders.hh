@@ -97,7 +97,7 @@ namespace TrickHLA
       }                                                                             \
                                                                                     \
      protected:                                                                     \
-      void resize_data_elements( std::size_t new_size );                            \
+      void resize_data_elements( std::size_t const new_size );                      \
                                                                                     \
      private:                                                                       \
       /* Do not allow the default, copy constructor or assignment operator. */      \
