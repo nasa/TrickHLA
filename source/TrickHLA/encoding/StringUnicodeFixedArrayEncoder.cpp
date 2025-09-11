@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/encoding/StringUnicodeStringFixedArrayEncoder.cpp
+@file TrickHLA/encoding/StringUnicodeFixedArrayEncoder.cpp
 @ingroup TrickHLA
 @brief This class represents the std::string Unicode string fixed array
 encoder implementation.
@@ -16,7 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{StringUnicodeStringFixedArrayEncoder.cpp}
+@trick_link_dependency{StringUnicodeFixedArrayEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
@@ -44,7 +44,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/encoding/StringUnicodeStringFixedArrayEncoder.hh"
+#include "TrickHLA/encoding/StringUnicodeFixedArrayEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
@@ -67,7 +67,7 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-StringUnicodeStringFixedArrayEncoder::StringUnicodeStringFixedArrayEncoder(
+StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder(
    void         *addr,
    ATTRIBUTES   *attr,
    string const &name )
@@ -76,7 +76,7 @@ StringUnicodeStringFixedArrayEncoder::StringUnicodeStringFixedArrayEncoder(
 {
    if ( this->type != TRICK_STRING ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeStringFixedArrayEncoder::StringUnicodeStringFixedArrayEncoder():" << __LINE__
+      errmsg << "StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << data_name
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
@@ -89,7 +89,7 @@ StringUnicodeStringFixedArrayEncoder::StringUnicodeStringFixedArrayEncoder(
 
    if ( !is_static_array() ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeStringFixedArrayEncoder::StringUnicodeStringFixedArrayEncoder():" << __LINE__
+      errmsg << "StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a static array of 'std::string'!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -116,7 +116,7 @@ StringUnicodeStringFixedArrayEncoder::StringUnicodeStringFixedArrayEncoder(
    }
 }
 
-StringUnicodeStringFixedArrayEncoder::~StringUnicodeStringFixedArrayEncoder()
+StringUnicodeFixedArrayEncoder::~StringUnicodeFixedArrayEncoder()
 {
    if ( wstring_data != NULL ) {
       free( wstring_data );
@@ -124,7 +124,7 @@ StringUnicodeStringFixedArrayEncoder::~StringUnicodeStringFixedArrayEncoder()
    }
 }
 
-void StringUnicodeStringFixedArrayEncoder::update_before_encode()
+void StringUnicodeFixedArrayEncoder::update_before_encode()
 {
    // Convert the string into a wide-string.
    string *array_data = static_cast< std::string * >( address );
@@ -133,7 +133,7 @@ void StringUnicodeStringFixedArrayEncoder::update_before_encode()
    }
 }
 
-void StringUnicodeStringFixedArrayEncoder::update_after_decode()
+void StringUnicodeFixedArrayEncoder::update_after_decode()
 {
    // Convert from wide-string to string.
    string *array_data = static_cast< std::string * >( address );
@@ -142,7 +142,7 @@ void StringUnicodeStringFixedArrayEncoder::update_after_decode()
    }
 }
 
-int const StringUnicodeStringFixedArrayEncoder::get_data_size()
+int const StringUnicodeFixedArrayEncoder::get_data_size()
 {
    int byte_count = 0;
    if ( data_encoder != NULL ) {

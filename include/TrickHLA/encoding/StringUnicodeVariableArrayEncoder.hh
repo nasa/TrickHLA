@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/encoding/StringUnicodeStringVariableArrayEncoder.hh
+@file TrickHLA/encoding/StringUnicodeVariableArrayEncoder.hh
 @ingroup TrickHLA
 @brief This class represents the std::string Unicode string variable array
 encoder implementation.
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/encoding/StringUnicodeStringVariableArrayEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/StringUnicodeVariableArrayEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_STRING_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH
-#define TRICKHLA_STRING_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH
+#ifndef TRICKHLA_STRING_UNICODE_VARIABLE_ARRAY_ENCODER_HH
+#define TRICKHLA_STRING_UNICODE_VARIABLE_ARRAY_ENCODER_HH
 
 // System includes.
 #include <string>
@@ -67,7 +67,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class StringUnicodeStringVariableArrayEncoder : public VariableArrayEncoderBase
+class StringUnicodeVariableArrayEncoder : public VariableArrayEncoderBase
 {
    /* Let the Trick input processor access protected and private data. */
    /* InputProcessor is really just a marker class (does not really    */
@@ -77,16 +77,16 @@ class StringUnicodeStringVariableArrayEncoder : public VariableArrayEncoderBase
    friend class InputProcessor;
    /* IMPORTANT Note: you must have the following line too.            */
    /* Syntax: friend void init_attr<namespace>__<class name>();        */
-   friend void init_attrTrickHLA__StringUnicodeStringVariableArrayEncoder();
+   friend void init_attrTrickHLA__StringUnicodeVariableArrayEncoder();
 
   public:
    /*! @brief Default constructor. */
-   StringUnicodeStringVariableArrayEncoder( void              *addr,
+   StringUnicodeVariableArrayEncoder( void              *addr,
                                             ATTRIBUTES        *attr,
                                             std::string const &name );
 
-   /*! @brief Destructor for the TrickHLA StringUnicodeStringVariableArrayEncoder class. */
-   virtual ~StringUnicodeStringVariableArrayEncoder();
+   /*! @brief Destructor for the TrickHLA StringUnicodeVariableArrayEncoder class. */
+   virtual ~StringUnicodeVariableArrayEncoder();
 
    virtual void update_before_encode();
 
@@ -96,7 +96,7 @@ class StringUnicodeStringVariableArrayEncoder : public VariableArrayEncoderBase
 
    virtual std::string to_string()
    {
-      return "StringUnicodeStringVariableArrayEncoder[" + data_name + "]";
+      return "StringUnicodeVariableArrayEncoder[" + data_name + "]";
    }
 
   protected:
@@ -104,15 +104,15 @@ class StringUnicodeStringVariableArrayEncoder : public VariableArrayEncoderBase
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
-   StringUnicodeStringVariableArrayEncoder();
-   /*! @brief Copy constructor for StringUnicodeStringVariableArrayEncoder class.
+   StringUnicodeVariableArrayEncoder();
+   /*! @brief Copy constructor for StringUnicodeVariableArrayEncoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   StringUnicodeStringVariableArrayEncoder( StringUnicodeStringVariableArrayEncoder const &rhs );
-   /*! @brief Assignment operator for StringUnicodeStringVariableArrayEncoder class.
+   StringUnicodeVariableArrayEncoder( StringUnicodeVariableArrayEncoder const &rhs );
+   /*! @brief Assignment operator for StringUnicodeVariableArrayEncoder class.
     *  @details Assignment operator is private to prevent inadvertent copies. */
-   StringUnicodeStringVariableArrayEncoder &operator=( StringUnicodeStringVariableArrayEncoder const &rhs );
+   StringUnicodeVariableArrayEncoder &operator=( StringUnicodeVariableArrayEncoder const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_STRING_UNICODE_STRING_VARIABLE_ARRAY_ENCODER_HH
+#endif // TRICKHLA_STRING_UNICODE_VARIABLE_ARRAY_ENCODER_HH

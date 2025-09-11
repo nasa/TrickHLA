@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/encoding/StringUnicodeStringEncoder.cpp
+@file TrickHLA/encoding/StringUnicodeEncoder.cpp
 @ingroup TrickHLA
 @brief This class represents the std::string Unicode string encoder implementation.
 
@@ -15,7 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{StringUnicodeStringEncoder.cpp}
+@trick_link_dependency{StringUnicodeEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/encoding/StringUnicodeStringEncoder.hh"
+#include "TrickHLA/encoding/StringUnicodeEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
@@ -63,7 +63,7 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-StringUnicodeStringEncoder::StringUnicodeStringEncoder(
+StringUnicodeEncoder::StringUnicodeEncoder(
    void         *addr,
    ATTRIBUTES   *attr,
    string const &name )
@@ -72,7 +72,7 @@ StringUnicodeStringEncoder::StringUnicodeStringEncoder(
 {
    if ( this->type != TRICK_STRING ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeStringEncoder::StringUnicodeStringEncoder():" << __LINE__
+      errmsg << "StringUnicodeEncoder::StringUnicodeEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << data_name
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
@@ -85,7 +85,7 @@ StringUnicodeStringEncoder::StringUnicodeStringEncoder(
 
    if ( is_array() ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeStringEncoder::StringUnicodeStringEncoder():" << __LINE__
+      errmsg << "StringUnicodeEncoder::StringUnicodeEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a 'std::string' and not an array!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -95,19 +95,19 @@ StringUnicodeStringEncoder::StringUnicodeStringEncoder(
    this->data_encoder = new HLAunicodeString( &wstring_data );
 }
 
-StringUnicodeStringEncoder::~StringUnicodeStringEncoder()
+StringUnicodeEncoder::~StringUnicodeEncoder()
 {
    return;
 }
 
-void StringUnicodeStringEncoder::update_before_encode()
+void StringUnicodeEncoder::update_before_encode()
 {
    // Convert the string into a wide-string.
    string &str_data = *static_cast< std::string * >( address );
    this->wstring_data.assign( str_data.begin(), str_data.end() );
 }
 
-void StringUnicodeStringEncoder::update_after_decode()
+void StringUnicodeEncoder::update_after_decode()
 {
    // Convert from wide-string to string.
    ( *static_cast< std::string * >( address ) ).assign( wstring_data.begin(), wstring_data.end() );

@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/encoding/StringUnicodeStringVariableArrayEncoder.cpp
+@file TrickHLA/encoding/StringUnicodeVariableArrayEncoder.cpp
 @ingroup TrickHLA
 @brief This class represents the std::string Unicode string variable array
 encoder implementation.
@@ -16,7 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{StringUnicodeStringVariableArrayEncoder.cpp}
+@trick_link_dependency{StringUnicodeVariableArrayEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
@@ -43,7 +43,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/encoding/StringUnicodeStringVariableArrayEncoder.hh"
+#include "TrickHLA/encoding/StringUnicodeVariableArrayEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
@@ -66,7 +66,7 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-StringUnicodeStringVariableArrayEncoder::StringUnicodeStringVariableArrayEncoder(
+StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder(
    void         *addr,
    ATTRIBUTES   *attr,
    string const &name )
@@ -74,7 +74,7 @@ StringUnicodeStringVariableArrayEncoder::StringUnicodeStringVariableArrayEncoder
 {
    if ( this->type != TRICK_STRING ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeStringVariableArrayEncoder::StringUnicodeStringVariableArrayEncoder():" << __LINE__
+      errmsg << "StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << data_name
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
@@ -87,7 +87,7 @@ StringUnicodeStringVariableArrayEncoder::StringUnicodeStringVariableArrayEncoder
 
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeStringVariableArrayEncoder::StringUnicodeStringVariableArrayEncoder():" << __LINE__
+      errmsg << "StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a dynamic array of 'std::string'!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -98,12 +98,12 @@ StringUnicodeStringVariableArrayEncoder::StringUnicodeStringVariableArrayEncoder
    resize_data_elements( var_element_count );
 }
 
-StringUnicodeStringVariableArrayEncoder::~StringUnicodeStringVariableArrayEncoder()
+StringUnicodeVariableArrayEncoder::~StringUnicodeVariableArrayEncoder()
 {
    return;
 }
 
-void StringUnicodeStringVariableArrayEncoder::update_before_encode()
+void StringUnicodeVariableArrayEncoder::update_before_encode()
 {
    // Since the Trick variable is dynamic (i.e. a pointer) its size
    // can change at any point so we need to refresh the counts.
@@ -129,7 +129,7 @@ void StringUnicodeStringVariableArrayEncoder::update_before_encode()
    }
 }
 
-void StringUnicodeStringVariableArrayEncoder::update_after_decode()
+void StringUnicodeVariableArrayEncoder::update_after_decode()
 {
    HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( data_encoder );
 
@@ -148,7 +148,7 @@ void StringUnicodeStringVariableArrayEncoder::update_after_decode()
    }
 }
 
-int const StringUnicodeStringVariableArrayEncoder::get_data_size()
+int const StringUnicodeVariableArrayEncoder::get_data_size()
 {
    int byte_count = 0;
    if ( data_encoder != NULL ) {
@@ -161,7 +161,7 @@ int const StringUnicodeStringVariableArrayEncoder::get_data_size()
    return byte_count;
 }
 
-void StringUnicodeStringVariableArrayEncoder::resize_data_elements(
+void StringUnicodeVariableArrayEncoder::resize_data_elements(
    size_t const new_size )
 {
    HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( data_encoder );

@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/encoding/StringUnicodeStringEncoder.hh
+@file TrickHLA/encoding/StringUnicodeEncoder.hh
 @ingroup TrickHLA
 @brief This class represents the std::string Unicode string encoder implementation.
 
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/encoding/StringUnicodeStringEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/StringUnicodeEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_STRING_UNICODE_STRING_ENCODER_HH
-#define TRICKHLA_STRING_UNICODE_STRING_ENCODER_HH
+#ifndef TRICKHLA_STRING_UNICODE_ENCODER_HH
+#define TRICKHLA_STRING_UNICODE_ENCODER_HH
 
 // System includes.
 #include <string>
@@ -65,7 +65,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class StringUnicodeStringEncoder : public VariableArrayEncoderBase
+class StringUnicodeEncoder : public VariableArrayEncoderBase
 {
    /* Let the Trick input processor access protected and private data. */
    /* InputProcessor is really just a marker class (does not really    */
@@ -75,16 +75,16 @@ class StringUnicodeStringEncoder : public VariableArrayEncoderBase
    friend class InputProcessor;
    /* IMPORTANT Note: you must have the following line too.            */
    /* Syntax: friend void init_attr<namespace>__<class name>();        */
-   friend void init_attrTrickHLA__StringUnicodeStringEncoder();
+   friend void init_attrTrickHLA__StringUnicodeEncoder();
 
   public:
    /*! @brief Default constructor. */
-   StringUnicodeStringEncoder( void              *addr,
+   StringUnicodeEncoder( void              *addr,
                                ATTRIBUTES        *attr,
                                std::string const &name );
 
-   /*! @brief Destructor for the TrickHLA StringUnicodeStringEncoder class. */
-   virtual ~StringUnicodeStringEncoder();
+   /*! @brief Destructor for the TrickHLA StringUnicodeEncoder class. */
+   virtual ~StringUnicodeEncoder();
 
    virtual void update_before_encode();
 
@@ -97,7 +97,7 @@ class StringUnicodeStringEncoder : public VariableArrayEncoderBase
 
    virtual std::string to_string()
    {
-      return "StringUnicodeStringEncoder[" + data_name + "]";
+      return "StringUnicodeEncoder[" + data_name + "]";
    }
 
   protected:
@@ -105,15 +105,15 @@ class StringUnicodeStringEncoder : public VariableArrayEncoderBase
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
-   StringUnicodeStringEncoder();
-   /*! @brief Copy constructor for StringUnicodeStringEncoder class.
+   StringUnicodeEncoder();
+   /*! @brief Copy constructor for StringUnicodeEncoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   StringUnicodeStringEncoder( StringUnicodeStringEncoder const &rhs );
-   /*! @brief Assignment operator for StringUnicodeStringEncoder class.
+   StringUnicodeEncoder( StringUnicodeEncoder const &rhs );
+   /*! @brief Assignment operator for StringUnicodeEncoder class.
     *  @details Assignment operator is private to prevent inadvertent copies. */
-   StringUnicodeStringEncoder &operator=( StringUnicodeStringEncoder const &rhs );
+   StringUnicodeEncoder &operator=( StringUnicodeEncoder const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_STRING_UNICODE_STRING_ENCODER_HH
+#endif // TRICKHLA_STRING_UNICODE_ENCODER_HH

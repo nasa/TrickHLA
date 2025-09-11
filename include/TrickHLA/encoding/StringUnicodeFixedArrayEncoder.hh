@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/encoding/StringUnicodeStringFixedArrayEncoder.hh
+@file TrickHLA/encoding/StringUnicodeFixedArrayEncoder.hh
 @ingroup TrickHLA
 @brief This class represents the std::string Unicode string fixed array
 encoder implementation.
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/encoding/StringUnicodeStringFixedArrayEncoder.cpp}
+@trick_link_dependency{../../../source/TrickHLA/encoding/StringUnicodeFixedArrayEncoder.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_STRING_UNICODE_STRING_FIXED_ARRAY_ENCODER_HH
-#define TRICKHLA_STRING_UNICODE_STRING_FIXED_ARRAY_ENCODER_HH
+#ifndef TRICKHLA_STRING_UNICODE_FIXED_ARRAY_ENCODER_HH
+#define TRICKHLA_STRING_UNICODE_FIXED_ARRAY_ENCODER_HH
 
 // System includes.
 #include <string>
@@ -67,7 +67,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class StringUnicodeStringFixedArrayEncoder : public VariableArrayEncoderBase
+class StringUnicodeFixedArrayEncoder : public VariableArrayEncoderBase
 {
    /* Let the Trick input processor access protected and private data. */
    /* InputProcessor is really just a marker class (does not really    */
@@ -77,16 +77,16 @@ class StringUnicodeStringFixedArrayEncoder : public VariableArrayEncoderBase
    friend class InputProcessor;
    /* IMPORTANT Note: you must have the following line too.            */
    /* Syntax: friend void init_attr<namespace>__<class name>();        */
-   friend void init_attrTrickHLA__StringUnicodeStringFixedArrayEncoder();
+   friend void init_attrTrickHLA__StringUnicodeFixedArrayEncoder();
 
   public:
    /*! @brief Default constructor. */
-   StringUnicodeStringFixedArrayEncoder( void              *addr,
+   StringUnicodeFixedArrayEncoder( void              *addr,
                                          ATTRIBUTES        *attr,
                                          std::string const &name );
 
-   /*! @brief Destructor for the TrickHLA StringUnicodeStringFixedArrayEncoder class. */
-   virtual ~StringUnicodeStringFixedArrayEncoder();
+   /*! @brief Destructor for the TrickHLA StringUnicodeFixedArrayEncoder class. */
+   virtual ~StringUnicodeFixedArrayEncoder();
 
    virtual void update_before_encode();
 
@@ -96,7 +96,7 @@ class StringUnicodeStringFixedArrayEncoder : public VariableArrayEncoderBase
 
    virtual std::string to_string()
    {
-      return "StringUnicodeStringFixedArrayEncoder[" + data_name + "]";
+      return "StringUnicodeFixedArrayEncoder[" + data_name + "]";
    }
 
   protected:
@@ -104,15 +104,15 @@ class StringUnicodeStringFixedArrayEncoder : public VariableArrayEncoderBase
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */
-   StringUnicodeStringFixedArrayEncoder();
-   /*! @brief Copy constructor for StringUnicodeStringFixedArrayEncoder class.
+   StringUnicodeFixedArrayEncoder();
+   /*! @brief Copy constructor for StringUnicodeFixedArrayEncoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   StringUnicodeStringFixedArrayEncoder( StringUnicodeStringFixedArrayEncoder const &rhs );
-   /*! @brief Assignment operator for StringUnicodeStringFixedArrayEncoder class.
+   StringUnicodeFixedArrayEncoder( StringUnicodeFixedArrayEncoder const &rhs );
+   /*! @brief Assignment operator for StringUnicodeFixedArrayEncoder class.
     *  @details Assignment operator is private to prevent inadvertent copies. */
-   StringUnicodeStringFixedArrayEncoder &operator=( StringUnicodeStringFixedArrayEncoder const &rhs );
+   StringUnicodeFixedArrayEncoder &operator=( StringUnicodeFixedArrayEncoder const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_STRING_UNICODE_STRING_FIXED_ARRAY_ENCODER_HH
+#endif // TRICKHLA_STRING_UNICODE_FIXED_ARRAY_ENCODER_HH

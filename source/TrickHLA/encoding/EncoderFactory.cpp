@@ -25,9 +25,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{CharUnicodeStringEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{Float64ToLogicalTimeEncoder.cpp}
-@trick_link_dependency{StringUnicodeStringEncoder.cpp}
-@trick_link_dependency{StringUnicodeStringFixedArrayEncoder.cpp}
-@trick_link_dependency{StringUnicodeStringVariableArrayEncoder.cpp}
+@trick_link_dependency{StringUnicodeEncoder.cpp}
+@trick_link_dependency{StringUnicodeFixedArrayEncoder.cpp}
+@trick_link_dependency{StringUnicodeVariableArrayEncoder.cpp}
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
@@ -70,9 +70,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
-#include "TrickHLA/encoding/StringUnicodeStringEncoder.hh"
-#include "TrickHLA/encoding/StringUnicodeStringFixedArrayEncoder.hh"
-#include "TrickHLA/encoding/StringUnicodeStringVariableArrayEncoder.hh"
+#include "TrickHLA/encoding/StringUnicodeEncoder.hh"
+#include "TrickHLA/encoding/StringUnicodeFixedArrayEncoder.hh"
+#include "TrickHLA/encoding/StringUnicodeVariableArrayEncoder.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -563,12 +563,12 @@ EncoderBase *EncoderFactory::create_string_encoder(
       case ENCODING_UNICODE_STRING: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new StringUnicodeStringFixedArrayEncoder( address, attr, data_name );
+               return new StringUnicodeFixedArrayEncoder( address, attr, data_name );
             } else {
-               return new StringUnicodeStringVariableArrayEncoder( address, attr, data_name );
+               return new StringUnicodeVariableArrayEncoder( address, attr, data_name );
             }
          } else {
-            return new StringUnicodeStringEncoder( address, attr, data_name );
+            return new StringUnicodeEncoder( address, attr, data_name );
          }
          break;
       }
