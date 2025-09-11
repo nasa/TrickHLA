@@ -80,8 +80,8 @@ class StringUnicodeEncoder : public VariableArrayEncoderBase
   public:
    /*! @brief Default constructor. */
    StringUnicodeEncoder( void              *addr,
-                               ATTRIBUTES        *attr,
-                               std::string const &name );
+                         ATTRIBUTES        *attr,
+                         std::string const &name );
 
    /*! @brief Destructor for the TrickHLA StringUnicodeEncoder class. */
    virtual ~StringUnicodeEncoder();

@@ -82,8 +82,8 @@ class StringUnicodeFixedArrayEncoder : public VariableArrayEncoderBase
   public:
    /*! @brief Default constructor. */
    StringUnicodeFixedArrayEncoder( void              *addr,
-                                         ATTRIBUTES        *attr,
-                                         std::string const &name );
+                                   ATTRIBUTES        *attr,
+                                   std::string const &name );
 
    /*! @brief Destructor for the TrickHLA StringUnicodeFixedArrayEncoder class. */
    virtual ~StringUnicodeFixedArrayEncoder();
@@ -98,9 +98,6 @@ class StringUnicodeFixedArrayEncoder : public VariableArrayEncoderBase
    {
       return "StringUnicodeFixedArrayEncoder[" + data_name + "]";
    }
-
-  protected:
-   std::wstring *wstring_data; ///< @trick_io{**} Wide string intermediate data.
 
   private:
    /* Do not allow the default, copy constructor or assignment operator. */

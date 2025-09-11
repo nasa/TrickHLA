@@ -67,12 +67,13 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
+#define USE_DATA_ELEMENTS
+
 StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder(
    void         *addr,
    ATTRIBUTES   *attr,
    string const &name )
-   : VariableArrayEncoderBase( addr, attr, name ),
-     wstring_data( NULL )
+   : VariableArrayEncoderBase( addr, attr, name )
 {
    if ( this->type != TRICK_STRING ) {
       ostringstream errmsg;
@@ -98,47 +99,49 @@ StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder(
 
    HLAfixedArray *array_encoder = new HLAfixedArray( HLAunicodeString(), var_element_count );
    this->data_encoder           = array_encoder;
+   string const *array_data     = static_cast< std::string * >( addr );
 
-   // Create the array of wstring's that holds the data that will be encoded.
-   this->wstring_data = static_cast< std::wstring * >( malloc( var_element_count * sizeof( std::wstring ) ) );
-
-   // Connect the users array data to the encoder array elements.
-   if ( addr != NULL ) {
-      string *array_data = static_cast< std::string * >( addr );
-      for ( size_t i = 0; i < var_element_count; ++i ) {
-         wstring_data[i].assign( array_data[i].begin(), array_data[i].end() );
-
-         const_cast< HLAunicodeString & >( // NOLINT(bugprone-macro-parentheses)
-            dynamic_cast< HLAunicodeString const & >(
-               array_encoder->get( i ) ) )
-            .setDataPointer( &wstring_data[i] );
-      }
+   std::wstring wstr;
+   for ( size_t i = 0; i < var_element_count; ++i ) {
+      // Convert from string to wide-string.
+      wstr.assign( array_data[i].begin(), array_data[i].end() );
+      array_encoder->set( i, HLAunicodeString( wstr ) );
    }
 }
 
 StringUnicodeFixedArrayEncoder::~StringUnicodeFixedArrayEncoder()
 {
-   if ( wstring_data != NULL ) {
-      free( wstring_data );
-      wstring_data = NULL;
-   }
+   return;
 }
 
 void StringUnicodeFixedArrayEncoder::update_before_encode()
 {
-   // Convert the string into a wide-string.
-   string *array_data = static_cast< std::string * >( address );
+   HLAfixedArray *array_encoder = dynamic_cast< HLAfixedArray * >( data_encoder );
+   string        *array_data    = static_cast< std::string * >( address ); // NOLINT(bugprone-macro-parentheses)
+   std::wstring   wstr;
+
    for ( size_t i = 0; i < var_element_count; ++i ) {
-      wstring_data[i].assign( array_data[i].begin(), array_data[i].end() );
+      // Convert from string to wide-string.
+      wstr.assign( array_data[i].begin(), array_data[i].end() );
+
+      const_cast< HLAunicodeString & >( // NOLINT(bugprone-macro-parentheses)
+         dynamic_cast< HLAunicodeString const & >(
+            array_encoder->get( i ) ) )
+         .set( wstr );
    }
 }
 
 void StringUnicodeFixedArrayEncoder::update_after_decode()
 {
-   // Convert from wide-string to string.
-   string *array_data = static_cast< std::string * >( address );
+   HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( data_encoder );
+   string              *array_data    = static_cast< std::string * >( address ); // NOLINT(bugprone-macro-parentheses)
+
+   // Copy the decoded data element values to the Trick array.
    for ( size_t i = 0; i < var_element_count; ++i ) {
-      array_data[i].assign( wstring_data[i].begin(), wstring_data[i].end() );
+      wstring wstr = dynamic_cast< HLAunicodeString const & >( array_encoder->get( i ) ).get();
+
+      // Convert from wide-string to string.
+      array_data[i].assign( wstr.begin(), wstr.end() );
    }
 }
 
