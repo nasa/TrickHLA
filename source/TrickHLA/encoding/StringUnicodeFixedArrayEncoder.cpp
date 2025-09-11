@@ -99,13 +99,9 @@ StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder(
 
    HLAfixedArray *array_encoder = new HLAfixedArray( HLAunicodeString(), var_element_count );
    this->data_encoder           = array_encoder;
-   string const *array_data     = static_cast< std::string * >( addr );
 
    for ( size_t i = 0; i < var_element_count; ++i ) {
-      // Convert from string to wide-string.
-      wstring wstring_data;
-      wstring_data.assign( array_data[i].begin(), array_data[i].end() );
-      array_encoder->set( i, HLAunicodeString( wstring_data ) );
+      array_encoder->set( i, HLAunicodeString() );
    }
 }
 
