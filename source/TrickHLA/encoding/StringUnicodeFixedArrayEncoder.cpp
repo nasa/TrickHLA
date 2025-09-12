@@ -67,8 +67,6 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-#define USE_DATA_ELEMENTS
-
 StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder(
    void         *addr,
    ATTRIBUTES   *attr,
