@@ -203,20 +203,26 @@ void EncodingTest::char_test(
    ostringstream encode_msg;
    encode_msg << "EncodingTest::char_test():" << __LINE__ << endl;
 
+   data1_char_encoder->update_before_encode();
    VariableLengthData encoded_data1_char = data1_char_encoder->encode();
    data2_char_encoder->decode( encoded_data1_char );
+   data2_char_encoder->update_after_decode();
    encode_msg << " Encoded data1_char size:" << encoded_data1_char.size()
               << " Encoded-length:" << data1_char_encoder->getEncodedLength()
               << endl;
 
+   data1_vec3_char_encoder->update_before_encode();
    VariableLengthData encoded_data1_vec3 = data1_vec3_char_encoder->encode();
    data2_vec3_char_encoder->decode( encoded_data1_vec3 );
+   data2_vec3_char_encoder->update_after_decode();
    encode_msg << " Encoded data1_vec3 size:" << encoded_data1_vec3.size()
               << " Encoded-length:" << data1_vec3_char_encoder->getEncodedLength()
               << endl;
 
+   data1_m3x3_char_encoder->update_before_encode();
    VariableLengthData encoded_data1_m3x3 = data1_m3x3_char_encoder->encode();
    data2_m3x3_char_encoder->decode( encoded_data1_m3x3 );
+   data2_m3x3_char_encoder->update_after_decode();
    encode_msg << " Encoded data1_m3x3 size:" << encoded_data1_m3x3.size()
               << " Encoded-length:" << data1_m3x3_char_encoder->getEncodedLength()
               << endl;
@@ -468,9 +474,17 @@ void EncodingTest::wchar_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_wchar_encoder->update_before_encode();
    data2_wchar_encoder->decode( data1_wchar_encoder->encode() );
+   data2_wchar_encoder->update_after_decode();
+
+   data1_vec3_wchar_encoder->update_before_encode();
    data2_vec3_wchar_encoder->decode( data1_vec3_wchar_encoder->encode() );
+   data2_vec3_wchar_encoder->update_after_decode();
+
+   data1_m3x3_wchar_encoder->update_before_encode();
    data2_m3x3_wchar_encoder->decode( data1_m3x3_wchar_encoder->encode() );
+   data2_m3x3_wchar_encoder->update_after_decode();
 
    data1_ptr_wchar_encoder->update_before_encode();
    data2_ptr_wchar_encoder->decode( data1_ptr_wchar_encoder->encode() );
@@ -564,9 +578,17 @@ void EncodingTest::wstring_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_wstring_encoder->update_before_encode();
    data2_wstring_encoder->decode( data1_wstring_encoder->encode() );
+   data2_wstring_encoder->update_after_decode();
+
+   data1_vec3_wstring_encoder->update_before_encode();
    data2_vec3_wstring_encoder->decode( data1_vec3_wstring_encoder->encode() );
+   data2_vec3_wstring_encoder->update_after_decode();
+
+   data1_m3x3_wstring_encoder->update_before_encode();
    data2_m3x3_wstring_encoder->decode( data1_m3x3_wstring_encoder->encode() );
+   data2_m3x3_wstring_encoder->update_after_decode();
 
    data1_ptr_wstring_encoder->update_before_encode();
    data2_ptr_wstring_encoder->decode( data1_ptr_wstring_encoder->encode() );
@@ -660,13 +682,21 @@ void EncodingTest::int16_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_i16_encoder->update_before_encode();
    data2_i16_encoder->decode( data1_i16_encoder->encode() );
+   data2_i16_encoder->update_after_decode();
+
+   data1_vec3_i16_encoder->update_before_encode();
    data2_vec3_i16_encoder->decode( data1_vec3_i16_encoder->encode() );
+   data2_vec3_i16_encoder->update_after_decode();
+
+   data1_m3x3_i16_encoder->update_before_encode();
    data2_m3x3_i16_encoder->decode( data1_m3x3_i16_encoder->encode() );
+   data2_m3x3_i16_encoder->update_after_decode();
 
    data1_ptr_i16_encoder->update_before_encode();
    data2_ptr_i16_encoder->decode( data1_ptr_i16_encoder->encode() );
-   data1_ptr_i16_encoder->update_after_decode();
+   data2_ptr_i16_encoder->update_after_decode();
 
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
@@ -756,13 +786,21 @@ void EncodingTest::uint16_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_ui16_encoder->update_before_encode();
    data2_ui16_encoder->decode( data1_ui16_encoder->encode() );
+   data2_ui16_encoder->update_after_decode();
+
+   data1_vec3_ui16_encoder->update_before_encode();
    data2_vec3_ui16_encoder->decode( data1_vec3_ui16_encoder->encode() );
+   data2_vec3_ui16_encoder->update_after_decode();
+
+   data1_m3x3_ui16_encoder->update_before_encode();
    data2_m3x3_ui16_encoder->decode( data1_m3x3_ui16_encoder->encode() );
+   data2_m3x3_ui16_encoder->update_after_decode();
 
    data1_ptr_ui16_encoder->update_before_encode();
    data2_ptr_ui16_encoder->decode( data1_ptr_ui16_encoder->encode() );
-   data1_ptr_ui16_encoder->update_after_decode();
+   data2_ptr_ui16_encoder->update_after_decode();
 
    ostringstream compare_msg;
    compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
@@ -852,9 +890,17 @@ void EncodingTest::int32_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_i32_encoder->update_before_encode();
    data2_i32_encoder->decode( data1_i32_encoder->encode() );
+   data2_i32_encoder->update_after_decode();
+
+   data1_vec3_i32_encoder->update_before_encode();
    data2_vec3_i32_encoder->decode( data1_vec3_i32_encoder->encode() );
+   data2_vec3_i32_encoder->update_after_decode();
+
+   data1_m3x3_i32_encoder->update_before_encode();
    data2_m3x3_i32_encoder->decode( data1_m3x3_i32_encoder->encode() );
+   data2_m3x3_i32_encoder->update_after_decode();
 
    data1_ptr_i32_encoder->update_before_encode();
    data2_ptr_i32_encoder->decode( data1_ptr_i32_encoder->encode() );
@@ -948,9 +994,17 @@ void EncodingTest::uint32_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_ui32_encoder->update_before_encode();
    data2_ui32_encoder->decode( data1_ui32_encoder->encode() );
+   data2_ui32_encoder->update_after_decode();
+
+   data1_vec3_ui32_encoder->update_before_encode();
    data2_vec3_ui32_encoder->decode( data1_vec3_ui32_encoder->encode() );
+   data2_vec3_ui32_encoder->update_after_decode();
+
+   data1_m3x3_ui32_encoder->update_before_encode();
    data2_m3x3_ui32_encoder->decode( data1_m3x3_ui32_encoder->encode() );
+   data2_m3x3_ui32_encoder->update_after_decode();
 
    data1_ptr_ui32_encoder->update_before_encode();
    data2_ptr_ui32_encoder->decode( data1_ptr_ui32_encoder->encode() );
@@ -1044,9 +1098,17 @@ void EncodingTest::int64_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_i64_encoder->update_before_encode();
    data2_i64_encoder->decode( data1_i64_encoder->encode() );
+   data2_i64_encoder->update_after_decode();
+
+   data1_vec3_i64_encoder->update_before_encode();
    data2_vec3_i64_encoder->decode( data1_vec3_i64_encoder->encode() );
+   data2_vec3_i64_encoder->update_after_decode();
+
+   data1_m3x3_i64_encoder->update_before_encode();
    data2_m3x3_i64_encoder->decode( data1_m3x3_i64_encoder->encode() );
+   data2_m3x3_i64_encoder->update_after_decode();
 
    data1_ptr_i64_encoder->update_before_encode();
    data2_ptr_i64_encoder->decode( data1_ptr_i64_encoder->encode() );
@@ -1140,9 +1202,17 @@ void EncodingTest::uint64_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_ui64_encoder->update_before_encode();
    data2_ui64_encoder->decode( data1_ui64_encoder->encode() );
+   data2_ui64_encoder->update_after_decode();
+
+   data1_vec3_ui64_encoder->update_before_encode();
    data2_vec3_ui64_encoder->decode( data1_vec3_ui64_encoder->encode() );
+   data2_vec3_ui64_encoder->update_after_decode();
+
+   data1_m3x3_ui64_encoder->update_before_encode();
    data2_m3x3_ui64_encoder->decode( data1_m3x3_ui64_encoder->encode() );
+   data2_m3x3_ui64_encoder->update_after_decode();
 
    data1_ptr_ui64_encoder->update_before_encode();
    data2_ptr_ui64_encoder->decode( data1_ptr_ui64_encoder->encode() );
@@ -1236,9 +1306,17 @@ void EncodingTest::long_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_long_encoder->update_before_encode();
    data2_long_encoder->decode( data1_long_encoder->encode() );
+   data2_long_encoder->update_after_decode();
+
+   data1_vec3_long_encoder->update_before_encode();
    data2_vec3_long_encoder->decode( data1_vec3_long_encoder->encode() );
+   data2_vec3_long_encoder->update_after_decode();
+
+   data1_m3x3_long_encoder->update_before_encode();
    data2_m3x3_long_encoder->decode( data1_m3x3_long_encoder->encode() );
+   data2_m3x3_long_encoder->update_after_decode();
 
    data1_ptr_long_encoder->update_before_encode();
    data2_ptr_long_encoder->decode( data1_ptr_long_encoder->encode() );
@@ -1332,9 +1410,17 @@ void EncodingTest::ulong_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_ulong_encoder->update_before_encode();
    data2_ulong_encoder->decode( data1_ulong_encoder->encode() );
+   data2_ulong_encoder->update_after_decode();
+
+   data1_vec3_ulong_encoder->update_before_encode();
    data2_vec3_ulong_encoder->decode( data1_vec3_ulong_encoder->encode() );
+   data2_vec3_ulong_encoder->update_after_decode();
+
+   data1_m3x3_ulong_encoder->update_before_encode();
    data2_m3x3_ulong_encoder->decode( data1_m3x3_ulong_encoder->encode() );
+   data2_m3x3_ulong_encoder->update_after_decode();
 
    data1_ptr_ulong_encoder->update_before_encode();
    data2_ptr_ulong_encoder->decode( data1_ptr_ulong_encoder->encode() );
@@ -1428,9 +1514,17 @@ void EncodingTest::float32_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_f32_encoder->update_before_encode();
    data2_f32_encoder->decode( data1_f32_encoder->encode() );
+   data2_f32_encoder->update_after_decode();
+
+   data1_vec3_f32_encoder->update_before_encode();
    data2_vec3_f32_encoder->decode( data1_vec3_f32_encoder->encode() );
+   data2_vec3_f32_encoder->update_after_decode();
+
+   data1_m3x3_f32_encoder->update_before_encode();
    data2_m3x3_f32_encoder->decode( data1_m3x3_f32_encoder->encode() );
+   data2_m3x3_f32_encoder->update_after_decode();
 
    data1_ptr_f32_encoder->update_before_encode();
    data2_ptr_f32_encoder->decode( data1_ptr_f32_encoder->encode() );
@@ -1524,9 +1618,17 @@ void EncodingTest::float64_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_f64_encoder->update_before_encode();
    data2_f64_encoder->decode( data1_f64_encoder->encode() );
+   data2_f64_encoder->update_after_decode();
+
+   data1_vec3_f64_encoder->update_before_encode();
    data2_vec3_f64_encoder->decode( data1_vec3_f64_encoder->encode() );
+   data2_vec3_f64_encoder->update_after_decode();
+
+   data1_m3x3_f64_encoder->update_before_encode();
    data2_m3x3_f64_encoder->decode( data1_m3x3_f64_encoder->encode() );
+   data2_m3x3_f64_encoder->update_after_decode();
 
    data1_ptr_f64_encoder->update_before_encode();
    data2_ptr_f64_encoder->decode( data1_ptr_f64_encoder->encode() );
@@ -1620,9 +1722,17 @@ void EncodingTest::bool_test(
       message_publish( MSG_NORMAL, msg2.str().c_str() );
    }
 
+   data1_bool_encoder->update_before_encode();
    data2_bool_encoder->decode( data1_bool_encoder->encode() );
+   data2_bool_encoder->update_after_decode();
+
+   data1_vec3_bool_encoder->update_before_encode();
    data2_vec3_bool_encoder->decode( data1_vec3_bool_encoder->encode() );
+   data2_vec3_bool_encoder->update_after_decode();
+
+   data1_m3x3_bool_encoder->update_before_encode();
    data2_m3x3_bool_encoder->decode( data1_m3x3_bool_encoder->encode() );
+   data2_m3x3_bool_encoder->update_after_decode();
 
    data1_ptr_bool_encoder->update_before_encode();
    data2_ptr_bool_encoder->decode( data1_ptr_bool_encoder->encode() );
@@ -1929,9 +2039,10 @@ void EncodingTest::fixed_record_attribute_test(
 
    attr_data2[0].initialize_element_encoder();
 
+   attr_data1[0].update_before_encode();
    VariableLengthData encoded_data = attr_data1[0].encode();
-
    attr_data2[0].decode( encoded_data );
+   attr_data2[0].update_after_decode();
 
    ostringstream compare_msg;
    string        explanation;
