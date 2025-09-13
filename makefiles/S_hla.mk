@@ -221,24 +221,25 @@ else
    # Determine the gcc compiler version.
    COMPILER_VERSION = $(shell $(CPPC_CMD) -dumpversion | cut -d . -f 1)
 
-   # The gcc version 11 compiler defaults to C++17 which removed the
-   # dynamic exception specification. Instead fallback to C++14 because
-   # the IEEE 1516-2010 APIs use dynamic exception specifications.
-   # Otherwise this will result in compile time errors for C++17.
-   ifeq ($(shell echo $(COMPILER_VERSION)\>=11 | bc),1)
-      TRICK_CFLAGS   += -std=c++14
-      TRICK_CXXFLAGS += -std=c++14
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Falling back to C++14 to compile Trick simulation.${RESET_TXT})
-   endif
+	ifeq ($(HLA_STANDARD),IEEE_1516_2010)
+	   # The gcc version 11 compiler defaults to C++17 which removed the
+	   # dynamic exception specification. Instead fallback to C++14 because
+	   # the IEEE 1516-2010 APIs use dynamic exception specifications.
+	   # Otherwise this will result in compile time errors for C++17.
+	   ifeq ($(shell echo $(COMPILER_VERSION)\>=11 | bc),1)
+	      TRICK_CXXFLAGS += -std=c++14
+	      $(info ${GREEN_TXT}S_hla.mk:INFO: Falling back to C++14 to compile Trick simulation.${RESET_TXT})
+	   endif
 
-   # ICG code needs to be targeted to either C++14 (gcc versions 6.1 to 10)
-   # or C++11 (gcc 4.8.1+) because C++17 (gcc version 11+) removed the dynamic
-   # exception specification and the IEEE 1516-2010 APIs use it. Otherwise
-   # this will result in compile time errors.
-   ifeq ($(shell echo $(COMPILER_VERSION)\>=6 | bc),1)
-      TRICK_ICGFLAGS += --icg-std=c++14
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
-   endif
+	   # ICG code needs to be targeted to either C++14 (gcc versions 6.1 to 10)
+	   # or C++11 (gcc 4.8.1+) because C++17 (gcc version 11+) removed the dynamic
+	   # exception specification and the IEEE 1516-2010 APIs use it. Otherwise
+	   # this will result in compile time errors.
+	   ifeq ($(shell echo $(COMPILER_VERSION)\>=6 | bc),1)
+	      TRICK_ICGFLAGS += --icg-std=c++14
+	      $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+	   endif
+	endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
