@@ -74,8 +74,8 @@ StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder(
 {
    if ( this->type != TRICK_STRING ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << data_name
+      errmsg << "StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder():"
+             << __LINE__ << " ERROR: Trick type for the '" << data_name
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
@@ -87,8 +87,8 @@ StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder(
 
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << data_name
+      errmsg << "StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder():"
+             << __LINE__ << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a dynamic array of 'std::string'!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;

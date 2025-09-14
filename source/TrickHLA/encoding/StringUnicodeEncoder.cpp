@@ -103,12 +103,13 @@ StringUnicodeEncoder::~StringUnicodeEncoder()
 void StringUnicodeEncoder::update_before_encode()
 {
    // Convert the string into a wide-string.
-   string &str_data = *static_cast< std::string * >( address );
-   this->wstring_data.assign( str_data.begin(), str_data.end() );
+   string const *str_data = static_cast< std::string * >( address );
+   wstring_data.assign( str_data->begin(), str_data->end() );
 }
 
 void StringUnicodeEncoder::update_after_decode()
 {
    // Convert from wide-string to string.
-   ( *static_cast< std::string * >( address ) ).assign( wstring_data.begin(), wstring_data.end() );
+   string *str_data = static_cast< std::string * >( address );
+   str_data->assign( wstring_data.begin(), wstring_data.end() );
 }

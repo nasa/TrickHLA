@@ -75,8 +75,8 @@ StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder(
 {
    if ( this->type != TRICK_STRING ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << data_name
+      errmsg << "StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder():"
+             << __LINE__ << " ERROR: Trick type for the '" << data_name
              << "' simulation variable (type:"
              << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
              << ") is not the expected type '"
@@ -88,8 +88,8 @@ StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder(
 
    if ( !is_static_array() ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << data_name
+      errmsg << "StringUnicodeFixedArrayEncoder::StringUnicodeFixedArrayEncoder():"
+             << __LINE__ << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a static array of 'std::string'!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
