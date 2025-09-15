@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/attributes.h"
+#include "trick/io_alloc.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/parameter_types.h"
 
@@ -162,8 +163,14 @@ void VariableArrayEncoderBase::calculate_var_element_count()
          this->var_element_count = 0;
       } else {
          // get_size returns the number of elements in the dynamic array.
-         int const num_items     = get_size( *static_cast< void ** >( address ) );
-         this->var_element_count = ( num_items > 0 ) ? num_items : 0;
+         int num_items = get_size( *static_cast< void ** >( address ) );
+         if ( num_items <= 0 ) {
+            ALLOC_INFO *alloc_info = get_alloc_info_of( *static_cast< void ** >( address ) );
+            if ( alloc_info != NULL ) {
+               num_items = alloc_info->num;
+            }
+         }
+         this->var_element_count = ( num_items >= 0 ) ? num_items : 0;
       }
    }
 }
