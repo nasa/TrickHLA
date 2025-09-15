@@ -163,7 +163,7 @@ void VariableArrayEncoderBase::calculate_var_element_count()
          // get_size returns the number of elements in the dynamic array.
          int num_items = get_size( *static_cast< void ** >( address ) );
          if ( num_items <= 0 ) {
-            ALLOC_INFO *alloc_info = get_alloc_info_of( *static_cast< void ** >( address ) );
+            ALLOC_INFO const *alloc_info = get_alloc_info_of( *static_cast< void ** >( address ) );
             if ( alloc_info != NULL ) {
                num_items = alloc_info->num;
             }
