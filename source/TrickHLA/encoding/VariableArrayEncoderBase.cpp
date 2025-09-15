@@ -159,9 +159,7 @@ void VariableArrayEncoderBase::calculate_var_element_count()
 {
    if ( is_dynamic_array() ) {
       // Dynamic array that is a pointer so check for NULL.
-      if ( *static_cast< void ** >( address ) == NULL ) {
-         this->var_element_count = 0;
-      } else {
+      if ( *static_cast< void ** >( address ) != NULL ) {
          // get_size returns the number of elements in the dynamic array.
          int num_items = get_size( *static_cast< void ** >( address ) );
          if ( num_items <= 0 ) {
@@ -171,6 +169,8 @@ void VariableArrayEncoderBase::calculate_var_element_count()
             }
          }
          this->var_element_count = ( num_items >= 0 ) ? num_items : 0;
+      } else {
+         this->var_element_count = 0;
       }
    }
 }
