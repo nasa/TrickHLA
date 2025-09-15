@@ -70,8 +70,9 @@ StringData::StringData(
 
 #if 0
    // Test Trick bug that can't see the assigned string.
-   string str = "Test";
-   ptr_string = &str;
+   ptr_string    = static_cast< std::string * >( TMM_declare_var_1d( "std::string", 1 ) );
+   ptr_string[0] = _string; // works
+//   ptr_string = &_string; // does not work
 #else
    int const num_items = 1 + ( ( offset < 10 ) ? offset : 10 ); // Number of std::string in array.
    ptr_string          = static_cast< std::string * >( TMM_declare_var_1d( "std::string", num_items ) );
