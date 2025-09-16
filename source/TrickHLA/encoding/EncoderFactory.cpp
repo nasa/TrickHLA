@@ -636,16 +636,12 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
       case ENCODING_UNICODE_STRING: {
          if ( is_array ) {
             if ( is_static_array ) {
-               return new WUnicodeStringFixedArrayEncoder( address, attr, data_name );
+               return new UnicodeStringFixedArrayEncoder( address, attr, data_name );
             } else {
                return new UnicodeStringVariableArrayEncoder( address, attr, data_name );
             }
          } else {
-#   if 1
             return new UnicodeStringEncoder( address, attr, data_name );
-#   else
-            return new HLAunicodeString( address, attr, data_name );
-#   endif
          }
          break;
       }
@@ -660,7 +656,6 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
          break;
       }
    }
-
    return NULL;
 }
 #endif // TRICK_WSTRING_MM_SUPPORT
