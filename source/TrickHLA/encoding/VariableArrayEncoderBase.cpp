@@ -136,8 +136,8 @@ int const VariableArrayEncoderBase::get_data_size()
          }
          case TRICK_WSTRING: {
             if ( is_dynamic_array() ) {
-               size_t   wchar_size = sizeof( wchar_t );
-               wstring *wstr_array = *static_cast< std::wstring ** >( address );
+               size_t const wchar_size = sizeof( wchar_t );
+               wstring     *wstr_array = *static_cast< std::wstring ** >( address );
                for ( size_t i = 0; i < var_element_count; ++i ) {
                   byte_count += ( wchar_size * wstr_array[i].size() ); // cppcheck-suppress [useStlAlgorithm]
                }
@@ -184,22 +184,36 @@ void VariableArrayEncoderBase::resize_trick_var(
         && ( ( new_size != var_element_count )
              || ( *( static_cast< void ** >( address ) ) == NULL ) ) ) {
 
-      if ( this->type == TRICK_STRING ) {
-         // TMM_resize_array_1d_a does not support STL strings.
-         if ( *( static_cast< void ** >( address ) ) != NULL ) {
-            TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
+      switch ( type ) {
+         case TRICK_STRING: {
+            // TMM_resize_array_1d_a does not support std::string.
+            if ( *( static_cast< void ** >( address ) ) != NULL ) {
+               TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
+            }
+            *( static_cast< void ** >( address ) ) =
+               static_cast< void * >( TMM_declare_var_1d( "std::string", (int)new_size ) );
+            break;
          }
-         *( static_cast< void ** >( address ) ) =
-            static_cast< void * >( TMM_declare_var_1d( "std::string", (int)new_size ) );
-      } else {
-         if ( *( static_cast< void ** >( address ) ) == NULL ) {
+         case TRICK_WSTRING: {
+            // TMM_resize_array_1d_a does not support std::wstring.
+            if ( *( static_cast< void ** >( address ) ) != NULL ) {
+               TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
+            }
             *( static_cast< void ** >( address ) ) =
-               static_cast< void * >( TMM_declare_var_1d(
-                  trickTypeCharString( this->type, "UNSUPPORTED_TYPE" ), (int)new_size ) );
-         } else {
-            *( static_cast< void ** >( address ) ) =
-               static_cast< void * >( TMM_resize_array_1d_a(
-                  *( static_cast< void ** >( address ) ), (int)new_size ) );
+               static_cast< void * >( TMM_declare_var_1d( "std::wstring", (int)new_size ) );
+            break;
+         }
+         default: {
+            if ( *( static_cast< void ** >( address ) ) == NULL ) {
+               *( static_cast< void ** >( address ) ) =
+                  static_cast< void * >( TMM_declare_var_1d(
+                     trickTypeCharString( this->type, "UNSUPPORTED_TYPE" ), (int)new_size ) );
+            } else {
+               *( static_cast< void ** >( address ) ) =
+                  static_cast< void * >( TMM_resize_array_1d_a(
+                     *( static_cast< void ** >( address ) ), (int)new_size ) );
+            }
+            break;
          }
       }
 
