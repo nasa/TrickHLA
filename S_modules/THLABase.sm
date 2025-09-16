@@ -84,7 +84,8 @@ class THLABaseSimObject : public Trick::SimObject {
                       unsigned short _1ST  = 1,
                       unsigned short _INIT = 60,
                       unsigned short _LAST = 65534 )
-      : data_cycle_time( data_cycle )
+      : Trick::SimObject(),
+        data_cycle_time( data_cycle )
    {
       // Verify the data and interaction cycle times.
       if ( data_cycle <= 0.0 ) {

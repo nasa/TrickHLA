@@ -41,7 +41,8 @@ class THLAFedSimObject : public Trick::SimObject {
    //----- DATA STRUCTURE DECLARATIONS -----
 
    THLAFedSimObject( TrickHLA::Federate & thla_fed )
-      : federate( thla_fed )
+      : Trick::SimObject(),
+        federate( thla_fed )
    {
       // No jobs for now.
       return;

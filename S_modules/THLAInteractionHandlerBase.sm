@@ -57,7 +57,8 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
                                             std::string          sim_obj_name,
                                             InteractionHandler * handler,
                                             unsigned short       _INIT = P_HLA_INIT  )
-      : handler_base_ptr( handler ),
+      : Trick::SimObject(),
+        handler_base_ptr( handler ),
         thla_interaction( NULL ),
         publish( publish_inter ),
         subscribe( subscribe_inter ),
@@ -79,7 +80,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
    virtual int default_config()
    {
       // Check interaction handler.
-      if ( handler_base_ptr == NULL ){
+      if ( handler_base_ptr == NULL ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::default_config():" << __LINE__
                 << " ERROR: Unexpected NULL InteractionHandler!\n";
@@ -106,23 +107,20 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
                TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
             }
             
-         }
-         else {
+         } else {
             
             // The Interaction is not set; so, assign the thla_interaction.
             handler_base_ptr->set_interaction( thla_interaction );
             
          }
          
-      }
-      else if ( interaction_ptr != NULL ) {
+      } else if ( interaction_ptr != NULL ) {
          
          // The thla_interaction reference is not set but the InteractionHandler
          // is.  So, we'll use that.
          thla_interaction = interaction_ptr;
          
-      }
-      else{
+      } else {
          
          // Neither is set; so, we must be configuring at initialization.
          // We're probably using the input file.
@@ -137,14 +135,13 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
    virtual int configure()
    {
       // We must have an InteractionHandler.
-      if ( handler_base_ptr == NULL ){
+      if ( handler_base_ptr == NULL ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::configure():" << __LINE__
                 << " ERROR: Unexpected NULL InteractionHandler!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-      }
-      else {
+      } else {
          handler_base_ptr->configure();
       }
       return( 0 );
@@ -153,7 +150,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
    virtual int initialize()
    {
       // We must have an InteractionHandler.
-      if ( handler_base_ptr == NULL ){
+      if ( handler_base_ptr == NULL ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
                 << " ERROR: Unexpected NULL Packing object!\n";
@@ -182,23 +179,20 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
                TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
             }
             
-         }
-         else {
+         } else {
 
             // The Interaction is not set; so, assign the thla_interaction.
             handler_base_ptr->set_interaction( thla_interaction );
             
          }
-         
-      }
-      else if ( interaction_ptr != NULL ) {
+
+      } else if ( interaction_ptr != NULL ) {
 
          // The thla_interaction reference is not set but the InteractionHandler
          // is.  So, we'll use that.
          thla_interaction = interaction_ptr;
          
-      }
-      else{
+      } else {
          
          // Neither is set.  This is an ERROR!
          std::ostringstream errmsg;

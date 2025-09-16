@@ -50,7 +50,8 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
                                       unsigned short               _INIT  = P_HLA_INIT,
                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
-      : thla_manager( thla_manager_in ),
+      : Trick::SimObject(),
+        thla_manager( thla_manager_in ),
         exec_cntrl( exec_cntrl_in )
    {
       //

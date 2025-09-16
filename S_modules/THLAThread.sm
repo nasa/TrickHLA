@@ -34,6 +34,8 @@
 
 // Trick include files.
 ##include "trick/exec_proto.h"
+##include "trick/message_proto.h"
+##include "trick/message_type.h"
 
 // TrickHLA include files.
 ##include "TrickHLA/Federate.hh"
@@ -50,17 +52,20 @@ class THLAThreadSimObject : public Trick::SimObject {
                         unsigned int _THREAD_ID,
                         unsigned short _1ST  = 1,
                         unsigned short _LAST = 65534 )
-      : federate( thla_fed ),
+      : Trick::SimObject(),
+        federate( thla_fed ),
         data_cycle_time( child_thread_data_cycle ),
         data_send_time( child_thread_data_cycle - main_thread_data_cycle ),
         thread_id( _THREAD_ID )
    {
       // Do a sanity check on the data cycle time.
       if ( child_thread_data_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "THLAThreadSimObject() child_thread_data_cycle must be > 0.0!" );
+         message_publish( MSG_ERROR, "%s:THLAThreadSimObject():%d ERROR: child_thread_data_cycle must be > 0.0!\n", __FILE__, __LINE__ );
+         exit( -1 );
       }
       if ( child_thread_data_cycle < main_thread_data_cycle ) {
-         exec_terminate( __FILE__, "THLAThreadSimObject() child_thread_data_cycle must be >= main_thread_data_cycle!" );
+         message_publish( MSG_ERROR, "%s:THLAThreadSimObject():%d ERROR: child_thread_data_cycle must be >= main_thread_data_cycle!\n", __FILE__, __LINE__ );
+         exit( -1 );
       }
 
       // Associate this Trick child thread ID to our TrickHLA Federate.

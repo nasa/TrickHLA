@@ -51,7 +51,8 @@ class JEODHLAInitSimObject : public Trick::SimObject {
                          unsigned short               _PRE_INIT  = 9,
                          unsigned short               _TIME_INIT = 10,
                          unsigned short               _INIT      = 60 )
-      : time_manager( time_manager_in ),
+      : Trick::SimObject(),
+        time_manager( time_manager_in ),
         time_manager_init( time_manager_init_in ),
         time_tai( time_tai_in ),
         time_tt( time_tt_in ),

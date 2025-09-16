@@ -49,6 +49,7 @@ class RelkinSimObject: public Trick::SimObject
 
    // Constructor
    RelkinSimObject( )
+     : Trick::SimObject()
    {
       //
       // Initialization jobs

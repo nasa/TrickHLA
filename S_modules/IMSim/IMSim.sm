@@ -78,7 +78,8 @@ class IMSimSimObject : public Trick::SimObject {
                    unsigned short _1ST  = 1,
                    unsigned short _INIT = 60,
                    unsigned short _LAST = 65534 ) 
-      : data_cycle_time( main_thread_data_cycle ),
+      : Trick::SimObject(),
+        data_cycle_time( main_thread_data_cycle ),
         CHECK_PAUSE_DELTA( 0.000001 )
    {
       // Verify the data and interaction cycle times.

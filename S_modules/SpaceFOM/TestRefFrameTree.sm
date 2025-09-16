@@ -101,7 +101,7 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
 
       // Check to see if the root reference frame is actualy being configured.
       // If not, don't tell the ExecutionControl about it.
-      if ( root_frame_ptr->get_object() != NULL ){
+      if ( root_frame_ptr->get_object() != NULL ) {
          // Set the root reference frame in the ExCO.
          exec_cntrl.root_ref_frame = root_frame_ptr;
       }

@@ -43,14 +43,14 @@ class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
    SpaceFOMPhysicalEntityRelState( SpaceFOM::RefFrameTree             & frame_tree_in,
                                    SpaceFOM::PhysicalEntityData const & entity_data_in,
                                    SpaceFOM::RefFrameBase             & default_frame )
-      : rel_state( default_frame , frame_tree_in ),
+      : Trick::SimObject(),
+        rel_state( default_frame , frame_tree_in ),
         debug_rel_state( false ),
         debug_entity_state( false ),
         debug_frames( false ),
         frame_tree( frame_tree_in ),
         entity_data( entity_data_in )
    {
-      
       ("initialization") initialize( );
       (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( &(entity_data), rel_state_frame );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( *rel_state_frame, *entity_frame, std::cout );
@@ -65,13 +65,13 @@ class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
       bool error = false;
 
       // Make sure that all the references are set.
-      if ( rel_state_frame == NULL ){
+      if ( rel_state_frame == NULL ) {
          errmsg << "SpaceFOMPhysicalEntityRelState:initialize(): Entity: " << entity_data.name << " NULL rel_state_frame!\n";
          errmsg << "\t You probably forgot to set the RelStateBase reference frame in the input file.\n";
          error = true;
       } else {
          entity_frame = frame_tree.find_frame( entity_data.parent_frame );
-         if ( entity_frame == NULL ){
+         if ( entity_frame == NULL ) {
             errmsg << "SpaceFOMPhysicalEntityRelState:initialize(): ref_entity parent frame not found: "
                    << entity_data.parent_frame << "!";
             error = true;
@@ -86,7 +86,9 @@ class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
    // Print state job.
    void print_rel_state( std::ostream &stream )
    {
-      if( !debug_rel_state ){ return; }
+      if ( !debug_rel_state ) {
+         return;
+      }
 
       stream << "----------------------------------------------------------------------\n";
       stream << " Relative state for entity: " << entity_data.name << "\n";
@@ -106,7 +108,9 @@ class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
    // Print state job.
    void print_entity( std::ostream &stream )
    {
-      if( !debug_entity_state ){ return; }
+      if ( !debug_entity_state ) {
+         return;
+      }
       stream << "----------------------------------------------------------------------\n";
       stream << " Entity: " << entity_data.name << "\n";
       stream << " Entity state frame: " << entity_data.parent_frame << "\n";
@@ -120,7 +124,9 @@ class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
                       SpaceFOM::RefFrameBase const & target_frame,
                       std::ostream                 & stream        )
    {
-      if( !debug_frames ){ return; }
+      if ( !debug_frames ) {
+         return;
+      }
       stream << "----------------------------------------------------------------------\n";
       stream << " Subject frame:  " << subject_frame.get_name() << "\n";
       stream << " Subject parent: " << subject_frame.get_parent_frame()->name << "\n";
