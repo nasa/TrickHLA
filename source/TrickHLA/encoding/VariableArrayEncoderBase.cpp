@@ -59,8 +59,8 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
    string const &name )
    : EncoderBase( name ),
      address( addr ),
-     var_address( NULL ),
      type( ( attr != NULL ) ? attr->type : TRICK_VOID ),
+     var_address( NULL ),
      var_element_count( 0 ),
      data_elements()
 {

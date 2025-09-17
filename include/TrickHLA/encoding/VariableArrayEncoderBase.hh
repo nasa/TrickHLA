@@ -135,10 +135,11 @@ class VariableArrayEncoderBase : public EncoderBase
    }
 
   protected:
-   void *address;     ///< @trick_units{--} Address of the trick variable in REF2.
-   void *var_address; ///< @trick_units{--} Address of the actual trick variable.
+   void *address; ///< @trick_units{--} Address of the trick variable in REF2.
 
    TRICK_TYPE type; ///< @trick_units{--} The trick variable type.
+
+   void *var_address; ///< @trick_units{--} Address of the actual trick variable.
 
    std::size_t var_element_count; ///< @trick_units{--} Number of elements (i.e. size) of the trick variable.
 
