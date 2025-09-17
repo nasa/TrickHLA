@@ -59,6 +59,7 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
    string const &name )
    : EncoderBase( name ),
      address( addr ),
+     var_address( NULL ),
      type( ( attr != NULL ) ? attr->type : TRICK_VOID ),
      var_element_count( 0 ),
      data_elements()
@@ -157,13 +158,21 @@ int const VariableArrayEncoderBase::get_data_size()
 
 void VariableArrayEncoderBase::calculate_var_element_count()
 {
-   if ( is_dynamic_array() ) {
-      // Dynamic array that is a pointer so check for NULL.
-      if ( *static_cast< void ** >( address ) != NULL ) {
+   // Calculate the size if the variable is dynamic and the variable address
+   // has changed from our cached address.
+   if ( is_dynamic_array() && ( *static_cast< void ** >( address ) != var_address ) ) {
+
+      // Remember the actual Trick variable address.
+      var_address = *static_cast< void ** >( address );
+
+      // Dynamic array is a pointer so check for NULL.
+      if ( var_address != NULL ) {
+
          // get_size returns the number of elements in the dynamic array.
-         int num_items = get_size( *static_cast< void ** >( address ) );
+         int num_items = get_size( var_address );
          if ( num_items <= 0 ) {
-            ALLOC_INFO const *alloc_info = get_alloc_info_of( *static_cast< void ** >( address ) );
+            // Get the allocation info that contains the variable address.
+            ALLOC_INFO const *alloc_info = get_alloc_info_of( var_address );
             if ( alloc_info != NULL ) {
                num_items = alloc_info->num;
             }
@@ -217,7 +226,8 @@ void VariableArrayEncoderBase::resize_trick_var(
          }
       }
 
-      // Update the element count to the new size.
+      // Update the cached variable address and element count for the new size.
+      this->var_address       = *static_cast< void ** >( address );
       this->var_element_count = new_size;
 
       if ( *static_cast< void ** >( address ) == NULL ) {

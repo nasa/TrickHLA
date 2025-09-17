@@ -135,7 +135,8 @@ class VariableArrayEncoderBase : public EncoderBase
    }
 
   protected:
-   void *address; ///< @trick_units{--} Address of the trick variable.
+   void *address;     ///< @trick_units{--} Address of the trick variable in REF2.
+   void *var_address; ///< @trick_units{--} Address of the actual trick variable.
 
    TRICK_TYPE type; ///< @trick_units{--} The trick variable type.
 
