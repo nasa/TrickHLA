@@ -1,8 +1,8 @@
 /*!
-@file TrickHLA/ObjectDeleted.cpp
+@file TrickHLA/ObjectDeletedHandler.cpp
 @ingroup TrickHLA
-@brief This class is the abstract base class for a callback of identification
-of deleted objects from the RTI.
+@brief This class is the abstract base class for a callback handler for
+notification of a deleted object from the RTI.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -16,7 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{ObjectDeleted.cpp}
+@trick_link_dependency{ObjectDeletedHandler.cpp}
 @trick_link_dependency{Object.cpp}
 
 @revs_title
@@ -34,7 +34,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/ObjectDeleted.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -42,7 +42,7 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-ObjectDeleted::ObjectDeleted() // RETURN: -- None.
+ObjectDeletedHandler::ObjectDeletedHandler() // RETURN: -- None.
    : object( NULL )
 {
    return;
@@ -51,7 +51,7 @@ ObjectDeleted::ObjectDeleted() // RETURN: -- None.
 /*!
  * @job_class{shutdown}
  */
-ObjectDeleted::~ObjectDeleted() // RETURN: -- None.
+ObjectDeletedHandler::~ObjectDeletedHandler() // RETURN: -- None.
 {
    return;
 }
@@ -60,7 +60,7 @@ ObjectDeleted::~ObjectDeleted() // RETURN: -- None.
  * @brief Initialize the callback object to the supplied Object pointer.
  * @param obj Associated object for this class.
  */
-void ObjectDeleted::initialize_callback(
+void ObjectDeletedHandler::initialize_callback(
    Object *obj )
 {
    this->object = obj;

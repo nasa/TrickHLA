@@ -60,7 +60,7 @@
 ##include "TrickHLA/InteractionHandler.hh"
 ##include "TrickHLA/InteractionItem.hh"
 ##include "TrickHLA/LagCompensation.hh"
-##include "TrickHLA/ObjectDeleted.hh"
+##include "TrickHLA/ObjectDeletedHandler.hh"
 ##include "TrickHLA/OwnershipHandler.hh"
 ##include "TrickHLA/Parameter.hh"
 ##include "TrickHLA/ParameterItem.hh"
@@ -76,7 +76,7 @@ class THLABaseSimObject : public Trick::SimObject {
    TrickHLA::Federate federate;
    TrickHLA::FedAmb   federate_amb;
    TrickHLA::Manager  manager;
-   
+
    double data_cycle_time;
 
    THLABaseSimObject( double data_cycle,
@@ -87,6 +87,9 @@ class THLABaseSimObject : public Trick::SimObject {
       : Trick::SimObject(),
         data_cycle_time( data_cycle )
    {
+      // Setup a message handler to allow text color in message_publish calls.
+      message_simobj.mpublisher.subscribe( &message_simobj.mcout );
+
       // Verify the data and interaction cycle times.
       if ( data_cycle <= 0.0 ) {
          message_publish( MSG_ERROR, "%s:THLABaseSimObject():%d ERROR: data_cycle time must be > 0.0!\n", __FILE__, __LINE__ );
@@ -232,6 +235,9 @@ class THLABaseSimObject : public Trick::SimObject {
 
    // Do not allow the default constructor.
    THLABaseSimObject();
+
+   // Message handler to allow colored text for message_publish() calls.
+   MessageSimObject message_simobj; ///< @trick_io{**} Fix for message text color.
 };
 
 // Required implementation of the pure virtual destructor.

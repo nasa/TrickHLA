@@ -18,6 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Support for default data initialization will now require the *Packing* implementation make a call to set the sim-data before calling the no-argument *configure()* and *initialize()* functions in the S_define file.
   - FROM: TBD
   - TO: TBD
+- Renamed *ObjectDeleted* class to *ObjectDeletedHandler* to be consistent with the naming convention used for other callback handlers.
+  - FROM: ObjectDeleted
+  - TO: ObjectDeletedHandler
 
 ### Added
 

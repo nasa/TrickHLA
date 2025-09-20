@@ -58,6 +58,9 @@ class THLAThreadSimObject : public Trick::SimObject {
         data_send_time( child_thread_data_cycle - main_thread_data_cycle ),
         thread_id( _THREAD_ID )
    {
+      // Setup a message handler to allow text color in message_publish calls.
+      message_simobj.mpublisher.subscribe( &message_simobj.mcout );
+
       // Do a sanity check on the data cycle time.
       if ( child_thread_data_cycle <= 0.0 ) {
          message_publish( MSG_ERROR, "%s:THLAThreadSimObject():%d ERROR: child_thread_data_cycle must be > 0.0!\n", __FILE__, __LINE__ );
@@ -89,10 +92,9 @@ class THLAThreadSimObject : public Trick::SimObject {
       C_THREAD_ID P_LAST (data_cycle_time, data_send_time, "logging") federate.wait_to_send_data();
    }
 
- private:
-   TrickHLA::Federate & federate;
- 
  protected:
+   TrickHLA::Federate & federate;
+
    double         data_cycle_time;
    double         data_send_time;
    unsigned int   thread_id;
@@ -104,6 +106,9 @@ class THLAThreadSimObject : public Trick::SimObject {
 
    // Do not allow the default constructor.
    THLAThreadSimObject();
+
+   // Message handler to allow colored text for message_publish() calls.
+   MessageSimObject message_simobj; ///< @trick_io{**} Fix for message text color.
 };
 
 #endif // TRICKHLA_THREAD_SIM_OBJECT

@@ -1,8 +1,8 @@
 /*!
-@file TrickHLA/ObjectDeleted.hh
+@file TrickHLA/ObjectDeletedHandler.hh
 @ingroup TrickHLA
-@brief This class is the abstract base class for a callback of identification
-of deleted objects from the RTI.
+@brief This class is the abstract base class for a callback handler for
+notification of a deleted object from the RTI.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/ObjectDeleted.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 
 @revs_title
@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_OBJECT_DELETED_HH
-#define TRICKHLA_OBJECT_DELETED_HH
+#ifndef TRICKHLA_OBJECT_DELETED_HANDLER_HH
+#define TRICKHLA_OBJECT_DELETED_HANDLER_HH
 
 namespace TrickHLA
 {
@@ -43,7 +43,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Object;
 
-class ObjectDeleted
+class ObjectDeletedHandler
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -53,16 +53,16 @@ class ObjectDeleted
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__ObjectDeleted();
+   friend void init_attrTrickHLA__ObjectDeletedHandler();
 
   public:
    //-----------------------------------------------------------------
    // Constructors / destructors
    //-----------------------------------------------------------------
-   /*! @brief Default constructor for the TrickHLA ObjectDeleted class. */
-   ObjectDeleted();
-   /*! @brief Destructor for the TrickHLA ObjectDeleted class. */
-   virtual ~ObjectDeleted();
+   /*! @brief Default constructor for the TrickHLA ObjectDeletedHandler class. */
+   ObjectDeletedHandler();
+   /*! @brief Destructor for the TrickHLA ObjectDeletedHandler class. */
+   virtual ~ObjectDeletedHandler();
 
    // Use implicit copy constructor and assignment operator.
 
@@ -83,4 +83,4 @@ class ObjectDeleted
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_OBJECT_DELETED_HH: Do NOT put anything after this line!
+#endif // TRICKHLA_OBJECT_DELETED_HANDLER_HH: Do NOT put anything after this line!

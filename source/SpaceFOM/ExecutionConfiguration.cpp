@@ -26,7 +26,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
-@trick_link_dependency{../TrickHLA/ObjectDeleted.cpp}
+@trick_link_dependency{../TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
@@ -529,7 +529,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->ownership = (OwnershipHandler *)NULL;
 
    // No Object Deleted callback.
-   this->deleted                         = (ObjectDeleted *)NULL;
+   this->deleted                         = (ObjectDeletedHandler *)NULL;
    this->process_object_deleted_from_RTI = false;
    this->object_deleted_from_RTI         = false;
 

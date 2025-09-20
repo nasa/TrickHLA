@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{sine/src/SineObjectDeleted.cpp}
 
 @revs_title
@@ -36,12 +37,12 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/ObjectDeleted.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
 
 namespace TrickHLAModel
 {
 
-class SineObjectDeleted : public TrickHLA::ObjectDeleted
+class SineObjectDeleted : public TrickHLA::ObjectDeletedHandler
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -68,7 +69,7 @@ class SineObjectDeleted : public TrickHLA::ObjectDeleted
 
    /*! @brief Callback routine implementation to report that this object has
     *  been deleted from the RTI. */
-   void deleted();
+   virtual void deleted();
 
   private:
    // Do not allow the copy constructor or assignment operator.

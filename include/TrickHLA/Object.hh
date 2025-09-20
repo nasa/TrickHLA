@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/TrickHLA/ReflectedAttributesQueue.cpp}
@@ -107,7 +108,7 @@ class Federate;
 class Conditional;
 class Packing;
 class OwnershipHandler;
-class ObjectDeleted;
+class ObjectDeletedHandler;
 class LagCompensation;
 
 class Object : public CheckpointConversionBase
@@ -155,7 +156,7 @@ class Object : public CheckpointConversionBase
 
    OwnershipHandler *ownership; ///< @trick_units{--} Manages attribute ownership.
 
-   ObjectDeleted *deleted; ///< @trick_units{--} Object Deleted callback object.
+   ObjectDeletedHandler *deleted; ///< @trick_units{--} Object Deleted callback object.
 
    Conditional *conditional; ///< @trick_units{--} Handler for a conditional attribute
 

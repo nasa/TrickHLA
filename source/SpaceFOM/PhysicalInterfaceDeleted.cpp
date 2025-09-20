@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/Object.cpp}
+@trick_link_dependency{../TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{PhysicalInterfaceDeleted.cpp}
 
 @revs_title
@@ -39,7 +40,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/ObjectDeleted.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -49,7 +50,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalInterfaceDeleted::PhysicalInterfaceDeleted()
-   : TrickHLA::ObjectDeleted()
+   : TrickHLA::ObjectDeletedHandler()
 {
    return;
 }

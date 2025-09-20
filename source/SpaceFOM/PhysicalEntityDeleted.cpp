@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/Object.cpp}
+@trick_link_dependency{../TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{PhysicalEntityDeleted.cpp}
 
 @revs_title
@@ -48,7 +49,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntityDeleted::PhysicalEntityDeleted()
-   : TrickHLA::ObjectDeleted()
+   : TrickHLA::ObjectDeletedHandler()
 {
    return;
 }

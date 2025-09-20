@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{sine/src/SineObjectDeleted.cpp}
 
 @revs_title
@@ -37,6 +38,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
 
 // Model include files.
 #include "sine/include/SineObjectDeleted.hh"
@@ -49,7 +51,7 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineObjectDeleted::SineObjectDeleted()
-   : TrickHLA::ObjectDeleted()
+   : TrickHLA::ObjectDeletedHandler()
 {
    return;
 }

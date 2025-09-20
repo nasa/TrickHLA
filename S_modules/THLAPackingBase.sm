@@ -33,7 +33,7 @@
 ##include "TrickHLA/DebugHandler.hh"
 ##include "TrickHLA/LagCompensation.hh"
 ##include "TrickHLA/Object.hh"
-##include "TrickHLA/ObjectDeleted.hh"
+##include "TrickHLA/ObjectDeletedHandler.hh"
 ##include "TrickHLA/OwnershipHandler.hh"
 ##include "TrickHLA/Packing.hh"
 
@@ -59,7 +59,7 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
    TrickHLA::OwnershipHandler * ownership_base_ptr;
 
    /* HLA base Object Deleted object reference. */
-   TrickHLA::ObjectDeleted * deleted_base_ptr;
+   TrickHLA::ObjectDeletedHandler * deleted_base_ptr;
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    TrickHLAPackingBaseSimObject( bool                create_object,

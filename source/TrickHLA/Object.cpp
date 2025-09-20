@@ -28,7 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
-@trick_link_dependency{ObjectDeleted.cpp}
+@trick_link_dependency{ObjectDeletedHandler.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
 @trick_link_dependency{Packing.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
@@ -75,7 +75,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/ObjectDeleted.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/SleepTimeout.hh"
@@ -350,12 +350,12 @@ void Object::initialize(
    }
 
    // If the user specified a resignation identification object then make sure
-   // it extends the ObjectDeleted virtual class.
-   if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeleted * >( deleted ) == NULL ) ) {
+   // it extends the ObjectDeletedHandler virtual class.
+   if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeletedHandler * >( deleted ) == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', the 'deleted' setting does not"
-             << " point to a class that extends the ObjectDeleted"
+             << " point to a class that extends the ObjectDeletedHandler"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -741,7 +741,7 @@ void Object::process_deleted_object()
       }
 
       // If the callback class has been defined, call it...
-      if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeleted * >( deleted ) != NULL ) ) {
+      if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeletedHandler * >( deleted ) != NULL ) ) {
          deleted->deleted();
       }
    }
