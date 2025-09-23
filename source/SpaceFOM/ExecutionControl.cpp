@@ -78,7 +78,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/Packing.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
@@ -858,6 +857,10 @@ void ExecutionControl::early_joiner_hla_init_process()
    // with the RTI. Calling this function will block until all the
    // required object instances in the Federation have been registered.
    manager->wait_for_registration_of_required_objects();
+
+   // Setup the preferred order for all object attributes and interactions
+   // if the user want's to override the FOM specified default.
+   manager->setup_preferred_order_with_RTI();
 
    // Achieve the "objects_discovered" sync-point and wait for the
    // federation to be synchronized on it. There is a race condition
