@@ -78,7 +78,7 @@ TimeOfDayCTETimeline::~TimeOfDayCTETimeline()
  * @details Get the minimum time resolution in seconds, which is the smallest
  * time representation for this timeline.
  */
-double const TimeOfDayCTETimeline::get_min_resolution()
+double const TimeOfDayCTETimeline::get_min_resolution() const
 {
    struct timespec ts;
    clock_getres( clk_id, &ts ); // NOLINT
@@ -104,7 +104,7 @@ void TimeOfDayCTETimeline::set_clock_tics_per_sec(
 /*!
  * @details Get the global time in seconds based on the CTE.
  */
-double const TimeOfDayCTETimeline::get_time()
+double const TimeOfDayCTETimeline::get_time() const
 {
    struct timespec ts;
    clock_gettime( clk_id, &ts ); // NOLINT

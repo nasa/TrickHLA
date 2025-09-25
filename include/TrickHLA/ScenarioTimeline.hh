@@ -85,12 +85,12 @@ class ScenarioTimeline : public Timeline
    //-----------------------------------------------------------------
    /*! @brief Get the current scenario time.
     *  @return Current scenario time in seconds. */
-   virtual double const get_time();
+   virtual double const get_time() const;
 
    /*! Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the minimum time resolution in seconds. */
-   virtual double const get_min_resolution();
+   virtual double const get_min_resolution() const;
 
    //
    // Additional function specific to this implementation.

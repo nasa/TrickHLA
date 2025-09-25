@@ -95,7 +95,7 @@ double const ScenarioTimeline::time_from_HLT(
 /*!
  * @details Get the current scenario time.
  */
-double const ScenarioTimeline::get_time()
+double const ScenarioTimeline::get_time() const
 {
    return ( epoch + sim_offset + sim_timeline.get_time() );
 }
@@ -104,7 +104,7 @@ double const ScenarioTimeline::get_time()
  * @details Get the minimum time resolution, which is the smallest time
  * representation for this timeline.
  */
-double const ScenarioTimeline::get_min_resolution()
+double const ScenarioTimeline::get_min_resolution() const
 {
    return ( 1.0 / (double)Int64BaseTime::get_base_time_multiplier() );
 }

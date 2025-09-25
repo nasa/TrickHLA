@@ -87,7 +87,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    /*! Get the time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the time resolution in seconds. */
-   virtual double const get_min_resolution() = 0;
+   virtual double const get_min_resolution() const = 0;
 
    /*! @brief Update the clock tics per second resolution of this clock
     *  to match the Trick executive resolution. */
@@ -95,7 +95,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
 
    /*! @brief Get the current CTE time.
     *  @return Current time of day in seconds. */
-   virtual double const get_time() = 0;
+   virtual double const get_time() const = 0;
 
    /*! @brief Initialize the Trick::Clock functions. */
    virtual int clock_init();

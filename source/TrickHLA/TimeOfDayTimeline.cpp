@@ -53,7 +53,7 @@ TimeOfDayTimeline::~TimeOfDayTimeline()
 /*!
  * @details Get the current time of day for this timeline.
  */
-double const TimeOfDayTimeline::get_time()
+double const TimeOfDayTimeline::get_time() const
 {
    struct timespec ts;
    clock_gettime( CLOCK_REALTIME, &ts ); // NOLINT
@@ -64,7 +64,7 @@ double const TimeOfDayTimeline::get_time()
  * @details Get the minimum time resolution, which is the smallest time
  * representation for this timeline.
  */
-double const TimeOfDayTimeline::get_min_resolution()
+double const TimeOfDayTimeline::get_min_resolution() const
 {
    struct timespec ts;
    clock_getres( CLOCK_REALTIME, &ts ); // NOLINT
