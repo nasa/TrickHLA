@@ -77,6 +77,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/Packing.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/Types.hh"
@@ -254,6 +255,9 @@ void ExecutionConfiguration::configure()
    // Make sure the ExecutionConfiguration attributes go out in
    // Receive-Order so that a late joining federate can get them.
    reset_preferred_order();
+
+   // Make sure we set the configured flag.
+   set_configured( true );
 }
 
 /*!
@@ -357,17 +361,6 @@ void ExecutionConfiguration::unpack()
           << "\t least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")" << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
-   }
-
-   // Verify the time constraint relationships between the Trick real-time
-   // software-frame, Least Common Time Step (LCTS), lookahead and delta
-   // time step times.
-   Federate *federate = get_federate();
-   if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-             << " ERROR: Time constraints verification failed!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark that we have an ExCO update with pending changes.

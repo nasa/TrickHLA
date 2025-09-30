@@ -227,7 +227,7 @@ void ExecutionControl::initialize()
              << " WARNING: Only a preset master is supported. Make sure to set"
              << " 'THLA.federate.use_preset_master = true' in your input.py file."
              << " Setting use_preset_master to true!" << endl;
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       this->use_preset_master = true;
    }
 
@@ -1095,7 +1095,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!\n",
+            message_publish( MSG_WARNING, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!\n",
                              __LINE__ );
          }
       }
@@ -1650,7 +1650,7 @@ void ExecutionControl::set_next_execution_control_mode(
             errmsg << "SpaceFOM::ExecutionControl::set_next_execution_control_mode():" << __LINE__
                    << " WARNING: Unknown execution mode value: " << exec_control
                    << endl;
-            message_publish( MSG_NORMAL, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
          }
          break;
       }
@@ -1671,7 +1671,7 @@ bool ExecutionControl::check_mode_transition_request()
              << " WARNING: Received Mode Transition Request and not Master: "
              << mtr_enum_to_string( this->pending_mtr )
              << endl;
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       return false;
    }
 
@@ -1681,7 +1681,7 @@ bool ExecutionControl::check_mode_transition_request()
       errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():" << __LINE__
              << " WARNING: Invalid Mode Transition Request: "
              << mtr_enum_to_string( this->pending_mtr ) << endl;
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       return false;
    }
 
@@ -1832,40 +1832,42 @@ bool ExecutionControl::process_execution_control_updates()
              << " WARNING: Master Federate received an unexpected ExCO update: "
              << execution_control_enum_to_string( this->requested_execution_control_mode )
              << endl;
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
 
       // Return that no mode changes occurred.
       return false;
    }
 
-   // If the LCTS is enabled and we have a valid ExCO value then update
-   // the ExecutionControl value if it is not initialized. Otherwise
-   // ensure they match.
+   // If the LCTS is enabled and update the ExecutionControl value if it
+   // does not match the ExCO value.
    if ( is_enabled_least_common_time_step()
-        && ( ExCO->get_least_common_time_step() > 0 ) ) {
+        && ( this->least_common_time_step != ExCO->get_least_common_time_step() ) ) {
 
-      // Set the Least Common Time Step (LCTS) in ExecutionControl if it has
-      // not been initialized and the ExCO has a valid value. This allows a
-      // non-Master federate to initialize LCTS from the reflected ExCO value.
-      if ( this->least_common_time_step <= 0 ) {
+      // Determine we have a valid value that is being updated and warn the user.
+      if ( ( this->least_common_time_step > 0 )
+           && DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                << " WARNING: Updating existing Least Common Time Step (LCTS) value of "
+                << this->least_common_time_step << " " << Int64BaseTime::get_units()
+                << " to a new LCTS value of " << ExCO->get_least_common_time_step()
+                << " " << Int64BaseTime::get_units() << "." << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
 
-         // This will sync the LCTS value in the ExCO and ExecutionControl.
-         this->least_common_time_step_seconds = Int64BaseTime::to_seconds( ExCO->get_least_common_time_step() );
-         this->least_common_time_step         = ExCO->get_least_common_time_step();
-      } else {
+      // Set the Least Common Time Step (LCTS) in ExecutionControl. This allows
+      // a non-Master federate to initialize LCTS from the reflected ExCO value.
+      this->least_common_time_step         = ExCO->get_least_common_time_step();
+      this->least_common_time_step_seconds = Int64BaseTime::to_seconds( ExCO->get_least_common_time_step() );
 
-         // The LCTS must match in both this ExecutionControl and the
-         // associated ExCO.
-         if ( this->least_common_time_step != ExCO->get_least_common_time_step() ) {
-            ostringstream errmsg;
-            errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
-                   << " ERROR: Least-Common-Time-Step (LCTS) time ("
-                   << this->least_common_time_step << " " << Int64BaseTime::get_units()
-                   << ") is not equal to ExCO LCTS ("
-                   << ExCO->get_least_common_time_step() << " " << Int64BaseTime::get_units()
-                   << ")!" << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
-         }
+      // Verify the time constraint relationships between the Trick real-time
+      // software-frame, Least Common Time Step (LCTS), lookahead and delta
+      // time step times.
+      if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                << " ERROR: Time constraints verification failed!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
 
@@ -1885,7 +1887,7 @@ bool ExecutionControl::process_execution_control_updates()
              << ") with ExCO next execution mode being ("
              << execution_mode_enum_to_string( exco_nem )
              << ")!" << endl;
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
    // Check for change in execution mode.
@@ -1912,7 +1914,7 @@ bool ExecutionControl::process_execution_control_updates()
             errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                    << " WARNING: Invalid ExCO next execution mode: "
                    << execution_mode_enum_to_string( exco_nem ) << "!" << endl;
-            message_publish( MSG_NORMAL, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
             return false;
@@ -1959,7 +1961,7 @@ bool ExecutionControl::process_execution_control_updates()
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
                       << ")!" << endl;
-               message_publish( MSG_NORMAL, errmsg.str().c_str() );
+               message_publish( MSG_WARNING, errmsg.str().c_str() );
 
                // Return that no mode changes occurred.
                return false;
@@ -2023,7 +2025,7 @@ bool ExecutionControl::process_execution_control_updates()
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
                       << ")!" << endl;
-               message_publish( MSG_NORMAL, errmsg.str().c_str() );
+               message_publish( MSG_WARNING, errmsg.str().c_str() );
 
                // Return that no mode changes occurred.
                return false;
@@ -2045,7 +2047,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
                          << ")!" << endl;
-                  message_publish( MSG_NORMAL, errmsg.str().c_str() );
+                  message_publish( MSG_WARNING, errmsg.str().c_str() );
                }
 
                // Mark the current execution mode as SHUTDOWN.
@@ -2106,7 +2108,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
                          << ")!" << endl;
-                  message_publish( MSG_NORMAL, errmsg.str().c_str() );
+                  message_publish( MSG_WARNING, errmsg.str().c_str() );
                }
                // Return that no mode changes occurred.
                return false;
@@ -2152,7 +2154,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
                          << ")!" << endl;
-                  message_publish( MSG_NORMAL, errmsg.str().c_str() );
+                  message_publish( MSG_WARNING, errmsg.str().c_str() );
                }
                // Return that no mode changes occurred.
                return false;
@@ -2170,7 +2172,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << " WARNING: Shutting down but received mode transition: "
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << endl;
-            message_publish( MSG_NORMAL, errmsg.str().c_str() );
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
          }
          // Return that no mode changes occurred.
          return false;
@@ -2314,7 +2316,7 @@ bool ExecutionControl::run_mode_transition()
                    << setprecision( 9 ) << get_time_padding()
                    << " )', to allow the go-to-run CTE message to propagate to"
                    << " all federates in time to be used." << endl;
-               message_publish( MSG_NORMAL, msg.str().c_str() );
+               message_publish( MSG_WARNING, msg.str().c_str() );
             } else {
                ostringstream msg;
                msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
@@ -2324,7 +2326,7 @@ bool ExecutionControl::run_mode_transition()
                    << " input.py file for this call 'federate.set_time_padding( pad )',"
                    << " to allow the go-to-run CTE message to propagate to"
                    << " all federates in time to be used." << endl;
-               message_publish( MSG_NORMAL, msg.str().c_str() );
+               message_publish( MSG_WARNING, msg.str().c_str() );
             }
          }
       }
