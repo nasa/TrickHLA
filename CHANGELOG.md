@@ -25,9 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Adding S_models/THLAPackingBase.sm to your simulation S_define file will allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
   - Support for Default Data initialization will now require the *Conditional*, *LagCompensation*, and *Packing* implementations to make a call to set the sim-data before calling the no-argument *configure()* and *initialize()* functions in the S_define file.
   - If you do not intend to use S_models/THLAPackingBase.sm to add support for using Default Data to configure and initialize TrickHLA, then you will need to explicitly call *set_sim_data()*, *configure()*, and *initialize()* functions from the S_define file.
-    - FROM:
 
 ```
+    FROM:
       P50 ("initialization") lag_compensation.configure( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
       
@@ -36,11 +36,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
       P50 ("initialization") conditional.configure( &packing );
       P50 ("initialization") conditional.initialize();
-```
 
-    - TO:
-
-```
+    TO:
       # $TRICKHLA_HOME/sims/SpaceFOM/SIM_sinw/S_define
       P50 ("initialization") lag_compensation.set_sim_data( &sim_data );
       P50 ("initialization") lag_compensation.configure();
