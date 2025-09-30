@@ -65,6 +65,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
 
 using namespace RTI1516_NAMESPACE;
@@ -237,6 +238,9 @@ void ExecutionConfiguration::configure()
 
    // Make sure we use correct function so that it is Trick managed memory.
    this->required_federates = string( federate_list.str() );
+
+   // Make sure we initialize the base class.
+   Packing::configure();
 }
 
 /*!

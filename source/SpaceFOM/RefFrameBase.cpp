@@ -63,7 +63,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameBase::RefFrameBase()
-   : parent_frame( NULL ),
+   : TrickHLA::Packing( "RefFrameBase" ),
+     parent_frame( NULL ),
      name_attr( NULL ),
      parent_name_attr( NULL ),
      state_attr( NULL ),
@@ -123,7 +124,7 @@ void RefFrameBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::base_config():" << __LINE__
-             << " WARNING: Unexpected empty federation instance frame name!" << endl;
+             << " ERROR: Unexpected empty federation instance frame name!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -177,7 +178,6 @@ void RefFrameBase::base_config(
  */
 void RefFrameBase::configure()
 {
-
    // Must have federation instance name.
    if ( this->packing_data.name.empty() ) {
       ostringstream errmsg;
@@ -185,14 +185,14 @@ void RefFrameBase::configure()
              << " ERROR: Unexpected empty federation instance name!"
              << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Associate the instantiated Manager object with this packing object.
    if ( this->object == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL THLAManager object for ReferenceFrame \""
+             << " ERROR: Unexpected NULL THLAManager object for ReferenceFrame \""
              << this->packing_data.name << "\"!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -237,7 +237,7 @@ void RefFrameBase::configure()
       string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
-             << " WARNING: For RefFrame object '"
+             << " ERROR: For RefFrame object '"
              << ( ( object != NULL ) ? object->get_name() : "" )
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
@@ -245,13 +245,11 @@ void RefFrameBase::configure()
              << endl;
 
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Now call the base class configure function.
-   TrickHLA::Packing::configure();
-
-   return;
+   Packing::configure();
 }
 
 /*!
@@ -267,7 +265,7 @@ void RefFrameBase::initialize()
       string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-             << " WARNING: For RefFrame object '"
+             << " ERROR: For RefFrame object '"
              << ( ( object != NULL ) ? object->get_name() : "" )
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
@@ -275,7 +273,7 @@ void RefFrameBase::initialize()
              << endl;
 
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Should have federation instance parent frame name or empty name for root.
@@ -318,21 +316,21 @@ void RefFrameBase::initialize()
       string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-             << " WARNING: For RefFrame object '"
+             << " ERROR: For RefFrame object '"
              << ( ( object != NULL ) ? object->get_name() : "" )
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
              << "', detected unexpected NULL parent frame reference!" << endl;
 
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Initialize from the initial state of the working data.
    pack_from_working_data();
 
    // Mark this as initialized.
-   TrickHLA::Packing::initialize();
+   Packing::initialize();
 
    // Return to calling routine.
    return;
@@ -377,7 +375,7 @@ void RefFrameBase::set_name( std::string const &new_name )
       errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Set the names.
@@ -398,7 +396,7 @@ void RefFrameBase::set_parent_name( std::string const &name )
       errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Set the parent frame name appropriately.
@@ -423,7 +421,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
       errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Set the parent frame reference pointer.

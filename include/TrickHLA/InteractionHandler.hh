@@ -150,15 +150,15 @@ class InteractionHandler
 
    /*! @brief Returns the current simulation time.
     *  @return Current simulation time. */
-   double get_sim_time();
+   double get_sim_time() const;
 
    /*! @brief Returns the current scenario time.
     *  @return Current scenario time. */
-   double get_scenario_time();
+   double get_scenario_time() const;
 
    /*! @brief Returns the current Central Timing Equipment (CTE) time.
     *  @return Current CTE time. */
-   double get_cte_time();
+   double get_cte_time() const;
 
    /*! @brief Get the Parameter by FOM name.
     *  @return Parameter for the given name.

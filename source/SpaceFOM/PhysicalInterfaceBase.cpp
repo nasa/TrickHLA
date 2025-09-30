@@ -61,7 +61,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
-   : debug( false ),
+   : TrickHLA::Packing( "PhysicalInterfaceBase" ),
+     debug( false ),
      name_attr( NULL ),
      parent_attr( NULL ),
      position_attr( NULL ),
@@ -181,7 +182,7 @@ void PhysicalInterfaceBase::configure()
    if ( this->object == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
-             << " WARNING: Unexpected NULL TrickHLA Object pointer!" << endl;
+             << " ERROR: Unexpected NULL TrickHLA Object pointer!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -204,8 +205,8 @@ void PhysicalInterfaceBase::configure()
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
-   // Call the base class function.
-   TrickHLA::Packing::configure();
+   // Call the base class.
+   Packing::configure();
 
    return;
 }
@@ -220,7 +221,7 @@ void PhysicalInterfaceBase::initialize()
         && this->packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected empty interface name!" << endl;
+             << " ERROR: Unexpected empty interface name!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -234,7 +235,7 @@ void PhysicalInterfaceBase::initialize()
    }
 
    // Mark this as initialized.
-   TrickHLA::Packing::initialize();
+   Packing::initialize();
 
    // Return to calling routine.
    return;

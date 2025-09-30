@@ -58,6 +58,7 @@ execution.
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Packing.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
@@ -81,7 +82,8 @@ extern ATTRIBUTES attrTrickHLA__ExecutionConfigurationBase[];
  * @job_class{initialization}
  */
 ExecutionConfigurationBase::ExecutionConfigurationBase()
-   : S_define_name(),
+   : TrickHLA::Packing( "ExecutionConfigurationBase" ),
+     S_define_name(),
      pending_update( false ),
      execution_control( NULL )
 {
@@ -95,7 +97,8 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
  */
 ExecutionConfigurationBase::ExecutionConfigurationBase(
    string const &s_define_name )
-   : pending_update( false ),
+   : TrickHLA::Packing( "ExecutionConfigurationBase" ),
+     pending_update( false ),
      execution_control( NULL )
 {
    // Set the full path S_define name and make a copy.

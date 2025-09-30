@@ -152,40 +152,52 @@ void InteractionHandler::receive_interaction(
 
 Int64Interval InteractionHandler::get_lookahead() const
 {
-   return ( ( interaction != NULL ) ? interaction->get_lookahead() : Int64Interval( -1.0 ) );
+   return ( interaction != NULL ) ? interaction->get_lookahead() : Int64Interval( -1.0 );
 }
 
 Int64Time InteractionHandler::get_granted_time() const
 {
-   return ( ( interaction != NULL )
-               ? interaction->get_granted_time()
-               : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() ) );
+   return ( interaction != NULL ) ? interaction->get_granted_time()
+                                  : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
 }
 
-double InteractionHandler::get_sim_time()
+double InteractionHandler::get_sim_time() const
 {
-   if ( ( interaction != NULL ) && ( interaction->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = interaction->get_federate()->get_execution_control();
-      return ( execution_control->get_sim_time() );
+   if ( interaction != NULL ) {
+      Federate *fed = interaction->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_sim_time();
+         }
+      }
    }
    return -std::numeric_limits< double >::max();
 }
 
-double InteractionHandler::get_scenario_time()
+double InteractionHandler::get_scenario_time() const
 {
-   if ( ( interaction != NULL ) && ( interaction->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = interaction->get_federate()->get_execution_control();
-      return ( execution_control->get_scenario_time() );
+   if ( interaction != NULL ) {
+      Federate *fed = interaction->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_scenario_time();
+         }
+      }
    }
    return -std::numeric_limits< double >::max();
 }
 
-double InteractionHandler::get_cte_time()
+double InteractionHandler::get_cte_time() const
 {
-   if ( ( interaction != NULL ) && ( interaction->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = interaction->get_federate()->get_execution_control();
-      if ( execution_control->does_cte_timeline_exist() ) {
-         return execution_control->get_cte_time();
+   if ( interaction != NULL ) {
+      Federate *fed = interaction->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_cte_time();
+         }
       }
    }
    return -std::numeric_limits< double >::max();

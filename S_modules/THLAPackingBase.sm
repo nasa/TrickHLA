@@ -193,7 +193,15 @@ class TrickHLAPackingBaseSimObject : public Trick::SimObject {
       } else {
          packing_base_ptr->configure();
       }
-      
+
+      // For callback classes make sure to call configure.
+      if ( lag_comp_base_ptr != NULL ) {
+         lag_comp_base_ptr->configure();
+      }
+      if ( conditional_base_ptr != NULL ) {
+         conditional_base_ptr->configure();
+      }
+
       return( 0 );
    }
 

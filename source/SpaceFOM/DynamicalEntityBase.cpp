@@ -111,7 +111,7 @@ void DynamicalEntityBase::base_config(
    if ( mngr_object == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityBase::base_config() Warning: " << endl
+         errmsg << "DynamicalEntityBase::base_config() WARNING: " << endl
                 << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL." << endl
                 << "\tEither of the two things are possible:" << endl
                 << "\t1). We are configuring in the input file, which is okay." << endl
@@ -129,7 +129,7 @@ void DynamicalEntityBase::base_config(
    if ( entity_fed_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
-             << " WARNING: Unexpected empty federation instance DynamicalEntity name!" << endl;
+             << " ERROR: Unexpected empty federation instance DynamicalEntity name!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
       set_name( entity_fed_name );
@@ -364,7 +364,7 @@ void DynamicalEntityBase::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 

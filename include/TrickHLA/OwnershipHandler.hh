@@ -187,11 +187,11 @@ class OwnershipHandler : public CheckpointConversionBase
 
    /*! @brief Get the current scenario time.
     *  @return Returns the current scenario time in seconds. */
-   double get_scenario_time();
+   double get_scenario_time() const;
 
    /*! @brief Get the current Central Timing Equipment (CTE) time.
     *  @return Returns the current CTE time. */
-   double get_cte_time();
+   double get_cte_time() const;
 
   protected:
    /*! @brief Returns the attribute for the given attribute FOM name or NULL

@@ -53,7 +53,7 @@ using namespace SpaceFOM;
  */
 PhysicalEntityConditionalBase::PhysicalEntityConditionalBase(
    PhysicalEntityBase &entity_ref )
-   : TrickHLA::Conditional(),
+   : TrickHLA::Conditional( "PhysicalEntityConditionalBase" ),
      debug( false ),
      entity( entity_ref ),
      prev_data(),
@@ -83,7 +83,7 @@ PhysicalEntityConditionalBase::~PhysicalEntityConditionalBase()
  */
 void PhysicalEntityConditionalBase::initialize()
 {
-   // Call the base class function.
+   // Call the base class.
    TrickHLA::Conditional::initialize();
 
    // Return to calling routine.

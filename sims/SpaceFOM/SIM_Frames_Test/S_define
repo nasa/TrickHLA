@@ -84,7 +84,7 @@ class FrameDynamicsSimObject : public Trick::SimObject {
    // Print state job.
    void print_frame_state()
    {
-      if( !debug_frame_state ){ return; }
+      if( !debug_frame_state ) { return; }
       std::cout << "----------------------------------------------------------------------\n";
       std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
       std::cout << " Sim Timeline: " << execution_control.sim_timeline->get_time() << "\n";
@@ -133,7 +133,7 @@ class EntityDynamicsSimObject : public Trick::SimObject {
    // Print state job.
    void print_entity_state()
    {
-      if( !debug_entity_state ){ return; }
+      if( !debug_entity_state ) { return; }
       std::cout << "----------------------------------------------------------------------\n";
       std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
       std::cout << " Sim Timeline: " << execution_control.sim_timeline->get_time() << "\n";

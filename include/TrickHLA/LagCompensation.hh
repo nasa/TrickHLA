@@ -20,10 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectCallbackBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -32,6 +29,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, October 2023, --, Added lag-comp bypass functions.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, September 2025, --, Extends ObjectCallbackBase.}
 @revs_end
 
 */
@@ -43,15 +41,12 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "Attribute.hh"
-#include "Int64Interval.hh"
-#include "Int64Time.hh"
-#include "Object.hh"
+#include "ObjectCallbackBase.hh"
 
 namespace TrickHLA
 {
 
-class LagCompensation
+class LagCompensation : public ObjectCallbackBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -68,16 +63,15 @@ class LagCompensation
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Default constructor for the TrickHLA LagCompensation class. */
-   LagCompensation() : initialized( false ), object( NULL ) { return; }
+   LagCompensation();
+   /*! @brief Constructor for the TrickHLA LagCompensation class with a name. */
+   explicit LagCompensation( std::string name );
    /*! @brief Destructor for the TrickHLA LagCompensation class. */
-   virtual ~LagCompensation() { return; }
+   virtual ~LagCompensation();
 
    //-----------------------------------------------------------------
    // These are virtual functions and must be defined by a full class.
    //-----------------------------------------------------------------
-
-   /*! @brief Finish the initialization of the TrickHLA LAgCompensation object. */
-   virtual void initialize() { initialized = true; }
 
    /*! @brief Send side lag compensation callback. */
    virtual void send_lag_compensation();
@@ -96,45 +90,6 @@ class LagCompensation
     * make sure to check the lag-comp data was received before copying to
     * the sim-data otherwise you will be copying stale data. */
    virtual void bypass_receive_lag_compensation() = 0;
-
-   //-----------------------------------------------------------------
-   // Helper functions.
-   //-----------------------------------------------------------------
-
-   /*! @brief Get the Attribute by FOM name.
-    *  @return Attribute for the given name.
-    *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( std::string const &attr_FOM_name );
-
-   /*! @brief Get the Attribute for the given attribute FOM name an validate
-    *  that is exists.
-    *  @return Attribute for the given name.
-    *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute_and_validate( std::string const &attr_FOM_name );
-
-   /*! @brief Returns a copy of the object's lookahead time.
-    *  @return A copy of the federate's lookahead time. */
-   Int64Interval get_lookahead() const;
-
-   /*! @brief Returns a copy of the object's granted federation time.
-    *  @return A copy of the federate's current granted time. */
-   Int64Time get_granted_time() const;
-
-   /*! @brief Returns the current scenario time.
-    *  @return Current scenario time. */
-   double get_scenario_time() const;
-
-   /*! @brief Returns the current Central Timing Equipment (CTE) time.
-    *  @return Current CTE time. */
-   double get_cte_time() const;
-
-   /*! @brief Initialize the callback object to the supplied Object pointer.
-    *  @param obj Associated object for this class. */
-   virtual void initialize_callback( Object *obj );
-
-  protected:
-   bool    initialized; ///< @trick_units{--} Initialization status flag.
-   Object *object;      ///< @trick_io{**} Object associated with this lag-comp class.
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -52,7 +52,7 @@ using namespace SpaceFOM;
  */
 RefFrameConditionalBase::RefFrameConditionalBase(
    RefFrameBase &frame_ref )
-   : TrickHLA::Conditional(),
+   : TrickHLA::Conditional( "RefFrameConditionalBase" ),
      debug( false ),
      frame( frame_ref ),
      prev_data(),
@@ -77,7 +77,7 @@ RefFrameConditionalBase::~RefFrameConditionalBase()
 void RefFrameConditionalBase::initialize()
 {
    // Call the base class function.
-   TrickHLA::Conditional::initialize();
+   Conditional::initialize();
 
    // Return to calling routine.
    return;

@@ -101,9 +101,9 @@ class THLABaseSimObject : public Trick::SimObject {
                           __LINE__, interaction_cycle );
       }
       if ( interaction_cycle != data_cycle ) {
-         long long inter_cycle_basetime = interaction_cycle * exec_get_time_tic_value();
-         long long data_cycle_basetime  = data_cycle * exec_get_time_tic_value();
-         if ( ( inter_cycle_basetime > data_cycle_basetime ) && ( ( inter_cycle_basetime % data_cycle_basetime ) != 0 ) ) {
+         long long inter_cycle_ns = interaction_cycle * 1000000000;
+         long long data_cycle_ns  = data_cycle * 1000000000;
+         if ( ( inter_cycle_ns > data_cycle_ns ) && ( ( inter_cycle_ns % data_cycle_ns ) != 0 ) ) {
             std::ostringstream errmsg;
             errmsg << __FILE__ << ":THLABaseSimObject():" << __LINE__
                    << " ERROR: interaction_cycle time '" << interaction_cycle
@@ -112,7 +112,7 @@ class THLABaseSimObject : public Trick::SimObject {
             message_publish( MSG_ERROR, errmsg.str().c_str() );
             exit( -1 );
          }
-         if ( ( inter_cycle_basetime < data_cycle_basetime ) && ( ( data_cycle_basetime % inter_cycle_basetime ) != 0 ) ) {
+         if ( ( inter_cycle_ns < data_cycle_ns ) && ( ( data_cycle_ns % inter_cycle_ns ) != 0 ) ) {
             std::ostringstream errmsg;
             errmsg << __FILE__ << ":THLABaseSimObject():" << __LINE__
                    << " ERROR: data_cycle time '" << data_cycle

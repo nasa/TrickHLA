@@ -66,7 +66,7 @@ DynamicalEntity::DynamicalEntity() // RETURN: -- None.
 DynamicalEntity::DynamicalEntity(
    PhysicalEntityData  &physical_data_ref,
    DynamicalEntityData &dynamics_data_ref ) // RETURN: -- None.
-   : PhysicalEntity( physical_data_ref ),
+   : SpaceFOM::PhysicalEntity( physical_data_ref ),
      dynamical_data( &dynamics_data_ref )
 {
    return;
@@ -106,32 +106,6 @@ void DynamicalEntity::configure()
 /*!
  * @job_class{initialization}
  */
-void DynamicalEntity::set_data(
-   PhysicalEntityData  *physical_data_ptr,
-   DynamicalEntityData *dynamics_data_ptr )
-{
-
-   // Set the reference to the reference frame.
-   if ( dynamics_data_ptr == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   this->dynamical_data = dynamics_data_ptr;
-
-   // Set the Physical Entity data.
-   PhysicalEntity::set_data( physical_data_ptr );
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void DynamicalEntity::initialize()
 {
    // Check to make sure the DynamicalEntity data is set.
@@ -147,6 +121,32 @@ void DynamicalEntity::initialize()
    // Mark this as initialized.
    PhysicalEntity::initialize();
    DynamicalEntityBase::initialize();
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void DynamicalEntity::set_data(
+   PhysicalEntityData  *physical_data_ptr,
+   DynamicalEntityData *dynamics_data_ptr )
+{
+
+   // Set the reference to the reference frame.
+   if ( dynamics_data_ptr == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::DynamicalEntity::set_data():" << __LINE__
+             << " ERROR: Unexpected NULL DynamicalEntityData: "
+             << pe_packing_data.name << endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->dynamical_data = dynamics_data_ptr;
+
+   // Set the Physical Entity data.
+   PhysicalEntity::set_data( physical_data_ptr );
 
    // Return to calling routine.
    return;

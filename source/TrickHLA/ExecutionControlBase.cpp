@@ -289,7 +289,7 @@ void ExecutionControlBase::initialize()
 
    if ( !does_scenario_timeline_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::initialize():%d WARNING: \
+         message_publish( MSG_WARNING, "ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
 Trick simulation time as the default scenario-timeline.\n",
                           __LINE__ );
@@ -852,7 +852,7 @@ void ExecutionControlBase::process_deleted_objects()
    }
 }
 
-double ExecutionControlBase::get_sim_time()
+double ExecutionControlBase::get_sim_time() const
 {
    if ( does_sim_timeline_exist() ) {
       return sim_timeline->get_time();
@@ -864,12 +864,12 @@ double ExecutionControlBase::get_sim_time()
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
              << " file. Returning Trick simulation time instead!" << endl;
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    return exec_get_sim_time();
 }
 
-double ExecutionControlBase::get_scenario_time()
+double ExecutionControlBase::get_scenario_time() const
 {
    if ( does_scenario_timeline_exist() ) {
       return scenario_timeline->get_time();
@@ -881,13 +881,12 @@ double ExecutionControlBase::get_scenario_time()
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
              << " file. Returning Trick simulation time instead!" << endl;
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
-
    return get_sim_time();
 }
 
-double ExecutionControlBase::get_cte_time()
+double ExecutionControlBase::get_cte_time() const
 {
    return does_cte_timeline_exist() ? cte_timeline->get_time()
                                     : -std::numeric_limits< double >::max();
@@ -1023,19 +1022,15 @@ void ExecutionControlBase::remove_execution_configuration()
 void ExecutionControlBase::set_least_common_time_step(
    double const lcts )
 {
-   // WARNING: Only the Master federate should ever set this.
-   if ( is_master() ) {
-      this->least_common_time_step_seconds = lcts;
-      this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         ostringstream msg;
-         msg << "ExecutionControlBase::set_least_common_time_step():" << __LINE__
-             << " This is not a Master federate so this setting will be ignored."
-             << endl;
-         message_publish( MSG_WARNING, msg.str().c_str() );
-      }
-   }
+   this->least_common_time_step_seconds = lcts;
+   this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
+}
+
+void ExecutionControlBase::set_least_common_time_step(
+   int64_t const lcts )
+{
+   this->least_common_time_step         = lcts;
+   this->least_common_time_step_seconds = Int64BaseTime::to_seconds( lcts );
 }
 
 void ExecutionControlBase::refresh_least_common_time_step()

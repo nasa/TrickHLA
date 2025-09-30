@@ -1137,7 +1137,7 @@ void Object::reserve_object_name_with_RTI()
    // was successful or failed.
    if ( is_instance_handle_valid() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::reserve_object_name_with_RTI():%d \
+         message_publish( MSG_WARNING, "Object::reserve_object_name_with_RTI():%d \
 WARNING: Object instance already exists so we will not reserve the instance name '%s' for it!\n",
                           __LINE__, get_name().c_str() );
       }
@@ -1294,7 +1294,7 @@ void Object::register_object_with_RTI()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_NORMAL, "Object::register_object_with_RTI():%d WARNING: \
+         message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d WARNING: \
 Detected object already registered '%s' Instance-ID:%s\n",
                           __LINE__, get_name().c_str(), id_str.c_str() );
       }

@@ -72,8 +72,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    friend void init_attrTrickHLA__ExecutionConfigurationBase();
 
   public:
-   std::string S_define_name; /**< @trick_units{--}
-      Full path name in the S_define for this ExecutionConfiguration instance. */
+   std::string S_define_name; /**< @trick_units{--} Full path name in the S_define for this ExecutionConfiguration instance. */
 
   public:
    // Public constructors and destructors.
@@ -94,9 +93,6 @@ class ExecutionConfigurationBase : public Object, public Packing
    /*! @brief Sets up the attributes for this Execution Configuration object
     *  using default values. These can be overridden in the input file. */
    virtual void configure_attributes() = 0;
-
-   /*! @brief Configure the execution configuration object. */
-   virtual void configure() = 0;
 
    /*! @brief Set the full path name in the S_define to the
     * ExecutionConfiguration object instance.

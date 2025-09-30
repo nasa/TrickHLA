@@ -54,7 +54,7 @@ using namespace SpaceFOM;
  */
 PhysicalInterfaceConditionalBase::PhysicalInterfaceConditionalBase(
    PhysicalInterfaceBase &interface_ref )
-   : TrickHLA::Conditional(),
+   : TrickHLA::Conditional( "PhysicalInterfaceConditionalBase" ),
      debug( false ),
      interface( interface_ref ),
      prev_data(),
@@ -79,6 +79,9 @@ PhysicalInterfaceConditionalBase::~PhysicalInterfaceConditionalBase()
  */
 void PhysicalInterfaceConditionalBase::initialize()
 {
+   // Call the base class.
+   Conditional::initialize();
+
    // Return to calling routine.
    return;
 }

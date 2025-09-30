@@ -83,7 +83,6 @@ PhysicalInterface::~PhysicalInterface()
  */
 void PhysicalInterface::configure()
 {
-
    // Check the reference to the PhysicalInterface data.
    if ( interface_data == NULL ) {
       ostringstream errmsg;
@@ -95,7 +94,7 @@ void PhysicalInterface::configure()
       return;
    }
 
-   // Call the base class pre_initialize function.
+   // Call the base class configure function.
    PhysicalInterfaceBase::configure();
 
    // Return to calling routine.

@@ -59,7 +59,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase &entity_ref ) // RETURN: -- None.
-   : debug( false ),
+   : TrickHLA::LagCompensation( "PhysicalEntityLagCompBase" ),
+     debug( false ),
      entity( entity_ref ),
      name_attr( NULL ),
      type_attr( NULL ),
@@ -93,6 +94,9 @@ PhysicalEntityLagCompBase::~PhysicalEntityLagCompBase() // RETURN: -- None.
  */
 void PhysicalEntityLagCompBase::initialize()
 {
+   // Make sure to call the base class initialize.
+   LagCompensation::initialize();
+
    // Return to calling routine.
    return;
 }

@@ -61,7 +61,7 @@ using namespace TrickHLAModel;
  */
 SinePacking::SinePacking()
    : SineData(),
-     TrickHLA::Packing(),
+     TrickHLA::Packing( "SinePacking" ),
      sim_data( NULL ),
      phase_deg( 0.0 ),
      pack_count( 0 ),
@@ -97,12 +97,10 @@ SinePacking::~SinePacking()
 /*!
  * @job_class{initialization}
  */
-void SinePacking::initialize()
+void SinePacking::set_sim_data(
+   SineData *sim_data )
 {
-   // Mark this as initialized.
-   TrickHLA::Packing::initialize();
-
-   return;
+   this->sim_data = sim_data;
 }
 
 /*!
@@ -370,15 +368,4 @@ void SinePacking::unpack()
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
-}
-
-/*!
- * @job_class{initialization}
- */
-void SinePacking::set_sim_data(
-   SineData *sim_data )
-{
-   this->sim_data = sim_data;
-
-   return;
 }

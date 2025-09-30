@@ -178,7 +178,7 @@ void RecordElement::initialize_element_encoder(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->encoder = EncoderFactory::create( address, attr, rti_encoding );
+   this->encoder = EncoderFactory::create( address, attr, rti_encoding, "" );
 }
 
 void RecordElement::update_before_encode()

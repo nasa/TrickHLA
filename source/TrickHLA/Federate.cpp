@@ -3162,7 +3162,7 @@ void Federate::set_time_advance_granted(
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::set_time_advance_granted():%d WARNING: Federate \"%s\" \
+         message_publish( MSG_WARNING, "Federate::set_time_advance_granted():%d WARNING: Federate \"%s\" \
 IGNORING GRANTED TIME %.12G because it is less then requested time %.12G.\n",
                           __LINE__, get_federate_name().c_str(),
                           int64_time.get_time_in_seconds(),
@@ -4540,7 +4540,7 @@ void Federate::perform_time_advance_request()
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
       if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
-         message_publish( MSG_NORMAL, "Federate::perform_time_advance_request():%d WARNING: Already in time requested state!\n",
+         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d WARNING: Already in time requested state!\n",
                           __LINE__ );
       }
 
@@ -4624,7 +4624,7 @@ void Federate::wait_for_zero_lookahead_TARA_TAG()
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
       if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
-         message_publish( MSG_NORMAL, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Already in time requested state!\n",
+         message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Already in time requested state!\n",
                           __LINE__ );
       } else {
 
@@ -4692,7 +4692,7 @@ void Federate::wait_for_zero_lookahead_TARA_TAG()
          // We had an error if we are not in the time advance requested state.
          if ( this->time_adv_state != TIME_ADVANCE_REQUESTED ) {
             if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-               message_publish( MSG_NORMAL, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Request Available call made!\n",
+               message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Request Available call made!\n",
                                 __LINE__ );
             }
             return;
@@ -5126,7 +5126,7 @@ void Federate::wait_for_time_advance_grant()
 
    if ( state == TIME_ADVANCE_RESET ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!\n",
+         message_publish( MSG_WARNING, "Federate::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!\n",
                           __LINE__ );
       }
       return;
@@ -7818,7 +7818,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
    // Determine if this is a MOM HLAfederation instance.
    if ( !is_MOM_HLAfederation_instance_id( instance_hndl ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d WARNING: Unknown object class, expected 'HLAmanager.HLAfederation'.\n",
+         message_publish( MSG_WARNING, "Federate::set_federation_instance_attributes():%d WARNING: Unknown object class, expected 'HLAmanager.HLAfederation'.\n",
                           __LINE__ );
       }
       return;

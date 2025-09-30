@@ -60,7 +60,7 @@ using namespace TrickHLAModel;
  */
 SineLagCompensation::SineLagCompensation()
    : SineData(),
-     TrickHLA::LagCompensation(),
+     TrickHLA::LagCompensation( "SineLagCompensation" ),
      sim_data( NULL ),
      time_attr( NULL ),
      value_attr( NULL ),
@@ -86,23 +86,10 @@ SineLagCompensation::~SineLagCompensation()
 /*!
  * @job_class{initialization}
  */
-void SineLagCompensation::configure(
+void SineLagCompensation::set_sim_data(
    SineData *sim_data )
 {
    this->sim_data = sim_data;
-
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void SineLagCompensation::initialize()
-{
-   // Call the base class initialize function.
-   TrickHLA::LagCompensation::initialize();
-
-   return;
 }
 
 /*!

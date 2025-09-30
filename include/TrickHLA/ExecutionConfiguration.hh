@@ -83,7 +83,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
     *  These can be overridden in the input file. */
    virtual void configure_attributes();
 
-   /*! @brief Configure the execution configuration object. */
+   /*! @brief From Packing, configure the execution configuration object. */
    virtual void configure();
 
    // From the TrickHLA::Packing class.

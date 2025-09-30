@@ -55,7 +55,7 @@ using namespace TrickHLAModel;
  */
 SineConditional::SineConditional()
    : SineData(),
-     TrickHLA::Conditional(),
+     TrickHLA::Conditional( "SineConditional" ),
      sim_data( NULL ),
      time_attr( NULL ),
      value_attr( NULL ),
@@ -80,17 +80,10 @@ SineConditional::~SineConditional()
 /*!
  * @job_class{initialization}
  */
-void SineConditional::configure(
-   SineData *data )
+void SineConditional::set_sim_data(
+   SineData *sim_data )
 {
-   this->sim_data = data;
-
-   if ( this->sim_data == NULL ) {
-      message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!\n",
-                       __LINE__ );
-      exit( -1 );
-   }
-   return;
+   this->sim_data = sim_data;
 }
 
 /*!
@@ -98,7 +91,6 @@ void SineConditional::configure(
  */
 void SineConditional::initialize()
 {
-
    if ( this->sim_data == NULL ) {
       message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!\n",
                        __LINE__ );
@@ -116,7 +108,7 @@ void SineConditional::initialize()
    set_amplitude( sim_data->get_amplitude() );
    set_tolerance( sim_data->get_tolerance() );
 
-   return;
+   TrickHLA::Conditional::initialize();
 }
 
 /*!

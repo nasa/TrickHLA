@@ -15,5 +15,6 @@ endif
 # Construct Build Environment
 #=============================================================================
 
-TRICK_CFLAGS   += -I. -I../../models -Werror
-TRICK_CXXFLAGS += -I. -I../../models -Werror
+# Add -Werror to turn warnings into errors.
+TRICK_CFLAGS   += -I. -I../../models
+TRICK_CXXFLAGS += -I. -I../../models

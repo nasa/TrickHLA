@@ -55,7 +55,8 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-RefFrameLagCompInteg::RefFrameLagCompInteg( RefFrameBase &ref_frame_ref ) // RETURN: -- None.
+RefFrameLagCompInteg::RefFrameLagCompInteg(
+   RefFrameBase &ref_frame_ref ) // RETURN: -- None.
    : RefFrameLagCompBase( ref_frame_ref ),
      TrickHLA::LagCompensationInteg()
 {

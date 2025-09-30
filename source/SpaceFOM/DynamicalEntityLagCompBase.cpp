@@ -63,7 +63,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
-   : PhysicalEntityLagCompBase( entity_ref ),
+   : SpaceFOM::PhysicalEntityLagCompBase( entity_ref ),
      de_entity( entity_ref ),
      force_attr( NULL ),
      torque_attr( NULL ),
@@ -106,6 +106,9 @@ DynamicalEntityLagCompBase::~DynamicalEntityLagCompBase() // RETURN: -- None.
  */
 void DynamicalEntityLagCompBase::initialize()
 {
+   // Call the base class.
+   PhysicalEntityLagCompBase::initialize();
+
    // Return to calling routine.
    return;
 }

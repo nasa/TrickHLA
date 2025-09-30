@@ -60,7 +60,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 DynamicalEntityLagComp::DynamicalEntityLagComp( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
-   : DynamicalEntityLagCompInteg( entity_ref )
+   : SpaceFOM::DynamicalEntityLagCompInteg( entity_ref )
 {
    // Assign the integrator state references.
    // Translational position
@@ -114,7 +114,7 @@ void DynamicalEntityLagComp::initialize()
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Call the base class initialize function.l
+   // Call the base class initialize function.
    DynamicalEntityLagCompInteg::initialize();
 
    // Return to calling routine.

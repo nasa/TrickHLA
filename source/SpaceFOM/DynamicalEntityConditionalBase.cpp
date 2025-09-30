@@ -76,6 +76,9 @@ DynamicalEntityConditionalBase::~DynamicalEntityConditionalBase()
  */
 void DynamicalEntityConditionalBase::initialize()
 {
+   // Call base class.
+   SpaceFOM::PhysicalEntityConditionalBase::initialize();
+
    // Return to calling routine.
    return;
 }

@@ -10,17 +10,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Added support for IEEE 1516-2025 (HLA 4).
 - Added support for Fixed Records including direct encoding and decoding of Trick simulation variables from memory.
+- Improved the variable array encoder efficiency for dynamic arrays.
 
 ### Breaking Changes
 
 - Using std::string for TrickHLA settings instead of char *.
-- Configure and initialize TrickHLA from default data instead of the input file.
-  - Support for default data initialization will now require the *Packing* implementation make a call to set the sim-data before calling the no-argument *configure()* and *initialize()* functions in the S_define file.
-  - FROM: TBD
-  - TO: TBD
-- Renamed *ObjectDeleted* class to *ObjectDeletedHandler* to be consistent with the naming convention used for other callback handlers.
+- Renamed *ObjectDeleted* class to *ObjectDeletedHandler* to be consistent with the naming convention used for other handler APIs.
   - FROM: ObjectDeleted
   - TO: ObjectDeletedHandler
+- Renamed *Modified_data* to *TrickHLA_data* to better support Default Data.
+  - FROM: Modified_data
+  - TO: TrickHLA_data
+- Configure and initialize TrickHLA from default data instead of the input file.
+  - Adding S_models/THLAPackingBase.sm to your simulation S_define file will allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
+  - Support for Default Data initialization will now require the *Conditional*, *LagCompensation*, and *Packing* implementations to make a call to set the sim-data before calling the no-argument *configure()* and *initialize()* functions in the S_define file.
+  - If you do not intend to use S_models/THLAPackingBase.sm to add support for using Default Data to configure and initialize TrickHLA, then you will need to explicitly call *set_sim_data()*, *configure()*, and *initialize()* functions from the S_define file.
+   - FROM:
+
+```
+      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.initialize();
+      
+      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.initialize();
+
+      P50 ("initialization") conditional.configure( &packing );
+      P50 ("initialization") conditional.initialize();
+```
+
+   - TO:
+
+```
+      # $TRICKHLA_HOME/sims/SpaceFOM/SIM_sinw/S_define
+      P50 ("initialization") lag_compensation.set_sim_data( &sim_data );
+      P50 ("initialization") lag_compensation.configure();
+      P50 ("initialization") lag_compensation.initialize();
+
+      P50 ("initialization") packing.set_sim_data( &lag_compensation );
+      P50 ("initialization") packing.configure();
+      P50 ("initialization") packing.initialize();
+
+      P50 ("initialization") conditional.set_sim_data( &packing );
+      P50 ("initialization") conditional.configure();
+      P50 ("initialization") conditional.initialize();
+```
 
 ### Added
 
@@ -32,6 +65,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Changed over to use the IEEE 1516 HLA encoder helpers instead of custom written encoders.
+- Changed the Least Common Time Step (LCTS) code to perform the time checks in the Execution Control when an Execution Configuration Object (ExCO) change is processed (issue #179).
+- Changed the Timeline functions to be more const friendly (issue #180).
 
 
 ## [v3.1.18] - 2025-04-10
@@ -47,7 +82,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Handle ExecutionControl interactions first before user interactions.
 - Updated SIM_Frame_Test and SIM_RelStateTest simulations.
 - Cleaned up and tested the RefFrameTree, RefFrameData, and RefFrameDataState code base.
-
 
 ## [v3.1.17] - 2025-03-27
 

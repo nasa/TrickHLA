@@ -349,15 +349,15 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 
    /*! @brief Get the current simulation time from Simulation Timeline.
     *  @return The current simulation time in seconds. */
-   double get_sim_time();
+   double get_sim_time() const;
 
    /*! @brief Get the current Central Timing Equipment time from CTE Timeline.
     *  @return The current CTE time in seconds. */
-   double get_cte_time();
+   double get_cte_time() const;
 
    /*! @brief Get the current scenario time from Scenario Timeline.
     *  @return The current scenario time in seconds. */
-   double get_scenario_time();
+   double get_scenario_time() const;
 
    /*! @brief Convert the a given scenario time into simulation time.
     *  @return Corresponding simulation time in seconds.
@@ -631,6 +631,10 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    /*! @brief Set the least common time step in seconds for the federation.
     *  @param lcts Least Common Time Step time in seconds. */
    virtual void set_least_common_time_step( double const lcts );
+
+   /*! @brief Set the least common time step in seconds for the federation.
+    *  @param lcts Least Common Time Step time in seconds. */
+   virtual void set_least_common_time_step( int64_t const lcts );
 
    /*! @brief Refresh the least common time step especially if the HLA base time units changed. */
    virtual void refresh_least_common_time_step();

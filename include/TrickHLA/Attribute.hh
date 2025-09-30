@@ -93,7 +93,7 @@ class Attribute : public RecordElement
 
    DataUpdateEnum config; ///< @trick_units{--} The attribute configuration.
 
-   TransportationEnum preferred_order; ///< @trick_units{--} Either Timestamp (default) or Receive Order.
+   TransportationEnum preferred_order; ///< @trick_units{--} Either Value specified in FOM (default), Timestamp or Receive Order.
 
    bool publish;   ///< @trick_units{--} True to publish attribute that is owned locally.
    bool subscribe; ///< @trick_units{--} True to subscribe to attribute.

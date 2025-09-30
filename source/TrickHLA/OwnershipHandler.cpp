@@ -552,13 +552,7 @@ void OwnershipHandler::push_ownership(
  */
 Int64Interval OwnershipHandler::get_lookahead() const
 {
-   Int64Interval di;
-   if ( object != NULL ) {
-      di = object->get_lookahead();
-   } else {
-      di = Int64Interval( -1.0 );
-   }
-   return di;
+   return ( object != NULL ) ? object->get_lookahead() : Int64Interval( -1.0 );
 }
 
 /*!
@@ -566,30 +560,33 @@ Int64Interval OwnershipHandler::get_lookahead() const
  *  is assigned to the returned object. */
 Int64Time OwnershipHandler::get_granted_time() const
 {
-   Int64Time dt;
-   if ( object != NULL ) {
-      dt = object->get_granted_time();
-   } else {
-      dt = Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
-   }
-   return dt;
+   return ( object != NULL ) ? object->get_granted_time()
+                             : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
 }
 
-double OwnershipHandler::get_scenario_time()
+double OwnershipHandler::get_scenario_time() const
 {
-   if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = object->get_federate()->get_execution_control();
-      return ( execution_control->get_scenario_time() );
+   if ( object != NULL ) {
+      Federate *fed = object->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_scenario_time();
+         }
+      }
    }
    return -std::numeric_limits< double >::max();
 }
 
-double OwnershipHandler::get_cte_time()
+double OwnershipHandler::get_cte_time() const
 {
-   if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = object->get_federate()->get_execution_control();
-      if ( execution_control->does_cte_timeline_exist() ) {
-         return execution_control->get_cte_time();
+   if ( object != NULL ) {
+      Federate *fed = object->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_cte_time();
+         }
       }
    }
    return -std::numeric_limits< double >::max();

@@ -94,7 +94,7 @@ class EncoderFactory
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding,
-      std::string const           &trick_name = "" );
+      std::string const           &trick_name );
 
   protected:
    static EncoderBase *create_char_encoder(
