@@ -985,7 +985,7 @@ void ExecutionControl::setup_object_ref_attributes()
  */
 void ExecutionControl::setup_interaction_ref_attributes()
 {
-   // setup FreezeInteraction and its FreezeInteractionHandler
+   // Setup FreezeInteraction and its FreezeInteractionHandler
    freeze_inter_count = 1;
    freeze_interaction = reinterpret_cast< Interaction * >(
       alloc_type( freeze_inter_count, "TrickHLA::Interaction" ) );

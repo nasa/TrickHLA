@@ -113,6 +113,15 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
       return;
    }
 
+   // This should only be called by the Master federate.
+   if ( !interaction->get_manager()->get_execution_control()->is_master() ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__
+             << " WARNING: This should only be called by the Master federate!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      return;
+   }
+
 #if THLA_FREEZE_INTERACTION_DEBUG
    ostringstream msg;
    msg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__
