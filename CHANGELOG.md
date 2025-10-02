@@ -62,7 +62,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Changed over to use the IEEE 1516 HLA encoder helpers instead of custom written encoders.
-- Changed the Least Common Time Step (LCTS) code to perform the time checks in the Execution Control when an Execution Configuration Object (ExCO) change is processed (issue #179).
+- Changed the Execution Control to perform the Least Common Time Step (LCTS) time checks when an Execution Configuration Object (ExCO) change is processed (issue #179).
 - Changed the Timeline functions to be more const friendly (issue #180).
 
 
