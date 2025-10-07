@@ -351,7 +351,8 @@ void Attribute::initialize(
       case TRICK_LONG:
       case TRICK_UNSIGNED_LONG:
       case TRICK_LONG_LONG:
-      case TRICK_UNSIGNED_LONG_LONG: {
+      case TRICK_UNSIGNED_LONG_LONG:
+      case TRICK_ENUMERATED: {
          if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
               && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
               && ( rti_encoding != ENCODING_LOGICAL_TIME )
@@ -3361,6 +3362,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             }
             break;
          }
+         case TRICK_ENUMERATED:
          case TRICK_INTEGER: {
             int const *i_src  = static_cast< int const * >( src );
             int       *i_dest = static_cast< int * >( dest );
@@ -3515,7 +3517,8 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
       case TRICK_LONG:
       case TRICK_UNSIGNED_LONG:
       case TRICK_LONG_LONG:
-      case TRICK_UNSIGNED_LONG_LONG: {
+      case TRICK_UNSIGNED_LONG_LONG:
+      case TRICK_ENUMERATED: {
          // We do not support an array of primitive types for the logical
          // time encoding, otherwise we support everything else.
          if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( ref2->attr->num_index > 0 ) ) {
