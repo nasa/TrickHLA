@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_JEOD_PHYSICAL_INTERFACE_HH
 
 // SpaceFOM includes.
-#include "../SpaceFOM/PhysicalInterfaceBase.hh"
+#include "SpaceFOM/PhysicalInterfaceBase.hh"
 
 namespace jeod
 {

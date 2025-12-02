@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TimeOfDayTimeline.hh
+@file TrickHLA/time/TimeOfDayTimeline.hh
 @ingroup TrickHLA
 @brief This class represents the time of day timeline.
 
@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/TimeOfDayTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/TimeOfDayTimeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Timeline.cpp}
 
 @revs_title
 @revs_begin
@@ -34,7 +34,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_TIMEOFDAY_TIMELINE_HH
 
 // TrickHLA includes.
-#include "Timeline.hh"
+#include "TrickHLA/time/Timeline.hh"
 
 namespace TrickHLA
 {

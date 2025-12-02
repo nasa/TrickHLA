@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "Types.hh"
+#include "TrickHLA/Types.hh"
 
 namespace TrickHLA
 {

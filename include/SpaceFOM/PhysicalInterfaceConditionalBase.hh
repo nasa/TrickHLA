@@ -36,11 +36,11 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_PHYSICAL_INTERFACE_CONDITIONAL_BASE_HH
 
 // TrickHLA includes.
-#include "../TrickHLA/Conditional.hh"
+#include "TrickHLA/Conditional.hh"
 
 // SpaceFOM includes.
-#include "PhysicalInterfaceBase.hh"
-#include "PhysicalInterfaceData.hh"
+#include "SpaceFOM/PhysicalInterfaceBase.hh"
+#include "SpaceFOM/PhysicalInterfaceData.hh"
 
 namespace SpaceFOM
 {

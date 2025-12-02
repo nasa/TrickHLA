@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SimTimeline.cpp
+@file TrickHLA/TimeOfDayTimeline.cpp
 @ingroup TrickHLA
 @brief This class represents the simulation timeline.
 
@@ -15,30 +15,29 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{SimTimeline.cpp}
 @trick_link_dependency{Timeline.cpp}
+@trick_link_dependency{TimeOfDayTimeline.cpp}
 
 @revs_title
 @revs_begin
-@rev_entry{Dan Dexter, NASA/ER7, NExSyS, April 2016, --, Initial implementation.}
-@rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
+@rev_entry{Dan Dexter, NASA ER7, SpaceFOM, June 2016, --, Initial implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @revs_end
 
 */
 
-// Trick includes.
-#include "trick/exec_proto.h"
+// System includes.
+#include <time.h>
 
 // TrickHLA includes.
-#include "TrickHLA/SimTimeline.hh"
+#include "TrickHLA/time/TimeOfDayTimeline.hh"
 
 using namespace TrickHLA;
 
 /*!
  * @job_class{initialization}
  */
-SimTimeline::SimTimeline()
+TimeOfDayTimeline::TimeOfDayTimeline()
 {
    return;
 }
@@ -46,25 +45,28 @@ SimTimeline::SimTimeline()
 /*!
  * @job_class{shutdown}
  */
-SimTimeline::~SimTimeline()
+TimeOfDayTimeline::~TimeOfDayTimeline()
 {
    return;
 }
 
 /*!
- * @details Get the current simulation time.
+ * @details Get the current time of day for this timeline.
  */
-double const SimTimeline::get_time() const
+double const TimeOfDayTimeline::get_time() const
 {
-   return exec_get_sim_time();
+   struct timespec ts;
+   clock_gettime( CLOCK_REALTIME, &ts ); // NOLINT
+   return ( (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 ) );
 }
 
 /*!
  * @details Get the minimum time resolution, which is the smallest time
  * representation for this timeline.
  */
-double const SimTimeline::get_min_resolution() const
+double const TimeOfDayTimeline::get_min_resolution() const
 {
-   // Time resolution for the Trick Simulation Environment.
-   return ( 1.0 / (double)exec_get_time_tic_value() );
+   struct timespec ts;
+   clock_getres( CLOCK_REALTIME, &ts ); // NOLINT
+   return ( (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 ) );
 }

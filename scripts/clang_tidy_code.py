@@ -61,6 +61,9 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --hla3\n  clang_tidy_code 
    parser.add_argument( '--Encoding', \
                         help = 'Process the core TrickHLA Encoding source code.', \
                         action = 'store_true', dest = 'process_TrickHLA_encoding' )
+   parser.add_argument( '--Time', \
+                        help = 'Process the TrickHLA Time source code.', \
+                        action = 'store_true', dest = 'process_TrickHLA_time' )
    parser.add_argument( '--SpaceFOM', \
                         help = 'Process the SpaceFOM source code.', \
                         action = 'store_true', dest = 'process_SpaceFOM' )
@@ -138,6 +141,9 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --hla3\n  clang_tidy_code 
       required_arg_cnt += 1
    if args.process_TrickHLA_encoding:
       # --Encoding
+      required_arg_cnt += 1
+   if args.process_TrickHLA_time:
+      # --Time
       required_arg_cnt += 1
    if args.process_SpaceFOM:
       # --SpaceFOM
@@ -298,7 +304,11 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --hla3\n  clang_tidy_code 
    # TrickHLA Encoding
    if args.process_all or args.process_TrickHLA_encoding:
       source_dirs.extend ( ['./source/TrickHLA/encoding'] )
-   
+
+   # TrickHLA Time
+   if args.process_all or args.process_TrickHLA_time:
+      source_dirs.extend ( ['./source/TrickHLA/time'] )
+
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
       include_dirs.extend( ['-I/usr/local/include'] )

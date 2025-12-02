@@ -24,8 +24,8 @@
 
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/KnownFederate.hh"
-##include "TrickHLA/SimTimeline.hh"
-##include "TrickHLA/ScenarioTimeline.hh"
+##include "TrickHLA/time/SimTimeline.hh"
+##include "TrickHLA/time/ScenarioTimeline.hh"
 
 ##include "sine/include/SineData.hh"
 ##include "sine/include/SinePacking.hh"

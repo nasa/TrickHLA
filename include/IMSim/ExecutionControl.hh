@@ -21,7 +21,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
@@ -44,15 +43,15 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "../TrickHLA/ExecutionControlBase.hh"
-#include "../TrickHLA/HLAStandardSupport.hh"
-#include "../TrickHLA/Interaction.hh"
-#include "../TrickHLA/Types.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/Types.hh"
 
 // IMSim includes.
-#include "ExecutionConfiguration.hh"
-#include "FreezeInteractionHandler.hh"
-#include "Types.hh"
+#include "IMSim/ExecutionConfiguration.hh"
+#include "IMSim/FreezeInteractionHandler.hh"
+#include "IMSim/Types.hh"
 
 namespace IMSim
 {

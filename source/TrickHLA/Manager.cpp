@@ -20,9 +20,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Int64Interval.cpp}
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionItem.cpp}
 @trick_link_dependency{Manager.cpp}
@@ -33,6 +30,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/Int64Interval.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -67,9 +67,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
@@ -80,6 +77,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -299,6 +299,7 @@ void Manager::initialize_HLA_cycle_time()
    // Set the core job cycle time now that we know what it is so that the
    // attribute cyclic ratios can now be calculated for any multi-rate
    // attributes.
+   // TODO: Use child thread cycle rate for core cycle time?
    for ( int n = 0; n < obj_count; ++n ) {
       objects[n].set_core_job_cycle_time( federate->get_HLA_cycle_time() );
    }
@@ -2356,7 +2357,7 @@ void Manager::send_cyclic_and_requested_data()
    for ( int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
 
       // Only send data if we are on the data cycle time boundary for this object.
-      if ( federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
+      if ( federate->on_receive_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
          // Get the cyclic data time for the object.
          dt = federate->get_data_cycle_base_time_for_obj( obj_index, federate->get_HLA_cycle_time_in_base_time() );
@@ -2404,7 +2405,7 @@ void Manager::receive_cyclic_data()
    for ( int n = 0; n < obj_count; ++n ) {
 
       // Only receive data if we are on the data cycle time boundary for this object.
-      if ( federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
+      if ( federate->on_receive_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
          objects[n].receive_cyclic_data();
       }
    }

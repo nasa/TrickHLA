@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "../TrickHLA/ExecutionConfigurationBase.hh"
+#include "TrickHLA/ExecutionConfigurationBase.hh"
 
 namespace IMSim
 {

@@ -21,17 +21,16 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/CTETimelineBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/TrickHLA/ScenarioTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/CTETimelineBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/ScenarioTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/SimTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Timeline.cpp}
 
 @revs_title
 @revs_begin
@@ -48,12 +47,12 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "CTETimelineBase.hh"
-#include "HLAStandardSupport.hh"
-#include "ScenarioTimeline.hh"
-#include "SimTimeline.hh"
-#include "SyncPointManagerBase.hh"
-#include "Types.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/time/SimTimeline.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -754,8 +753,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    double simulation_freeze_time; ///< @trick_units{s} Trick simulation time for freeze.
    double scenario_freeze_time;   ///< @trick_units{s} Federation execution scenario time for freeze.
 
-   bool announce_freeze;       ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
-   bool freeze_the_federation; ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
+   bool announce_freeze;       ///< @trick_io{**} Flag to indicate that this federate is announcing go to freeze mode
+   bool freeze_the_federation; ///< @trick_io{**} Flag to indicate the federation is going into freeze now
 
    bool late_joiner;            ///< @trick_units{--} Flag that this federate is a late joiner.
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.

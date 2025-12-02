@@ -140,7 +140,7 @@ class THLABaseSimObject : public Trick::SimObject {
       // After all the P2 jobs run in the THLAThreadSimObject sim-object to
       // assoicate Trick child threads to object instances, verify all the
       // thread associations.
-      P3 ("initialization") federate.verify_trick_child_thread_associations();
+      P3 ("initialization") federate.verify_trick_thread_associations();
 
       // Setup the HLA infrastructure.
       P_INIT ("initialization") federate.initialize();

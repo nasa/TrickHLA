@@ -47,8 +47,8 @@
 // TrickHLA includes.
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
-##include "TrickHLA/SimTimeline.hh"
-##include "TrickHLA/ScenarioTimeline.hh"
+##include "TrickHLA/time/SimTimeline.hh"
+##include "TrickHLA/time/ScenarioTimeline.hh"
 
 // Sine model includes.
 ##include "sine/include/SineData.hh"
@@ -66,9 +66,9 @@
 
 
 //==========================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+// SIM_OBJECT: SpaceFOMSimObject - Generalized TrickHLA interface routines.
 //==========================================================================
-#include "SpaceFOM/SpaceFOM.sm"
+#include "SpaceFOM/SpaceFOM2.sm"
 
 
 //==========================================================================
@@ -203,7 +203,7 @@ class PropagatedSineSimObj : public Trick::SimObject {
 
 
 //==========================================================================
-// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// SIM_OBJECT: THLAInitSimObject - An example of a TrickHLA multi-phase
 // initialization SimObject.
 //==========================================================================
 class THLAInitSimObject : public Trick::SimObject {

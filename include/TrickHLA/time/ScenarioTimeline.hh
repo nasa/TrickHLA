@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/ScenarioTimeline.hh
+@file TrickHLA/time/ScenarioTimeline.hh
 @ingroup TrickHLA
 @brief This class represents the scenario timeline.
 
@@ -29,10 +29,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/ScenarioTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/ScenarioTimeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/SimTimeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Timeline.cpp}
 
 @revs_title
 @revs_begin
@@ -46,9 +46,9 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SCENARIO_TIMELINE_HH
 
 // TrickHLA includes.
-#include "Int64Time.hh"
-#include "SimTimeline.hh"
-#include "Timeline.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/SimTimeline.hh"
+#include "TrickHLA/time/Timeline.hh"
 
 namespace TrickHLA
 {

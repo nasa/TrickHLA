@@ -18,7 +18,6 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
@@ -27,6 +26,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{SyncPointTimed.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -52,7 +52,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SleepTimeout.hh"
@@ -62,6 +61,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

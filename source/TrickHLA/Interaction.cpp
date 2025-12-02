@@ -17,9 +17,6 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Int64Interval.cpp}
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionHandler.cpp}
 @trick_link_dependency{InteractionItem.cpp}
@@ -29,6 +26,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/Int64Interval.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
 #include <cstring>
 #include <map>
 #include <ostream>
@@ -56,8 +57,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/InteractionItem.hh"
@@ -69,6 +68,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Interval.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -1063,7 +1064,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.\n",
              << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", InvalidLogicalTime exception for " << get_FOM_name()
              << "  time=" << time.get_time_in_seconds() << " ("
-             << time.get_base_time() << " " << Int64BaseTime::get_units()
+             << time.get_base_time() << " " << Int64BaseTime::get_base_unit()
              << " error message:'" << rti_err_msg << "'" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -1246,7 +1247,7 @@ Int64Time Interaction::get_granted_time() const
 {
    return ( ( manager != NULL )
                ? manager->get_granted_time()
-               : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() ) );
+               : Int64Time( INT64_MAX ) );
 }
 
 Federate *Interaction::get_federate()

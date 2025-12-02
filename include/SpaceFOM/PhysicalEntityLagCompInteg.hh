@@ -38,10 +38,10 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_INTEG_HH
 
 // SpaceFOM includes.
-#include "PhysicalEntityLagCompBase.hh"
+#include "SpaceFOM/PhysicalEntityLagCompBase.hh"
 
 // TrickHLA includes.
-#include "../TrickHLA/LagCompensationInteg.hh"
+#include "TrickHLA/LagCompensationInteg.hh"
 
 namespace SpaceFOM
 {

@@ -47,13 +47,13 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // SpaceFOM includes.
-#include "LRTreeNodeBase.hh"
-#include "RefFrameData.hh"
-#include "SpaceTimeCoordinateData.hh"
-#include "SpaceTimeCoordinateEncoder.hh"
+#include "SpaceFOM/LRTreeNodeBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 // TrickHLA includes.
-#include "../TrickHLA/Packing.hh"
+#include "TrickHLA/Packing.hh"
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This

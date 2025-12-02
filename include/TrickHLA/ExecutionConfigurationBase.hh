@@ -48,8 +48,8 @@ execution.
 #include <string>
 
 // TrickHLA includes.
-#include "Object.hh"
-#include "Packing.hh"
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/Packing.hh"
 
 namespace TrickHLA
 {

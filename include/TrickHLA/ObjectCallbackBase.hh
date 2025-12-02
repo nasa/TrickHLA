@@ -24,9 +24,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ObjectCallbackBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -41,10 +41,10 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "ExecutionControlBase.hh"
-#include "Int64Interval.hh"
-#include "Int64Time.hh"
-#include "ObjectCallbackBase.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/ObjectCallbackBase.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 namespace TrickHLA
 {

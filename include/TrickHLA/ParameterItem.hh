@@ -35,8 +35,8 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_PARAMETER_ITEM_HH
 
 // TrickHLA includes.
-#include "HLAStandardSupport.hh"
-#include "Item.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Item.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

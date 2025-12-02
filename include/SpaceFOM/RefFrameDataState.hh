@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // SpaceFOM includes.
-#include "SpaceTimeCoordinateData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {

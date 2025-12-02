@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "ExecutionConfigurationBase.hh"
+#include "TrickHLA/ExecutionConfigurationBase.hh"
 
 namespace TrickHLA
 {

@@ -41,7 +41,7 @@
 ##include "SpaceFOM/RefFrameBase.hh"
 
 //=========================================================================
-// SIM_OBJECT: SpaceFOM - Extend the TrickHLA Base SimObject.
+// SIM_OBJECT: SpaceFOMSimObject - Extend the TrickHLA Base SimObject.
 //=========================================================================
 class SpaceFOMSimObject : public THLABaseSimObject {
 

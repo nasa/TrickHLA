@@ -47,8 +47,8 @@
 // TrickHLA includes.
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
-##include "TrickHLA/SimTimeline.hh"
-##include "TrickHLA/ScenarioTimeline.hh"
+##include "TrickHLA/time/SimTimeline.hh"
+##include "TrickHLA/time/ScenarioTimeline.hh"
 
 // Sine model includes.
 ##include "sine/include/SineData.hh"

@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_REF_FRAME_LAG_COMP_HH
 
 // SpaceFOM includes.
-#include "RefFrameLagCompInteg.hh"
+#include "SpaceFOM/RefFrameLagCompInteg.hh"
 
 namespace SpaceFOM
 {

@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/CTETimelineBase.hh
+@file TrickHLA/time/CTETimelineBase.hh
 @ingroup TrickHLA
 @brief This class represents the CTE timeline.
 
@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/CTETimelineBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/CTETimelineBase.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Timeline.cpp}
 
 @revs_title
 @revs_begin
@@ -52,7 +52,7 @@ NASA, Johnson Space Center\n
 #include "trick/Clock.hh"
 
 // TrickHLA includes.
-#include "Timeline.hh"
+#include "TrickHLA/time/Timeline.hh"
 
 namespace TrickHLA
 {

@@ -17,12 +17,12 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{RecordElement.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 @trick_link_dependency{encoding/EncoderBase.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
 
 
 @revs_title

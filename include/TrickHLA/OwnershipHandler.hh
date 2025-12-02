@@ -22,10 +22,10 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -44,12 +44,12 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "Attribute.hh"
-#include "CheckpointConversionBase.hh"
-#include "Int64Interval.hh"
-#include "Int64Time.hh"
-#include "OwnershipItem.hh"
-#include "Types.hh"
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CheckpointConversionBase.hh"
+#include "TrickHLA/OwnershipItem.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 namespace TrickHLA
 {

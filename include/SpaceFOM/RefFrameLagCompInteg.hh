@@ -38,10 +38,10 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_REF_FRAME_LAG_COMP_INTEG_HH
 
 // SpaceFOM includes.
-#include "RefFrameLagCompBase.hh"
+#include "SpaceFOM/RefFrameLagCompBase.hh"
 
 // TrickHLA includes.
-#include "../TrickHLA/LagCompensationInteg.hh"
+#include "TrickHLA/LagCompensationInteg.hh"
 
 namespace SpaceFOM
 {

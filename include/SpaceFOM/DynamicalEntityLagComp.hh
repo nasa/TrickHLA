@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_HH
 
 // SpaceFOM includes.
-#include "DynamicalEntityLagCompInteg.hh"
+#include "SpaceFOM/DynamicalEntityLagCompInteg.hh"
 
 namespace SpaceFOM
 {

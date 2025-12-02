@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_OPAQUE_BUFFER_HH
 
 // TrickHLA includes.
-#include "Types.hh"
+#include "TrickHLA/Types.hh"
 
 namespace TrickHLA
 {

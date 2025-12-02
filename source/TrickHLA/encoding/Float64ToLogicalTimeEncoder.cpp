@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
-@trick_link_dependency{../Int64BaseTime.cpp}
 @trick_link_dependency{../Types.cpp}
+@trick_link_dependency{../time/Int64BaseTime.cpp}
 
 
 @revs_title
@@ -43,9 +43,9 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.

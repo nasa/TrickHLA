@@ -12,7 +12,7 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA) (June 2021) (--) (Added set_wait_status_time.))
-#     ((Dan Dexter) (NASA) (July 2023) (--) (Added support for HLA base time units.)))
+#     ((Dan Dexter) (NASA) (July 2023) (--) (Added support for HLA base time unit.)))
 ##############################################################################
 import socket
 import subprocess
@@ -242,24 +242,46 @@ class TrickHLAFederateConfig( object ):
       return
 
 
-   def set_HLA_base_time_units( self, new_base_time_units ):
+   def set_HLA_base_time_unit( self, new_base_time_unit ):
 
-      # You can only set HLA base time units before initialize method is called.
+      # You can only set the HLA base time unit before initialize method is called.
       if self.initialized:
-         print( 'TrickHLAFederateConfig.set_HLA_base_time_units(): Warning, already initialized, function ignored!' )
+         print( 'TrickHLAFederateConfig.set_HLA_base_time_unit(): Warning, already initialized, function ignored!' )
       else:
-         self.federate.set_HLA_base_time_units( new_base_time_units )
+         self.federate.set_HLA_base_time_unit( new_base_time_unit )
 
       return
 
 
-   def scale_trick_tics_to_base_time_units( self ):
+   def set_HLA_base_time_unit_and_scale_trick_tics( self, new_base_time_unit ):
 
-      # You can only adjust the Trick Tick value before initialize method is called.
+      # You can only set the HLA base time unit before initialize method is called.
       if self.initialized:
-         print( 'TrickHLAFederateConfig.scale_trick_tics_to_base_time_units(): Warning, already initialized, function ignored!' )
+         print( 'TrickHLAFederateConfig.set_HLA_base_time_unit_and_scale_trick_tics(): Warning, already initialized, function ignored!' )
       else:
-         self.federate.scale_trick_tics_to_base_time_units()
+         self.federate.set_HLA_base_time_unit_and_scale_trick_tics( new_base_time_unit )
+
+      return
+
+
+   def set_HLA_base_time_multiplier( self, new_base_time_multiplier: int ):
+
+      # You can only set the HLA base time multiplier before initialize method is called.
+      if self.initialized:
+         print( 'TrickHLAFederateConfig.set_HLA_base_time_multiplier(): Warning, already initialized, function ignored!' )
+      else:
+         self.federate.set_HLA_base_time_multiplier( new_base_time_multiplier )
+
+      return
+
+
+   def set_HLA_base_time_multiplier_and_scale_trick_tics( self, new_base_time_multiplier: int ):
+
+      # You can only set the HLA base time multiplier before initialize method is called.
+      if self.initialized:
+         print( 'TrickHLAFederateConfig.set_HLA_base_time_multiplier_and_scale_trick_tics(): Warning, already initialized, function ignored!' )
+      else:
+         self.federate.set_HLA_base_time_multiplier_and_scale_trick_tics( new_base_time_multiplier )
 
       return
 
@@ -348,17 +370,17 @@ class TrickHLAFederateConfig( object ):
 
 
    def setup_HLA_time_management( self,
-                                  lookahead       = 1.0,
-                                  constrained     = True,
-                                  regulating      = True,
-                                  time_managed    = True,
-                                  base_time_units = trick.HLA_BASE_TIME_MICROSECONDS ):
+                                  lookahead      = 1.0,
+                                  constrained    = True,
+                                  regulating     = True,
+                                  time_managed   = True,
+                                  base_time_unit = trick.HLA_BASE_TIME_MICROSECONDS ):
 
       # You can only setup parameters before initialize method is called.
       if self.initialized:
          print( 'TrickHLAFederateConfig.setup_HLA_time_management(): Warning, already initialized, function ignored!' )
       else:
-         self.set_HLA_base_time_units( base_time_units )
+         self.set_HLA_base_time_unit( base_time_unit )
          self.set_lookahead_time( lookahead )
          self.set_time_constrained( constrained )
          self.set_time_regulating( regulating )

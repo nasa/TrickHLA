@@ -44,16 +44,16 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // SpaceFOM includes.
-#include "ExecutionConfiguration.hh"
-#include "MTRInteractionHandler.hh"
-#include "RefFrameBase.hh"
-#include "Types.hh"
+#include "SpaceFOM/ExecutionConfiguration.hh"
+#include "SpaceFOM/MTRInteractionHandler.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/Types.hh"
 
 // TrickHLA includes.
-#include "../TrickHLA/ExecutionControlBase.hh"
-#include "../TrickHLA/HLAStandardSupport.hh"
-#include "../TrickHLA/Interaction.hh"
-#include "../TrickHLA/Types.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

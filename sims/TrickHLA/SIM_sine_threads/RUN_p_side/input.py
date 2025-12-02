@@ -82,13 +82,9 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 
 THLA.federate.lookahead_time = 0.250
 
-# We need more HLA Logical Time resolution because the lookahead time cannot
-# be represented by the default microsecond resolution.
-THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
-
-# Scale the Trick Time Tic value based on the HLA base time units.
-THLA.federate.scale_trick_tics_to_base_time_units()
-
+# Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
+# and scale the Trick time tics value.
+federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Disable Trick child thread IDs associated to TrickHLA in the S_define file
 # as a comma separated list.

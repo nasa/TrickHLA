@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../../source/TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{sine/src/SineInteractionHandler.cpp}
 
 @revs_title
@@ -48,11 +48,11 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // Sine model includes.
 #include "sine/include/SineInteractionHandler.hh"
@@ -159,13 +159,13 @@ void SineInteractionHandler::send_sine_interaction(
               << "  user-supplied-tag:'" << user_supplied_tag_string << "'" << endl
               << "  user-supplied-tag-size:" << user_supplied_tag.size() << endl
               << "  hla_granted_time:" << send_time << " ("
-              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_base_unit() << ")" << endl
               << "  send_time:" << send_time << " ("
-              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_base_unit() << ")" << endl
               << "  lookahead_time:" << lookahead_time << " ("
-              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_base_unit() << ")" << endl
               << "  timestamp:" << timestamp << " ("
-              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_units() << ")" << endl
+              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_base_unit() << ")" << endl
               << "  time:" << time << endl
               << "  year:" << year << endl
               << "  send_cnt:" << ( send_cnt + 1 ) << endl;

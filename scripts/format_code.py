@@ -84,13 +84,13 @@ def main():
    # Files and one-level of sub-directories under include.
    trickhla_src_paths.append( os.path.join( trickhla_home, 'include' ) )
    
-   # Sub-directories under include/TrickHLA (i.e. include/TrickHLA/encoding).
+   # Sub-directories under include/TrickHLA (i.e. include/TrickHLA/encoding, include/TrickHLA/time).
    trickhla_src_paths.append( os.path.join( trickhla_home, 'include/TrickHLA' ) )
    
    # Files and one-level of sub-directories under source.
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source' ) )
    
-   # Sub-directories under source/TrickHLA (i.e. source/TrickHLA/encoding).
+   # Sub-directories under source/TrickHLA (i.e. source/TrickHLA/encoding, source/TrickHLA/time).
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source/TrickHLA' ) )
    
    if os.path.isdir( os.path.join( trickhla_home, 'models/Ball' ) ):

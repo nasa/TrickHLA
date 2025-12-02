@@ -18,7 +18,6 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/SyncPoint.cpp}
@@ -26,6 +25,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{../TrickHLA/Utilities.cpp}
+@trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{FreezeInteractionHandler.cpp}
@@ -64,23 +64,23 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Parameter.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
-#include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/time/SimTimeline.hh"
 
 // IMSim includes.
 #include "IMSim/ExecutionControl.hh"
@@ -592,7 +592,7 @@ Simulation has started and is now running...\n",
          send_execution_configuration();
 
          /* TODO: REMOVE
-         // DANNY2.7 When master is started in freeze, create a pause sync point
+         // When master is started in freeze, create a pause sync point
          //  so other feds will start in freeze.
          if ( exec_get_freeze_command() != 0 ) {
             register_sync_point( IMSim::PAUSE_SYNC_POINT );
@@ -2135,7 +2135,7 @@ void ExecutionControl::shutdown_mode_transition()
 
 void ExecutionControl::enter_freeze()
 {
-   // DANNY2.7 send a freeze interaction when master hits Sim Control Panel
+   // Send a freeze interaction when master hits Sim Control Panel
    //  Freeze button. Determine if I am the federate that clicked Freeze
    if ( get_sim_time() <= 0.0 ) {
       set_freeze_announced( is_master() );
@@ -2306,7 +2306,7 @@ bool ExecutionControl::check_freeze_time()
    bool do_immediate_freeze = check_scenario_freeze_time();
 
    if ( do_immediate_freeze ) {
-      // DANNY2.7 Go to FREEZE at top of next frame.
+      // Go to FREEZE at top of next frame.
       exec_freeze(); // go to freeze at top of next frame (other federates MUST have their software frame set in input.py file!)
       // If we are to initiate the federation save, register a sync point
       // which must be acknowledged only in freeze mode!!!

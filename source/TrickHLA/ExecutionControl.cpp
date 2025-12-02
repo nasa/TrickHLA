@@ -20,9 +20,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
 
 @revs_title
 @revs_begin
@@ -50,9 +50,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControl.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -512,10 +512,10 @@ void ExecutionControl::set_time_padding( double t )
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Mode transition padding time (" << padding_base_time
-             << " " << Int64BaseTime::get_units()
+             << " " << Int64BaseTime::get_base_unit()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << this->least_common_time_step
-             << " " << Int64BaseTime::get_units() << ")!" << endl;
+             << " " << Int64BaseTime::get_base_unit() << ")!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -526,7 +526,7 @@ void ExecutionControl::set_time_padding( double t )
              << " ERROR: Time padding value (" << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " "
-             << Int64BaseTime::get_units() << ")!" << endl;
+             << Int64BaseTime::get_base_unit() << ")!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -538,10 +538,10 @@ void ExecutionControl::set_time_padding( double t )
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Padding time ("
-             << padding_base_time << " " << Int64BaseTime::get_units()
+             << padding_base_time << " " << Int64BaseTime::get_base_unit()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (LCTS:"
-             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ") when the time padding is less than "
              << THLA_PADDING_DEFAULT << " seconds!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );

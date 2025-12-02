@@ -70,7 +70,6 @@ class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
       self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_datatypes.xml' )
       self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_management.xml' )
       self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_environment.xml' )
-      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_entity.xml' )
 
       # Add any multi-phase initialization synchronization points.
       # These will be federation execution specific. These sync points

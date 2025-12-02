@@ -45,13 +45,13 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // SpaceFOM includes.
-#include "PhysicalEntityData.hh"
-#include "QuaternionEncoder.hh"
-#include "SpaceTimeCoordinateData.hh"
-#include "SpaceTimeCoordinateEncoder.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/QuaternionEncoder.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 // TrickHLA includes.
-#include "../TrickHLA/Packing.hh"
+#include "TrickHLA/Packing.hh"
 
 namespace SpaceFOM
 {

@@ -40,8 +40,8 @@
 #include "SpaceFOM/RefFrameTreeBase.sm"
 
 //==========================================================================
-// SIM_OBJECT: RefFrameTreeSimObject - An JEOD reference frame tree
-// simulation object definition.
+// SIM_OBJECT: SpaceFOMEMMRefFrameTreeSimObject - An JEOD reference frame
+// tree simulation object definition.
 //==========================================================================
 class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
 
@@ -136,7 +136,7 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
 
 
 //==========================================================================
-// SIM_OBJECT: RefFrameSimObject - An example SpaceFOM reference frame
+// SIM_OBJECT: SpaceFOMRefFrameSimObject - An example SpaceFOM reference frame
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================

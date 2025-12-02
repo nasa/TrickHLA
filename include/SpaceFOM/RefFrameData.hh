@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // SpaceFOM includes.
-#include "RefFrameDataState.hh"
+#include "SpaceFOM/RefFrameDataState.hh"
 
 namespace SpaceFOM
 {

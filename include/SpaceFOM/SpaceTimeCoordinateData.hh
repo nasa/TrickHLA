@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // SpaceFOM includes.
-#include "QuaternionData.hh"
+#include "SpaceFOM/QuaternionData.hh"
 
 namespace SpaceFOM
 {

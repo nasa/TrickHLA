@@ -17,12 +17,12 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Int64Interval.cpp}
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionHandler.cpp}
 @trick_link_dependency{Parameter.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/Int64Interval.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
@@ -49,12 +50,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // HLA includes.
 #include "RTI/VariableLengthData.h"
@@ -158,7 +158,7 @@ Int64Interval InteractionHandler::get_lookahead() const
 Int64Time InteractionHandler::get_granted_time() const
 {
    return ( interaction != NULL ) ? interaction->get_granted_time()
-                                  : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
+                                  : Int64Time( INT64_MAX );
 }
 
 double InteractionHandler::get_sim_time() const

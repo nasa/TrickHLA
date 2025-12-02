@@ -55,7 +55,7 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // SpaceFOM includes.
-#include "LRTreeNodeBase.hh"
+#include "SpaceFOM/LRTreeNodeBase.hh"
 
 namespace SpaceFOM
 {

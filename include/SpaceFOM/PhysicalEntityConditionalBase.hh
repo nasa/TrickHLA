@@ -36,11 +36,11 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_PHYSICAL_ENTITY_CONDITIONAL_BASE_HH
 
 // SpaceFOM includes.
-#include "PhysicalEntityBase.hh"
-#include "PhysicalEntityData.hh"
+#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
 
 // TrickHLA includes.
-#include "../TrickHLA/Conditional.hh"
+#include "TrickHLA/Conditional.hh"
 
 namespace SpaceFOM
 {

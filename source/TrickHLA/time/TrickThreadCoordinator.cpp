@@ -16,17 +16,17 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{Federate.cpp}
+@trick_link_dependency{../DebugHandler.cpp}
+@trick_link_dependency{../Federate.cpp}
+@trick_link_dependency{../Manager.cpp}
+@trick_link_dependency{../MutexLock.cpp}
+@trick_link_dependency{../MutexProtection.cpp}
+@trick_link_dependency{../Object.cpp}
+@trick_link_dependency{../SleepTimeout.cpp}
+@trick_link_dependency{../Types.cpp}
+@trick_link_dependency{../Utilities.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Manager.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
-@trick_link_dependency{Object.cpp}
-@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{TrickThreadCoordinator.cpp}
-@trick_link_dependency{Types.cpp}
-@trick_link_dependency{Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -59,14 +59,14 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/TrickThreadCoordinator.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/TrickThreadCoordinator.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -74,16 +74,19 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-TrickThreadCoordinator::TrickThreadCoordinator() // RETURN: -- None.
-   : federate( NULL ),
-     manager( NULL ),
+TrickThreadCoordinator::TrickThreadCoordinator(
+   Federate *fed ) // RETURN: -- None.
+   : federate( fed ),
      mutex(),
      any_child_thread_associated( false ),
      disable_thread_ids(),
      thread_cnt( 0 ),
      thread_state( NULL ),
+     data_cycle_time_per_thread( NULL ),
      data_cycle_base_time_per_thread( NULL ),
+     data_cycle_time_per_obj( NULL ),
      data_cycle_base_time_per_obj( NULL ),
+     main_thread_data_cycle_time( 0.0 ),
      main_thread_data_cycle_base_time( 0LL )
 {
    return;
@@ -103,12 +106,26 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
       }
       this->thread_state = NULL;
    }
+   if ( this->data_cycle_time_per_thread != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_time_per_thread ) ) ) {
+         message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_time_per_thread'\n",
+                          __LINE__ );
+      }
+      this->data_cycle_time_per_thread = NULL;
+   }
    if ( this->data_cycle_base_time_per_thread != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_thread ) ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_thread'\n",
                           __LINE__ );
       }
       this->data_cycle_base_time_per_thread = NULL;
+   }
+   if ( this->data_cycle_time_per_obj != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_time_per_obj ) ) ) {
+         message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_time_per_obj'\n",
+                          __LINE__ );
+      }
+      this->data_cycle_time_per_obj = NULL;
    }
    if ( this->data_cycle_base_time_per_obj != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_obj ) ) ) {
@@ -123,49 +140,34 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
 }
 
 /*!
- * @brief Setup the required class instance associations.
- * @param federate Associated TrickHLA::Federate class instance.
- * @param manager  Associated TrickHLA::Manager class instance.
- */
-void TrickThreadCoordinator::setup(
-   Federate &federate,
-   Manager  &manager )
-{
-   // Set the associated TrickHLA Federate and Manager references.
-   this->federate = &federate;
-   this->manager  = &manager;
-}
-
-/*!
  * @brief Initialize the thread memory associated with the Trick child threads.
  */
-void TrickThreadCoordinator::initialize(
-   double const main_thread_data_cycle_time )
+void TrickThreadCoordinator::initialize_thread_coordinator(
+   double const main_thread_cycle_time )
 {
+   this->main_thread_data_cycle_time = main_thread_cycle_time;
+
    // Determine if the main_thread_data_cycle_time time needs a resolution that
    // exceeds the configured base time.
    if ( Int64BaseTime::exceeds_base_time_resolution( main_thread_data_cycle_time ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: The main_thread_data_cycle_time specified (thread-id:0, "
              << setprecision( 18 ) << main_thread_data_cycle_time
              << " seconds) requires more resolution"
-             << " than whole " << Int64BaseTime::get_units()
+             << " than whole " << Int64BaseTime::get_base_unit()
              << ". The HLA Logical Time is a 64-bit integer"
-             << " representing " << Int64BaseTime::get_units()
+             << " representing " << Int64BaseTime::get_base_unit()
              << " and cannot represent the Trick main thread data-cycle time of "
              << setprecision( 18 )
              << ( main_thread_data_cycle_time * Int64BaseTime::get_base_time_multiplier() )
-             << " " << Int64BaseTime::get_units() << ". You can adjust the"
+             << " " << Int64BaseTime::get_base_unit() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
-             << " 'THLA.federate.HLA_time_base_units = trick."
-             << Int64BaseTime::get_units_string(
-                   Int64BaseTime::best_base_time_resolution( main_thread_data_cycle_time ) )
-             << "' or 'federate.set_HLA_base_time_units( "
-             << Int64BaseTime::get_units_string(
+             << " 'federate.set_HLA_base_time_unit( "
+             << Int64BaseTime::get_base_unit_enum_string(
                    Int64BaseTime::best_base_time_resolution( main_thread_data_cycle_time ) )
              << " )' in your input.py file. The current HLA base time resolution is "
-             << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
+             << Int64BaseTime::get_base_unit_enum_string( Int64BaseTime::get_base_unit_enum() )
              << ". You also need to update both the Federation Execution"
              << " Specific Federation Agreement (FESFA) and Federate Compliance"
              << " Declaration (FCD) documents for your Federation to document"
@@ -176,7 +178,7 @@ void TrickThreadCoordinator::initialize(
    // Determine if the Trick time Tic can represent the job cycle time.
    if ( Int64BaseTime::exceeds_base_time_resolution( main_thread_data_cycle_time, exec_get_time_tic_value() ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: The main_thread_data_cycle_time specified (thread-id:0, "
              << setprecision( 18 ) << main_thread_data_cycle_time
              << " seconds) requires more resolution"
@@ -192,7 +194,7 @@ void TrickThreadCoordinator::initialize(
 
    if ( thread_state != NULL ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: This function can only be called once. Detected the"
              << " this->thread_state variable is already allocated memory and"
              << " is not NULL." << endl;
@@ -205,7 +207,7 @@ void TrickThreadCoordinator::initialize(
    // Verify the thread state data cycle time.
    if ( main_thread_data_cycle_base_time <= 0 ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: main_thread_data_cycle_time time ("
              << setprecision( 18 ) << main_thread_data_cycle_time
              << ") must be > 0.0!" << endl;
@@ -225,7 +227,7 @@ void TrickThreadCoordinator::initialize(
    thread_state = static_cast< unsigned int * >( TMM_declare_var_1d( "unsigned int", thread_cnt ) );
    if ( thread_state == NULL ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: Could not allocate memory for 'thread_state'"
              << " for requested size " << thread_cnt
              << "!" << endl;
@@ -260,12 +262,12 @@ void TrickThreadCoordinator::initialize(
             thread_state[thread_id] = TrickHLA::THREAD_STATE_DISABLED;
 
             if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-               message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize():%d Disabled Trick child thread association (thread-id:%d).\n",
+               message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize_thread_coordinator():%d Disabled Trick child thread association (thread-id:%d).\n",
                                 __LINE__, thread_id );
             }
          } else if ( thread_id == 0 ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+            errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
                    << " ERROR: The Trick thread-ID '" << thread_id_vec[k]
                    << "' specified in the input file for 'federate.disable_associated_thread_ids'"
                    << " is not valid because the Trick main thread (id:0) cannot"
@@ -273,7 +275,7 @@ void TrickThreadCoordinator::initialize(
             DebugHandler::terminate_with_message( errmsg.str() );
          } else {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+            errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
                    << " ERROR: The Trick child thread-ID '" << thread_id_vec[k]
                    << "' specified in the input file for 'federate.disable_associated_thread_ids'"
                    << " is not valid because this Trick child thread does not"
@@ -286,37 +288,61 @@ void TrickThreadCoordinator::initialize(
    }
 
    // Allocate memory for the data cycle times per each thread.
+   data_cycle_time_per_thread = static_cast< double * >( TMM_declare_var_1d( "double", thread_cnt ) );
+   if ( data_cycle_time_per_thread == NULL ) {
+      ostringstream errmsg;
+      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
+             << " ERROR: Could not allocate memory for 'data_cycle_time_per_thread'"
+             << " for requested size " << thread_cnt
+             << "!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
    data_cycle_base_time_per_thread = static_cast< int64_t * >( TMM_declare_var_1d( "long long", thread_cnt ) );
    if ( data_cycle_base_time_per_thread == NULL ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_thread'"
              << " for requested size " << thread_cnt
              << "!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
+      data_cycle_time_per_thread[thread_id]      = 0.0;
       data_cycle_base_time_per_thread[thread_id] = 0LL;
    }
 
+   Manager const *manager = federate->get_manager();
+
    // Allocate memory for the data cycle times per each object instance.
    if ( manager->obj_count > 0 ) {
+      data_cycle_time_per_obj = static_cast< double * >( TMM_declare_var_1d( "double", manager->obj_count ) );
+      if ( data_cycle_time_per_obj == NULL ) {
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
+                << " ERROR: Could not allocate memory for 'data_cycle_time_per_obj'"
+                << " for requested size " << manager->obj_count
+                << "'!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
       data_cycle_base_time_per_obj = static_cast< int64_t * >( TMM_declare_var_1d( "long long", manager->obj_count ) );
       if ( data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+         errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
                 << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_obj'"
                 << " for requested size " << manager->obj_count
                 << "'!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         return;
       }
       for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
+         data_cycle_time_per_obj[obj_index]      = 0.0;
          data_cycle_base_time_per_obj[obj_index] = 0LL;
       }
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize():%d Trick main thread (id:0, data_cycle:%.9f).\n",
+      message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize_thread_coordinator():%d Trick main thread (id:0, data_cycle:%.9f).\n",
                        __LINE__, main_thread_data_cycle_time );
    }
 
@@ -327,7 +353,7 @@ void TrickThreadCoordinator::initialize(
 
    if ( !verify_time_constraints( 0, main_thread_data_cycle_base_time ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
+      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: Invalid HLA cycle time ("
              << setprecision( 18 ) << main_thread_data_cycle_time
              << " seconds)!" << endl;
@@ -418,19 +444,19 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " ERROR: The data_cycle time specified (thread-id:" << thread_id
              << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << " seconds) requires more resolution than whole "
-             << Int64BaseTime::get_units()
+             << Int64BaseTime::get_base_unit()
              << ". The HLA Logical Time is a 64-bit integer representing "
-             << Int64BaseTime::get_units()
+             << Int64BaseTime::get_base_unit()
              << " and cannot represent the Trick child thread data-cycle time of "
              << setprecision( 18 )
              << ( data_cycle * Int64BaseTime::get_base_time_multiplier() )
-             << " " << Int64BaseTime::get_units() << ". You can adjust the"
+             << " " << Int64BaseTime::get_base_unit() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
-             << " 'THLA.federate.HLA_time_base_units = trick."
-             << Int64BaseTime::get_units_string(
+             << " 'federate.set_HLA_base_time_unit( "
+             << Int64BaseTime::get_base_unit_enum_string(
                    Int64BaseTime::best_base_time_resolution( data_cycle ) )
-             << "' in your input.py file. The current HLA base time resolution is "
-             << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
+             << " )' in your input.py file. The current HLA base time resolution is "
+             << Int64BaseTime::get_base_unit_enum_string( Int64BaseTime::get_base_unit_enum() )
              << ". You also need to update both the Federation Execution"
              << " Specific Federation Agreement (FESFA) and Federate Compliance"
              << " Declaration (FCD) documents for your Federation to document"
@@ -469,6 +495,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    ostringstream summary;
    summary << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
            << " Summary:" << endl;
+
+   Manager *manager = federate->get_manager();
 
    // Search all the objects for a thread ID match and configure data arrays.
    bool any_valid_thread_id_found = false;
@@ -520,8 +548,11 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
             any_valid_thread_id_found = true;
 
+            data_cycle_time_per_thread[thread_id]      = data_cycle;
             data_cycle_base_time_per_thread[thread_id] = data_cycle_base_time;
-            data_cycle_base_time_per_obj[obj_index]    = data_cycle_base_time;
+
+            data_cycle_time_per_obj[obj_index]      = data_cycle;
+            data_cycle_base_time_per_obj[obj_index] = data_cycle_base_time;
          }
       }
    }
@@ -646,6 +677,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
  * */
 void TrickThreadCoordinator::verify_trick_thread_associations()
 {
+   Manager *manager = federate->get_manager();
+
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
@@ -732,6 +765,33 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
                    << " with this ID was associated in the S_define file!" << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
+      }
+   }
+}
+
+void TrickThreadCoordinator::refresh_thread_base_times()
+{
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   main_thread_data_cycle_base_time = Int64BaseTime::to_base_time( main_thread_data_cycle_time );
+
+   Manager const *manager = federate->get_manager();
+
+   if ( ( data_cycle_base_time_per_obj != NULL )
+        && ( data_cycle_time_per_obj != NULL ) ) {
+      for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
+         data_cycle_base_time_per_obj[obj_index] =
+            Int64BaseTime::to_base_time( data_cycle_time_per_obj[obj_index] );
+      }
+   }
+
+   if ( ( data_cycle_base_time_per_thread != NULL )
+        && ( data_cycle_time_per_thread != NULL ) ) {
+      for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
+         data_cycle_base_time_per_thread[thread_id] =
+            Int64BaseTime::to_base_time( data_cycle_time_per_thread[thread_id] );
       }
    }
 }
@@ -1165,7 +1225,7 @@ bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
 {
    // On boundary if sim-time is an integer multiple of a valid cycle-time.
    return ( ( any_child_thread_associated
-              && ( obj_index < manager->obj_count )
+              && ( obj_index < federate->get_manager()->obj_count )
               && ( data_cycle_base_time_per_obj[obj_index] > 0LL ) )
                ? ( ( sim_time_in_base_time % data_cycle_base_time_per_obj[obj_index] ) == 0LL )
                : true );
@@ -1178,7 +1238,7 @@ int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
    int64_t const default_data_cycle_base_time ) const
 {
    return ( any_child_thread_associated
-            && ( obj_index < manager->obj_count )
+            && ( obj_index < federate->get_manager()->obj_count )
             && ( data_cycle_base_time_per_obj[obj_index] > default_data_cycle_base_time ) )
              ? data_cycle_base_time_per_obj[obj_index]
              : default_data_cycle_base_time;
@@ -1220,6 +1280,8 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
+
+   Manager *manager = federate->get_manager();
 
    // Lookahead and LCTS times in the integer base time.
    int64_t const lookahead_base_time = federate->get_lookahead_in_base_time();
@@ -1377,7 +1439,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                    << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
                    << " cannot be represented in base-time because it"
                    << " exceeds the base-time resolution of "
-                   << Int64BaseTime::get_units() << "!" << endl;
+                   << Int64BaseTime::get_base_unit() << "!" << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
@@ -1402,7 +1464,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
          }
 
          // Time Constraint: (LCTS % RT = 0)
-         if ( lcts_base_time % RT_base_time != 0 ) {
+         if ( ( lcts_base_time % RT_base_time ) != 0 ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                    << " ERROR: The Least Common Time Step (LCTS:"
@@ -1432,7 +1494,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
             errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                    << " ERROR: For this Master federate, the ExCO Least Common"
                    << " Time Step (LCTS:"
-                   << lcts_base_time << " " << Int64BaseTime::get_units()
+                   << lcts_base_time << " " << Int64BaseTime::get_base_unit()
                    << ") must be greater than zero!" << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
@@ -1450,9 +1512,9 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                       << " ERROR: Mode transition padding time ("
-                      << pad_base_time << " " << Int64BaseTime::get_units()
+                      << pad_base_time << " " << Int64BaseTime::get_base_unit()
                       << ") can not be less than the ExCO Least Common Time Step (LCTS:"
-                      << lcts_base_time << " " << Int64BaseTime::get_units()
+                      << lcts_base_time << " " << Int64BaseTime::get_base_unit()
                       << ")!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
                return false;
@@ -1463,10 +1525,10 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                       << " ERROR: Mode transition padding time ("
-                      << pad_base_time << " " << Int64BaseTime::get_units()
+                      << pad_base_time << " " << Int64BaseTime::get_base_unit()
                       << ") is not an integer multiple of the ExCO"
                       << " Least Common Time Step (LCTS:"
-                      << lcts_base_time << " " << Int64BaseTime::get_units()
+                      << lcts_base_time << " " << Int64BaseTime::get_base_unit()
                       << ")!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
                return false;
@@ -1481,10 +1543,10 @@ bool const TrickThreadCoordinator::verify_time_constraints(
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
                       << " ERROR: Mode transition padding time ("
-                      << pad_base_time << " " << Int64BaseTime::get_units()
+                      << pad_base_time << " " << Int64BaseTime::get_base_unit()
                       << ") is not a multiple of 3 or more of the ExCO"
                       << " Least Common Time Step (LCTS:"
-                      << lcts_base_time << " " << Int64BaseTime::get_units()
+                      << lcts_base_time << " " << Int64BaseTime::get_base_unit()
                       << ") when the time padding is less than "
                       << THLA_PADDING_DEFAULT << " seconds!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );

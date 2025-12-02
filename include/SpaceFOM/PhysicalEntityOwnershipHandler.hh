@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_PHYSICAL_ENTITY_OWNERSHIP_HANDLER_HH
 
 // TrickHLA includes.
-#include "../TrickHLA/OwnershipHandler.hh"
+#include "TrickHLA/OwnershipHandler.hh"
 
 namespace SpaceFOM
 {

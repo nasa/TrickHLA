@@ -230,7 +230,7 @@ federate.add_known_federate( True, "FED_1" )
 federate.add_known_federate( True, "FED_2" )
 
 # Set time management parameters
-federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_10_NANOSECONDS )
+federate.set_HLA_base_time_unit( trick.HLA_BASE_TIME_10_NANOSECONDS )
 federate.set_lookahead_time( 0.1 )
 federate.set_least_common_time_step( 0.1 )
 federate.set_time_regulating( True )

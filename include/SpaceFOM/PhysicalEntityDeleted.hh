@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_PHYSICAL_ENTITY_DELETED_HH
 
 // TrickHLA includes.
-#include "../TrickHLA/ObjectDeletedHandler.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
 
 namespace SpaceFOM
 {

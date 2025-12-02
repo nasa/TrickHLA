@@ -48,8 +48,8 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/TimeOfDayCTETimeline.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/TimeOfDayCTETimeline.hh"
 
 using namespace std;
 using namespace Trick;

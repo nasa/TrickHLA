@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>SISO Space Reference FOM Augmented Management</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2023-07-14</modificationDate>
+        <securityClassification>unclassified</securityClassification>
+        <purpose>Defines the augmented set of Execution Configuration Object (ExCO) parameters.</purpose>
+        <applicationDomain></applicationDomain>
+        <description>Contains the augmented set of Execution Configuration Object (ExCO) parameters.</description>
+        <useLimitation></useLimitation>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Daniel E. Dexter</pocName>
+            <pocOrg>NASA Johnson Space Center, Houston, TX</pocOrg>
+            <pocTelephone>+1 281-483-1142</pocTelephone>
+            <pocEmail>daniel.e.dexter@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType></pocType>
+            <pocName></pocName>
+            <pocOrg></pocOrg>
+        </poc>
+        <other>Copyright © 2025 by the Simulation Interoperability Standards Organization, Inc.
+P.O. Box 781238
+Orlando, FL 32878-1238, USA
+All rights reserved.
+
+Schema and API: SISO hereby grants a general, royalty-free license to copy, distribute, display, and make derivative works from this material, for all purposes, provided that any use of the material contains the following attribution: “Reprinted with permission from SISO Inc.” Should a reader require additional information, contact the SISO Inc. Board of Directors.
+
+Documentation: SISO hereby grants a general, royalty-free license to copy, distribute, display, and make derivative works from this material, for noncommercial purposes, provided that any use of the material contains the following attribution: “Reprinted with permission from SISO Inc.” The material may not be used for a commercial purpose without express written permission from the SISO Inc. Board of Directors.
+
+SISO Inc. Board of Directors
+P.O. Box 781238
+Orlando, FL 32878-1238, USA
+</other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>ExecutionConfiguration</name>
+                <objectClass>
+                    <name>ExecutionConfiguration2</name>
+                    <sharing>Neither</sharing>
+                    <semantics>This is the augmented federation Execution Configuration Object (ExCO).  This object defines the augmented set of attributes necessary to coordinate federation and federate execution time lines and execution mode transitions in a SISO Space Reference FOM compliant federation execution.</semantics>
+                    <attribute>
+                        <name>hla_base_time_multiplier</name>
+                        <dataType>BaseTimeMultiplier</dataType>
+                        <updateType>Static</updateType>
+                        <updateCondition>At initialization</updateCondition>
+                        <ownership>NoTransfer</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>Receive</order>
+                        <semantics>The HLA base time multiplier for the HLA 64-bit integer time used for the Lookahead and Timestamp values.</semantics>
+                    </attribute>
+                </objectClass>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <dataTypes>
+        <simpleDataTypes>
+            <simpleData>
+                <name>BaseTimeMultiplier</name>
+                <representation>HLAinteger64LE</representation>
+                <units>Ticks/second</units>
+                <resolution>1 Tick/second</resolution>
+                <accuracy></accuracy>
+                <semantics></semantics>
+            </simpleData>
+        </simpleDataTypes>
+    </dataTypes>
+</objectModel>

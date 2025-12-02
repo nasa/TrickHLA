@@ -20,14 +20,14 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Int64Interval.cpp}
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/Int64Interval.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <ostream>
 #include <sstream>
@@ -56,14 +57,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/OwnershipItem.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -561,7 +561,7 @@ Int64Interval OwnershipHandler::get_lookahead() const
 Int64Time OwnershipHandler::get_granted_time() const
 {
    return ( object != NULL ) ? object->get_granted_time()
-                             : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
+                             : Int64Time( INT64_MAX );
 }
 
 double OwnershipHandler::get_scenario_time() const

@@ -48,7 +48,7 @@ NASA, Johnson Space Center\n
 #include "trick/realtimesync_proto.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CTETimelineBase.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
 
 using namespace std;
 using namespace Trick;

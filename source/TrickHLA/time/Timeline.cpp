@@ -25,7 +25,7 @@ NASA, Johnson Space Center\n
 */
 
 // TrickHLA includes.
-#include "TrickHLA/Timeline.hh"
+#include "TrickHLA/time/Timeline.hh"
 
 using namespace TrickHLA;
 

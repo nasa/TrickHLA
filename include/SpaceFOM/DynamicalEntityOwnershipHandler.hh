@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_DYNAMICAL_ENTITY_OWNERSHIP_HANDLER_HH
 
 // SpaceFOM includes.
-#include "PhysicalEntityOwnershipHandler.hh"
+#include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
 
 namespace SpaceFOM
 {

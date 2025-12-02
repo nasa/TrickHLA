@@ -37,7 +37,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_HH
 
 // SpaceFOM includes.
-#include "PhysicalEntityLagCompInteg.hh"
+#include "SpaceFOM/PhysicalEntityLagCompInteg.hh"
 
 namespace SpaceFOM
 {

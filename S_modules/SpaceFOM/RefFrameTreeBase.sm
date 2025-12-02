@@ -34,8 +34,8 @@
 ##include "SpaceFOM/RefFrameTree.hh"
 
 //==========================================================================
-// SIM_OBJECT: RefFrameTreeBaseSimObject - An JEOD reference frame tree
-// simulation object definition.
+// SIM_OBJECT: SpaceFOMRefFrameTreeBaseSimObject - An JEOD reference frame
+// tree simulation object definition.
 //==========================================================================
 class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
 

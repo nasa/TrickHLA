@@ -1,7 +1,7 @@
 /*!
-@file TrickHLA/Timeline.cpp
+@file TrickHLA/Int64Interval.cpp
 @ingroup TrickHLA
-@brief This class represents the HLA time.
+@brief This class represents the HLA Interval time.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -16,8 +16,8 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{Types.cpp}
+@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{../Types.cpp}
 
 @revs_title
 @revs_begin
@@ -31,14 +31,13 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <cstring>
 #include <sstream>
 #include <string>
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Interval.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -48,14 +47,13 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic ignored "-Wdeprecated"
 #endif
 
+// HLA include files.
 #if defined( IEEE_1516_2025 )
-#   include "RTI/time/LogicalTime.h"
+#   include "RTI/time/LogicalTimeInterval.h"
 #else
-#   include "RTI/LogicalTime.h"
+#   include "RTI/LogicalTimeInterval.h"
 #endif // IEEE_1516_2025
-#include "RTI/VariableLengthData.h"
-#include "RTI/encoding/BasicDataElements.h"
-#include "RTI/time/HLAinteger64Time.h"
+#include "RTI/time/HLAinteger64Interval.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -68,7 +66,7 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-Int64Time::Int64Time(
+Int64Interval::Int64Interval(
    int64_t const value )
 {
    set( value );
@@ -77,7 +75,7 @@ Int64Time::Int64Time(
 /*!
  * @job_class{initialization}
  */
-Int64Time::Int64Time(
+Int64Interval::Int64Interval(
    double const value )
 {
    set( value );
@@ -86,8 +84,8 @@ Int64Time::Int64Time(
 /*!
  * @job_class{initialization}
  */
-Int64Time::Int64Time(
-   LogicalTime const &value )
+Int64Interval::Int64Interval(
+   LogicalTimeInterval const &value )
 {
    set( value );
 }
@@ -95,9 +93,9 @@ Int64Time::Int64Time(
 /*!
  * @job_class{initialization}
  */
-Int64Time::Int64Time(
-   HLAinteger64Time const &value )
-   : hla_time( value )
+Int64Interval::Int64Interval(
+   HLAinteger64Interval const &value )
+   : hla_interval( value )
 {
    return;
 }
@@ -105,9 +103,9 @@ Int64Time::Int64Time(
 /*!
  * @job_class{initialization}
  */
-Int64Time::Int64Time(
-   Int64Time const &value )
-   : hla_time( value.get_base_time() )
+Int64Interval::Int64Interval(
+   Int64Interval const &value )
+   : hla_interval( value.get_base_time() )
 {
    return;
 }
@@ -115,73 +113,63 @@ Int64Time::Int64Time(
 /*!
  * @job_class{shutdown}
  */
-Int64Time::~Int64Time()
+Int64Interval::~Int64Interval()
 {
    return;
 }
 
-VariableLengthData Int64Time::encode() const
+int64_t Int64Interval::get_seconds() const
 {
-   return hla_time.encode();
+   return ( (int64_t)( hla_interval.getInterval() / Int64BaseTime::get_base_time_multiplier() ) );
 }
 
-void Int64Time::decode(
-   VariableLengthData const &user_supplied_tag )
+int64_t Int64Interval::get_fractional_seconds() const
 {
-   hla_time.decode( user_supplied_tag );
+   return ( (int64_t)( hla_interval.getInterval() % Int64BaseTime::get_base_time_multiplier() ) );
 }
 
-int64_t Int64Time::get_seconds() const
+int64_t Int64Interval::get_base_time() const
 {
-   return ( (int64_t)( hla_time.getTime() / Int64BaseTime::get_base_time_multiplier() ) );
+   return ( hla_interval.getInterval() );
 }
 
-int64_t Int64Time::get_fractional_seconds() const
-{
-   return ( (int64_t)( hla_time.getTime() % Int64BaseTime::get_base_time_multiplier() ) );
-}
-
-int64_t Int64Time::get_base_time() const
-{
-   return ( hla_time.getTime() );
-}
-
-double Int64Time::get_time_in_seconds() const
+double Int64Interval::get_time_in_seconds() const
 {
    double const seconds    = (double)get_seconds();
    double const fractional = (double)get_fractional_seconds() / (double)Int64BaseTime::get_base_time_multiplier();
    return ( seconds + fractional );
 }
 
-string Int64Time::to_string() const
+bool Int64Interval::is_zero() const
+{
+   return hla_interval.isZero();
+}
+
+wstring Int64Interval::to_wstring() const
 {
    ostringstream msg;
-   msg << "Int64Time<" << get_time_in_seconds() << ">";
-   return msg.str();
+   msg << "Int64Interval<" << get_time_in_seconds() << ">";
+   wstring wstr;
+   wstr.assign( msg.str().begin(), msg.str().end() );
+   return wstr;
 }
 
-void Int64Time::set(
+void Int64Interval::set(
    int64_t const value )
 {
-   hla_time.setTime( value );
+   this->hla_interval = value;
 }
 
-void Int64Time::set(
+void Int64Interval::set(
    double const value )
 {
-   this->hla_time = Int64BaseTime::to_base_time( value );
+   this->hla_interval = Int64BaseTime::to_base_time( value );
 }
 
-void Int64Time::set(
-   LogicalTime const &value )
+void Int64Interval::set(
+   LogicalTimeInterval const &value )
 {
-   HLAinteger64Time const &t = dynamic_cast< HLAinteger64Time const & >( value );
+   HLAinteger64Interval const &t = dynamic_cast< HLAinteger64Interval const & >( value );
 
-   this->hla_time = t.getTime();
-}
-
-void Int64Time::set(
-   Int64Time const &value )
-{
-   this->hla_time = value.get_base_time();
+   this->hla_interval = t.getInterval();
 }

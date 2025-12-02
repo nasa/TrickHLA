@@ -21,12 +21,12 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Item.cpp}
 @trick_link_dependency{../../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/ParameterItem.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -41,11 +41,11 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_INTERACTION_ITEM_HH
 
 // TrickHLA includes.
-#include "HLAStandardSupport.hh"
-#include "Int64Time.hh"
-#include "Item.hh"
-#include "ItemQueue.hh"
-#include "Types.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Item.hh"
+#include "TrickHLA/ItemQueue.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Attribute.hh
+@file TrickHLA/time/SimTimeline.hh
 @ingroup TrickHLA
 @brief This class represents the simulation timeline.
 
@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/SimTimeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Timeline.cpp}
 
 @revs_title
 @revs_begin
@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SIM_TIMELINE_HH
 
 // TrickHLA includes.
-#include "Timeline.hh"
+#include "TrickHLA/time/Timeline.hh"
 
 namespace TrickHLA
 {

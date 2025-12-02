@@ -44,8 +44,8 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/TSyncCTETimeline.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/TSyncCTETimeline.hh"
 
 #if !defined( SWIG )
 #   if !defined( __linux__ )

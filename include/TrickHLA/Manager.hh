@@ -29,6 +29,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -47,14 +49,14 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "ExecutionControlBase.hh"
-#include "HLAStandardSupport.hh"
-#include "Int64Interval.hh"
-#include "Int64Time.hh"
-#include "ItemQueue.hh"
-#include "MutexLock.hh"
-#include "Object.hh"
-#include "Types.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/ItemQueue.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -108,7 +110,7 @@ class Manager : public CheckpointConversionBase
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__Manager();
-   // DANNY federate needs to call some of manager's private methods during restore
+   // Federate needs to call some of manager's private methods during restore
    friend class Federate;
 
    //----------------------------- USER VARIABLES -----------------------------

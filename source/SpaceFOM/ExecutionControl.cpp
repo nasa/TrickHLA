@@ -16,17 +16,17 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../TrickHLA/CTETimelineBase.cpp}
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/Parameter.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
+@trick_link_dependency{../TrickHLA/time/CTETimelineBase.cpp}
+@trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
+@trick_link_dependency{../TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
@@ -68,24 +68,24 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/Types.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Parameter.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
-#include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/time/SimTimeline.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -1111,9 +1111,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: Least-Common-Time-Step (LCTS) time ("
-                << this->least_common_time_step << " " << Int64BaseTime::get_units()
+                << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
                 << ") is not equal to ExCO LCTS ("
-                << ExCO->get_least_common_time_step() << " " << Int64BaseTime::get_units()
+                << ExCO->get_least_common_time_step() << " " << Int64BaseTime::get_base_unit()
                 << ")!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -1611,20 +1611,20 @@ void ExecutionControl::set_next_execution_control_mode(
                    << "      Requested-Mode: EXECUTION_CONTROL_FREEZE\n"
                    << "       Scenario-time: " << setprecision( 18 ) << get_scenario_time()
                    << " seconds (" << Int64BaseTime::to_base_time( get_scenario_time() )
-                   << " " << Int64BaseTime::get_units() << ")\n"
+                   << " " << Int64BaseTime::get_base_unit() << ")\n"
                    << "        Time-padding: " << setprecision( 18 ) << get_time_padding()
                    << " seconds (" << Int64BaseTime::to_base_time( get_time_padding() )
-                   << " " << Int64BaseTime::get_units() << ")\n"
+                   << " " << Int64BaseTime::get_base_unit() << ")\n"
                    << "                LCTS: " << setprecision( 18 )
                    << Int64BaseTime::to_seconds( this->least_common_time_step )
                    << " seconds (" << this->least_common_time_step
-                   << " " << Int64BaseTime::get_units() << ")\n"
+                   << " " << Int64BaseTime::get_base_unit() << ")\n"
                    << "Scenario-Freeze-Time: " << setprecision( 18 ) << this->scenario_freeze_time
                    << " seconds (" << Int64BaseTime::to_base_time( this->scenario_freeze_time )
-                   << " " << Int64BaseTime::get_units() << ")\n"
+                   << " " << Int64BaseTime::get_base_unit() << ")\n"
                    << "     Sim-Freeze-Time: " << setprecision( 18 ) << this->simulation_freeze_time
                    << " seconds (" << Int64BaseTime::to_base_time( this->simulation_freeze_time )
-                   << " " << Int64BaseTime::get_units() << ")" << endl;
+                   << " " << Int64BaseTime::get_base_unit() << ")" << endl;
             message_publish( MSG_NORMAL, errmsg.str().c_str() );
          }
          break;
@@ -1849,9 +1849,9 @@ bool ExecutionControl::process_execution_control_updates()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                 << " WARNING: Updating existing Least Common Time Step (LCTS) value of "
-                << this->least_common_time_step << " " << Int64BaseTime::get_units()
+                << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
                 << " to a new LCTS value of " << ExCO->get_least_common_time_step()
-                << " " << Int64BaseTime::get_units() << "." << endl;
+                << " " << Int64BaseTime::get_base_unit() << "." << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
 
@@ -2732,7 +2732,7 @@ void ExecutionControl::exit_freeze()
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
-   ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
+   ExecutionConfiguration *ExCO = dynamic_cast< SpaceFOM::ExecutionConfiguration * >( execution_configuration );
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::get_execution_configuration():" << __LINE__
@@ -3027,7 +3027,7 @@ void ExecutionControl::set_least_common_time_step(
    // WARNING: Only the Master federate should ever set this.
    if ( is_master() ) {
 
-      ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
+      ExecutionConfiguration *ExCO = dynamic_cast< SpaceFOM::ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == NULL ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
@@ -3041,7 +3041,7 @@ void ExecutionControl::set_least_common_time_step(
       this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
       ExCO->set_least_common_time_step( lcts );
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          ostringstream msg;
          msg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
              << " This is not a Master federate so this setting will be ignored."
@@ -3076,9 +3076,9 @@ void ExecutionControl::set_time_padding(
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Mode transition padding time ("
-             << padding_base_time << " " << Int64BaseTime::get_units()
+             << padding_base_time << " " << Int64BaseTime::get_base_unit()
              << ") can not be less than the ExCO Least Common Time Step (LCTS:"
-             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ")!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -3088,9 +3088,9 @@ void ExecutionControl::set_time_padding(
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value ("
-             << padding_base_time << " " << Int64BaseTime::get_units()
+             << padding_base_time << " " << Int64BaseTime::get_base_unit()
              << ") must be an integer multiple of the Least Common Time Step (LCTS:"
-             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ")!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -3103,10 +3103,10 @@ void ExecutionControl::set_time_padding(
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Mode transition padding time ("
-             << padding_base_time << " " << Int64BaseTime::get_units()
+             << padding_base_time << " " << Int64BaseTime::get_base_unit()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (LCTS:"
-             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ") when the time padding is less than "
              << THLA_PADDING_DEFAULT << " seconds!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );

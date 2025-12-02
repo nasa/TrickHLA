@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_REF_FRAME_STATE_HH
 
 // SpaceFOM includes.
-#include "RefFrameBase.hh"
+#include "SpaceFOM/RefFrameBase.hh"
 
 namespace SpaceFOM
 {

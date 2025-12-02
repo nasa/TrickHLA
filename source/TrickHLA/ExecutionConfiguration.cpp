@@ -25,11 +25,11 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{Packing.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
 
 @revs_title
 @revs_begin
@@ -61,12 +61,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -287,7 +287,7 @@ void ExecutionConfiguration::pack()
           << "\tObject-Name:'" << object->get_name() << "'" << endl
           << "\towner:'" << owner << "'" << endl
           << "\trun_duration:" << run_duration << " seconds" << endl
-          << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
+          << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_base_unit() << endl
           << "\tnum_federates:" << num_federates << endl
           << "\trequired_federates:'" << required_federates << "'" << endl
           << "===================================================" << endl;
@@ -324,7 +324,7 @@ void ExecutionConfiguration::unpack()
           << "\tObject-Name:'" << object->get_name() << "'" << endl
           << "\towner:'" << owner << "'" << endl
           << "\trun_duration:" << run_duration << " seconds" << endl
-          << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
+          << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_base_unit() << endl
           << "\tnum_federates:" << num_federates << endl
           << "\trequired_federates:'" << required_federates << "'" << endl
           << "===================================================" << endl;
@@ -353,7 +353,7 @@ void ExecutionConfiguration::print_execution_configuration() const
           << "TrickHLA::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
           << "\t Object-Name:           '" << get_name() << "'" << endl
           << "\t run_duration:          " << setprecision( 18 ) << run_duration << " seconds" << endl
-          << "\t run_duration_base_time:" << setprecision( 18 ) << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
+          << "\t run_duration_base_time:" << setprecision( 18 ) << run_duration_base_time << " " << Int64BaseTime::get_base_unit() << endl
           << "\t num_federates:         " << setprecision( 18 ) << num_federates << endl
           << "\t required_federates:    '" << required_federates << "'" << endl
           << "\t owner:                 '" << owner << "'" << endl

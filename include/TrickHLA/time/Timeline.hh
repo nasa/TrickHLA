@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Timeline.hh
+@file TrickHLA/time/Timeline.hh
 @ingroup TrickHLA
 @brief This class is the abstract base class for representing timelines.
 
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Timeline.cpp}
 
 @revs_title
 @revs_begin

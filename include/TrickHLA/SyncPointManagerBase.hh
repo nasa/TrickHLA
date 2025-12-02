@@ -39,13 +39,13 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // trickHLA includes.
-#include "CheckpointConversionBase.hh"
-#include "Federate.hh"
-#include "HLAStandardSupport.hh"
-#include "Int64Time.hh"
-#include "MutexLock.hh"
-#include "SyncPointList.hh"
-#include "Types.hh"
+#include "TrickHLA/CheckpointConversionBase.hh"
+#include "TrickHLA/Federate.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/SyncPointList.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

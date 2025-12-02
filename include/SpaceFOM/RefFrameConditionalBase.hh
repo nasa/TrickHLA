@@ -36,11 +36,11 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_REF_FRAME_CONDITIONAL_BASE_HH
 
 // TrickHLA includes.
-#include "../TrickHLA/Conditional.hh"
+#include "TrickHLA/Conditional.hh"
 
 // SpaceFOM includes.
-#include "RefFrameBase.hh"
-#include "RefFrameData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
 
 namespace SpaceFOM
 {

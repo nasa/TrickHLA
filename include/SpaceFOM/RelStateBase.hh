@@ -38,10 +38,10 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // SpaceFOM includes.
-#include "PhysicalEntityData.hh"
-#include "RefFrameBase.hh"
-#include "RefFrameData.hh"
-#include "RefFrameTree.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
+#include "SpaceFOM/RefFrameTree.hh"
 
 namespace SpaceFOM
 {

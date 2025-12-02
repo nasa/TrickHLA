@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // TrickHLA includes.
-#include "HLAStandardSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -73,15 +73,16 @@ static std::string const MULTIPHASE_INIT_SYNC_POINT_LIST = "Multiphase";
 */
 typedef enum {
 
-   HLA_BASE_TIME_SECONDS          = 0,  ///< Range +/-292471208677.536 years with 1 second resolution.
-   HLA_BASE_TIME_100_MILLISECONDS = 1,  ///< Range +/-29247120867.753 years with 100 millisecond resolution.
-   HLA_BASE_TIME_10_MILLISECONDS  = 2,  ///< Range +/-2924712086.775 years with 10 millisecond resolution.
-   HLA_BASE_TIME_MILLISECONDS     = 3,  ///< Range +/-292471208.677 years with 1 millisecond resolution.
-   HLA_BASE_TIME_100_MICROSECONDS = 4,  ///< Range +/-29247120.867 years with 100 microsecond resolution.
-   HLA_BASE_TIME_10_MICROSECONDS  = 5,  ///< Range +/-2924712.086 years with 10 microsecond resolution.
-   HLA_BASE_TIME_MICROSECONDS     = 6,  ///< Range +/-292471.208 years with 1 microsecond resolution.
-   HLA_BASE_TIME_100_NANOSECONDS  = 7,  ///< Range +/-29247.120 years with 100 nanosecond resolution.
-   HLA_BASE_TIME_10_NANOSECONDS   = 8,  ///< Range +/-2924.712 years with 10 nanosecond resolution.
+   HLA_BASE_TIME_FIRST_VALUE      = 0,
+   HLA_BASE_TIME_SECONDS          = 0,  ///< Range +/-292,471,208,677.536 years with 1 second resolution.
+   HLA_BASE_TIME_100_MILLISECONDS = 1,  ///< Range +/-29,247,120,867.753 years with 100 millisecond resolution.
+   HLA_BASE_TIME_10_MILLISECONDS  = 2,  ///< Range +/-2,924,712,086.775 years with 10 millisecond resolution.
+   HLA_BASE_TIME_MILLISECONDS     = 3,  ///< Range +/-292,471,208.677 years with 1 millisecond resolution.
+   HLA_BASE_TIME_100_MICROSECONDS = 4,  ///< Range +/-29,247,120.867 years with 100 microsecond resolution.
+   HLA_BASE_TIME_10_MICROSECONDS  = 5,  ///< Range +/-2,924,712.086 years with 10 microsecond resolution.
+   HLA_BASE_TIME_MICROSECONDS     = 6,  ///< Range +/-292,471.208 years with 1 microsecond resolution.
+   HLA_BASE_TIME_100_NANOSECONDS  = 7,  ///< Range +/-29,247.120 years with 100 nanosecond resolution.
+   HLA_BASE_TIME_10_NANOSECONDS   = 8,  ///< Range +/-2,924.712 years with 10 nanosecond resolution.
    HLA_BASE_TIME_NANOSECONDS      = 9,  ///< Range +/-292.471 years with 1 nanosecond resolution.
    HLA_BASE_TIME_100_PICOSECONDS  = 10, ///< Range +/-29.247 years with 100 picosecond resolution.
    HLA_BASE_TIME_10_PICOSECONDS   = 11, ///< Range +/-2.924 years with 10 picosecond resolution.
@@ -91,7 +92,9 @@ typedef enum {
    HLA_BASE_TIME_FEMTOSECONDS     = 15, ///< Range +/-2.562 hours with 1 femosecond resolution.
    HLA_BASE_TIME_100_ATTOSECONDS  = 16, ///< Range +/-922.337 seconds with 100 attosecond resolution.
    HLA_BASE_TIME_10_ATTOSECONDS   = 17, ///< Range +/-92.233 seconds with 10 attosecond resolution.
-   HLA_BASE_TIME_ATTOSECONDS      = 18  ///< Range +/-9.223 seconds with 1 attosecond resolution.
+   HLA_BASE_TIME_ATTOSECONDS      = 18, ///< Range +/-9.223 seconds with 1 attosecond resolution.
+   HLA_BASE_TIME_NOT_DEFINED      = 19, ///< HLA base time is not a pre-defined emum value.
+   HLA_BASE_TIME_LAST_VALUE       = 19
 
 } HLABaseTimeEnum;
 

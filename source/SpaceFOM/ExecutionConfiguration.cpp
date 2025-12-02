@@ -23,7 +23,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/ObjectDeletedHandler.cpp}
@@ -31,6 +30,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
+@trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 
@@ -68,19 +68,18 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -148,9 +147,6 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
  */
 void ExecutionConfiguration::configure_attributes()
 {
-   string exco_name_str;
-   string trick_name_str;
-
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( S_define_name.empty() ) {
       ostringstream errmsg;
@@ -159,9 +155,6 @@ void ExecutionConfiguration::configure_attributes()
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-
-   // Convert the S_define_name to a string.
-   exco_name_str = string( S_define_name );
 
    //
    // Assign an empty root frame name to start with.
@@ -186,43 +179,43 @@ void ExecutionConfiguration::configure_attributes()
    // Specify the ExCO attributes.
    //
    this->attributes[0].FOM_name     = trick_MM->mm_strdup( "root_frame_name" );
-   trick_name_str                   = exco_name_str + string( ".root_frame_name" );
+   string trick_name_str            = S_define_name + string( ".root_frame_name" );
    this->attributes[0].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[1].FOM_name     = trick_MM->mm_strdup( "scenario_time_epoch" );
-   trick_name_str                   = exco_name_str + string( ".scenario_time_epoch" );
+   trick_name_str                   = S_define_name + string( ".scenario_time_epoch" );
    this->attributes[1].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[2].FOM_name     = trick_MM->mm_strdup( "next_mode_scenario_time" );
-   trick_name_str                   = exco_name_str + string( ".next_mode_scenario_time" );
+   trick_name_str                   = S_define_name + string( ".next_mode_scenario_time" );
    this->attributes[2].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[3].FOM_name     = trick_MM->mm_strdup( "next_mode_cte_time" );
-   trick_name_str                   = exco_name_str + string( ".next_mode_cte_time" );
+   trick_name_str                   = S_define_name + string( ".next_mode_cte_time" );
    this->attributes[3].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[3].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[4].FOM_name     = trick_MM->mm_strdup( "current_execution_mode" );
-   trick_name_str                   = exco_name_str + string( ".current_execution_mode" );
+   trick_name_str                   = S_define_name + string( ".current_execution_mode" );
    this->attributes[4].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[4].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[4].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[5].FOM_name     = trick_MM->mm_strdup( "next_execution_mode" );
-   trick_name_str                   = exco_name_str + string( ".next_execution_mode" );
+   trick_name_str                   = S_define_name + string( ".next_execution_mode" );
    this->attributes[5].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[5].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[5].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[6].FOM_name     = trick_MM->mm_strdup( "least_common_time_step" );
-   trick_name_str                   = exco_name_str + string( ".least_common_time_step" );
+   trick_name_str                   = S_define_name + string( ".least_common_time_step" );
    this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[6].rti_encoding = ENCODING_LITTLE_ENDIAN;
@@ -244,13 +237,13 @@ void ExecutionConfiguration::configure()
 
    // Clear out the existing object instance name, because we are going to
    // make sure it is ExCO regardless of what the user set it to be.
-   this->name = "ExCO";
+   this->name = trick_MM->mm_strdup( "ExCO" );
 
    // Lag compensation is not supported for the Execution Configuration object.
    set_lag_compensation_type( LAG_COMPENSATION_NONE );
 
    // Ownership transfer will not be used for the Execution Configuration object.
-   ownership = NULL;
+   this->ownership = NULL;
 
    // Make sure the ExecutionConfiguration attributes go out in
    // Receive-Order so that a late joining federate can get them.
@@ -270,62 +263,38 @@ void ExecutionConfiguration::pack()
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__ << endl
-          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
+          << "        Current Scenario Time: " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
           << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
-          << "\t Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
+          << "      Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
           << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl
-          << "\t Current HLA grant time:  " << setprecision( 18 ) << get_federate()->get_granted_time().get_time_in_seconds()
+          << "     Current HLA Granted Time: " << setprecision( 18 ) << get_federate()->get_granted_time().get_time_in_seconds()
           << " (" << get_federate()->get_granted_time().get_base_time() << ")" << endl
-          << "\t Current HLA request time:" << setprecision( 18 ) << get_federate()->get_requested_time().get_time_in_seconds()
+          << "   Current HLA Requested Time: " << setprecision( 18 ) << get_federate()->get_requested_time().get_time_in_seconds()
           << " (" << get_federate()->get_requested_time().get_base_time() << ")" << endl
           << "............................................................." << endl
-          << "\t Object-Name:             " << get_name() << "'" << endl
-          << "\t root_frame_name:         '" << root_frame_name << "'" << endl
-          << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
-          << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl;
+          << "                  Object-Name: '" << get_name() << "'" << endl
+          << "              root_frame_name: '" << root_frame_name << "'" << endl
+          << "          scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
+          << "      next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
+          << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "\t current-cte-time:        " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+         msg << "             current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
       }
-      msg << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "\t least_common_time_step:  " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")" << endl;
+      msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
+          << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
+          << "       least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_base_unit() << ")" << endl;
       if ( this->next_execution_mode == EXECUTION_MODE_FREEZE ) {
-         msg << "\t simulation_freeze_time:  " << execution_control->get_simulation_freeze_time() << " seconds" << endl;
+         msg << "       simulation_freeze_time: " << execution_control->get_simulation_freeze_time() << " seconds" << endl;
       }
       msg << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
-
-   // Do a bounds check on the least-common-time-step.
-   if ( least_common_time_step < fed_lookahead ) {
+   if ( ( get_federate() != NULL ) && !get_federate()->verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not greater than or equal to this federates lookahead time ("
-             << fed_lookahead << " units:" << Int64BaseTime::get_units()
-             << ")!" << endl;
+             << " ERROR: Invalid time constraints!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Skip for a zero lookahead time.
-   if ( fed_lookahead != 0 ) {
-
-      // The least-common-time-step time must be an integer multiple of
-      // the federate's lookahead time.
-      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
-                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " units:" << Int64BaseTime::get_units()
-                << ") is not an integer multiple of the federate lookahead time ("
-                << fed_lookahead << " units:" << Int64BaseTime::get_units()
-                << ")!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
    }
 }
 
@@ -339,26 +308,26 @@ void ExecutionConfiguration::unpack()
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__ << endl
-          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
+          << "        Current Scenario Time: " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
           << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
-          << "\t Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
+          << "      Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
           << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl
-          << "\t Current HLA grant time:  " << setprecision( 18 ) << get_federate()->get_granted_time().get_time_in_seconds()
+          << "     Current HLA Granted Time: " << setprecision( 18 ) << get_federate()->get_granted_time().get_time_in_seconds()
           << " (" << get_federate()->get_granted_time().get_base_time() << ")" << endl
-          << "\t Current HLA request time:" << setprecision( 18 ) << get_federate()->get_requested_time().get_time_in_seconds()
+          << "   Current HLA Requested Time: " << setprecision( 18 ) << get_federate()->get_requested_time().get_time_in_seconds()
           << " (" << get_federate()->get_requested_time().get_base_time() << ")" << endl
           << "............................................................." << endl
-          << "\t Object-Name:            '" << get_name() << "'" << endl
-          << "\t root_frame_name:        '" << root_frame_name << "'" << endl
-          << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << endl
-          << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << endl
-          << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << endl;
+          << "                  Object-Name: '" << get_name() << "'" << endl
+          << "              root_frame_name: '" << root_frame_name << "'" << endl
+          << "          scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
+          << "      next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
+          << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "\t current-cte-time:       " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+         msg << "             current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
       }
-      msg << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "\t least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")" << endl
+      msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
+          << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
+          << "       least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_base_unit() << ")" << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -469,7 +438,7 @@ void ExecutionConfiguration::set_least_common_time_step(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          ostringstream msg;
          msg << "SpaceFOM::ExecutionConfiguration::set_least_common_time_step():" << __LINE__
-             << " This is not a Master federate so this setting will be ignored."
+             << " WARNING: This is not a Master federate so this setting will be ignored."
              << endl;
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
@@ -557,7 +526,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Normally, we would specify the Trick 'name' of the simulation
    // variable. However, T=this will be replaced with a direct construction
    // of the Trick REF2 ATTRIBUTES for the associated variable in memory.
-   // trick_name_str = exco_name_str + string( ".root_frame_name" );
+   // trick_name_str = S_define_name + string( ".root_frame_name" );
    // this->attributes[0].trick_name = trick_MM->mm_strdup( trick_name_str.c_str() );
 
    // Normally we would use the Trick variable to resolve to at run time,
@@ -656,17 +625,17 @@ void ExecutionConfiguration::print_execution_configuration() const
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
-          << "\t Object-Name:             '" << get_name() << "'" << endl
-          << "\t root_frame_name:         '" << root_frame_name << "'" << endl
-          << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
+          << "\t             Object-Name: '" << get_name() << "'" << endl
+          << "\t         root_frame_name: '" << root_frame_name << "'" << endl
+          << "\t     scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl;
+          << "\t      next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "\t current-cte-time:        " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+         msg << "\t        current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
       }
-      msg << "\t current_execution_mode:  " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "\t next_execution_mode:     " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "\t least_common_time_step:  " << least_common_time_step << " (units:" << Int64BaseTime::get_units() << ")" << endl
+      msg << "\t  current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
+          << "\t     next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
+          << "\t  least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_base_unit() << ")" << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

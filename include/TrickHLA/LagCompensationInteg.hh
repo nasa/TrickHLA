@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 #include "trick/Integrator.hh"
 
 // TrickHLA includes.
-#include "LagCompensationIntegBase.hh"
+#include "TrickHLA/LagCompensationIntegBase.hh"
 
 namespace TrickHLA
 {

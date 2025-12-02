@@ -42,7 +42,7 @@
 #include "SpaceFOM/RefFrameTreeBase.sm"
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
+// SIM_OBJECT: SpaceFOMTestRefFrameTreeSimObject - An example reference frame tree
 // simulation object definition.
 //==========================================================================
 class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {

@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_DYNAMICAL_ENTITY_DELETED_HH
 
 // SpaceFOM includes.
-#include "PhysicalEntityDeleted.hh"
+#include "SpaceFOM/PhysicalEntityDeleted.hh"
 
 namespace SpaceFOM
 {

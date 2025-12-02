@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/TrickThreadCoordinator.cpp}
-@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../../source/TrickHLA/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -41,8 +41,8 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include <string>
 
 // TrickHLA includes.
-#include "MutexLock.hh"
-#include "Types.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/Types.hh"
 
 namespace TrickHLA
 {
@@ -51,7 +51,6 @@ namespace TrickHLA
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
-class Manager;
 
 class TrickThreadCoordinator
 {
@@ -70,17 +69,12 @@ class TrickThreadCoordinator
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Default constructor for the TrickHLA TrickThreadCoordinator class. */
-   TrickThreadCoordinator();
+   explicit TrickThreadCoordinator( Federate *fed );
    /*! @brief Destructor for the TrickHLA TrickThreadCoordinator class. */
    virtual ~TrickThreadCoordinator();
 
-   /*! @brief Setup the required class instance associations.
-    *  @param federate  Associated TrickHLA::Federate class instance.
-    *  @param manager   Associated TrickHLA::Manager class instance. */
-   void setup( Federate &federate, Manager &manager );
-
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
-   void initialize( double const main_thread_data_cycle_time );
+   void initialize_thread_coordinator( double const main_thread_data_cycle_time );
 
    /*! @brief Associate a Trick child thread with TrickHLA. */
    void associate_to_trick_child_thread( unsigned int const thread_id,
@@ -91,6 +85,9 @@ class TrickThreadCoordinator
 
    /*! @brief Verify the threads IDs associated to objects in the input file. */
    void verify_trick_thread_associations();
+
+   /*! @brief Refresh the thread times. */
+   void refresh_thread_base_times();
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available();
@@ -186,7 +183,6 @@ class TrickThreadCoordinator
 
   protected:
    Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
-   Manager  *manager;  ///< @trick_units{--} Associated TrickHLA::Manager.
 
    MutexLock mutex; ///< @trick_units{--} TrickHLA thread state mutex.
 
@@ -198,10 +194,25 @@ class TrickThreadCoordinator
 
    unsigned int *thread_state; ///< @trick_units{--} TrickHLA state of trick child threads being used.
 
+   double  *data_cycle_time_per_thread;      ///< @trick_units{s} Data cycle times per thread in seconds.
    int64_t *data_cycle_base_time_per_thread; ///< @trick_units{--} Data cycle times per thread in the base HLA Logical Time representation.
-   int64_t *data_cycle_base_time_per_obj;    ///< @trick_units{--} Data cycle times per object instance in the base HLA Logical Time representation.
 
+   double  *data_cycle_time_per_obj;      ///< @trick_units{--} Data cycle times per object instance in seconds.
+   int64_t *data_cycle_base_time_per_obj; ///< @trick_units{--} Data cycle times per object instance in the base HLA Logical Time representation.
+
+   double  main_thread_data_cycle_time;      ///< @trick_units{s} Trick main thread data cycle time in seconds.
    int64_t main_thread_data_cycle_base_time; ///< @trick_units{--} Trick main thread data cycle time in the base HLA Logical Time representation.
+
+  private:
+   // Do not allow the copy constructor or assignment operator.
+   TrickThreadCoordinator();
+   /*! @brief Copy constructor for TimeManagement class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   TrickThreadCoordinator( TrickThreadCoordinator const &rhs );
+
+   /*! @brief Assignment operator for TimeManagement class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
+   TrickThreadCoordinator &operator=( TrickThreadCoordinator const &rhs );
 };
 
 } // namespace TrickHLA

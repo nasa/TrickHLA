@@ -19,9 +19,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
+@trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{MTRInteractionHandler.cpp}
 @trick_link_dependency{Types.cpp}
@@ -55,11 +55,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -178,7 +178,7 @@ void MTRInteractionHandler::send_interaction(
          }
          msg << "  HLA grant time: " << granted_time << " ("
              << Int64BaseTime::to_base_time( granted_time ) << " "
-             << Int64BaseTime::get_units() << ")" << endl
+             << Int64BaseTime::get_base_unit() << ")" << endl
              << "  send_cnt:" << ( send_cnt + 1 ) << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -210,7 +210,7 @@ void MTRInteractionHandler::send_interaction(
          }
          msg << "  HLA grant time: " << granted_time << " ("
              << Int64BaseTime::to_base_time( granted_time ) << " "
-             << Int64BaseTime::get_units() << ")" << endl;
+             << Int64BaseTime::get_base_unit() << ")" << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
@@ -281,7 +281,7 @@ void MTRInteractionHandler::receive_interaction(
       }
       msg << "  HLA grant time: " << this->granted_time << " ("
           << Int64BaseTime::to_base_time( this->granted_time ) << " "
-          << Int64BaseTime::get_units() << ")" << endl
+          << Int64BaseTime::get_base_unit() << ")" << endl
           << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

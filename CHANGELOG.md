@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added support for IEEE 1516-2025 (HLA 4).
 - Added support for Fixed Records including direct encoding and decoding of Trick simulation variables from memory.
 - Improved the variable array encoder efficiency for dynamic arrays.
+- Shutdown on notification of SpaceFOM Execution Configuration Object (ExCO) deletion (SpaceFOM PCR-002).
+- Added support for designated late joining federates (SpaceFOM PCR-003).
+- Added support for specifying the HLA time resolution at runtime using the SpaceFOM ExCO (SpaceFOM PCR-007).
 
 ### Breaking Changes
 
@@ -21,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Renamed *Modified_data* to *TrickHLA_data* to better support Default Data.
   - FROM: Modified_data
   - TO: TrickHLA_data
+- Scaling the Trick executive tics to the HLA base time multiplier is now combined with setting the HLA base time multiplier to resolve a time check dependency.
+  - FROM: federate.scale_trick_tics_to_base_time_unit()
+  - TO: federate.set_HLA_base_time_unit_and_scale_trick_tics( unit )
+     or federate.set_HLA_base_time_multiplier_and_scale_trick_tics( multiplier )
 - Configure and initialize TrickHLA from default data instead of the input file.
   - Adding S_models/THLAPackingBase.sm to your simulation S_define file will allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
   - Support for Default Data initialization will now require the *Conditional*, *LagCompensation*, and *Packing* implementations to make a call to set the sim-data before calling the no-argument *configure()* and *initialize()* functions in the S_define file.
@@ -58,6 +65,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added Ball simulation based off the Trick tutorial Ball simulation.
 - Added a check to the THLABaseSimObject to set the interaction cycle time to the data cycle time if a time is not set.
 - Added a check to the THLABaseSimObject to verify the interaction cycle time is an integer multiple of the data cycle time.
+- Added functions to TrickHLAFederateConfig.py to allow the HLA base time multiplier to be set and automatically scale the Trick time tics value.
+  - 
 
 ### Changed
 

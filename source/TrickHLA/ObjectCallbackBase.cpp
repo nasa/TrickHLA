@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdint>
 #include <cstring>
 #include <limits>
 #include <ostream>
@@ -41,11 +42,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -203,7 +203,7 @@ Int64Interval ObjectCallbackBase::get_lookahead() const
 Int64Time ObjectCallbackBase::get_granted_time() const
 {
    return ( object != NULL ) ? object->get_granted_time()
-                             : Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
+                             : Int64Time( INT64_MAX );
 }
 
 /*!

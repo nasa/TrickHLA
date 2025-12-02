@@ -35,8 +35,8 @@ NASA, Johnson Space Center\n
 #define IMSIM_FREEZE_INTERACTION_HANDLER_HH
 
 // TrickHLA include files.
-#include "../TrickHLA/HLAStandardSupport.hh"
-#include "../TrickHLA/InteractionHandler.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/InteractionHandler.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

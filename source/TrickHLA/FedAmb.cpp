@@ -66,13 +66,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/FedAmbBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 #if defined( IEEE_1516_2025 )
 #   include "TrickHLA/FedAmbHLA4.hh"

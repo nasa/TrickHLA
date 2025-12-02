@@ -22,11 +22,11 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Attribute.cpp}
 @trick_link_dependency{Conditional.cpp}
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{RecordElement.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 @trick_link_dependency{encoding/EncoderBase.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
 
 
 @revs_title
@@ -353,7 +353,7 @@ void Attribute::determine_cycle_ratio(
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      this->cycle_ratio = round( this->cycle_time / core_job_cycle_time );
+      this->cycle_ratio = lround( this->cycle_time / core_job_cycle_time );
 
       // Make sure we are ready to send the data on the first check.
       this->cycle_cnt = this->cycle_ratio;

@@ -238,11 +238,9 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 # Set the CTE timeline and change the Trick real time clock to use it.
 THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
 
-# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
-federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
-
-# Scale the Trick Time Tic value based on the HLA base time units.
-federate.scale_trick_tics_to_base_time_units()
+# Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
+# and scale the Trick time tics value.
+federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )

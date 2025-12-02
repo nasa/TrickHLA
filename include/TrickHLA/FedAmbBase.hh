@@ -44,7 +44,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "HLAStandardSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 
 namespace TrickHLA
 {

@@ -1,17 +1,13 @@
 /*!
-@file TrickHLA/TimeOfDayCTETimeline.hh
+@file TrickHLA/time/TSyncCTETimeline.hh
 @ingroup TrickHLA
-@brief This class represents the CTE timeline.
+@brief The implementation of a TSync CTE timeline.
 
-\par<b>Assumptions and Limitations:</b>
-- Instances of this class represent the timeline for the CTE associated with
-the problem.
-- The time scale for this timeline is always Terrestrial Time (TT) which
-complies with the Space Reference FOM standard.
-- Note that the epoch value for this CTE timeline represents the epoch or
-starting point of the CTE timeline. This will correspond to the starting
-time in the TT time standard represented in Truncated Julian Date format
-(TJD) expressed in seconds.
+This is a baseline implementation based off of the TSync hardware clock.
+It is intended to provide the definition of the CTE Timeline interface.
+
+TSync Driver:
+https://safran-navigation-timing.com/portal/public-downloads/latest-tsyncpcie-update-files/
 
 @copyright Copyright 2025 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -29,32 +25,40 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/CTETimelineBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/TimeOfDayCTETimeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/CTETimelineBase.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Timeline.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/TSyncCTETimeline.cpp}
 
 @revs_title
 @revs_begin
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, January 2019, --, Initial implementation.}
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Rewrite of CTE Timeline into this class.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2025, --, Initial implementation.}
 @revs_end
 
 */
 
-#ifndef TRICKHLA_TIMEOFDAY_CTE_TIMELINE_HH
-#define TRICKHLA_TIMEOFDAY_CTE_TIMELINE_HH
+#ifndef TRICKHLA_TSYNC_CTE_TIMELINE_HH
+#define TRICKHLA_TSYNC_CTE_TIMELINE_HH
 
 // System includes.
-#include <time.h>
+#include <string>
 
-// TrickHLA includes.
-#include "CTETimelineBase.hh"
+// TrickHLA includes
+#include "TrickHLA/time/CTETimelineBase.hh"
+
+#if !defined( SWIG )
+#   if !defined( __linux__ )
+#      error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
+#   endif
+
+extern "C" {
+#   include "tsync.h" // cppcheck-suppress [missingInclude]
+}
+#endif // SWIG
 
 namespace TrickHLA
 {
 
-class TimeOfDayCTETimeline : public CTETimelineBase
+class TSyncCTETimeline : public CTETimelineBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -64,16 +68,19 @@ class TimeOfDayCTETimeline : public CTETimelineBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__TimeOfDayCTETimeline();
+   friend void init_attrTrickHLA__TSyncCTETimeline();
+
+  public:
+   std::string full_device_name; ///< @trick_units{--} TSync board device name.
 
   public:
    //-----------------------------------------------------------------
    // Constructors / destructors
    //-----------------------------------------------------------------
-   /*! @brief Default constructor for the TrickHLA TimeOfDayCTETimeline class. */
-   TimeOfDayCTETimeline();
-   /*! @brief Destructor for the TrickHLA TimeOfDayCTETimeline class. */
-   virtual ~TimeOfDayCTETimeline();
+   /*! @brief Default constructor for the TrickHLA TSyncCTETimeline class. */
+   TSyncCTETimeline();
+   /*! @brief Destructor for the TrickHLA TSyncCTETimeline class. */
+   virtual ~TSyncCTETimeline();
 
    //-----------------------------------------------------------------
    // These virtual function must be defined by a full class.
@@ -83,7 +90,7 @@ class TimeOfDayCTETimeline : public CTETimelineBase
    /*! Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the minimum time resolution in seconds. */
-   virtual double const get_min_resolution() const;
+   virtual double const get_min_resolution();
 
    /*! @brief Update the clock tics per second resolution of this clock
     *  to match the Trick executive resolution. */
@@ -91,7 +98,7 @@ class TimeOfDayCTETimeline : public CTETimelineBase
 
    /*! @brief Get the current CTE time.
     *  @return Current time of day in seconds. */
-   virtual double const get_time() const;
+   virtual double const get_time();
 
    /*! @brief Initialize the Trick::Clock functions. */
    virtual int clock_init();
@@ -104,26 +111,18 @@ class TimeOfDayCTETimeline : public CTETimelineBase
     *  @return Default implementation always returns 0. */
    virtual int clock_stop();
 
-   /*! @brief Sets the clock ID (system clock type). */
-   virtual void set_clock_ID( clockid_t const id );
-
-   /*! @brief Gets the current clock ID (system clock type).
-    *  @return The system clock type in use. */
-   virtual clockid_t const get_clock_ID();
-
-  protected:
-   clockid_t clk_id; /**< @trick_io{**} System clock type used. The default clock ID is <i>CLOCK_MONOTONIC</i>. */
-
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for TimeOfDayCTETimeline class.
+   /*! @brief Copy constructor for TSyncCTETimeline class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   TimeOfDayCTETimeline( TimeOfDayCTETimeline const &rhs );
-   /*! @brief Assignment operator for TimeOfDayCTETimeline class.
+   TSyncCTETimeline( TSyncCTETimeline const &rhs );
+   /*! @brief Assignment operator for TSyncCTETimeline class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   TimeOfDayCTETimeline &operator=( TimeOfDayCTETimeline const &rhs );
+   TSyncCTETimeline &operator=( TSyncCTETimeline const &rhs );
+
+   TSYNC_BoardHandle board_handle; ///< @trick_units{--} TSync board handle.
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_TIMEOFDAY_CTE_TIMELINE_HH: Do NOT put anything after this line!
+#endif // TRICKHLA_TSYNC_CTE_TIMELINE_HH: Do NOT put anything after this line!

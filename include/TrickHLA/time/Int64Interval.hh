@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Int64Interval.hh
+@file TrickHLA/time/Int64Interval.hh
 @ingroup TrickHLA
 @brief This class represents the HLA Interval time.
 
@@ -19,9 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64Interval.cpp}
 
 @revs_title
 @revs_begin
@@ -41,8 +41,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "HLAStandardSupport.hh"
-#include "Int64BaseTime.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

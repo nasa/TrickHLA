@@ -51,10 +51,10 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "HLAStandardSupport.hh"
-#include "Int64Time.hh"
-#include "MutexLock.hh"
-#include "Types.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

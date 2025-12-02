@@ -33,10 +33,10 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 
 // TrickHLA includes.
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
-#include "TrickHLA/SimTimeline.hh"
-#include "TrickHLA/Timeline.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/time/SimTimeline.hh"
+#include "TrickHLA/time/Timeline.hh"
 
 using namespace TrickHLA;
 

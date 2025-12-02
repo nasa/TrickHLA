@@ -184,7 +184,7 @@ EntityRelStateSimObject relstate( dynamics.dyn_manager, relkin.rel_kin, veh.dyn_
 //==========================================================================
 
 // This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/TimeOfDayCTETimeline.hh"
+##include "TrickHLA/time/TimeOfDayCTETimeline.hh"
 
 
 //==========================================================================

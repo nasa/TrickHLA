@@ -41,8 +41,8 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_JEOD_REF_FRAME_STATE_HH
 
 // SpaceFOM includes.
-#include "../SpaceFOM/RefFrameBase.hh"
-#include "../SpaceFOM/SpaceTimeCoordinateData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace jeod
 {

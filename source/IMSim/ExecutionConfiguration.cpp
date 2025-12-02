@@ -20,13 +20,13 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 
@@ -61,11 +61,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
 
 // IMSim includes.
 #include "IMSim/ExecutionConfiguration.hh"

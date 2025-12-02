@@ -43,8 +43,8 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // SpaceFOM includes.
-#include "DynamicalEntityBase.hh"
-#include "PhysicalEntityLagCompBase.hh"
+#include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityLagCompBase.hh"
 
 namespace SpaceFOM
 {

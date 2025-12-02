@@ -38,8 +38,8 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_DYNAMICAL_ENTITY_HH
 
 // SpaceFOM includes.
-#include "DynamicalEntityBase.hh"
-#include "PhysicalEntity.hh"
+#include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntity.hh"
 
 namespace SpaceFOM
 {

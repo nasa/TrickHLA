@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "ObjectCallbackBase.hh"
+#include "TrickHLA/ObjectCallbackBase.hh"
 
 namespace TrickHLA
 {

@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
@@ -42,11 +42,11 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "HLAStandardSupport.hh"
-#include "Int64Interval.hh"
-#include "Int64Time.hh"
-#include "Interaction.hh"
-#include "Parameter.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/Parameter.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

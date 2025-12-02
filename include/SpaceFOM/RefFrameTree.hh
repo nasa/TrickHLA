@@ -47,9 +47,9 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // SpaceFOM includes.
-#include "LRTreeBase.hh"
-#include "RefFrameBase.hh"
-#include "RefFrameData.hh"
+#include "SpaceFOM/LRTreeBase.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
 
 namespace SpaceFOM
 {

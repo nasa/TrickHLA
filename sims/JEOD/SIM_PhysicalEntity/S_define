@@ -276,7 +276,7 @@ vcollect passive_vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForc
 //==========================================================================
 
 // This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/TimeOfDayCTETimeline.hh"
+##include "TrickHLA/time/TimeOfDayCTETimeline.hh"
 
 
 //==========================================================================

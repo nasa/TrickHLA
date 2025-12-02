@@ -16,18 +16,18 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{CTETimelineBase.cpp}
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
-@trick_link_dependency{ScenarioTimeline.cpp}
-@trick_link_dependency{SimTimeline.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/CTETimelineBase.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/ScenarioTimeline.cpp}
+@trick_link_dependency{time/SimTimeline.cpp}
 
 @revs_title
 @revs_begin
@@ -53,22 +53,22 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
-#include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/time/SimTimeline.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

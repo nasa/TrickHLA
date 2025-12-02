@@ -1,7 +1,7 @@
 /*!
 @file TrickHLA/Timeline.cpp
 @ingroup TrickHLA
-@brief This class represents an integer time for a given base time units.
+@brief This class represents an integer time for a given base time unit.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -15,9 +15,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Types.cpp}
+@trick_link_dependency{../DebugHandler.cpp}
+@trick_link_dependency{../Types.cpp}
 
 @revs_title
 @revs_begin
@@ -36,20 +36,19 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
 
 using namespace std;
 using namespace TrickHLA;
 
 // Initialize the Int64BaseTime class variables.
-HLABaseTimeEnum Int64BaseTime::base_units               = HLA_BASE_TIME_MICROSECONDS;
-std::string     Int64BaseTime::units_string             = "microseconds";
-int64_t         Int64BaseTime::base_time_multiplier     = 1000000LL;
-double          Int64BaseTime::max_logical_time_seconds = ( (double)INT64_MAX / (double)Int64BaseTime::base_time_multiplier );
+HLABaseTimeEnum Int64BaseTime::base_unit            = HLA_BASE_TIME_MICROSECONDS;
+std::string     Int64BaseTime::base_unit_string     = "microseconds";
+int64_t         Int64BaseTime::base_time_multiplier = 1000000LL;
 
 /*!
- * @brief Default constructor with microsecond base units_string.
+ * @brief Default constructor with microsecond base base_unit_string.
  */
 Int64BaseTime::Int64BaseTime()
 {
@@ -57,13 +56,23 @@ Int64BaseTime::Int64BaseTime()
 }
 
 /*!
- * @brief Constructor with base units_string specified.
- * @param units The base time units to use.
+ * @brief Constructor with base time multiplier specified.
+ * @param multiplier The base time multiplier to use.
  */
 Int64BaseTime::Int64BaseTime(
-   HLABaseTimeEnum const units )
+   int64_t const multiplier )
 {
-   set( units );
+   set( multiplier );
+}
+
+/*!
+ * @brief Constructor with base base_unit_string specified.
+ * @param unit The base time unit to use.
+ */
+Int64BaseTime::Int64BaseTime(
+   HLABaseTimeEnum const unit )
+{
+   set( unit );
 }
 
 /*!
@@ -74,130 +83,258 @@ Int64BaseTime::~Int64BaseTime()
    return;
 }
 
+/*! @brief Set the base time resolution multiplier.
+ *  @param multiplier The base time multiplier to use. */
+void Int64BaseTime::set(
+   int64_t const multiplier )
+{
+   if ( multiplier < 1LL ) {
+      ostringstream errmsg;
+      errmsg << "Int64BaseTime::set():" << __LINE__
+             << " ERROR: The base-time multiplier specified (" << multiplier
+             << ") must be greater than or equal to 1!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   base_time_multiplier = multiplier;
+
+   update_unit_for_multiplier();
+}
+
 /*!
- * @brief Determine if the specified value exceeds the base time resolution.
- * @param units The base time units to use.
+ * @brief Set the base time resolution for the enum value.
+ * @param unit The base time unit to use.
  */
 void Int64BaseTime::set(
-   HLABaseTimeEnum const units )
+   HLABaseTimeEnum unit )
 {
-   switch ( units ) {
+   base_unit = unit;
+
+   switch ( unit ) {
       case HLA_BASE_TIME_SECONDS: { // range: +/-292471208677.536 years with 1 second resolution
          base_time_multiplier = 1LL;
-         units_string         = "seconds";
+         base_unit_string     = "seconds";
          break;
       }
       case HLA_BASE_TIME_100_MILLISECONDS: { // range: +/-29247120867.753 years with 100 millisecond resolution
          base_time_multiplier = 10LL;
-         units_string         = "100-milliseconds";
+         base_unit_string     = "100-milliseconds";
          break;
       }
       case HLA_BASE_TIME_10_MILLISECONDS: { // range: +/-2924712086.775 years with 10 millisecond resolution
          base_time_multiplier = 100LL;
-         units_string         = "10-milliseconds";
+         base_unit_string     = "10-milliseconds";
          break;
       }
       case HLA_BASE_TIME_MILLISECONDS: { // range: +/-292471208.677 years with 1 millisecond resolution
          base_time_multiplier = 1000LL;
-         units_string         = "milliseconds";
+         base_unit_string     = "milliseconds";
          break;
       }
       case HLA_BASE_TIME_100_MICROSECONDS: { // range: +/-29247120.867 years with 100 microsecond resolution
          base_time_multiplier = 10000LL;
-         units_string         = "100-microseconds";
+         base_unit_string     = "100-microseconds";
          break;
       }
       case HLA_BASE_TIME_10_MICROSECONDS: { // range: +/-2924712.086 years with 10 microsecond resolution
          base_time_multiplier = 100000LL;
-         units_string         = "10-microseconds";
+         base_unit_string     = "10-microseconds";
          break;
       }
       case HLA_BASE_TIME_MICROSECONDS: { // range: +/-292471.208 years with 1 microsecond resolution
          base_time_multiplier = 1000000LL;
-         units_string         = "microseconds";
+         base_unit_string     = "microseconds";
          break;
       }
       case HLA_BASE_TIME_100_NANOSECONDS: { // range: +/-29247.120 years with 100 nanosecond resolution
          base_time_multiplier = 10000000LL;
-         units_string         = "100-nanoseconds";
+         base_unit_string     = "100-nanoseconds";
          break;
       }
       case HLA_BASE_TIME_10_NANOSECONDS: { // range: +/-2924.712 years with 10 nanosecond resolution
          base_time_multiplier = 100000000LL;
-         units_string         = "10-nanoseconds";
+         base_unit_string     = "10-nanoseconds";
          break;
       }
       case HLA_BASE_TIME_NANOSECONDS: { // range: +/-292.471 years with 1 nanosecond resolution
          base_time_multiplier = 1000000000LL;
-         units_string         = "nanoseconds";
+         base_unit_string     = "nanoseconds";
          break;
       }
       case HLA_BASE_TIME_100_PICOSECONDS: { // range: +/-29.247 years with 100 picosecond resolution
          base_time_multiplier = 10000000000LL;
-         units_string         = "100-picoseconds";
+         base_unit_string     = "100-picoseconds";
          break;
       }
       case HLA_BASE_TIME_10_PICOSECONDS: { // range: +/-2.924 years with 10 picosecond resolution
          base_time_multiplier = 100000000000LL;
-         units_string         = "10-picoseconds";
+         base_unit_string     = "10-picoseconds";
          break;
       }
       case HLA_BASE_TIME_PICOSECONDS: { // range: +/-2562.047 hours with 1 picosecond resolution
          base_time_multiplier = 1000000000000LL;
-         units_string         = "picoseconds";
+         base_unit_string     = "picoseconds";
          break;
       }
       case HLA_BASE_TIME_100_FEMTOSECONDS: { // range: +/-256.204 hours with 100 femosecond resolution
          base_time_multiplier = 10000000000000LL;
-         units_string         = "100-femtoseconds";
+         base_unit_string     = "100-femtoseconds";
          break;
       }
       case HLA_BASE_TIME_10_FEMTOSECONDS: { // range: +/-25.620 hours with 10 femosecond resolution
          base_time_multiplier = 100000000000000LL;
-         units_string         = "10-femtoseconds";
+         base_unit_string     = "10-femtoseconds";
          break;
       }
       case HLA_BASE_TIME_FEMTOSECONDS: { // range: +/-9223.372 seconds with 1 femosecond resolution
          base_time_multiplier = 1000000000000000LL;
-         units_string         = "femtoseconds";
+         base_unit_string     = "femtoseconds";
          break;
       }
       case HLA_BASE_TIME_100_ATTOSECONDS: { // range: +/-922.337 seconds with 100 attosecond resolution
          base_time_multiplier = 10000000000000000LL;
-         units_string         = "100-attoseconds";
+         base_unit_string     = "100-attoseconds";
          break;
       }
       case HLA_BASE_TIME_10_ATTOSECONDS: { // range: +/-92.233 seconds with 10 attosecond resolution
          base_time_multiplier = 100000000000000000LL;
-         units_string         = "10-attoseconds";
+         base_unit_string     = "10-attoseconds";
          break;
       }
       case HLA_BASE_TIME_ATTOSECONDS: { // range: +/-9.223 seconds with 1 attosecond resolution
          base_time_multiplier = 1000000000000000000LL;
-         units_string         = "attoseconds";
+         base_unit_string     = "attoseconds";
+         break;
+      }
+      case HLA_BASE_TIME_NOT_DEFINED: { // Not a pre-defined enum value.
+         update_unit_for_multiplier();
          break;
       }
       default: {
          ostringstream errmsg;
          errmsg << "Int64BaseTime::set():" << __LINE__
-                << " ERROR: Unknown units:" << units << endl;
+                << " ERROR: Unknown unit:" << unit << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
    }
-   base_units               = units;
-   max_logical_time_seconds = ( (double)INT64_MAX / (double)base_time_multiplier );
+}
+
+void Int64BaseTime::update_unit_for_multiplier()
+{
+   switch ( base_time_multiplier ) {
+      case 1LL: {
+         base_unit        = HLA_BASE_TIME_SECONDS;
+         base_unit_string = "seconds";
+         break;
+      }
+      case 10LL: {
+         base_unit        = HLA_BASE_TIME_100_MILLISECONDS;
+         base_unit_string = "100-milliseconds";
+         break;
+      }
+      case 100LL: {
+         base_unit        = HLA_BASE_TIME_10_MILLISECONDS;
+         base_unit_string = "10-milliseconds";
+         break;
+      }
+      case 1000LL: {
+         base_unit        = HLA_BASE_TIME_MILLISECONDS;
+         base_unit_string = "milliseconds";
+         break;
+      }
+      case 10000LL: {
+         base_unit        = HLA_BASE_TIME_100_MICROSECONDS;
+         base_unit_string = "100-microseconds";
+         break;
+      }
+      case 100000LL: {
+         base_unit        = HLA_BASE_TIME_10_MICROSECONDS;
+         base_unit_string = "10-microseconds";
+         break;
+      }
+      case 1000000LL: {
+         base_unit        = HLA_BASE_TIME_MICROSECONDS;
+         base_unit_string = "microseconds";
+         break;
+      }
+      case 10000000LL: {
+         base_unit        = HLA_BASE_TIME_100_NANOSECONDS;
+         base_unit_string = "100-nanoseconds";
+         break;
+      }
+      case 100000000LL: {
+         base_unit        = HLA_BASE_TIME_10_NANOSECONDS;
+         base_unit_string = "10-nanoseconds";
+         break;
+      }
+      case 1000000000LL: {
+         base_unit        = HLA_BASE_TIME_NANOSECONDS;
+         base_unit_string = "nanoseconds";
+         break;
+      }
+      case 10000000000LL: {
+         base_unit        = HLA_BASE_TIME_100_PICOSECONDS;
+         base_unit_string = "100-picoseconds";
+         break;
+      }
+      case 100000000000LL: {
+         base_unit        = HLA_BASE_TIME_10_PICOSECONDS;
+         base_unit_string = "10-picoseconds";
+         break;
+      }
+      case 1000000000000LL: {
+         base_unit        = HLA_BASE_TIME_PICOSECONDS;
+         base_unit_string = "picoseconds";
+         break;
+      }
+      case 10000000000000LL: {
+         base_unit        = HLA_BASE_TIME_100_FEMTOSECONDS;
+         base_unit_string = "100-femtoseconds";
+         break;
+      }
+      case 100000000000000LL: {
+         base_unit        = HLA_BASE_TIME_10_FEMTOSECONDS;
+         base_unit_string = "10-femtoseconds";
+         break;
+      }
+      case 1000000000000000LL: {
+         base_unit        = HLA_BASE_TIME_FEMTOSECONDS;
+         base_unit_string = "femtoseconds";
+         break;
+      }
+      case 10000000000000000LL: {
+         base_unit        = HLA_BASE_TIME_100_ATTOSECONDS;
+         base_unit_string = "100-attoseconds";
+         break;
+      }
+      case 100000000000000000LL: {
+         base_unit        = HLA_BASE_TIME_10_ATTOSECONDS;
+         base_unit_string = "10-attoseconds";
+         break;
+      }
+      case 1000000000000000000LL: {
+         base_unit        = HLA_BASE_TIME_ATTOSECONDS;
+         base_unit_string = "attoseconds";
+         break;
+      }
+      default: {
+         base_unit        = HLA_BASE_TIME_NOT_DEFINED;
+         base_unit_string = std::to_string( base_time_multiplier ) + " Ticks/second";
+         break;
+      }
+   }
 }
 
 /*!
- * @brief A string representing the specified units.
- * @param units The base time units.
- * @return A string representing the specified units.
+ * @brief A string representing the specified unit.
+ * @param unit The base time unit.
+ * @return A string representing the specified unit.
  */
-std::string const Int64BaseTime::get_units_string(
-   HLABaseTimeEnum const units )
+std::string const Int64BaseTime::get_base_unit_enum_string(
+   HLABaseTimeEnum const unit )
 {
-   switch ( units ) {
+   switch ( unit ) {
       case HLA_BASE_TIME_SECONDS: {
          return "HLA_BASE_TIME_SECONDS";
       }
@@ -252,9 +389,12 @@ std::string const Int64BaseTime::get_units_string(
       case HLA_BASE_TIME_10_ATTOSECONDS: {
          return "HLA_BASE_TIME_10_ATTOSECONDS";
       }
-      case HLA_BASE_TIME_ATTOSECONDS:
-      default: {
+      case HLA_BASE_TIME_ATTOSECONDS: {
          return "HLA_BASE_TIME_ATTOSECONDS";
+      }
+      case HLA_BASE_TIME_NOT_DEFINED:
+      default: {
+         return "HLA_BASE_TIME_NOT_DEFINED";
       }
    }
 }
@@ -301,58 +441,41 @@ bool const Int64BaseTime::exceeds_base_time_resolution(
    int64_t      multiplier )
 {
    double seconds;
-   return ( modf( value * multiplier, &seconds ) != 0.0 );
+   return ( fabs( modf( value * multiplier, &seconds ) ) >= 1e-10 );
 }
 
 /*!
  * @brief Converts the given floating point time to an integer representing
  *  the time in the HLA Logical base time.
  * @return Time value in the HLA Logical base time.
- * @param value Time value as a floating point double in seconds.
+ * @param time The time in seconds as a floating point double.
  */
 int64_t const Int64BaseTime::to_base_time(
-   double const value )
+   double const time )
 {
-   // Do a range check on the double value in seconds.
-   if ( value > max_logical_time_seconds ) {
-      return INT64_MAX;
-   } else if ( value < -max_logical_time_seconds ) {
-      return -INT64_MAX;
-   }
-
-   // A more efficient way to calculate the time in the base units_string by avoiding fmod().
-   double        seconds;
-   int64_t const fractional = (int64_t)round( modf( value, &seconds ) * base_time_multiplier );
-   return ( ( (int64_t)seconds * base_time_multiplier ) + fractional );
-
-   // TODO: Benchmark the new code against this previous implementation to see
-   // which is faster.
-   // int64_t const seconds    = (int64_t)trunc( value );
-   // int64_t const fractional = ( seconds >= 0 ) ? (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
-   //                                             : (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
-   // return ( ( seconds * MICROS_MULTIPLIER ) + fractional );
+   return llround( time * base_time_multiplier );
 }
 
 /*!
  * @brief Converts the given integer time to an floating-point time representing seconds.
  * @return Time value in seconds.
- * @param time_in_base_units Time value as a 64-bit integer in the units_string specified for this class.
+ * @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class.
  */
 double const Int64BaseTime::to_seconds(
-   int64_t const time_in_base_units )
+   int64_t const time_in_base_unit )
 {
-   double const seconds    = (double)( time_in_base_units / base_time_multiplier );
-   double const fractional = (double)( time_in_base_units % base_time_multiplier ) / (double)base_time_multiplier;
+   double const seconds    = (double)( time_in_base_unit / base_time_multiplier );
+   double const fractional = (double)( time_in_base_unit % base_time_multiplier ) / (double)base_time_multiplier;
    return ( seconds + fractional );
 }
 
 /*!
  * @brief Converts the given integer time to an integer time representing whole seconds.
  * @return Time value in whole seconds.
- * @param time_in_base_units Time value as a 64-bit integer in the units_string specified for this class.
+ * @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class.
  */
 int64_t const Int64BaseTime::to_whole_seconds(
-   int64_t const time_in_base_units )
+   int64_t const time_in_base_unit )
 {
-   return ( time_in_base_units / base_time_multiplier );
+   return ( time_in_base_unit / base_time_multiplier );
 }
