@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Added support for IEEE 1516-2025 (HLA 4).
 - Added support for Fixed Records including direct encoding and decoding of Trick simulation variables from memory.
-- Added support for Trick enumerations, but HLA encoding is limited to 32-bit integers as either Big or Little Endian (issue #181).
+- Added encoder support for 8, 16, 32, and 64-bit integer enum's (issue #181).
 - Improved the variable array encoder efficiency for dynamic arrays.
 - Shutdown on notification of SpaceFOM Execution Configuration Object (ExCO) deletion (SpaceFOM PCR-002).
 - Added support for designated late joining federates (SpaceFOM PCR-003).

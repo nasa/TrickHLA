@@ -21,7 +21,10 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{encoding/src/EncodingTest.cpp}
 @trick_link_dependency{encoding/src/BoolData.cpp}
+@trick_link_dependency{encoding/src/Enum8Data.cpp}
+@trick_link_dependency{encoding/src/Enum16Data.cpp}
 @trick_link_dependency{encoding/src/Enum32Data.cpp}
+@trick_link_dependency{encoding/src/Enum64Data.cpp}
 @trick_link_dependency{encoding/src/Float32Data.cpp}
 @trick_link_dependency{encoding/src/Float64Data.cpp}
 @trick_link_dependency{encoding/src/CharData.cpp}
@@ -59,7 +62,10 @@ NASA, Johnson Space Center\n
 
 #include "BoolData.hh"
 #include "CharData.hh"
+#include "Enum16Data.hh"
 #include "Enum32Data.hh"
+#include "Enum64Data.hh"
+#include "Enum8Data.hh"
 #include "Float32Data.hh"
 #include "Float64Data.hh"
 #include "Int16Data.hh"
@@ -190,10 +196,28 @@ class EncodingTest
                    BoolData                    &data2,
                    TrickHLA::EncodingEnum const rti_encoding );
 
+   void enum8_test( std::string const           &data1_trick_base_name,
+                    Enum8Data                   &data1,
+                    std::string const           &data2_trick_base_name,
+                    Enum8Data                   &data2,
+                    TrickHLA::EncodingEnum const rti_encoding );
+
+   void enum16_test( std::string const           &data1_trick_base_name,
+                     Enum16Data                  &data1,
+                     std::string const           &data2_trick_base_name,
+                     Enum16Data                  &data2,
+                     TrickHLA::EncodingEnum const rti_encoding );
+
    void enum32_test( std::string const           &data1_trick_base_name,
                      Enum32Data                  &data1,
                      std::string const           &data2_trick_base_name,
                      Enum32Data                  &data2,
+                     TrickHLA::EncodingEnum const rti_encoding );
+
+   void enum64_test( std::string const           &data1_trick_base_name,
+                     Enum64Data                  &data1,
+                     std::string const           &data2_trick_base_name,
+                     Enum64Data                  &data2,
                      TrickHLA::EncodingEnum const rti_encoding );
 
    void fixed_record_test( std::string const &data1_trick_base_name,

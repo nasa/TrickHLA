@@ -26,6 +26,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstdlib>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -54,24 +55,24 @@ Enum32Data::Enum32Data()
 Enum32Data::Enum32Data(
    unsigned int const offset )
 {
-   enum32 = ( offset == 0 ) ? TwoCountEnum::one : TwoCountEnum::two;
+   enum32 = ( offset == 0 ) ? Int32Enum::one32 : Int32Enum::two32;
 
    for ( int i = 0; i < 3; ++i ) {
-      vec3_enum32[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? TwoCountEnum::one : TwoCountEnum::two;
+      vec3_enum32[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? Int32Enum::one32 : Int32Enum::two32;
    }
 
    int value = 1;
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
-         m3x3_enum32[row][col] = ( ( ( value + offset ) % 2 ) == 0 ) ? TwoCountEnum::one : TwoCountEnum::two;
+         m3x3_enum32[row][col] = ( ( ( value + offset ) % 2 ) == 0 ) ? Int32Enum::one32 : Int32Enum::two32;
          ++value;
       }
    }
 
-   int const ptr_enum32_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int ptr_enum32_size = 5 + ( ( offset < 10 ) ? offset : 10 );
 
-   ptr_enum32 = static_cast< TrickHLAModel::TwoCountEnum * >(
-      TMM_declare_var_1d( "TrickHLAModel::TwoCountEnum", ptr_enum32_size ) );
+   ptr_enum32 = static_cast< TrickHLAModel::Int32Enum * >(
+      TMM_declare_var_1d( "TrickHLAModel::Int32Enum", ptr_enum32_size ) );
    if ( ptr_enum32 == NULL ) {
       ostringstream errmsg;
       errmsg << "Enum32Data::Enum32Data():" << __LINE__
@@ -79,7 +80,7 @@ Enum32Data::Enum32Data(
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    for ( int i = 0; i < ptr_enum32_size; ++i ) {
-      ptr_enum32[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? TwoCountEnum::one : TwoCountEnum::two;
+      ptr_enum32[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? Int32Enum::one32 : Int32Enum::two32;
    }
 }
 
@@ -101,19 +102,19 @@ bool Enum32Data::compare(
    msg << "Enum32Data::compare():" << __LINE__ << endl;
 
    if ( this->enum32 == data.enum32 ) {
-      msg << "this->enum32 (" << this->enum32 << ") == (" << data.enum32 << ") data.enum32" << endl;
+      msg << "this->enum32 (" << (long long)this->enum32 << ") == (" << (long long)data.enum32 << ") data.enum32" << endl;
    } else {
-      msg << "this->enum32 (" << this->enum32 << ") != (" << data.enum32 << ") data.enum32" << endl;
+      msg << "this->enum32 (" << (long long)this->enum32 << ") != (" << (long long)data.enum32 << ") data.enum32" << endl;
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_enum32[i] == data.vec3_enum32[i] ) {
-         msg << "this->vec3_enum32[" << i << "] (" << this->vec3_enum32[i]
-             << ") == (" << data.vec3_enum32[i] << ") data.vec3_enum32[" << i << "]" << endl;
+         msg << "this->vec3_enum32[" << i << "] (" << (long long)this->vec3_enum32[i]
+             << ") == (" << (long long)data.vec3_enum32[i] << ") data.vec3_enum32[" << i << "]" << endl;
       } else {
-         msg << "this->vec3_enum32[" << i << "] (" << this->vec3_enum32[i]
-             << ") != (" << data.vec3_enum32[i] << ") data.vec3_enum32[" << i << "]" << endl;
+         msg << "this->vec3_enum32[" << i << "] (" << (long long)this->vec3_enum32[i]
+             << ") != (" << (long long)data.vec3_enum32[i] << ") data.vec3_enum32[" << i << "]" << endl;
          equal_values = false;
       }
    }
@@ -121,11 +122,11 @@ bool Enum32Data::compare(
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_enum32[row][col] == data.m3x3_enum32[row][col] ) {
-            msg << "this->m3x3_enum32[" << row << "][" << col << "] (" << this->m3x3_enum32[row][col]
-                << ") == (" << data.m3x3_enum32[row][col] << ") data.m3x3_enum32[" << row << "][" << col << "]" << endl;
+            msg << "this->m3x3_enum32[" << row << "][" << col << "] (" << (long long)this->m3x3_enum32[row][col]
+                << ") == (" << (long long)data.m3x3_enum32[row][col] << ") data.m3x3_enum32[" << row << "][" << col << "]" << endl;
          } else {
-            msg << "this->m3x3_enum32[" << row << "][" << col << "] (" << this->m3x3_enum32[row][col]
-                << ") != (" << data.m3x3_enum32[row][col] << ") data.m3x3_enum32[" << row << "][" << col << "]" << endl;
+            msg << "this->m3x3_enum32[" << row << "][" << col << "] (" << (long long)this->m3x3_enum32[row][col]
+                << ") != (" << (long long)data.m3x3_enum32[row][col] << ") data.m3x3_enum32[" << row << "][" << col << "]" << endl;
             equal_values = false;
          }
       }
@@ -143,11 +144,11 @@ bool Enum32Data::compare(
 
       for ( int i = 0; i < data1_ptr_enum32_size; ++i ) {
          if ( this->ptr_enum32[i] == data.ptr_enum32[i] ) {
-            msg << "this->ptr_enum32[" << i << "] (" << this->ptr_enum32[i]
-                << ") == (" << data.ptr_enum32[i] << ") data.ptr_enum32[" << i << "]" << endl;
+            msg << "this->ptr_enum32[" << i << "] (" << (long long)this->ptr_enum32[i]
+                << ") == (" << (long long)data.ptr_enum32[i] << ") data.ptr_enum32[" << i << "]" << endl;
          } else {
-            msg << "this->ptr_enum32[" << i << "] (" << this->ptr_enum32[i]
-                << ") != (" << data.ptr_enum32[i] << ") data.ptr_enum32[" << i << "]" << endl;
+            msg << "this->ptr_enum32[" << i << "] (" << (long long)this->ptr_enum32[i]
+                << ") != (" << (long long)data.ptr_enum32[i] << ") data.ptr_enum32[" << i << "]" << endl;
             equal_values = false;
          }
       }
@@ -162,16 +163,16 @@ string Enum32Data::to_string()
 {
    ostringstream msg;
    msg << "Enum32Data::to_string():" << __LINE__ << endl
-       << "enum32:" << enum32 << endl;
+       << "enum32:" << (long long)enum32 << endl;
 
    for ( int i = 0; i < 3; ++i ) {
-      msg << "vec3_enum32[" << i << "]:" << vec3_enum32[i] << " ";
+      msg << "vec3_enum32[" << i << "]:" << (long long)vec3_enum32[i] << " ";
    }
    msg << endl;
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
-         msg << "m3x3_enum32[" << row << "][" << col << "]:" << m3x3_enum32[row][col] << " ";
+         msg << "m3x3_enum32[" << row << "][" << col << "]:" << (long long)m3x3_enum32[row][col] << " ";
       }
    }
    msg << endl;
@@ -179,7 +180,7 @@ string Enum32Data::to_string()
    int ptr_enum32_size = get_size( ptr_enum32 );
    msg << "ptr_enum32 size:" << ptr_enum32_size << endl;
    for ( int i = 0; i < ptr_enum32_size; ++i ) {
-      msg << "ptr_enum32[" << i << "]:" << ptr_enum32[i] << " ";
+      msg << "ptr_enum32[" << i << "]:" << (long long)ptr_enum32[i] << " ";
    }
    msg << endl;
 

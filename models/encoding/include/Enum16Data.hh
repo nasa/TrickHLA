@@ -1,6 +1,6 @@
 /*!
 @ingroup encoding
-@file models/encoding/include/Enum32Data.hh
+@file models/encoding/include/Enum16Data.hh
 @brief This is a container class for general encoder test data.
 
 @copyright Copyright 2025 United States Government as represented by the
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{encoding/src/Enum32Data.cpp}
+@trick_link_dependency{encoding/src/Enum16Data.cpp}
 
 @revs_title
 @revs_begin
@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_MODEL_ENUM32_DATA_HH
-#define TRICKHLA_MODEL_ENUM32_DATA_HH
+#ifndef TRICKHLA_MODEL_ENUM16_DATA_HH
+#define TRICKHLA_MODEL_ENUM16_DATA_HH
 
 // System includes.
 #include <string>
@@ -41,10 +41,10 @@ NASA, Johnson Space Center\n
 namespace TrickHLAModel
 {
 
-enum Int32Enum : int { one32,
-                       two32 };
+enum Int16Enum : short { one16,
+                         two16 };
 
-class Enum32Data
+class Enum16Data
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -54,31 +54,31 @@ class Enum32Data
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLAModel__Enum32Data();
+   friend void init_attrTrickHLAModel__Enum16Data();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLAModel Enum32Data class. */
-   Enum32Data();
+   /*! @brief Default constructor for the TrickHLAModel Enum16Data class. */
+   Enum16Data();
 
-   explicit Enum32Data( unsigned int const offset );
+   explicit Enum16Data( unsigned int const offset );
 
-   /*! @brief Destructor for the TrickHLAModel Enum32Data class. */
-   virtual ~Enum32Data();
+   /*! @brief Destructor for the TrickHLAModel Enum16Data class. */
+   virtual ~Enum16Data();
 
-   bool compare( Enum32Data const &data, std::string &explanation );
+   bool compare( Enum16Data const &data, std::string &explanation );
 
    std::string to_string();
 
   public:
-   Int32Enum  enum32;
-   Int32Enum  vec3_enum32[3];
-   Int32Enum  m3x3_enum32[3][3];
-   Int32Enum *ptr_enum32;
+   Int16Enum  enum16;
+   Int16Enum  vec3_enum16[3];
+   Int16Enum  m3x3_enum16[3][3];
+   Int16Enum *ptr_enum16;
 };
 
 } // namespace TrickHLAModel
 
-#endif // TRICKHLA_MODEL_ENUM32_DATA_HH: Do NOT put anything after this line!
+#endif // TRICKHLA_MODEL_ENUM16_DATA_HH: Do NOT put anything after this line!

@@ -216,8 +216,8 @@ void VariableArrayEncoderBase::resize_trick_var(
          default: {
             if ( *( static_cast< void ** >( address ) ) == NULL ) {
                *( static_cast< void ** >( address ) ) =
-                     static_cast< void * >( TMM_declare_var_1d(
-                           type_name.c_str(), (int)new_size ) );
+                  static_cast< void * >( TMM_declare_var_1d(
+                     type_name.c_str(), (int)new_size ) );
             } else {
                *( static_cast< void ** >( address ) ) =
                   static_cast< void * >( TMM_resize_array_1d_a(
@@ -235,10 +235,10 @@ void VariableArrayEncoderBase::resize_trick_var(
          ostringstream errmsg;
          errmsg << "VariableArrayEncoderBase::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"
-                << " '" << data_name << "' of Trick determined type '"
-                << trickTypeCharString( this->type, "UNKNOWN_TYPE" )
-                << "' with user defined type '" << type_name
-                << "' for " << new_size << " elements!" << endl;
+                << " '" << data_name << "' of Trick determined type (name:'"
+                << trickTypeCharString( this->type, type_name.c_str() )
+                << "', type:" << this->type << ") for user defined type '"
+                << type_name << "' for " << new_size << " elements!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }

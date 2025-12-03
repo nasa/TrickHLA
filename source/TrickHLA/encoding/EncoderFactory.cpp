@@ -1102,26 +1102,23 @@ EncoderBase *EncoderFactory::create_enum_encoder(
    switch ( attr->size ) {
       case 1: {
          return create_char_encoder( address, attr, ENCODING_ASCII_CHAR, data_name );
-         break;
       }
       case 2: {
          return create_int16_encoder( address, attr, hla_encoding, data_name );
-         break;
       }
       case 4: {
          return create_int32_encoder( address, attr, hla_encoding, data_name );
-         break;
       }
       case 8: {
          return create_int64_encoder( address, attr, hla_encoding, data_name );
-         break;
       }
       default: {
          ostringstream errmsg;
          errmsg << "EncoderFactory::create_enum_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type TRICK_ENUMERATED (i.e. enum), but the specified"
-                << " size (" << attr->size << ") is not supported." << endl;
+                << "' is of type TRICK_ENUMERATED (" << attr->type_name
+                << "), but the specified size (" << attr->size
+                << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
