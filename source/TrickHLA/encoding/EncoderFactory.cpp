@@ -1102,9 +1102,8 @@ EncoderBase *EncoderFactory::create_enum_encoder(
    bool const is_array        = ( attr->num_index > 0 );
    bool const is_static_array = is_array && ( attr->index[attr->num_index - 1].size != 0 );
 
-   // Ensure enum's are 32-bit, so that the encoder will work as expected.
-   enum TestEnum { test };
-   if ( sizeof( TestEnum ) != 4 ) {
+   // Ensure enum's are 32-bit, so the encoder will work as expected.
+   if ( attr->size != 4 ) {
       ostringstream errmsg;
       errmsg << "EncoderFactory::create_enum_encoder():" << __LINE__
              << " ERROR: Trick attributes for the variable '" << data_name
@@ -1115,7 +1114,7 @@ EncoderBase *EncoderFactory::create_enum_encoder(
    }
 
    switch ( hla_encoding ) {
-      case ENCODING_ENUM_INT32_BE: {
+      case ENCODING_BIG_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
                return new Int32BEFixedArrayEncoder( address, attr, data_name );
@@ -1127,7 +1126,7 @@ EncoderBase *EncoderFactory::create_enum_encoder(
          }
          break;
       }
-      case ENCODING_ENUM_INT32_LE: {
+      case ENCODING_LITTLE_ENDIAN: {
          if ( is_array ) {
             if ( is_static_array ) {
                return new Int32LEFixedArrayEncoder( address, attr, data_name );

@@ -68,12 +68,6 @@ string TrickHLA::encoding_enum_to_string(
       case ENCODING_FIXED_RECORD: {
          return "ENCODING_FIXED_RECORD";
       }
-      case ENCODING_ENUM_INT32_BE: {
-         return "ENCODING_ENUM_INT32_BE";
-      }
-      case ENCODING_ENUM_INT32_LE: {
-         return "ENCODING_ENUM_INT32_LE";
-      }
       case ENCODING_NONE: {
          return "ENCODING_NONE";
       }

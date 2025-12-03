@@ -255,11 +255,11 @@ class TestSimObj : public Trick::SimObject {
 
       ("initialization") encoder_test.enum32_test( "T.enum32_data1", enum32_data1,
                                                    "T.enum32_data2", enum32_data2,
-                                                   TrickHLA::ENCODING_ENUM_INT32_BE );
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
 
       ("initialization") encoder_test.enum32_test( "T.enum32_data3", enum32_data3,
                                                    "T.enum32_data4", enum32_data4,
-                                                   TrickHLA::ENCODING_ENUM_INT32_LE );
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
 
       ("initialization") encoder_test.fixed_record_test( "T.fixed_rec_data1", fixed_rec_data1,
                                                          "T.fixed_rec_data2", fixed_rec_data2 );
