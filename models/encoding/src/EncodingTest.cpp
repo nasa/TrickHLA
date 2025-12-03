@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/encoding/FixedRecordEncoder.cpp}
 @trick_link_dependency{encoding/src/EncodingTest.cpp}
 @trick_link_dependency{encoding/src/BoolData.cpp}
+@trick_link_dependency{encoding/src/Enum32Data.cpp}
 @trick_link_dependency{encoding/src/Float32Data.cpp}
 @trick_link_dependency{encoding/src/Float64Data.cpp}
 @trick_link_dependency{encoding/src/CharData.cpp}
@@ -73,6 +74,7 @@ NASA, Johnson Space Center\n
 #include "encoding/include/BoolData.hh"
 #include "encoding/include/CharData.hh"
 #include "encoding/include/EncodingTest.hh"
+#include "encoding/include/Enum32Data.hh"
 #include "encoding/include/Float32Data.hh"
 #include "encoding/include/Float64Data.hh"
 #include "encoding/include/Int16Data.hh"
@@ -1674,7 +1676,7 @@ void EncodingTest::bool_test(
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================" << endl
-           << "EncodingTest::fixed_record_test():" << __LINE__ << endl
+           << "EncodingTest::bool_test():" << __LINE__ << endl
            << "BEFORE encode/decode:" << endl
            << "Data1: " << data1.to_string()
            << "-----------------------------" << endl
@@ -1760,6 +1762,110 @@ void EncodingTest::bool_test(
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::bool_test():" << __LINE__ << endl
+           << "AFTER encode/decode:" << endl
+           << "Data1: " << data1.to_string()
+           << "-----------------------------" << endl
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg3.str().c_str() );
+   }
+}
+
+void EncodingTest::enum32_test(
+   string const      &data1_trick_base_name,
+   Enum32Data        &data1,
+   string const      &data2_trick_base_name,
+   Enum32Data        &data2,
+   EncodingEnum const rti_encoding )
+{
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg1;
+      msg1 << "========================================" << endl
+           << "EncodingTest::enum32_test():" << __LINE__ << endl
+           << "BEFORE encode/decode:" << endl
+           << "Data1: " << data1.to_string()
+           << "-----------------------------" << endl
+           << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg1.str().c_str() );
+   }
+
+   EncoderBase *data1_enum32_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".enum32", rti_encoding );
+
+   EncoderBase *data1_vec3_enum32_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".vec3_enum32", rti_encoding );
+
+   EncoderBase *data1_m3x3_enum32_encoder = EncoderFactory::create(
+      data1_trick_base_name + ".m3x3_enum32", rti_encoding );
+
+   EncoderBase *data1_ptr_enum32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data1_trick_base_name + ".ptr_enum32", rti_encoding ) );
+
+   EncoderBase *data2_enum32_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".enum32", rti_encoding );
+
+   EncoderBase *data2_vec3_enum32_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".vec3_enum32", rti_encoding );
+
+   EncoderBase *data2_m3x3_enum32_encoder = EncoderFactory::create(
+      data2_trick_base_name + ".m3x3_enum32", rti_encoding );
+
+   EncoderBase *data2_ptr_enum32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
+      data2_trick_base_name + ".ptr_enum32", rti_encoding ) );
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg2;
+      msg2 << endl
+           << "----------------------------------------" << endl
+           << "EncodingTest::enum32_test():" << __LINE__ << endl
+           << "     data1_enum32_encoder: " << data1_enum32_encoder->to_string() << endl
+           << "data1_vec3_enum32_encoder: " << data1_vec3_enum32_encoder->to_string() << endl
+           << "data1_m3x3_enum32_encoder: " << data1_m3x3_enum32_encoder->to_string() << endl
+           << " data1_ptr_enum32_encoder: " << data1_ptr_enum32_encoder->to_string() << endl
+           << "     data2_enum32_encoder: " << data2_enum32_encoder->to_string() << endl
+           << "data2_vec3_enum32_encoder: " << data2_vec3_enum32_encoder->to_string() << endl
+           << "data2_m3x3_enum32_encoder: " << data2_m3x3_enum32_encoder->to_string() << endl
+           << " data2_ptr_enum32_encoder: " << data2_ptr_enum32_encoder->to_string() << endl;
+      message_publish( MSG_NORMAL, msg2.str().c_str() );
+   }
+
+   data1_enum32_encoder->update_before_encode();
+   data2_enum32_encoder->decode( data1_enum32_encoder->encode() );
+   data2_enum32_encoder->update_after_decode();
+
+   data1_vec3_enum32_encoder->update_before_encode();
+   data2_vec3_enum32_encoder->decode( data1_vec3_enum32_encoder->encode() );
+   data2_vec3_enum32_encoder->update_after_decode();
+
+   data1_m3x3_enum32_encoder->update_before_encode();
+   data2_m3x3_enum32_encoder->decode( data1_m3x3_enum32_encoder->encode() );
+   data2_m3x3_enum32_encoder->update_after_decode();
+
+   data1_ptr_enum32_encoder->update_before_encode();
+   data2_ptr_enum32_encoder->decode( data1_ptr_enum32_encoder->encode() );
+   data2_ptr_enum32_encoder->update_after_decode();
+
+   ostringstream compare_msg;
+   compare_msg << "(" << encoding_enum_to_string( rti_encoding ) << ") ";
+
+   string explanation;
+
+   if ( data1.compare( data2, explanation ) ) {
+      compare_msg << "enum32_data1 == enum32_data2" << endl;
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
+   } else {
+      compare_msg << "enum32_data1 != enum32_data2" << endl;
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+         compare_msg << explanation;
+      }
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
+   }
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg3;
+      msg3 << "EncodingTest::enum32_test():" << __LINE__ << endl
            << "AFTER encode/decode:" << endl
            << "Data1: " << data1.to_string()
            << "-----------------------------" << endl

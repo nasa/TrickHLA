@@ -44,14 +44,17 @@ string TrickHLA::encoding_enum_to_string(
       case ENCODING_LITTLE_ENDIAN: {
          return "ENCODING_LITTLE_ENDIAN";
       }
-      case ENCODING_LOGICAL_TIME: {
-         return "ENCODING_LOGICAL_TIME";
-      }
-      case ENCODING_UNICODE_STRING: {
-         return "ENCODING_UNICODE_STRING";
+      case ENCODING_ASCII_CHAR: {
+         return "ENCODING_ASCII_CHAR";
       }
       case ENCODING_ASCII_STRING: {
          return "ENCODING_ASCII_STRING";
+      }
+      case ENCODING_UNICODE_CHAR: {
+         return "ENCODING_UNICODE_CHAR";
+      }
+      case ENCODING_UNICODE_STRING: {
+         return "ENCODING_UNICODE_STRING";
       }
       case ENCODING_OPAQUE_DATA: {
          return "ENCODING_OPAQUE_DATA";
@@ -59,14 +62,20 @@ string TrickHLA::encoding_enum_to_string(
       case ENCODING_BOOLEAN: {
          return "ENCODING_BOOLEAN";
       }
+      case ENCODING_LOGICAL_TIME: {
+         return "ENCODING_LOGICAL_TIME";
+      }
+      case ENCODING_FIXED_RECORD: {
+         return "ENCODING_FIXED_RECORD";
+      }
+      case ENCODING_ENUM_INT32_BE: {
+         return "ENCODING_ENUM_INT32_BE";
+      }
+      case ENCODING_ENUM_INT32_LE: {
+         return "ENCODING_ENUM_INT32_LE";
+      }
       case ENCODING_NONE: {
          return "ENCODING_NONE";
-      }
-      case ENCODING_UNICODE_CHAR: {
-         return "ENCODING_UNICODE_CHAR";
-      }
-      case ENCODING_ASCII_CHAR: {
-         return "ENCODING_ASCII_CHAR";
       }
       default: {
          return "UNKNOWN TrickHLA Encoding";

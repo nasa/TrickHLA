@@ -11,6 +11,7 @@
 
 ##include "encoding/include/EncodingTest.hh"
 ##include "encoding/include/BoolData.hh"
+##include "encoding/include/Enum32Data.hh"
 ##include "encoding/include/Float32Data.hh"
 ##include "encoding/include/Float64Data.hh"
 ##include "encoding/include/CharData.hh"
@@ -121,6 +122,11 @@ class TestSimObj : public Trick::SimObject {
 
    BoolData bool_data1 = BoolData( 0 );
    BoolData bool_data2 = BoolData( 1 );
+
+   Enum32Data enum32_data1 = Enum32Data( 0 );
+   Enum32Data enum32_data2 = Enum32Data( 1 );
+   Enum32Data enum32_data3 = Enum32Data( 1 );
+   Enum32Data enum32_data4 = Enum32Data( 0 );
 
    FixedRecData fixed_rec_data1 = FixedRecData();
    FixedRecData fixed_rec_data2 = FixedRecData();
@@ -246,6 +252,14 @@ class TestSimObj : public Trick::SimObject {
       ("initialization") encoder_test.bool_test( "T.bool_data1", bool_data1,
                                                  "T.bool_data2", bool_data2,
                                                  TrickHLA::ENCODING_BOOLEAN );
+
+      ("initialization") encoder_test.enum32_test( "T.enum32_data1", enum32_data1,
+                                                   "T.enum32_data2", enum32_data2,
+                                                   TrickHLA::ENCODING_ENUM_INT32_BE );
+
+      ("initialization") encoder_test.enum32_test( "T.enum32_data3", enum32_data3,
+                                                   "T.enum32_data4", enum32_data4,
+                                                   TrickHLA::ENCODING_ENUM_INT32_LE );
 
       ("initialization") encoder_test.fixed_record_test( "T.fixed_rec_data1", fixed_rec_data1,
                                                          "T.fixed_rec_data2", fixed_rec_data2 );

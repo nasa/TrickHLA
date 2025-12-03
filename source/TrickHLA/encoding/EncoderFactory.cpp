@@ -389,12 +389,8 @@ EncoderBase *EncoderFactory::create(
          break;
       }
       case TRICK_ENUMERATED: {
-         // User defined type (enumeration), Not supported
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type 'enum', and is not supported." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         // User defined type (enumeration)
+         encoder = create_enum_encoder( address, attr, hla_encoding, data_name );
          break;
       }
       case TRICK_STRUCTURED: {
@@ -1089,6 +1085,66 @@ EncoderBase *EncoderFactory::create_bool_encoder(
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type 'bool', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
+                << ") is not supported." << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
+      }
+   }
+   return NULL;
+}
+
+EncoderBase *EncoderFactory::create_enum_encoder(
+   void              *address,
+   ATTRIBUTES        *attr,
+   EncodingEnum const hla_encoding,
+   string const      &data_name )
+{
+   bool const is_array        = ( attr->num_index > 0 );
+   bool const is_static_array = is_array && ( attr->index[attr->num_index - 1].size != 0 );
+
+   // Ensure enum's are 32-bit, so that the encoder will work as expected.
+   enum TestEnum { test };
+   if ( sizeof( TestEnum ) != 4 ) {
+      ostringstream errmsg;
+      errmsg << "EncoderFactory::create_enum_encoder():" << __LINE__
+             << " ERROR: Trick attributes for the variable '" << data_name
+             << "' is of type TRICK_ENUMERATED (i.e. enum) and is not the"
+             << " expected 4 bytes in size!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return NULL;
+   }
+
+   switch ( hla_encoding ) {
+      case ENCODING_ENUM_INT32_BE: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new Int32BEFixedArrayEncoder( address, attr, data_name );
+            } else {
+               return new Int32BEVariableArrayEncoder( address, attr, data_name );
+            }
+         } else {
+            return new Int32BEEncoder( address, attr, data_name );
+         }
+         break;
+      }
+      case ENCODING_ENUM_INT32_LE: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new Int32LEFixedArrayEncoder( address, attr, data_name );
+            } else {
+               return new Int32LEVariableArrayEncoder( address, attr, data_name );
+            }
+         } else {
+            return new Int32LEEncoder( address, attr, data_name );
+         }
+         break;
+      }
+      default: {
+         ostringstream errmsg;
+         errmsg << "EncoderFactory::create_enum_encoder():" << __LINE__
+                << " ERROR: Trick attributes for the variable '" << data_name
+                << "' is of type TRICK_ENUMERATED (i.e. enum), but the specified"
+                << " HLA-encoding (" << encoding_enum_to_string( hla_encoding )
                 << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;

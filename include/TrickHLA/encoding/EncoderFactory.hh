@@ -179,6 +179,12 @@ class EncoderFactory
       TrickHLA::EncodingEnum const hla_encoding,
       std::string const           &data_name );
 
+   static EncoderBase *create_enum_encoder(
+      void                        *address,
+      ATTRIBUTES                  *attr,
+      TrickHLA::EncodingEnum const hla_encoding,
+      std::string const           &data_name );
+
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Default constructor for the TrickHLA EncoderFactory class. */

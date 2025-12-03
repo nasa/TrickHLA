@@ -141,8 +141,10 @@ typedef enum {
    ENCODING_BOOLEAN        = 8,  ///< Boolean c++ type configured in the FOM to use HLAboolean HLA data type encoded as an HLAinteger32BE.
    ENCODING_LOGICAL_TIME   = 9,  ///< 64-bit Big Endian encoded integer representing microseconds.
    ENCODING_FIXED_RECORD   = 10, ///< Fixed record encoding.
-   ENCODING_NONE           = 11, ///< Fixed length array of data for "char *" type sent as is.
-   ENCODING_LAST_VALUE     = 11  ///< Set to the Last value in the enumeration.
+   ENCODING_ENUM_INT32_BE  = 11, ///< Enumeration encoded at 32-bit integer Big Endian.
+   ENCODING_ENUM_INT32_LE  = 12, ///< Enumeration encoded at 32-bit integer Little Endian.
+   ENCODING_NONE           = 13, ///< Fixed length array of data for "char *" type sent as is.
+   ENCODING_LAST_VALUE     = 13  ///< Set to the Last value in the enumeration.
 
 } EncodingEnum;
 
