@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
 
+// TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
+
 // Model include files.
 #include "encoding/include/Enum32Data.hh"
 
@@ -69,6 +72,12 @@ Enum32Data::Enum32Data(
 
    ptr_enum32 = static_cast< TrickHLAModel::TwoCountEnum * >(
       TMM_declare_var_1d( "TrickHLAModel::TwoCountEnum", ptr_enum32_size ) );
+   if ( ptr_enum32 == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Enum32Data::Enum32Data():" << __LINE__
+             << " ERROR: Failed to allocate memory for ptr_enum32!" << endl;
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
    for ( int i = 0; i < ptr_enum32_size; ++i ) {
       ptr_enum32[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? TwoCountEnum::one : TwoCountEnum::two;
    }

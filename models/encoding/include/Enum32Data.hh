@@ -41,8 +41,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLAModel
 {
 
-enum TwoCountEnum { one,
-                    two };
+enum TwoCountEnum : int { one, two };
 
 class Enum32Data
 {

@@ -137,7 +137,9 @@ class VariableArrayEncoderBase : public EncoderBase
   protected:
    void *address; ///< @trick_units{--} Address of the trick variable in REF2.
 
-   TRICK_TYPE type; ///< @trick_units{--} The trick variable type.
+   TRICK_TYPE  type;        ///< @trick_units{--} The trick variable type.
+
+   std::string type_name; ///< @trick_units{--} String representation of the data type or user defined type.
 
    void *var_address; ///< @trick_units{--} Address of the actual trick variable.
 

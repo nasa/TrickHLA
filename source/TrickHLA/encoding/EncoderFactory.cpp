@@ -1099,43 +1099,21 @@ EncoderBase *EncoderFactory::create_enum_encoder(
    EncodingEnum const hla_encoding,
    string const      &data_name )
 {
-   bool const is_array        = ( attr->num_index > 0 );
-   bool const is_static_array = is_array && ( attr->index[attr->num_index - 1].size != 0 );
-
-   // Ensure enum's are 32-bit, so the encoder will work as expected.
-   if ( attr->size != 4 ) {
-      ostringstream errmsg;
-      errmsg << "EncoderFactory::create_enum_encoder():" << __LINE__
-             << " ERROR: Trick attributes for the variable '" << data_name
-             << "' is of type TRICK_ENUMERATED (i.e. enum) and is not the"
-             << " expected 4 bytes in size!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return NULL;
-   }
-
-   switch ( hla_encoding ) {
-      case ENCODING_BIG_ENDIAN: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new Int32BEFixedArrayEncoder( address, attr, data_name );
-            } else {
-               return new Int32BEVariableArrayEncoder( address, attr, data_name );
-            }
-         } else {
-            return new Int32BEEncoder( address, attr, data_name );
-         }
+   switch ( attr->size ) {
+      case 1: {
+         return create_char_encoder( address, attr, ENCODING_ASCII_CHAR, data_name );
          break;
       }
-      case ENCODING_LITTLE_ENDIAN: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new Int32LEFixedArrayEncoder( address, attr, data_name );
-            } else {
-               return new Int32LEVariableArrayEncoder( address, attr, data_name );
-            }
-         } else {
-            return new Int32LEEncoder( address, attr, data_name );
-         }
+      case 2: {
+         return create_int16_encoder( address, attr, hla_encoding, data_name );
+         break;
+      }
+      case 4: {
+         return create_int32_encoder( address, attr, hla_encoding, data_name );
+         break;
+      }
+      case 8: {
+         return create_int64_encoder( address, attr, hla_encoding, data_name );
          break;
       }
       default: {
@@ -1143,10 +1121,8 @@ EncoderBase *EncoderFactory::create_enum_encoder(
          errmsg << "EncoderFactory::create_enum_encoder():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
                 << "' is of type TRICK_ENUMERATED (i.e. enum), but the specified"
-                << " HLA-encoding (" << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << endl;
+                << " size (" << attr->size << ") is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
-         break;
       }
    }
    return NULL;
