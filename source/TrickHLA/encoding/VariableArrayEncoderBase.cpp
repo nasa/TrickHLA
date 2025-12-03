@@ -194,36 +194,22 @@ void VariableArrayEncoderBase::resize_trick_var(
         && ( ( new_size != var_element_count )
              || ( *( static_cast< void ** >( address ) ) == NULL ) ) ) {
 
-      switch ( type ) {
-         case TRICK_STRING: {
-            // TMM_resize_array_1d_a does not support std::string.
-            if ( *( static_cast< void ** >( address ) ) != NULL ) {
-               TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
-            }
-            *( static_cast< void ** >( address ) ) =
-               static_cast< void * >( TMM_declare_var_1d( "std::string", (int)new_size ) );
-            break;
+      if ( ( type == TRICK_STRING ) || ( type == TRICK_WSTRING ) ) {
+         // TMM_resize_array_1d_a does not support std::string or std::wstring
+         // so reallocate a new array and delete the old one.
+         if ( *( static_cast< void ** >( address ) ) != NULL ) {
+            TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
          }
-         case TRICK_WSTRING: {
-            // TMM_resize_array_1d_a does not support std::wstring.
-            if ( *( static_cast< void ** >( address ) ) != NULL ) {
-               TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
-            }
+         *( static_cast< void ** >( address ) ) =
+            static_cast< void * >( TMM_declare_var_1d( type_name.c_str(), (int)new_size ) );
+      } else {
+         if ( *( static_cast< void ** >( address ) ) == NULL ) {
             *( static_cast< void ** >( address ) ) =
-               static_cast< void * >( TMM_declare_var_1d( "std::wstring", (int)new_size ) );
-            break;
-         }
-         default: {
-            if ( *( static_cast< void ** >( address ) ) == NULL ) {
-               *( static_cast< void ** >( address ) ) =
-                  static_cast< void * >( TMM_declare_var_1d(
-                     type_name.c_str(), (int)new_size ) );
-            } else {
-               *( static_cast< void ** >( address ) ) =
-                  static_cast< void * >( TMM_resize_array_1d_a(
-                     *( static_cast< void ** >( address ) ), (int)new_size ) );
-            }
-            break;
+               static_cast< void * >( TMM_declare_var_1d( type_name.c_str(), (int)new_size ) );
+         } else {
+            *( static_cast< void ** >( address ) ) =
+               static_cast< void * >( TMM_resize_array_1d_a(
+                  *( static_cast< void ** >( address ) ), (int)new_size ) );
          }
       }
 
