@@ -18,7 +18,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{FixedRecordEncoder.cpp}
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
-@trick_link_dependency{../Int64BaseTime.cpp}
 @trick_link_dependency{../Types.cpp}
 
 
