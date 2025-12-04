@@ -44,6 +44,9 @@ string TrickHLA::encoding_enum_to_string(
       case ENCODING_LITTLE_ENDIAN: {
          return "ENCODING_LITTLE_ENDIAN";
       }
+      case ENCODING_BYTE: {
+         return "ENCODING_BYTE";
+      }
       case ENCODING_ASCII_CHAR: {
          return "ENCODING_ASCII_CHAR";
       }
