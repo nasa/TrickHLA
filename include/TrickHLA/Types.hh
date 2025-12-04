@@ -133,16 +133,17 @@ typedef enum {
    ENCODING_UNKNOWN        = 0,  ///< Default encoding. The software automatically determines it for you. Otherwise, specify to one of the below values.
    ENCODING_BIG_ENDIAN     = 1,  ///< Big Endian.
    ENCODING_LITTLE_ENDIAN  = 2,  ///< Little Endian.
-   ENCODING_ASCII_CHAR     = 3,  ///< Variable length HLA ASCII character encoding.
-   ENCODING_ASCII_STRING   = 4,  ///< Variable length HLA ASCII string encoding.
-   ENCODING_UNICODE_CHAR   = 5,  ///< Variable length HLA Unicode character encoding.
-   ENCODING_UNICODE_STRING = 6,  ///< Variable length HLA Unicode string encoding.
-   ENCODING_OPAQUE_DATA    = 7,  ///< Variable length HLA Opaque data for a "char *" type.
-   ENCODING_BOOLEAN        = 8,  ///< Boolean c++ type configured in the FOM to use HLAboolean HLA data type encoded as an HLAinteger32BE.
-   ENCODING_LOGICAL_TIME   = 9,  ///< 64-bit Big Endian encoded integer representing microseconds.
-   ENCODING_FIXED_RECORD   = 10, ///< Fixed record encoding.
-   ENCODING_NONE           = 11, ///< Fixed length array of data for "char *" type sent as is.
-   ENCODING_LAST_VALUE     = 11  ///< Set to the Last value in the enumeration.
+   ENCODING_BYTE           = 3,  ///< Byte encoding for octet type (i.e. char or unsigned char).
+   ENCODING_ASCII_CHAR     = 4,  ///< Variable length HLA ASCII character encoding.
+   ENCODING_ASCII_STRING   = 5,  ///< Variable length HLA ASCII string encoding.
+   ENCODING_UNICODE_CHAR   = 6,  ///< Variable length HLA Unicode character encoding.
+   ENCODING_UNICODE_STRING = 7,  ///< Variable length HLA Unicode string encoding.
+   ENCODING_OPAQUE_DATA    = 8,  ///< Variable length HLA Opaque data for a "char *" type.
+   ENCODING_BOOLEAN        = 9,  ///< Boolean c++ type configured in the FOM to use HLAboolean HLA data type encoded as an HLAinteger32BE.
+   ENCODING_LOGICAL_TIME   = 10, ///< 64-bit Big Endian encoded integer representing microseconds.
+   ENCODING_FIXED_RECORD   = 11, ///< Fixed record encoding.
+   ENCODING_NONE           = 12, ///< Fixed length array of data for "char *" type sent as is.
+   ENCODING_LAST_VALUE     = 12  ///< Set to the Last value in the enumeration.
 
 } EncodingEnum;
 

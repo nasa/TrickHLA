@@ -448,18 +448,27 @@ EncoderBase *EncoderFactory::create_char_encoder(
    bool const is_dynamic_array = is_array && ( attr->index[attr->num_index - 1].size == 0 );
 
    switch ( hla_encoding ) {
-      case ENCODING_UNICODE_STRING: {
-         if ( is_dynamic_array ) {
-            return new CharUnicodeStringEncoder( address, attr, data_name );
+      case ENCODING_BYTE: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new ByteFixedArrayEncoder( address, attr, data_name );
+            } else {
+               return new ByteVariableArrayEncoder( address, attr, data_name );
+            }
          } else {
-            ostringstream errmsg;
-            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick attributes for the variable '" << data_name
-                   << "' is of type 'char' for the specified"
-                   << " ENCODING_UNICODE_STRING encoding and only a dynamic"
-                   << " array of characters (i.e. char *) is supported!"
-                   << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            return new ByteEncoder( address, attr, data_name );
+         }
+         break;
+      }
+      case ENCODING_ASCII_CHAR: {
+         if ( is_array ) {
+            if ( is_static_array ) {
+               return new ASCIICharFixedArrayEncoder( address, attr, data_name );
+            } else {
+               return new ASCIICharVariableArrayEncoder( address, attr, data_name );
+            }
+         } else {
+            return new ASCIICharEncoder( address, attr, data_name );
          }
          break;
       }
@@ -472,6 +481,21 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << " ERROR: Trick attributes for the variable '" << data_name
                    << "' is of type 'char' for the specified"
                    << " ENCODING_ASCII_STRING encoding and only a dynamic"
+                   << " array of characters (i.e. char *) is supported!"
+                   << endl;
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+         break;
+      }
+      case ENCODING_UNICODE_STRING: {
+         if ( is_dynamic_array ) {
+            return new CharUnicodeStringEncoder( address, attr, data_name );
+         } else {
+            ostringstream errmsg;
+            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
+                   << " ERROR: Trick attributes for the variable '" << data_name
+                   << "' is of type 'char' for the specified"
+                   << " ENCODING_UNICODE_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!"
                    << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -505,20 +529,6 @@ EncoderBase *EncoderFactory::create_char_encoder(
                    << " array of characters (i.e. char *) is supported!"
                    << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
-         }
-         break;
-      }
-      case ENCODING_BIG_ENDIAN:
-      case ENCODING_LITTLE_ENDIAN:
-      case ENCODING_ASCII_CHAR: {
-         if ( is_array ) {
-            if ( is_static_array ) {
-               return new ASCIICharFixedArrayEncoder( address, attr, data_name );
-            } else {
-               return new ASCIICharVariableArrayEncoder( address, attr, data_name );
-            }
-         } else {
-            return new ASCIICharEncoder( address, attr, data_name );
          }
          break;
       }
@@ -1103,7 +1113,17 @@ EncoderBase *EncoderFactory::create_enum_encoder(
 {
    switch ( attr->size ) {
       case 1: {
-         return create_char_encoder( address, attr, hla_encoding, data_name );
+         if ( ( hla_encoding != ENCODING_BYTE )
+              && DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
+            ostringstream msg;
+            msg << "EncoderFactory::create_enum_encoder():" << __LINE__
+                << " WARNING: HLA encoding (" << encoding_enum_to_string( hla_encoding )
+                << ") specified for variable '" << data_name
+                << "' is not appropriate for an enum type. Using ENCODING_BYTE"
+                << " encoding instead." << endl;
+            message_publish( MSG_WARNING, msg.str().c_str() );
+         }
+         return create_char_encoder( address, attr, ENCODING_BYTE, data_name );
       }
       case 2: {
          return create_int16_encoder( address, attr, hla_encoding, data_name );

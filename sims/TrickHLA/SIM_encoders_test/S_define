@@ -273,10 +273,10 @@ class TestSimObj : public Trick::SimObject {
 
       ("initialization") encoder_test.enum8_test( "T.enum8_data1", enum8_data1,
                                                   "T.enum8_data2", enum8_data2,
-                                                  TrickHLA::ENCODING_BIG_ENDIAN );
+                                                  TrickHLA::ENCODING_BYTE );
       ("initialization") encoder_test.enum8_test( "T.enum8_data3", enum8_data3,
                                                   "T.enum8_data4", enum8_data4,
-                                                  TrickHLA::ENCODING_LITTLE_ENDIAN );
+                                                  TrickHLA::ENCODING_BYTE );
 
       ("initialization") encoder_test.enum16_test( "T.enum16_data1", enum16_data1,
                                                    "T.enum16_data2", enum16_data2,
