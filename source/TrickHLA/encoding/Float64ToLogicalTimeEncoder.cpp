@@ -77,8 +77,7 @@ Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder(
       ostringstream errmsg;
       errmsg << "Float64ToLogicalTimeEncoder::Float64ToLogicalTimeEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << data_name
-             << "' simulation variable (type:"
-             << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
+             << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_DOUBLE, "UNSUPPORTED_TYPE" )
              << "'." << endl;

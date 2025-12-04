@@ -74,8 +74,7 @@ StringUnicodeEncoder::StringUnicodeEncoder(
       ostringstream errmsg;
       errmsg << "StringUnicodeEncoder::StringUnicodeEncoder():" << __LINE__
              << " ERROR: Trick type for the '" << data_name
-             << "' simulation variable (type:"
-             << trickTypeCharString( this->type, "UNSUPPORTED_TYPE" )
+             << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_STRING, "UNSUPPORTED_TYPE" )
              << "'." << endl;

@@ -426,9 +426,8 @@ EncoderBase *EncoderFactory::create(
          ostringstream errmsg;
          errmsg << "EncoderFactory::create():" << __LINE__
                 << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of unknown type ("
-                << trickTypeCharString( attr->type, "UNSUPPORTED_TYPE" )
-                << " = " << attr->type << "), and is not supported." << endl;
+                << "' is of unknown type '" << attr->type_name
+                << "', and is not supported." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
