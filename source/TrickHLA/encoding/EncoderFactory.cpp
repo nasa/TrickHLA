@@ -508,6 +508,8 @@ EncoderBase *EncoderFactory::create_char_encoder(
          }
          break;
       }
+      case ENCODING_BIG_ENDIAN:
+      case ENCODING_LITTLE_ENDIAN:
       case ENCODING_ASCII_CHAR: {
          if ( is_array ) {
             if ( is_static_array ) {
@@ -1101,7 +1103,7 @@ EncoderBase *EncoderFactory::create_enum_encoder(
 {
    switch ( attr->size ) {
       case 1: {
-         return create_char_encoder( address, attr, ENCODING_ASCII_CHAR, data_name );
+         return create_char_encoder( address, attr, hla_encoding, data_name );
       }
       case 2: {
          return create_int16_encoder( address, attr, hla_encoding, data_name );

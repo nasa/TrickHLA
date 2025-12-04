@@ -222,8 +222,8 @@ void VariableArrayEncoderBase::resize_trick_var(
          errmsg << "VariableArrayEncoderBase::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"
                 << " '" << data_name << "' of Trick determined type (name:'"
-                << trickTypeCharString( this->type, type_name.c_str() )
-                << "', type:" << this->type << ") for user defined type '"
+                << trickTypeCharString( type, type_name.c_str() )
+                << "', type:" << type << ") for user defined type '"
                 << type_name << "' for " << new_size << " elements!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
