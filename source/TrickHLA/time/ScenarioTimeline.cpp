@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/ScenarioTimeline.cpp
+@file TrickHLA/time/ScenarioTimeline.cpp
 @ingroup TrickHLA
 @brief This class represents the simulation timeline.
 

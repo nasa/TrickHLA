@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TimeManagement.cpp
+@file TrickHLA/time/TimeManagement.cpp
 @ingroup TrickHLA
 @brief This class provides basic services for HLA time management.
 

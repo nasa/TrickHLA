@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Int64Interval.cpp
+@file TrickHLA/time/Int64Interval.cpp
 @ingroup TrickHLA
 @brief This class represents the HLA Interval time.
 

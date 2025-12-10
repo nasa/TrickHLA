@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TrickThreadCoordinator.hh
+@file TrickHLA/time/TrickThreadCoordinator.hh
 @ingroup TrickHLA
 @brief This class handles the coordination of Trick Child Threads with the
 HLA asynchronous data exchanges and time management.

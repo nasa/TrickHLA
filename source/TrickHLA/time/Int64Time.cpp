@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Timeline.cpp
+@file TrickHLA/time/Timeline.cpp
 @ingroup TrickHLA
 @brief This class represents the HLA time.
 

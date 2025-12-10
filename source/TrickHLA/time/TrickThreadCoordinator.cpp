@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TrickThreadCoordinator.cpp
+@file TrickHLA/time/TrickThreadCoordinator.cpp
 @ingroup TrickHLA
 @brief This class handles the coordination of Trick Child Threads with the
 HLA asynchronous data exchanges and time management.
@@ -16,6 +16,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{TrickThreadCoordinator.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Federate.cpp}
 @trick_link_dependency{../Manager.cpp}
@@ -25,8 +27,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../SleepTimeout.cpp}
 @trick_link_dependency{../Types.cpp}
 @trick_link_dependency{../Utilities.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{TrickThreadCoordinator.cpp}
 
 @revs_title
 @revs_begin

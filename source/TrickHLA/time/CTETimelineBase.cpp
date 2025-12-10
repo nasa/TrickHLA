@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/CTETimelineBase.cpp
+@file TrickHLA/time/CTETimelineBase.cpp
 @ingroup TrickHLA
 @brief A base implementation of a SRFOM CTE timeline.
 

@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TSyncCTETimeline.cpp
+@file TrickHLA/time/TSyncCTETimeline.cpp
 @ingroup TrickHLA
 @brief The implementation of a TSync CTE timeline.
 

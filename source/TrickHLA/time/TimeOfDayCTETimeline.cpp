@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TimeOfDayCTETimeline.cpp
+@file TrickHLA/time/TimeOfDayCTETimeline.cpp
 @ingroup TrickHLA
 @brief A base implementation of a SRFOM CTE timeline.
 
