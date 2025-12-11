@@ -32,7 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Configure and initialize TrickHLA from default data instead of the input file.
   - Adding S_models/THLAPackingBase.sm to your simulation S_define file will allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
   - Support for Default Data initialization will now require the *Conditional*, *LagCompensation*, and *Packing* implementations to make a call to set the sim-data before calling the no-argument *configure()* and *initialize()* functions in the S_define file.
-  - If you do not intend to use S_models/THLAPackingBase.sm to add support for using Default Data to configure and initialize TrickHLA, then you will need to explicitly call *set_sim_data()*, *configure()*, and *initialize()* functions from the S_define file.
+  - If your simulation object where you instantiate your *Conditional*, *LagCompensation*, or *Packing* implementations does not extend TrickHLAPackingBaseSimObject (defined in S_models/THLAPackingBase.sm) to add support for  Default Data configuration and initialization of TrickHLA, then you will need to explicitly call *set_sim_data()*, *configure()*, and *initialize()* functions from the S_define file.
 
 ```
     FROM:
