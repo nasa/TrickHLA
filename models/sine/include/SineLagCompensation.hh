@@ -75,8 +75,8 @@ class SineLagCompensation : public SineData, public TrickHLA::LagCompensation
    virtual ~SineLagCompensation();
 
    /*! @brief Set the simulation data.
-    *  @param sim_data The sine wave data object. */
-   void set_sim_data( SineData *sim_data );
+    *  @param data The sine wave data object. */
+   void set_data( SineData *data );
 
    //
    // From the TrickHLALag::Compensation class.

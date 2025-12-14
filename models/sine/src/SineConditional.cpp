@@ -80,10 +80,10 @@ SineConditional::~SineConditional()
 /*!
  * @job_class{initialization}
  */
-void SineConditional::set_sim_data(
-   SineData *sim_data )
+void SineConditional::set_data(
+   SineData *data )
 {
-   this->sim_data = sim_data;
+   this->sim_data = data;
 }
 
 /*!

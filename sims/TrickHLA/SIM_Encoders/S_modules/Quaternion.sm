@@ -1,7 +1,7 @@
 
 
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
+// Include TrickHLA Object base simulation definition module.
+#include "THLAObjectBase.sm"
 
 // SpaceFOM include files.
 ##include "SpaceFOM/QuaternionData.hh"

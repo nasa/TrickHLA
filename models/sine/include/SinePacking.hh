@@ -89,8 +89,8 @@ class SinePacking : public SineData, public TrickHLA::Packing
    virtual ~SinePacking();
 
    /*! @brief Set the packing object working data.
-    *  @param sim_data The sine wave data object for packing and unpacking. */
-   void set_sim_data( SineData *sim_data );
+    *  @param data The sine wave data object for packing and unpacking. */
+   void set_data( SineData *data );
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */

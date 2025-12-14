@@ -25,8 +25,8 @@
 #ifndef JEOD_PHYSICAL_INTERFACE_SIM_OBJECT
 #define JEOD_PHYSICAL_INTERFACE_SIM_OBJECT
 
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
+// Include TrickHLA Object base simulation definition module.
+#include "THLAObjectBase.sm"
 
 // SpaceFOM include files.
 ##include "JEOD/JEODPhysicalInterface.hh"
@@ -38,7 +38,7 @@
 // SIM_OBJECT: JEODPhysicalInterfaceSimObject - A JEOD-based SpaceFOM
 // Physical Interface instance simulation object definition.
 //==========================================================================
-class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
+class JEODPhysicalInterfaceSimObject : public TrickHLAObjectBaseSimObject {
 
   public:
 
@@ -59,7 +59,7 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
                                    std::string const & obj_fed_name,
                                    jeod::DynBody     & dyn_body_ref,
                                    unsigned short      _INIT = P_HLA_INIT )
-      : TrickHLAPackingBaseSimObject( create_object, sim_obj_name, "interface_packing", obj_fed_name, _INIT ),
+      : TrickHLAObjectBaseSimObject( create_object, sim_obj_name, "interface_packing", obj_fed_name, _INIT ),
         interface_packing( dyn_body_ref ),
         conditional( interface_packing ),
         dyn_body(dyn_body_ref)
@@ -73,13 +73,13 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
       //
       // Default data jobs.
       //
-      // See TrickHLAPackingBaseSimObject:
+      // See TrickHLAObjectBaseSimObject:
       // The base class default_config function will run the local function.
 
       //
       // Initialization jobs.
       //
-      // See TrickHLAPackingBaseSimObject:
+      // See TrickHLAObjectBaseSimObject:
       // The base class configure function will run the local function.
       // The base class intialize function will run the local function.
    }
@@ -98,7 +98,7 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
                                      thla_object );
         
       // Now call the base class default config function.
-      value = TrickHLAPackingBaseSimObject::default_config();
+      value = TrickHLAObjectBaseSimObject::default_config();
         
       return( value );
    }
@@ -112,7 +112,7 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
         
       // Now call the base class default config function.
       // NOTE: This will call the packing class configure() function.
-      value = TrickHLAPackingBaseSimObject::configure();
+      value = TrickHLAObjectBaseSimObject::configure();
         
       return( value );
    }
@@ -123,7 +123,7 @@ class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
         
       // Now call the base class default config function.
       // NOTE: This will call the packing class initialize() function.
-      value = TrickHLAPackingBaseSimObject::initialize();
+      value = TrickHLAObjectBaseSimObject::initialize();
         
       return( value );
    }

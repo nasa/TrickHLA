@@ -77,8 +77,8 @@ class FixedRecPacking : public FixedRecData, public TrickHLA::Packing
    virtual void unpack();
 
    /*! @brief Set the packing object working data.
-    *  @param sim_data The sine wave data object for packing and unpacking. */
-   void set_sim_data( FixedRecData *sim_data );
+    *  @param data The sine wave data object for packing and unpacking. */
+   void set_data( FixedRecData *data );
 
   private:
    // Do not allow the copy constructor or assignment operator.

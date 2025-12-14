@@ -69,7 +69,7 @@ class SineConditional : public SineData, public TrickHLA::Conditional
 
    /*! @brief Set the sim_datad.
     *  @param data External simulation data. */
-   void set_sim_data( SineData *data );
+   void set_data( SineData *data );
 
    /*! @brief Initializes conditional object. */
    virtual void initialize();

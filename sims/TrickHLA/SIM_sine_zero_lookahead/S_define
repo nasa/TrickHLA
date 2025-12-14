@@ -63,7 +63,7 @@ class ZeroLookaheadAnalyticSineSimObj : public THLAFedSimObject {
    ZeroLookaheadAnalyticSineSimObj( TrickHLA::Federate & thla_fed )
       : THLAFedSimObject( thla_fed )
    {
-      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.set_data( &sim_data );
       P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
@@ -109,7 +109,7 @@ class ZeroLookaheadPropagatedSineSimObj : public THLAFedSimObject {
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.set_data( &sim_data );
       P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
@@ -163,7 +163,7 @@ class AnalyticSineSimObj : public Trick::SimObject {
 
    AnalyticSineSimObj()
    {
-      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.set_data( &sim_data );
       P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
@@ -198,7 +198,7 @@ class PropagatedSineSimObj : public Trick::SimObject {
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") packing.set_sim_data( &sim_data );
+      P50 ("initialization") packing.set_data( &sim_data );
       P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 

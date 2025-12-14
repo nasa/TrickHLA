@@ -31,14 +31,14 @@
 ##include "SpaceFOM/PhysicalInterfaceDeleted.hh"
 ##include "SpaceFOM/PhysicalInterfaceOwnershipHandler.hh"
 
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
+// Include TrickHLA Object base simulation definition module.
+#include "THLAObjectBase.sm"
 
 //==========================================================================
 // SIM_OBJECT: SpaceFOMPhysicalInterfaceSimObject - A SpaceFOM Physical
 // Interface instance simulation object definition.
 //==========================================================================
-class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
+class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAObjectBaseSimObject {
 
   public:
    // DynamicalEntity data.
@@ -61,7 +61,7 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
                                        std::string const & sim_obj_name,
                                        std::string const & obj_fed_name,
                                        unsigned short      _INIT = P_HLA_INIT )
-      : TrickHLAPackingBaseSimObject( create_object, sim_obj_name, "interface_packing", obj_fed_name, _INIT ),
+      : TrickHLAObjectBaseSimObject( create_object, sim_obj_name, "interface_packing", obj_fed_name, _INIT ),
         interface_packing( interface_data ),
         conditional( interface_packing )
    {
@@ -74,13 +74,13 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
       //
       // Default data jobs.
       //
-      // See TrickHLAPackingBaseSimObject:
+      // See TrickHLAObjectBaseSimObject:
       // The base class default_config function will run the local function.
 
       //
       // Initialization jobs.
       //
-      // See TrickHLAPackingBaseSimObject:
+      // See TrickHLAObjectBaseSimObject:
       // The base class configure function will run the local function.
       // The base class intialize function will run the local function.
    }
@@ -99,7 +99,7 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
                                      thla_object );
         
       // Now call the base class default config function.
-      value = TrickHLAPackingBaseSimObject::default_config();
+      value = TrickHLAObjectBaseSimObject::default_config();
         
       return( value );
    }
@@ -113,7 +113,7 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
         
       // Now call the base class default config function.
       // NOTE: This will call the packing class configure() function.
-      value = TrickHLAPackingBaseSimObject::configure();
+      value = TrickHLAObjectBaseSimObject::configure();
         
       return( value );
    }
@@ -124,7 +124,7 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
         
       // Now call the base class default config function.
       // NOTE: This will call the packing class initialize() function.
-      value = TrickHLAPackingBaseSimObject::initialize();
+      value = TrickHLAObjectBaseSimObject::initialize();
         
       return( value );
    }

@@ -86,10 +86,10 @@ SineLagCompensation::~SineLagCompensation()
 /*!
  * @job_class{initialization}
  */
-void SineLagCompensation::set_sim_data(
-   SineData *sim_data )
+void SineLagCompensation::set_data(
+   SineData *data )
 {
-   this->sim_data = sim_data;
+   this->sim_data = data;
 }
 
 /*!

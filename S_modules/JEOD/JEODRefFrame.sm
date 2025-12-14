@@ -25,8 +25,8 @@
 #ifndef JEOD_REF_FRAME_SIM_OBJECT
 #define JEOD_REF_FRAME_SIM_OBJECT
 
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
+// Include TrickHLA Object base simulation definition module.
+#include "THLAObjectBase.sm"
 
 // JEOD includes.
 ##include "environment/time/include/time_tt.hh"
@@ -44,7 +44,7 @@
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
-class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
+class JEODRefFrameSimObject : public TrickHLAObjectBaseSimObject {
 
   public:
 
@@ -75,7 +75,7 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
                           jeod::TimeTT           & time_in,
                           unsigned short           _INIT   = P_HLA_INIT,
                           unsigned short           _UPDATE = 99 )
-      : TrickHLAPackingBaseSimObject( create_object, sim_obj_name, "frame_packing", frame_fed_name, _INIT ),
+      : TrickHLAObjectBaseSimObject( create_object, sim_obj_name, "frame_packing", frame_fed_name, _INIT ),
         frame_packing( time_in, ref_frame_state ),
         lag_compensation( frame_packing ),
         conditional( frame_packing ),
@@ -92,13 +92,13 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
       //
       // Default data jobs
       //
-      // See TrickHLAPackingBaseSimObject:
+      // See TrickHLAObjectBaseSimObject:
       // The base class default_config function will run the local function.
       
       //
       // Initialization jobs
       //
-      // See TrickHLAPackingBaseSimObject:
+      // See TrickHLAObjectBaseSimObject:
       // The base class configure function will run the local function.
       // The base class intialize function will run the local function.
       
@@ -170,7 +170,7 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
                                   thla_object );
        
        // Now call the base class default config function.
-       value = TrickHLAPackingBaseSimObject::default_config();
+       value = TrickHLAObjectBaseSimObject::default_config();
        
        return( value );
     }
@@ -184,7 +184,7 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
        
        // Now call the base class default config function.
        // NOTE: This will call the packing class configure() function.
-       value = TrickHLAPackingBaseSimObject::configure();
+       value = TrickHLAObjectBaseSimObject::configure();
        
        return( value );
     }
@@ -198,7 +198,7 @@ class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
        
        // Now call the base class default config function.
        // NOTE: This will call the packing class initialize() function.
-       value = TrickHLAPackingBaseSimObject::initialize();
+       value = TrickHLAObjectBaseSimObject::initialize();
        
        return( value );
     }

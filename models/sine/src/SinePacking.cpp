@@ -97,10 +97,10 @@ SinePacking::~SinePacking()
 /*!
  * @job_class{initialization}
  */
-void SinePacking::set_sim_data(
-   SineData *sim_data )
+void SinePacking::set_data(
+   SineData *data )
 {
-   this->sim_data = sim_data;
+   this->sim_data = data;
 }
 
 /*!

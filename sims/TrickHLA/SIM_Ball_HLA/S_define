@@ -204,8 +204,8 @@ class THLAInitSimObj : public Trick::SimObject {
 //##include "Ball/include/BallDeleted.hh"
 //##include "Ball/include/BallOwnershipHandler.hh"
 
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
+// Include TrickHLA Object base simulation definition module.
+#include "THLAObjectBase.sm"
 
 
 //=============================================================================
@@ -254,7 +254,7 @@ class BallHLASimObject : public Trick::SimObject {
       //P_INIT ("initialization") lag_compensation.configure( &packing );
       //P_INIT ("initialization") lag_compensation.initialize();
 
-      //P_INIT ("initialization") packing.set_sim_data( &lag_compensation );
+      //P_INIT ("initialization") packing.set_data( &lag_compensation );
       P_INIT ("initialization") packing.configure();
       P_INIT ("initialization") packing.initialize();
 
@@ -275,8 +275,8 @@ class BallHLASimObject : public Trick::SimObject {
 //##include "Ball/include/WallsDeleted.hh"
 //##include "Ball/include/WallOwnershipHandler.hh"
 
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
+// Include TrickHLA Object base simulation definition module.
+#include "THLAObjectBase.sm"
 
 
 //=============================================================================
@@ -322,7 +322,7 @@ class WallsHLASimObject : public Trick::SimObject {
       //P_INIT ("initialization") lag_compensation.configure( &packing );
       //P_INIT ("initialization") lag_compensation.initialize();
 
-      //P_INIT ("initialization") packing.set_sim_data( &lag_compensation );
+      //P_INIT ("initialization") packing.set_data( &lag_compensation );
       P_INIT ("initialization") packing.configure();
       P_INIT ("initialization") packing.initialize();
 

@@ -155,8 +155,8 @@ void FixedRecPacking::unpack()
 /*!
  * @job_class{initialization}
  */
-void FixedRecPacking::set_sim_data(
-   FixedRecData *sim_data )
+void FixedRecPacking::set_data(
+   FixedRecData *data )
 {
-   this->sim_data = sim_data;
+   this->sim_data = data;
 }

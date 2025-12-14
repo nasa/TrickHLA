@@ -9,8 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Notable Additions
 
 - Added support for IEEE 1516-2025 (HLA 4).
-- Added support for Fixed Records including direct encoding and decoding of Trick simulation variables from memory.
-- Added encoder support for 8, 16, 32, and 64-bit integer enum's (issue #181).
+- Added encoding support for Fixed Records including direct encoding and decoding of Trick simulation variables from memory.
+- Added encoding support for 8, 16, 32, and 64-bit integer enumerations (issue #181).
 - Improved the variable array encoder efficiency for dynamic arrays.
 - Shutdown on notification of SpaceFOM Execution Configuration Object (ExCO) deletion (SpaceFOM PCR-002).
 - Added support for designated late joining federates (SpaceFOM PCR-003).
@@ -19,43 +19,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Breaking Changes
 
 - Using std::string for TrickHLA settings instead of char *.
-- Renamed *ObjectDeleted* class to *ObjectDeletedHandler* to be consistent with the naming convention used for other handler APIs.
-  - FROM: ObjectDeleted
-  - TO: ObjectDeletedHandler
-- Renamed *Modified_data* to *TrickHLA_data* to better support Default Data.
-  - FROM: Modified_data
-  - TO: TrickHLA_data
-- Scaling the Trick executive tics to the HLA base time multiplier is now combined with setting the HLA base time multiplier to resolve a time check dependency.
+- Scaling the Trick executive Tics to the HLA base time multiplier is now combined with setting the HLA base time multiplier to resolve a time check dependency.
   - FROM: federate.scale_trick_tics_to_base_time_unit()
   - TO: federate.set_HLA_base_time_unit_and_scale_trick_tics( unit )
      or federate.set_HLA_base_time_multiplier_and_scale_trick_tics( multiplier )
+- Renamed *ObjectDeleted* class to *ObjectDeletedHandler* to be consistent with the naming convention used for other handler APIs.
+  - FROM: ObjectDeleted
+  - TO: ObjectDeletedHandler
+- Renamed the *TrickHLAPackingBaseSimObject* simulation object to *TrickHLAObjectBaseSimObject* including the corresponding simulation module filename.
+  - FROM: TrickHLAPackingBaseSimObject (S_modules/THLAPackingBase.sm)
+  - TO: TrickHLAObjectBaseSimObject (S_module/THLAObjectBase.sm)
+- Renamed the *Modified_data* directory to *TrickHLA_data* to better support Default Data.
+  - FROM: Modified_data
+  - TO: TrickHLA_data
 - Configure and initialize TrickHLA from default data instead of the input file.
-  - Adding S_models/THLAPackingBase.sm to your simulation S_define file will allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
-  - Support for Default Data initialization will now require the *Conditional*, *LagCompensation*, and *Packing* implementations to make a call to set the sim-data before calling the no-argument *configure()* and *initialize()* functions in the S_define file.
-  - If your simulation object where you instantiate your *Conditional*, *LagCompensation*, or *Packing* implementations does not extend TrickHLAPackingBaseSimObject (defined in S_models/THLAPackingBase.sm) to add support for  Default Data configuration and initialization of TrickHLA, then you will need to explicitly call *set_sim_data()*, *configure()*, and *initialize()* functions from the S_define file.
+  - Extend your simulation objects with TrickHLAObjectBaseSimObject and include the S_models/THLAObjectBase.sm file in your simulation S_define file to allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
+  - If the simulation object where you instantiate and initialize your *Conditional*, *LagCompensation*, or *Packing* implementations does not extend TrickHLAObjectBaseSimObject (defined in S_models/THLAObjectBase.sm), then you will need to explicitly call both *configure()* and *initialize()* functions from the S_define file.
 
 ```
     FROM:
-      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.set_data( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
       
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_data( &lag_compensation );
       P50 ("initialization") packing.initialize();
 
-      P50 ("initialization") conditional.configure( &packing );
+      P50 ("initialization") conditional.set_data( &packing );
       P50 ("initialization") conditional.initialize();
 
     TO:
-      # $TRICKHLA_HOME/sims/SpaceFOM/SIM_sinw/S_define
-      P50 ("initialization") lag_compensation.set_sim_data( &sim_data );
+      # Example from sims/SpaceFOM/SIM_sinw/S_define
+      P50 ("initialization") lag_compensation.set_data( &sim_data );
       P50 ("initialization") lag_compensation.configure();
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.set_sim_data( &lag_compensation );
+      P50 ("initialization") packing.set_data( &lag_compensation );
       P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
-      P50 ("initialization") conditional.set_sim_data( &packing );
+      P50 ("initialization") conditional.set_data( &packing );
       P50 ("initialization") conditional.configure();
       P50 ("initialization") conditional.initialize();
 ```
@@ -67,11 +69,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added a check to the THLABaseSimObject to set the interaction cycle time to the data cycle time if a time is not set.
 - Added a check to the THLABaseSimObject to verify the interaction cycle time is an integer multiple of the data cycle time.
 - Added functions to TrickHLAFederateConfig.py to allow the HLA base time multiplier to be set and automatically scale the Trick time tics value.
-  - 
+  - set_HLA_base_time_unit_and_scale_trick_tics( new_base_time_unit )
+  - set_HLA_base_time_multiplier_and_scale_trick_tics( new_base_time_multiplier )
 
 ### Changed
 
-- Changed over to use the IEEE 1516 HLA encoder helpers instead of custom written encoders.
+- Changed to use IEEE 1516 HLA encoder helpers instead of the custom written encoders.
 - Changed the Execution Control to perform the Least Common Time Step (LCTS) time checks when an Execution Configuration Object (ExCO) change is processed (issue #179).
 - Changed the Timeline functions to be more const friendly (issue #180).
 
