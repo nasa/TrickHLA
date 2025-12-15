@@ -68,7 +68,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added Ball simulation based off the Trick tutorial Ball simulation.
 - Added a check to the THLABaseSimObject to set the interaction cycle time to the data cycle time if a time is not set.
 - Added a check to the THLABaseSimObject to verify the interaction cycle time is an integer multiple of the data cycle time.
-- Added functions to TrickHLAFederateConfig.py to allow the HLA base time multiplier to be set and automatically scale the Trick time tics value.
+- Added functions to TrickHLAFederateConfig.py to allow either the HLA base time unit or multiplier to be set and automatically scale the Trick time tics value.
   - set_HLA_base_time_unit_and_scale_trick_tics( new_base_time_unit )
   - set_HLA_base_time_multiplier_and_scale_trick_tics( new_base_time_multiplier )
 
