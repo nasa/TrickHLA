@@ -82,33 +82,8 @@ PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntity::configure()
-{
-
-   // Set the reference to the PhysicalEntity data.
-   if ( physical_data == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalEntityData: "
-             << pe_packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
-   // First call the base class pre_initialize function.
-   PhysicalEntityBase::configure();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void PhysicalEntity::set_data( PhysicalEntityData *physical_data_ptr )
 {
-
    // Set the reference to the PhysicalEntity data.
    if ( physical_data_ptr == NULL ) {
       ostringstream errmsg;

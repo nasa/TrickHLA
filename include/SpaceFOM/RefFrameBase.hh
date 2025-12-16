@@ -116,13 +116,6 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
                              std::string const &ref_frame_fed_name,
                              TrickHLA::Object  *mngr_object = NULL );
 
-   // Pre-initialize the packing object.
-   /*! @brief Function to begin the configuration/initialization of the RefFrame.
-    *  This function needs to be called prior to TrickHLA initialization if
-    *  the RefFrame object is not being configured with an initialization
-    *  constructor. */
-   virtual void configure();
-
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */
    virtual void initialize();

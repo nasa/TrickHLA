@@ -88,28 +88,6 @@ JEODPhysicalEntity::~JEODPhysicalEntity()
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalEntity::configure()
-{
-
-   // Set the reference to the JEODPhysicalEntity data.
-   if ( dyn_body_data == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL JEOD::DynBody: "
-             << this->pe_packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Now call the base class pre_initialize function.
-   PhysicalEntityBase::configure();
-
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void JEODPhysicalEntity::initialize()
 {
    // Check to make sure the JEODPhysicalEntity data is set.

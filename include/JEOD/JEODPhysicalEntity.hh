@@ -71,9 +71,6 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    explicit JEODPhysicalEntity( jeod::DynBody &dyn_body_ref ); // Initialization constructor.
    virtual ~JEODPhysicalEntity();                              // Destructor.
 
-   /*! @brief Set the reference to the physical entity data. */
-   virtual void configure();
-
    /*! @brief Initialize the packing object. */
    virtual void initialize();
 

@@ -176,46 +176,17 @@ void PhysicalInterfaceBase::base_config(
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterfaceBase::configure()
+void PhysicalInterfaceBase::initialize()
 {
    // Check for a NULL object pointer.
    if ( this->object == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA Object pointer!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
-   // Check for empty federation instance name.
-   if ( this->object->create_HLA_instance
-        && this->packing_data.name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
-             << " WARNING: Unexpected empty interface name!" << endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-   }
-
-   // Check for empty federation instance parent_ref_frame.
-   if ( this->object->create_HLA_instance
-        && this->packing_data.parent_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::configure():" << __LINE__
-             << " WARNING: Unexpected empty interface parent!" << endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-   }
-
-   // Call the base class.
-   Packing::configure();
-
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void PhysicalInterfaceBase::initialize()
-{
    // Must have interface instance name.
    if ( this->object->create_HLA_instance
         && this->packing_data.name.empty() ) {

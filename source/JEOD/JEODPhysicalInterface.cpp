@@ -116,39 +116,6 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalInterface::configure()
-{
-   // Make sure that we have an associated JEOD::DynBody.
-   if ( dyn_body == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body_ptr: for interface "
-             << this->packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Make sure that we have a vehicle point ID to work with.
-   if ( this->vehicle_point_id == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_id for interface "
-             << this->packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Now call the base class pre_initialize function.
-   PhysicalInterfaceBase::configure();
-
-   // Postpone looking up the actual VehiclePoint until initialization.
-
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void JEODPhysicalInterface::initialize()
 {
    // Check if the DynBody is set.

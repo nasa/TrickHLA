@@ -115,15 +115,12 @@ class AnalyticSineSimObj : public Trick::SimObject {
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
       P50 ("initialization") lag_compensation.set_data( &sim_data );
-      P50 ("initialization") lag_compensation.configure();
       P50 ("initialization") lag_compensation.initialize();
 
       P50 ("initialization") packing.set_data( &lag_compensation );
-      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       P50 ("initialization") conditional.set_data( &packing );
-      P50 ("initialization") conditional.configure();
       P50 ("initialization") conditional.initialize();
 
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
@@ -170,15 +167,12 @@ class PropagatedSineSimObj : public Trick::SimObject {
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
       P50 ("initialization") lag_compensation.set_data( &sim_data );
-      P50 ("initialization") lag_compensation.configure();
       P50 ("initialization") lag_compensation.initialize();
 
       P50 ("initialization") packing.set_data( &lag_compensation );
-      P50 ("initialization") packing.configure();
       P50 ("initialization") packing.initialize();
 
       P50 ("initialization") conditional.set_data( &packing );
-      P50 ("initialization") conditional.configure();
       P50 ("initialization") conditional.initialize();
 
       /*

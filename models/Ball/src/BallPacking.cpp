@@ -244,28 +244,6 @@ void BallPacking::base_config(
 /*!
  * @job_class{initialization}
  */
-void BallPacking::configure()
-{
-   // Must have federation instance name.
-   if ( name == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Ball::BallPacking::configure():" << __LINE__
-             << " WARNING: Unexpected NULL entity name!"
-             << " Setting frame name to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
-      this->name = trick_MM->mm_strdup( "" );
-   }
-
-   // Call the Packing configure function.
-   TrickHLA::Packing::configure();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void BallPacking::initialize()
 {
    // Must have federation instance name.

@@ -117,7 +117,6 @@ class SpaceFOMRefFrameSimObject : public TrickHLAObjectBaseSimObject {
        int value;
        
        // Now call the base class default config function.
-       // NOTE: This will call the packing class configure() function.
        value = TrickHLAObjectBaseSimObject::configure();
        
        return( value );

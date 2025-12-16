@@ -238,9 +238,6 @@ void ExecutionConfiguration::configure()
 
    // Make sure we use correct function so that it is Trick managed memory.
    this->required_federates = string( federate_list.str() );
-
-   // Make sure we initialize the base class.
-   Packing::configure();
 }
 
 /*!

@@ -34,31 +34,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - TO: TrickHLA_data
 - Configure and initialize TrickHLA from default data instead of the input file.
   - Extend your simulation objects with TrickHLAObjectBaseSimObject and include the S_models/THLAObjectBase.sm file in your simulation S_define file to allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
-  - If the simulation object where you instantiate and initialize your *Conditional*, *LagCompensation*, or *Packing* implementations does not extend TrickHLAObjectBaseSimObject (defined in S_models/THLAObjectBase.sm), then you will need to explicitly call both *configure()* and *initialize()* functions from the S_define file.
+  - If the simulation object that defines and instantiates your *Conditional*, *LagCompensation*, or *Packing* implementations does not extend TrickHLAObjectBaseSimObject (defined in S_models/THLAObjectBase.sm), then make sure to explicitly call the *initialize()* function for each from the S_define file.
 
 ```
-    FROM:
+      # Example from sims/SpaceFOM/SIM_sine/S_define
       P50 ("initialization") lag_compensation.set_data( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
-      
+
       P50 ("initialization") packing.set_data( &lag_compensation );
       P50 ("initialization") packing.initialize();
 
       P50 ("initialization") conditional.set_data( &packing );
-      P50 ("initialization") conditional.initialize();
-
-    TO:
-      # Example from sims/SpaceFOM/SIM_sinw/S_define
-      P50 ("initialization") lag_compensation.set_data( &sim_data );
-      P50 ("initialization") lag_compensation.configure();
-      P50 ("initialization") lag_compensation.initialize();
-
-      P50 ("initialization") packing.set_data( &lag_compensation );
-      P50 ("initialization") packing.configure();
-      P50 ("initialization") packing.initialize();
-
-      P50 ("initialization") conditional.set_data( &packing );
-      P50 ("initialization") conditional.configure();
       P50 ("initialization") conditional.initialize();
 ```
 

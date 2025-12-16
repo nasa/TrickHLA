@@ -58,11 +58,8 @@ class TrickHLAInteractionConfig( object ):
       if thla_handler_instance != None:
          self.set_handler_instance( thla_handler_instance )
 
-      # Still need to set the object attributes but this is left to the
+      # Still need to set the interaction parameters but this is left to the
       # specific implementation classes.
-      
-      # Mark the InteractionHandler as configured.
-      self.hla_handler_instance.set_configured( True )
 
       return
 

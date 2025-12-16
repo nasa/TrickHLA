@@ -102,9 +102,6 @@ void RefFrameState::set_data(
    }
    this->ref_frame_data = ref_frame_data_ptr;
 
-   // Now call the base class pre_initialize function.
-   RefFrameBase::configure();
-
    // Return to calling routine.
    return;
 }

@@ -82,13 +82,6 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
                              std::string const &entity_fed_name,
                              TrickHLA::Object  *mngr_object = NULL );
 
-   /*! @brief Function to begin the configuration/initialization of the
-    *  DynamicalEntity.
-    *  This function needs to be called prior to TrickHLA initialization if
-    *  the DynamicalEntity object is not being configured with an
-    *  initialization constructor. */
-   // virtual void configure();
-
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 

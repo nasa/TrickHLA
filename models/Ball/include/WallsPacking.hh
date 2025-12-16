@@ -86,13 +86,6 @@ class WallsPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
                              bool              publishes,
                              TrickHLA::Object *mngr_object = NULL );
 
-   /*! @brief Function to begin the configuration/initialization of the
-    *  Walls.
-    *  This function needs to be called prior to TrickHLA initialization if
-    *  the Walls object is not being configured with an
-    *  initialization constructor. */
-   void configure();
-
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 

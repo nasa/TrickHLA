@@ -101,34 +101,6 @@ JEODRefFrameState::~JEODRefFrameState()
 /*!
  * @job_class{initialization}
  */
-void JEODRefFrameState::configure()
-{
-
-   // Set the reference to the reference frame.
-   if ( ref_frame_state == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Set the JEOD time reference.
-   if ( time_tt == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Now call the base class pre_initialize function.
-   RefFrameBase::configure();
-}
-
-/*!
- * @job_class{initialization}
- */
 void JEODRefFrameState::initialize()
 {
    // Check for the reference frame data.

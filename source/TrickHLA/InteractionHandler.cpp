@@ -67,8 +67,7 @@ using namespace RTI1516_NAMESPACE;
  * @job_class{initialization}
  */
 InteractionHandler::InteractionHandler() // RETURN: -- None.
-   : configured( false ),
-     initialized( false ),
+   : initialized( false ),
      interaction( NULL )
 {
    return;

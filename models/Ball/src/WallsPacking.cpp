@@ -182,19 +182,6 @@ void WallsPacking::base_config(
 /*!
  * @job_class{initialization}
  */
-void WallsPacking::configure()
-{
-
-   // Call the Packing configure function.
-   TrickHLA::Packing::configure();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void WallsPacking::initialize()
 {
    // Mark this as initialized.

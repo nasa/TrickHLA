@@ -90,6 +90,9 @@ class ExecutionConfigurationBase : public Object, public Packing
     *  @param exec_control Reference to the associated TrickHLA::ExecutionControlBase object. */
    virtual void setup( TrickHLA::ExecutionControlBase &exec_control );
 
+   /*! @brief Configure this Execution Configuration object. */
+   virtual void configure() = 0;
+
    /*! @brief Sets up the attributes for this Execution Configuration object
     *  using default values. These can be overridden in the input file. */
    virtual void configure_attributes() = 0;

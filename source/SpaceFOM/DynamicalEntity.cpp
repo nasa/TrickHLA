@@ -83,29 +83,6 @@ DynamicalEntity::~DynamicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void DynamicalEntity::configure()
-{
-
-   // Set the reference to the reference frame.
-   if ( dynamical_data == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::DynamicalEntity::configure():" << __LINE__
-             << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Call the base class pre_initialize function.
-   PhysicalEntity::configure();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void DynamicalEntity::initialize()
 {
    // Check to make sure the DynamicalEntity data is set.

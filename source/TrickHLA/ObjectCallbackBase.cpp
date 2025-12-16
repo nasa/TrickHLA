@@ -54,8 +54,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 ObjectCallbackBase::ObjectCallbackBase()
-   : configured( false ),
-     initialized( false ),
+   : initialized( false ),
      object( NULL ),
      callback_name(),
      exec_control( NULL )
@@ -65,8 +64,7 @@ ObjectCallbackBase::ObjectCallbackBase()
 
 ObjectCallbackBase::ObjectCallbackBase(
    string name )
-   : configured( false ),
-     initialized( false ),
+   : initialized( false ),
      object( NULL ),
      callback_name( name ),
      exec_control( NULL )
@@ -87,25 +85,20 @@ ObjectCallbackBase::~ObjectCallbackBase()
  */
 void ObjectCallbackBase::initialize()
 {
-   if ( !is_configured() ) {
-      if ( ( this->object != NULL ) && !this->object->name.empty() ) {
+   if ( this->object != NULL ) {
+      if ( this->object->name.empty() ) {
          ostringstream errmsg;
          errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
-                << " ERROR: Object '" << this->object->name
-                << "' needs to be configured before being initialized!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      } else if ( !callback_name.empty() ) {
-         ostringstream errmsg;
-         errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
-                << " ERROR: '" << callback_name
-                << "' needs to be configured before being initialized!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      } else {
-         ostringstream errmsg;
-         errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
-                << " ERROR: Must be configured before being initialized!" << endl;
+                << " ERROR: No Object name found, and it needs to be set"
+                << " before calling the initialize() function!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
+   } else if ( callback_name.empty() ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
+             << " ERROR: 'callback_name' needs to be set before calling the"
+             << " initialize() function!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    this->initialized = true;

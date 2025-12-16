@@ -112,7 +112,6 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAObjectBaseSimObject {
       interface_packing.set_data( &interface_data );
         
       // Now call the base class default config function.
-      // NOTE: This will call the packing class configure() function.
       value = TrickHLAObjectBaseSimObject::configure();
         
       return( value );

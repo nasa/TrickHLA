@@ -94,16 +94,6 @@ class InteractionHandler
    virtual ~InteractionHandler();
 
   public:
-   /*! @brief Configure the TrickHLA Interaction. */
-   virtual void configure() { configured = true; }
-
-   /*! @brief Check if the TrickHLA Interaction is configured.
-    *  @param status Configuration status. */
-   virtual void set_configured( bool status = true ) { configured = status; }
-
-   /*! @brief Check if the TrickHLA Interaction is configured. */
-   virtual bool is_configured() { return ( configured ); }
-
    // Initialize the Interaction handler.
    /*! @brief Finish the initialization of the TrickHLA Initialization handler. */
    virtual void initialize() { initialized = true; }
@@ -178,7 +168,6 @@ class InteractionHandler
    virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
   protected:
-   bool         configured;  ///< @trick_units{--} Configured status flag.
    bool         initialized; ///< @trick_units{--} Initialization status flag.
    Interaction *interaction; ///< @trick_io{**} Pointer to the TrickHLA interaction.
 

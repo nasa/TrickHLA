@@ -66,11 +66,6 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    explicit PhysicalEntity( PhysicalEntityData &physical_data_ref ); // Initialization constructor.
    virtual ~PhysicalEntity();                                        // Destructor.
 
-   /*! @brief Function to begin the configuration/initialization of the
-    *  PhysicalEntity.
-    *  This function needs to be called prior to TrickHLA initialization. */
-   virtual void configure();
-
    /*! @brief Initialize the packing object. */
    virtual void initialize();
 

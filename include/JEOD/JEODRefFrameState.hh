@@ -78,9 +78,6 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    /*! @brief Destructor for the SpaceFOM JEODRefFrameState class. */
    virtual ~JEODRefFrameState();
 
-   /*! @brief Configure the JEOD reference frame data. */
-   virtual void configure();
-
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data. */
    virtual void initialize();

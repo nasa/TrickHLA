@@ -248,9 +248,6 @@ void ExecutionConfiguration::configure()
    // Make sure the ExecutionConfiguration attributes go out in
    // Receive-Order so that a late joining federate can get them.
    reset_preferred_order();
-
-   // Make sure we set the configured flag.
-   set_configured( true );
 }
 
 /*!

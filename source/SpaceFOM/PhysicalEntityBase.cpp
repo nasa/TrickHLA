@@ -264,39 +264,6 @@ void PhysicalEntityBase::base_config(
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityBase::configure()
-{
-   // Must have federation instance name.
-   if ( pe_packing_data.name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
-             << " ERROR: Unexpected empty federation instance name!"
-             << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Must have federation instance parent_ref_frame.
-   if ( pe_packing_data.parent_frame.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::configure():" << __LINE__
-             << " ERROR: Unexpected NULL entity parent_ref_frame!"
-             << " Setting parent_ref_frame to empty string."
-             << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Call the base class.
-   TrickHLA::Packing::configure();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void PhysicalEntityBase::initialize()
 {
    // Must have federation instance name.

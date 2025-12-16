@@ -63,10 +63,10 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    TrickHLAObjectBaseSimObject( bool                create_object,
-                                 std::string const & sim_obj_name,
-                                 std::string const & obj_packing_name,
-                                 std::string const & obj_fed_name,
-                                 unsigned short      _INIT = P_HLA_INIT  )
+                                std::string const & sim_obj_name,
+                                std::string const & obj_packing_name,
+                                std::string const & obj_fed_name,
+                                unsigned short      _INIT = P_HLA_INIT )
       : Trick::SimObject(),
         packing_base_ptr( NULL ),
         lag_comp_base_ptr( NULL ),
@@ -74,6 +74,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
         ownership_base_ptr( NULL ),
         deleted_base_ptr( NULL ),
         create( create_object ),
+        sim_object_configured( false ),
         sim_object_name( sim_obj_name ),
         object_packing_name( obj_packing_name ),
         object_fed_name( obj_fed_name ),
@@ -96,16 +97,15 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
       if ( packing_base_ptr == NULL ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
-                << " ERROR: Unexpected NULL Packing object!\n";
-         // Print message and terminate.
+                << " ERROR: Unexpected NULL Packing object!" << std::endl;
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
       
       if ( object == NULL ) {
          std::ostringstream errmsg;
-         errmsg << "TrickHLAObjectBaseSimObject::set_object(): ERROR: " << std::endl
-                << "\tThe TrickHLA::Object associated with object \'" << name << "\' is NULL." << std::endl;
-         // Print message and terminate.
+         errmsg << "TrickHLAObjectBaseSimObject::set_object():" << __LINE__
+                << " ERROR: The TrickHLA::Object associated with object \'"
+                << name << "\' is NULL." << std::endl;
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
       
@@ -120,9 +120,9 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
       if ( packing_base_ptr == NULL ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
-                << " ERROR: Unexpected NULL Packing object!\n";
-         // Print message and terminate.
+                << " ERROR: Unexpected NULL Packing object!" << std::endl;
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
       }
 
       // Get the associated TrickHLA manager object.
@@ -139,9 +139,9 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
             if ( thla_object != pkg_obj_ptr ) {
                std::ostringstream errmsg;
                errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
-                      << " ERROR: Object references do NOT match!\n";
-               // Print message and terminate.
+                      << " ERROR: Object references do NOT match!" << std::endl;
                TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               return( -1 );
             }
             
          } else {
@@ -183,44 +183,35 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
 
    virtual int configure()
    {
-      // We must have a Packing object.
-      if ( packing_base_ptr == NULL ) {
-         std::ostringstream errmsg;
-         errmsg << "TrickHLAObjectBaseSimObject::configure():" << __LINE__
-                << " ERROR: Unexpected NULL Packing object!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-      } else {
-         packing_base_ptr->configure();
-      }
-
-      // For callback classes make sure to call configure.
-      if ( lag_comp_base_ptr != NULL ) {
-         lag_comp_base_ptr->configure();
-      }
-      if ( conditional_base_ptr != NULL ) {
-         conditional_base_ptr->configure();
-      }
-
+      sim_object_configured = true;
       return( 0 );
    }
 
    virtual int initialize()
    {
+      if ( !sim_object_configured ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
+                << " ERROR: The sim-object configure function must be called"
+                << " before calling this initialize function!" << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
+      }
+
       // We must have a Packing object.
       if ( packing_base_ptr == NULL ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
-                << " ERROR: Unexpected NULL Packing object!\n";
-         // Print message and terminate.
+                << " ERROR: Unexpected NULL Packing object!" << std::endl;
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
       } else {
          packing_base_ptr->initialize();
       }
 
       // Get the associated TrickHLA manager object.
       TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
-      
+
       // Check if the TrickHLA Object associated with the packing function
       // has been instantiated and assigned.
       if ( thla_object != NULL ) {
@@ -232,9 +223,9 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
             if ( thla_object != pkg_obj_ptr ) {
                std::ostringstream errmsg;
                errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
-                      << " ERROR: Object references do NOT match!\n";
-               // Print message and terminate.
+                      << " ERROR: Object references do NOT match!" << std::endl;
                TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               return( -1 );
             }
             
          } else {
@@ -252,13 +243,13 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          
       } else {
          
-         // Neither is set.  This is an ERROR!
+         // Neither is set. This is an ERROR!
          std::ostringstream errmsg;
-         errmsg << "TrickHLAObjectBaseSimObject::initialize(): ERROR: " << std::endl
-                << "\tThe TrickHLA::Object associated with object \'" << name << "\' is NULL." << std::endl;
-         // Print message and terminate.
+         errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
+                << " ERROR: The TrickHLA::Object associated with object \'"
+                << name << "\' is NULL." << std::endl;
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-         
+         return( -1 );
       }
 
       // Check for a Lag Compensation object.
@@ -276,6 +267,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
   
  protected:
   bool        create;
+  bool        sim_object_configured;
   std::string sim_object_name;
   std::string object_packing_name;
   std::string object_fed_name;

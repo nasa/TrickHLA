@@ -47,7 +47,6 @@ class SpaceTimeCoordinateSimObject : public Trick::SimObject {
       //
       // Initialization jobs.
       //
-      P_INIT ("initialization") packing.configure();
       P_INIT ("initialization") packing.initialize();
 
    }

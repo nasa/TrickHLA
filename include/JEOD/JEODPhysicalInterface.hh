@@ -74,9 +74,6 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
                           jeod::BodyRefFrame &vehicle_point_ref ); // Initialization constructor.
    virtual ~JEODPhysicalInterface();                               // Destructor.
 
-   /*! @brief Make sure that the JEODPhysicalInterface is configured properly. */
-   virtual void configure();
-
    // Initialize the packing object.
    /*! @brief Initialize the class assuming that the vehicle point data is set. */
    virtual void initialize();

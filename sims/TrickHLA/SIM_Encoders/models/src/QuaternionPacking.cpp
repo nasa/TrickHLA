@@ -153,16 +153,6 @@ void QuaternionPacking::base_config(
 /*!
  * @job_class{initialization}
  */
-void QuaternionPacking::configure()
-{
-   // Call the base class configure function.
-   TrickHLA::Packing::configure();
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void QuaternionPacking::initialize()
 {
 

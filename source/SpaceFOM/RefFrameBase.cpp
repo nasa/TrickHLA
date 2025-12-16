@@ -176,85 +176,6 @@ void RefFrameBase::base_config(
 /*!
  * @job_class{initialization}
  */
-void RefFrameBase::configure()
-{
-   // Must have federation instance name.
-   if ( this->packing_data.name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
-             << " ERROR: Unexpected empty federation instance name!"
-             << endl;
-      // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Associate the instantiated Manager object with this packing object.
-   if ( this->object == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
-             << " ERROR: Unexpected NULL THLAManager object for ReferenceFrame \""
-             << this->packing_data.name << "\"!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Should have federation instance parent frame name or empty name for root.
-   if ( this->packing_data.parent_name.empty() ) {
-
-      // Print message.
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_NO_MODULES ) ) {
-
-         ostringstream errmsg;
-
-         string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
-         string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
-
-         errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
-                << " WARNING: For RefFrame '" << this->packing_data.name
-                << "' and object '" << ( ( object != NULL ) ? object->get_name() : "" )
-                << "' with Attribute Trick name '" << trick_name
-                << "' and FOM name '" << fom_name
-                << "', detected unexpected empty federation instance parent frame name!"
-                << endl;
-
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
-      }
-
-      // Mark as root reference frame.
-      this->is_root_node = true;
-
-   } else {
-
-      // Mark as NOT a root reference frame.
-      this->is_root_node = false;
-   }
-
-   // Check to see if the parent reference frame has been set if this frame
-   // is NOT the root frame.
-   if ( !this->packing_data.parent_name.empty() && ( this->parent_frame == NULL ) ) {
-      ostringstream errmsg;
-
-      string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
-      string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
-
-      errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
-             << " ERROR: For RefFrame object '"
-             << ( ( object != NULL ) ? object->get_name() : "" )
-             << "' with Attribute Trick name '" << trick_name
-             << "' and FOM name '" << fom_name
-             << "', detected unexpected NULL parent frame reference!"
-             << endl;
-
-      // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Now call the base class configure function.
-   Packing::configure();
-}
-
-/*!
- * @job_class{initialization}
- */
 void RefFrameBase::initialize()
 {
    // Must have federation instance name.
@@ -323,6 +244,15 @@ void RefFrameBase::initialize()
              << "', detected unexpected NULL parent frame reference!" << endl;
 
       // Print message and terminate.
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Associate the instantiated Manager object with this packing object.
+   if ( this->object == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL THLAManager object for ReferenceFrame \""
+             << this->packing_data.name << "\"!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

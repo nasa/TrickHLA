@@ -251,14 +251,13 @@ class BallHLASimObject : public Trick::SimObject {
       //
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
-      //P_INIT ("initialization") lag_compensation.configure( &packing );
+      //P_INIT ("initialization") lag_compensation.set_data( &packing );
       //P_INIT ("initialization") lag_compensation.initialize();
 
       //P_INIT ("initialization") packing.set_data( &lag_compensation );
-      P_INIT ("initialization") packing.configure();
       P_INIT ("initialization") packing.initialize();
 
-      //P_INIT ("initialization") conditional.configure( &packing );
+      //P_INIT ("initialization") conditional.set_data( &packing );
       //P_INIT ("initialization") conditional.initialize();
 
    }
@@ -319,14 +318,13 @@ class WallsHLASimObject : public Trick::SimObject {
       //
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
-      //P_INIT ("initialization") lag_compensation.configure( &packing );
+      //P_INIT ("initialization") lag_compensation.set_data( &packing );
       //P_INIT ("initialization") lag_compensation.initialize();
 
       //P_INIT ("initialization") packing.set_data( &lag_compensation );
-      P_INIT ("initialization") packing.configure();
       P_INIT ("initialization") packing.initialize();
 
-      //P_INIT ("initialization") conditional.configure( &packing );
+      //P_INIT ("initialization") conditional.set_data( &packing );
       //P_INIT ("initialization") conditional.initialize();
 
    }

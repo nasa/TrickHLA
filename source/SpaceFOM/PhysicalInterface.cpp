@@ -81,29 +81,6 @@ PhysicalInterface::~PhysicalInterface()
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterface::configure()
-{
-   // Check the reference to the PhysicalInterface data.
-   if ( interface_data == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterface::configure():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalInterfaceData: "
-             << packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
-   // Call the base class configure function.
-   PhysicalInterfaceBase::configure();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 void PhysicalInterface::initialize()
 {
    // Check to make sure the PhysicalInterface data is set.

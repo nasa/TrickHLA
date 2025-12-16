@@ -75,26 +75,6 @@ class ObjectCallbackBase
    /*! @brief Destructor for the TrickHLA ObjectCallbackBase class. */
    virtual ~ObjectCallbackBase();
 
-   // Configure the packing object.
-   /*! @brief Configure the TrickHLA ObjectCallbackBase object. */
-   virtual void configure()
-   {
-      this->configured = true;
-   }
-
-   /*! @brief Check if the TrickHLA ObjectCallbackBase object is configured.
-    *  @param status Configuration status. */
-   virtual void set_configured( bool status = true )
-   {
-      this->configured = status;
-   }
-
-   /*! @brief Check if the TrickHLA ObjectCallbackBase object is configured. */
-   virtual bool is_configured()
-   {
-      return ( this->configured );
-   }
-
    // Initialize the packing object.
    /*! @brief Finish the initialization of the TrickHLA ObjectCallbackBase object. */
    virtual void initialize();
@@ -155,7 +135,6 @@ class ObjectCallbackBase
    /*! @brief Update the internal pointer to the Execution Control instance. */
    void update_exec_control_ptr();
 
-   bool        configured;    ///< @trick_units{--} Configured status flag.
    bool        initialized;   ///< @trick_units{--} Initialization status flag.
    Object     *object;        ///< @trick_io{**} Object associated with this class.
    std::string callback_name; ///< @trick_io{**} Name of the object associated with this class.

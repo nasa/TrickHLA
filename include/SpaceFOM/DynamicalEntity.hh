@@ -63,11 +63,6 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
                     DynamicalEntityData &dynamics_data_ref ); // Initialization constructor.
    virtual ~DynamicalEntity();                                // Destructor.
 
-   /*! @brief Function to begin the configuration/initialization of the
-    *  DynamicalEntity.
-    *  This function needs to be called prior to TrickHLA initialization. */
-   virtual void configure();
-
    /*! @brief Initialize the packing object. */
    virtual void initialize();
 
