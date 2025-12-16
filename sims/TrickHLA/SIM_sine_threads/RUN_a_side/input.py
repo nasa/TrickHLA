@@ -81,7 +81,7 @@ THLA.federate.lookahead_time = 0.250
 
 # Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
 # and scale the Trick time tics value.
-federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
+THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Disable Trick child thread IDs associated to TrickHLA in the S_define file
 # as a comma separated list.
