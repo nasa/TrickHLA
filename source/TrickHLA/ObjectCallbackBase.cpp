@@ -85,19 +85,11 @@ ObjectCallbackBase::~ObjectCallbackBase()
  */
 void ObjectCallbackBase::initialize()
 {
-   if ( this->object != NULL ) {
-      if ( this->object->name.empty() ) {
-         ostringstream errmsg;
-         errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
-                << " ERROR: No Object name found, and it needs to be set"
-                << " before calling the initialize() function!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-   } else if ( callback_name.empty() ) {
+   if ( ( this->object != NULL ) && this->object->name.empty() ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
-             << " ERROR: 'callback_name' needs to be set before calling the"
-             << " initialize() function!" << endl;
+             << " ERROR: No Object name found, and it needs to be set"
+             << " before calling the initialize() function!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
