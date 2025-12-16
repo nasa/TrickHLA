@@ -434,6 +434,31 @@ void RefFrameBase::publish()
              << " WARNING: Ignoring, reference frame already initialized!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
+      if ( object == NULL ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::publish():" << __LINE__
+                << " ERROR: Unexpected NULL Object reference!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+      if ( object->attributes == NULL ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::publish():" << __LINE__
+                << " ERROR: For Object '" << object->get_name()
+                << "', unexpected NULL object attribute reference!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+      if ( object->attr_count <= 0 ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::publish():" << __LINE__
+                << " ERROR: For Object '" << object->get_name()
+                << "', unexpected non-zero object attribute count ("
+                << object->attr_count << ")" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+
       object->create_HLA_instance         = true;
       object->attributes[0].publish       = true;
       object->attributes[0].subscribe     = false;
@@ -456,10 +481,35 @@ void RefFrameBase::subscribe()
 {
    if ( this->initialized ) {
       ostringstream errmsg;
-      errmsg << "RefFrameBase::publish():" << __LINE__
+      errmsg << "RefFrameBase::subscribe():" << __LINE__
              << " WARNING: Ignoring, reference frame already initialized!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
+      if ( object == NULL ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::subscribe():" << __LINE__
+                << " ERROR: Unexpected NULL Object reference!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+      if ( object->attributes == NULL ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::subscribe():" << __LINE__
+                << " ERROR: For Object '" << object->get_name()
+                << "', unexpected NULL object attribute reference!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+      if ( object->attr_count <= 0 ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::subscribe():" << __LINE__
+                << " ERROR: For Object '" << object->get_name()
+                << "', unexpected non-zero object attribute count ("
+                << object->attr_count << ")" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+
       object->create_HLA_instance         = false;
       object->attributes[0].publish       = false;
       object->attributes[0].subscribe     = true;
