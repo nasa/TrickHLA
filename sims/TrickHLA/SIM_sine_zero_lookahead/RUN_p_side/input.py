@@ -67,7 +67,7 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_4_TRACE
 
 # Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
 # and scale the Trick time tics value.
-federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
+THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Configure the CRC.
 # Pitch specific local settings designator:
