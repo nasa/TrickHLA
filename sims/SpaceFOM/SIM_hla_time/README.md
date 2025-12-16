@@ -1,6 +1,6 @@
 # SIM_hla_time
 
-SIM_hla_time is a simulation that demonstrates the a simple SpaceFOM federate that implements the minimum to participate as a time constrained and time regulating federate. The distributed simulation is comprised of this simulation and any other SpaceFOM simulation. An example where this might be useful is if you have a simulation using [TrickCFS](https://github.com/nasa/TrickCFS) and need to synchronize it with other SpaceFOM simulations.
+SIM_hla_time is a simulation that demonstrates a simple SpaceFOM federate that implements the minimum to participate as a time constrained and time regulating federate. The distributed simulation is comprised of this simulation and any other SpaceFOM simulation. An example where this might be useful is if you have a simulation using [TrickCFS](https://github.com/nasa/TrickCFS) and need to synchronize it with other SpaceFOM simulations.
 
 ---
 ### Building the Simulation
