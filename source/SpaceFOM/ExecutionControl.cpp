@@ -1086,12 +1086,14 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // The User Must specify a root reference frame.
    if ( this->root_ref_frame == NULL ) {
-      // The Master federate and the Root Reference Frame Publisher federate
+      // The Master federate or the Root Reference Frame Publisher federate
       // must have the root_ref_frame reference set.
       if ( is_master() || is_root_frame_publisher() ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Unexpected NULL THLA.manager.root_ref_frame object." << endl;
+                << " ERROR: Unexpected NULL THLA.manager.root_ref_frame object."
+                << " The Master federate or the Root Reference Frame Publisher"
+                << " federate must have the root_ref_frame reference set." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
