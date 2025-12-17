@@ -370,7 +370,7 @@ if THLA.federate.get_manager().obj_count <= 0:
    trick.exec_terminate_with_return( -1,
                                      sys._getframe( 0 ).f_code.co_filename,
                                      sys._getframe( 0 ).f_lineno,
-                                     'input.py ERROR: TrickHLA::Manager objects have not been allocated!' )
+                                     'input.py ERROR: TrickHLA::Manager objects have not been allocated! Try running with --default_data_config command line argument.' )
    
 
 # Set the debug flag for the reference frames.
