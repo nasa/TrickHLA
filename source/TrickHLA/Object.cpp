@@ -3657,6 +3657,11 @@ void Object::create_attribute_set(
             // it here.
             attributes[i].set_update_requested( false );
 
+            if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+               message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For object '%s', adding '%s' to attribute map.\n",
+                                __LINE__, get_name().c_str(), attributes[i].get_FOM_name().c_str() );
+            }
+
             ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
          }
       }
