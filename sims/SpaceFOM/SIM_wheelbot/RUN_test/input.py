@@ -291,7 +291,7 @@ if hla:
    # If it is the RRFP, it will publish the frame.
    # If it is NOT the RRFP, it will subscribe to the frame.
    #---------------------------------------------------------------------------
-   root_frame = SpaceFOMRefFrameObject( 
+   root_frame = SpaceFOMRefFrameObject(
       create_frame_object          = federate.is_RRFP,
       frame_instance_name          = 'RootFrame',
       frame_S_define_instance      = root_ref_frame.frame_packing,
@@ -319,6 +319,7 @@ if hla:
 
    # Add this reference frame to the list of managed object.
    federate.add_fed_object( frame_A )
+
    #---------------------------------------------------------------------------
    # Add the HLA SimObjects associated with this federate.
    # This is really only useful for turning on and off HLA objects.
