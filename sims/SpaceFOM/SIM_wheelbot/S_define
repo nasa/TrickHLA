@@ -46,6 +46,9 @@ class VehicleSimObject : public Trick::SimObject {
    VehicleSimObject & operator=( VehicleSimObject const & rhs );
 };
 
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/time/TimeOfDayCTETimeline.hh"
+
 //=============================================================================
 #define HLA
 // Uncomment the above line to build the sim with HLA.
