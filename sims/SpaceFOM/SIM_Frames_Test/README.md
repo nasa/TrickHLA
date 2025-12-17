@@ -14,5 +14,5 @@ Trick Build Process Complete
 In the SIM_Frames_Test directory:
 
 ```
-./S_main_*.exe RUN_test/input.py --verbose on
+./S_main_*.exe RUN_test/input.py --default_data_config --verbose on
 ```

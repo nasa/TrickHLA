@@ -86,10 +86,10 @@ def parse_command_line():
             case_name = str( argv[index] )
             case_file = config_dir + "/" + case_name + ".py"
             if not os.path.exists( frames_file ):
-               print( 'ERROR: Frames file not found: ' + frames_file )
+               print( 'input.py ERROR: Frames file not found: ' + frames_file )
                print_usage = True
          else:
-            print( 'ERROR: Missing frames name.' )
+            print( 'input.py ERROR: Missing frames name.' )
             print_usage = True
 
       elif ( str( argv[index] ) == '-d' ):
@@ -105,7 +105,7 @@ def parse_command_line():
          if ( index < argc ):
             express_frame = str( argv[index] )
          else:
-            print( 'ERROR: Missing express frame name.' )
+            print( 'input.py ERROR: Missing express frame name.' )
             print_usage = True
 
       elif ( ( str( argv[index] ) == '-f' ) | ( str( argv[index] ) == '--frames' ) ):
@@ -114,10 +114,10 @@ def parse_command_line():
             frames_name = str( argv[index] )
             frames_file = config_dir + "/" + frames_name + ".py"
             if not os.path.exists( frames_file ):
-               print( 'ERROR: Frames file not found: ' + frames_file )
+               print( 'input.py ERROR: Frames file not found: ' + frames_file )
                print_usage = True
          else:
-            print( 'ERROR: Missing frames name.' )
+            print( 'input.py ERROR: Missing frames name.' )
             print_usage = True
 
       elif ( str( argv[index] ) == '--stop' ):
@@ -125,7 +125,7 @@ def parse_command_line():
          if ( index < argc ):
             run_duration = float( str( argv[index] ) )
          else:
-            print( 'ERROR: Missing --stop [time] argument.' )
+            print( 'input.py ERROR: Missing --stop [time] argument.' )
             print_usage = True
 
       elif ( str( argv[index] ) == '--nostop' ):
@@ -139,7 +139,7 @@ def parse_command_line():
          if ( index < argc ):
             native_frame = str( argv[index] )
          else:
-            print( 'ERROR: Missing entity frame name.' )
+            print( 'input.py ERROR: Missing entity frame name.' )
             print_usage = True
 
       elif ( ( str( argv[index] ) == '-t' ) | ( str( argv[index] ) == '--tree' ) ):
@@ -151,10 +151,10 @@ def parse_command_line():
             vehicle_name = str( argv[index] )
             vehicle_file = config_dir + "/" + vehicle_name + ".py"
             if not os.path.exists( vehicle_file ):
-               print( 'ERROR: Vehicle file not found: ' + vehicle_file )
+               print( 'input.py ERROR: Vehicle file not found: ' + vehicle_file )
                print_usage = True
          else:
-            print( 'ERROR: Missing vehicle name.' )
+            print( 'input.py ERROR: Missing vehicle name.' )
             print_usage = True
 
       elif ( str( argv[index] ) == '--verbose' ):
@@ -165,14 +165,14 @@ def parse_command_line():
             elif ( str( argv[index] ) == 'off' ):
                verbose = False
             else:
-               print( 'ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
+               print( 'input.py ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
                print_usage = True
          else:
-            print( 'ERROR: Missing --verbose [on|off] argument.' )
+            print( 'input.py ERROR: Missing --verbose [on|off] argument.' )
             print_usage = True
 
       else:
-         print( 'ERROR: Unknown command line argument ' + str( argv[index] ) )
+         print( 'input.py ERROR: Unknown command line argument ' + str( argv[index] ) )
          print_usage = True
 
       index = index + 1
@@ -313,7 +313,7 @@ if ( case_file ):
    if os.path.exists( case_file ):
       exec( open( case_file ).read() )
    else:
-      print( 'ERROR: Case file not found: ' + case_file )
+      print( 'input.py ERROR: Case file not found: ' + case_file )
       print_usage_message()
 
 #---------------------------------------------------------------------------
@@ -322,16 +322,16 @@ if ( case_file ):
 if os.path.exists( frames_file ):
    exec( open( frames_file ).read() )
 else:
-   print( 'ERROR: Frames file not found: ' + frames_file )
+   print( 'input.py ERROR: Frames file not found: ' + frames_file )
    print_usage_message()
 
 # Do a sanity check on selected frame names.
 if not native_frame in frames_list:
-   print( 'ERROR: Unknown native entity frame: ' + native_frame )
+   print( 'input.py ERROR: Unknown native entity frame: ' + native_frame )
    print_usage_message()
 
 if not express_frame in frames_list:
-   print( 'ERROR: Unknown express frame: ' + express_frame )
+   print( 'input.py ERROR: Unknown express frame: ' + express_frame )
    print_usage_message()
 
 #---------------------------------------------------------------------------
@@ -352,7 +352,7 @@ mars_fixed_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
 if os.path.exists( vehicle_file ):
    exec( open( vehicle_file ).read() )
 else:
-   print( 'ERROR: Vehicle file not found: ' + vehicle_file )
+   print( 'input.py ERROR: Vehicle file not found: ' + vehicle_file )
    print_usage_message()
 
 #---------------------------------------------------------------------------
@@ -370,7 +370,7 @@ if THLA.federate.get_manager().obj_count <= 0:
    trick.exec_terminate_with_return( -1,
                                      sys._getframe( 0 ).f_code.co_filename,
                                      sys._getframe( 0 ).f_lineno,
-                                     'TrickHLA::Manager objects have not been allocated!' )
+                                     'input.py ERROR: TrickHLA::Manager objects have not been allocated!' )
    
 
 # Set the debug flag for the reference frames.
