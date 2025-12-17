@@ -3661,7 +3661,6 @@ void Object::create_attribute_set(
                message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For object '%s', adding '%s' to attribute map.\n",
                                 __LINE__, get_name().c_str(), attributes[i].get_FOM_name().c_str() );
             }
-
             ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
          }
       }
