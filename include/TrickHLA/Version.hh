@@ -39,7 +39,7 @@ static unsigned int const TRICKHLA_MINOR_VERSION = 2;
 static unsigned int const TRICKHLA_PATCH_VERSION = 0;
 
 // Release date of the form: "YYYY-MM-DD"
-static std::string const TRICKHLA_RELEASE_DATE = "2025-12-02";
+static std::string const TRICKHLA_RELEASE_DATE = "2025-12-19";
 
 } // namespace TrickHLA
 
