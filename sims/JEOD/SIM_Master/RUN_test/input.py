@@ -159,19 +159,19 @@ fix_var_server_source_address()
 jeod_time.time_manager_init.initializer = "UTC"
 jeod_time.time_manager_init.sim_start_format = trick.TimeEnum.calendar
 
-jeod_time.time_utc.calendar_year = 2027
-jeod_time.time_utc.calendar_month = 8
-jeod_time.time_utc.calendar_day = 17
-jeod_time.time_utc.calendar_hour = 12
+jeod_time.time_utc.calendar_year   = 2027
+jeod_time.time_utc.calendar_month  = 8
+jeod_time.time_utc.calendar_day    = 17
+jeod_time.time_utc.calendar_hour   = 12
 jeod_time.time_utc.calendar_minute = 0
 jeod_time.time_utc.calendar_second = 0.0
 
 jeod_time.time_tai.initialize_from_name = "UTC"
-jeod_time.time_tt.initialize_from_name = "TAI"
+jeod_time.time_tt.initialize_from_name  = "TAI"
 
 jeod_time.time_tai.update_from_name = "Dyn"
 jeod_time.time_utc.update_from_name = "TAI"
-jeod_time.time_tt.update_from_name = "TAI"
+jeod_time.time_tt.update_from_name  = "TAI"
 
 # Configure the ephemeris model
 env.de4xx.set_model_number( 440 )
@@ -273,14 +273,14 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose
-sun_inertial.frame_packing.debug = verbose
-earth_moon_barycenter.frame_packing.debug = verbose
+sun_inertial.frame_packing.debug            = verbose
+earth_moon_barycenter.frame_packing.debug   = verbose
 earth_centered_inertial.frame_packing.debug = verbose
-moon_centered_inertial.frame_packing.debug = verbose
-mars_centered_inertial.frame_packing.debug = verbose
-earth_centered_fixed.frame_packing.debug = verbose
-moon_centered_fixed.frame_packing.debug = verbose
-mars_centered_fixed.frame_packing.debug = verbose
+moon_centered_inertial.frame_packing.debug  = verbose
+mars_centered_inertial.frame_packing.debug  = verbose
+earth_centered_fixed.frame_packing.debug    = verbose
+moon_centered_fixed.frame_packing.debug     = verbose
+mars_centered_fixed.frame_packing.debug     = verbose
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
