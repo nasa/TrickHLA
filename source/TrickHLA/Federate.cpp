@@ -1281,19 +1281,19 @@ void Federate::determine_federate_MOM_object_instance_names()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: ObjectInstanceNotKnown\n",
+      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: ObjectInstanceNotKnown\n",
                        __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: NotConnected\n",
+      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: NotConnected\n",
                        __LINE__ );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1301,7 +1301,7 @@ void Federate::determine_federate_MOM_object_instance_names()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1314,7 +1314,7 @@ void Federate::determine_federate_MOM_object_instance_names()
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
-      errmsg << "Object::register_object_with_RTI():" << __LINE__
+      errmsg << "Federate::determine_federate_MOM_object_instance_names():" << __LINE__
              << " ERROR: Exception getting MOM instance name for '"
              << fed_name_str << "' ID:" << id_str
              << " '" << rti_err_msg << "'." << endl;
@@ -3643,7 +3643,7 @@ void Federate::send_zero_lookahead_and_requested_data(
    TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
-      errmsg << "Federate::send_zero_lookahead_data():" << __LINE__
+      errmsg << "Federate::send_zero_lookahead_and_requested_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
              << obj_instance_name << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -3657,7 +3657,7 @@ void Federate::send_zero_lookahead_and_requested_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::send_zero_lookahead_data():%d Object:'%s'\n",
+      message_publish( MSG_NORMAL, "Federate::send_zero_lookahead_and_requested_data():%d Object:'%s'\n",
                        __LINE__, obj_instance_name.c_str() );
    }
 
