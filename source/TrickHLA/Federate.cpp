@@ -342,18 +342,18 @@ void Federate::initialize_debug()
    // Verify the debug level is correct just in case the user specifies it in
    // the input.py file as an integer instead of using the ENUM values...
    if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
-      message_publish( MSG_WARNING, "Federate::initialize():%d You specified an \
+      message_publish( MSG_WARNING, "Federate::initialize_debug():%d You specified an \
 invalid debug level '%d' in the input.py file using an integer value instead of \
 an ENUM. Please double check the value you specified in the input.py file against \
 the documented ENUM values.\n",
                        __LINE__, (int)this->debug_level );
       if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
          this->debug_level = DEBUG_LEVEL_NO_TRACE;
-         message_publish( MSG_WARNING, "Federate::initialize():%d No TrickHLA debug messages will be emitted.\n",
+         message_publish( MSG_WARNING, "Federate::initialize_debug():%d No TrickHLA debug messages will be emitted.\n",
                           __LINE__ );
       } else {
          this->debug_level = DEBUG_LEVEL_FULL_TRACE;
-         message_publish( MSG_WARNING, "Federate::initialize():%d All TrickHLA debug messages will be emitted.\n",
+         message_publish( MSG_WARNING, "Federate::initialize_debug():%d All TrickHLA debug messages will be emitted.\n",
                           __LINE__ );
       }
    }
@@ -573,7 +573,7 @@ void Federate::pre_multiphase_initialization()
    // Check to make sure we have a reference to the TrickHLA::Manager.
    if ( manager == NULL ) {
       ostringstream errmsg;
-      errmsg << "Federate::initialize():" << __LINE__
+      errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
