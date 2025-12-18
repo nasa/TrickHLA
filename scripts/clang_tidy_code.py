@@ -47,7 +47,7 @@ def main():
                                      formatter_class = argparse.RawDescriptionHelpFormatter, \
                                      description = 'Scan the TrickHLA source code using clang-tidy.', \
                                      epilog = textwrap.dedent( '''\n
-Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --hla3\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3''' ) )
+Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n  clang_tidy_code --TrickHLA --SpaceFOM -v --hla3''' ) )
 
    parser.add_argument( '--apply-fixes', \
                         help = 'Apply fixes.', \
