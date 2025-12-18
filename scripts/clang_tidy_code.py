@@ -270,18 +270,6 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
          source_dirs.extend ( ['./models/simconfig/src/'] )
       if os.path.isdir( './models/sine/src' ):
          source_dirs.extend ( ['./models/sine/src/'] )
-      if os.path.isdir( './models/Wheelbot/Battery/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Battery/src/'] )
-      if os.path.isdir( './models/Wheelbot/Control/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Control/src/'] )
-      if os.path.isdir( './models/Wheelbot/Electrical/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Electrical/src/'] )
-      if os.path.isdir( './models/Wheelbot/Guidance/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Guidance/src/'] )
-      if os.path.isdir( './models/Wheelbot/Motor/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Motor/src/'] )
-      if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Vehicle/src/'] )
 
    # JEOD
    if args.process_all or args.process_JEOD:

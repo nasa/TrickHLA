@@ -63,6 +63,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Changed to use IEEE 1516 HLA encoder helpers instead of the custom written encoders.
 - Changed the Execution Control to perform the Least Common Time Step (LCTS) time checks when an Execution Configuration Object (ExCO) change is processed (issue #179).
 - Changed the Timeline functions to be more const friendly (issue #180).
+- Removed wheelbot example simulation.
 
 
 ## [v3.1.18] - 2025-04-10
@@ -78,6 +79,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Handle ExecutionControl interactions first before user interactions.
 - Updated SIM_Frame_Test and SIM_RelStateTest simulations.
 - Cleaned up and tested the RefFrameTree, RefFrameData, and RefFrameDataState code base.
+
 
 ## [v3.1.17] - 2025-03-27
 

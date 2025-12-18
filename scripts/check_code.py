@@ -299,18 +299,6 @@ Examples:\n  check_code -s -o -v --exhaustive --hla3\n  check_code -i -o -v --ex
       trickhla_source_dirs.extend ( ['./models/simconfig/src'] )
    if os.path.isdir( './models/sine/src' ):
       trickhla_source_dirs.extend ( ['./models/sine/src'] )
-   if os.path.isdir( './models/Wheelbot/Battery/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Battery/src'] )
-   if os.path.isdir( './models/Wheelbot/Control/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Control/src'] )
-   if os.path.isdir( './models/Wheelbot/Electrical/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Electrical/src'] )
-   if os.path.isdir( './models/Wheelbot/Guidance/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Guidance/src'] )
-   if os.path.isdir( './models/Wheelbot/Motor/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Motor/src'] )
-   if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Vehicle/src'] )
 
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
