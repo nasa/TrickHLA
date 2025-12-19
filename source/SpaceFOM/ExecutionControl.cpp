@@ -2040,18 +2040,6 @@ bool ExecutionControl::process_execution_control_updates()
 
          switch ( this->requested_execution_control_mode ) {
             case EXECUTION_CONTROL_SHUTDOWN: { // Check for SHUTDOWN.
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  // Print out a diagnostic warning message.
-                  ostringstream errmsg;
-                  errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
-                         << " WARNING: Execution mode mismatch between current mode ("
-                         << execution_control_enum_to_string( this->current_execution_control_mode )
-                         << ") and the requested execution mode ("
-                         << execution_control_enum_to_string( this->requested_execution_control_mode )
-                         << ")!" << endl;
-                  message_publish( MSG_WARNING, errmsg.str().c_str() );
-               }
-
                // Mark the current execution mode as SHUTDOWN.
                this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
