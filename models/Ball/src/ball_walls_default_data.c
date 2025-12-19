@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 #include "Ball/include/ball_walls.h"
 
 int ball_walls_default_data(
-  BallWalls * walls )
+   BallWalls *walls )
 {
 
    /* Turn off wall contact printing by default. */
@@ -41,9 +41,9 @@ int ball_walls_default_data(
 
    /* Set the wall positions */
    walls->floor_y_pos      = -10.0;
-   walls->right_wall_x_pos =  10.0;
-   walls->ceiling_y_pos    =  10.0;
+   walls->right_wall_x_pos = 10.0;
+   walls->ceiling_y_pos    = 10.0;
    walls->left_wall_x_pos  = -10.0;
 
-   return( 0 );
+   return ( 0 );
 }

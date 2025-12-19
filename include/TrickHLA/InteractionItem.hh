@@ -21,12 +21,12 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Item.cpp}
 @trick_link_dependency{../../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/ParameterItem.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -40,25 +40,29 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_ITEM_HH
 #define TRICKHLA_INTERACTION_ITEM_HH
 
-// System include files.
-
-// Trick include files.
-
-// TrickHLA include files.
-#include "TrickHLA/Int64Time.hh"
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
@@ -122,7 +126,7 @@ class InteractionItem : public Item
                     int const                                         param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag );
+                    RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag );
 
    /*! @brief Initialization constructor for the TrickHLA InteractionItem class.
     *  @param inter_index        Interaction index.
@@ -137,7 +141,7 @@ class InteractionItem : public Item
                     int const                                         param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag,
+                    RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                     RTI1516_NAMESPACE::LogicalTime const             &theTime );
 
    /*! @brief Destructor for the TrickHLA InteractionItem class. */
@@ -178,7 +182,7 @@ class InteractionItem : public Item
                     int const                                         param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag );
+                    RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag );
 
   private:
    // Do not allow the copy constructor or assignment operator.

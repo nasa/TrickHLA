@@ -27,9 +27,16 @@
 
 // Trick include files.
 ##include "trick/exec_proto.h"
+##include "trick/message_proto.h"
+##include "trick/message_type.h"
 
 // TrickHLA include files.
-##include "TrickHLA/FedAmb.hh"
+##include "TrickHLA/HLAStandardSupport.hh"
+#if defined( IEEE_1516_2025 )
+##include "TrickHLA/FedAmbHLA4.hh"
+#else
+##include "TrickHLA/FedAmbHLA3.hh"
+#endif // IEEE_1516_2025
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
 
@@ -43,7 +50,7 @@
 ##include "TrickHLA/InteractionHandler.hh"
 ##include "TrickHLA/InteractionItem.hh"
 ##include "TrickHLA/LagCompensation.hh"
-##include "TrickHLA/ObjectDeleted.hh"
+##include "TrickHLA/ObjectDeletedHandler.hh"
 ##include "TrickHLA/OwnershipHandler.hh"
 ##include "TrickHLA/Parameter.hh"
 ##include "TrickHLA/ParameterItem.hh"
@@ -67,19 +74,46 @@ class IMSimSimObject : public Trick::SimObject {
    double const       CHECK_PAUSE_DELTA;
 
    IMSimSimObject( double main_thread_data_cycle,
-                   double main_thread_interaction_cycle,
+                   double main_thread_interaction_cycle = 0.0,
                    unsigned short _1ST  = 1,
                    unsigned short _INIT = 60,
                    unsigned short _LAST = 65534 ) 
-      : data_cycle_time( main_thread_data_cycle ),
+      : Trick::SimObject(),
+        data_cycle_time( main_thread_data_cycle ),
         CHECK_PAUSE_DELTA( 0.000001 )
    {
-      // Validate the data and interaction cycle times.
+      // Verify the data and interaction cycle times.
       if ( main_thread_data_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > 0.0!" );
+         message_publish( MSG_ERROR, "%s:IMSimSimObject():%d ERROR: data_cycle time must be > 0.0!\n", __FILE__, __LINE__ );
+         exit( -1 );
       }
       if ( main_thread_interaction_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "IMSimSimObject() main_thread_interaction_cycle must be > 0.0!" );
+         main_thread_interaction_cycle = main_thread_data_cycle;
+         message_publish( MSG_WARNING, "IMSimSimObject():%d WARNING: Setting main_thread_interaction_cycle to data_cycle time '%f'.\n",
+                          __LINE__, main_thread_interaction_cycle );
+      }
+      if ( main_thread_interaction_cycle != main_thread_data_cycle ) {
+         long long inter_cycle_basetime = main_thread_interaction_cycle * exec_get_time_tic_value();
+         long long data_cycle_basetime  = main_thread_data_cycle * exec_get_time_tic_value();
+         if ( ( inter_cycle_basetime > data_cycle_basetime ) && ( ( inter_cycle_basetime % data_cycle_basetime ) != 0 ) ) {
+            std::ostringstream errmsg;
+            errmsg << __FILE__ << ":IMSimSimObject():" << __LINE__
+                   << " ERROR: interaction_cycle time '" << main_thread_interaction_cycle
+                   << "' is not an integer multiple of the data_cycle time '"
+                   << main_thread_data_cycle << "'!" << std::endl;
+            message_publish( MSG_ERROR, errmsg.str().c_str() );
+            exit( -1 );
+         }
+         if ( ( inter_cycle_basetime < data_cycle_basetime ) && ( ( data_cycle_basetime % inter_cycle_basetime ) != 0 ) ) {
+            std::ostringstream errmsg;
+            errmsg << __FILE__ << ":IMSimSimObject():" << __LINE__
+                   << " ERROR: data_cycle time '" << main_thread_data_cycle
+                   << "' divided by the interaction_cycle time '"
+                   << main_thread_interaction_cycle << "' must be an integer!"
+                   << std::endl;
+            message_publish( MSG_ERROR, errmsg.str().c_str() );
+            exit( -1 );
+         }
       }
 
       // Calculate and validate the check-pause job offset time.
@@ -194,7 +228,7 @@ class IMSimSimObject : public Trick::SimObject {
    }
 
  protected:
-    double      data_cycle_time;
+    double  data_cycle_time;
  
  private:
    // Do not allow the implicit copy constructor or assignment operator.

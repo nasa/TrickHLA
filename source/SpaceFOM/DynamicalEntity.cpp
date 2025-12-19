@@ -31,31 +31,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstdlib>
-#include <iostream>
-#include <limits>
-#include <math.h>
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
-#include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
-#include "trick/vector_macros.h"
-
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/Packing.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// Trick includes.
 #include "SpaceFOM/DynamicalEntity.hh"
+#include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/DynamicalEntityData.hh"
+#include "SpaceFOM/PhysicalEntity.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -76,7 +66,7 @@ DynamicalEntity::DynamicalEntity() // RETURN: -- None.
 DynamicalEntity::DynamicalEntity(
    PhysicalEntityData  &physical_data_ref,
    DynamicalEntityData &dynamics_data_ref ) // RETURN: -- None.
-   : PhysicalEntity( physical_data_ref ),
+   : SpaceFOM::PhysicalEntity( physical_data_ref ),
      dynamical_data( &dynamics_data_ref )
 {
    return;
@@ -93,26 +83,21 @@ DynamicalEntity::~DynamicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void DynamicalEntity::configure(
-   PhysicalEntityData  *physical_data_ptr,
-   DynamicalEntityData *dynamics_data_ptr )
+void DynamicalEntity::initialize()
 {
-   // First call the base class pre_initialize function.
-   DynamicalEntityBase::configure();
-
-   // Set the reference to the reference frame.
-   if ( dynamics_data_ptr == NULL ) {
+   // Check to make sure the DynamicalEntity data is set.
+   if ( dynamical_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << '\n';
+             << pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
-   this->dynamical_data = dynamics_data_ptr;
 
    // Mark this as initialized.
-   PhysicalEntity::configure( physical_data_ptr );
+   PhysicalEntity::initialize();
+   DynamicalEntityBase::initialize();
 
    // Return to calling routine.
    return;
@@ -121,21 +106,24 @@ void DynamicalEntity::configure(
 /*!
  * @job_class{initialization}
  */
-void DynamicalEntity::initialize()
+void DynamicalEntity::set_data(
+   PhysicalEntityData  *physical_data_ptr,
+   DynamicalEntityData *dynamics_data_ptr )
 {
-   // Check to make sure the DynamicalEntity data is set.
-   if ( dynamical_data == NULL ) {
+
+   // Set the reference to the reference frame.
+   if ( dynamics_data_ptr == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
+      errmsg << "SpaceFOM::DynamicalEntity::set_data():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << '\n';
+             << pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
+   this->dynamical_data = dynamics_data_ptr;
 
-   // Mark this as initialized.
-   PhysicalEntity::initialize();
-   DynamicalEntityBase::initialize();
+   // Set the Physical Entity data.
+   PhysicalEntity::set_data( physical_data_ptr );
 
    // Return to calling routine.
    return;

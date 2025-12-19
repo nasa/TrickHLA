@@ -36,22 +36,30 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_EXECUTON_CONTROL_HH
 
 // System includes.
-#include <cstdint>
 #include <string>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA Encoder helper includes.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
@@ -90,8 +98,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // Execution Control initialization routines.
    /*! @brief Execution Control initialization routine. */
    virtual void initialize();
-   /*! @brief Join federation execution process. */
-   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
@@ -117,12 +123,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  that have not been achieved and wait for the federation to be
     *  synchronized on it. */
    virtual void clear_multiphase_init_sync_points();
-   /*! @brief The RTI has announced the existence of a synchronization point.
-    *  @param label             Sync-point label.
-    *  @param user_supplied_tag Use supplied tag.*/
-   virtual void sync_point_announced( // cppcheck-suppress [uselessOverride]
-      std::wstring const     &label,
-      RTI1516_USERDATA const &user_supplied_tag );
 
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
@@ -162,7 +162,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool receive_interaction(
       RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const                           &theUserSuppliedTag,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool const                                        received_as_TSO );
 
@@ -222,8 +222,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double      freeze_scenario_time,
-                                                        char const *file_name );
+   virtual void start_federation_save_at_scenario_time( double             freeze_scenario_time,
+                                                        std::string const &file_name );
 
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.

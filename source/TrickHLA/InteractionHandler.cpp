@@ -17,11 +17,12 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Int64Interval.cpp}
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionHandler.cpp}
+@trick_link_dependency{Parameter.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/Int64Interval.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -31,41 +32,43 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
+#include <cstdint>
 #include <cstdlib>
-#include <iostream>
+#include <cstring>
 #include <limits>
+#include <ostream>
+#include <sstream>
+#include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
+#include "TrickHLA/Parameter.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-// HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+// HLA includes.
+#include "RTI/VariableLengthData.h"
 
 using namespace std;
 using namespace TrickHLA;
+using namespace RTI1516_NAMESPACE;
 
 /*!
  * @job_class{initialization}
  */
 InteractionHandler::InteractionHandler() // RETURN: -- None.
-   : interaction( NULL )
+   : initialized( false ),
+     interaction( NULL )
 {
    return;
 }
@@ -87,36 +90,60 @@ void InteractionHandler::initialize_callback(
    this->interaction = inter;
 }
 
+/*!
+ * @job_class{default_data}
+ */
+void InteractionHandler::set_interaction( TrickHLA::Interaction *inter )
+{
+   // Check for initialization.
+   if ( initialized ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::InteractionHandler::set_interaction():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Assign the object.
+   this->interaction = inter;
+
+   return;
+}
+
 bool InteractionHandler::send_interaction()
 {
-   return ( ( interaction != NULL ) ? interaction->send( RTI1516_USERDATA( 0, 0 ) )
-                                    : false );
+   return ( ( interaction != NULL )
+               ? interaction->send( VariableLengthData( NULL, 0 ) )
+               : false );
 }
 
 bool InteractionHandler::send_interaction(
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   VariableLengthData const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL ) ? interaction->send( the_user_supplied_tag )
-                                    : false );
+   return ( ( interaction != NULL )
+               ? interaction->send( the_user_supplied_tag )
+               : false );
 }
 
 bool InteractionHandler::send_interaction(
    double send_HLA_time )
 {
-   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, RTI1516_USERDATA( 0, 0 ) )
-                                    : false );
+   return ( ( interaction != NULL )
+               ? interaction->send( send_HLA_time, VariableLengthData( NULL, 0 ) )
+               : false );
 }
 
 bool InteractionHandler::send_interaction(
-   double                  send_HLA_time,
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   double                    send_HLA_time,
+   VariableLengthData const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, the_user_supplied_tag )
-                                    : false );
+   return ( ( interaction != NULL )
+               ? interaction->send( send_HLA_time, the_user_supplied_tag )
+               : false );
 }
 
 void InteractionHandler::receive_interaction(
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   VariableLengthData const &the_user_supplied_tag )
 {
    message_publish( MSG_NORMAL, "InteractionHandler::receive_interaction():%d \n",
                     __LINE__ );
@@ -124,51 +151,98 @@ void InteractionHandler::receive_interaction(
 
 Int64Interval InteractionHandler::get_lookahead() const
 {
-   Int64Interval di;
-   if ( interaction != NULL ) {
-      di = interaction->get_lookahead();
-   } else {
-      di = Int64Interval( -1.0 );
-   }
-   return di;
+   return ( interaction != NULL ) ? interaction->get_lookahead() : Int64Interval( -1.0 );
 }
 
 Int64Time InteractionHandler::get_granted_time() const
 {
-   Int64Time dt;
+   return ( interaction != NULL ) ? interaction->get_granted_time()
+                                  : Int64Time( INT64_MAX );
+}
+
+double InteractionHandler::get_sim_time() const
+{
    if ( interaction != NULL ) {
-      dt = interaction->get_granted_time();
-   } else {
-      dt = Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
-   }
-   return dt;
-}
-
-double InteractionHandler::get_sim_time()
-{
-   if ( ( interaction != NULL ) && ( interaction->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = interaction->get_federate()->get_execution_control();
-      return ( execution_control->get_sim_time() );
-   }
-   return -std::numeric_limits< double >::max();
-}
-
-double InteractionHandler::get_scenario_time()
-{
-   if ( ( interaction != NULL ) && ( interaction->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = interaction->get_federate()->get_execution_control();
-      return ( execution_control->get_scenario_time() );
-   }
-   return -std::numeric_limits< double >::max();
-}
-
-double InteractionHandler::get_cte_time()
-{
-   if ( ( interaction != NULL ) && ( interaction->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = interaction->get_federate()->get_execution_control();
-      if ( execution_control->does_cte_timeline_exist() ) {
-         return execution_control->get_cte_time();
+      Federate *fed = interaction->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_sim_time();
+         }
       }
    }
    return -std::numeric_limits< double >::max();
+}
+
+double InteractionHandler::get_scenario_time() const
+{
+   if ( interaction != NULL ) {
+      Federate *fed = interaction->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_scenario_time();
+         }
+      }
+   }
+   return -std::numeric_limits< double >::max();
+}
+
+double InteractionHandler::get_cte_time() const
+{
+   if ( interaction != NULL ) {
+      Federate *fed = interaction->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_cte_time();
+         }
+      }
+   }
+   return -std::numeric_limits< double >::max();
+}
+
+/*!
+ * @brief Get the Parameter by FOM name.
+ * @return Parameter for the given name.
+ * @param param_FOM_name Parameter FOM name.
+ */
+Parameter *InteractionHandler::get_parameter(
+   string const &param_FOM_name )
+{
+   return interaction->get_parameter( param_FOM_name );
+}
+
+/*!
+ * @brief This function returns the Parameter for the given parameter FOM name.
+ * @return Parameter for the given name.
+ * @param param_FOM_name Parameter FOM name.
+ */
+Parameter *InteractionHandler::get_parameter_and_validate(
+   string const &param_FOM_name )
+{
+   // Make sure the FOM name is not NULL.
+   if ( param_FOM_name.empty() ) {
+      ostringstream errmsg;
+      errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
+             << " ERROR: Unexpected NULL parameter FOM name specified." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Get the parameter by FOM name.
+   Parameter *param = get_parameter( param_FOM_name );
+
+   // Make sure we have found the parameter.
+   if ( param == NULL ) {
+      ostringstream errmsg;
+      errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
+             << " ERROR: For FOM interaction '" << interaction->get_FOM_name()
+             << "', failed to find the TrickHLA Parameter for an parameter named"
+             << " '" << param_FOM_name << "'. Make sure the FOM parameter name is"
+             << " correct, the FOM contains an parameter named '"
+             << param_FOM_name << "' and that your input.py file is properly"
+             << " configured for this parameter." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   return param;
 }

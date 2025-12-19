@@ -29,8 +29,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <iostream>
-#include <sstream>
 #include <stdlib.h>
 #include <string>
 
@@ -40,7 +38,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // Model include files.
-#include "../include/SineOwnershipHandler.hh"
+#include "sine/include/SineOwnershipHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;

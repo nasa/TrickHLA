@@ -30,19 +30,19 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstdio> // needed for std::FILE used in trick/message_proto.h
+// System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 
 using namespace std;
@@ -182,7 +182,7 @@ void ItemQueue::dump_linked_list(
    for ( Item *item = head; item != NULL; item = item->next ) {
       msg << item << "->";
    }
-   msg << "NULL\n";
+   msg << "NULL" << endl;
 
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }

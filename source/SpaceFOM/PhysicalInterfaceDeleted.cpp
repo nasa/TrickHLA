@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/Object.cpp}
+@trick_link_dependency{../TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{PhysicalInterfaceDeleted.cpp}
 
 @revs_title
@@ -26,20 +27,22 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
-#include "trick/exec_proto.h"
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/Object.hh"
-
-// Model include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterfaceDeleted.hh"
 
+// TrickHLA includes.
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
+
+using namespace std;
 using namespace TrickHLA;
 using namespace SpaceFOM;
 
@@ -47,7 +50,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalInterfaceDeleted::PhysicalInterfaceDeleted()
-   : TrickHLA::ObjectDeleted()
+   : TrickHLA::ObjectDeletedHandler()
 {
    return;
 }
@@ -62,8 +65,9 @@ PhysicalInterfaceDeleted::~PhysicalInterfaceDeleted()
 
 void PhysicalInterfaceDeleted::deleted()
 {
-   std::ostringstream msg;
+   ostringstream msg;
    msg << "SpaceFOM::PhysicalInterfaceDeleted::deleted():" << __LINE__
-       << " Object '" << object->get_name() << "' deleted from the federation.";
+       << " Object '" << object->get_name() << "' deleted from the federation."
+       << endl;
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }

@@ -29,26 +29,31 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <float.h>
-#include <iostream>
+// System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
+// Trick includes.
+#include "trick/matrix_macros.h"
 #include "trick/message_proto.h"
-#include "trick/trick_math.h"
+#include "trick/message_type.h"
+#include "trick/trick_math_error.h"
 #include "trick/trick_math_proto.h"
+#include "trick/vector_macros.h"
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
+#include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/DynamicalEntityData.hh"
 #include "SpaceFOM/DynamicalEntityLagCompBase.hh"
+#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -58,7 +63,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
-   : PhysicalEntityLagCompBase( entity_ref ),
+   : SpaceFOM::PhysicalEntityLagCompBase( entity_ref ),
      de_entity( entity_ref ),
      force_attr( NULL ),
      torque_attr( NULL ),
@@ -101,6 +106,9 @@ DynamicalEntityLagCompBase::~DynamicalEntityLagCompBase() // RETURN: -- None.
  */
 void DynamicalEntityLagCompBase::initialize()
 {
+   // Call the base class.
+   PhysicalEntityLagCompBase::initialize();
+
    // Return to calling routine.
    return;
 }
@@ -161,10 +169,10 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << '\n'
-             << " scenario-time:" << get_scenario_time() << '\n'
-             << "     lookahead:" << this->compensate_dt << '\n'
-             << " adjusted-time:" << end_t << '\n';
+      errmsg << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
+             << " scenario-time:" << get_scenario_time() << endl
+             << "     lookahead:" << this->compensate_dt << endl
+             << " adjusted-time:" << end_t << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -176,7 +184,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data before compensation: \n";
+      msg << "Send data before compensation: " << endl;
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -187,7 +195,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data after compensation: \n";
+      msg << "Send data after compensation: " << endl;
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -213,10 +221,10 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << '\n'
-             << "  scenario-time:" << end_t << '\n'
-             << "      data-time:" << data_t << '\n'
-             << " comp-time-step:" << this->compensate_dt << '\n';
+      errmsg << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
+             << "  scenario-time:" << end_t << endl
+             << "      data-time:" << data_t << endl
+             << " comp-time-step:" << this->compensate_dt << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -231,7 +239,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data before compensation: \n";
+         msg << "Receive data before compensation: " << endl;
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -242,7 +250,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data after compensation: \n";
+         msg << "Receive data after compensation: " << endl;
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -250,9 +258,9 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    } else {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received.\n"
+         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl
                 << "\tvalue_changed: " << state_attr->is_changed()
-                << "; locally owned: " << state_attr->locally_owned << '\n';
+                << "; locally owned: " << state_attr->locally_owned << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -397,36 +405,36 @@ void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream ) con
    stream.precision( 15 );
 
    // Print out the DynamicalEntity data.
-   stream << "\tmass: " << this->mass << '\n';
-   stream << "\tmass_rate: " << this->mass_rate << '\n';
-   stream << "\tinertia: \n"
+   stream << "\tmass: " << this->mass << endl;
+   stream << "\tmass_rate: " << this->mass_rate << endl;
+   stream << "\tinertia: " << endl
           << "\t\t" << this->inertia[0][0] << ", "
           << this->inertia[0][1] << ", "
-          << this->inertia[0][2] << '\n'
+          << this->inertia[0][2] << endl
           << "\t\t" << this->inertia[1][0] << ", "
           << this->inertia[1][1] << ", "
-          << this->inertia[1][2] << '\n'
+          << this->inertia[1][2] << endl
           << "\t\t" << this->inertia[2][0] << ", "
           << this->inertia[2][1] << ", "
-          << this->inertia[2][2] << '\n';
-   stream << "\tinertia rate: \n"
+          << this->inertia[2][2] << endl;
+   stream << "\tinertia rate: " << endl
           << "\t\t" << this->inertia_rate[0][0] << ", "
           << this->inertia_rate[0][1] << ", "
-          << this->inertia_rate[0][2] << '\n'
+          << this->inertia_rate[0][2] << endl
           << "\t\t" << this->inertia_rate[1][0] << ", "
           << this->inertia_rate[1][1] << ", "
-          << this->inertia_rate[1][2] << '\n'
+          << this->inertia_rate[1][2] << endl
           << "\t\t" << this->inertia_rate[2][0] << ", "
           << this->inertia_rate[2][1] << ", "
-          << this->inertia_rate[2][2] << '\n';
+          << this->inertia_rate[2][2] << endl;
    stream << "\tforce: "
           << this->force[0] << ", "
           << this->force[1] << ", "
-          << this->force[2] << '\n';
+          << this->force[2] << endl;
    stream << "\ttorque: "
           << this->torque[0] << ", "
           << this->torque[1] << ", "
-          << this->torque[2] << '\n';
+          << this->torque[2] << endl;
 
    // Return to the calling routine.
    return;

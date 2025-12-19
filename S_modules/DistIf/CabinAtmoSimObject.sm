@@ -19,7 +19,8 @@ class CabinAtmoSimObject: public Trick::SimObject
 
    // Construct the sim object instance and define Trick jobs.
    CabinAtmoSimObject(const std::string& name)
-     : modelConfigA(),
+     : Trick::SimObject(),
+       modelConfigA(),
        modelConfigB(),
        modelA(name + ".modelA", &modelConfigA),
        modelB(name + ".modelB", &modelConfigB),

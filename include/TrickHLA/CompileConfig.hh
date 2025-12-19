@@ -29,13 +29,21 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_COMPILE_CONFIG_HH
 #define TRICKHLA_COMPILE_CONFIG_HH
 
+// Trick does not support the std::wstring type in the Memory Manager for now.
+// Default: NO_TRICK_WSTRING_MM_SUPPORT
+#define NO_TRICK_WSTRING_MM_SUPPORT
+
+// Collect statistics on the wait times for the Time Advance Grant (TAG).
+// Default: NO_TRICKHLA_COLLECT_TAG_STATS
+#define NO_TRICKHLA_COLLECT_TAG_STATS
+
 // For blocking cyclic reads, do a check on the send and received data counts.
-// Default: NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
-#define NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+// Default: NO_TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#define NO_TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
 // Measure the elapsed time between cyclic data reads.
-// Default: NO_THLA_CYCLIC_READ_TIME_STATS
-#define NO_THLA_CYCLIC_READ_TIME_STATS
+// Default: NO_TRICKHLA_CYCLIC_READ_TIME_STATS
+#define NO_TRICKHLA_CYCLIC_READ_TIME_STATS
 
 // Insert a compile time error if an unsupported version of Trick 19 is used.
 // Minimum supported Trick 19 version: 19.0.0
@@ -44,7 +52,7 @@ NASA, Johnson Space Center\n
 #define MIN_TRICK_PATCH 0 // Set to the minimum supported Trick Patch version.
 // Make sure the TRICK_VER compiler define is set.
 #if ( !defined( TRICK_VER ) )
-#   error "The Trick version variable \"TRICK_VER\" is not set!"
+#   error "The Trick version variable TRICK_VER is not set!"
 #   error "The minimum acceptable version of Trick is 19.0.0!"
 #endif
 // Check for the minimum major version of Trick.

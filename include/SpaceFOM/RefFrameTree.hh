@@ -43,15 +43,13 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_TREE_HH
 #define SPACEFOM_REF_FRAME_TREE_HH
 
-// System include files.
-#include <map>
-#include <string>
+// System includes.
+#include <iostream>
 
-// TrickHLA include files.
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/LRTreeBase.hh"
 #include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
 
 namespace SpaceFOM
 {
@@ -81,14 +79,6 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
     *  @param frame_ptr Pointer to the reference frame to add.
     *  @return Success or failure of the add. */
    virtual bool add_frame( RefFrameBase *frame_ptr );
-
-   /*! @brief Iterate through the frames and build a consistent tree.
-    *  @return True on success, false otherwise. */
-   virtual bool build_tree(); // cppcheck-suppress [uselessOverride]
-
-   /*! @brief Check for consistency of the tree.
-    *  @return True on success, false otherwise. */
-   virtual bool check_tree(); // cppcheck-suppress [uselessOverride]
 
    /*! @brief Check if a frame is in the tree.
     *  @return True if in the tree, false otherwise.

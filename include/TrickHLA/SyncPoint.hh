@@ -35,22 +35,29 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SYNC_POINT_HH
 #define TRICKHLA_SYNC_POINT_HH
 
-// System includes
+// System includes.
 #include <string>
 
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
@@ -143,11 +150,11 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
 
    /*! @brief Encode the user supplied tag data.
     *  @return The encoded user supplied tag. */
-   virtual RTI1516_USERDATA const encode_user_supplied_tag();
+   virtual RTI1516_NAMESPACE::VariableLengthData const encode_user_supplied_tag();
 
    /*! @brief Decode the user supplied data.
     *  @param supplied_tag supplied_tag The supplied tag to decode as the user supplied tag. */
-   virtual void decode_user_supplied_tag( RTI1516_USERDATA const &supplied_tag );
+   virtual void decode_user_supplied_tag( RTI1516_NAMESPACE::VariableLengthData const &supplied_tag );
 
    // Utility functions.
    /*! @brief Create a C++ string with the synchronization point label and
@@ -168,7 +175,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    std::wstring    label; ///< @trick_io{**} Sync-point name.
    SyncPtStateEnum state; ///< @trick_units{--} Sync-point state.
 
-   RTI1516_USERDATA user_supplied_tag; ///< @trick_io{**} Sync-point user supplied data.
+   RTI1516_NAMESPACE::VariableLengthData user_supplied_tag; ///< @trick_io{**} Sync-point user supplied data.
 
    char *label_chkpt; ///< @trick_units{--} Trick memory allocated label that is checkpointable.
 };

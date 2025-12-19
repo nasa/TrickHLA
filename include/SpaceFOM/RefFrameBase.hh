@@ -42,17 +42,18 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_BASE_HH
 #define SPACEFOM_REF_FRAME_BASE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 #include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/Packing.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/LRTreeNodeBase.hh"
 #include "SpaceFOM/RefFrameData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Packing.hh"
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
@@ -101,28 +102,19 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    // Default data.
    /*! @brief Sets up the attributes for a reference frame using default values.
-    *  @param publishes             Does this federate publish this reference frame.
+    *  @param create                Does this federate create this reference frame.
     *  @param sim_obj_name          Name of SimObject containing this reference frame.
-    *  @param ref_frame_obj_name    Name of the ReferenceFrame object in the SimObject.
-    *  @param ref_frame_name        Name of the ReferenceFrame instance.
+    *  @param ref_frame_pkg_name    Name of the ReferenceFrame object in the SimObject.
+    *  @param ref_frame_fed_name    Name of the ReferenceFrame instance in federation.
     *  @param ref_frame_parent_name Name of the parent frame for this ReferenceFrame instance.
     *  @param ref_frame_parent      Reference to parent frame for this ReferenceFrame instance.
     *  @param mngr_object           TrickHLA::Object associated with this reference frame.
     *  */
-   virtual void base_config( bool              publishes,
-                             char const       *sim_obj_name,
-                             char const       *ref_frame_obj_name,
-                             char const       *ref_frame_name,
-                             char const       *ref_frame_parent_name = NULL,
-                             RefFrameBase     *ref_frame_parent      = NULL,
-                             TrickHLA::Object *mngr_object           = NULL );
-
-   // Pre-initialize the packing object.
-   /*! @brief Function to begin the configuration/initialization of the RefFrame.
-    *  This function needs to be called prior to TrickHLA initialization if
-    *  the RefFrame object is not being configured with an initialization
-    *  constructor. */
-   void configure();
+   virtual void base_config( bool               create,
+                             std::string const &sim_obj_name,
+                             std::string const &ref_frame_pkg_name,
+                             std::string const &ref_frame_fed_name,
+                             TrickHLA::Object  *mngr_object = NULL );
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */
@@ -135,22 +127,22 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
    // Access functions.
    /*! @brief Access function to set the HLA federation instance name for the reference frame.
     *  @param new_name Object instance name for this reference frame. */
-   virtual void set_name( char const *new_name );
+   virtual void set_name( std::string const &new_name );
 
    /*! @brief Access function to get the HLA federation instance name for the reference frame.
     *  @return Object instance name for this reference frame. */
-   virtual char const *get_name() const
+   virtual std::string const &get_name() const
    {
       return packing_data.name;
    }
 
    /*! @brief Access function to set the HLA federation instance name for the parent reference frame.
     *  @param name Object instance name for the parent reference frame. */
-   virtual void set_parent_name( char const *name );
+   virtual void set_parent_name( std::string const &name );
 
    /*! @brief Access function to get the HLA federation instance name for the parent reference frame.
     *  @return Object instance name for the parent reference frame. */
-   virtual char const *get_parent_name() const
+   virtual std::string const &get_parent_name() const
    {
       return packing_data.parent_name;
    }

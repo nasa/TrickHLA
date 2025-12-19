@@ -32,21 +32,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstring>
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/trick_byteswap.h"
+#include "trick/message_type.h"
 
-// TrickHLA model include files.
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 using namespace std;
@@ -103,7 +103,7 @@ void OpaqueBuffer::set_byte_alignment( unsigned int const size )
       default:
          ostringstream errmsg;
          errmsg << "OpaqueBuffer::set_byte_alignment():" << __LINE__
-                << " ERROR: Unsupported byte alignment: " << size << "!\n";
+                << " ERROR: Unsupported byte alignment: " << size << "!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
    }
@@ -145,7 +145,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
       ostringstream errmsg;
       errmsg << "OpaqueBuffer::ensure_buffer_capacity():" << __LINE__
              << " ERROR: Could not allocate memory for buffer for requested"
-             << " capacity " << capacity << "!\n";
+             << " capacity " << capacity << "!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -177,19 +177,21 @@ void OpaqueBuffer::push_to_buffer(
              << " WARNING: Trying to push " << size << " bytes into the buffer at"
              << " position " << push_pos << ", which exceeds the buffer capacity"
              << " by " << ( ( push_pos + size ) - capacity ) << " bytes! Resizing the"
-             << " buffer to accommodate the data.\n";
+             << " buffer to accommodate the data." << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + size );
    }
 
    // Display a warning if an unsupported encoding is used.
-   if ( ( encoding != ENCODING_LITTLE_ENDIAN ) && ( encoding != ENCODING_BIG_ENDIAN ) && ( encoding != ENCODING_NONE ) ) {
+   if ( ( encoding != ENCODING_LITTLE_ENDIAN )
+        && ( encoding != ENCODING_BIG_ENDIAN )
+        && ( encoding != ENCODING_NONE ) ) {
       ostringstream errmsg;
       errmsg << "OpaqueBuffer::push_to_buffer():" << __LINE__
              << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
-             << ", or ENCODING_NONE:" << ENCODING_NONE << '\n';
+             << ", or ENCODING_NONE:" << ENCODING_NONE << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -230,7 +232,7 @@ void OpaqueBuffer::pull_from_buffer(
       errmsg << "OpaqueBuffer::pull_from_buffer():" << __LINE__
              << " ERROR: Trying to pull " << size << " bytes from the buffer at"
              << " position " << pull_pos << ", which exceeds the end of the buffer"
-             << " by " << ( ( pull_pos + size ) - capacity ) << " bytes!\n";
+             << " by " << ( ( pull_pos + size ) - capacity ) << " bytes!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -241,7 +243,7 @@ void OpaqueBuffer::pull_from_buffer(
              << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
-             << ", or ENCODING_NONE:" << ENCODING_NONE << '\n';
+             << ", or ENCODING_NONE:" << ENCODING_NONE << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -267,7 +269,7 @@ void OpaqueBuffer::push_pad_to_buffer(
              << " WARNING: Trying to push " << pad_size << " pad bytes into the"
              << " buffer at position " << push_pos << ", which exceeds the buffer"
              << " capacity by " << ( ( push_pos + pad_size ) - capacity ) << " bytes!"
-             << " Resizing the buffer to accommodate the data.\n";
+             << " Resizing the buffer to accommodate the data." << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + pad_size );
    }
@@ -293,7 +295,7 @@ void OpaqueBuffer::pull_pad_from_buffer(
              << " ERROR: Trying to pull " << pad_size << " pad bytes from the"
              << " buffer at position " << pull_pos << ", which exceeds the end of"
              << " the buffer by " << ( ( pull_pos + pad_size ) - capacity )
-             << " bytes!\n";
+             << " bytes!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -317,7 +319,7 @@ void OpaqueBuffer::byteswap_buffer_copy(
       // Do a byte-swap based on the size of the data.
       switch ( size ) {
          case 1: {
-            memcpy( dest, src, 1 );
+            memcpy( dest, src, 1 ); // flawfinder: ignore
             break;
          }
          case 2: {
@@ -357,7 +359,7 @@ void OpaqueBuffer::byteswap_buffer_copy(
                ostringstream errmsg;
                errmsg << "OpaqueBuffer::byteswap_buffer_copy():"
                       << __LINE__ << " ERROR: Don't know how to byteswap "
-                      << size << " bytes!\n";
+                      << size << " bytes!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
             break;
@@ -365,6 +367,6 @@ void OpaqueBuffer::byteswap_buffer_copy(
       }
    } else {
       // No byte-swap needed so just copy the data.
-      memcpy( dest, src, size );
+      memcpy( dest, src, size ); // flawfinder: ignore
    }
 }

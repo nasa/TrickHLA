@@ -36,13 +36,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_HH
 #define SPACEFOM_PHYSICAL_ENTITY_HH
 
-// System include files.
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityBase.hh"
-#include "SpaceFOM/PhysicalEntityData.hh"
 
 namespace TrickHLA
 {
@@ -71,10 +66,6 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    explicit PhysicalEntity( PhysicalEntityData &physical_data_ref ); // Initialization constructor.
    virtual ~PhysicalEntity();                                        // Destructor.
 
-   /*! @brief Set the reference to the physical entity data.
-    *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
-   void configure( PhysicalEntityData *physical_data_ptr );
-
    /*! @brief Initialize the packing object. */
    virtual void initialize();
 
@@ -90,15 +81,11 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
    /*! @brief Set the reference to the physical entity data.
     *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
-   virtual void set_data( PhysicalEntityData *physical_data_ptr )
-   {
-      physical_data = physical_data_ptr;
-      return;
-   }
+   void set_data( PhysicalEntityData *physical_data_ptr );
 
    /*! @brief Get the reference to the physical entity data.
     *  @return Pointer to the PhysicalEntity data. */
-   virtual PhysicalEntityData *get_data()
+   PhysicalEntityData *get_data()
    {
       return ( physical_data );
    }

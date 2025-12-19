@@ -26,18 +26,20 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cmath>
-#include <iostream>
+#include <cstddef>
+#include <ostream>
 #include <sstream>
 
-// Trick include files.
+// Trick includes.
+#include "trick/Integrator.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/LagCompensationInteg.hh"
+#include "TrickHLA/Types.hh"
 
 // Uncomment this define if you want additional debug information.
 #define TRICK_HLA_DEBUG_INTEG
@@ -79,7 +81,7 @@ int LagCompensationInteg::integrate(
       ostringstream msg;
       msg << "LagCompensationInteg::integrate(): " << __LINE__
           << " Compensate: t_begin, t_end, dt_go: "
-          << t_begin << ", " << t_end << ", " << dt_go << '\n';
+          << t_begin << ", " << t_end << ", " << dt_go << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -98,7 +100,7 @@ int LagCompensationInteg::integrate(
          msg << "LagCompensationInteg::integrate(): " << __LINE__
              << "Integ dt, tol, t, dt_go: "
              << this->integ_dt << ", " << this->integ_tol << ", "
-             << integ_t << ", " << dt_go << '\n';
+             << integ_t << ", " << dt_go << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 

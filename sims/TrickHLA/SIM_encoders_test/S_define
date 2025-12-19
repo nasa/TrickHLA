@@ -1,0 +1,317 @@
+
+#include "sim_objects/default_trick_sys.sm"
+
+##include <climits>
+
+##include "TrickHLA/CompileConfig.hh" // for TRICK_WSTRING_MM_SUPPORT
+##include "TrickHLA/DebugHandler.hh"
+##include "TrickHLA/Manager.hh"
+##include "TrickHLA/encoding/EncoderFactory.hh"
+##include "TrickHLA/encoding/EncoderBase.hh"
+
+##include "encoding/include/EncodingTest.hh"
+##include "encoding/include/BoolData.hh"
+##include "encoding/include/Enum8Data.hh"
+##include "encoding/include/Enum16Data.hh"
+##include "encoding/include/Enum32Data.hh"
+##include "encoding/include/Enum64Data.hh"
+##include "encoding/include/Float32Data.hh"
+##include "encoding/include/Float64Data.hh"
+##include "encoding/include/CharData.hh"
+##include "encoding/include/Int16Data.hh"
+##include "encoding/include/Int32Data.hh"
+##include "encoding/include/Int64Data.hh"
+##include "encoding/include/UInt16Data.hh"
+##include "encoding/include/UInt32Data.hh"
+##include "encoding/include/UInt64Data.hh"
+##include "encoding/include/LongData.hh"
+##include "encoding/include/ULongData.hh"
+##include "encoding/include/StringData.hh"
+##include "encoding/include/WCharData.hh"
+##include "encoding/include/WStringData.hh"
+
+##include "FixedRecord/include/FixedRecData.hh"
+
+
+%header{
+ using namespace TrickHLA;
+ using namespace TrickHLAModel;
+%}
+
+//=============================================================================
+// SIM_OBJECT: TestSimObj
+// Sim-object for testing basic data type encoders.
+//=============================================================================
+class TestSimObj : public Trick::SimObject {
+
+ public:
+   CharData char_data1  = CharData( 0 );
+   CharData char_data2  = CharData( 10 );
+   CharData char_data3  = CharData( 10 );
+   CharData char_data4  = CharData( 0 );
+   CharData char_data5  = CharData( 0 );
+   CharData char_data6  = CharData( 10 );
+   CharData char_data7  = CharData( 10 );
+   CharData char_data8  = CharData( 0 );
+   CharData char_data9  = CharData( 0 );
+   CharData char_data10 = CharData( 10 );
+
+   StringData string_data1 = StringData( 10 );
+   StringData string_data2 = StringData( 0 );
+   StringData string_data3 = StringData( 0 );
+   StringData string_data4 = StringData( 10 );
+
+   WCharData wchar_data1 = WCharData( 0 );
+   WCharData wchar_data2 = WCharData( 10 );
+
+#ifdef TRICK_WSTRING_MM_SUPPORT
+   // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
+   WStringData wstring_data1 = WStringData( 0 );
+   WStringData wstring_data2 = WStringData( 10 );
+#endif
+
+   Int16Data int16_data1 = Int16Data( 0 );
+   Int16Data int16_data2 = Int16Data( 0 );
+   Int16Data int16_data3 = Int16Data( 0 );
+   Int16Data int16_data4 = Int16Data( 0 );
+
+   UInt16Data uint16_data1 = UInt16Data( 0 );
+   UInt16Data uint16_data2 = UInt16Data( 0 );
+   UInt16Data uint16_data3 = UInt16Data( (unsigned short)SHRT_MAX + 1 );
+   UInt16Data uint16_data4 = UInt16Data( (unsigned short)SHRT_MAX + 1 );
+
+   Int32Data int32_data1 = Int32Data( 0 );
+   Int32Data int32_data2 = Int32Data( 10 );
+   Int32Data int32_data3 = Int32Data( 0 );
+   Int32Data int32_data4 = Int32Data( 10 );
+
+   UInt32Data uint32_data1 = UInt32Data( 0 );
+   UInt32Data uint32_data2 = UInt32Data( 10 );
+   UInt32Data uint32_data3 = UInt32Data( (unsigned int)INT_MAX + 1 );
+   UInt32Data uint32_data4 = UInt32Data( (unsigned int)INT_MAX + 1 + 10 );
+
+   Int64Data int64_data1 = Int64Data( 10 );
+   Int64Data int64_data2 = Int64Data( 0 );
+   Int64Data int64_data3 = Int64Data( 10 );
+   Int64Data int64_data4 = Int64Data( 0 );
+
+   UInt64Data uint64_data1 = UInt64Data( 10 );
+   UInt64Data uint64_data2 = UInt64Data( 0 );
+   UInt64Data uint64_data3 = UInt64Data( (unsigned long long)LLONG_MAX + 1 + 10 );
+   UInt64Data uint64_data4 = UInt64Data( (unsigned long long)LLONG_MAX + 1 );
+
+   LongData long_data1 = LongData( 0 );
+   LongData long_data2 = LongData( 10 );
+   LongData long_data3 = LongData( 0 );
+   LongData long_data4 = LongData( 10 );
+
+   ULongData ulong_data1 = ULongData( 0 );
+   ULongData ulong_data2 = ULongData( 10 );
+   ULongData ulong_data3 = ULongData( (unsigned long)LONG_MAX + 1 );
+   ULongData ulong_data4 = ULongData( (unsigned long)LONG_MAX + 1 + 10 );
+
+   Float32Data float32_data1 = Float32Data( 0 );
+   Float32Data float32_data2 = Float32Data( 10 );
+   Float32Data float32_data3 = Float32Data( 0 );
+   Float32Data float32_data4 = Float32Data( 10 );
+
+   Float64Data float64_data1 = Float64Data( 10 );
+   Float64Data float64_data2 = Float64Data( 0 );
+   Float64Data float64_data3 = Float64Data( 10 );
+   Float64Data float64_data4 = Float64Data( 0 );
+
+   Float64Data float64_logical_time_data1 = Float64Data( 10 );
+   Float64Data float64_logical_time_data2 = Float64Data( 0 );
+
+   BoolData bool_data1 = BoolData( 0 );
+   BoolData bool_data2 = BoolData( 1 );
+
+   Enum8Data enum8_data1 = Enum8Data( 0 );
+   Enum8Data enum8_data2 = Enum8Data( 1 );
+   Enum8Data enum8_data3 = Enum8Data( 1 );
+   Enum8Data enum8_data4 = Enum8Data( 0 );
+
+   Enum16Data enum16_data1 = Enum16Data( 0 );
+   Enum16Data enum16_data2 = Enum16Data( 1 );
+   Enum16Data enum16_data3 = Enum16Data( 1 );
+   Enum16Data enum16_data4 = Enum16Data( 0 );
+
+   Enum32Data enum32_data1 = Enum32Data( 0 );
+   Enum32Data enum32_data2 = Enum32Data( 1 );
+   Enum32Data enum32_data3 = Enum32Data( 1 );
+   Enum32Data enum32_data4 = Enum32Data( 0 );
+
+   Enum64Data enum64_data1 = Enum64Data( 0 );
+   Enum64Data enum64_data2 = Enum64Data( 1 );
+   Enum64Data enum64_data3 = Enum64Data( 1 );
+   Enum64Data enum64_data4 = Enum64Data( 0 );
+
+   FixedRecData fixed_rec_data1 = FixedRecData();
+   FixedRecData fixed_rec_data2 = FixedRecData();
+
+   FixedRecData fixed_rec_data3 = FixedRecData();
+   FixedRecData fixed_rec_data4 = FixedRecData();
+
+   EncodingTest encoder_test;
+
+   TestSimObj()
+   {
+      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_1_TRACE,
+                                            TrickHLA::DEBUG_SOURCE_ALL_MODULES );
+
+#if 0
+      ("initialization") encoder_test.char_test( "T.char_data1", char_data1,
+                                                 "T.char_data2", char_data2,
+                                                 TrickHLA::ENCODING_NONE );
+#endif
+      ("initialization") encoder_test.char_test( "T.char_data3", char_data3,
+                                                 "T.char_data4", char_data4,
+                                                 TrickHLA::ENCODING_ASCII_CHAR );
+      ("initialization") encoder_test.char_test( "T.char_data5", char_data5,
+                                                 "T.char_data6", char_data6,
+                                                 TrickHLA::ENCODING_ASCII_STRING );
+      ("initialization") encoder_test.char_test( "T.char_data7", char_data7,
+                                                 "T.char_data8", char_data8,
+                                                 TrickHLA::ENCODING_UNICODE_STRING );
+      ("initialization") encoder_test.char_test( "T.char_data9",  char_data9,
+                                                 "T.char_data10", char_data10,
+                                                 TrickHLA::ENCODING_OPAQUE_DATA );
+
+      ("initialization") encoder_test.string_test( "T.string_data1", string_data1,
+                                                   "T.string_data2", string_data2,
+                                                   TrickHLA::ENCODING_ASCII_STRING );
+      ("initialization") encoder_test.string_test( "T.string_data3", string_data3,
+                                                   "T.string_data4", string_data4,
+                                                   TrickHLA::ENCODING_UNICODE_STRING );
+
+      ("initialization") encoder_test.wchar_test( "T.wchar_data1", wchar_data1,
+                                                  "T.wchar_data2", wchar_data2,
+                                                  TrickHLA::ENCODING_UNICODE_CHAR );
+
+#ifdef TRICK_WSTRING_MM_SUPPORT
+      ("initialization") encoder_test.wstring_test( "T.wstring_data1", wstring_data1,
+                                                    "T.wstring_data2", wstring_data2,
+                                                    TrickHLA::ENCODING_UNICODE_STRING );
+#endif
+
+      ("initialization") encoder_test.int16_test( "T.int16_data1", int16_data1,
+                                                  "T.int16_data2", int16_data2,
+                                                  TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.int16_test( "T.int16_data3", int16_data3,
+                                                  "T.int16_data4", int16_data4,
+                                                  TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.uint16_test( "T.uint16_data1", uint16_data1,
+                                                   "T.uint16_data2", uint16_data2,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.uint16_test( "T.uint16_data3", uint16_data3,
+                                                   "T.uint16_data4", uint16_data4,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.int32_test( "T.int32_data1", int32_data1,
+                                                  "T.int32_data2", int32_data2,
+                                                  TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.int32_test( "T.int32_data3", int32_data3,
+                                                  "T.int32_data4", int32_data4,
+                                                  TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.uint32_test( "T.uint32_data1", uint32_data1,
+                                                   "T.uint32_data2", uint32_data2,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.uint32_test( "T.uint32_data3", uint32_data3,
+                                                   "T.uint32_data4", uint32_data4,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.int64_test( "T.int64_data1", int64_data1,
+                                                  "T.int64_data2", int64_data2,
+                                                  TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.int64_test( "T.int64_data3", int64_data3,
+                                                  "T.int64_data4", int64_data4,
+                                                  TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.uint64_test( "T.uint64_data1", uint64_data1,
+                                                   "T.uint64_data2", uint64_data2,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.uint64_test( "T.uint64_data3", uint64_data3,
+                                                   "T.uint64_data4", uint64_data4,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.long_test( "T.long_data1", long_data1,
+                                                 "T.long_data2", long_data2,
+                                                 TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.long_test( "T.long_data3", long_data3,
+                                                 "T.long_data4", long_data4,
+                                                 TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.ulong_test( "T.ulong_data1", ulong_data1,
+                                                  "T.ulong_data2", ulong_data2,
+                                                  TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.ulong_test( "T.ulong_data3", ulong_data3,
+                                                  "T.ulong_data4", ulong_data4,
+                                                  TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.float32_test( "T.float32_data1", float32_data1,
+                                                    "T.float32_data2", float32_data2,
+                                                    TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.float32_test( "T.float32_data3", float32_data3,
+                                                    "T.float32_data4", float32_data4,
+                                                    TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.float64_test( "T.float64_data1", float64_data1,
+                                                    "T.float64_data2", float64_data2,
+                                                    TrickHLA::ENCODING_LITTLE_ENDIAN );
+      ("initialization") encoder_test.float64_test( "T.float64_data3", float64_data3,
+                                                    "T.float64_data4", float64_data4,
+                                                    TrickHLA::ENCODING_BIG_ENDIAN );
+
+      ("initialization") encoder_test.float64_logical_time_test( "T.float64_logical_time_data1", float64_logical_time_data1,
+                                                                 "T.float64_logical_time_data2", float64_logical_time_data2 );
+
+      ("initialization") encoder_test.bool_test( "T.bool_data1", bool_data1,
+                                                 "T.bool_data2", bool_data2,
+                                                 TrickHLA::ENCODING_BOOLEAN );
+
+      ("initialization") encoder_test.enum8_test( "T.enum8_data1", enum8_data1,
+                                                  "T.enum8_data2", enum8_data2,
+                                                  TrickHLA::ENCODING_BYTE );
+      ("initialization") encoder_test.enum8_test( "T.enum8_data3", enum8_data3,
+                                                  "T.enum8_data4", enum8_data4,
+                                                  TrickHLA::ENCODING_BYTE );
+
+      ("initialization") encoder_test.enum16_test( "T.enum16_data1", enum16_data1,
+                                                   "T.enum16_data2", enum16_data2,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+      ("initialization") encoder_test.enum16_test( "T.enum16_data3", enum16_data3,
+                                                   "T.enum16_data4", enum16_data4,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+
+      ("initialization") encoder_test.enum32_test( "T.enum32_data1", enum32_data1,
+                                                   "T.enum32_data2", enum32_data2,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+      ("initialization") encoder_test.enum32_test( "T.enum32_data3", enum32_data3,
+                                                   "T.enum32_data4", enum32_data4,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+
+      ("initialization") encoder_test.enum64_test( "T.enum64_data1", enum64_data1,
+                                                   "T.enum64_data2", enum64_data2,
+                                                   TrickHLA::ENCODING_BIG_ENDIAN );
+      ("initialization") encoder_test.enum64_test( "T.enum64_data3", enum64_data3,
+                                                   "T.enum64_data4", enum64_data4,
+                                                   TrickHLA::ENCODING_LITTLE_ENDIAN );
+
+      ("initialization") encoder_test.fixed_record_test( "T.fixed_rec_data1", fixed_rec_data1,
+                                                         "T.fixed_rec_data2", fixed_rec_data2 );
+
+      ("initialization") encoder_test.fixed_record_attribute_test( "T.fixed_rec_data3", fixed_rec_data3,
+                                                                   "T.fixed_rec_data4", fixed_rec_data4 );
+
+      ("initialization") exec_terminate( __FILE__, "Done" );
+   }
+
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   TestSimObj( TestSimObj const & rhs );
+   TestSimObj & operator=( TestSimObj const & rhs );
+};
+
+TestSimObj T;

@@ -36,15 +36,13 @@ NASA, Johnson Space Center\n
 #ifndef IMSIM_EXECUTION_CONFIGURATION_HH
 #define IMSIM_EXECUTION_CONFIGURATION_HH
 
-// System include files.
+// System includes.
 #include <cstdint>
+#include <iostream>
+#include <string>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/ExecutionConfigurationBase.hh"
-#include "TrickHLA/Packing.hh"
-
-// IMSim include files.
-#include "IMSim/Types.hh"
 
 namespace IMSim
 {
@@ -69,15 +67,15 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
   public:
    // The members below are part of the FOM data IMSim simulation configuration exchange.
-   char *owner; /**< @trick_units{--}
+   std::string owner; /**< @trick_units{--}
       Specifies the name of the federate publishing the simulation
       configuration object. */
 
-   char *scenario; /**< @trick_units{--}
+   std::string scenario; /**< @trick_units{--}
       Specifies the identifying string associated with the scenario being
       executed. */
 
-   char *mode; /**< @trick_units{--}
+   std::string mode; /**< @trick_units{--}
       Specifies the mode string describing the current federation execution
       run status. */
 
@@ -87,7 +85,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    int32_t number_of_federates; /**< @trick_units{--}
       Number of the required federates for the federation execution. */
 
-   char *required_federates; /**< @trick_units{--}
+   std::string required_federates; /**< @trick_units{--}
       Specifies the name of the required federates for the federation execution. */
 
    int32_t start_year; /**< @trick_units{yr}
@@ -108,7 +106,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    ExecutionConfiguration();
    /*! @brief Initialization constructor for the TrickHLA IMSim ExecutionConfiguration class.
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   explicit ExecutionConfiguration( char const *s_define_name );
+   explicit ExecutionConfiguration( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the IMSim ExecutionConfiguration class. */
    virtual ~ExecutionConfiguration();
 
@@ -120,7 +118,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    /*! @brief Sets up the attributes for the simulation configuration using
     *  default values.  These can be overridden in the input file.
     *  @param sim_config_name S_define level Trick name for simulation configuration object. */
-   virtual void configure_attributes( char const *sim_config_name );
+   virtual void configure_attributes( std::string const &sim_config_name );
 
    /*! @brief Configure the execution configuration object. */
    virtual void configure();
@@ -142,30 +140,30 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    //
    /*! @brief Set the name of the simulation configuration owner.
     *  @param owner_name Name of the simulation configuration owner. */
-   virtual void set_owner( char const *owner_name );
+   virtual void set_owner( std::string const &owner_name );
    /*! @brief Get the name of the simulation configuration owner.
     *  @return Name of the simulation configuration owner as a constant string. */
-   virtual char const *get_owner()
+   virtual std::string const &get_owner()
    {
       return owner;
    }
 
    /*! @brief Set the scenario execution description string.
     *  @param scenario_id String describing the federation execution scenario. */
-   virtual void set_scenario( char const *scenario_id );
+   virtual void set_scenario( std::string const &scenario_id );
    /*! @brief Get the scenario execution description string.
     *  @return Scenario execution description as a constant string. */
-   virtual char const *get_scenario()
+   virtual std::string const &get_scenario()
    {
       return scenario;
    }
 
    /*! @brief Set the execution mode description string.
     *  @param mode_id String describing the federation execution mode. */
-   virtual void set_mode( char const *mode_id );
+   virtual void set_mode( std::string const &mode_id );
    /*! @brief Get the execution mode description string.
     *  @return Execution mode description as a constant string. */
-   virtual char const *get_mode()
+   virtual std::string const &get_mode()
    {
       return mode;
    }
@@ -198,10 +196,10 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
    /*! @brief Set the list of required federates in a comma separated string.
     *  @param federates List of required federates in a comma separated string. */
-   virtual void set_required_federates( char const *federates );
+   virtual void set_required_federates( std::string const &federates );
    /*! @brief Get the list of required federates.
     *  @return List of required federates as a comma separated constant string. */
-   virtual char const *get_required_federates()
+   virtual std::string const &get_required_federates()
    {
       return required_federates;
    }

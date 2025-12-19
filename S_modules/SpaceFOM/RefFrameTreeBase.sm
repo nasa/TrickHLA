@@ -34,8 +34,8 @@
 ##include "SpaceFOM/RefFrameTree.hh"
 
 //==========================================================================
-// SIM_OBJECT: RefFrameTreeBaseSimObject - An JEOD reference frame tree
-// simulation object definition.
+// SIM_OBJECT: SpaceFOMRefFrameTreeBaseSimObject - An JEOD reference frame
+// tree simulation object definition.
 //==========================================================================
 class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
 
@@ -48,20 +48,24 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    SpaceFOMRefFrameTreeBaseSimObject( TrickHLA::Manager          & thla_manager_in,
                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
+                                      unsigned short               _INIT  = P_HLA_INIT,
                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
-      : thla_manager( thla_manager_in ),
+      : Trick::SimObject(),
+        thla_manager( thla_manager_in ),
         exec_cntrl( exec_cntrl_in )
    {
       //
+      // NOTE: P_BUILD has to run after P_INIT!
+      //
+      
+      //
       // Default data jobs
       //
- #ifdef DEFAULT_DATA_CONFIG
-      ("default_data") configure_tree();
- #endif
+      P_BUILD ("default_data") configure_tree();
       
       // Build the reference frame tree.
-      P_BUILD ("initialization") frame_tree.build_tree();
-      P_BUILD ("initialization") frame_tree.check_tree();
+      P_INIT  ("initialization") initialize();
+      P_BUILD ("initialization") build();
       P_BUILD ("initialization") frame_tree.print_tree();
    }
 
@@ -71,6 +75,16 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
    // This is an abstract class
    // Define the interface to configure the reference frame tree.
    virtual void configure_tree() = 0;
+   
+   // Define the interface to initialize the reference frame tree.
+   virtual void initialize() = 0;
+   
+   // Define the interface to build the reference frame tree.
+   virtual void build()
+   {
+      frame_tree.build_tree();
+      frame_tree.check_tree();
+   }
 
   protected:
    // Need for scheduled job persitence.

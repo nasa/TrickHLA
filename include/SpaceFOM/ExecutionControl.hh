@@ -40,34 +40,37 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_EXECUTON_CONTROL_HH
 #define SPACEFOM_EXECUTON_CONTROL_HH
 
-// System include files.
-#include <cstdint>
+// System includes.
 #include <string>
 
-// Trick include files.
-
-// HLA include files.
-
-// TrickHLA include files.
-#include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/Interaction.hh"
-#include "TrickHLA/SyncPointManagerBase.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/MTRInteractionHandler.hh"
 #include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/Types.hh"
 
+// TrickHLA includes.
+#include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/Types.hh"
+
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA Encoder helper includes.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace SpaceFOM
 {
@@ -85,9 +88,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    friend void init_attrSpaceFOM__ExecutionControl();
 
   public:
-   bool designated_late_joiner; /**< @trick_units{--} Flag set by the user to
-      indicate this federate is a designated late joiner, default is false. */
-
    // These are the execution control roles available to a federate.
    bool pacing; /**< @trick_units{--} Is true when this federate is
                      the "pacing". (default: false) */
@@ -122,8 +122,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // This is called by the TrickHLA::Federate::initialize routine.
    /*! @brief Execution Control initialization routine. */
    virtual void initialize();
-   /*! @brief Join federation execution process. */
-   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
@@ -157,8 +155,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
    virtual void sync_point_announced(
-      std::wstring const     &label,
-      RTI1516_USERDATA const &user_supplied_tag );
+      std::wstring const                          &label,
+      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    /*! @brief Publish the ExecutionControl objects and interactions. */
    virtual void publish();
@@ -181,7 +179,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool receive_interaction(
       RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const                           &theUserSuppliedTag,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool const                                        received_as_TSO );
    /*! @brief Send a mode transition request to the Master federate.
@@ -292,7 +290,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @return true if a designated later joiner federate. */
    bool is_designated_late_joiner()
    {
-      return this->designated_late_joiner;
+      return ( federate->get_join_constraint() == TrickHLA::FEDERATE_JOIN_LATE );
    }
 
    //
@@ -302,7 +300,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name );
+   virtual void start_federation_save_at_scenario_time( double             freeze_scenario_time,
+                                                        std::string const &file_name );
 
    //
    // Freeze time management functions.

@@ -30,7 +30,7 @@ def HLA_ball_config( THLA_object,
    # Configure the object this federate will create an HLA instance and
    # publish data for.
    THLA_object.FOM_name            = 'Ball'
-   THLA_object.name                = obj_name
+   THLA_object.name                = str(obj_name)
    THLA_object.create_HLA_instance = obj_create
    THLA_object.packing             = obj_packing
    THLA_object.lag_comp            = None

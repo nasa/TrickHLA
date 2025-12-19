@@ -26,7 +26,7 @@ do
       trick-CP
       status=$?
       if [ $status -ne 0 ]; then
-         echo "ERROR"
+         echo "ERROR for sims/${sim_pkg}/${sim}"
          exit 1
       fi
    done

@@ -45,14 +45,25 @@ def main():
    #
    parser = argparse.ArgumentParser( prog = 'clang_tidy_code', \
                                      formatter_class = argparse.RawDescriptionHelpFormatter, \
-                                     description = 'Scan the TrickHLA source code using clang-tidy.' )
+                                     description = 'Scan the TrickHLA source code using clang-tidy.', \
+                                     epilog = textwrap.dedent( '''\n
+Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n  clang_tidy_code --TrickHLA --SpaceFOM -v --hla3''' ) )
 
+   parser.add_argument( '--apply-fixes', \
+                        help = 'Apply fixes.', \
+                        action = 'store_true', dest = 'apply_fixes' )
    parser.add_argument( '-a', '--all', \
                         help = 'Process all the source code.', \
                         action = 'store_true', dest = 'process_all' )
    parser.add_argument( '--TrickHLA', \
                         help = 'Process the core TrickHLA source code.', \
                         action = 'store_true', dest = 'process_TrickHLA' )
+   parser.add_argument( '--Encoding', \
+                        help = 'Process the core TrickHLA Encoding source code.', \
+                        action = 'store_true', dest = 'process_TrickHLA_encoding' )
+   parser.add_argument( '--Time', \
+                        help = 'Process the TrickHLA Time source code.', \
+                        action = 'store_true', dest = 'process_TrickHLA_time' )
    parser.add_argument( '--SpaceFOM', \
                         help = 'Process the SpaceFOM source code.', \
                         action = 'store_true', dest = 'process_SpaceFOM' )
@@ -65,9 +76,36 @@ def main():
    parser.add_argument( '--models', \
                         help = 'Process the models source code.', \
                         action = 'store_true', dest = 'process_models' )
+   parser.add_argument( '--check-all', \
+                        help = 'Run all code checks.', \
+                        action = 'store_true', dest = 'check_all' )
+   parser.add_argument( '--check-bugprone', \
+                        help = 'Check for bugprone.', \
+                        action = 'store_true', dest = 'check_bugprone' )
+   parser.add_argument( '--check-cppcoreguidelines', \
+                        help = 'Check for cppcoreguidelines.', \
+                        action = 'store_true', dest = 'check_cppcoreguidelines' )
+   parser.add_argument( '--check-default', \
+                        help = 'Default: Check for clang static code analyzer and performance.', \
+                        action = 'store_true', dest = 'check_default' )
+   parser.add_argument( '--check-includes', \
+                        help = 'Check for includes.', \
+                        action = 'store_true', dest = 'check_includes' )
+   parser.add_argument( '--check-misc', \
+                        help = 'Check for misc.', \
+                        action = 'store_true', dest = 'check_misc' )
+   parser.add_argument( '--check-portability', \
+                        help = 'Check for portability.', \
+                        action = 'store_true', dest = 'check_portability' )
    parser.add_argument( '-b', '--bin', \
                         help = 'Path to clang-tidy binaries directory.', \
                         dest = 'bin_path' )
+   parser.add_argument( '--hla3', \
+                        help = 'Check against HLA 3 (default), IEEE 1516-2010', \
+                        action = 'store_true', dest = 'hla3' )
+   parser.add_argument( '--hla4', \
+                        help = 'Check against HLA 4, IEEE 1516-2025', \
+                        action = 'store_true', dest = 'hla4' )
    parser.add_argument( '--jeod-home', \
                         help = 'Provide a path to the JEOD installation directory.', \
                         dest = 'jeod_home' )
@@ -101,6 +139,12 @@ def main():
    if args.process_TrickHLA:
       # --TrickHLA
       required_arg_cnt += 1
+   if args.process_TrickHLA_encoding:
+      # --Encoding
+      required_arg_cnt += 1
+   if args.process_TrickHLA_time:
+      # --Time
+      required_arg_cnt += 1
    if args.process_SpaceFOM:
       # --SpaceFOM
       required_arg_cnt += 1
@@ -117,6 +161,11 @@ def main():
    if required_arg_cnt == 0:
       arg_error = True
       TrickHLAMessage.warning( 'You must specify at least one of \'-a\', \'--TrickHLA\', \'--SpaceFOM\', \'--IMSim\', \'--JEOD\', \'--models\'!' )
+
+   # Can only specify one of --hla3 or --hla4.
+   if args.hla3 and args.hla4:
+      arg_error = True
+      TrickHLAMessage.warning( 'Only specify one of \'--hla3\' or \'--hla4\'!' )
 
    if arg_error:
       TrickHLAMessage.failure( 'Error detected in parsing command arguments!' )
@@ -173,7 +222,10 @@ def main():
       TrickHLAMessage.status( 'Path to HLA RTI: ' + rti_home )
 
    # Determine the path to the HLA RTI include directory.
-   rti_include = rti_home + '/api/cpp/HLA_1516-2010'
+   if args.hla4:
+      rti_include = rti_home + '/api/cpp/HLA_1516-2025'
+   else:
+      rti_include = rti_home + '/api/cpp/HLA_1516-2010'
    if os.path.isdir( rti_include ) is False:
       rti_include = rti_home + '/include'
       if os.path.isdir( rti_include ) is False:
@@ -188,7 +240,10 @@ def main():
 
    # Define preprocessor symbols we use for TrickHLA and set the TRICK_VER based on the
    # version of the Trick simulation environment we found in our Path.
-   trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2010', '-DFPU_CW_PROTECTION' ]
+   if args.hla4:
+      trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2025', '-DFPU_CW_PROTECTION' ]
+   else:
+      trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2010', '-DFPU_CW_PROTECTION' ]
 
    # Form relative paths to all the include directories used by TrickHLA.
    include_dirs.extend( ['-I./include'] )
@@ -199,65 +254,22 @@ def main():
 
    # Add models source code and include paths to process.
    if args.process_all or args.process_models:
+      include_dirs.extend( ['-I./models'] )
+
       if os.path.isdir( './models/DistIf/src' ):
          source_dirs.extend( ['./models/DistIf/src/'] )
-      if os.path.isdir( './models/DistIf/include' ):
-         include_dirs.extend( ['-I./models/DistIf/include'] )
-
+      if os.path.isdir( './models/encoding/src' ):
+         source_dirs.extend( ['./models/encoding/src/'] )
       if os.path.isdir( './models/EntityDynamics/src' ):
          source_dirs.extend( ['./models/EntityDynamics/src/'] )
-      if os.path.isdir( './models/EntityDynamics/include' ):
-         include_dirs.extend( ['-I./models/EntityDynamics/include'] )
-
       if os.path.isdir( './models/FrameDynamics/src' ):
          source_dirs.extend( ['./models/FrameDynamics/src/'] )
-      if os.path.isdir( './models/FrameDynamics/include' ):
-         include_dirs.extend( ['-I./models/FrameDynamics/include'] )
-
       if os.path.isdir( './models/SAIntegrator/src' ):
          source_dirs.extend( ['./models/SAIntegrator/src/'] )
-      if os.path.isdir( './models/SAIntegrator/include' ):
-         include_dirs.extend( ['-I./models/SAIntegrator/include'] )
-
       if os.path.isdir( './models/simconfig/src' ):
          source_dirs.extend ( ['./models/simconfig/src/'] )
-      if os.path.isdir( './models/simconfig/include' ):
-         include_dirs.extend( ['-I./models/simconfig/include'] )
-
       if os.path.isdir( './models/sine/src' ):
          source_dirs.extend ( ['./models/sine/src/'] )
-      if os.path.isdir( './models/sine/include' ):
-         include_dirs.extend( ['-I./models/sine/include'] )
-
-      if os.path.isdir( './models/Wheelbot/Battery/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Battery/src/'] )
-      if os.path.isdir( './models/Wheelbot/Battery/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Battery/include'] )
-
-      if os.path.isdir( './models/Wheelbot/Control/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Control/src/'] )
-      if os.path.isdir( './models/Wheelbot/Control/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Control/include'] )
-
-      if os.path.isdir( './models/Wheelbot/Electrical/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Electrical/src/'] )
-      if os.path.isdir( './models/Wheelbot/Electrical/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Electrical/include'] )
-
-      if os.path.isdir( './models/Wheelbot/Guidance/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Guidance/src/'] )
-      if os.path.isdir( './models/Wheelbot/Guidance/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Guidance/include'] )
-
-      if os.path.isdir( './models/Wheelbot/Motor/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Motor/src/'] )
-      if os.path.isdir( './models/Wheelbot/Motor/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Motor/include'] )
-
-      if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
-         source_dirs.extend( ['./models/Wheelbot/Vehicle/src/'] )
-      if os.path.isdir( './models/Wheelbot/Vehicle/include' ):
-         include_dirs.extend( ['-I./models/Wheelbot/Vehicle/include'] )
 
    # JEOD
    if args.process_all or args.process_JEOD:
@@ -277,16 +289,44 @@ def main():
    if args.process_all or args.process_TrickHLA:
       source_dirs.extend ( ['./source/TrickHLA/'] )
 
+   # TrickHLA Encoding
+   if args.process_all or args.process_TrickHLA_encoding:
+      source_dirs.extend ( ['./source/TrickHLA/encoding'] )
+
+   # TrickHLA Time
+   if args.process_all or args.process_TrickHLA_time:
+      source_dirs.extend ( ['./source/TrickHLA/time'] )
+
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
       include_dirs.extend( ['-I/usr/local/include'] )
 
    # Configure the clang-tidy arguments.
-   # Don't use '--checks=*', it makes to many modifications to the code.
-   # cppcoreguidelines-*
-   clang_tidy_args.append( '--checks=\'clang-diagnostic-*,clang-analyzer-*,performance-*\'' )
-#   clang_tidy_args.append( '--fix-notes' )
-   clang_tidy_args.append( '--fix-errors' )
+   # List all checks: clang-tidy --checks='*' --dump-config --explain-config
+   checks = '--checks=\'-*,clang-diagnostic-*'
+   if args.check_bugprone or args.check_all:
+      checks += ',bugprone-*'
+   if args.check_cppcoreguidelines or args.check_all:
+      checks += ',cppcoreguidelines-*'
+   if args.check_includes or args.check_all:
+      checks += ',bugprone-suspicious-include,llvm-include-order,misc-header-include-cycle,misc-include-cleaner,portability-restrict-system-includes,readability-duplicate-include'
+   if args.check_misc or args.check_all:
+      checks += ',misc-*'
+   if args.check_portability or args.check_all:
+      checks += ',portability-*'
+   if args.check_default or args.check_all:
+      checks += ',clang-analyzer-*,performance-*'
+   if not ( args.check_bugprone or args.check_cppcoreguidelines or args.check_includes or args.check_misc or args.check_portability or args.check_default ):
+      checks += ',clang-analyzer-*,performance-*'
+
+   checks += '\''
+   clang_tidy_args.append( checks )
+   
+   if args.apply_fixes:
+      clang_tidy_args.append( '--fix-notes' )
+      clang_tidy_args.append( '--fix-errors' )
+      clang_tidy_args.append( '--export-fixes=\'clang_tidy_fixes.xml\'' )
+
    clang_tidy_args.append( '--header-filter=\'.*TrickHLA/.*\'' )
    clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )
    clang_tidy_extra_args.append( '--' )

@@ -21,7 +21,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
@@ -43,25 +42,39 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <string>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/Types.hh"
 
-// IMSim include files.
+// IMSim includes.
 #include "IMSim/ExecutionConfiguration.hh"
 #include "IMSim/FreezeInteractionHandler.hh"
 #include "IMSim/Types.hh"
 
+namespace IMSim
+{
+class ExecutionConfiguration;
+class FreezeInteractionHandler;
+} /* namespace IMSim */
+
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA Encoder helper includes.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace IMSim
 {
@@ -99,8 +112,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // This is called by the TrickHLA::Federate::initialize routine.
    /*! @brief Execution Control initialization routine. */
    virtual void initialize();
-   /*! @brief Join federation execution process. */
-   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
@@ -116,7 +127,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *         0 -- normal execution (neither late joiner nor federate restore),\n
     *         1 -- late joiner,\n
     *         2 -- federate restore. */
-   TrickHLA::FederateJoinEnum determine_if_late_joining_or_restoring_federate();
+   TrickHLA::FederateJoinConstraintsEnum determine_if_late_joining_or_restoring_federate();
 
    //
    // Execution Control support routines.routines.
@@ -135,9 +146,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
-   virtual void sync_point_announced( // cppcheck-suppress [uselessOverride]
-      std::wstring const     &label,
-      RTI1516_USERDATA const &user_supplied_tag );
+   virtual void sync_point_announced(
+      std::wstring const                          &label,
+      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
@@ -160,7 +171,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool receive_interaction(
       RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const                           &theUserSuppliedTag,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool const                                        received_as_TSO );
 
@@ -258,7 +269,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name );
+   virtual void start_federation_save_at_scenario_time( double             freeze_scenario_time,
+                                                        std::string const &file_name );
 
    //
    // Federation freeze/pause management functions.

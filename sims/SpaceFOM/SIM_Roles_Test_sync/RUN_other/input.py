@@ -18,10 +18,10 @@ import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 #---------------------------------------------------------------------------
@@ -300,11 +300,9 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
 #--------------------------------------------------------------------------
-# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
-federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
-
-# Scale the Trick Time Tic value based on the HLA base time units.
-federate.scale_trick_tics_to_base_time_units()
+# Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
+# and scale the Trick time tics value.
+federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
@@ -338,7 +336,7 @@ else:
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
-# THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+# THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::TimeOfDayCTETimeline' )
 
 #---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.

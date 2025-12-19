@@ -31,9 +31,11 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SLEEP_TIMEOUT_HH
 #define TRICKHLA_SLEEP_TIMEOUT_HH
 
-// System include files.
+// System includes.
 #include <cstdint>
 #include <time.h>
+
+struct timespec;
 
 #define THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC ( (double)10.0 )
 #define THLA_DEFAULT_SLEEP_WAIT_IN_MICROS ( (long)10000 )
@@ -103,8 +105,8 @@ class SleepTimeout
    void reset();
 
   protected:
-   long long       timeout_time;       ///< @trick_io{**} Timeout elapsed time in microseconds.
-   long long       timeout_clock_time; ///< @trick_io{**} Clock timeout time in microseconds.
+   int64_t         timeout_time;       ///< @trick_io{**} Timeout elapsed time in microseconds.
+   int64_t         timeout_clock_time; ///< @trick_io{**} Clock timeout time in microseconds.
    struct timespec sleep_time;         ///< @trick_io{**} Time-spec for the requested sleep time.
 
   private:

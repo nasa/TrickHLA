@@ -21,9 +21,9 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/SyncPointTimed.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -40,19 +40,25 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/SyncPoint.hh"
-#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
@@ -105,11 +111,11 @@ class SyncPointTimed : public TrickHLA::SyncPoint
 
    /*! @brief Encode the user supplied tag data.
     *  @return The encoded user supplied tag. */
-   virtual RTI1516_USERDATA const encode_user_supplied_tag();
+   virtual RTI1516_NAMESPACE::VariableLengthData const encode_user_supplied_tag();
 
    /*! @brief Decode the user supplied data.
     *  @param supplied_tag The supplied tag to decode as the user supplied tag. */
-   virtual void decode_user_supplied_tag( RTI1516_USERDATA const &supplied_tag );
+   virtual void decode_user_supplied_tag( RTI1516_NAMESPACE::VariableLengthData const &supplied_tag );
 
    // Utility functions.
    /*! @brief Create a string with the synchronization point label and current state.

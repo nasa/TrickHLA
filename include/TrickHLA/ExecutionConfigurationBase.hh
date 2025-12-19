@@ -44,7 +44,10 @@ execution.
 #ifndef TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 #define TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 
-// TrickHLA include files.
+// System includes.
+#include <string>
+
+// TrickHLA includes.
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 
@@ -69,8 +72,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    friend void init_attrTrickHLA__ExecutionConfigurationBase();
 
   public:
-   char const *S_define_name; /**< @trick_units{--}
-      Full path name in the S_define for this ExecutionConfiguration instance. */
+   std::string S_define_name; /**< @trick_units{--} Full path name in the S_define for this ExecutionConfiguration instance. */
 
   public:
    // Public constructors and destructors.
@@ -78,7 +80,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    ExecutionConfigurationBase();
    /*! @brief Initialization constructor for the TrickHLA ExecutionConfigurationBase class.
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   explicit ExecutionConfigurationBase( char const *s_define_name );
+   explicit ExecutionConfigurationBase( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the TrickHLA ExecutionConfigurationBase class. */
    virtual ~ExecutionConfigurationBase() = 0;
 
@@ -88,22 +90,22 @@ class ExecutionConfigurationBase : public Object, public Packing
     *  @param exec_control Reference to the associated TrickHLA::ExecutionControlBase object. */
    virtual void setup( TrickHLA::ExecutionControlBase &exec_control );
 
+   /*! @brief Configure this Execution Configuration object. */
+   virtual void configure() = 0;
+
    /*! @brief Sets up the attributes for this Execution Configuration object
     *  using default values. These can be overridden in the input file. */
    virtual void configure_attributes() = 0;
 
-   /*! @brief Configure the execution configuration object. */
-   virtual void configure() = 0;
-
    /*! @brief Set the full path name in the S_define to the
     * ExecutionConfiguration object instance.
     *  @param new_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   virtual void set_S_define_name( char const *new_name );
+   virtual void set_S_define_name( std::string const &new_name );
 
    /*! @brief Get the full path name in the S_define to the
     * ExecutionConfiguration object instance.
     *  @return S_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   virtual char const *get_S_define_name()
+   virtual std::string const &get_S_define_name()
    {
       return ( S_define_name );
    }

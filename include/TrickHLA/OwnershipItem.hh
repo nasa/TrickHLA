@@ -34,15 +34,17 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OWNERSHIP_ITEM_HH
 #define TRICKHLA_OWNERSHIP_ITEM_HH
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
-#include "trick/message_proto.h"
+// System includes.
+#include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// Trick includes.
+#include "trick/MemoryManager.hh"
+#include "trick/message_proto.h"
+#include "trick/message_type.h"
+
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
-#include "TrickHLA/StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -50,7 +52,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
-#include RTI1516_HEADER
+#include "RTI/RTI1516.h"
 #pragma GCC diagnostic pop
 
 namespace TrickHLA
@@ -69,15 +71,15 @@ class OwnershipItem : public Item
    friend void init_attrTrickHLA__OwnershipItem();
 
   public:
-   double time;     ///< @trick_units{--} Federation time when this attribute's ownership is to be transferred.
-   char  *FOM_name; ///< @trick_units{--} FOM name for the attribute.
+   double      time;     ///< @trick_units{--} Federation time when this attribute's ownership is to be transferred.
+   std::string FOM_name; ///< @trick_units{--} FOM name for the attribute.
 
   public:
    //
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA OwnershipItem class. */
-   OwnershipItem() : time( 0.0 ), FOM_name( NULL )
+   OwnershipItem() : time( 0.0 ), FOM_name()
    {
       return;
    }
@@ -90,13 +92,7 @@ class OwnershipItem : public Item
    /*! @brief Clear the Trick allocated memory for the FOM name. */
    void clear()
    {
-      if ( this->FOM_name != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
-            message_publish( MSG_WARNING, "OwnershipItem::clear():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n",
-                             __LINE__ );
-         }
-         this->FOM_name = NULL;
-      }
+      this->FOM_name = "";
    }
 
   private:

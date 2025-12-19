@@ -27,31 +27,32 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstdlib>
-#include <iostream>
-#include <limits>
-#include <math.h>
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
-#include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
-#include "trick/vector_macros.h"
+// JEOD model includes.
+#include "dynamics/dyn_body/include/body_ref_frame.hh"
+#include "dynamics/dyn_body/include/dyn_body.hh"
+#include "dynamics/dyn_body/include/frame_derivs.hh"
+#include "dynamics/mass/include/mass.hh"
+#include "dynamics/mass/include/mass_properties.hh"
+#include "utils/quaternion/include/quat.hh"
+#include "utils/ref_frames/include/ref_frame_state.hh"
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/Packing.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// JEOD includes.
 #include "JEOD/JEODPhysicalEntity.hh"
+
+// SpaceFOM includes.
+#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -87,27 +88,6 @@ JEODPhysicalEntity::~JEODPhysicalEntity()
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalEntity::configure(
-   jeod::DynBody *dyn_body_ptr )
-{
-   // First call the base class pre_initialize function.
-   PhysicalEntityBase::configure();
-
-   // Set the reference to the JEODPhysicalEntity data.
-   if ( dyn_body_ptr == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
-             << this->pe_packing_data.name << '\n';
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   this->dyn_body_data = dyn_body_ptr;
-}
-
-/*!
- * @job_class{initialization}
- */
 void JEODPhysicalEntity::initialize()
 {
    // Check to make sure the JEODPhysicalEntity data is set.
@@ -115,7 +95,7 @@ void JEODPhysicalEntity::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_data: "
-             << this->pe_packing_data.name << '\n';
+             << this->pe_packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -258,4 +238,25 @@ void JEODPhysicalEntity::unpack_into_working_data()
          dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc] = this->pe_packing_data.body_wrt_struct.vector[iinc];
       }
    }
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void JEODPhysicalEntity::set_data(
+   jeod::DynBody *dyn_body_data_ptr )
+{
+
+   // Set the reference to the JEODPhysicalEntity data.
+   if ( dyn_body_data_ptr == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::JEODPhysicalEntity::set_data():" << __LINE__
+             << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
+             << this->pe_packing_data.name << endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->dyn_body_data = dyn_body_data_ptr;
+
+   return;
 }

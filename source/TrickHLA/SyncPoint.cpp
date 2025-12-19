@@ -26,25 +26,23 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
+#include <cstddef>
 #include <string>
 
-// Trick include files.
+// Trick includes.
+#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPoint.hh"
+#include "TrickHLA/Types.hh"
 
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-// HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+// HLA includes.
+#include "RTI/VariableLengthData.h"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -126,13 +124,13 @@ bool const SyncPoint::is_error() const
             && ( this->state != TrickHLA::SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
-RTI1516_USERDATA const SyncPoint::encode_user_supplied_tag()
+VariableLengthData const SyncPoint::encode_user_supplied_tag()
 {
    return this->user_supplied_tag;
 }
 
 void SyncPoint::decode_user_supplied_tag(
-   RTI1516_USERDATA const &supplied_tag )
+   VariableLengthData const &supplied_tag )
 {
    this->user_supplied_tag = supplied_tag;
 }
@@ -181,7 +179,7 @@ void SyncPoint::encode_checkpoint()
    free_checkpoint();
 
    // Checkpointable copy of the label.
-   this->label_chkpt = StringUtilities::ip_strdup_wstring( this->label );
+   this->label_chkpt = StringUtilities::mm_strdup_wstring( this->label );
 }
 
 void SyncPoint::decode_checkpoint()

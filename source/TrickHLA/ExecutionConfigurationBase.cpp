@@ -39,33 +39,29 @@ execution.
 
 */
 
-// System include files.
+// System includes.
+#include <cstddef>
 #include <cstdint>
+#include <ostream>
+#include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
+// Trick includes.
+#include "trick/attributes.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Packing.hh"
 #include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
-
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-// HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -86,13 +82,11 @@ extern ATTRIBUTES attrTrickHLA__ExecutionConfigurationBase[];
  * @job_class{initialization}
  */
 ExecutionConfigurationBase::ExecutionConfigurationBase()
-   : S_define_name( NULL ),
+   : TrickHLA::Packing( "ExecutionConfigurationBase" ),
+     S_define_name(),
      pending_update( false ),
      execution_control( NULL )
 {
-   // Set the name to an empty string.
-   this->name = trick_MM->mm_strdup( "" );
-
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
    this->packing = this;
@@ -102,15 +96,13 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
  * @job_class{initialization}
  */
 ExecutionConfigurationBase::ExecutionConfigurationBase(
-   char const *s_define_name )
-   : pending_update( false ),
+   string const &s_define_name )
+   : TrickHLA::Packing( "ExecutionConfigurationBase" ),
+     pending_update( false ),
      execution_control( NULL )
 {
-   // Set the name to an empty string.
-   this->name = trick_MM->mm_strdup( "" );
-
-   // Set the full path S_define name.
-   this->S_define_name = trick_MM->mm_strdup( s_define_name );
+   // Set the full path S_define name and make a copy.
+   this->S_define_name = string( s_define_name );
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
@@ -122,13 +114,7 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
  */
 ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
-   if ( this->S_define_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
-                          __LINE__ );
-      }
-      this->S_define_name = NULL;
-   }
+   return;
 }
 
 /*!
@@ -153,18 +139,10 @@ void ExecutionConfigurationBase::setup(
  * @job_class{initialization}
  */
 void ExecutionConfigurationBase::set_S_define_name(
-   char const *new_name )
+   string const &new_name )
 {
-   if ( this->S_define_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionConfigurationBase::set_S_define_name():%d WARNING failed to delete Trick Memory for 'this->S_define_name'\n",
-                          __LINE__ );
-      }
-      this->S_define_name = NULL;
-   }
-
-   // Set the full path S_define name.
-   this->S_define_name = trick_MM->mm_strdup( new_name );
+   // Set the full path S_define name and make a copy.
+   this->S_define_name = string( new_name );
 }
 
 void ExecutionConfigurationBase::reset_preferred_order()
@@ -288,10 +266,12 @@ void ExecutionConfigurationBase::wait_for_registration()
          // Build the summary as an output string stream.
          ostringstream summary;
          summary << "ExecutionConfigurationBase::wait_for_registration()"
-                 << __LINE__ << "\nOBJECTS: " << total_obj_cnt;
+                 << __LINE__ << endl
+                 << "OBJECTS: " << total_obj_cnt;
 
          // Execution-Configuration object
-         summary << "\n  1:Object instance '" << get_name() << "' ";
+         summary << endl
+                 << "  1:Object instance '" << get_name() << "' ";
 
          if ( is_instance_handle_valid() ) {
             string id_str;
@@ -302,7 +282,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( is_required() ? "REQUIRED" : "not required" )
                  << " and is "
                  << ( is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
-                 << '\n';
+                 << endl;
          // Display the summary.
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
@@ -331,7 +311,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                         << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -388,7 +368,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                         << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -416,7 +396,8 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified.\n";
+             << " files to make sure the 'subscribe' value is correctly specified."
+             << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

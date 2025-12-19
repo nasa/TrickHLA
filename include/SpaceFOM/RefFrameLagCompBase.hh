@@ -39,17 +39,13 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_LAG_COMP_BASE_HH
 #define SPACEFOM_REF_FRAME_LAG_COMP_BASE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 
-// Trick includes.
-
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
+// System includes.
 #include "TrickHLA/LagCompensation.hh"
-#include "TrickHLA/Object.hh"
 
-// SpaceFOM include files.
+// System includes.
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"

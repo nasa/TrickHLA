@@ -31,27 +31,26 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <algorithm>
+#include <cstddef>
 #include <iomanip>
-#include <iostream>
 #include <math.h>
-#include <stdlib.h>
+#include <ostream>
+#include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
-#include "trick/message_proto.h"
+// Sine model includes.
+#include "sine/include/SineData.hh"
+#include "sine/include/SinePacking.hh"
 
-// TrickHLA model include files.
-#include "TrickHLA/Attribute.hh"
+// Trick includes.
+#include "trick/MemoryManager.hh"
+#include "trick/message_proto.h"
+#include "trick/message_type.h"
+
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
-
-// Model include files.
-#include "../include/SineData.hh"
-#include "../include/SinePacking.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -62,7 +61,7 @@ using namespace TrickHLAModel;
  */
 SinePacking::SinePacking()
    : SineData(),
-     TrickHLA::Packing(),
+     TrickHLA::Packing( "SinePacking" ),
      sim_data( NULL ),
      phase_deg( 0.0 ),
      pack_count( 0 ),
@@ -98,23 +97,10 @@ SinePacking::~SinePacking()
 /*!
  * @job_class{initialization}
  */
-void SinePacking::configure(
-   SineData *sim_data )
+void SinePacking::set_data(
+   SineData *data )
 {
-   this->sim_data = sim_data;
-
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void SinePacking::initialize()
-{
-   // Mark this as initialized.
-   TrickHLA::Packing::initialize();
-
-   return;
+   this->sim_data = data;
 }
 
 /*!
@@ -151,7 +137,7 @@ void SinePacking::pack()
    if ( !initialized ) {
       ostringstream msg;
       msg << "SinePacking::pack():" << __LINE__
-          << " ERROR: The initialize() function has not been called!\n";
+          << " ERROR: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
    }
 
@@ -181,51 +167,51 @@ void SinePacking::pack()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      string        obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
+      string        obj_name = ( this->object != NULL ) ? object->get_name() : "";
       ostringstream msg;
-      msg << "SinePacking::pack():" << __LINE__ << '\n'
-          << "\t Object-Name:'" << obj_name << "'\n"
+      msg << "SinePacking::pack():" << __LINE__ << endl
+          << "\t Object-Name:'" << obj_name << "'" << endl
 
           << "\t sim_data->name:'" << sim_data->get_name()
           << "', Send-HLA-Data:"
           << ( ( name_attr->is_publish() && name_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << '\n'
+          << endl
 
           << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time() << " seconds"
           << ", Send-HLA-Data:"
           << ( ( time_attr->is_publish() && time_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << '\n'
+          << endl
 
           << "\t sim_data->value:" << sim_data->get_value()
           << ", Send-HLA-Data:"
           << ( ( value_attr->is_publish() && value_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << '\n'
+          << endl
 
           << "\t sim_data->dvdt:" << sim_data->get_derivative()
           << ", Send-HLA-Data:"
           << ( ( dvdt_attr->is_publish() && dvdt_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << '\n'
+          << endl
 
           << "\t sim_data->phase:" << sim_data->get_phase() << " radians"
           << " ==> packing-phase:" << phase_deg << " degrees"
           << ", Send-HLA-Data:"
           << ( ( phase_attr->is_publish() && phase_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << '\n'
+          << endl
 
           << "\t sim_data->amp:" << sim_data->get_amplitude()
           << ", Send-HLA-Data:"
           << ( ( amp_attr->is_publish() && amp_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << '\n'
+          << endl
 
           << "\t sim_data->freq:" << sim_data->get_frequency()
           << ", Send-HLA-Data:"
           << ( ( freq_attr->is_publish() && freq_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << '\n'
+          << endl
 
           << "\t sim_data->tol:" << sim_data->get_tolerance()
           << ", Send-HLA-Data:"
           << ( ( tol_attr->is_publish() && tol_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << '\n';
+          << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -236,59 +222,27 @@ void SinePacking::pack()
 
       if ( buff != NULL ) {
 
-         msg << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
-             << " buff_size: " << buff_size << '\n';
+         msg << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
+             << " buff_size: " << buff_size << endl;
 
          unsigned char c = pack_count % 10;
          for ( int i = 0; i < buff_size; ++i ) {
             buff[i] = c;
             msg << " SinePacking::pack():" << __LINE__
-                << " buffer[" << i << "] = " << (int)buff[i] << '\n';
+                << " buffer[" << i << "] = " << (int)buff[i] << endl;
          }
       }
 
-      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
-      msg << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
-          << "\t Object-Name:'" << obj_name << "'\n";
+      msg << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
+          << "\t Object-Name:'" << obj_name << "'" << endl;
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's, where most users may never go.
-      string     name_attr_str = "Name";
-      Attribute *attr          = get_attribute( name_attr_str.c_str() );
+      string name_attr_str = "Name";
 
-      msg << "\t FOM-Attribute '" << name_attr_str << "'\n";
-
-      if ( attr != NULL ) {
-
-         // Get the address of the "name" simulation data variable.
-         char *name_sim_var = static_cast< char * >( attr->get_sim_variable_address() );
-
-         // Make a little change to the name and show it.
-         if ( name_sim_var != NULL ) {
-
-            // Number of bytes ref-attributes says this variable is.
-            int const name_sim_var_size = attr->get_attribute_size();
-
-            // NOTE: Make the last character either a '0' through '9' character
-            // so that we can see that the name is changing.
-            int name_len = strnlen( name_sim_var, name_sim_var_size );
-            if ( name_len > 0 ) {
-               name_sim_var[name_len - 1] = (char)( '0' + ( pack_count % 10 ) );
-            }
-
-            msg << "\t Value:'" << string( name_sim_var ) << "'\n";
-         } else {
-            msg << "\t Value:NULL\n";
-         }
-
-         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PACKING ) ) {
-            // Print the state of the TrickHLA-Attribute internal buffer.
-            attr->print_buffer();
-         }
-      } else {
-         msg << "\t NULL Attribute for FOM-Attribute '" << name_attr_str << "'\n";
-      }
+      msg << "\t FOM-Attribute '" << name_attr_str << "'" << endl;
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -299,7 +253,7 @@ void SinePacking::unpack()
    if ( !initialized ) {
       ostringstream msg;
       msg << "SinePacking::unpack():" << __LINE__
-          << " ERROR: The initialize() function has not been called!\n";
+          << " ERROR: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
    }
 
@@ -347,43 +301,43 @@ void SinePacking::unpack()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
-      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
-      msg << "SinePacking::unpack():" << __LINE__ << '\n'
-          << "\t Object-Name:'" << obj_name << "'\n"
+      msg << "SinePacking::unpack():" << __LINE__ << endl
+          << "\t Object-Name:'" << obj_name << "'" << endl
 
           << "\t sim_data->name:'" << sim_data->get_name()
           << "', Received-HLA-Data:"
-          << ( name_attr->is_received() ? "Yes" : "No" ) << '\n'
+          << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time()
           << " seconds, Received-HLA-Data:"
-          << ( time_attr->is_received() ? "Yes" : "No" ) << '\n'
+          << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t sim_data->value:" << sim_data->get_value()
           << ", Received-HLA-Data:"
-          << ( value_attr->is_received() ? "Yes" : "No" ) << '\n'
+          << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t sim_data->dvdt:" << sim_data->get_derivative()
           << ", Received-HLA-Data:"
-          << ( dvdt_attr->is_received() ? "Yes" : "No" ) << '\n'
+          << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t packing-phase:" << phase_deg << " degrees ==> sim_data->phase:"
           << sim_data->get_phase() << " radians, Received-HLA-Data:"
-          << ( phase_attr->is_received() ? "Yes" : "No" ) << '\n'
+          << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t sim_data->amp:" << sim_data->get_amplitude()
           << ", Received-HLA-Data:"
-          << ( amp_attr->is_received() ? "Yes" : "No" ) << '\n'
+          << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t sim_data->freq:" << sim_data->get_frequency()
           << ", Received-HLA-Data:"
-          << ( freq_attr->is_received() ? "Yes" : "No" ) << '\n'
+          << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t sim_data->tol:" << sim_data->get_tolerance()
           << ", Received-HLA-Data:"
-          << ( tol_attr->is_received() ? "Yes" : "No" ) << '\n';
+          << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -393,46 +347,24 @@ void SinePacking::unpack()
       ostringstream msg;
 
       if ( buff != NULL ) {
-         msg << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
-             << " buff_size: " << buff_size << '\n';
+         msg << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
+             << " buff_size: " << buff_size << endl;
          for ( int i = 0; i < buff_size; ++i ) {
             msg << " SinePacking::unpack():" << __LINE__
-                << " buffer[" << i << "] = " << (int)buff[i] << '\n';
+                << " buffer[" << i << "] = " << (int)buff[i] << endl;
          }
       }
 
-      string obj_name = ( this->object != NULL ) ? object->get_name_string() : "";
+      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
-      msg << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
-          << "\t Object-Name:'" << obj_name << "'\n";
+      msg << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
+          << "\t Object-Name:'" << obj_name << "'" << endl;
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's where most users may never go.
-      string     name_attr_str = "Name";
-      Attribute *attr          = get_attribute( name_attr_str.c_str() );
+      string name_attr_str = "Name";
 
-      msg << "\t FOM-Attribute '" << name_attr_str << "'\n";
-
-      if ( attr != NULL ) {
-
-         // Get the address of the "name" simulation data variable.
-         char *name_sim_var = static_cast< char * >( attr->get_sim_variable_address() );
-
-         // Display the name.
-         if ( name_sim_var != NULL ) {
-            msg << "\t Value:'" << string( name_sim_var ) << "'\n";
-         } else {
-            msg << "\t Value:NULL\n";
-         }
-
-         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PACKING ) ) {
-            // Print the state of the TrickHLA-Attribute internal buffer.
-            attr->print_buffer();
-         }
-      } else {
-         msg << "\t NULL Attribute for FOM-Attribute '" << name_attr_str
-             << "'\n";
-      }
+      msg << "\t FOM-Attribute '" << name_attr_str << "'" << endl;
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

@@ -69,10 +69,10 @@ WallsPacking::WallsPacking()
      right_wall_x_pos_attr( NULL ),
      ceiling_y_pos_attr( NULL ),
      left_wall_x_pos_attr( NULL ),
-     floor_y_pos(0.0),
-     right_wall_x_pos(0.0),
-     ceiling_y_pos(0.0),
-     left_wall_x_pos(0.0),
+     floor_y_pos( 0.0 ),
+     right_wall_x_pos( 0.0 ),
+     ceiling_y_pos( 0.0 ),
+     left_wall_x_pos( 0.0 ),
      walls( NULL )
 {
    return;
@@ -87,10 +87,10 @@ WallsPacking::WallsPacking( BallWalls &walls_ref )
      right_wall_x_pos_attr( NULL ),
      ceiling_y_pos_attr( NULL ),
      left_wall_x_pos_attr( NULL ),
-     floor_y_pos(0.0),
-     right_wall_x_pos(0.0),
-     ceiling_y_pos(0.0),
-     left_wall_x_pos(0.0),
+     floor_y_pos( 0.0 ),
+     right_wall_x_pos( 0.0 ),
+     ceiling_y_pos( 0.0 ),
+     left_wall_x_pos( 0.0 ),
      walls( &walls_ref )
 {
    return;
@@ -129,8 +129,8 @@ void WallsPacking::base_config(
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
-   object->FOM_name            = allocate_input_string( "Walls" );
-   object->name                = allocate_input_string( walls_name );
+   object->FOM_name            = "Walls";
+   object->name                = walls_name;
    object->create_HLA_instance = publishes;
    object->packing             = this;
    // Allocate the attributes for the Wall HLA object.
@@ -140,51 +140,42 @@ void WallsPacking::base_config(
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name      = allocate_input_string( "ceiling" );
+   object->attributes[0].FOM_name      = "ceiling";
    trick_name_str                      = entity_name_str + string( ".ceiling_y_pos" );
-   object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[0].trick_name    = trick_name_str;
    object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE );
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[1].FOM_name      = allocate_input_string( "right" );
+   object->attributes[1].FOM_name      = "right";
    trick_name_str                      = entity_name_str + string( ".right_wall_x_pos" );
-   object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[1].trick_name    = trick_name_str;
    object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE );
    object->attributes[1].publish       = publishes;
    object->attributes[1].subscribe     = !publishes;
    object->attributes[1].locally_owned = publishes;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[2].FOM_name      = allocate_input_string( "left" );
+   object->attributes[2].FOM_name      = "left";
    trick_name_str                      = entity_name_str + string( ".left_wall_x_pos" );
-   object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[2].trick_name    = trick_name_str;
    object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE );
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[3].FOM_name      = allocate_input_string( "floor" );
+   object->attributes[3].FOM_name      = "floor";
    trick_name_str                      = entity_name_str + string( ".floor_y_pos" );
-   object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[3].trick_name    = trick_name_str;
    object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE );
    object->attributes[3].publish       = publishes;
    object->attributes[3].subscribe     = !publishes;
    object->attributes[3].locally_owned = publishes;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void WallsPacking::configure()
-{
-   // Return to calling routine.
    return;
 }
 
@@ -330,7 +321,7 @@ void WallsPacking::unpack_into_working_data()
 
    // Unpack the ceiling Y position.
    if ( ceiling_y_pos_attr->is_received() ) {
-      walls->ceiling_y_pos =ceiling_y_pos;
+      walls->ceiling_y_pos = ceiling_y_pos;
    }
 
    // Unpack the left wall X position.

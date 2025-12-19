@@ -22,10 +22,10 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -39,15 +39,17 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OWNERSHIP_HANDLER_HH
 #define TRICKHLA_OWNERSHIP_HANDLER_HH
 
-// System include files.
+// System includes.
+#include <map>
 #include <string>
 
-// TrickHLA include files.
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/OwnershipItem.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 namespace TrickHLA
 {
@@ -126,22 +128,22 @@ class OwnershipHandler : public CheckpointConversionBase
    /*! @brief Query if the attribute is locally owned.
     *  @return True if attribute is locally owned; False otherwise.
     *  @param attribute_FOM_name Attribute FOM name. */
-   bool is_locally_owned( char const *attribute_FOM_name );
+   bool is_locally_owned( std::string const &attribute_FOM_name );
 
    /*! @brief Query if the attribute is remotely owned.
     *  @return True if attribute is remotely owned; False otherwise.
     *  @param attribute_FOM_name Attribute FOM name. */
-   bool is_remotely_owned( char const *attribute_FOM_name );
+   bool is_remotely_owned( std::string const &attribute_FOM_name );
 
    /*! @brief Query if the attribute is published.
     *  @return True if attribute is published; False otherwise.
     *  @param attribute_FOM_name Attribute FOM name. */
-   bool is_published( char const *attribute_FOM_name );
+   bool is_published( std::string const &attribute_FOM_name );
 
    /*! @brief Query if the attribute is subscribed.
     *  @return True if attribute is subscribed; False otherwise.
     *  @param attribute_FOM_name Attribute FOM name. */
-   bool is_subscribed( char const *attribute_FOM_name );
+   bool is_subscribed( std::string const &attribute_FOM_name );
 
    /*! @brief Pull ownership of all object attributes as soon as possible. */
    void pull_ownership();
@@ -152,12 +154,12 @@ class OwnershipHandler : public CheckpointConversionBase
 
    /*! @brief Pull ownership of the specified attribute as soon as possible.
     *  @param attribute_FOM_name Attribute FOM name. */
-   void pull_ownership( char const *attribute_FOM_name );
+   void pull_ownership( std::string const &attribute_FOM_name );
 
    /*! @brief Pull ownership of the specified attribute at the given time.
     *  @param attribute_FOM_name Attribute FOM name.
     *  @param time               Requested time to pull ownership. */
-   void pull_ownership( char const *attribute_FOM_name, double time );
+   void pull_ownership( std::string const &attribute_FOM_name, double time );
 
    /*! @brief Push ownership of all the object attributes as soon as possible. */
    void push_ownership();
@@ -168,12 +170,12 @@ class OwnershipHandler : public CheckpointConversionBase
 
    /*! @brief Push ownership of the specified attribute as soon as possible.
     *  @param attribute_FOM_name Attribute FOM name. */
-   void push_ownership( char const *attribute_FOM_name );
+   void push_ownership( std::string const &attribute_FOM_name );
 
    /*! @brief Push ownership of the specified attribute at the given time.
     *  @param attribute_FOM_name Attribute FOM name.
     *  @param time Requested time to push ownership. */
-   void push_ownership( char const *attribute_FOM_name, double time );
+   void push_ownership( std::string const &attribute_FOM_name, double time );
 
    /*! @brief Return a copy of the object's lookahead time.
     *  @return A copy of the fedetate's lookahead time */
@@ -185,18 +187,18 @@ class OwnershipHandler : public CheckpointConversionBase
 
    /*! @brief Get the current scenario time.
     *  @return Returns the current scenario time in seconds. */
-   double get_scenario_time();
+   double get_scenario_time() const;
 
    /*! @brief Get the current Central Timing Equipment (CTE) time.
     *  @return Returns the current CTE time. */
-   double get_cte_time();
+   double get_cte_time() const;
 
   protected:
    /*! @brief Returns the attribute for the given attribute FOM name or NULL
     * if an attribute corresponding to the FOM name is not found.
     * @return Attribute of the object.
     * @param attribute_FOM_name Attribute FOM name.*/
-   Attribute *get_attribute( char const *attribute_FOM_name );
+   Attribute *get_attribute( std::string const &attribute_FOM_name );
 
    Object *object; ///< @trick_io{**} Reference to the TrickHLA Object.
 

@@ -23,10 +23,10 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-// System include files.
+// System includes.
 #include <pthread.h>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/MutexLock.hh"
 
 using namespace TrickHLA;
@@ -56,7 +56,7 @@ MutexLock::~MutexLock()
  */
 int const MutexLock::initialize()
 {
-   pthread_mutexattr_t attr;
+   pthread_mutexattr_t attr; // NOLINT
    pthread_mutexattr_init( &attr );
    pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
    return ( pthread_mutex_init( &mutex, &attr ) );

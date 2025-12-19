@@ -24,16 +24,17 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
 @trick_link_dependency{../../source/TrickHLA/ElapsedTimeStats.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/TrickHLA/ReflectedAttributesQueue.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -47,37 +48,41 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OBJECT_HH
 #define TRICKHLA_OBJECT_HH
 
-// System include files.
-#include <cstdint>
-#include <pthread.h>
+// System includes.
+#include <map>
 #include <string>
 
-// Trick include files.
-#include "trick/attributes.h"
-
-// TrickHLA include files.
+// TrickHLA inlcudes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/BasicClock.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/ElapsedTimeStats.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/ReflectedAttributesQueue.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/Handle.h"
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 // Special handling of SWIG limitations for forward declarations.
 #ifdef SWIG
@@ -103,7 +108,7 @@ class Federate;
 class Conditional;
 class Packing;
 class OwnershipHandler;
-class ObjectDeleted;
+class ObjectDeletedHandler;
 class LagCompensation;
 
 class Object : public CheckpointConversionBase
@@ -128,10 +133,10 @@ class Object : public CheckpointConversionBase
 
    // The variables below this point are configured by the user in either the
    // input or modified-data file.
-   char *name;          ///< @trick_units{--} Object Instance Name.
-   bool  name_required; ///< @trick_units{--} True (default) to require an object instance name be specified by you, or false to use the instance name automatically assigned by the RTI.
+   std::string name;          ///< @trick_units{--} Object Instance Name.
+   bool        name_required; ///< @trick_units{--} True (default) to require an object instance name be specified by you, or false to use the instance name automatically assigned by the RTI.
 
-   char *FOM_name; ///< @trick_units{--} FOM name for the object.
+   std::string FOM_name; ///< @trick_units{--} FOM name for the object.
 
    bool create_HLA_instance; ///< @trick_units{--} Set to true to create an HLA named instance of this object.
 
@@ -139,7 +144,7 @@ class Object : public CheckpointConversionBase
 
    bool blocking_cyclic_read; ///< @trick_units{--} True to block in receive_cyclic_data() for data to be received.
 
-   char *thread_ids; ///< @trick_units{--} Comma separated list of Trick child thread IDs associated to this object.
+   std::string thread_ids; ///< @trick_units{--} Comma separated list of Trick child thread IDs associated to this object.
 
    int        attr_count; ///< @trick_units{--} Number of object attributes.
    Attribute *attributes; ///< @trick_units{--} Array of object attributes.
@@ -151,7 +156,7 @@ class Object : public CheckpointConversionBase
 
    OwnershipHandler *ownership; ///< @trick_units{--} Manages attribute ownership.
 
-   ObjectDeleted *deleted; ///< @trick_units{--} Object Deleted callback object.
+   ObjectDeletedHandler *deleted; ///< @trick_units{--} Object Deleted callback object.
 
    Conditional *conditional; ///< @trick_units{--} Handler for a conditional attribute
 
@@ -281,10 +286,10 @@ class Object : public CheckpointConversionBase
     *  @param theAttributes Attributes data. */
    void enqueue_data( RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributes );
 
-   /*! @brief This function extracts the new attribute values.
+   /*! @brief This function decoded the received encoded attributes.
     *  @param theAttributes Attributes data.
-    *  @return True if successfully extracted data, false otherwise. */
-   bool extract_data( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
+    *  @return True if successfully decoded data, false otherwise. */
+   bool decode( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
 
    /*! @brief Remove this object instance from the RTI/Federation. */
    void remove();
@@ -302,7 +307,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Pull ownership of the named object instance at initialization.
     *  @param attribute_list Comma separated list of attributes FOM names. */
-   void pull_ownership_at_init( char const *attribute_list );
+   void pull_ownership_at_init( std::string const &attribute_list );
 
    /*! @brief Wait to handle the remote request to Pull ownership object
     *  attributes to this federate. */
@@ -320,7 +325,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Push ownership of the named object instance at initialization.
     *  @param attribute_list Comma separated list of attributes FOM names. */
-   void push_ownership_at_init( char const *attribute_list );
+   void push_ownership_at_init( std::string const &attribute_list );
 
    /*! @brief Wait to handle the remote request to Push ownership object
     *  attributes to this federate. */
@@ -353,16 +358,9 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Get the object instance name.
     *  @return Object instance name. */
-   char const *get_name() const
+   std::string const &get_name() const
    {
       return name;
-   }
-
-   /*! @brief Get the object instance name as a C++ string.
-    *  @return The object instance name as a C++ string. */
-   std::string const get_name_string() const
-   {
-      return ( ( name != NULL ) ? name : "" );
    }
 
    /*! @brief Check if an object instance name is required.
@@ -393,7 +391,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Get the FOM name for this object.
     *  @return The FOM name for this object. */
-   char const *get_FOM_name() const
+   std::string const &get_FOM_name() const
    {
       return FOM_name;
    }
@@ -450,7 +448,7 @@ class Object : public CheckpointConversionBase
       set_instance_handle( id );
       std::string instance_name_str;
       StringUtilities::to_string( instance_name_str, instance_name );
-      set_name( instance_name_str.c_str() );
+      set_name( instance_name_str );
       set_name_registered();
    }
 
@@ -476,10 +474,11 @@ class Object : public CheckpointConversionBase
       return this->required;
    }
 
-   /*! @brief Mark this object instance as required. */
-   void mark_required()
+   /*! @brief Set this object instance as required.
+    *  @param required_obj True if object instance is required, false otherwise. */
+   void set_required( bool const required_obj )
    {
-      this->required = true;
+      this->required = required_obj;
    }
 
    /*! @brief Stops publishing data for the object attributes by setting the
@@ -611,12 +610,10 @@ class Object : public CheckpointConversionBase
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &receive_mutex );
 
-      if ( !changed ) {
-         if ( !thla_reflected_attributes_queue.empty() ) {
-            // The 'changed' flag is set when the data is extracted.
-            extract_data( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >( thla_reflected_attributes_queue.front() ) );
-            thla_reflected_attributes_queue.pop();
-         }
+      if ( !changed && !reflected_attributes_queue.empty() ) {
+         // The 'changed' flag is set when the data is decoded.
+         decode( reflected_attributes_queue.front() );
+         reflected_attributes_queue.pop();
       }
       return changed;
    }
@@ -685,11 +682,6 @@ class Object : public CheckpointConversionBase
     *  @param attr_FOM_name Attribute FOM name. */
    Attribute *get_attribute( std::string const &attr_FOM_name );
 
-   /*! @brief Gets the attribute for the given FOM name.
-    *  @return Associated TrickHLA::Attribute.
-    *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( char const *attr_FOM_name );
-
    /*! @brief Get the count of the number of attributes associated with this object.
     *  @return The number of attributes associated with this object. */
    int get_attribute_count() const
@@ -715,84 +707,6 @@ class Object : public CheckpointConversionBase
       return attribute_FOM_names;
    }
 
-   /*! @brief Pack the attributes that were part of the attribute value request
-    * into the buffer that is used for sending the encoded attribute through
-    * the RTI. */
-   void pack_requested_attribute_buffers();
-
-   /*! @brief Pack the attributes for the given configuration into the buffer
-    * that is used for sending the encoded attribute through the RTI.
-    *  @param attr_config Attribute configuration. */
-   void pack_attribute_buffers( DataUpdateEnum const attr_config )
-   {
-      pack_attribute_buffers( attr_config, false );
-   }
-
-   /*! @brief Pack the attributes for the given configuration into the buffer
-    * that is used for sending the encoded attribute through the RTI.
-    *  @param attr_config Attribute configuration.
-    *  @param include_requested True to also included requeted attributes */
-   void pack_attribute_buffers( DataUpdateEnum const attr_config, bool const include_requested );
-
-   /*! @brief Unpack the buffer back into the attributes that have the given
-    * configuration.
-    *  @param attr_config Attribute configuration. */
-   void unpack_attribute_buffers( DataUpdateEnum const attr_config );
-
-   /*! @brief Copy the cyclic and requested attribute values to the buffer for each attribute. */
-   void pack_cyclic_and_requested_attribute_buffers()
-   {
-      pack_attribute_buffers( CONFIG_CYCLIC, true );
-   }
-
-   /*! @brief Copy the zero lookahead and requested attribute values to the buffer for each attribute. */
-   void pack_zero_lookahead_and_requested_attribute_buffers()
-   {
-      pack_attribute_buffers( CONFIG_ZERO_LOOKAHEAD, true );
-   }
-
-   /*! @brief Copy the blocking I/O attribute values to the buffer for each attribute. */
-   void pack_blocking_io_attribute_buffers()
-   {
-      pack_attribute_buffers( CONFIG_BLOCKING_IO, false );
-   }
-
-   /*! @brief Copy the cyclic attribute values to the buffer for each attribute. */
-   void pack_cyclic_attribute_buffers()
-   {
-      pack_attribute_buffers( CONFIG_CYCLIC );
-   }
-
-   /*! @brief Copy the packed buffer contents back to each cyclic attribute. */
-   void unpack_cyclic_attribute_buffers()
-   {
-      unpack_attribute_buffers( CONFIG_CYCLIC );
-   }
-
-   /*! @brief Copy the packed buffer contents back to each zero-lookhead attribute. */
-   void unpack_zero_lookahead_attribute_buffers()
-   {
-      unpack_attribute_buffers( CONFIG_ZERO_LOOKAHEAD );
-   }
-
-   /*! @brief Copy the packed buffer contents back to each blocking I/O attribute. */
-   void unpack_blocking_io_attribute_buffers()
-   {
-      unpack_attribute_buffers( CONFIG_BLOCKING_IO );
-   }
-
-   /*! @brief Copy the dynamic initialization attribute values to the buffer for each attribute. */
-   void pack_init_attribute_buffers()
-   {
-      pack_attribute_buffers( CONFIG_INITIALIZE );
-   }
-
-   /*! @brief Copy the packed buffer contents back to each dynamic initialization attribute. */
-   void unpack_init_attribute_buffers()
-   {
-      unpack_attribute_buffers( CONFIG_INITIALIZE );
-   }
-
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */
    bool is_shutdown_called() const;
@@ -803,16 +717,8 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Create a name value pair set, aka attribute handle value pair,
     * for the attributes of this object.
-    * @param required_config Attribute configuration required in order to send data. */
-   void create_attribute_set( DataUpdateEnum const required_config )
-   {
-      create_attribute_set( required_config, false );
-   }
-
-   /*! @brief Create a name value pair set, aka attribute handle value pair,
-    * for the attributes of this object.
     * @param required_config Attribute configuration required in order to send data
-    * @param include_requested True to also included requeted attributes */
+    * @param include_requested True to also included requested attributes */
    void create_attribute_set( DataUpdateEnum const required_config, bool const include_requested );
 
    /*! @brief Initialize the thread ID array based on the users 'thread_ids' input.*/
@@ -854,9 +760,6 @@ class Object : public CheckpointConversionBase
    bool any_attribute_FOM_specified_order; ///< @trick_units{--} True if any attribute is the FOM specified order.
    bool any_attribute_timestamp_order;     ///< @trick_units{--} True if any attribute is timestamp order.
 
-   RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
-   RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
-
    bool pull_requested;     ///< @trick_units{--} Has someone asked to own us?
    bool divest_requested;   ///< @trick_units{--} Are we releasing ownership?
    bool ownership_acquired; ///< @trick_units{--} True when attribute ownership changed.
@@ -869,12 +772,15 @@ class Object : public CheckpointConversionBase
 
    RTI1516_NAMESPACE::AttributeHandleValueMap *attribute_values_map; ///< @trick_io{**} Map of attributes that will be sent as an update to other federates.
 
-   ReflectedAttributesQueue thla_reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
+   ReflectedAttributesQueue reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
 
    AttributeMap thla_attribute_map; ///< @trick_io{**} Map of the Attribute's, key is the AttributeHandle.
 
+   RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
+   RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
+
   public:
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    uint64_t send_count;    ///< @trick_units{--} Number of times data from this object was sent.
    uint64_t receive_count; ///< @trick_units{--} Number of times data for this object was received.
 #endif
@@ -884,11 +790,11 @@ class Object : public CheckpointConversionBase
   private:
    /*! @brief Sets the new value of the name attribute.
     *  @param new_name New name for the object instance. */
-   void set_name( char const *new_name );
+   void set_name( std::string const &new_name );
 
    /*! @brief Set the name of the object and mark it as changed.
     *  @param new_name The new name of the object. */
-   void set_name_and_mark_changed( char const *new_name )
+   void set_name_and_mark_changed( std::string const &new_name )
    {
       set_name( new_name );
       mark_changed();

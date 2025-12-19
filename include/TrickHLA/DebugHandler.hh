@@ -33,10 +33,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_DEBUG_HANDLER_HH
 #define TRICKHLA_DEBUG_HANDLER_HH
 
-// System include files.
+// System includes.
 #include <string>
 
-// TrickHLA Model include files.
+// TrickHLA includes.
 #include "TrickHLA/Types.hh"
 
 namespace TrickHLA
@@ -55,13 +55,11 @@ class DebugHandler
    friend void init_attrTrickHLA__DebugHandler();
 
   public:
-   //-----------------------------------------------------------------
-   // Constructors / destructors
-   //-----------------------------------------------------------------
-   /*! @brief Initialization constructor for the TrickHLA DebugHandler class. */
-   DebugHandler();
    /*! @brief Destructor for the TrickHLA DebugHandler class. */
-   virtual ~DebugHandler();
+   virtual ~DebugHandler()
+   {
+      return;
+   }
 
    /*! @brief Conditional test to see if a debug message should be shown.
     *  @return Returns true if the requested message should be printed.
@@ -83,6 +81,19 @@ class DebugHandler
   public:
    static DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
    static DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
+
+  private:
+   // Do not allow the copy constructor or assignment operator.
+   /*! @brief Default constructor for the TrickHLA DebugHandler class. */
+   DebugHandler();
+
+   /*! @brief Copy constructor for DebugHandler class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   DebugHandler( DebugHandler const &rhs );
+
+   /*! @brief Assignment operator for DebugHandler class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
+   DebugHandler &operator=( DebugHandler const &rhs );
 };
 
 } // namespace TrickHLA

@@ -25,8 +25,8 @@
 // TrickHLA includes.
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/KnownFederate.hh"
-##include "TrickHLA/SimTimeline.hh"
-##include "TrickHLA/ScenarioTimeline.hh"
+##include "TrickHLA/time/SimTimeline.hh"
+##include "TrickHLA/time/ScenarioTimeline.hh"
 
 // Sine model includes.
 ##include "sine/include/SineData.hh"
@@ -68,10 +68,10 @@ class AnalyticSineSimObj : public Trick::SimObject {
 
    AnalyticSineSimObj()
    {
-      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.set_data( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_data( &lag_compensation );
       P50 ("initialization") packing.initialize();
 
       C1 (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
@@ -119,10 +119,10 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.set_data( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_data( &lag_compensation );
       P50 ("initialization") packing.initialize();
 
       /*

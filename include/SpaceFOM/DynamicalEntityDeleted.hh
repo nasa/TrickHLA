@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/TrickHLA/ObjectDeleted.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntityDeleted.cpp}
 
 @revs_title
@@ -34,11 +34,7 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_DELETED_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_DELETED_HH
 
-// Trick include files.
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/ObjectDeleted.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityDeleted.hh"
 
 namespace SpaceFOM

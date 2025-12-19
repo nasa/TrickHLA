@@ -37,13 +37,15 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_UTILITIES_HH
 #define TRICKHLA_UTILITIES_HH
 
-// System include files.
+// System includes.
 #include <string>
 
-// Trick include files.
+// Trick includes.
+#include "trick/attributes.h"
+#include "trick/parameter_types.h"
 #include "trick/trick_byteswap.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Types.hh"
 
@@ -135,15 +137,6 @@ class Utilities
    friend void init_attrTrickHLA__Utilities();
 
   public:
-   //
-   // Public constructors and destructor.
-   //
-   /*! @brief Default constructor for the TrickHLA Utilities class. */
-   Utilities()
-   {
-      return;
-   }
-
    /*! @brief Destructor for the TrickHLA Utilities class. */
    virtual ~Utilities()
    {
@@ -161,6 +154,8 @@ class Utilities
       }
       return endianness;
    }
+
+   static size_t get_static_var_element_count( ATTRIBUTES *attr );
 
    /*! @brief Determine if the RTI data needs a byteswap before transmission.
     *  @return True if byteswap is needed.
@@ -250,6 +245,9 @@ class Utilities
 
   private:
    // Do not allow the copy constructor or assignment operator.
+   /*! @brief Default constructor for the TrickHLA Utilities class. */
+   Utilities();
+
    /*! @brief Copy constructor for Utilities class.
     *  @details This constructor is private to prevent inadvertent copies. */
    Utilities( Utilities const &rhs );

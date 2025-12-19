@@ -40,39 +40,44 @@ NASA, Johnson Space Center\n
  * @job_class{dynamic_event}
  */
 double ball_ensemble_collision(
-   BallWalls * walls,
-   int         num_balls,
-   BallState * states[]   )
+   BallWalls const *walls,
+   int              num_balls,
+   BallState       *states[] )
 {
-   double tgo;
    double event_tgo = BIG_TGO;
 
    /* NOTE: This routine only checks for collisions with walls not between balls. */
 
    /* Check for collisions with walls. */
-   for ( int iinc = 0; iinc < num_balls; iinc++ ){
+   for ( int iinc = 0; iinc < num_balls; iinc++ ) {
 
-      tgo = ball_ceiling( walls, states[iinc] );
-      if (tgo < event_tgo){ event_tgo = tgo; }
+      double tgo = ball_ceiling( walls, states[iinc] );
+      if ( tgo < event_tgo ) {
+         event_tgo = tgo;
+      }
 
       tgo = ball_floor( walls, states[iinc] );
-      if (tgo < event_tgo){ event_tgo = tgo; }
+      if ( tgo < event_tgo ) {
+         event_tgo = tgo;
+      }
 
       tgo = ball_left_wall( walls, states[iinc] );
-      if (tgo < event_tgo){ event_tgo = tgo; }
+      if ( tgo < event_tgo ) {
+         event_tgo = tgo;
+      }
 
       tgo = ball_right_wall( walls, states[iinc] );
-      if (tgo < event_tgo){ event_tgo = tgo; }
+      if ( tgo < event_tgo ) {
+         event_tgo = tgo;
+      }
 
       if ( event_tgo == 0.0 && walls->print_contact ) {
          message_publish( 0, "Ball %s: time = %8.2f; position = %12.6f , %12.6f; velocity = %12.6f , %12.6f\n",
                           states[iinc]->name, exec_get_sim_time(),
                           states[iinc]->output.position[0], states[iinc]->output.position[1],
-                          states[iinc]->output.velocity[0], states[iinc]->output.velocity[1]  );
+                          states[iinc]->output.velocity[0], states[iinc]->output.velocity[1] );
       }
-
    }
 
-   return( event_tgo );
-
+   return ( event_tgo );
 }

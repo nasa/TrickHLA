@@ -44,8 +44,8 @@ spotless: clean_links
 build_links:
 	@ echo "${GREEN_TXT}Creating links to FOM and Modified_data folders.${RESET_TXT}"
 	ln -s -fn ${MODEL_PACKAGE_HOME}/FOMs/DistIf FOMs/DistIf
-	ln -s -fn ${MODEL_PACKAGE_HOME}/Modified_data/DistIf Modified_data/DistIf
-	ln -s -fn ${TRICKHLA_HOME}/Modified_data/TrickHLA Modified_data/TrickHLA
+	ln -s -fn ${MODEL_PACKAGE_HOME}/TrickHLA_data/DistIf Modified_data/DistIf
+	ln -s -fn ${TRICKHLA_HOME}/TrickHLA_data/TrickHLA Modified_data/TrickHLA
 
 clean_links:
 	@if [ -e FOMs/DistIf ] ; then \

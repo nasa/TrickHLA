@@ -26,10 +26,10 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstddef>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Item.hh"
 
 using namespace TrickHLA;

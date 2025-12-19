@@ -24,8 +24,8 @@
 
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/KnownFederate.hh"
-##include "TrickHLA/SimTimeline.hh"
-##include "TrickHLA/ScenarioTimeline.hh"
+##include "TrickHLA/time/SimTimeline.hh"
+##include "TrickHLA/time/ScenarioTimeline.hh"
 
 ##include "sine/include/SineData.hh"
 ##include "sine/include/SinePacking.hh"
@@ -71,13 +71,13 @@ class AnalyticSineSimObj : public Trick::SimObject {
       //
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
-      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.set_data( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_data( &lag_compensation );
       P50 ("initialization") packing.initialize();
 
-      P50 ("initialization") conditional.configure( &packing );
+      P50 ("initialization") conditional.set_data( &packing );
       P50 ("initialization") conditional.initialize();
 
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.imsim_exec_control.get_scenario_time() );
@@ -123,13 +123,13 @@ class PropagatedSineSimObj : public Trick::SimObject {
       //
       // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
       // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
-      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.set_data( &sim_data );
       P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.set_data( &lag_compensation );
       P50 ("initialization") packing.initialize();
 
-      P50 ("initialization") conditional.configure( &packing );
+      P50 ("initialization") conditional.set_data( &packing );
       P50 ("initialization") conditional.initialize();
 
       /*
@@ -209,15 +209,15 @@ class THLAInitSimObj : public Trick::SimObject {
       // Alternative method: Send and receive all the initialization data.
 /*
       // Send all the initialization data.
-      P100 ("initialization") thla_manager.send_init_data();
+      P200 ("initialization") thla_manager.send_init_data();
 
       // Wait to receive all the initialization data.
-      P100 ("initialization") thla_manager.receive_init_data();
+      P200 ("initialization") thla_manager.receive_init_data();
 
       // Do some processing here if needed...
 
       // Clear remaining initialization sync-points.
-      P100 ("initialization") thla_manager.clear_init_sync_points();
+      P200 ("initialization") thla_manager.clear_init_sync_points();
 */
    }
 

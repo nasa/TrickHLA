@@ -1,7 +1,7 @@
 /*!
 @file TrickHLA/Federate.cpp
 @ingroup TrickHLA
-@brief This class is the abstract base class for representing timelines.
+@brief This class provides basic services for an HLA federate.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -19,14 +19,15 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{FedAmb.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
-@trick_link_dependency{TrickThreadCoordinator.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/TimeManagement.cpp}
+@trick_link_dependency{time/TrickThreadCoordinator.cpp}
 
 @revs_title
 @revs_begin
@@ -39,54 +40,51 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <arpa/inet.h>
-#include <cmath>
-#include <cstddef>
 #include <cstdint>
-#include <cstdio>
-#include <cstdlib> // for atof
-#include <float.h>
-#include <fstream> // for ifstream
-#include <iomanip>
+#include <cstdlib>
+#include <cstring>
+#include <fstream>
 #include <iostream>
-#include <limits>
-#include <map>
-#include <memory>
+#include <ostream>
+#include <set>
 #include <sstream>
 #include <string>
-#include <sys/time.h>
-#include <time.h>
+#include <vector>
 
-// Trick include files.
+// Trick includes.
 #include "trick/CheckPointRestart.hh"
 #include "trick/CheckPointRestart_c_intf.hh"
-#include "trick/Clock.hh"
-#include "trick/DataRecordDispatcher.hh" //DANNY2.7 need the_drd to init data recording groups when restoring at init time (IMSIM)
-#include "trick/Executive.hh"
+#include "trick/Flag.h"
 #include "trick/MemoryManager.hh"
 #include "trick/command_line_protos.h"
 #include "trick/exec_proto.h"
-#include "trick/input_processor_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
-#include "trick/release.h"
+#include "trick/message_type.h"
+#include "trick/sim_mode.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+// TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/TrickThreadCoordinator.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/TimeManagement.hh"
+
+#if defined( IEEE_1516_2025 )
+#   include "TrickHLA/FedAmbHLA4.hh"
+#else
+#   include "TrickHLA/FedAmbHLA3.hh"
+#endif // IEEE_1516_2025
 
 // Access the Trick global objects for CheckPoint restart and the Clock.
 extern Trick::CheckPointRestart *the_cpr;
@@ -94,12 +92,28 @@ extern Trick::CheckPointRestart *the_cpr;
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#include <RTI/encoding/BasicDataElements.h>
-#pragma GCC diagnostic pop
+#include "RTI/Enums.h"
+#include "RTI/Exception.h"
+#include "RTI/Handle.h"
+#include "RTI/RTI1516.h"
+#include "RTI/RTIambassador.h"
+#include "RTI/RTIambassadorFactory.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+#include "RTI/encoding/BasicDataElements.h"
+#include "RTI/time/HLAinteger64Time.h"
+
+#if defined( IEEE_1516_2025 )
+#   include "RTI/RtiConfiguration.h"
+#else
+#   pragma GCC diagnostic pop
+#endif // IEEE_1516_2025
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -116,21 +130,20 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Federate::Federate()
-   : name( NULL ),
-     type( NULL ),
-     federation_name( NULL ),
-     local_settings( NULL ),
-     FOM_modules( NULL ),
-     MIM_module( NULL ),
-     lookahead_time( 0.0 ),
-     time_regulating( true ),
-     time_constrained( true ),
-     time_management( true ),
+   : TimeManagement( this ),
+     name(),
+     type(),
+     federation_name(),
+     rti_address(),
+     local_settings(),
+     FOM_modules(),
+     MIM_module(),
+     join_constraint( TrickHLA::FEDERATE_JOIN_EARLY_OR_LATE ),
      enable_known_feds( true ),
      known_feds_count( 0 ),
      known_feds( NULL ),
-     debug_level( DEBUG_LEVEL_NO_TRACE ),
-     code_section( DEBUG_SOURCE_ALL_MODULES ),
+     debug_level( TrickHLA::DEBUG_LEVEL_NO_TRACE ),
+     code_section( TrickHLA::DEBUG_SOURCE_ALL_MODULES ),
      wait_status_time( 30.0 ),
      can_rejoin_federation( false ),
      freeze_delay_frames( 2 ),
@@ -139,9 +152,6 @@ Federate::Federate()
      federation_exists( false ),
      federation_joined( false ),
      all_federates_joined( false ),
-     lookahead( 0.0 ),
-     HLA_cycle_time( 0.0 ),
-     HLA_cycle_time_in_base_time( 0LL ),
      shutdown_called( false ),
      HLA_save_directory( "" ),
      initiate_save_flag( false ),
@@ -172,17 +182,10 @@ Federate::Federate()
      checkpoint_file_name( "" ),
      checkpoint_rt_itimer( Off ),
      execution_has_begun( false ),
-     time_adv_state( TIME_ADVANCE_RESET ),
-     time_adv_state_mutex(),
-     granted_time( 0.0 ),
-     requested_time( 0.0 ),
-     HLA_time( 0.0 ),
      start_to_save( false ),
      start_to_restore( false ),
      restart_flag( false ),
      restart_cfg_flag( false ),
-     time_regulating_state( false ),
-     time_constrained_state( false ),
      got_startup_sync_point( false ),
      make_copy_of_run_directory( false ),
      MOM_HLAfederation_class_handle(),
@@ -200,8 +203,6 @@ Federate::Federate()
      joined_federate_name_map(),
      joined_federate_handles(),
      joined_federate_names(),
-     thread_coordinator(),
-     RTI_ambassador( NULL ),
      federate_ambassador( NULL ),
      manager( NULL ),
      execution_control( NULL )
@@ -219,83 +220,9 @@ Federate::Federate()
  */
 Federate::~Federate()
 {
-   // Free the memory used for the federate name.
-   if ( name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'name'\n",
-                          __LINE__ );
-      }
-      name = NULL;
-   }
-
-   // Free the memory used for the federate type.
-   if ( type != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( type ) ) ) {
-         message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'type'\n",
-                          __LINE__ );
-      }
-      type = NULL;
-   }
-
-   // Free the memory used for local-settings
-   if ( local_settings != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( local_settings ) ) ) {
-         message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'local_settings'\n",
-                          __LINE__ );
-      }
-      local_settings = NULL;
-   }
-
-   // Free the memory used for the Federation Execution name.
-   if ( federation_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( federation_name ) ) ) {
-         message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'federation_name'\n",
-                          __LINE__ );
-      }
-      federation_name = NULL;
-   }
-
-   // Free the memory used by the FOM module filenames.
-   if ( FOM_modules != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( FOM_modules ) ) ) {
-         message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'FOM_modules'\n",
-                          __LINE__ );
-      }
-      FOM_modules = NULL;
-   }
-   if ( MIM_module != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( MIM_module ) ) ) {
-         message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'MIM_module'\n",
-                          __LINE__ );
-      }
-      MIM_module = NULL;
-   }
-
    // Free the memory used by the array of known Federates for the Federation.
-   if ( known_feds != NULL ) {
-      for ( int i = 0; i < known_feds_count; ++i ) {
-         if ( known_feds[i].MOM_instance_name != NULL ) {
-            if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].MOM_instance_name ) ) ) {
-               message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'known_feds[i].MOM_instance_name'\n",
-                                __LINE__ );
-            }
-            known_feds[i].MOM_instance_name = NULL;
-         }
-         if ( known_feds[i].name != NULL ) {
-            if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].name ) ) ) {
-               message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'known_feds[i].name'\n",
-                                __LINE__ );
-            }
-            known_feds[i].name = NULL;
-         }
-      }
-      if ( trick_MM->delete_var( static_cast< void * >( known_feds ) ) ) {
-         message_publish( MSG_WARNING, "Federate::~Federate():%d WARNING failed to delete Trick Memory for 'known_feds'\n",
-                          __LINE__ );
-      }
-      known_feds       = NULL;
-      known_feds_count = 0;
-   }
+   clear_known_feds();
+   known_feds_count = 0;
 
    // Clear the joined federate name map.
    joined_federate_name_map.clear();
@@ -335,11 +262,11 @@ void Federate::print_version() const
       StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
 
       ostringstream msg;
-      msg << "Federate::print_version()::" << __LINE__ << '\n'
-          << "     TrickHLA-version:'" << Utilities::get_version() << "'\n"
-          << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'\n"
-          << "             RTI-name:'" << rti_name << "'\n"
-          << "          RTI-version:'" << rti_version << "'\n";
+      msg << "Federate::print_version():" << __LINE__ << endl
+          << "     TrickHLA-version:'" << Utilities::get_version() << "'" << endl
+          << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'" << endl
+          << "             RTI-name:'" << rti_name << "'" << endl
+          << "          RTI-version:'" << rti_version << "'" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -402,9 +329,6 @@ void Federate::setup(
 
    // Set up the TrickHLA::ExecutionControl instance.
    execution_control->setup( *this, *( this->manager ) );
-
-   // Set up the TrickHLA::TrickThreadCoordinator instance.
-   thread_coordinator.setup( *this, *( this->manager ) );
 }
 
 /*! @brief Initialization the debug settings, show the version and apply
@@ -418,18 +342,18 @@ void Federate::initialize_debug()
    // Verify the debug level is correct just in case the user specifies it in
    // the input.py file as an integer instead of using the ENUM values...
    if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
-      message_publish( MSG_WARNING, "Federate::initialize():%d You specified an \
+      message_publish( MSG_WARNING, "Federate::initialize_debug():%d You specified an \
 invalid debug level '%d' in the input.py file using an integer value instead of \
 an ENUM. Please double check the value you specified in the input.py file against \
 the documented ENUM values.\n",
                        __LINE__, (int)this->debug_level );
       if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
          this->debug_level = DEBUG_LEVEL_NO_TRACE;
-         message_publish( MSG_WARNING, "Federate::initialize():%d No TrickHLA debug messages will be emitted.\n",
+         message_publish( MSG_WARNING, "Federate::initialize_debug():%d No TrickHLA debug messages will be emitted.\n",
                           __LINE__ );
       } else {
          this->debug_level = DEBUG_LEVEL_FULL_TRACE;
-         message_publish( MSG_WARNING, "Federate::initialize():%d All TrickHLA debug messages will be emitted.\n",
+         message_publish( MSG_WARNING, "Federate::initialize_debug():%d All TrickHLA debug messages will be emitted.\n",
                           __LINE__ );
       }
    }
@@ -446,30 +370,6 @@ the documented ENUM values.\n",
 }
 
 /*!
- * @brief Initialize the thread memory associated with the Trick child threads.
- */
-void Federate::initialize_thread_state(
-   double const main_thread_data_cycle_time )
-{
-   this->HLA_cycle_time              = main_thread_data_cycle_time;
-   this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
-
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).\n",
-                       __LINE__, this->HLA_cycle_time );
-   }
-
-   // Make sure the Trick thread coordinator is initialized. This will
-   // also associate the Trick main thread. TrickHLA will maintain data
-   // coherency for the HLA object instances specified in the input file
-   // over the data cycle time specified.
-   thread_coordinator.initialize( this->HLA_cycle_time );
-
-   // Initialize the manager with the verified HLA cycle time.
-   manager->initialize_HLA_cycle_time();
-}
-
-/*!
  * \par<b>Assumptions and Limitations:</b>
  * - The TrickHLA::FedAmb class is actually an abstract class. Therefore,
  * the actual object instance being passed in is an instantiable polymorphic
@@ -481,22 +381,22 @@ void Federate::initialize()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Make sure the federate name has been specified.
-   if ( ( name == NULL ) || ( *name == '\0' ) ) {
+   if ( name.empty() ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL federate name.\n";
+             << " ERROR: Unexpected NULL federate name." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
    // If a federate type is not specified make it the same as the federate name.
-   if ( ( type == NULL ) || ( *type == '\0' ) ) {
-      type = trick_MM->mm_strdup( name );
+   if ( type.empty() ) {
+      type = name;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::initialize():%d Federate:\"%s\" Type:\"%s\"\n",
-                       __LINE__, name, type );
+                       __LINE__, name.c_str(), type.c_str() );
    }
 
    // Determine if the Trick time Tic resolution can support the HLA base time.
@@ -505,11 +405,11 @@ void Federate::initialize()
       errmsg << "Federate::initialize():" << __LINE__
              << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
              << ") cannot support the HLA base time resolution ("
-             << Int64BaseTime::get_units()
+             << Int64BaseTime::get_base_unit()
              << ") corresponding to THLA.federate.set_HLA_base_time_unit("
-             << Int64BaseTime::get_base_units()
+             << Int64BaseTime::get_base_unit_enum()
              << "). Please update the Trick time tic value in your input.py file"
-             << " (i.e. by calling 'trick.exec_set_time_tic_value()').\n";
+             << " (i.e. by calling 'trick.exec_set_time_tic_value()')." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -517,7 +417,7 @@ void Federate::initialize()
    if ( federate_ambassador == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::FedAmb.\n";
+             << " ERROR: Unexpected NULL TrickHLA::FedAmb." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -529,7 +429,7 @@ void Federate::initialize()
    if ( manager == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager.\n";
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -541,7 +441,7 @@ void Federate::initialize()
    if ( execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::ExecutionControlBase.\n";
+             << " ERROR: Unexpected NULL TrickHLA::ExecutionControlBase." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -565,58 +465,45 @@ void Federate::restart_initialization()
                        __LINE__ );
    }
 
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+   TimeManagement::restart_initialization();
 
-   // Update the lookahead time in our HLA time line.
-   set_lookahead( lookahead_time );
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( federate_ambassador == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " ERROR: NULL pointer to FederateAmbassador!\n";
+             << " ERROR: NULL pointer to FederateAmbassador!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
    // Verify the federate name.
-   if ( ( name == NULL ) || ( *name == '\0' ) ) {
+   if ( name.empty() ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " ERROR: NULL or zero length Federate Name.\n";
+             << " ERROR: NULL or zero length Federate Name." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
-   // The lookahead time can not be negative.
-   if ( lookahead_time < 0.0 ) {
-      ostringstream errmsg;
-      errmsg << "Federate::restart_initialization():" << __LINE__
-             << " ERROR: Invalid HLA lookahead time!"
-             << " Lookahead time (" << lookahead_time << " seconds)"
-             << " must be greater than or equal to zero and not negative. Make"
-             << " sure 'lookahead_time' in your input.py or modified-data file is"
-             << " not a negative number.\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
    // Verify the FOM-modules value.
-   if ( ( FOM_modules == NULL ) || ( *FOM_modules == '\0' ) ) {
+   if ( FOM_modules.empty() ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
              << " ERROR: Invalid FOM-modules."
              << " Please check your input.py or modified-data files to make sure"
              << " 'FOM_modules' is correctly specified, where 'FOM_modules' is"
-             << " a comma separated list of FOM-module filenames.\n";
+             << " a comma separated list of FOM-module filenames." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Verify the Federation execution name.
-   if ( ( federation_name == NULL ) || ( *federation_name == '\0' ) ) {
+   if ( federation_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
              << " ERROR: Invalid Federate Execution Name."
              << " Please check your input.py or modified-data files to make sure"
-             << " the 'federation_name' is correctly specified.\n";
+             << " the 'federation_name' is correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -632,19 +519,19 @@ void Federate::restart_initialization()
          // If we are enabling known federates, then there probably should be some.
          ostringstream errmsg;
          errmsg << "Federate::restart_initialization():" << __LINE__
-                << " ERROR: No Known Federates Specified for the Federation.\n";
+                << " ERROR: No Known Federates Specified for the Federation." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Validate the name of each Federate known to be in the Federation.
       for ( int i = 0; i < known_feds_count; ++i ) {
 
-         // A NULL or zero length Federate name is not allowed.
-         if ( ( known_feds[i].name == NULL ) || ( *known_feds[i].name == '\0' ) ) {
+         // A zero length Federate name is not allowed.
+         if ( known_feds[i].name.empty() ) {
             ostringstream errmsg;
             errmsg << "Federate::restart_initialization():" << __LINE__
                    << " ERROR: Invalid name of known Federate at array index: "
-                   << i << '\n';
+                   << i << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
       }
@@ -670,7 +557,7 @@ void Federate::pre_multiphase_initialization()
    if ( !verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
-             << " ERROR: Time Constraints verification failed!\n";
+             << " ERROR: Time Constraints verification failed!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -686,8 +573,8 @@ void Federate::pre_multiphase_initialization()
    // Check to make sure we have a reference to the TrickHLA::Manager.
    if ( manager == NULL ) {
       ostringstream errmsg;
-      errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager.\n";
+      errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -744,33 +631,77 @@ void Federate::create_RTI_ambassador_and_connect()
       exec_set_trap_sigfpe( false );
    }
 
+#if defined( IEEE_1516_2025 )
+   RtiConfiguration rti_config = RtiConfiguration::createConfiguration();
+   if ( !rti_address.empty() ) {
+      wstring rti_address_ws;
+      StringUtilities::to_wstring( rti_address_ws, rti_address );
+      rti_config = rti_config.withRtiAddress( rti_address_ws );
+   }
+   if ( !local_settings.empty() ) {
+      wstring local_settings_ws;
+      StringUtilities::to_wstring( local_settings_ws, local_settings );
+      rti_config = rti_config.withAdditionalSettings( local_settings_ws );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
+          << StringUtilities::to_string( rti_config ) << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+#else
    // For HLA-Evolved, the user can set a vendor specific local settings for
    // the connect() API.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      if ( ( local_settings == NULL ) || ( *local_settings == '\0' ) ) {
+      if ( local_settings.empty() ) {
          ostringstream msg;
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " WARNING: Local settings designator 'THLA.federate.local_settings'"
-             << " for the RTI-Ambassador connection was not specified in the"
-             << " input.py file, using HLA-Evolved vendor defaults.\n";
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+             << " for the RTI was not specified in the input.py file. Using"
+             << " vendor defaults." << endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
       } else {
          ostringstream msg;
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " Local settings designator for RTI-Ambassador connection:\n'"
-             << local_settings << "'\n";
+             << " Local settings designator for RTI connection:"
+             << "'" << local_settings << "'" << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
+
+      if ( !rti_address.empty() ) {
+         ostringstream msg;
+         msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
+             << " WARNING: The 'THLA.federate.rti_address' setting is ignored"
+             << " when using IEEE 1516-2010." << endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
    }
+#endif // IEEE_1516_2025
 
+   // Create the RTI ambassador factory, RTI-ambassador, and then connect.
    try {
-      // Create the RTI ambassador factory.
-      RTIambassadorFactory *rtiAmbassadorFactory = new RTIambassadorFactory();
 
-      // Create the RTI ambassador.
-      this->RTI_ambassador = rtiAmbassadorFactory->createRTIambassador();
+#if defined( IEEE_1516_2025 )
+      auto rti_amb_factory = std::make_unique< RTIambassadorFactory >();
+      this->RTI_ambassador = rti_amb_factory->createRTIambassador();
 
-      if ( ( local_settings == NULL ) || ( *local_settings == '\0' ) ) {
+      ConfigurationResult config_result;
+      config_result = RTI_ambassador->connect( *federate_ambassador,
+                                               RTI1516_NAMESPACE::HLA_IMMEDIATE,
+                                               rti_config );
+
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         ostringstream msg;
+         msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
+             << StringUtilities::to_string( config_result ) << endl;
+         message_publish( MSG_NORMAL, msg.str().c_str() );
+      }
+#else
+      RTIambassadorFactory *rti_amb_factory = new RTIambassadorFactory();
+      this->RTI_ambassador                  = rti_amb_factory->createRTIambassador();
+
+      if ( local_settings.empty() ) {
          // Use default vendor local settings.
          RTI_ambassador->connect( *federate_ambassador,
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE );
@@ -783,11 +714,13 @@ void Federate::create_RTI_ambassador_and_connect()
                                   local_settings_ws );
       }
 
+      // Make sure we delete the factory now that we are done with it.
+      delete rti_amb_factory;
+
+#endif // IEEE_1516_2025
+
       // Reset the Federate shutdown-called flag now that we are connected.
       this->shutdown_called = false;
-
-      // Make sure we delete the factory now that we are done with it.
-      delete rtiAmbassadorFactory;
 
    } catch ( ConnectionFailed const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -801,9 +734,10 @@ void Federate::create_RTI_ambassador_and_connect()
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
-             << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' with EXCEPTION: ConnectionFailed: '" << rti_err_msg << "'.\n";
+             << "' with local_settings: '" << local_settings
+             << "' with EXCEPTION: ConnectionFailed: '" << rti_err_msg << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#if defined( IEEE_1516_2010 )
    } catch ( InvalidLocalSettingsDesignator const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -816,10 +750,11 @@ void Federate::create_RTI_ambassador_and_connect()
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
-             << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
+             << "' with local_settings: '" << local_settings
              << "' with EXCEPTION: InvalidLocalSettingsDesignator: '"
-             << rti_err_msg << "'.\n";
+             << rti_err_msg << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#endif // IEEE_1516_2010
    } catch ( UnsupportedCallbackModel const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -832,9 +767,9 @@ void Federate::create_RTI_ambassador_and_connect()
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " For Federate: '" << name
              << "' of Federation: '" << federation_name
-             << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
+             << "' with local_settings: '" << local_settings
              << "' with EXCEPTION: UnsupportedCallbackModel: '"
-             << rti_err_msg << "'.\n";
+             << rti_err_msg << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( AlreadyConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -848,9 +783,9 @@ void Federate::create_RTI_ambassador_and_connect()
       errmsg << "Federate::create_RTI_ambassador_and_connect()"
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
-             << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
+             << "' with local_settings: '" << local_settings
              << "' with EXCEPTION: AlreadyConnected: '"
-             << rti_err_msg << "'.\n";
+             << rti_err_msg << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( CallNotAllowedFromWithinCallback const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -864,9 +799,9 @@ void Federate::create_RTI_ambassador_and_connect()
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
-             << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
+             << "' with local_settings: '" << local_settings
              << "' with EXCEPTION: CallNotAllowedFromWithinCallback: '"
-             << rti_err_msg << "'.\n";
+             << rti_err_msg << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -880,13 +815,13 @@ void Federate::create_RTI_ambassador_and_connect()
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
-             << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
+             << "' with local_settings: '" << local_settings
              << "' with RTIinternalError: '" << rti_err_msg
              << "'. One possible"
              << " cause could be that the Central RTI Component is not running,"
              << " or is not running on the computer you think it is on. Please"
              << " check your CRC host and port settings and make sure the RTI"
-             << " is running.\n";
+             << " is running." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -919,7 +854,7 @@ void Federate::remove_federate_instance_id(
 
          ostringstream summary;
          summary << "Federate::remove_federate_instance_id():" << __LINE__
-                 << " Object Instance:" << handle_str << '\n';
+                 << " Object Instance:" << handle_str << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
    }
@@ -1000,7 +935,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                 << __LINE__ << " ERROR: Unexpected number of bytes in the"
                 << " Encoded FederateHandle because the byte count is "
                 << attr_iter->second.size()
-                << " but we expected 8!\n";
+                << " but we expected 8!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       }
@@ -1023,7 +958,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
                 << __LINE__ << " ERROR: FederateHandle size is "
-                << size << " but expected it to be 4!\n";
+                << size << " but expected it to be 4!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       }
@@ -1048,7 +983,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: CouldNotDecode\n";
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: CouldNotDecode" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       } catch ( FederateNotExecutionMember const &e ) {
@@ -1058,7 +993,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: FederateNotExecutionMember\n";
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: FederateNotExecutionMember" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       } catch ( NotConnected const &e ) {
@@ -1068,7 +1003,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: NotConnected\n";
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: NotConnected" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       } catch ( RTIinternalError const &e ) {
@@ -1082,7 +1017,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
                 << " ERROR: When decoding 'FederateHandle': EXCEPTION: "
-                << "RTIinternalError: %s" << rti_err_msg << '\n';
+                << "RTIinternalError: %s" << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
       }
@@ -1105,8 +1040,10 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( is_federate_executing() ) {
          bool found = false;
          for ( int loop = 0; loop < running_feds_count; ++loop ) {
-            char const *tName = StringUtilities::ip_strdup_wstring( federate_name_ws );
-            if ( !strcmp( running_feds[loop].name, tName ) ) {
+            string tName;
+            StringUtilities::to_string( tName, federate_name_ws );
+
+            if ( running_feds[loop].name == tName ) {
                found = true;
                break;
             }
@@ -1171,7 +1108,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador.\n";
+             << " ERROR: Unexpected NULL RTIambassador." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -1189,7 +1126,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    // Resolve all the federate instance handles given the federate names.
    try {
       for ( int i = 0; i < known_feds_count; ++i ) {
-         if ( known_feds[i].MOM_instance_name != NULL ) {
+         if ( !known_feds[i].MOM_instance_name.empty() ) {
 
             // Create the wide-string version of the MOM instance name.
             StringUtilities::to_wstring( fed_mom_instance_name_ws,
@@ -1205,7 +1142,8 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                string id_str;
                StringUtilities::to_string( id_str, fed_mom_obj_instance_hdl );
-               summary << "\n    Federate:'" << known_feds[i].name
+               summary << endl
+                       << "    Federate:'" << known_feds[i].name
                        << "' MOM-Object-ID:" << id_str;
             }
          }
@@ -1216,7 +1154,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         summary << '\n';
+         summary << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
 
@@ -1225,7 +1163,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
              << " ERROR: Object Instance Not Known for '"
-             << fed_mom_instance_name << "'\n";
+             << fed_mom_instance_name << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1233,13 +1171,13 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         summary << '\n';
+         summary << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
 
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " ERROR: Federation Not Execution Member\n";
+             << " ERROR: Federation Not Execution Member" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1247,13 +1185,13 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         summary << '\n';
+         summary << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
 
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " ERROR: NotConnected\n";
+             << " ERROR: NotConnected" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1261,7 +1199,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         summary << '\n';
+         summary << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
 
@@ -1270,15 +1208,15 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " RTIinternalError: '" << rti_err_msg << "'\n";
+             << " RTIinternalError: '" << rti_err_msg << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         summary << '\n';
+         summary << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
 
@@ -1287,7 +1225,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " ERROR: RTI1516_EXCEPTION for '" << rti_err_msg << "'\n";
+             << " ERROR: Exception for '" << rti_err_msg << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1295,7 +1233,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      summary << '\n';
+      summary << endl;
       message_publish( MSG_NORMAL, summary.str().c_str() );
    }
 }
@@ -1309,7 +1247,7 @@ void Federate::determine_federate_MOM_object_instance_names()
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::determine_federate_MOM_object_instance_names():" << __LINE__
-             << " Unexpected NULL RTIambassador.\n";
+             << " Unexpected NULL RTIambassador." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -1334,7 +1272,7 @@ void Federate::determine_federate_MOM_object_instance_names()
                // Get the instance name based on the MOM object instance handle
                // and make sure it is in the Trick memory space.
                known_feds[i].MOM_instance_name =
-                  StringUtilities::ip_strdup_wstring(
+                  StringUtilities::mm_strdup_wstring(
                      rti_amb->getObjectInstanceName( fed_mom_instance_hdl ) );
             }
          }
@@ -1343,19 +1281,19 @@ void Federate::determine_federate_MOM_object_instance_names()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: ObjectInstanceNotKnown\n",
+      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: ObjectInstanceNotKnown\n",
                        __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: NotConnected\n",
+      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: NotConnected\n",
                        __LINE__ );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1363,9 +1301,9 @@ void Federate::determine_federate_MOM_object_instance_names()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d rti_amb->getObjectInstanceName() ERROR: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1376,10 +1314,10 @@ void Federate::determine_federate_MOM_object_instance_names()
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
-      errmsg << "Object::register_object_with_RTI():" << __LINE__
+      errmsg << "Federate::determine_federate_MOM_object_instance_names():" << __LINE__
              << " ERROR: Exception getting MOM instance name for '"
              << fed_name_str << "' ID:" << id_str
-             << " '" << rti_err_msg << "'.\n";
+             << " '" << rti_err_msg << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1403,7 +1341,7 @@ bool Federate::is_required_federate(
 }
 
 bool Federate::is_joined_federate(
-   char const *federate_name )
+   string const &federate_name )
 {
    wstring fed_name_ws;
    StringUtilities::to_wstring( fed_name_ws, federate_name );
@@ -1413,8 +1351,8 @@ bool Federate::is_joined_federate(
 bool Federate::is_joined_federate(
    wstring const &federate_name )
 {
-   for ( int i = 0; i < (int)joined_federate_names.size(); ++i ) {
-      if ( federate_name == joined_federate_names[i] ) {
+   for ( size_t i = 0; i < joined_federate_names.size(); ++i ) {
+      if ( federate_name == joined_federate_names[i] ) { // cppcheck-suppress [useStlAlgorithm]
          return true;
       }
    }
@@ -1458,7 +1396,8 @@ string Federate::wait_for_required_federates_to_join()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream required_fed_summary;
       required_fed_summary << "Federate::wait_for_required_federates_to_join():"
-                           << __LINE__ << "\nWAITING FOR " << required_feds_count
+                           << __LINE__ << endl
+                           << "WAITING FOR " << required_feds_count
                            << " REQUIRED FEDERATES:";
 
       // Display the initial summary of the required federates we are waiting for.
@@ -1467,13 +1406,14 @@ string Federate::wait_for_required_federates_to_join()
          // Create a summary of the required federates by name.
          if ( known_feds[i].required ) {
             ++cnt;
-            required_fed_summary << "\n    " << cnt
+            required_fed_summary << endl
+                                 << "    " << cnt
                                  << ": Waiting for required federate '"
                                  << known_feds[i].name << "'";
          }
       }
 
-      required_fed_summary << '\n';
+      required_fed_summary << endl;
 
       // Display a summary of the required federate by name.
       message_publish( MSG_NORMAL, required_fed_summary.str().c_str() );
@@ -1557,7 +1497,8 @@ string Federate::wait_for_required_federates_to_join()
             // Build the federate summary as an output string stream.
             ostringstream summary;
             summary << "Federate::wait_for_required_federates_to_join():"
-                    << __LINE__ << "\nWAITING FOR " << required_feds_count
+                    << __LINE__ << endl
+                    << "WAITING FOR " << required_feds_count
                     << " REQUIRED FEDERATES:";
 
             // Summarize the required federates first.
@@ -1566,11 +1507,13 @@ string Federate::wait_for_required_federates_to_join()
                ++cnt;
                if ( known_feds[i].required ) {
                   if ( is_joined_federate( known_feds[i].name ) ) {
-                     summary << "\n    " << cnt
+                     summary << endl
+                             << "    " << cnt
                              << ": Found joined required federate '"
                              << known_feds[i].name << "'";
                   } else {
-                     summary << "\n    " << cnt
+                     summary << endl
+                             << "    " << cnt
                              << ": Waiting for required federate '"
                              << known_feds[i].name << "'";
                   }
@@ -1586,11 +1529,12 @@ string Federate::wait_for_required_federates_to_join()
                   string fedname;
                   StringUtilities::to_string( fedname, joined_federate_names[i] );
 
-                  summary << "\n    " << cnt << ": Found joined federate '"
+                  summary << endl
+                          << "    " << cnt << ": Found joined federate '"
                           << fedname << "'";
                }
             }
-            summary << '\n';
+            summary << endl;
 
             // Display the federate summary.
             message_publish( MSG_NORMAL, summary.str().c_str() );
@@ -1611,7 +1555,7 @@ string Federate::wait_for_required_federates_to_join()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -1641,8 +1585,8 @@ string Federate::wait_for_required_federates_to_join()
              << "Restore), precondition d), \"The correct number of joined "
              << "federates of the correct types that were joined to the "
              << "federation execution when the save was accomplished are "
-             << "currently joined to the federation execution.\"\n\tThe "
-             << "extraneous ";
+             << "currently joined to the federation execution.\"" << endl
+             << "\tThe extraneous ";
       if ( unrequired_federates_list.size() == 1 ) {
          errmsg << "federate is: ";
       } else {
@@ -1655,7 +1599,8 @@ string Federate::wait_for_required_federates_to_join()
          names += *cii + ", ";
       }
       names.resize( names.length() - 2 ); // remove trailing comma and space
-      errmsg << names << "\n\tThe required federates are: ";
+      errmsg << names << endl
+             << "\tThe required federates are: ";
       names = "";
       for ( i = 0; i < known_feds_count; ++i ) {
          if ( known_feds[i].required ) {
@@ -1664,7 +1609,8 @@ string Federate::wait_for_required_federates_to_join()
          }
       }
       names.resize( names.length() - 2 ); // remove trailing comma and space
-      errmsg << names << "\nTERMINATING EXECUTION!";
+      errmsg << names << endl
+             << "TERMINATING EXECUTION!";
 
       status_string = errmsg.str();
       return status_string;
@@ -1972,13 +1918,13 @@ void Federate::subscribe_attributes(
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::subscribe_attributes():" << __LINE__ << '\n';
+      summary << "Federate::subscribe_attributes():" << __LINE__ << endl;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, class_handle );
          summary << "  Class-Handle:" << handle_str << " with "
-                 << attribute_list.size() << " Attributes\n";
+                 << attribute_list.size() << " Attributes" << endl;
 
          AttributeHandleSet::const_iterator attr_iter;
          for ( attr_iter = attribute_list.begin();
@@ -1986,7 +1932,7 @@ void Federate::subscribe_attributes(
                ++attr_iter ) {
 
             StringUtilities::to_string( handle_str, *attr_iter );
-            summary << "   + Attribute-Handle:" << handle_str << '\n';
+            summary << "   + Attribute-Handle:" << handle_str << endl;
          }
       }
       message_publish( MSG_NORMAL, summary.str().c_str() );
@@ -2048,20 +1994,20 @@ void Federate::unsubscribe_attributes(
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::unsubscribe_attributes():" << __LINE__ << '\n';
+      summary << "Federate::unsubscribe_attributes():" << __LINE__ << endl;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, class_handle );
          summary << "  Class-Handle:" << handle_str << " with "
-                 << attribute_list.size() << " Attributes\n";
+                 << attribute_list.size() << " Attributes" << endl;
 
          AttributeHandleSet::const_iterator attr_iter;
          for ( attr_iter = attribute_list.begin();
                attr_iter != attribute_list.end();
                ++attr_iter ) {
             StringUtilities::to_string( handle_str, *attr_iter );
-            summary << "   + Attribute-Handle:" << handle_str << '\n';
+            summary << "   + Attribute-Handle:" << handle_str << endl;
          }
       }
       message_publish( MSG_NORMAL, summary.str().c_str() );
@@ -2119,20 +2065,20 @@ void Federate::request_attribute_update(
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::request_attribute_update():" << __LINE__ << '\n';
+      summary << "Federate::request_attribute_update():" << __LINE__ << endl;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, class_handle );
          summary << "  Class-Handle:" << handle_str << " with "
-                 << attribute_list.size() << " Attributes\n";
+                 << attribute_list.size() << " Attributes" << endl;
 
          AttributeHandleSet::const_iterator attr_iter;
          for ( attr_iter = attribute_list.begin();
                attr_iter != attribute_list.end();
                ++attr_iter ) {
             StringUtilities::to_string( handle_str, *attr_iter );
-            summary << "   + Attribute-Handle:" << handle_str << '\n';
+            summary << "   + Attribute-Handle:" << handle_str << endl;
          }
       }
       message_publish( MSG_NORMAL, summary.str().c_str() );
@@ -2147,7 +2093,7 @@ void Federate::request_attribute_update(
       // Request initial values.
       RTI_ambassador->requestAttributeValueUpdate( class_handle,
                                                    attribute_list,
-                                                   RTI1516_USERDATA( 0, 0 ) );
+                                                   VariableLengthData( NULL, 0 ) );
    } catch ( ObjectClassNotDefined const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::request_attribute_update():%d ObjectClassNotDefined: Attribute update request FAILED!\n",
@@ -2236,12 +2182,12 @@ void Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
       summary << "Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM():"
-              << __LINE__ << '\n';
+              << __LINE__ << endl;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, MOM_HLAfederate_class_handle );
-         summary << "  Class-Handle:" << handle_str << '\n';
+         summary << "  Class-Handle:" << handle_str << endl;
       }
       message_publish( MSG_NORMAL, summary.str().c_str() );
    }
@@ -2401,7 +2347,7 @@ void Federate::send_interaction(
 
    bool error_flag = false;
    try {
-      RTI_ambassador->sendInteraction( class_handle, parameter_list, RTI1516_USERDATA( 0, 0 ) );
+      RTI_ambassador->sendInteraction( class_handle, parameter_list, VariableLengthData( NULL, 0 ) );
    } catch ( InteractionClassNotPublished const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::send_interaction():%d InteractionClassNotPublished: Send interaction FAILED!\n",
@@ -2446,8 +2392,8 @@ void Federate::send_interaction(
 }
 
 void Federate::announce_sync_point(
-   wstring const          &label,
-   RTI1516_USERDATA const &user_supplied_tag )
+   wstring const            &label,
+   VariableLengthData const &user_supplied_tag )
 {
    // Delegate to the Execution Control to handle the FedAmb callback. It will
    // check for any synchronization points that require special handling.
@@ -2608,7 +2554,7 @@ void Federate::perform_checkpoint()
          // Replace all directory characters with an underscore.
          string save_name_str;
          StringUtilities::to_string( save_name_str, this->save_name );
-         string str_save_label = string( get_federation_name() ) + "_" + save_name_str;
+         string str_save_label = get_federation_name() + "_" + save_name_str;
          for ( int i = 0; i < (int)str_save_label.length(); ++i ) {
             if ( str_save_label[i] == '/' ) {
                str_save_label[i] = '_';
@@ -2675,7 +2621,7 @@ void Federate::setup_checkpoint()
          found = trick_filename.rfind( slash );
          if ( found != (int)string::npos ) {
             save_name_str              = trick_filename.substr( found + 1 );
-            string federation_name_str = string( get_federation_name() );
+            string federation_name_str = get_federation_name();
             if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
                // dir/federation_filename
                trick_filename.replace( found, slash.length(), slash + federation_name_str + "_" );
@@ -2694,7 +2640,7 @@ void Federate::setup_checkpoint()
          the_cpr->output_file = trick_filename;
 
          // federation_filename
-         str_save_label = string( get_federation_name() ) + "_" + save_name_str;
+         str_save_label = get_federation_name() + "_" + save_name_str;
 
          // Set the federate save_name to filename (without the federation name)
          // - this gets announced to other feds
@@ -2738,7 +2684,7 @@ void Federate::setup_checkpoint()
                             << " member. This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!\n";
+                            << " the Central RTI Component (CRC) level!" << endl;
                      DebugHandler::terminate_with_message( errmsg.str() );
                   }
                }
@@ -2873,7 +2819,7 @@ void Federate::perform_restore()
          // Replace all directory characters with an underscore.
          string restore_name_str;
          StringUtilities::to_string( restore_name_str, restore_name );
-         string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
+         string str_restore_label = get_federation_name() + "_" + restore_name_str;
          for ( int i = 0; i < (int)str_restore_label.length(); ++i ) {
             if ( str_restore_label[i] == '/' ) {
                str_restore_label[i] = '_';
@@ -2931,7 +2877,7 @@ void Federate::setup_restore()
    // if I announced the restore, must initiate federation restore
    if ( this->announce_restore ) {
       string trick_filename;
-      string slash_fedname( "/" + string( get_federation_name() ) + "_" );
+      string slash_fedname( "/" + get_federation_name() + "_" );
       int    found;
 
       // Otherwise set restore_name_str using trick's file name
@@ -2947,7 +2893,7 @@ void Federate::setup_restore()
          restore_name_str = trick_filename;
       }
       // federation_filename
-      string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
+      string str_restore_label = get_federation_name() + "_" + restore_name_str;
 
       // make sure we have a save directory specified
       check_HLA_save_directory();
@@ -2960,7 +2906,7 @@ void Federate::setup_restore()
       if ( !return_string.empty() ) {
          return_string += '\n';
          ostringstream errmsg;
-         errmsg << "Federate::setup_restore():" << __LINE__ << '\n'
+         errmsg << "Federate::setup_restore():" << __LINE__ << endl
                 << "ERROR: " << return_string;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -2993,7 +2939,7 @@ void Federate::setup_restore()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                         << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -3045,7 +2991,7 @@ void Federate::post_restore()
          wait_for_federation_restore_failed_callback_to_complete();
          ostringstream errmsg;
          errmsg << "TrickFederate::post_restore():" << __LINE__
-                << " ERROR: " << tStr << '\n';
+                << " ERROR: " << tStr << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -3127,317 +3073,6 @@ void Federate::post_restore()
    }
 }
 
-/*! @brief Set the time advance as granted. */
-void Federate::set_time_advance_granted(
-   RTI1516_NAMESPACE::LogicalTime const &time )
-{
-   Int64Time int64_time( time );
-
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-   // Ignore any granted time less than the requested time otherwise it will
-   // break our concept of HLA time since we are using scheduled jobs for
-   // processing HLA data sends, receives, etc and expected the next granted
-   // time to match our requested time. Dan Dexter, 2/12/2007
-   if ( int64_time >= this->requested_time ) {
-
-      granted_time.set( int64_time );
-
-      // Record the granted time in the HLA_time variable, so we can plot it
-      // in Trick data products.
-      this->HLA_time = granted_time.get_time_in_seconds();
-
-      this->time_adv_state = TIME_ADVANCE_GRANTED;
-
-      if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::set_time_advance_granted():%d Granted-time:%f, Requested-time:%f.\n",
-                          __LINE__, this->HLA_time, requested_time.get_time_in_seconds() );
-      }
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::set_time_advance_granted():%d WARNING: Federate \"%s\" \
-IGNORING GRANTED TIME %.12G because it is less then requested time %.12G.\n",
-                          __LINE__, get_federate_name(), int64_time.get_time_in_seconds(),
-                          requested_time.get_time_in_seconds() );
-      }
-   }
-}
-
-void Federate::set_granted_time(
-   double const time )
-{
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-   granted_time.set( time );
-
-   // Record the granted time in the HLA_time variable, so we can plot it
-   // in Trick data products.
-   this->HLA_time = granted_time.get_time_in_seconds();
-}
-
-void Federate::set_granted_time(
-   RTI1516_NAMESPACE::LogicalTime const &time )
-{
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-   granted_time.set( time );
-
-   // Record the granted time in the HLA_time variable, so we can plot it
-   // in Trick data products.
-   this->HLA_time = granted_time.get_time_in_seconds();
-}
-
-void Federate::set_requested_time(
-   double const time )
-{
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-   requested_time.set( time );
-}
-
-void Federate::set_requested_time(
-   RTI1516_NAMESPACE::LogicalTime const &time )
-{
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-   requested_time.set( time );
-}
-
-HLABaseTimeEnum Federate::get_HLA_base_time_units() const
-{
-   return Int64BaseTime::get_base_units();
-}
-
-void Federate::set_HLA_base_time_units(
-   HLABaseTimeEnum const base_time_units )
-{
-   // Set the HLA Logical time base units in the global Int64BaseTime.
-   Int64BaseTime::set( base_time_units );
-
-   // Refresh the HLA time constants based on the updated base time.
-   refresh_HLA_time_constants();
-}
-
-void Federate::refresh_HLA_time_constants()
-{
-   // Refresh the lookahead time given a possible new HLA base time units.
-   refresh_lookahead();
-
-   // Refresh the LCTS given a possible new HLA base time units.
-   execution_control->refresh_least_common_time_step();
-
-   // Refresh the HLA cycle time in base time.
-   this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
-}
-
-void Federate::scale_trick_tics_to_base_time_units()
-{
-   long long time_res  = Int64BaseTime::get_base_time_multiplier();
-   long long tic_value = exec_get_time_tic_value();
-
-   // Scale up the Trick time Tic value to support the HLA base time units.
-   // Trick Time Tics is limited to a value of 2^31.
-   while ( ( tic_value < time_res ) && ( tic_value < std::numeric_limits< int >::max() ) ) {
-      tic_value *= 10;
-   }
-
-   if ( tic_value <= std::numeric_limits< int >::max() ) {
-      // Update the Trick Time Tic value only if we are increasing the resolution.
-      if ( tic_value > exec_get_time_tic_value() ) {
-         exec_set_time_tic_value( tic_value );
-
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "Federate::scale_trick_tics_to_base_time_units():%d New Trick time tics:%d.\n",
-                             __LINE__, tic_value );
-         }
-      }
-   } else {
-      ostringstream errmsg;
-      errmsg << "Federate::scale_trick_tics_to_base_time_units():" << __LINE__
-             << " ERROR: Trick cannot represent the required time Tic value "
-             << setprecision( 18 ) << time_res
-             << " in order to support the HLA base units of '"
-             << Int64BaseTime::get_units()
-             << "'.\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-}
-
-void Federate::set_lookahead(
-   double const value )
-{
-   // Determine if the lookahead time needs a resolution that exceeds the
-   // configured HLA base time.
-   if ( Int64BaseTime::exceeds_base_time_resolution( value ) ) {
-      ostringstream errmsg;
-      errmsg << "Federate::set_lookahead():" << __LINE__
-             << " ERROR: The lookahead time specified (" << setprecision( 18 ) << value
-             << " seconds) requires more resolution than whole "
-             << Int64BaseTime::get_units()
-             << ". The HLA Logical Time is a 64-bit integer"
-             << " representing " << Int64BaseTime::get_units()
-             << " and cannot represent a lookahead time of "
-             << setprecision( 18 ) << ( value * Int64BaseTime::get_base_time_multiplier() )
-             << " " << Int64BaseTime::get_units() << ". You can adjust the"
-             << " base HLA Logical Time resolution by setting"
-             << " 'THLA.federate.HLA_time_base_units = trick."
-             << Int64BaseTime::get_units_string( Int64BaseTime::best_base_time_resolution( value ) )
-             << "' or 'federate.set_HLA_base_time_units( "
-             << Int64BaseTime::get_units_string( Int64BaseTime::best_base_time_resolution( value ) )
-             << " )' in your input.py file. The current HLA base time resolution is "
-             << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
-             << ". You also need to update both the Federation Execution"
-             << " Specific Federation Agreement (FESFA) and Federate Compliance"
-             << " Declaration (FCD) documents for your Federation to document"
-             << " the change in timing class resolution.\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Determine if the Trick time Tic can represent the lookahead time.
-   if ( Int64BaseTime::exceeds_base_time_resolution( value, exec_get_time_tic_value() ) ) {
-      ostringstream errmsg;
-      errmsg << "Federate::set_lookahead():" << __LINE__
-             << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
-             << ") does not have enough resolution to represent the HLA lookahead time ("
-             << setprecision( 18 ) << value
-             << " seconds). Please update the Trick time tic value in your"
-             << " input.py file (i.e. by calling 'trick.exec_set_time_tic_value()').\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-   lookahead.set( value );
-   this->lookahead_time = value;
-}
-
-/*! @brief Update the HLA lookahead base time. */
-void Federate::refresh_lookahead()
-{
-   // Recalculate the lookahead HLA time in base time units.
-   set_lookahead( this->lookahead_time );
-}
-
-void Federate::time_advance_request_to_GALT()
-{
-   // Simply return if we are the master federate that created the federation,
-   // or if time management is not enabled.
-   if ( !this->time_management || ( execution_control->is_master() && !execution_control->is_late_joiner() ) ) {
-      return;
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   try {
-      HLAinteger64Time time;
-      if ( RTI_ambassador->queryGALT( time ) ) {
-         int64_t L = lookahead.get_base_time();
-         if ( L > 0 ) {
-            int64_t GALT = time.getTime();
-
-            // Make sure the time is an integer multiple of the lookahead time.
-            time.setTime( ( ( GALT / L ) + 1 ) * L );
-         }
-         set_requested_time( time );
-      }
-   } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: FederateNotExecutionMember\n",
-                       __LINE__ );
-   } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: SaveInProgress\n",
-                       __LINE__ );
-   } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RestoreInProgress\n",
-                       __LINE__ );
-   } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: NotConnected\n",
-                       __LINE__ );
-   } catch ( RTIinternalError const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RTIinternalError\n",
-                       __LINE__ );
-   }
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::time_advance_request_to_GALT():%d Requested-Time:%lf\n",
-                       __LINE__, requested_time.get_time_in_seconds() );
-   }
-
-   // Perform the time-advance request to go to the requested time.
-   perform_time_advance_request();
-}
-
-void Federate::time_advance_request_to_GALT_LCTS_multiple()
-{
-   // Simply return if we are the master federate that created the federation,
-   // or if time management is not enabled.
-   if ( !this->time_management || ( execution_control->is_master() && !execution_control->is_late_joiner() ) ) {
-      return;
-   }
-
-   // Setup the Least-Common-Time-Step time value.
-   int64_t LCTS = execution_control->get_least_common_time_step();
-   if ( LCTS <= 0 ) {
-      LCTS = lookahead.get_base_time();
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   try {
-      HLAinteger64Time time;
-      if ( RTI_ambassador->queryGALT( time ) ) {
-         if ( LCTS > 0 ) {
-            int64_t GALT = time.getTime();
-
-            // Make sure the time is an integer multiple of the LCTS time.
-            time.setTime( ( ( GALT / LCTS ) + 1 ) * LCTS );
-         }
-         set_requested_time( time );
-      }
-   } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: FederateNotExecutionMember\n",
-                       __LINE__ );
-   } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: SaveInProgress\n",
-                       __LINE__ );
-   } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RestoreInProgress\n",
-                       __LINE__ );
-   } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: NotConnected\n",
-                       __LINE__ );
-   } catch ( RTIinternalError const &e ) {
-      message_publish( MSG_WARNING, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RTIinternalError\n",
-                       __LINE__ );
-   }
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Requested-Time:%lf\n",
-                       __LINE__, requested_time.get_time_in_seconds() );
-   }
-
-   // Perform the time-advance request to go to the requested time.
-   perform_time_advance_request();
-}
-
 /*!
  * @job_class{initialization}
  */
@@ -3450,13 +3085,13 @@ void Federate::create_federation()
    if ( RTI_ambassador.get() == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
-             << " ERROR: NULL pointer to RTIambassador!\n";
+             << " ERROR: NULL pointer to RTIambassador!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::create_federation():%d Attempting to create Federation '%s'\n",
-                       __LINE__, get_federation_name() );
+                       __LINE__, get_federation_name().c_str() );
    }
 
    // Create the wide-string version of the federation name.
@@ -3472,13 +3107,13 @@ void Federate::create_federation()
 
       // Add the user specified FOM-modules to the vector by parsing the comma
       // separated list of modules.
-      if ( FOM_modules != NULL ) {
+      if ( !FOM_modules.empty() ) {
          StringUtilities::tokenize( FOM_modules, FOM_modules_vector, "," );
       }
 
       // Determine if the user specified a MIM-module, which determines how
       // we create the federation execution.
-      if ( MIM_module != NULL ) {
+      if ( !MIM_module.empty() ) {
          StringUtilities::to_wstring( MIM_module_ws, MIM_module );
       }
 
@@ -3500,7 +3135,7 @@ void Federate::create_federation()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::create_federation():%d Created Federation '%s'\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
    } catch ( RTI1516_NAMESPACE::FederationExecutionAlreadyExists const &e ) {
       // Just ignore the exception if the federation execution already exits
@@ -3511,9 +3146,13 @@ void Federate::create_federation()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::create_federation():%d Federation already exists for '%s'\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::CouldNotOpenFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::CouldNotOpenFDD const &e ) {
+#endif
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -3525,12 +3164,17 @@ void Federate::create_federation()
       errmsg << "Federate::create_federation():" << __LINE__
              << " ERROR: Could not open FOM-modules: '"
              << FOM_modules << "'";
-      if ( MIM_module != NULL ) {
+      if ( !MIM_module.empty() ) {
          errmsg << " or MIM-module: '" << MIM_module << "'";
       }
-      errmsg << ", RTI Exception: " << rti_err_msg << '\n';
+      errmsg << ", RTI Exception: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::ErrorReadingFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::ErrorReadingFDD const &e ) {
+#endif
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -3542,10 +3186,10 @@ void Federate::create_federation()
       errmsg << "Federate::create_federation():" << __LINE__
              << " ERROR: Problem reading FOM-modules: '"
              << FOM_modules << "'";
-      if ( MIM_module != NULL ) {
+      if ( !MIM_module.empty() ) {
          errmsg << " or MIM-module: '" << MIM_module << "'";
       }
-      errmsg << ", RTI Exception: " << rti_err_msg << '\n';
+      errmsg << ", RTI Exception: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::CouldNotCreateLogicalTimeFactory const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -3558,9 +3202,10 @@ void Federate::create_federation()
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
              << " ERROR: Could not create logical time factory 'HLAinteger64Time"
-             << "', RTI Exception: " << rti_err_msg << "\n  Make sure that you "
+             << "', RTI Exception: " << rti_err_msg << endl
+             << "  Make sure that you "
              << "are using a IEEE_1516_2010-compliant RTI version which "
-             << "supplies the 'HLAinteger64Time' class.\n";
+             << "supplies the 'HLAinteger64Time' class." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -3569,7 +3214,7 @@ void Federate::create_federation()
 
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
-             << " EXCEPTION: NotConnected\n";
+             << " EXCEPTION: NotConnected" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -3581,9 +3226,9 @@ void Federate::create_federation()
 
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
-             << " RTI Internal Error: " << rti_err_msg << '\n';
+             << " RTI Internal Error: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -3595,7 +3240,7 @@ void Federate::create_federation()
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
              << " ERROR: Unrecoverable error in federation '" << get_federation_name()
-             << "' creation, RTI Exception: " << rti_err_msg << '\n';
+             << "' creation, RTI Exception: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -3607,8 +3252,8 @@ void Federate::create_federation()
  * @job_class{initialization}
  */
 void Federate::join_federation(
-   char const *const federate_name,
-   char const *const federate_type )
+   string const &federate_name,
+   string const &federate_type )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -3617,13 +3262,13 @@ void Federate::join_federation(
    if ( RTI_ambassador.get() == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " ERROR: NULL pointer to RTIambassador!\n";
+             << " ERROR: NULL pointer to RTIambassador!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    if ( federate_ambassador == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " ERROR: NULL pointer to FederateAmbassador!\n";
+             << " ERROR: NULL pointer to FederateAmbassador!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    if ( this->federation_joined ) {
@@ -3631,17 +3276,17 @@ void Federate::join_federation(
          ostringstream errmsg;
          errmsg << "Federate::join_federation():" << __LINE__
                 << " Federation '" << get_federation_name()
-                << "': ALREADY JOINED FEDERATION EXECUTION\n";
+                << "': ALREADY JOINED FEDERATION EXECUTION" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
    }
 
    // Make sure the federate name has been specified.
-   if ( ( federate_name == NULL ) || ( *federate_name == '\0' ) ) {
+   if ( federate_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " ERROR: Unexpected NULL federate name.\n";
+             << " ERROR: Unexpected empty federate name." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -3652,7 +3297,7 @@ void Federate::join_federation(
    wstring fed_name_ws;
    StringUtilities::to_wstring( fed_name_ws, federate_name );
    wstring fed_type_ws;
-   if ( ( federate_type == NULL ) || ( *federate_type == '\0' ) ) {
+   if ( federate_type.empty() ) {
       // Just set the federate type to the name if it was not specified.
       StringUtilities::to_wstring( fed_type_ws, federate_name );
    } else {
@@ -3668,7 +3313,7 @@ void Federate::join_federation(
    // will use the information.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::join_federation():%d Attempting to Join Federation '%s'\n",
-                       __LINE__, get_federation_name() );
+                       __LINE__, get_federation_name().c_str() );
    }
    try {
       this->federation_joined = false;
@@ -3677,7 +3322,7 @@ void Federate::join_federation(
 
       // Add the user specified FOM-modules to the vector by parsing the comma
       // separated list of modules.
-      if ( this->FOM_modules != NULL ) {
+      if ( !FOM_modules.empty() ) {
          StringUtilities::tokenize( FOM_modules, fomModulesVector, "," );
       }
 
@@ -3693,7 +3338,7 @@ void Federate::join_federation(
          StringUtilities::to_string( id_str, federate_id );
 
          message_publish( MSG_NORMAL, "Federate::join_federation():%d Joined Federation '%s', Federate-Handle:%s\n",
-                          __LINE__, get_federation_name(), id_str.c_str() );
+                          __LINE__, get_federation_name().c_str(), id_str.c_str() );
       }
    } catch ( RTI1516_NAMESPACE::CouldNotCreateLogicalTimeFactory const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -3702,7 +3347,7 @@ void Federate::join_federation(
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: CouldNotCreateLogicalTimeFactory\n";
+             << " EXCEPTION: CouldNotCreateLogicalTimeFactory" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::FederateNameAlreadyInUse const &e ) {
@@ -3713,40 +3358,55 @@ void Federate::join_federation(
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
              << " EXCEPTION: FederateNameAlreadyInUse! Federate name:\""
-             << get_federate_name() << "\"\n";
+             << get_federate_name() << "\"" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::InconsistentFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::InconsistentFDD const &e ) {
+#endif
+
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: InconsistentFDD! FOM-modules:\""
-             << FOM_modules << "\"\n";
+             << " EXCEPTION: Inconsistent FOM! FOM-modules:\""
+             << FOM_modules << "\"" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::ErrorReadingFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::ErrorReadingFDD const &e ) {
+#endif
+
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: ErrorReadingFDD! FOM-modules:\""
-             << FOM_modules << "\"\n";
+             << " EXCEPTION: Error Reading FOM! FOM-modules:\""
+             << FOM_modules << "\"" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
+
+#if defined( IEEE_1516_2025 )
+   } catch ( RTI1516_NAMESPACE::CouldNotOpenFOM const &e ) {
+#else
    } catch ( RTI1516_NAMESPACE::CouldNotOpenFDD const &e ) {
+#endif
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: CouldNotOpenFDD! FOM-modules:\""
-             << FOM_modules << "\"\n";
+             << " EXCEPTION: Could Not Open FOM! FOM-modules:\""
+             << FOM_modules << "\"" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::FederateAlreadyExecutionMember const &e ) {
@@ -3758,7 +3418,7 @@ void Federate::join_federation(
       errmsg << "Federate::join_federation():" << __LINE__
              << " ERROR: The Federate '" << get_federate_name()
              << "' is already a member of the '"
-             << get_federation_name() << "' Federation.\n";
+             << get_federation_name() << "' Federation." << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::FederationExecutionDoesNotExist const &e ) {
@@ -3767,7 +3427,7 @@ void Federate::join_federation(
       this->federation_created_by_federate = false;
       this->federation_exists              = false;
       message_publish( MSG_WARNING, "Federate::join_federation():%d EXCEPTION: %s Federation Execution does not exist.\n",
-                       __LINE__, get_federation_name() );
+                       __LINE__, get_federation_name().c_str() );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       message_publish( MSG_WARNING, "Federate::join_federation():%d EXCEPTION: SaveInProgress\n", __LINE__ );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
@@ -3779,7 +3439,7 @@ void Federate::join_federation(
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: NotConnected\n";
+             << " EXCEPTION: NotConnected" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::CallNotAllowedFromWithinCallback const &e ) {
@@ -3789,7 +3449,7 @@ void Federate::join_federation(
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " EXCEPTION: CallNotAllowedFromWithinCallback\n";
+             << " EXCEPTION: CallNotAllowedFromWithinCallback" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -3803,7 +3463,7 @@ void Federate::join_federation(
       errmsg << "Federate::join_federation():" << __LINE__
              << " ERROR: Federate '" << get_federate_name() << "' for Federation '"
              << get_federation_name() << "' encountered RTI Internal Error: "
-             << rti_err_msg << '\n';
+             << rti_err_msg << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -3823,7 +3483,7 @@ void Federate::create_and_join_federation()
          ostringstream errmsg;
          errmsg << "Federate::create_and_join_federation():" << __LINE__
                 << " Federation \"" << get_federation_name()
-                << "\": ALREADY JOINED FEDERATION EXECUTION\n";
+                << "\": ALREADY JOINED FEDERATION EXECUTION" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -3843,7 +3503,7 @@ void Federate::create_and_join_federation()
 
       if ( !this->federation_joined ) {
          message_publish( MSG_WARNING, "Federate::create_and_join_federation():%d Failed to join federation \"%s\" on attempt %d of %d!\n",
-                          __LINE__, get_federation_name(), k, max_retries );
+                          __LINE__, get_federation_name().c_str(), k, max_retries );
          Utilities::micro_sleep( 100000 );
       }
    }
@@ -3852,7 +3512,7 @@ void Federate::create_and_join_federation()
       ostringstream errmsg;
       errmsg << "Federate::create_and_join_federation():" << __LINE__
              << " ERROR: Federate '" << get_federate_name() << "' FAILED TO JOIN the '"
-             << get_federation_name() << "' Federation.\n";
+             << get_federation_name() << "' Federation." << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -3894,7 +3554,7 @@ void Federate::enable_async_delivery()
 
       ostringstream errmsg;
       errmsg << "Federate::enable_async_delivery():" << __LINE__
-             << " EXCEPTION: SaveInProgress\n";
+             << " EXCEPTION: SaveInProgress" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
@@ -3904,7 +3564,7 @@ void Federate::enable_async_delivery()
 
       ostringstream errmsg;
       errmsg << "Federate::enable_async_delivery():" << __LINE__
-             << " EXCEPTION: RestoreInProgress\n";
+             << " EXCEPTION: RestoreInProgress" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
@@ -3914,7 +3574,7 @@ void Federate::enable_async_delivery()
 
       ostringstream errmsg;
       errmsg << "Federate::enable_async_delivery():" << __LINE__
-             << " EXCEPTION: FederateNotExecutionMember\n";
+             << " EXCEPTION: FederateNotExecutionMember" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
@@ -3924,7 +3584,7 @@ void Federate::enable_async_delivery()
 
       ostringstream errmsg;
       errmsg << "Federate::enable_async_delivery():" << __LINE__
-             << " EXCEPTION: NotConnected\n";
+             << " EXCEPTION: NotConnected" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
@@ -3937,10 +3597,10 @@ void Federate::enable_async_delivery()
 
       ostringstream errmsg;
       errmsg << "Federate::enable_async_delivery():" << __LINE__
-             << " EXCEPTION: RTIinternalError: '" << rti_err_msg << "'\n";
+             << " EXCEPTION: RTIinternalError: '" << rti_err_msg << "'" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -3948,7 +3608,7 @@ void Federate::enable_async_delivery()
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "Federate::enable_async_delivery():%d \"%s\": Unexpected RTI exception!\nRTI Exception: RTIinternalError: '%s'\n\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
+                       __LINE__, get_federation_name().c_str(), rti_err_msg.c_str() );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -3974,876 +3634,6 @@ bool Federate::check_for_shutdown_with_termination()
 }
 
 /*!
- * @job_class{initialization}.
- */
-void Federate::setup_time_management()
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s \n",
-                       __LINE__,
-                       ( this->time_management ? "Yes" : "No" ),
-                       ( this->time_regulating ? "Yes" : "No" ),
-                       ( this->time_constrained ? "Yes" : "No" ) );
-   }
-
-   // Determine if HLA time management is enabled.
-   if ( this->time_management ) {
-
-      // Setup time constrained if the user wants to be constrained and our
-      // current HLA time constrained state indicates we are not constrained.
-      if ( this->time_constrained ) {
-         if ( !this->time_constrained_state ) {
-            setup_time_constrained();
-         }
-      } else {
-         if ( this->time_constrained_state ) {
-            // Disable time constrained if our current HLA state indicates we
-            // are already constrained.
-            shutdown_time_constrained();
-         }
-      }
-
-      // Setup time regulation if the user wanted to be regulated and our
-      // current HLA time regulating state indicates we are not regulated.
-      if ( this->time_regulating ) {
-         if ( !this->time_regulating_state ) {
-            setup_time_regulation();
-         }
-      } else {
-         if ( this->time_regulating_state ) {
-            // Disable time regulation if our current HLA state indicates we
-            // are already regulating.
-            shutdown_time_regulating();
-         }
-      }
-   } else {
-      // HLA Time Management is disabled.
-
-      // Disable time constrained and time regulation.
-      if ( this->time_constrained_state ) {
-         shutdown_time_constrained();
-      }
-      if ( this->time_regulating_state ) {
-         shutdown_time_regulating();
-      }
-   }
-}
-
-void Federate::set_time_constrained_enabled(
-   RTI1516_NAMESPACE::LogicalTime const &time )
-{
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-      // Set the control flags after the debug show above to avoid a race condition
-      // with the main Trick thread printing to the console when these flags are set.
-      set_requested_time( time );
-      set_time_advance_granted( time );
-      set_time_constrained_state( true );
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "Federate::set_time_constrained_enabled():%d Federate \
-\"%s\" Time granted to: %.12G \n",
-                       __LINE__, get_federate_name(),
-                       get_granted_time().get_time_in_seconds() );
-   }
-}
-
-/*!
- * @job_class{initialization}.
- */
-void Federate::setup_time_constrained()
-{
-   // Just return if HLA time management is not enabled, the user does
-   // not want time constrained enabled, or if we are already constrained.
-   if ( !this->time_management || !this->time_constrained || this->time_constrained_state ) {
-      return;
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   // Sanity check.
-   if ( RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate_with_message( "Federate::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
-   }
-
-   try {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED \n",
-                          __LINE__, get_federation_name() );
-      }
-
-      {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-         this->time_adv_state         = TIME_ADVANCE_RESET;
-         this->time_constrained_state = false;
-      }
-
-      // Turn on constrained status so that regulating federates will control
-      // our advancement in time.
-      //
-      // If we are constrained and sending federates specify the Class
-      // attributes and Communication interaction with timestamp in the
-      // simulation fed file we will receive TimeStamp Ordered messages.
-      RTI_ambassador->enableTimeConstrained();
-
-      int64_t      wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
-      SleepTimeout sleep_timer;
-
-      // This spin lock waits for the time constrained flag to be set from the RTI.
-      while ( !this->time_constrained_state ) {
-
-         // Check for shutdown.
-         check_for_shutdown_with_termination();
-
-         sleep_timer.sleep();
-
-         if ( !this->time_constrained_state ) {
-
-            // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
-
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::setup_time_constrained():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate_with_message( errmsg.str() );
-               }
-            }
-
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               message_publish( MSG_NORMAL, "Federate::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED, waiting...\n",
-                                __LINE__, get_federation_name() );
-            }
-         }
-      }
-   } catch ( RTI1516_NAMESPACE::TimeConstrainedAlreadyEnabled const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      this->time_constrained_state = true;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": Time Constrained Already Enabled : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::InTimeAdvancingState const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": ERROR: InTimeAdvancingState : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::RequestForTimeConstrainedPending const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": ERROR: RequestForTimeConstrainedPending : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": ERROR: FederateNotExecutionMember : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TrickHLAFderate::setup_time_constrained():%d \"%s\": ERROR: SaveInProgress : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": ERROR: RestoreInProgress : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": ERROR: NotConnected : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": ERROR: RTIinternalError : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_constrained():%d \"%s\": Unexpected RTI exception!\nRTI Exception: RTIinternalError: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   }
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-}
-
-/*! @brief Enable time regulating.
- *  @param time the granted HLA Logical time */
-void Federate::set_time_regulation_enabled(
-   RTI1516_NAMESPACE::LogicalTime const &time )
-{
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-      // Set the control flags after the show above to avoid a race condition with
-      // the main Trick thread printing to the console when these flags are set.
-      set_requested_time( time );
-      set_time_advance_granted( time );
-      set_time_regulation_state( true );
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "Federate::set_time_regulation_enabled():%d Federate \
-\"%s\" Time granted to: %.12G \n",
-                       __LINE__, get_federate_name(),
-                       get_granted_time().get_time_in_seconds() );
-   }
-}
-
-/*!
- * @job_class{initialization}.
- */
-void Federate::setup_time_regulation()
-{
-   // Just return if HLA time management is not enabled, the user does
-   // not want time regulation enabled, or if we are already regulating.
-   if ( !this->time_management || !this->time_regulating || this->time_regulating_state ) {
-      return;
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   // Sanity check.
-   if ( RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate_with_message( "Federate::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
-   }
-
-   try {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds.\n",
-                          __LINE__, get_federation_name(), lookahead.get_time_in_seconds() );
-      }
-
-      // RTI_amb->enableTimeRegulation() is an implicit
-      // RTI_amb->timeAdvanceRequest() so clear the flags since we will get a
-      // FedAmb::timeRegulationEnabled() callback which will set the
-      // time-adv state and time_regulating_state flags to true/granted.
-
-      {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-         this->time_adv_state        = TIME_ADVANCE_RESET;
-         this->time_regulating_state = false;
-      }
-
-      // Turn on regulating status so that constrained federates will be
-      // controlled by our time.
-      //
-      // If we are regulating and our object attributes and interaction
-      // parameters are specified with timestamp in the FOM we will send
-      // TimeStamp Ordered messages.
-      RTI_ambassador->enableTimeRegulation( lookahead.get() );
-
-      int64_t      wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
-      SleepTimeout sleep_timer;
-
-      // This spin lock waits for the time regulation flag to be set from the RTI.
-      while ( !this->time_regulating_state ) {
-
-         // Check for shutdown.
-         check_for_shutdown_with_termination();
-
-         sleep_timer.sleep();
-
-         if ( !this->time_regulating_state ) {
-
-            // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
-
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::setup_time_regulation():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate_with_message( errmsg.str() );
-               }
-            }
-
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               message_publish( MSG_NORMAL, "Federate::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds, waiting...\n",
-                                __LINE__, get_federation_name(), lookahead.get_time_in_seconds() );
-            }
-         }
-      }
-
-   } catch ( RTI1516_NAMESPACE::TimeRegulationAlreadyEnabled const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      this->time_regulating_state = true;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": Time Regulation Already Enabled: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::InvalidLookahead const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: InvalidLookahead: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::InTimeAdvancingState const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: InTimeAdvancingState: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::RequestForTimeRegulationPending const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: RequestForTimeRegulationPending: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: FederateNotExecutionMember: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: SaveInProgress: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: RestoreInProgress: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: NotConnected : '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": ERROR: RTIinternalError: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_time_regulation():%d \"%s\": Unexpected RTI exception!\nRTI Exception: RTIinternalError: '%s'\n",
-                       __LINE__, get_federation_name(), rti_err_msg.c_str() );
-   }
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-}
-
-/*!
- * @job_class{scheduled}
- */
-void Federate::time_advance_request()
-{
-   // Skip requesting time-advancement if we are not time-regulating and
-   // not time-constrained (i.e. not using time management).
-   if ( !this->time_management ) {
-      return;
-   }
-
-   // Do not ask for a time advance on an initialization pass.
-   if ( exec_get_mode() == Initialization ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::time_advance_request():%d exec_init_pass() == true so returning.\n",
-                          __LINE__ );
-      }
-      return;
-   }
-
-   // -- start of checkpoint additions --
-   this->save_completed = false; // reset ONLY at the bottom of the frame...
-   // -- end of checkpoint additions --
-
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-      // Build the requested HLA logical time for the next time step.
-      if ( is_zero_lookahead_time() ) {
-         // Use the TAR job cycle time for the time-step.
-         this->requested_time += this->HLA_cycle_time_in_base_time;
-      } else {
-         // Use the lookahead time for the time-step.
-         // Requested time = granted time + lookahead
-         this->requested_time += this->lookahead;
-      }
-   }
-
-   // Perform the time-advance request to go to the requested time.
-   perform_time_advance_request();
-}
-
-/*!
- * @job_class{scheduled}
- */
-void Federate::perform_time_advance_request()
-{
-   // -- start of checkpoint additions --
-   this->save_completed = false; // reset ONLY at the bottom of the frame...
-   // -- end of checkpoint additions --
-
-   // Skip requesting time-advancement if we are not time-regulating and
-   // not time-constrained (i.e. not using time management).
-   if ( !this->time_management ) {
-      return;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      if ( is_zero_lookahead_time() ) {
-         message_publish( MSG_NORMAL, "Federate::perform_time_advance_request():%d Time Advance Request Available (TARA) to %.12G seconds.\n",
-                          __LINE__, requested_time.get_time_in_seconds() );
-      } else {
-         message_publish( MSG_NORMAL, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.\n",
-                          __LINE__, requested_time.get_time_in_seconds() );
-      }
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks
-      // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-      if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
-         message_publish( MSG_NORMAL, "Federate::perform_time_advance_request():%d WARNING: Already in time requested state!\n",
-                          __LINE__ );
-      }
-
-      // Clear the TAR flag before we make our request.
-      this->time_adv_state = TIME_ADVANCE_RESET;
-
-      try {
-         if ( is_zero_lookahead_time() ) {
-            // Request that time be advanced to the new time, but still allow
-            // TSO data for Treq = Tgrant
-            RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
-         } else {
-            // Request that time be advanced to the new time.
-            RTI_ambassador->timeAdvanceRequest( requested_time.get() );
-         }
-
-         // Indicate we issued a TAR since we successfully made the request
-         // without an exception.
-         this->time_adv_state = TIME_ADVANCE_REQUESTED;
-
-      } catch ( InvalidLogicalTime const &e ) {
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d EXCEPTION: InvalidLogicalTime\n",
-                          __LINE__ );
-      } catch ( LogicalTimeAlreadyPassed const &e ) {
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d EXCEPTION: LogicalTimeAlreadyPassed\n",
-                          __LINE__ );
-      } catch ( InTimeAdvancingState const &e ) {
-         // A time advance request is still being processed by the RTI so show
-         // a message and treat this as a successful time advance request.
-         //
-         // Indicate we are in the time advance requested state.
-         this->time_adv_state = TIME_ADVANCE_REQUESTED;
-
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.\n",
-                          __LINE__ );
-      } catch ( RequestForTimeRegulationPending const &e ) {
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d EXCEPTION: RequestForTimeRegulationPending\n",
-                          __LINE__ );
-      } catch ( RequestForTimeConstrainedPending const &e ) {
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d EXCEPTION: RequestForTimeConstrainedPending\n",
-                          __LINE__ );
-      } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d EXCEPTION: FederateNotExecutionMember\n",
-                          __LINE__ );
-      } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d EXCEPTION: SaveInProgress\n",
-                          __LINE__ );
-      } catch ( RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d EXCEPTION: RestoreInProgress\n",
-                          __LINE__ );
-      } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d EXCEPTION: NotConnected\n",
-                          __LINE__ );
-      } catch ( RTIinternalError const &e ) {
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Federate::perform_time_advance_request():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'\n",
-                          __LINE__, get_federation_name(), rti_err_msg.c_str() );
-      }
-   }
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-}
-
-/*!
- * @job_class{scheduled}
- */
-void Federate::wait_for_zero_lookahead_TARA_TAG()
-{
-   // Skip requesting time-advancement if we are not time-regulating and
-   // not time-constrained (i.e. not using time management).
-   if ( !this->time_management ) {
-      return;
-   }
-
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks
-      // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-      if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
-         message_publish( MSG_NORMAL, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Already in time requested state!\n",
-                          __LINE__ );
-      } else {
-
-         // Clear the TAR flag before we make our request.
-         this->time_adv_state = TIME_ADVANCE_RESET;
-
-         // Macro to save the FPU Control Word register value.
-         TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-         // Time Advance Request Available (TARA)
-         try {
-            // Request that time be advanced to the new time, but still allow
-            // TSO data for Treq = Tgrant
-            RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
-
-            // Indicate we issued a TAR since we successfully made the request
-            // without an exception.
-            this->time_adv_state = TIME_ADVANCE_REQUESTED;
-
-         } catch ( InvalidLogicalTime const &e ) {
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: InvalidLogicalTime\n",
-                             __LINE__ );
-         } catch ( LogicalTimeAlreadyPassed const &e ) {
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: LogicalTimeAlreadyPassed\n",
-                             __LINE__ );
-         } catch ( InTimeAdvancingState const &e ) {
-            // A time advance request is still being processed by the RTI so show
-            // a message and treat this as a successful time advance request.
-            //
-            // Indicate we are in the time advance requested state.
-            this->time_adv_state = TIME_ADVANCE_REQUESTED;
-
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.\n",
-                             __LINE__ );
-         } catch ( RequestForTimeRegulationPending const &e ) {
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeRegulationPending\n",
-                             __LINE__ );
-         } catch ( RequestForTimeConstrainedPending const &e ) {
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeConstrainedPending\n",
-                             __LINE__ );
-         } catch ( FederateNotExecutionMember const &e ) {
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: FederateNotExecutionMember\n",
-                             __LINE__ );
-         } catch ( SaveInProgress const &e ) {
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: SaveInProgress\n",
-                             __LINE__ );
-         } catch ( RestoreInProgress const &e ) {
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RestoreInProgress\n",
-                             __LINE__ );
-         } catch ( NotConnected const &e ) {
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected\n",
-                             __LINE__ );
-         } catch ( RTIinternalError const &e ) {
-            string rti_err_msg;
-            StringUtilities::to_string( rti_err_msg, e.what() );
-            message_publish( MSG_WARNING, "Federate::wait_for_zero_lookahead_TARA_TAG():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'\n",
-                             __LINE__, get_federation_name(), rti_err_msg.c_str() );
-         }
-
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         // We had an error if we are not in the time advance requested state.
-         if ( this->time_adv_state != TIME_ADVANCE_REQUESTED ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-               message_publish( MSG_NORMAL, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Request Available call made!\n",
-                                __LINE__ );
-            }
-            return;
-         }
-      }
-   }
-
-   unsigned short state;
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks
-      // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-      state = this->time_adv_state;
-   }
-
-   // Wait for Time Advance Grant (TAG)
-   if ( state != TIME_ADVANCE_GRANTED ) {
-
-      int64_t      wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
-      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
-
-      // This spin lock waits for the time advance grant from the RTI.
-      do {
-         // Check for shutdown.
-         check_for_shutdown_with_termination();
-
-         sleep_timer.sleep();
-
-         {
-            // When auto_unlock_mutex goes out of scope it automatically unlocks
-            // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-            state = this->time_adv_state;
-         }
-
-         if ( state != TIME_ADVANCE_GRANTED ) {
-
-            // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
-
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::wait_for_zero_lookahead_TARA_TAG():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate_with_message( errmsg.str() );
-               }
-            }
-
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               message_publish( MSG_NORMAL, "Federate::wait_for_zero_lookahead_TARA_TAG():%d Waiting...\n",
-                                __LINE__ );
-            }
-         }
-      } while ( state != TIME_ADVANCE_GRANTED );
-   }
-}
-
-/*!
- * @brief Associate a Trick child thread with TrickHLA.
- */
-void Federate::associate_to_trick_child_thread(
-   unsigned int const thread_id,
-   double const       data_cycle )
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d, data_cycle:%.3f).\n",
-                       __LINE__, thread_id, data_cycle );
-   }
-
-   // Delegate to the Trick child thread coordinator.
-   thread_coordinator.associate_to_trick_child_thread( thread_id, data_cycle );
-}
-
-/*!
- * @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA.
- */
-void Federate::disable_trick_child_thread_associations(
-   char const *thread_ids )
-{
-   // Delegate to the Trick child thread coordinator.
-   thread_coordinator.disable_trick_thread_associations( thread_ids );
-}
-
-/*!
- * @brief Verify the thread IDs associated to the objects.
- */
-void Federate::verify_trick_child_thread_associations()
-{
-   // Delegate to the Trick thread coordinator.
-   thread_coordinator.verify_trick_thread_associations();
-}
-
-/*
- * @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt).
- */
-bool const Federate::verify_time_constraints()
-{
-   return thread_coordinator.verify_time_constraints();
-}
-
-/*!
- * @brief Announce all the HLA data was sent.
- */
-void Federate::announce_data_available()
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::announce_data_available():%d Thread:%d\n",
-                       __LINE__, exec_get_process_id() );
-   }
-
-   // Delegate to the Trick child thread coordinator.
-   thread_coordinator.announce_data_available();
-}
-
-/*!
- * @brief Announce all the HLA data was sent.
- */
-void Federate::announce_data_sent()
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::announce_data_sent():%d Thread:%d Granted HLA-time:%.12G seconds.\n",
-                       __LINE__, exec_get_process_id(), granted_time.get_time_in_seconds() );
-   }
-
-   // Delegate to the Trick child thread coordinator.
-   thread_coordinator.announce_data_sent();
-}
-
-/*!
- * @brief Wait for the HLA data to be sent if a Trick child thread or if the
- * calling thread is the Trick main thread then wait for all associated Trick
- * child threads to have called this function.
- */
-void Federate::wait_to_send_data()
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::wait_to_send_data():%d Thread:%d\n",
-                       __LINE__, exec_get_process_id() );
-   }
-
-   // Delegate to the Trick child thread coordinator.
-   thread_coordinator.wait_to_send_data();
-}
-
-/*! @brief Wait to receive data when the Trick main thread is ready. */
-void Federate::wait_to_receive_data()
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::wait_to_receive_data():%d Thread:%d\n",
-                       __LINE__, exec_get_process_id() );
-   }
-
-   // Delegate to the Trick child thread coordinator.
-   thread_coordinator.wait_to_receive_data();
-}
-
-/*! @brief Get the data cycle time for the configured object index or return
- * the default data cycle time otherwise. */
-int64_t const Federate::get_data_cycle_base_time_for_obj(
-   unsigned int const obj_index,
-   int64_t const      default_data_cycle_base_time ) const
-{
-   // Delegate to the Trick child thread coordinator.
-   return thread_coordinator.get_data_cycle_base_time_for_obj( obj_index, default_data_cycle_base_time );
-}
-
-/*! @brief Is the object for the given index on a data cycle boundary. */
-bool const Federate::on_data_cycle_boundary_for_obj(
-   unsigned int const obj_index,
-   int64_t const      sim_time_in_base_time ) const
-{
-   // Delegate to the Trick child thread coordinator.
-   return thread_coordinator.on_receive_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time );
-}
-
-/*!
  * @brief Send zero lookahead or requested data for the specified object instance.
  * @param obj_instance_name Object instance name to send data for.
  */
@@ -4853,9 +3643,9 @@ void Federate::send_zero_lookahead_and_requested_data(
    TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
-      errmsg << "Federate::send_zero_lookahead_data():" << __LINE__
+      errmsg << "Federate::send_zero_lookahead_and_requested_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
-             << obj_instance_name << "'\n";
+             << obj_instance_name << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -4867,7 +3657,7 @@ void Federate::send_zero_lookahead_and_requested_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::send_zero_lookahead_data():%d Object:'%s'\n",
+      message_publish( MSG_NORMAL, "Federate::send_zero_lookahead_and_requested_data():%d Object:'%s'\n",
                        __LINE__, obj_instance_name.c_str() );
    }
 
@@ -4887,7 +3677,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
-             << obj_instance_name << "'\n";
+             << obj_instance_name << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -4937,7 +3727,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -4967,7 +3757,7 @@ void Federate::send_blocking_io_data(
       ostringstream errmsg;
       errmsg << "Federate::send_blocking_io_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
-             << obj_instance_name << "'\n";
+             << obj_instance_name << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -4999,7 +3789,7 @@ void Federate::wait_to_receive_blocking_io_data(
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_blocking_io_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
-             << obj_instance_name << "'\n";
+             << obj_instance_name << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -5044,7 +3834,7 @@ void Federate::wait_to_receive_blocking_io_data(
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -5058,101 +3848,6 @@ void Federate::wait_to_receive_blocking_io_data(
    }
 
    obj->receive_blocking_io_data();
-}
-
-/*!
- *  @job_class{scheduled}
- */
-void Federate::wait_for_time_advance_grant()
-{
-   // Skip requesting time-advancement if time management is not enabled.
-   if ( !this->time_management ) {
-      return;
-   }
-
-   // Do not ask for a time advance on an initialization pass.
-   if ( exec_get_mode() == Initialization ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d In Initialization mode so returning.\n",
-                          __LINE__ );
-      }
-      return;
-   }
-
-   unsigned short state;
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-      state = this->time_adv_state;
-   }
-
-   if ( state == TIME_ADVANCE_RESET ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!\n",
-                          __LINE__ );
-      }
-      return;
-   }
-
-   if ( state != TIME_ADVANCE_GRANTED ) {
-
-      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.\n",
-                          __LINE__, requested_time.get_time_in_seconds() );
-      }
-
-      int64_t      wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
-      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
-
-      // This spin lock waits for the time advance grant from the RTI.
-      do {
-         // Check for shutdown.
-         check_for_shutdown_with_termination();
-
-         sleep_timer.sleep();
-
-         {
-            // When auto_unlock_mutex goes out of scope it automatically unlocks
-            // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-            state = this->time_adv_state;
-         }
-
-         if ( state != TIME_ADVANCE_GRANTED ) {
-
-            // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
-
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::wait_for_time_advance_grant():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate_with_message( errmsg.str() );
-               }
-            }
-
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d Waiting...\n",
-                                __LINE__ );
-            }
-         }
-      } while ( state != TIME_ADVANCE_GRANTED );
-   }
-
-   // Add the line number for a higher trace level.
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.\n",
-                       __LINE__, granted_time.get_time_in_seconds() );
-   }
 }
 
 /*!
@@ -5186,223 +3881,102 @@ bool Federate::is_execution_member()
 void Federate::shutdown()
 {
    // Guard against doing a shutdown more than once.
-   if ( !is_shutdown_called() ) {
-      this->shutdown_called = true;
+   if ( is_shutdown_called() ) {
+      return;
+   }
+   this->shutdown_called = true;
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::shutdown():%d \n", __LINE__ );
-      }
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      message_publish( MSG_NORMAL, "Federate::shutdown():%d \n", __LINE__ );
+   }
 
-#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
-      for ( int i = 0; i < manager->obj_count; ++i ) {
-         ostringstream msg;
-         msg << "Federate::shutdown():" << __LINE__
-             << " Object[" << i << "]:'" << manager->objects[i].get_name() << "'"
-             << " send_count:" << manager->objects[i].send_count
-             << " receive_count:" << manager->objects[i].receive_count
-             << endl;
-         message_publish( MSG_NORMAL, msg.str().c_str() );
-      }
-#endif
+#if defined( TRICKHLA_COLLECT_TAG_STATS )
+   double const  tag_wait_time     = (double)tag_wait_sum / exec_get_time_tic_value();
+   double const  avg_tag_wait_time = ( tag_wait_count != 0 )
+                                        ? ( tag_wait_time / tag_wait_count )
+                                        : tag_wait_time;
+   ostringstream tag_msg;
+   tag_msg << "Federate::shutdown():" << __LINE__ << endl
+           << "Total # waits for TAG:" << tag_wait_count << endl
+           << "  Total TAG wait time:" << tag_wait_time << " seconds" << endl
+           << "Average TAG wait time:" << avg_tag_wait_time << " seconds" << endl;
+   message_publish( MSG_INFO, tag_msg.str().c_str() );
+#endif // TRICKHLA_COLLECT_TAG_STATS
 
-#ifdef THLA_CYCLIC_READ_TIME_STATS
-      for ( int i = 0; i < manager->obj_count; ++i ) {
-         ostringstream msg;
-         msg << "Federate::shutdown():" << __LINE__
-             << " Object[" << i << "]:'" << manager->objects[i].get_name() << "' "
-             << manager->objects[i].elapsed_time_stats.to_string()
-             << endl;
-         message_publish( MSG_NORMAL, msg.str().c_str() );
-      }
-#endif
+#ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
+   for ( int i = 0; i < manager->obj_count; ++i ) {
+      ostringstream msg1;
+      msg1 << "Federate::shutdown():" << __LINE__
+           << " Object[" << i << "]:'" << manager->objects[i].get_name() << "'"
+           << " send_count:" << manager->objects[i].send_count
+           << " receive_count:" << manager->objects[i].receive_count << endl;
+      message_publish( MSG_INFO, msg1.str().c_str() );
+   }
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
+#ifdef TRICKHLA_CYCLIC_READ_TIME_STATS
+   for ( int i = 0; i < manager->obj_count; ++i ) {
+      ostringstream msg2;
+      msg2 << "Federate::shutdown():" << __LINE__
+           << " Object[" << i << "]:'" << manager->objects[i].get_name() << "' "
+           << manager->objects[i].elapsed_time_stats.to_string() << endl;
+      message_publish( MSG_INFO, msg2.str().c_str() );
+   }
+#endif // TRICKHLA_CYCLIC_READ_TIME_STATS
 
-      // Check for Execution Control shutdown. If this is NULL, then we are
-      // probably shutting down prior to initialization.
-      if ( this->execution_control != NULL ) {
-         // Call Execution Control shutdown method.
-         execution_control->shutdown();
-      }
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-      // Disable Time Constrained and Time Regulation for this federate.
-      shutdown_time_management();
+   // Check for Execution Control shutdown. If this is NULL, then we are
+   // probably shutting down prior to initialization.
+   if ( this->execution_control != NULL ) {
+      // Call Execution Control shutdown method.
+      execution_control->shutdown();
+   }
 
-      // Resign from the federation.
-      // If the federate can rejoin, resign in a way so we can rejoin later...
-      if ( this->can_rejoin_federation ) {
-         resign_so_we_can_rejoin();
-      } else {
-         resign();
-      }
+   // Disable Time Constrained and Time Regulation for this federate.
+   shutdown_time_management();
 
-      // Attempt to destroy the federation.
-      destroy();
+   // Resign from the federation.
+   // If the federate can rejoin, resign in a way so we can rejoin later...
+   if ( this->can_rejoin_federation ) {
+      resign_so_we_can_rejoin();
+   } else {
+      resign();
+   }
 
-      // Remove the ExecutionConfiguration object.
-      if ( this->execution_control != NULL ) {
-         execution_control->remove_execution_configuration();
-      }
+   // Attempt to destroy the federation.
+   destroy();
 
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   // Remove the ExecutionConfiguration object.
+   if ( this->execution_control != NULL ) {
+      execution_control->remove_execution_configuration();
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
 
 #if defined( FPU_CW_PROTECTION ) && ( defined( __i386__ ) || defined( __x86_64__ ) )
-      // As the last thing we do, check to see if we did a good job of
-      // protecting against FPU control-word precision-control changes by
-      // comparing the current precision-control value to the one at program
-      // startup (__fpu_control is automatically set for us, and the _fpu_cw
-      // variable comes from the TRICKHLA_SAVE_FPU_CONTROL_WORD macro). Print
-      // a warning message if they are different. Only support the Intel CPU's.
-      // NOTE: Don't use the TRICKHLA_VALIDATE_FPU_CONTROL_WORD because it can
-      // be disabled in the TrickHLA compile-config header file.
-      if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) ) {
-         message_publish( MSG_WARNING, "%s:%d WARNING: We have detected that the current \
+   // As the last thing we do, check to see if we did a good job of
+   // protecting against FPU control-word precision-control changes by
+   // comparing the current precision-control value to the one at program
+   // startup (__fpu_control is automatically set for us, and the _fpu_cw
+   // variable comes from the TRICKHLA_SAVE_FPU_CONTROL_WORD macro). Print
+   // a warning message if they are different. Only support the Intel CPU's.
+   // NOTE: Don't use the TRICKHLA_VALIDATE_FPU_CONTROL_WORD because it can
+   // be disabled in the TrickHLA compile-config header file.
+   if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) ) {
+      message_publish( MSG_WARNING, "%s:%d WARNING: We have detected that the current \
 Floating-Point Unit (FPU) Control-Word Precision-Control value (%#x: %s) does \
 not match the Precision-Control value at program startup (%#x: %s). The change \
 in FPU Control-Word Precision-Control could cause the numerical values in your \
 simulation to be slightly different in the 7th or 8th decimal place. Please \
 contact the TrickHLA team for support.\n",
-                          __FILE__, __LINE__,
-                          ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),
-                          ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ) );
-      }
-#endif
+                       __FILE__, __LINE__,
+                       ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),
+                       ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ) );
    }
-}
-
-/*!
- *  @details Shutdown this federate's time management by shutting down time
- *  constraint management and time regulating management.
- *  @job_class{shutdown}
- */
-void Federate::shutdown_time_management()
-{
-   shutdown_time_constrained();
-   shutdown_time_regulating();
-}
-
-/*!
- *  @job_class{shutdown}
- */
-void Federate::shutdown_time_constrained()
-{
-   if ( !this->time_constrained_state ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::shutdown_time_constrained():%d HLA Time Constrained Already Disabled.\n",
-                          __LINE__ );
-      }
-   } else {
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-      // Make sure we've been able to get the RTI ambassador.
-      if ( RTI_ambassador.get() == NULL ) {
-         return;
-      }
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::shutdown_time_constrained():%d Disabling HLA Time Constrained.\n",
-                          __LINE__ );
-      }
-
-      try {
-         RTI_ambassador->disableTimeConstrained();
-         this->time_constrained_state = false;
-      } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled const &e ) {
-         this->time_constrained_state = false;
-         message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-         this->time_constrained_state = false;
-         message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": FederateNotExecutionMember EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": SaveInProgress EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": RestoreInProgress EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         this->time_constrained_state = false;
-         message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": NotConnected EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": RTIinternalError EXCEPTION: '%s'\n",
-                          __LINE__, get_federation_name(), rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
-         message_publish( MSG_WARNING, "Federate::shutdown_time_constrained():%d \"%s\": Unexpected RTI EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      }
-
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-   }
-}
-
-/*!
- *  @job_class{shutdown}
- */
-void Federate::shutdown_time_regulating()
-{
-   if ( !this->time_regulating_state ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::shutdown_time_regulating():%d HLA Time Regulation Already Disabled.\n",
-                          __LINE__ );
-      }
-   } else {
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-      // Make sure we've been able to get the RTI ambassador.
-      if ( RTI_ambassador.get() == NULL ) {
-         return;
-      }
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::shutdown_time_regulating():%d Disabling HLA Time Regulation.\n",
-                          __LINE__ );
-      }
-
-      try {
-         RTI_ambassador->disableTimeRegulation();
-         this->time_regulating_state = false;
-      } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled const &e ) {
-         this->time_regulating_state = false;
-         message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-         this->time_regulating_state = false;
-         message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": FederateNotExecutionMember EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": SaveInProgress EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": RestoreInProgress EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         this->time_constrained_state = false;
-         message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": NotConnected EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": RTIinternalError EXCEPTION: '%s'\n",
-                          __LINE__, get_federation_name(), rti_err_msg.c_str() );
-      } catch ( RTI1516_EXCEPTION const &e ) {
-         message_publish( MSG_WARNING, "Federate::shutdown_time_regulating():%d \"%s\": Unexpected RTI EXCEPTION!\n",
-                          __LINE__, get_federation_name() );
-      }
-
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-   }
+#endif // FPU_CW_PROTECTION
 }
 
 /*!
@@ -5429,7 +4003,7 @@ void Federate::resign()
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::resign():%d Attempting to resign from Federation '%s'\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
 
       if ( is_execution_member() ) {
@@ -5439,11 +4013,11 @@ void Federate::resign()
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_NORMAL, "Federate::resign():%d Resigned from Federation '%s'\n",
-                             __LINE__, get_federation_name() );
+                             __LINE__, get_federation_name().c_str() );
          }
       } else {
          message_publish( MSG_NORMAL, "Federate::resign():%d Not execution member of Federation '%s'\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
    } catch ( InvalidResignAction const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -5455,7 +4029,7 @@ void Federate::resign()
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "InvalidResignAction\n";
+             << "InvalidResignAction" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( OwnershipAcquisitionPending const &e ) {
@@ -5468,7 +4042,7 @@ void Federate::resign()
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "OwnershipAcquisitionPending\n";
+             << "OwnershipAcquisitionPending" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( FederateOwnsAttributes const &e ) {
@@ -5496,7 +4070,7 @@ void Federate::resign()
              << " Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "FederateNotExecutionMember\n";
+             << "FederateNotExecutionMember" << endl;
 
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
@@ -5511,7 +4085,7 @@ void Federate::resign()
              << " Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "NotConnected\n";
+             << "NotConnected" << endl;
 
       // Just display an error message and don't terminate if we are not connected.
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -5525,7 +4099,7 @@ void Federate::resign()
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "CallNotAllowedFromWithinCallback\n";
+             << "CallNotAllowedFromWithinCallback" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
@@ -5540,10 +4114,10 @@ void Federate::resign()
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because of the RTIinternalError: "
-             << rti_err_msg << '\n';
+             << rti_err_msg << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5555,7 +4129,7 @@ void Federate::resign()
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because of the RTI Exception: "
-             << rti_err_msg << '\n';
+             << rti_err_msg << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -5586,7 +4160,7 @@ void Federate::resign_so_we_can_rejoin()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::resign_so_we_can_rejoin():%d \
 Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federation)\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
 
       RTI_ambassador->resignFederationExecution( RTI1516_NAMESPACE::UNCONDITIONALLY_DIVEST_ATTRIBUTES );
@@ -5603,7 +4177,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "InvalidResignAction\n";
+             << "InvalidResignAction" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( OwnershipAcquisitionPending const &e ) {
@@ -5616,7 +4190,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "OwnershipAcquisitionPending\n";
+             << "OwnershipAcquisitionPending" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( FederateOwnsAttributes const &e ) {
@@ -5625,7 +4199,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << " Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation received an EXCEPTION: "
-             << "FederateOwnsAttributes\n";
+             << "FederateOwnsAttributes" << endl;
 
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
@@ -5638,7 +4212,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "FederateNotExecutionMember\n";
+             << "FederateNotExecutionMember" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
@@ -5651,7 +4225,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "NotConnected\n";
+             << "NotConnected" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( CallNotAllowedFromWithinCallback const &e ) {
@@ -5664,7 +4238,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
-             << "CallNotAllowedFromWithinCallback\n";
+             << "CallNotAllowedFromWithinCallback" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
@@ -5679,10 +4253,10 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because of the RTIinternalError: "
-             << rti_err_msg << '\n';
+             << rti_err_msg << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5694,7 +4268,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because of the RTI Exception: "
-             << rti_err_msg << '\n';
+             << rti_err_msg << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -5707,7 +4281,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
    ostringstream errmsg;
    errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
           << " ERROR: Federate '" << get_federate_name()
-          << "' resigned from Federation '" << get_federation_name() << "'\n";
+          << "' resigned from Federation '" << get_federation_name() << "'" << endl;
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
@@ -5737,7 +4311,7 @@ void Federate::destroy()
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::destroy():%d Attempting to Destroy Federation '%s'\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
 
       RTI_ambassador->destroyFederationExecution( federation_name_ws );
@@ -5747,7 +4321,7 @@ void Federate::destroy()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::destroy():%d Destroyed Federation '%s'\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
    } catch ( RTI1516_NAMESPACE::FederatesCurrentlyJoined const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -5761,7 +4335,7 @@ void Federate::destroy()
       // message when they try to destroy the federation. This is expected.
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::destroy():%d Federation '%s' destroy failed because this is not the last federate, which is expected.\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
    } catch ( RTI1516_NAMESPACE::FederationExecutionDoesNotExist const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -5773,7 +4347,7 @@ void Federate::destroy()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_WARNING, "Federate::destroy():%d Federation '%s' Already Destroyed.\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -5785,9 +4359,9 @@ void Federate::destroy()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_WARNING, "Federate::destroy():%d Federation '%s' destroy failed because we are NOT CONNECTED to the federation.\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5799,7 +4373,7 @@ void Federate::destroy()
              << " ERROR: Federation '" << get_federation_name()
              << "': Unexpected RTI exception when destroying federation!\n"
              << "RTI Exception: RTIinternalError: '"
-             << rti_err_msg << "'\n";
+             << rti_err_msg << "'" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -5828,7 +4402,7 @@ void Federate::destroy()
          message_publish( MSG_WARNING, "Federate::destroy():%d Cannot disconnect from RTI because this federate is still joined.\n",
                           __LINE__ );
       }
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5839,7 +4413,7 @@ void Federate::destroy()
       errmsg << "Federate::destroy():" << __LINE__
              << " ERROR: Unexpected RTI exception when disconnecting from RTI!\n"
              << "RTI Exception: RTIinternalError: '"
-             << rti_err_msg << "'\n";
+             << rti_err_msg << "'" << endl;
 
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -5861,7 +4435,7 @@ void Federate::destroy_orphaned_federation()
    if ( RTI_ambassador.get() == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::destroy_orphaned_federation():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador.\n";
+             << " ERROR: Unexpected NULL RTIambassador." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -5871,7 +4445,7 @@ void Federate::destroy_orphaned_federation()
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::destroy_orphaned_federation():%d Attempting to Destroy Orphaned Federation '%s'.\n",
-                       __LINE__, get_federation_name() );
+                       __LINE__, get_federation_name().c_str() );
    }
 
    try {
@@ -5881,9 +4455,9 @@ void Federate::destroy_orphaned_federation()
       // an orphaned federation.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::destroy_orphaned_federation():%d Successfully Destroyed Orphaned Federation '%s'.\n",
-                          __LINE__, get_federation_name() );
+                          __LINE__, get_federation_name().c_str() );
       }
-   } catch ( RTI1516_EXCEPTION const &e ) {
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Ignore any exception since we are just removing an orphaned federation.
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -5897,28 +4471,17 @@ void Federate::destroy_orphaned_federation()
 void Federate::set_federation_name(
    string const &exec_name )
 {
-   // Check for a NULL current federatin name or a self assigned name.
-   if ( ( this->federation_name == NULL ) || ( this->federation_name != exec_name ) ) {
+   // Check for a empty current federation name or a self assigned name.
+   if ( federation_name.empty() || ( federation_name != exec_name ) ) {
 
       // Check for an empty (i.e. zero length) name.
       if ( !exec_name.empty() ) {
-
-         // Reallocate and set the federation execution name.
-         if ( this->federation_name != NULL ) {
-            if ( trick_MM->delete_var( static_cast< void * >( this->federation_name ) ) ) {
-               message_publish( MSG_WARNING, "Federate::set_federation_name():%d WARNING failed to delete Trick Memory for 'federation_name'\n",
-                                __LINE__ );
-            }
-            this->federation_name = NULL;
-         }
-
-         // Set the federation execution name.
-         this->federation_name = trick_MM->mm_strdup( const_cast< char * >( exec_name.c_str() ) );
+         // Set the federation execution name as a copy.
+         this->federation_name = exec_name;
       } else {
-
          // Set to a default value if not already set in the input stream.
-         if ( this->federation_name == NULL ) {
-            this->federation_name = trick_MM->mm_strdup( const_cast< char * >( "TrickHLA Federation" ) );
+         if ( federation_name.empty() ) {
+            this->federation_name = "TrickHLA Federation";
          }
       }
    }
@@ -5975,7 +4538,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -6118,7 +4681,7 @@ void Federate::load_and_print_running_federate_names()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -6181,7 +4744,7 @@ MOM just informed us that there are %d federates currently running in the federa
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -6219,7 +4782,7 @@ MOM just informed us that there are %d federates currently running in the federa
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -6245,17 +4808,19 @@ MOM just informed us that there are %d federates currently running in the federa
       unsigned int  cnt = 0;
 
       summary << "Federate::load_and_print_running_federate_names():"
-              << __LINE__ << "\n'running_feds' data structure contains these "
+              << __LINE__ << endl
+              << "'running_feds' data structure contains these "
               << running_feds_count << " federates:";
 
       // Summarize the required federates first.
       for ( int i = 0; i < running_feds_count; ++i ) {
          ++cnt;
-         summary << "\n    " << cnt
+         summary << endl
+                 << "    " << cnt
                  << ": Found running federate '"
                  << running_feds[i].name << "'";
       }
-      summary << '\n';
+      summary << endl;
 
       // Display the federate summary.
       message_publish( MSG_NORMAL, summary.str().c_str() );
@@ -6276,24 +4841,28 @@ MOM just informed us that there are %d federates currently running in the federa
    }
 }
 
+void Federate::clear_known_feds()
+{
+   if ( this->known_feds != NULL ) {
+      // Clear out the known_feds from memory...
+      for ( int i = 0; i < known_feds_count; ++i ) {
+         known_feds[i].MOM_instance_name = "";
+         known_feds[i].name              = "";
+      }
+      if ( trick_MM->delete_var( static_cast< void * >( this->known_feds ) ) ) {
+         message_publish( MSG_WARNING, "Federate::clear_known_feds():%d WARNING failed to delete Trick Memory for 'this->known_feds'\n",
+                          __LINE__ );
+      }
+      this->known_feds = NULL;
+   }
+}
+
 void Federate::clear_running_feds()
 {
    if ( this->running_feds != NULL ) {
       for ( int i = 0; i < running_feds_count; ++i ) {
-         if ( running_feds[i].MOM_instance_name != NULL ) {
-            if ( trick_MM->delete_var( static_cast< void * >( running_feds[i].MOM_instance_name ) ) ) {
-               message_publish( MSG_WARNING, "Federate::clear_running_feds():%d WARNING failed to delete Trick Memory for 'running_feds[i].MOM_instance_name'\n",
-                                __LINE__ );
-            }
-            running_feds[i].MOM_instance_name = NULL;
-         }
-         if ( running_feds[i].name != NULL ) {
-            if ( trick_MM->delete_var( static_cast< void * >( running_feds[i].name ) ) ) {
-               message_publish( MSG_WARNING, "Federate::clear_running_feds():%d WARNING failed to delete Trick Memory for 'running_feds[i].name'\n",
-                                __LINE__ );
-            }
-            running_feds[i].name = NULL;
-         }
+         running_feds[i].MOM_instance_name = "";
+         running_feds[i].name              = "";
       }
       if ( trick_MM->delete_var( static_cast< void * >( this->running_feds ) ) ) {
          message_publish( MSG_WARNING, "Federate::clear_running_feds():%d WARNING failed to delete Trick Memory for 'this->running_feds'\n",
@@ -6312,7 +4881,7 @@ void Federate::update_running_feds()
    if ( running_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::update_running_feds():" << __LINE__
-             << " ERROR: Could not allocate memory for running_feds!\n";
+             << " ERROR: Could not allocate memory for running_feds!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -6332,7 +4901,7 @@ void Federate::update_running_feds()
 
       for ( int i = 0; i < running_feds_count; ++i ) {
          message_publish( MSG_NORMAL, "Federate::update_running_feds():%d running_feds[%d]=%s \n",
-                          __LINE__, i, running_feds[i].name );
+                          __LINE__, i, running_feds[i].name.c_str() );
       }
 
       // Terminate the execution since the counters are out of sync...
@@ -6341,7 +4910,7 @@ void Federate::update_running_feds()
              << " FATAL_ERROR: joined_federate_name_map contains "
              << joined_federate_name_map.size()
              << " entries but running_feds_count = " << running_feds_count
-             << "!!!\n";
+             << "!!!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -6352,9 +4921,9 @@ void Federate::update_running_feds()
    for ( map_iter = joined_federate_name_map.begin();
          map_iter != joined_federate_name_map.end(); ++map_iter ) {
 
-      running_feds[index].name = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
+      running_feds[index].name = StringUtilities::mm_strdup_wstring( map_iter->second.c_str() );
 
-      running_feds[index].MOM_instance_name = StringUtilities::ip_strdup_wstring(
+      running_feds[index].MOM_instance_name = StringUtilities::mm_strdup_wstring(
          MOM_HLAfederate_instance_name_map[map_iter->first].c_str() );
 
       // If the federate was running at the time of the checkpoint, it must be
@@ -6377,23 +4946,23 @@ void Federate::add_a_single_entry_into_running_feds()
       ostringstream errmsg;
       errmsg << "Federate::add_a_single_entry_into_running_feds():" << __LINE__
              << " ERROR: Could not allocate memory for temp_feds when attempting to add"
-             << " an entry into running_feds!\n";
+             << " an entry into running_feds!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
 
    } else {
 
       // copy current running_feds entries into temporary structure...
       for ( int i = 0; i < running_feds_count; ++i ) {
-         temp_feds[i].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
-         temp_feds[i].name              = trick_MM->mm_strdup( running_feds[i].name );
+         temp_feds[i].MOM_instance_name = running_feds[i].MOM_instance_name;
+         temp_feds[i].name              = running_feds[i].name;
          temp_feds[i].required          = running_feds[i].required;
       }
 
-      TrickHLAObjInstanceNameMap::const_iterator map_iter;
-      map_iter                                        = joined_federate_name_map.begin();
-      temp_feds[running_feds_count].MOM_instance_name = StringUtilities::ip_strdup_wstring( MOM_HLAfederate_instance_name_map[map_iter->first].c_str() );
-      temp_feds[running_feds_count].name              = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
-      temp_feds[running_feds_count].required          = true;
+      TrickHLAObjInstanceNameMap::const_iterator map_iter = joined_federate_name_map.begin();
+      StringUtilities::to_string( temp_feds[running_feds_count].MOM_instance_name,
+                                  MOM_HLAfederate_instance_name_map[map_iter->first] );
+      StringUtilities::to_string( temp_feds[running_feds_count].name, map_iter->second );
+      temp_feds[running_feds_count].required = true;
 
       // delete running_feds data structure.
       clear_running_feds();
@@ -6404,7 +4973,7 @@ void Federate::add_a_single_entry_into_running_feds()
       ++running_feds_count; // make the new running_feds_count size permanent
    }
 
-#if 0
+#if 0 // TODO: Update for IMSim.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::add_a_single_entry_into_running_feds():%d Exiting routine, here is what running_feds contains:\n",
                __LINE__, '\n');
@@ -6435,7 +5004,7 @@ void Federate::add_MOM_HLAfederate_instance_id(
       ostringstream summary;
       summary << "Federate::add_MOM_HLAfederate_instance_id():" << __LINE__
               << " Object '" << name_str << "', with Instance Handle:"
-              << handle_str << '\n';
+              << handle_str << endl;
       message_publish( MSG_NORMAL, summary.str().c_str() );
    }
 }
@@ -6446,13 +5015,13 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    remove_federate_instance_id( instance_hndl );
    remove_MOM_HLAfederation_instance_id( instance_hndl );
 
-   char const *tMOMName  = NULL;
-   char const *tFedName  = NULL;
-   bool        foundName = false;
+   string tMOMName  = "";
+   string tFedName  = "";
+   bool   foundName = false;
 
    TrickHLAObjInstanceNameMap::iterator iter = MOM_HLAfederate_instance_name_map.find( instance_hndl );
    if ( iter != MOM_HLAfederate_instance_name_map.end() ) {
-      tMOMName  = StringUtilities::ip_strdup_wstring( iter->second.c_str() );
+      StringUtilities::to_string( tMOMName, iter->second );
       foundName = true;
       MOM_HLAfederate_instance_name_map.erase( iter );
 
@@ -6463,7 +5032,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
          ostringstream summary;
          summary << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
                  << " Object '" << tMOMName << "', with Instance Handle:"
-                 << handle_str << '\n';
+                 << handle_str << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
    }
@@ -6476,9 +5045,9 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    // Search for the federate information from running_feds...
    foundName = false;
    for ( int i = 0; i < running_feds_count; ++i ) {
-      if ( !strcmp( running_feds[i].MOM_instance_name, tMOMName ) ) {
+      if ( running_feds[i].MOM_instance_name != tMOMName ) {
          foundName = true;
-         tFedName  = trick_MM->mm_strdup( running_feds[i].name );
+         tFedName  = running_feds[i].name;
       }
    }
 
@@ -6498,18 +5067,18 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    if ( tmp_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
-             << " ERROR: Could not allocate memory for tmp_feds!\n";
+             << " ERROR: Could not allocate memory for tmp_feds!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // now, copy everything minus the requested name from the original list...
    int tmp_feds_cnt = 0;
    for ( int i = 0; i < this->running_feds_count; ++i ) {
       // if the name is not the one we are looking for...
-      if ( strcmp( running_feds[i].name, tFedName ) ) {
-         if ( running_feds[i].MOM_instance_name != NULL ) {
-            tmp_feds[tmp_feds_cnt].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
+      if ( running_feds[i].name != tFedName ) {
+         if ( running_feds[i].MOM_instance_name.empty() ) {
+            tmp_feds[tmp_feds_cnt].MOM_instance_name = running_feds[i].MOM_instance_name;
          }
-         tmp_feds[tmp_feds_cnt].name     = trick_MM->mm_strdup( running_feds[i].name );
+         tmp_feds[tmp_feds_cnt].name     = running_feds[i].name;
          tmp_feds[tmp_feds_cnt].required = running_feds[i].required;
          ++tmp_feds_cnt;
       }
@@ -6529,7 +5098,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
       StringUtilities::to_string( id_str, instance_hndl );
       message_publish( MSG_INFO, "Federate::remove_MOM_HLAfederate_instance_id():%d \
 Removed Federate '%s' Instance-ID:%s Valid-ID:%s \n",
-                       __LINE__, tFedName, id_str.c_str(),
+                       __LINE__, tFedName.c_str(), id_str.c_str(),
                        ( instance_hndl.isValid() ? "Yes" : "No" ) );
    }
 }
@@ -6546,7 +5115,7 @@ void Federate::add_MOM_HLAfederation_instance_id(
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
       summary << "Federate::add_MOM_HLAfederation_instance_id():" << __LINE__
-              << " Object Instance:" << id_str << '\n';
+              << " Object Instance:" << id_str << endl;
       message_publish( MSG_NORMAL, summary.str().c_str() );
    }
 }
@@ -6566,7 +5135,7 @@ void Federate::remove_MOM_HLAfederation_instance_id(
 
          ostringstream summary;
          summary << "Federate::remove_MOM_HLAfederation_instance_id():" << __LINE__
-                 << " Object Instance:" << handle_str << '\n';
+                 << " Object Instance:" << handle_str << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
    }
@@ -6579,15 +5148,15 @@ void Federate::write_running_feds_file(
    ofstream file;
 
    full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
-   file.open( full_path.c_str(), ios::out );
+   file.open( full_path.c_str(), ios::out ); // flawfinder: ignore
    if ( file.is_open() ) {
-      file << this->running_feds_count << '\n';
+      file << this->running_feds_count << endl;
 
       // echo the contents of running_feds into file...
       for ( int i = 0; i < this->running_feds_count; ++i ) {
-         file << trick_MM->mm_strdup( running_feds[i].MOM_instance_name ) << '\n';
-         file << trick_MM->mm_strdup( running_feds[i].name ) << '\n';
-         file << running_feds[i].required << '\n';
+         file << running_feds[i].MOM_instance_name << endl;
+         file << running_feds[i].name << endl;
+         file << running_feds[i].required << endl;
       }
 
       file.close(); // close the file.
@@ -6595,7 +5164,7 @@ void Federate::write_running_feds_file(
    } else {
       ostringstream errmsg;
       errmsg << "Federate::write_running_feds_file():" << __LINE__
-             << " ERROR: Failed to open file '" << full_path << "' for writing!\n";
+             << " ERROR: Failed to open file '" << full_path << "' for writing!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -6651,15 +5220,15 @@ void Federate::restore_checkpoint(
    string const &file_name )
 {
    string trick_filename = file_name;
-   // DANNY2.7 prepend federation name to the filename (if it's not already prepended)
-   string federation_name_str = string( get_federation_name() );
+   // Prepend federation name to the filename (if it's not already prepended)
+   string federation_name_str = get_federation_name();
    if ( trick_filename.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
       trick_filename = federation_name_str + "_" + file_name;
    }
    message_publish( MSG_NORMAL, "Federate::restore_checkpoint() Restoring checkpoint file %s\n",
                     trick_filename.c_str() );
 
-   // DANNY2.7 must init all data recording groups since we are restarting at init
+   // Must init all data recording groups since we are restarting at init
    // time before Trick would normally do this. Prior to Trick 10.8, the only way
    // to do this is by calling each recording group init() routine in the S_define
 
@@ -6677,7 +5246,7 @@ void Federate::restore_checkpoint(
 
    // If exec_set_freeze_command(true) is in master fed's input.py file when
    // check-pointed, then restore starts up in freeze.
-   // DANNY2.7 Clear non-master fed's freeze command so it does not cause
+   // Clear non-master fed's freeze command so it does not cause
    // unnecessary freeze interaction to be sent.
    if ( !execution_control->is_master() ) {
       exec_set_freeze_command( false );
@@ -6772,8 +5341,8 @@ void Federate::read_running_feds_file(
    string   full_path;
    ifstream file;
 
-   // DANNY2.7 Prepend federation name to the filename (if it's not already prepended)
-   string federation_name_str = string( get_federation_name() );
+   // Prepend federation name to the filename (if it's not already prepended)
+   string federation_name_str = get_federation_name();
    if ( file_name.compare( 0, federation_name_str.length(), federation_name_str ) == 0 ) {
       // Already prepended
       full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
@@ -6782,31 +5351,10 @@ void Federate::read_running_feds_file(
       full_path = this->HLA_save_directory + "/" + federation_name_str + "_" + file_name + ".running_feds";
    }
 
-   file.open( full_path.c_str(), ios::in );
+   file.open( full_path.c_str(), ios::in ); // flawfinder: ignore
    if ( file.is_open() ) {
 
-      // Clear out the known_feds from memory...
-      for ( int i = 0; i < known_feds_count; ++i ) {
-         if ( known_feds[i].MOM_instance_name != NULL ) {
-            if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].MOM_instance_name ) ) ) {
-               message_publish( MSG_WARNING, "Federate::read_running_feds_file():%d WARNING failed to delete Trick Memory for 'known_feds[i].MOM_instance_name'\n",
-                                __LINE__ );
-            }
-            known_feds[i].MOM_instance_name = NULL;
-         }
-         if ( known_feds[i].name != NULL ) {
-            if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].name ) ) ) {
-               message_publish( MSG_WARNING, "Federate::read_running_feds_file():%d WARNING failed to delete Trick Memory for 'known_feds[i].name'\n",
-                                __LINE__ );
-            }
-            known_feds[i].name = NULL;
-         }
-      }
-      if ( trick_MM->delete_var( static_cast< void * >( this->known_feds ) ) ) {
-         message_publish( MSG_WARNING, "Federate::read_running_feds_file():%d WARNING failed to delete Trick Memory for 'this->known_feds'\n",
-                          __LINE__ );
-      }
-      this->known_feds = NULL;
+      clear_known_feds();
 
       file >> this->known_feds_count;
 
@@ -6816,54 +5364,34 @@ void Federate::read_running_feds_file(
       if ( this->known_feds == NULL ) {
          ostringstream errmsg;
          errmsg << "Federate::read_running_feds_file():" << __LINE__
-                << " ERROR: Could not allocate memory for known_feds!\n";
+                << " ERROR: Could not allocate memory for known_feds!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       string current_line;
       for ( int i = 0; i < this->known_feds_count; ++i ) {
          file >> current_line;
-         known_feds[i].MOM_instance_name = trick_MM->mm_strdup( const_cast< char * >( current_line.c_str() ) );
+         known_feds[i].MOM_instance_name = current_line;
 
          file >> current_line;
-         known_feds[i].name = trick_MM->mm_strdup( const_cast< char * >( current_line.c_str() ) );
+         known_feds[i].name = current_line;
 
          file >> current_line;
-         known_feds[i].required = ( atoi( current_line.c_str() ) != 0 );
+         known_feds[i].required = ( atoi( current_line.c_str() ) != 0 ); // flawfinder: ignore
       }
 
       file.close(); // Close the file before exiting
    } else {
       ostringstream errmsg;
       errmsg << "Federate::read_running_feds_file()" << __LINE__
-             << " ERROR: Failed to open file '" << full_path << "'!\n";
+             << " ERROR: Failed to open file '" << full_path << "'!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
 void Federate::copy_running_feds_into_known_feds()
 {
-   // Clear out the known_feds from memory...
-   for ( int i = 0; i < this->known_feds_count; ++i ) {
-      if ( known_feds[i].MOM_instance_name != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].MOM_instance_name ) ) ) {
-            message_publish( MSG_WARNING, "Federate::copy_running_feds_into_known_feds():%d WARNING failed to delete Trick Memory for 'known_feds[i].MOM_instance_name_name'\n",
-                             __LINE__ );
-         }
-         known_feds[i].MOM_instance_name = NULL;
-      }
-      if ( known_feds[i].name != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].name ) ) ) {
-            message_publish( MSG_WARNING, "Federate::copy_running_feds_into_known_feds():%d WARNING failed to delete Trick Memory for 'known_feds[i].name'\n",
-                             __LINE__ );
-         }
-         known_feds[i].name = NULL;
-      }
-   }
-   if ( trick_MM->delete_var( static_cast< void * >( this->known_feds ) ) ) {
-      message_publish( MSG_WARNING, "Federate::copy_running_feds_into_known_feds():%d WARNING failed to delete Trick Memory for 'this->known_feds'\n",
-                       __LINE__ );
-   }
+   clear_known_feds();
 
    // Re-allocate it...
    this->known_feds = reinterpret_cast< KnownFederate * >(
@@ -6871,15 +5399,15 @@ void Federate::copy_running_feds_into_known_feds()
    if ( this->known_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::copy_running_feds_into_known_feds():" << __LINE__
-             << " ERROR: Could not allocate memory for known_feds!\n";
+             << " ERROR: Could not allocate memory for known_feds!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Copy everything from running_feds into known_feds...
    this->known_feds_count = 0;
    for ( int i = 0; i < this->running_feds_count; ++i ) {
-      known_feds[this->known_feds_count].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
-      known_feds[this->known_feds_count].name              = trick_MM->mm_strdup( running_feds[i].name );
+      known_feds[this->known_feds_count].MOM_instance_name = running_feds[i].MOM_instance_name;
+      known_feds[this->known_feds_count].name              = running_feds[i].name;
       known_feds[this->known_feds_count].required          = running_feds[i].required;
       this->known_feds_count++;
    }
@@ -7014,7 +5542,7 @@ void Federate::wait_for_federation_restore_begun()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7064,7 +5592,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7149,7 +5677,7 @@ string Federate::wait_for_federation_restore_to_complete()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                         << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -7215,7 +5743,7 @@ void Federate::wait_for_restore_request_callback()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7265,7 +5793,7 @@ void Federate::wait_for_restore_status_to_complete()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7315,7 +5843,7 @@ void Federate::wait_for_save_status_to_complete()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7374,7 +5902,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -7521,19 +6049,20 @@ void Federate::print_requested_federation_restore_status(
           << "pre-restore fed_id=" << id_name;
       StringUtilities::to_string( id_name, vector_iter->postRestoreHandle );
       msg << ", post-restore fed_id =" << id_name
-          << ", status matrix: \n   NO_RESTORE_IN_PROGRESS="
-          << ( vector_iter->status == NO_RESTORE_IN_PROGRESS )
-          << "\n   FEDERATE_RESTORE_REQUEST_PENDING="
-          << ( vector_iter->status == FEDERATE_RESTORE_REQUEST_PENDING )
-          << "\n   FEDERATE_WAITING_FOR_RESTORE_TO_BEGIN="
-          << ( vector_iter->status == FEDERATE_WAITING_FOR_RESTORE_TO_BEGIN )
-          << "\n   FEDERATE_PREPARED_TO_RESTORE="
-          << ( vector_iter->status == FEDERATE_PREPARED_TO_RESTORE )
-          << "\n   FEDERATE_RESTORING="
-          << ( vector_iter->status == FEDERATE_RESTORING )
-          << "\n   FEDERATE_WAITING_FOR_FEDERATION_TO_RESTORE="
+          << ", status matrix:" << endl
+          << "   NO_RESTORE_IN_PROGRESS="
+          << ( vector_iter->status == NO_RESTORE_IN_PROGRESS ) << endl
+          << "   FEDERATE_RESTORE_REQUEST_PENDING="
+          << ( vector_iter->status == FEDERATE_RESTORE_REQUEST_PENDING ) << endl
+          << "   FEDERATE_WAITING_FOR_RESTORE_TO_BEGIN="
+          << ( vector_iter->status == FEDERATE_WAITING_FOR_RESTORE_TO_BEGIN ) << endl
+          << "   FEDERATE_PREPARED_TO_RESTORE="
+          << ( vector_iter->status == FEDERATE_PREPARED_TO_RESTORE ) << endl
+          << "   FEDERATE_RESTORING="
+          << ( vector_iter->status == FEDERATE_RESTORING ) << endl
+          << "   FEDERATE_WAITING_FOR_FEDERATION_TO_RESTORE="
           << ( vector_iter->status == FEDERATE_WAITING_FOR_FEDERATION_TO_RESTORE )
-          << '\n';
+          << endl;
       // Load the next element from 'theFederateStatusVector'.
       ++vector_iter;
    }
@@ -7548,7 +6077,7 @@ void Federate::process_requested_federation_restore_status(
    vector_iter = status_vector.begin();
    vector_end  = status_vector.end();
 
-   // DANNY2.7 if any of our federates have a restore in progress, we will NOT initiate restore
+   // If any of our federates have a restore in progress, we will NOT initiate restore
    this->initiate_restore_flag = true;
 
    // while there are elements in Federate Restore Status Vector...
@@ -7577,7 +6106,7 @@ void Federate::process_requested_federation_save_status(
    vector_iter = status_vector.begin();
    vector_end  = status_vector.end();
 
-   // DANNY2.7 if any of our federates have a save in progress, we will NOT initiate save
+   // If any of our federates have a save in progress, we will NOT initiate save
    initiate_save_flag = true;
 
    // while there are elements in Federate Save Status Vector...
@@ -7600,19 +6129,19 @@ void Federate::print_restore_failure_reason(
 
    if ( reason == RTI_UNABLE_TO_RESTORE ) {
       msg << "Federate::print_restore_failure_reason():" << __LINE__
-          << " failure reason=\"RTI_UNABLE_TO_RESTORE\"\n";
+          << " failure reason=\"RTI_UNABLE_TO_RESTORE\"" << endl;
    }
    if ( reason == FEDERATE_REPORTED_FAILURE_DURING_RESTORE ) {
       msg << "Federate::print_restore_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_RESTORE\"\n";
+          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_RESTORE\"" << endl;
    }
    if ( reason == FEDERATE_RESIGNED_DURING_RESTORE ) {
       msg << "Federate::print_restore_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_RESIGNED_DURING_RESTORE\"\n";
+          << " failure reason=\"FEDERATE_RESIGNED_DURING_RESTORE\"" << endl;
    }
    if ( reason == RTI_DETECTED_FAILURE_DURING_RESTORE ) {
       msg << "Federate::print_restore_failure_reason():" << __LINE__
-          << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"\n";
+          << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"" << endl;
    }
    message_publish( MSG_NORMAL, msg.str().c_str() );
 
@@ -7627,23 +6156,23 @@ void Federate::print_save_failure_reason(
 
    if ( reason == RTI_UNABLE_TO_SAVE ) {
       msg << "Federate::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"RTI_UNABLE_TO_SAVE\"\n";
+          << " failure reason=\"RTI_UNABLE_TO_SAVE\"" << endl;
    }
    if ( reason == FEDERATE_REPORTED_FAILURE_DURING_SAVE ) {
       msg << "Federate::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_SAVE\"\n";
+          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_SAVE\"" << endl;
    }
    if ( reason == FEDERATE_RESIGNED_DURING_SAVE ) {
       msg << "Federate::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_RESIGNED_DURING_SAVE\"\n";
+          << " failure reason=\"FEDERATE_RESIGNED_DURING_SAVE\"" << endl;
    }
    if ( reason == RTI_DETECTED_FAILURE_DURING_SAVE ) {
       msg << "Federate::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"=RTI_DETECTED_FAILURE_DURING_SAVE\"\n";
+          << " failure reason=\"=RTI_DETECTED_FAILURE_DURING_SAVE\"" << endl;
    }
    if ( reason == SAVE_TIME_CANNOT_BE_HONORED ) {
       msg << "Federate::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"SAVE_TIME_CANNOT_BE_HONORED\"\n";
+          << " failure reason=\"SAVE_TIME_CANNOT_BE_HONORED\"" << endl;
    }
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }
@@ -7672,7 +6201,7 @@ void Federate::initiate_save_announce()
    if ( this->save_label_generated ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_WARNING, "Federate::initiate_save_announce():%d save_label already generated for federate '%s'\n",
-                          __LINE__, name );
+                          __LINE__, name.c_str() );
       }
       return;
    }
@@ -7809,7 +6338,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
    // Determine if this is a MOM HLAfederation instance.
    if ( !is_MOM_HLAfederation_instance_id( instance_hndl ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d WARNING: Unknown object class, expected 'HLAmanager.HLAfederation'.\n",
+         message_publish( MSG_WARNING, "Federate::set_federation_instance_attributes():%d WARNING: Unknown object class, expected 'HLAmanager.HLAfederation'.\n",
                           __LINE__ );
       }
       return;
@@ -7985,7 +6514,7 @@ void Federate::restore_federate_handles_from_MOM()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!\n";
+                      << " the Central RTI Component (CRC) level!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
@@ -8024,7 +6553,7 @@ void Federate::rebuild_federate_handles(
                 << __LINE__ << " ERROR: Unexpected number of bytes in the"
                 << " Encoded FederateHandle because the byte count is "
                 << attr_iter->second.size()
-                << " but we expected 8!\n";
+                << " but we expected 8!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -8047,7 +6576,7 @@ void Federate::rebuild_federate_handles(
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():"
                 << __LINE__ << " ERROR: FederateHandle size is "
-                << size << " but expected it to be 4!\n";
+                << size << " but expected it to be 4!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -8071,7 +6600,7 @@ void Federate::rebuild_federate_handles(
 
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():" << __LINE__
-                << " EXCEPTION: CouldNotDecode\n";
+                << " EXCEPTION: CouldNotDecode" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( FederateNotExecutionMember const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -8080,7 +6609,7 @@ void Federate::rebuild_federate_handles(
 
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():" << __LINE__
-                << " EXCEPTION: FederateNotExecutionMember\n";
+                << " EXCEPTION: FederateNotExecutionMember" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( NotConnected const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -8089,7 +6618,7 @@ void Federate::rebuild_federate_handles(
 
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():" << __LINE__
-                << " EXCEPTION: NotConnected\n";
+                << " EXCEPTION: NotConnected" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
@@ -8101,7 +6630,7 @@ void Federate::rebuild_federate_handles(
 
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():" << __LINE__
-                << " EXCEPTION: RTIinternalError: %s" << rti_err_msg << '\n';
+                << " EXCEPTION: RTIinternalError: %s" << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 

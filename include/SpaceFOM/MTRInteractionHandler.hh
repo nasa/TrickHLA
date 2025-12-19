@@ -36,22 +36,32 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_MTR_INTERACTION_HANDLER_HH
 #define SPACEFOM_MTR_INTERACTION_HANDLER_HH
 
-// System include files.
+// System includes.
+#include <cstdint>
+#include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/InteractionHandler.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/Types.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/InteractionHandler.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
@@ -93,12 +103,12 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Receive the HLA interaction.
     *  @param the_user_supplied_tag User supplied interaction tag. */
-   virtual void receive_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
+   virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    // Public utility functions.
    /*! @brief Set the associated name for this interaction handler.
     *  @param new_name  Associated name. */
-   virtual void set_name( char const *new_name );
+   virtual void set_name( std::string const &new_name );
 
    /*! @brief Get the address of the MTR interaction mode transition state.
     *  @return Address of the MTR interaction mode transition state. */
@@ -108,7 +118,8 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
    }
 
   public:
-   char   *name;         ///< @trick_units{--} Federation instance name for this interaction.
+   std::string name; ///< @trick_units{--} Federation instance name for this interaction.
+
    MTREnum mtr_mode;     ///< @trick_units{--} Requested mode transition state.
    int16_t mtr_mode_int; ///< @trick_units{--} Requested mode transition state (integer version).
 

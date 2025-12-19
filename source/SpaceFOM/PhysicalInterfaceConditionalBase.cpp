@@ -29,22 +29,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
-#include <string>
+// System includes.
+#include <cstddef>
+#include <cstring>
+#include <ostream>
+#include <sstream>
 
-// Trick include files.
-#include "trick/exec_proto.h"
-#include "trick/message_proto.h"
+// SpaceFOM includes.
+#include "SpaceFOM/PhysicalInterfaceBase.hh"
+#include "SpaceFOM/PhysicalInterfaceConditionalBase.hh"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
-
-// Model include files.
-#include "SpaceFOM/PhysicalInterfaceConditionalBase.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -55,7 +54,7 @@ using namespace SpaceFOM;
  */
 PhysicalInterfaceConditionalBase::PhysicalInterfaceConditionalBase(
    PhysicalInterfaceBase &interface_ref )
-   : TrickHLA::Conditional(),
+   : TrickHLA::Conditional( "PhysicalInterfaceConditionalBase" ),
      debug( false ),
      interface( interface_ref ),
      prev_data(),
@@ -80,6 +79,9 @@ PhysicalInterfaceConditionalBase::~PhysicalInterfaceConditionalBase()
  */
 void PhysicalInterfaceConditionalBase::initialize()
 {
+   // Call the base class.
+   Conditional::initialize();
+
    // Return to calling routine.
    return;
 }
@@ -129,61 +131,21 @@ bool PhysicalInterfaceConditionalBase::should_send(
    // Check for Name change.
    if ( attr == name_attr ) {
 
-      if ( interface.packing_data.name != NULL ) {
-         if ( prev_data.name != NULL ) {
-            if ( strcmp( interface.packing_data.name, prev_data.name ) ) {
-               if ( trick_MM->delete_var( static_cast< void * >( prev_data.name ) ) ) {
-                  message_publish( MSG_WARNING,
-                                   "PhysicalInterfaceConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'\n",
-                                   __LINE__ );
-               }
-               // Update the previous value.
-               prev_data.name = trick_MM->mm_strdup( interface.packing_data.name );
-               // Mark to send.
-               send_attr = true;
-            }
-         } else {
-            // Update the previous value.
-            prev_data.name = trick_MM->mm_strdup( interface.packing_data.name );
-            // Mark to send.
-            send_attr = true;
-         }
-      } else {
-         ostringstream errmsg;
-         errmsg << "PhysicalInterfaceConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Name for PhysicalInterface!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      if ( interface.packing_data.name != prev_data.name ) {
+         // Update the previous value.
+         prev_data.name = interface.packing_data.name;
+         // Mark to send.
+         send_attr = true;
       }
 
    } // Check for Parent Frame change.
    else if ( attr == parent_attr ) {
 
-      if ( interface.packing_data.parent_name != NULL ) {
-         if ( prev_data.parent_name != NULL ) {
-            if ( strcmp( interface.packing_data.parent_name, prev_data.parent_name ) ) {
-               if ( trick_MM->delete_var( static_cast< void * >( prev_data.parent_name ) ) ) {
-                  message_publish( MSG_WARNING,
-                                   "PhysicalInterfaceConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_name'\n",
-                                   __LINE__ );
-               }
-               // Update the previous value.
-               prev_data.parent_name = trick_MM->mm_strdup( interface.packing_data.parent_name );
-               // Mark to send.
-               send_attr = true;
-            }
-         } else {
-            // Update the previous value.
-            prev_data.parent_name = trick_MM->mm_strdup( interface.packing_data.parent_name );
-            // Mark to send.
-            send_attr = true;
-         }
-      } else {
-         ostringstream errmsg;
-         errmsg << "PhysicalInterfaceConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Parent Frame for PhysicalInterface!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      if ( interface.packing_data.parent_name != prev_data.parent_name ) {
+         // Update the previous value.
+         prev_data.parent_name = interface.packing_data.parent_name;
+         // Mark to send.
+         send_attr = true;
       }
 
    } else if ( attr == position_attr ) {
@@ -218,7 +180,8 @@ bool PhysicalInterfaceConditionalBase::should_send(
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
-             << "ERROR: Could not find the data for the specified FOM attribute!\n";
+             << "ERROR: Could not find the data for the specified FOM attribute!"
+             << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

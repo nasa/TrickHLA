@@ -24,17 +24,15 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstdint>
-#include <limits>
 #include <time.h>
 
-// Trick include files.
-#include "trick/Executive.hh"
+// Trick includes.
 #include "trick/clock_proto.h"
 #include "trick/exec_proto.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/SleepTimeout.hh"
 
 using namespace TrickHLA;
@@ -102,7 +100,7 @@ void SleepTimeout::set(
 
 int const SleepTimeout::sleep() const
 {
-   return nanosleep( &sleep_time, NULL );
+   return nanosleep( &sleep_time, NULL ); // NOLINT
 }
 
 // Current time as an integer in microseconds.

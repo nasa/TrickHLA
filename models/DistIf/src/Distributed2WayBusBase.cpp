@@ -24,7 +24,9 @@ NASA, Johnson Space Center\n
 
 */
 
-#include "../include/Distributed2WayBusBase.hh"
+#include <string>
+
+#include "DistIf/include/Distributed2WayBusBase.hh"
 
 using namespace DistIf;
 

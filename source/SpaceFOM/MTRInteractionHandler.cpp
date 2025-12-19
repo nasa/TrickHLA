@@ -19,9 +19,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
+@trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{MTRInteractionHandler.cpp}
 @trick_link_dependency{Types.cpp}
@@ -34,52 +34,59 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
+#include <cstdlib>
 #include <cstring>
-#include <iostream>
+#include <ostream>
 #include <sstream>
-#include <stdlib.h>
 #include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/InteractionHandler.hh"
-#include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/ExecutionControl.hh"
 #include "SpaceFOM/MTRInteractionHandler.hh"
 #include "SpaceFOM/Types.hh"
 
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/Federate.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
+
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace std;
 using namespace SpaceFOM;
 using namespace TrickHLA;
+using namespace RTI1516_NAMESPACE;
 
 /*!
  * @job_class{initialization}
  */
 MTRInteractionHandler::MTRInteractionHandler(
    Federate const *fed )
-   : name( NULL ),
+   : name(),
      mtr_mode( MTR_UNINITIALIZED ),
      mtr_mode_int( 0 ),
      scenario_time( 0.0 ),
@@ -97,13 +104,6 @@ MTRInteractionHandler::MTRInteractionHandler(
  */
 MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
-   if ( this->name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                          __LINE__ );
-      }
-      this->name = NULL;
-   }
    return;
 }
 
@@ -111,18 +111,9 @@ MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
  * @job_class{default_data}
  */
 void MTRInteractionHandler::set_name(
-   char const *new_name )
+   string const &new_name )
 {
-   if ( this->name != NULL ) {
-      if ( trick_MM->is_alloced( this->name ) ) {
-         if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            message_publish( MSG_WARNING, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                             __LINE__ );
-         }
-      }
-      this->name = NULL;
-   }
-   this->name = trick_MM->mm_strdup( new_name );
+   this->name = string( new_name );
 }
 
 /*!
@@ -136,7 +127,7 @@ void MTRInteractionHandler::send_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
-             << " ERROR: Unexpected NULL Interaction!\n";
+             << " ERROR: Unexpected NULL Interaction!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -148,11 +139,11 @@ void MTRInteractionHandler::send_interaction(
    mtr_mode_int = mtr_enum_to_int16( mode_request );
 
    // Create a User Supplied Tag based off the name in this example.
-   RTI1516_USERDATA rti_user_supplied_tag;
-   if ( name != NULL ) {
-      rti_user_supplied_tag = RTI1516_USERDATA( name, strlen( name ) );
+   VariableLengthData rti_user_supplied_tag;
+   if ( !name.empty() ) {
+      rti_user_supplied_tag = VariableLengthData( name.c_str(), name.size() );
    } else {
-      rti_user_supplied_tag = RTI1516_USERDATA( 0, 0 );
+      rti_user_supplied_tag = VariableLengthData( NULL, 0 );
    }
 
    // Get the current time line values.
@@ -175,20 +166,20 @@ void MTRInteractionHandler::send_interaction(
          ostringstream msg;
 
          msg << "++++SENDING++++ MTRInteractionHandler::send_interaction("
-             << "Receive Order):" << __LINE__ << '\n'
-             << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-             << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
-             << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << '\n'
-             << "  mode request: " << mtr_enum_to_string( mtr_mode ) << '\n'
-             << "  Scenario time: " << scenario_time << '\n'
-             << "  Simulation time: " << sim_time << '\n';
+             << "Receive Order):" << __LINE__ << endl
+             << "  name: '" << name << "'" << endl
+             << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'" << endl
+             << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << endl
+             << "  mode request: " << mtr_enum_to_string( mtr_mode ) << endl
+             << "  Scenario time: " << scenario_time << endl
+             << "  Simulation time: " << sim_time << endl;
          if ( exco_base->does_cte_timeline_exist() ) {
-            msg << "  CTE time: " << cte_time << '\n';
+            msg << "  CTE time: " << cte_time << endl;
          }
          msg << "  HLA grant time: " << granted_time << " ("
              << Int64BaseTime::to_base_time( granted_time ) << " "
-             << Int64BaseTime::get_units() << ")\n"
-             << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+             << Int64BaseTime::get_base_unit() << ")" << endl
+             << "  send_cnt:" << ( send_cnt + 1 ) << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
@@ -210,29 +201,29 @@ void MTRInteractionHandler::send_interaction(
          // The interaction was Not sent.
          ostringstream msg;
          msg << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
-             << __LINE__ << '\n'
-             << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-             << "  Scenario time: " << scenario_time << '\n'
-             << "  Simulation time: " << sim_time << '\n';
+             << __LINE__ << endl
+             << "  name:'" << name << "'" << endl
+             << "  Scenario time: " << scenario_time << endl
+             << "  Simulation time: " << sim_time << endl;
          if ( exco_base->does_cte_timeline_exist() ) {
-            msg << "  CTE time: " << cte_time << '\n';
+            msg << "  CTE time: " << cte_time << endl;
          }
          msg << "  HLA grant time: " << granted_time << " ("
              << Int64BaseTime::to_base_time( granted_time ) << " "
-             << Int64BaseTime::get_units() << ")\n";
+             << Int64BaseTime::get_base_unit() << ")" << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
 }
 
 void MTRInteractionHandler::receive_interaction(
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   VariableLengthData const &the_user_supplied_tag )
 {
    // Make sure that the federate reference has been set.
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << " ERROR: Unexpected NULL Interaction!\n";
+             << " ERROR: Unexpected NULL Interaction!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -241,7 +232,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( exco == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!\n";
+             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       exit( 1 );
    }
@@ -278,20 +269,20 @@ void MTRInteractionHandler::receive_interaction(
 
       ostringstream msg;
       msg << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
-          << __LINE__ << '\n'
-          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-          << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
-          << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << '\n'
-          << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << '\n'
-          << "  Scenario time: " << this->scenario_time << '\n'
-          << "  Simulation time: " << this->sim_time << '\n';
+          << __LINE__ << endl
+          << "  name:'" << name << "'" << endl
+          << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
+          << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << endl
+          << "  mode request: " << mtr_enum_to_string( this->mtr_mode ) << endl
+          << "  Scenario time: " << this->scenario_time << endl
+          << "  Simulation time: " << this->sim_time << endl;
       if ( exco->does_cte_timeline_exist() ) {
-         msg << "  CTE time: " << this->cte_time << '\n';
+         msg << "  CTE time: " << this->cte_time << endl;
       }
       msg << "  HLA grant time: " << this->granted_time << " ("
           << Int64BaseTime::to_base_time( this->granted_time ) << " "
-          << Int64BaseTime::get_units() << ")\n"
-          << "  receive_cnt:" << ( receive_cnt + 1 ) << '\n';
+          << Int64BaseTime::get_base_unit() << ")" << endl
+          << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 

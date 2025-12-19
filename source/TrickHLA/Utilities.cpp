@@ -27,14 +27,15 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <string>
 #include <time.h>
 
-// Trick include files.
+// Trick includes.
+#include "trick/attributes.h"
 #include "trick/trick_byteswap.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/Version.hh"
@@ -46,6 +47,29 @@ fpu_control_t __fpu_control;
 
 using namespace std;
 using namespace TrickHLA;
+
+size_t Utilities::get_static_var_element_count(
+   ATTRIBUTES *attr )
+{
+   size_t count = 0;
+
+   if ( attr != NULL ) {
+      bool const is_array        = ( attr->num_index > 0 );
+      bool const is_static_array = is_array && ( attr->index[attr->num_index - 1].size != 0 );
+
+      if ( !is_array || is_static_array ) {
+         // The user variable is either a primitive type or a static
+         // multi-dimension array.
+         count = 1;
+         for ( int i = 0; i < attr->num_index; ++i ) {
+            if ( attr->index[i].size > 0 ) {
+               count *= attr->index[i].size;
+            }
+         }
+      }
+   }
+   return count;
+}
 
 bool Utilities::is_transmission_byteswap(
    EncodingEnum const rti_encoding )
@@ -423,7 +447,7 @@ int Utilities::micro_sleep(
       sleep_time.tv_sec  = 0;
       sleep_time.tv_nsec = 0;
    }
-   return nanosleep( &sleep_time, NULL );
+   return nanosleep( &sleep_time, NULL ); // NOLINT
 }
 
 string const Utilities::get_version()

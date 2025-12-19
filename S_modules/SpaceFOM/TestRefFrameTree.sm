@@ -42,7 +42,7 @@
 #include "SpaceFOM/RefFrameTreeBase.sm"
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
+// SIM_OBJECT: SpaceFOMTestRefFrameTreeSimObject - An example reference frame tree
 // simulation object definition.
 //==========================================================================
 class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
@@ -60,43 +60,49 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    SpaceFOMTestRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
+                                      unsigned short               _INIT = P_HLA_INIT,
                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
-      : SpaceFOMRefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _BUILD ),
+      : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _INIT, _BUILD ),
         root_frame_ptr( NULL ),
         leaf_frame_ptr( NULL )
    {
+      //
+      // NOTE: P_BUILD has to run after P_INIT!
+      //
+      
       return;
    }
 
   private:
+   
    // Define the interface to configure the reference frame tree.
+   // This is the implementation of the configure_tree default_data interface
+   // called in the SpaceFOMRefFrameTreeBaseSimObject base class.
    void configure_tree()
    {
-      // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
-         std::ostringstream errmsg;
-         errmsg << "SpaceFOMRefFrameTreeSimObject::configure_tree():" << __LINE__
-                << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      // This is a very simple SpaceFOM-compliant reference frame tree.
+      // It has a root frame (root_ref_frame) and one child reference frame
+      // (leaf_ref_frame).
+
+      // Make the root_ref_frame the parent of the leaf_ref_frame.
+      leaf_frame_ptr->set_parent_frame( root_frame_ptr );
+
+      // Note that we do NOT need to configure the reference frames here.
+      // The frames will be configured separately as part of the simulation
+      // default_data and initialization processes.
+   }
+
+   // Define the interface to configure the reference frame tree.
+   // This is the implementation of the configure_tree default_data interface
+   // called in the SpaceFOMRefFrameTreeBaseSimObject base class.
+   void initialize()
+   {
+      // Check to see if the root reference frame is actualy being configured.
+      // If not, don't tell the ExecutionControl about it.
+      if ( root_frame_ptr->get_object() != NULL ) {
+         // Set the root reference frame in the ExCO.
+         exec_cntrl.root_ref_frame = root_frame_ptr;
       }
-
-      // Setup the root reference frame.
-      root_frame_ptr->base_config( false,
-                                   "root_ref_frame",
-                                   "frame_packing",
-                                   "RootFrame" );
-
-      // Set the root reference frame in the ExCO.
-      exec_cntrl.root_ref_frame = root_frame_ptr;
-
-      // Define a leaf reference frame.
-      leaf_frame_ptr->base_config( false,
-                                   "leaf_ref_frame",
-                                   "frame_packing",
-                                   "FrameA",
-                                   "RootFrame",
-                                   root_frame_ptr );
    }
 
   private:
@@ -121,8 +127,16 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
 // SimObject used for root reference frame discovery.
 SpaceFOMTestRefFrameTreeSimObject ref_frame_tree( THLA.manager,
                                                   THLA.execution_control );
-SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.frame_tree, ref_frame_tree.root_frame_data );
-SpaceFOMRefFrameSimObject leaf_ref_frame( ref_frame_tree.frame_tree, ref_frame_tree.leaf_frame_data );
+SpaceFOMRefFrameSimObject root_ref_frame( true,
+                                          "root_ref_frame",
+                                          "RootFrame",
+                                          ref_frame_tree.frame_tree,
+                                          ref_frame_tree.root_frame_data );
+SpaceFOMRefFrameSimObject leaf_ref_frame( true,
+                                          "leaf_ref_frame",
+                                          "FrameA",
+                                          ref_frame_tree.frame_tree,
+                                          ref_frame_tree.leaf_frame_data );
 
 
 //==========================================================================

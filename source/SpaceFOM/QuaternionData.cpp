@@ -28,16 +28,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// C includes.
+// System includes.
+#include <cmath>
 #include <math.h>
+#include <ostream>
 
 // Trick includes.
 #include "trick/constant.h"
-#include "trick/trick_math.h"
+#include "trick/reference_frame.h"
+#include "trick/trick_math_proto.h"
+#include "trick/vector_macros.h"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
 
+using namespace std;
 using namespace SpaceFOM;
 
 /*!
@@ -127,11 +132,11 @@ void QuaternionData::print_data( std::ostream &stream ) const
           << "\t\t" << scalar << "; "
           << "\t\t" << vector[0] << ", "
           << "\t\t" << vector[1] << ", "
-          << "\t\t" << vector[2] << '\n';
+          << "\t\t" << vector[2] << endl;
    stream << "\tattitude (RPY){deg}: "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
+          << "\t\t" << euler_angles[2] << endl;
 
    return;
 }

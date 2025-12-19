@@ -15,10 +15,10 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{SyncPoint.cpp}
 @trick_link_dependency{SyncPointTimed.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -28,29 +28,31 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <string>
 
-// Trick include files.
-#include "trick/message_proto.h"
-
-// TrickHLA include files.
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-#include RTI1516_HEADER
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
-#pragma GCC diagnostic pop
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -97,13 +99,13 @@ SyncPointTimed::~SyncPointTimed()
    return;
 }
 
-RTI1516_USERDATA const SyncPointTimed::encode_user_supplied_tag()
+VariableLengthData const SyncPointTimed::encode_user_supplied_tag()
 {
    return time.encode();
 }
 
 void SyncPointTimed::decode_user_supplied_tag(
-   RTI1516_USERDATA const &supplied_tag )
+   VariableLengthData const &supplied_tag )
 {
    time.decode( supplied_tag );
 }

@@ -30,7 +30,7 @@
 #define DYNAMICS       0.03125 // Vehicle and planetary dynamics interval (32Hz)
 
 //==========================================================================
-// Define the Trick HLA job cycle times.
+// Define the TrickHLA job cycle times.
 //==========================================================================
 #define THLA_DATA_CYCLE_TIME        HIGH_RATE_ENV // HLA data communication cycle time.
 #define THLA_INTERACTION_CYCLE_TIME DYNAMICS      // HLA Interaction cycle time.
@@ -98,7 +98,7 @@ class MoonSimObject : public Moon_LP150Q_SimObject
    // This object is not copyable.
    MoonSimObject (const MoonSimObject&);
    MoonSimObject & operator = (const MoonSimObject&);
-   
+
    // Do not allow the default constructor.
    MoonSimObject();
 };
@@ -159,7 +159,7 @@ class VehicleSimObject: public Trick::SimObject
    // This object is not copyable
    VehicleSimObject (const VehicleSimObject&) = delete;
    VehicleSimObject & operator = (const VehicleSimObject&) = delete;
-   
+
    // Do not allow the default constructor.
    VehicleSimObject();
 
@@ -179,12 +179,12 @@ EntityRelStateSimObject relstate( dynamics.dyn_manager, relkin.rel_kin, veh.dyn_
 
 
 //==========================================================================
-// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
 // for input file instantiations.
 //==========================================================================
 
 // This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/CTETimelineBase.hh"
+##include "TrickHLA/time/TimeOfDayCTETimeline.hh"
 
 
 //==========================================================================
@@ -216,7 +216,11 @@ EntityRelStateSimObject relstate( dynamics.dyn_manager, relkin.rel_kin, veh.dyn_
 
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject veh_physical_entity( veh.dyn_body, P_HLA_INIT );
+JEODPhysicalEntiySimObject veh_physical_entity( true,
+                                                "veh_physical_entity",
+                                                "test_vehicle",
+                                                veh.dyn_body,
+                                                P_HLA_INIT );
 
 
 //==========================================================================

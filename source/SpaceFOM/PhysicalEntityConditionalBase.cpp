@@ -29,22 +29,20 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
-#include <string>
+// System includes.
+#include <cstring>
+#include <ostream>
+#include <sstream>
 
-// Trick include files.
-#include "trick/exec_proto.h"
-#include "trick/message_proto.h"
+// SpaceFOM includes.
+#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityConditionalBase.hh"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
-
-// Model include files.
-#include "SpaceFOM/PhysicalEntityConditionalBase.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -55,7 +53,7 @@ using namespace SpaceFOM;
  */
 PhysicalEntityConditionalBase::PhysicalEntityConditionalBase(
    PhysicalEntityBase &entity_ref )
-   : TrickHLA::Conditional(),
+   : TrickHLA::Conditional( "PhysicalEntityConditionalBase" ),
      debug( false ),
      entity( entity_ref ),
      prev_data(),
@@ -85,7 +83,7 @@ PhysicalEntityConditionalBase::~PhysicalEntityConditionalBase()
  */
 void PhysicalEntityConditionalBase::initialize()
 {
-   // Call the base class function.
+   // Call the base class.
    TrickHLA::Conditional::initialize();
 
    // Return to calling routine.
@@ -142,121 +140,41 @@ bool PhysicalEntityConditionalBase::should_send(
    if ( attr == name_attr ) {
 
       // Check for Name change.
-      if ( entity.pe_packing_data.name != NULL ) {
-         if ( prev_data.name != NULL ) {
-            if ( strcmp( entity.pe_packing_data.name, prev_data.name ) ) {
-               if ( trick_MM->delete_var( static_cast< void * >( prev_data.name ) ) ) {
-                  message_publish( MSG_WARNING,
-                                   "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.name'\n",
-                                   __LINE__ );
-               }
-               // Update the previous value.
-               prev_data.name = trick_MM->mm_strdup( entity.pe_packing_data.name );
-               // Mark to send.
-               send_attr = true;
-            }
-         } else {
-            // Update the previous value.
-            prev_data.name = trick_MM->mm_strdup( entity.pe_packing_data.name );
-            // Mark to send.
-            send_attr = true;
-         }
-      } else {
-         ostringstream errmsg;
-         errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Name for PhysicalEntity!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      if ( entity.pe_packing_data.name != prev_data.name ) {
+         // Update the previous value.
+         prev_data.name = entity.pe_packing_data.name;
+         // Mark to send.
+         send_attr = true;
       }
 
    } else if ( attr == type_attr ) {
 
       // Check for Type change.
-      if ( entity.pe_packing_data.type != NULL ) {
-         if ( prev_data.type != NULL ) {
-            if ( strcmp( entity.pe_packing_data.type, prev_data.type ) ) {
-               if ( trick_MM->delete_var( static_cast< void * >( prev_data.type ) ) ) {
-                  message_publish( MSG_WARNING,
-                                   "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.type'\n",
-                                   __LINE__ );
-               }
-               // Update the previous value.
-               prev_data.type = trick_MM->mm_strdup( entity.pe_packing_data.type );
-               // Mark to send.
-               send_attr = true;
-            }
-         } else {
-            // Update the previous value.
-            prev_data.type = trick_MM->mm_strdup( entity.pe_packing_data.type );
-            // Mark to send.
-            send_attr = true;
-         }
-      } else {
-         ostringstream errmsg;
-         errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Type for PhysicalEntity!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      if ( entity.pe_packing_data.type != prev_data.type ) {
+         // Update the previous value.
+         prev_data.type = entity.pe_packing_data.type;
+         // Mark to send.
+         send_attr = true;
       }
 
    } else if ( attr == status_attr ) {
 
       // Check for Status change.
-      if ( entity.pe_packing_data.status != NULL ) {
-         if ( prev_data.status != NULL ) {
-            if ( strcmp( entity.pe_packing_data.status, prev_data.status ) ) {
-               if ( trick_MM->delete_var( static_cast< void * >( prev_data.status ) ) ) {
-                  message_publish( MSG_WARNING,
-                                   "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.status'\n",
-                                   __LINE__ );
-               }
-               // Update the previous value.
-               prev_data.status = trick_MM->mm_strdup( entity.pe_packing_data.status );
-               // Mark to send.
-               send_attr = true;
-            }
-         } else {
-            // Update the previous value.
-            prev_data.status = trick_MM->mm_strdup( entity.pe_packing_data.status );
-            // Mark to send.
-            send_attr = true;
-         }
-      } else {
-         ostringstream errmsg;
-         errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Status for PhysicalEntity!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      if ( entity.pe_packing_data.status != prev_data.status ) {
+         // Update the previous value.
+         prev_data.status = entity.pe_packing_data.status;
+         // Mark to send.
+         send_attr = true;
       }
 
    } else if ( attr == parent_frame_attr ) {
 
       // Check for Parent Frame change.
-      if ( entity.pe_packing_data.parent_frame != NULL ) {
-         if ( prev_data.parent_frame != NULL ) {
-            if ( strcmp( entity.pe_packing_data.parent_frame, prev_data.parent_frame ) ) {
-               if ( trick_MM->delete_var( static_cast< void * >( prev_data.parent_frame ) ) ) {
-                  message_publish( MSG_WARNING,
-                                   "PhysicalEntityConditionalBase::should_send():%d WARNING failed to delete Trick Memory for 'prev_data.parent_frame'\n",
-                                   __LINE__ );
-               }
-               // Update the previous value.
-               prev_data.parent_frame = trick_MM->mm_strdup( entity.pe_packing_data.parent_frame );
-               // Mark to send.
-               send_attr = true;
-            }
-         } else {
-            // Update the previous value.
-            prev_data.parent_frame = trick_MM->mm_strdup( entity.pe_packing_data.parent_frame );
-            // Mark to send.
-            send_attr = true;
-         }
-      } else {
-         ostringstream errmsg;
-         errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Parent Frame for PhysicalEntity!\n";
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      if ( entity.pe_packing_data.parent_frame != prev_data.parent_frame ) {
+         // Update the previous value.
+         prev_data.parent_frame = entity.pe_packing_data.parent_frame;
+         // Mark to send.
+         send_attr = true;
       }
 
    } // Check for change in state.
@@ -336,7 +254,8 @@ bool PhysicalEntityConditionalBase::should_send(
 
       errmsg << "PhysicalEntityConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
-             << "ERROR: Could not find the data for the specified FOM attribute!\n";
+             << "ERROR: Could not find the data for the specified FOM attribute!"
+             << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

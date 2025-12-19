@@ -1,0 +1,226 @@
+/*!
+@ingroup TrickHLA
+@file S_modules/THLAInteractionHandlerBase.sm
+@brief A generalized Trick S_define object module that defines the base
+design for the TrickHLA Interaction Handler object.
+
+@copyright Copyright 2025 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Light Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@trick_parse{everything}
+
+@python_module{TrickHLA}
+
+@tldh
+@trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
+
+@revs_begin
+@rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, July 2025, --, Initial version. }
+@revs_end
+
+*/
+
+#ifndef TRICKHLA_INTERACTION_BASE_SIM_OBJECT
+#define TRICKHLA_INTERACTION_BASE_SIM_OBJECT
+
+// System include files.
+##include <sstream>
+
+// TrickHLA include files.
+##include "TrickHLA/Interaction.hh"
+##include "TrickHLA/InteractionHandler.hh"
+
+//==========================================================================
+// SIM_OBJECT: TrickHLAInteractionHandlerBaseSimObject - A base simulation
+// definition module implementation to support a TrickHLA interaction
+// handler instance. This simulation definition module is entended to be
+// extended.
+//==========================================================================
+class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
+
+ public:
+
+   /* Associated TrickHLA base Interaction handler reference. */
+   TrickHLA::InteractionHandler * handler_base_ptr;
+
+   // The _INIT phasing variable needs to occure before THLA initialization.
+   TrickHLAInteractionHandlerBaseSimObject( bool                 publish_inter,
+                                            bool                 subscribe_inter,
+                                            std::string          sim_obj_name,
+                                            InteractionHandler * handler,
+                                            unsigned short       _INIT = P_HLA_INIT  )
+      : Trick::SimObject(),
+        handler_base_ptr( handler ),
+        thla_interaction( NULL ),
+        publish( publish_inter ),
+        subscribe( subscribe_inter ),
+        sim_object_configured( false ),
+        sim_object_name( sim_obj_name )
+   {
+      //
+      // Default data jobs
+      //
+      P_INIT ("default_data") default_config();
+
+      //
+      // Initialization jobs
+      //
+      P_INIT ("initialization") configure();
+      P_INIT ("initialization") initialize();
+   }
+
+ protected:
+   virtual int default_config()
+   {
+      // Check interaction handler.
+      if ( handler_base_ptr == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAInteractionHandlerBaseSimObject::default_config():" << __LINE__
+                << " ERROR: Unexpected NULL InteractionHandler!" << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
+      }
+
+      // Get the associated TrickHLA Interaction.
+      TrickHLA::Interaction * interaction_ptr = handler_base_ptr->get_interaction();
+      
+      // Check if the TrickHLA Interaction associated with the handler function
+      // has been instantiated and assigned.
+      if ( thla_interaction != NULL ) {
+         
+         // Check if the Interaction is already assigned.
+         if ( interaction_ptr != NULL ) {
+            
+            // Both are set and they MUST match!
+            if ( thla_interaction != interaction_ptr ) {
+               std::ostringstream errmsg;
+               errmsg << "TrickHLAInteractionHandlerBaseSimObject::default_config():" << __LINE__
+                      << " ERROR: InteractionHandler references do NOT match!" << std::endl;
+               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               return( -1 );
+            }
+            
+         } else {
+            
+            // The Interaction is not set; so, assign the thla_interaction.
+            handler_base_ptr->set_interaction( thla_interaction );
+            
+         }
+         
+      } else if ( interaction_ptr != NULL ) {
+         
+         // The thla_interaction reference is not set but the InteractionHandler
+         // is.  So, we'll use that.
+         thla_interaction = interaction_ptr;
+         
+      } else {
+         
+         // Neither is set; so, we must be configuring at initialization.
+         // We're probably using the input file.
+         // So, just return.
+         return( 0 );
+         
+      }
+
+      return( 0 );
+   }
+
+   virtual int configure()
+   {
+      sim_object_configured = true;
+      return( 0 );
+   }
+
+   virtual int initialize()
+   {
+      if ( !sim_object_configured ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
+                << " ERROR: The sim-object configure function must be called"
+                << " before calling this initialize function!" << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
+      }
+
+      // We must have an InteractionHandler.
+      if ( handler_base_ptr == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
+                << " ERROR: Unexpected NULL Packing object!" << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
+      } else {
+         handler_base_ptr->initialize();
+      }
+
+      // Get the associated TrickHLA Interaction.
+      TrickHLA::Interaction * interaction_ptr = handler_base_ptr->get_interaction();
+
+      // Check if the TrickHLA Interaction associated with the handler function
+      // has been instantiated and assigned.
+      if ( thla_interaction != NULL ) {
+
+         // Check if the Interaction is already assigned.
+         if ( interaction_ptr != NULL ) {
+            
+            // Both are set and they MUST match!
+            if ( thla_interaction != interaction_ptr ) {
+               std::ostringstream errmsg;
+               errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
+                      << " ERROR: InteractionHandler references do NOT match!" << std::endl;
+               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               return( -1 );
+            }
+            
+         } else {
+
+            // The Interaction is not set; so, assign the thla_interaction.
+            handler_base_ptr->set_interaction( thla_interaction );
+            
+         }
+
+      } else if ( interaction_ptr != NULL ) {
+
+         // The thla_interaction reference is not set but the InteractionHandler
+         // is.  So, we'll use that.
+         thla_interaction = interaction_ptr;
+         
+      } else {
+         
+         // Neither is set.  This is an ERROR!
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
+                << " ERROR: The TrickHLA::InteractionHandler associated with"
+                << " interaction \'" << name << "\' is NULL." << std::endl;
+         //TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         
+      }
+
+      return( 0 );
+   }
+   
+ public:
+  TrickHLA::Interaction * thla_interaction;
+  
+ protected:
+  bool        publish;
+  bool        subscribe;
+  bool        sim_object_configured;
+  std::string sim_object_name;
+
+ private:
+   // This object is not copyable
+   TrickHLAInteractionHandlerBaseSimObject( TrickHLAInteractionHandlerBaseSimObject const & );
+   TrickHLAInteractionHandlerBaseSimObject & operator=( TrickHLAInteractionHandlerBaseSimObject const & );
+};
+
+#endif // TRICKHLA_INTERACTION_BASE_SIM_OBJECT: Do NOT put anything after this line!

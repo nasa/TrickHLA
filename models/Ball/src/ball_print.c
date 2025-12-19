@@ -37,24 +37,23 @@ NASA, Johnson Space Center\n
 #include "../include/ball_proto.h"
 #include "../include/ball_state.h"
 
-
 /*!
  * @job_class{scheduled}
  */
 int ball_print(
-  BallState * state )
+   BallState *state )
 {
    /* Check if printing is active (True). */
    if ( state->input.print_state ) {
 
       /* GET SHORTHAND NOTATION FOR DATA STRUCTURES */
-      BallState_Out *SO = &(state->output);
+      BallState_Out *SO = &( state->output );
 
       message_publish( 0, "Ball %s: time = %8.2f; position = %12.6f , %12.6f; velocity = %12.6f , %12.6f\n",
                        state->name, exec_get_sim_time(),
                        SO->position[0], SO->position[1],
-                       SO->velocity[0], SO->velocity[1]  );
+                       SO->velocity[0], SO->velocity[1] );
    }
 
-   return( 0 );
+   return ( 0 );
 }

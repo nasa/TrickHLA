@@ -47,15 +47,14 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_L_R_TREE_BASE_HH
 #define SPACEFOM_L_R_TREE_BASE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
-// TrickHLA include files.
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/LRTreeNodeBase.hh"
 
 namespace SpaceFOM

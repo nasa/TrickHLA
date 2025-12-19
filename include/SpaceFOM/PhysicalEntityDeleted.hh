@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/TrickHLA/ObjectDeleted.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityDeleted.cpp}
 
 @revs_title
@@ -34,14 +34,13 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_DELETED_HH
 #define SPACEFOM_PHYSICAL_ENTITY_DELETED_HH
 
-// Trick include files.
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/ObjectDeleted.hh"
+// TrickHLA includes.
+#include "TrickHLA/ObjectDeletedHandler.hh"
 
 namespace SpaceFOM
 {
 
-class PhysicalEntityDeleted : public TrickHLA::ObjectDeleted
+class PhysicalEntityDeleted : public TrickHLA::ObjectDeletedHandler
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

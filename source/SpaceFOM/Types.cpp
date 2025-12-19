@@ -24,10 +24,14 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
+#include <cstdint>
 #include <string>
 
-// SpaceFOM include files.
+// TrickHLA includes.
+#include "TrickHLA/Types.hh"
+
+// SpaceFOM includes.
 #include "SpaceFOM/Types.hh"
 
 using namespace std;

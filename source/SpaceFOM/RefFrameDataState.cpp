@@ -28,21 +28,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// C includes.
-#include <cstring>
+// System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
-
-// Trick HLA includes.
-#include "TrickHLA/CompileConfig.hh"
+#include "trick/message_type.h"
+#include "trick/vector_macros.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameDataState.hh"
 
+using namespace std;
 using namespace SpaceFOM;
 
 /*!
@@ -59,7 +59,7 @@ RefFrameDataState::RefFrameDataState()
  */
 RefFrameDataState::RefFrameDataState( RefFrameDataState const &source )
 {
-   this->copy( source );
+   this->copy( source ); // NOLINT
 }
 
 /*!
@@ -146,21 +146,21 @@ bool RefFrameDataState::transform_to_parent(
    // Check for null reference to transformed frame data.
    if ( frame_out == NULL ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d NULL transformed frame reference!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d NULL transformed frame reference!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
    // You cannot call this function on itself.
    if ( frame_out == this ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
    // You cannot write into the 'to' frame.
    if ( frame_out == &frame_to ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
@@ -280,21 +280,21 @@ bool RefFrameDataState::transform_to_child(
    // Check for null reference to transformed frame data.
    if ( frame_out == NULL ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_child() ERROR:%d NULL transformed frame reference!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_child() ERROR:%d NULL transformed frame reference!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
    // You cannot call this function on itself.
    if ( frame_out == this ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
    // You cannot write into the 'to' frame.
    if ( frame_out == &frame_to ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
@@ -419,24 +419,24 @@ void RefFrameDataState::print_data( std::ostream &stream ) const
    stream << "\tposition: "
           << "\t\t" << state.pos[0] << ", "
           << "\t\t" << state.pos[1] << ", "
-          << "\t\t" << state.pos[2] << '\n';
+          << "\t\t" << state.pos[2] << endl;
    stream << "\tvelocity: "
           << "\t\t" << state.vel[0] << ", "
           << "\t\t" << state.vel[1] << ", "
-          << "\t\t" << state.vel[2] << '\n';
+          << "\t\t" << state.vel[2] << endl;
    stream << "\tacceleration: "
           << "\t\t" << accel[0] << ", "
           << "\t\t" << accel[1] << ", "
-          << "\t\t" << accel[2] << '\n';
+          << "\t\t" << accel[2] << endl;
    state.att.print_data( stream );
    stream << "\tangular velocity: "
           << "\t\t" << state.ang_vel[0] << ", "
           << "\t\t" << state.ang_vel[1] << ", "
-          << "\t\t" << state.ang_vel[2] << '\n';
+          << "\t\t" << state.ang_vel[2] << endl;
    stream << "\tangular acceleration: "
           << "\t\t" << ang_accel[0] << ", "
           << "\t\t" << ang_accel[1] << ", "
-          << "\t\t" << ang_accel[2] << '\n';
+          << "\t\t" << ang_accel[2] << endl;
 
    return;
 }

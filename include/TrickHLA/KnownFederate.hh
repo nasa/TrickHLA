@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_KNOWN_FEDERATE_HH
 #define TRICKHLA_KNOWN_FEDERATE_HH
 
+// System includes.
+#include <string>
+
 namespace TrickHLA
 {
 
@@ -49,20 +52,20 @@ class KnownFederate
    friend void init_attrTrickHLA__KnownFederate();
 
   public:
-   char *MOM_instance_name; ///< @trick_units{--} MOM instance name for the federate object.
+   std::string MOM_instance_name; ///< @trick_units{--} MOM instance name for the federate object.
 
    //----------------------------- USER VARIABLES -----------------------------
    // Variables below this point are for either use within a users simulation
    // or must be configured by the user.
 
-   char *name;     ///< @trick_units{--} Name of a Federate in the Federation.
-   bool  required; ///< @trick_units{--} True requires federate to be in federation before continuing.
+   std::string name;     ///< @trick_units{--} Name of a Federate in the Federation.
+   bool        required; ///< @trick_units{--} True requires federate to be in federation before continuing.
 
   public:
    /*! @brief Default constructor for the TrickHLA KnownFederate class. */
    KnownFederate()
-      : MOM_instance_name( NULL ),
-        name( NULL ),
+      : MOM_instance_name(),
+        name(),
         required( false )
    {
       return;

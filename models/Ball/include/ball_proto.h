@@ -38,62 +38,59 @@ NASA, Johnson Space Center\n
 #ifndef MODELS_TRICKHLA_BALL_PROTO_H_
 #define MODELS_TRICKHLA_BALL_PROTO_H_
 
-#include "ball_state.h"
-#include "ball_force.h"
-#include "ball_walls.h"
-
+#include "Ball/include/ball_force.h"
+#include "Ball/include/ball_state.h"
+#include "Ball/include/ball_walls.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-
 /*! @brief A simple routine to integrate (propagate) the state of an array of balls.
  *  @param num_balls Number of balls in simulation.
  *  @param states List of ball states in simulation.
  *  @return Integration pass number used by integrator. */
-int ball_ensemble_integ( int num_balls, BallState * states[] );
+int ball_ensemble_integ( int num_balls, BallState *states[] );
 
 /*! @brief A simple routine to check for ball collisions with walls.
  *  @param walls Ball wall parameters for collision management.
  *  @param num_balls Number of balls in simulation.
  *  @param states List of ball states in simulation.
  *  @return Time to go to next predicted collision event. */
-double ball_ensemble_collision( BallWalls * walls,
-                                int         num_balls,
-                                BallState * states[] );
+double ball_ensemble_collision( BallWalls const *walls,
+                                int              num_balls,
+                                BallState       *states[] );
 
 /*! @brief Initializes the ball force model.
  *  @param force Force parameters for force model.
  *  @return Always returns zero. */
-int ball_force_default_data( BallForce * force );
+int ball_force_default_data( BallForce *force );
 
 /*! @brief Compute forces based on ball position.
  *  @param force Force parameters for force model.
  *  @param position Current ball state.
  *  @return Always returns zero. */
-int ball_force_field( BallForce * force, BallState * position );
+int ball_force_field( BallForce *force, BallState *position );
 
 /*! @brief Simple print out of ball state.
  *  @param state Ball state parameters.
  *  @return Always returns zero. */
-int ball_print( BallState * state );
+int ball_print( BallState *state );
 
 /*! @brief Initializes the ball state model.
  *  @param state Ball state parameters.
  *  @return Always returns zero. */
-int ball_state_default_data( BallState * state );
+int ball_state_default_data( BallState *state );
 
 /*! @brief A simple routine to compute the derivative of a ball state.
  *  @param state Ball state parameters.
  *  @return Always returns zero. */
-int ball_state_deriv( BallState * state );
+int ball_state_deriv( BallState *state );
 
 /*! @brief A simple routine to initialize the state of a ball.
  *  @param state Ball state parameters.
  *  @return Always returns zero. */
-int ball_state_init( BallState * state );
+int ball_state_init( BallState *state );
 
 /*
  * Wall contact testing routines.
@@ -103,32 +100,32 @@ int ball_state_init( BallState * state );
  *  @param ball_state Ball state for Regula Falsi testing.
  *  @return Time to go for Regula False logic. */
 double ball_ceiling(
-   BallWalls * walls,
-   BallState * ball_state );
+   BallWalls const *walls,
+   BallState       *ball_state );
 
 /*! @brief Regula Falsi routine for left wall contact.
  *  @param walls Definition of wall constraints.
  *  @param ball_state Ball state for Regula Falsi testing.
  *  @return Time to go for Regula False logic. */
 double ball_left_wall(
-   BallWalls * walls,
-   BallState * ball_state );
+   BallWalls const *walls,
+   BallState       *ball_state );
 
 /*! @brief Regula Falsi routine for floor contact.
  *  @param walls Definition of wall constraints.
  *  @param ball_state Ball state for Regula Falsi testing.
  *  @return Time to go for Regula False logic. */
 double ball_floor(
-   BallWalls * walls,
-   BallState * ball_state );
+   BallWalls const *walls,
+   BallState       *ball_state );
 
 /*! @brief Regula Falsi routine for right wall contact.
  *  @param walls Definition of wall constraints.
  *  @param ball_state Ball state for Regula Falsi testing.
  *  @return Time to go for Regula False logic. */
 double ball_right_wall(
-   BallWalls * walls,
-   BallState * ball_state );
+   BallWalls const *walls,
+   BallState       *ball_state );
 
 /*! @brief Regula Falsi routine for general wall contact testing.
  *  @param integ_time    Current integration time.
@@ -138,20 +135,19 @@ double ball_right_wall(
  *  @param velocity      Ball velocity component.
  *  @return Time to go for Regula False logic. */
 double wall_contact(
-   double         integ_time,
-   double         wall_position,
-   double         position,
-   REGULA_FALSI * rf_state,
-   double       * velocity     );
+   double        integ_time,
+   double        wall_position,
+   double        position,
+   REGULA_FALSI *rf_state,
+   double       *velocity );
 
 /*! @brief Regula Falsi routine for general wall contact testing.
  *  @param walls Walls configuration and REgula Falsi data.
  *  @return Always returns zero. */
-int ball_walls_default_data( BallWalls * walls );
+int ball_walls_default_data( BallWalls *walls );
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* MODELS_TRICKHLA_BALL_PROTO_H_ */

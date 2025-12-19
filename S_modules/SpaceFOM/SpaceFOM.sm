@@ -41,7 +41,7 @@
 ##include "SpaceFOM/RefFrameBase.hh"
 
 //=========================================================================
-// SIM_OBJECT: SpaceFOM - Extend the TrickHLA Base SimObject.
+// SIM_OBJECT: SpaceFOMSimObject - Extend the TrickHLA Base SimObject.
 //=========================================================================
 class SpaceFOMSimObject : public THLABaseSimObject {
 
@@ -54,7 +54,7 @@ class SpaceFOMSimObject : public THLABaseSimObject {
    SpaceFOM::ExecutionControl execution_control;
 
    SpaceFOMSimObject( double main_thread_data_cycle,
-                      double main_thread_interaction_cycle,
+                      double main_thread_interaction_cycle = 0.0,
                       unsigned short _1ST  = 1,
                       unsigned short _INIT = 60,
                       unsigned short _LAST = 65534,

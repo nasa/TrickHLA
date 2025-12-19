@@ -30,7 +30,7 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MUTEX_LOCK_HH
 #define TRICKHLA_MUTEX_LOCK_HH
 
-// System include files.
+// System includes.
 #include <pthread.h>
 
 namespace TrickHLA

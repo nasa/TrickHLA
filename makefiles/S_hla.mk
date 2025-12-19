@@ -20,9 +20,9 @@ ifeq ("$(wildcard ${RTI_HOME})","")
    $(error ${RED_TXT}S_hla.mk:ERROR: Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME}${RESET_TXT})
 endif
 
-# Either IEEE_1516_2010 for HLA Evolved or IEEE_1516_202X for HLA 4.
+# Either IEEE_1516_2010 for HLA Evolved or IEEE_1516_2025 for HLA 4.
 ifeq ($(RTI_VENDOR),Pitch_HLA_4)
-   HLA_STANDARD = IEEE_1516_202X
+   HLA_STANDARD = IEEE_1516_2025
 else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
    HLA_STANDARD = IEEE_1516_2010
 else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
@@ -39,7 +39,7 @@ TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_S
 # Needed for the HLA IEEE 1516 header files.
 ifeq ($(RTI_VENDOR),Pitch_HLA_4)
    # Determine the Pitch RTI include path based on the HLA Standard specififed.
-   RTI_INCLUDE    =  ${RTI_HOME}/api/cpp/HLA_1516-202X
+   RTI_INCLUDE    =  ${RTI_HOME}/api/cpp/HLA_1516-2025
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
@@ -92,11 +92,13 @@ endif
 ifeq ($(TRICK_HOST_TYPE),Darwin)
    # macOS
 
-   # C++17 removed the dynamic exception specification so fallback to C++14 for
-   # ICG because the IEEE 1516-2010 APIs use dynamic exception specifications.
-   # Otherwise this will result in compile time errors.
-   TRICK_ICGFLAGS += --icg-std=c++14
-   $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+   ifeq ($(HLA_STANDARD),IEEE_1516_2010)
+      # C++17 removed the dynamic exception specification so fallback to
+      # C++14 for ICG because the IEEE 1516-2010 APIs use dynamic exception
+      # specifications. Otherwise this will result in compile time errors.
+      TRICK_ICGFLAGS += --icg-std=c++14
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+   endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
@@ -137,7 +139,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
             else
                export DYLD_LIBRARY_PATH = ${RTI_HOME}/lib
             endif
-            TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -v -Wl,-rpath,${RTI_HOME}/lib -lrti1516_202Xclang12 -lfedtime1516_202Xclang12 -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
+            TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -v -Wl,-rpath,${RTI_HOME}/lib -lrti1516_2025clang12 -lfedtime1516_2025clang12 -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
          else
             $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least clang 12 on the Mac.${RESET_TXT})
          endif
@@ -147,7 +149,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
       # simulation executable.
-      export CLASSPATH     += ${RTI_HOME}/lib/prti1516_202X.jar
+      export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
 
    else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
@@ -221,23 +223,24 @@ else
    # Determine the gcc compiler version.
    COMPILER_VERSION = $(shell $(CPPC_CMD) -dumpversion | cut -d . -f 1)
 
-   # The gcc version 11 compiler defaults to C++17 which removed the
-   # dynamic exception specification. Instead fallback to C++14 because
-   # the IEEE 1516-2010 APIs use dynamic exception specifications.
-   # Otherwise this will result in compile time errors for C++17.
-   ifeq ($(shell echo $(COMPILER_VERSION)\>=11 | bc),1)
-      TRICK_CFLAGS   += -std=c++14
-      TRICK_CXXFLAGS += -std=c++14
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Falling back to C++14 to compile Trick simulation.${RESET_TXT})
-   endif
+   ifeq ($(HLA_STANDARD),IEEE_1516_2010)
+      # The gcc version 11 compiler defaults to C++17 which removed the
+      # dynamic exception specification. Instead fallback to C++14 because
+      # the IEEE 1516-2010 APIs use dynamic exception specifications.
+      # Otherwise this will result in compile time errors for C++17.
+      ifeq ($(shell echo $(COMPILER_VERSION)\>=11 | bc),1)
+         TRICK_CXXFLAGS += -std=c++14
+         $(info ${GREEN_TXT}S_hla.mk:INFO: Falling back to C++14 to compile Trick simulation.${RESET_TXT})
+      endif
 
-   # ICG code needs to be targeted to either C++14 (gcc versions 6.1 to 10)
-   # or C++11 (gcc 4.8.1+) because C++17 (gcc version 11+) removed the dynamic
-   # exception specification and the IEEE 1516-2010 APIs use it. Otherwise
-   # this will result in compile time errors.
-   ifeq ($(shell echo $(COMPILER_VERSION)\>=6 | bc),1)
-      TRICK_ICGFLAGS += --icg-std=c++14
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+      # ICG code needs to be targeted to either C++14 (gcc versions 6.1 to 10)
+      # or C++11 (gcc 4.8.1+) because C++17 (gcc version 11+) removed the dynamic
+      # exception specification and the IEEE 1516-2010 APIs use it. Otherwise
+      # this will result in compile time errors.
+      ifeq ($(shell echo $(COMPILER_VERSION)\>=6 | bc),1)
+         TRICK_ICGFLAGS += --icg-std=c++14
+         $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+      endif
    endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
@@ -267,7 +270,7 @@ else
       TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
 
       # Add the CLASSPATH environment variable to the simulation executable.
-      export CLASSPATH     += ${RTI_HOME}/lib/prti1516_202X.jar
+      export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
       export TRICK_GTE_EXT += CLASSPATH
 
       # Determine which gcc library version to use.
@@ -276,7 +279,7 @@ else
       else
          $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_202Xgcc7 -lfedtime1516_202Xgcc7 -Wl,-rpath,${RTI_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7 -Wl,-rpath,${RTI_LIB_PATH}
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
       # their environment.

@@ -36,20 +36,21 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
 #include <map>
+#include <ostream>
 #include <sstream>
+#include <time.h>
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionItem.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
@@ -58,11 +59,23 @@ NASA, Johnson Space Center\n
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#if defined( IEEE_1516_2025 )
+#   include "RTI/time/LogicalTime.h"
+#else
+#   include "RTI/LogicalTime.h"
+#endif // IEEE_1516_2025
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -94,7 +107,7 @@ InteractionItem::InteractionItem(
    int const                      param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const        &theUserSuppliedTag )
+   VariableLengthData const      &theUserSuppliedTag )
    : index( inter_index ),
      parameter_queue(),
      interaction_type( inter_type ),
@@ -116,7 +129,7 @@ InteractionItem::InteractionItem(
    int const                      param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const        &theUserSuppliedTag,
+   VariableLengthData const      &theUserSuppliedTag,
    LogicalTime const             &theTime )
    : index( inter_index ),
      parameter_queue(),
@@ -157,7 +170,7 @@ void InteractionItem::initialize(
    int const                      param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const        &theUserSuppliedTag )
+   VariableLengthData const      &theUserSuppliedTag )
 {
    this->interaction_type = inter_type;
 
@@ -193,8 +206,11 @@ void InteractionItem::initialize(
    // Put the user supplied tag into a buffer.
    user_supplied_tag_size = theUserSuppliedTag.size();
    if ( user_supplied_tag_size != 0 ) {
-      user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", user_supplied_tag_size ) );
-      memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size );
+      user_supplied_tag = static_cast< unsigned char * >(
+         TMM_declare_var_1d( "unsigned char", user_supplied_tag_size ) );
+      memcpy( user_supplied_tag, // flawfinder: ignore
+              theUserSuppliedTag.data(),
+              user_supplied_tag_size );
    }
 }
 
@@ -214,11 +230,11 @@ void InteractionItem::checkpoint_queue()
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for a parm_items linear"
-                << " array of " << parm_items_count << " elements\n";
+                << " array of " << parm_items_count << " elements" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      unsigned int   i;
+      int            i;
       ParameterItem *item;
 
       // Iterate through the parameter-queue.
@@ -234,7 +250,7 @@ void InteractionItem::checkpoint_queue()
             parm_items[i].data = static_cast< unsigned char * >(
                TMM_declare_var_1d( "unsigned char", item->size ) );
 
-            memcpy( parm_items[i].data, item->data, item->size );
+            memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
          }
       }
    }
@@ -275,7 +291,7 @@ void InteractionItem::restore_queue()
          } else {
             item->data = static_cast< unsigned char * >(
                TMM_declare_var_1d( "unsigned char", parm_items[i].size ) );
-            memcpy( item->data, parm_items[i].data, parm_items[i].size );
+            memcpy( item->data, parm_items[i].data, parm_items[i].size ); // flawfinder: ignore
          }
 
          parameter_queue.push( item );

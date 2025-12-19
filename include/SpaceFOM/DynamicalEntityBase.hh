@@ -38,11 +38,7 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Object.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityData.hh"
 #include "SpaceFOM/PhysicalEntityBase.hh"
 
@@ -74,26 +70,17 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
 
    // Default data.
    /*! @brief Sets up the attributes for a DynamicalEntity using default values.
+    *  @param create Does this federate create this DynamicalEntity instance.
     *  @param sim_obj_name Name of SimObject containing this DynamicalEntity.
-    *  @param entity_obj_name Name of the DynamicalEntity object in the SimObject.
-    *  @param entity_name Name of the DynamicalEntity instance.
-    *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this DynamicalEntity instance.
-    *  @param publishes Does this federate publish this DynamicalEntity.
+    *  @param entity_pkg_name Name of the DynamicalEntity object in the SimObject.
+    *  @param entity_fed_name Name of the DynamicalEntity instance.
     *  @param mngr_object TrickHLA::Object associated with this DynamicalEntity.
     *  */
-   virtual void base_config( char const       *sim_obj_name,
-                             char const       *entity_obj_name,
-                             char const       *entity_name,
-                             char const       *parent_ref_frame_name,
-                             bool              publishes,
-                             TrickHLA::Object *mngr_object = NULL );
-
-   /*! @brief Function to begin the configuration/initialization of the
-    *  DynamicalEntity.
-    *  This function needs to be called prior to TrickHLA initialization if
-    *  the DynamicalEntity object is not being configured with an
-    *  initialization constructor. */
-   void configure(); // cppcheck-suppress [duplInheritedMember]
+   virtual void base_config( bool               create,
+                             std::string const &sim_obj_name,
+                             std::string const &entity_pkg_name,
+                             std::string const &entity_fed_name,
+                             TrickHLA::Object  *mngr_object = NULL );
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();

@@ -40,33 +40,22 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstring>
-
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/message_proto.h"
-
-/* Global singleton pointer to the memory manager. */
-extern Trick::MemoryManager *trick_MM;
-
-// TrickHLA model include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
+#include <ostream>
+#include <string>
 
 // SpaceFOM include files.
 #include "SpaceFOM/LRTreeNodeBase.hh"
 
 using namespace std;
-using namespace TrickHLA;
 using namespace SpaceFOM;
 
 /*!
  * @job_class{initialization}
  */
 LRTreeNodeBase::LRTreeNodeBase()
-   : name( NULL ),
-     parent( NULL ),
+   : parent( NULL ),
      debug( false ),
      is_root_node( false ),
      node_id( 0 )
@@ -78,28 +67,14 @@ LRTreeNodeBase::LRTreeNodeBase()
  * @job_class{initialization}
  */
 LRTreeNodeBase::LRTreeNodeBase(
-   char const     *node_name,
-   LRTreeNodeBase *node_parent )
-   : name( NULL ),
-     parent( NULL ),
+   std::string const &node_name,
+   LRTreeNodeBase    *node_parent )
+   : name( node_name ),
+     parent( node_parent ),
      debug( false ),
      is_root_node( false ),
      node_id( 0 )
 {
-   // Copy the name.
-   if ( trick_MM != NULL ) {
-      name = trick_MM->mm_strdup( node_name );
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         message_publish( MSG_NORMAL,
-                          "mm_strdup called before MemoryManager instantiation. Setting to name to NULL.\n",
-                          __LINE__ );
-      }
-   }
-
-   // Assign the parent node.
-   parent = node_parent;
-
    // Determine root node status.
    if ( node_parent == NULL ) {
       is_root_node = true;
@@ -115,64 +90,6 @@ LRTreeNodeBase::LRTreeNodeBase(
  */
 LRTreeNodeBase::~LRTreeNodeBase()
 {
-   // Free the allocated node name.
-   if ( this->name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::LRTreeNodeBase::~LRTreeNodeBase:%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                          __LINE__ );
-      }
-
-      // Set the node name to NULL.
-      name = NULL;
-   }
-
-   return;
-}
-
-/*!
- * @job_class{scheduled}
- */
-void LRTreeNodeBase::set_name( char const *node_name )
-{
-   // Check to see if a node name has already been set.
-   if ( name == NULL ) {
-
-      // It has not been set; so, only copy the new node name if it is not NULL.
-      if ( node_name != NULL ) {
-         name = trick_MM->mm_strdup( node_name );
-      }
-
-   } // A node name is set; so, make sure that the new node name is NOT NULL.
-   else if ( node_name != NULL ) {
-
-      // New node name not NULL; so, checking for a match to the existing name.
-      if ( strcmp( node_name, this->name ) ) {
-
-         // New node name differs from existing node name.
-
-         // Free the existing name.
-         if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            message_publish( MSG_WARNING, "SpaceFOM::LRTreeNodeBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                             __LINE__ );
-         }
-
-         // Copy the new node name.
-         name = trick_MM->mm_strdup( node_name );
-      }
-
-   } // The new node name is NULL; so, reset the node name.
-   else {
-
-      // Free the existing name.
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::LRTreeNodeBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'\n",
-                          __LINE__ );
-      }
-
-      // Set the node name to NULL.
-      name = NULL;
-   }
-
    return;
 }
 
@@ -221,18 +138,18 @@ bool LRTreeNodeBase::set_root( bool root_status )
  */
 void LRTreeNodeBase::print_node( std::ostream &stream ) const
 {
-   stream << "Node Name: '" << this->name << "'\n"
-          << "\tID: " << this->node_id << '\n';
+   stream << "Node Name: '" << this->name << "'" << endl
+          << "\tID: " << this->node_id << endl;
 
    if ( parent == NULL ) {
-      stream << "\tParent: <NULL>\n";
+      stream << "\tParent: <NULL>" << endl;
    } else {
-      stream << "\tParent: '" << this->parent->name << "'\n";
+      stream << "\tParent: '" << this->parent->name << "'" << endl;
    }
    if ( is_root_node ) {
-      stream << "\tIs Root: True\n";
+      stream << "\tIs Root: True" << endl;
    } else {
-      stream << "\tIs Root: False\n";
+      stream << "\tIs Root: False" << endl;
    }
 
    return;

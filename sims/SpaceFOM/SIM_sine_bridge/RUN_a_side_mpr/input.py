@@ -16,18 +16,18 @@
 #     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
 ##############################################################################
 import socket
-import subprocess 
+import subprocess
 import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 # Load the sine specific Sine object.
-from Modified_data.sine.SineObject import *
+from TrickHLA_data.sine.SineObject import *
 
 
 def print_usage_message():
@@ -132,30 +132,6 @@ def parse_command_line():
    return
 
 
-def fix_var_server_source_address():
-   # The Trick variable server uses the local host name without verifying the
-   # IP address it resolves to is actually used by the local host computer.
-   # Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
-   # Otherwise the simulation control panel will not successfully connect.
-   try:
-      if ( trick.var_server_get_hostname() == socket.gethostname() ):
-         host_ip_addr = socket.gethostbyname( socket.gethostname() )
-         try:
-            ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode() 
-            if ( ifconfig_out.find( host_ip_addr ) < 0 ):
-               print( 'WARNING: Invalid IP address ' + host_ip_addr
-                      + ' resolved for host \'' + trick.var_server_get_hostname() 
-                      + '\', setting the variable server source address to 127.0.0.1!' )
-               trick.var_server_set_source_address( '127.0.0.1' )
-         except:
-            return  # Use host source address as is.
-   except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
-      print( 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
-             + '\' host name to an address, setting the variable server source address to 127.0.0.1!' )
-      trick.var_server_set_source_address( '127.0.0.1' )
-   return
-
-
 # Default: Don't show usage.
 print_usage = False
 
@@ -198,7 +174,6 @@ trick.exec_set_stack_trace( False )
 
 trick.var_server_set_port( 7000 )
 trick.sim_control_panel_set_enabled( True )
-fix_var_server_source_address()
 
 # simControlPanel = trick.SimControlPanel()
 # simControlPanel.set_host( "localhost" )
@@ -223,6 +198,8 @@ federate = SpaceFOMFederateConfig(
    thla_federation_name = federation_name,
    thla_federate_name   = federate_name,
    thla_enabled         = True )
+
+federate.fix_var_server_source_address()
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -274,11 +251,9 @@ THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
 # Set the scenario timeline to be used for configuring federation freeze times.
 THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 
-# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
-federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
-
-# Scale the Trick Time Tic value based on the HLA base time units.
-federate.scale_trick_tics_to_base_time_units()
+# Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
+# and scale the Trick time tics value.
+federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )

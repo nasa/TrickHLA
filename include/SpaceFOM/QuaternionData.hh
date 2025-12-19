@@ -32,11 +32,10 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_QUATERNION_DATA_HH
 #define SPACEFOM_QUATERNION_DATA_HH
 
-// System include files.
+// System includes.
 #include <iostream>
-#include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/reference_frame.h"
 
 namespace SpaceFOM

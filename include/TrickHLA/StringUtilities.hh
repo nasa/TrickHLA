@@ -34,32 +34,40 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_STRING_UTILITIES_HH
 #define TRICKHLA_STRING_UTILITIES_HH
 
-// System include files.
-#include <cstdlib>
+// System includes.
 #include <cstring>
-#include <cwchar>
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
+#include "trick/parameter_types.h"
 
-// TrickHLA Model include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/Handle.h"
+#include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/Enums.h"
+#   include "RTI/Typedefs.h"
+#endif
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 // Whitespace characters: space (' '), tab ('\t'), carriage  return ('\r'),
 // newline ('\n'), form-feed ('\f'), and vertical tab ('\v').
@@ -81,25 +89,15 @@ class StringUtilities
    friend void init_attrTrickHLA__StringUtilities();
 
   public:
-   //
-   // Public constructors and destructor.
-   //
-   /*! @brief Default constructor for the TrickHLA StringUtilities class. */
-   StringUtilities()
-   {
-      return;
-   };
-
    /*! @brief Destructor for the TrickHLA StringUtilities class. */
    virtual ~StringUtilities()
    {
       return;
-   };
+   }
 
-  public:
    /*! @brief Wide character string (i.e. wchar_t *) duplication in Trick memory.
     *  @param s The input wide string.
-    *  @rreturn The duplicate wide string.*/
+    *  @return The duplicate wide string.*/
    static wchar_t *tmm_wstrdup( wchar_t const *s )
    {
       int size = wcslen( s ) + 1;
@@ -149,7 +147,7 @@ class StringUtilities
     *  could end up with a memory leak.
     *  @return C string.
     *  @param input The input string. */
-   static char *ip_strdup_string(
+   static char *mm_strdup_string(
       std::string const &input )
    {
       return trick_MM->mm_strdup( const_cast< char * >( input.c_str() ) );
@@ -161,7 +159,7 @@ class StringUtilities
     *  could end up with a memory leak.
     *  @return C string.
     *  @param input The input wide string. */
-   static char *ip_strdup_wstring(
+   static char *mm_strdup_wstring(
       std::wstring const &input )
    {
       std::string s;
@@ -173,8 +171,8 @@ class StringUtilities
     *  @param output The output C++ string with only printable characters.
     *  @param data   User supplied tag */
    static void to_printable_string(
-      std::string            &output,
-      RTI1516_USERDATA const &data )
+      std::string                                 &output,
+      RTI1516_NAMESPACE::VariableLengthData const &data )
    {
       output.assign( static_cast< char const * >( data.data() ), data.size() );
       for ( size_t i = 0; i < output.size(); ++i ) {
@@ -188,11 +186,68 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param data   User supplied tag */
    static void to_string(
-      std::string            &output,
-      RTI1516_USERDATA const &data )
+      std::string                                 &output,
+      RTI1516_NAMESPACE::VariableLengthData const &data )
    {
       output.assign( static_cast< char const * >( data.data() ), data.size() );
    }
+
+#if defined( IEEE_1516_2025 )
+   static std::string to_string(
+      RTI1516_NAMESPACE::RtiConfiguration const &rti_config )
+   {
+      std::string config_name;
+      StringUtilities::to_string( config_name, rti_config.configurationName() );
+
+      std::string config_rti_addr;
+      StringUtilities::to_string( config_rti_addr, rti_config.rtiAddress() );
+
+      std::string config_addl_settings;
+      StringUtilities::to_string( config_addl_settings, rti_config.additionalSettings() );
+
+      std::ostringstream msg;
+      msg << " RTI Configuration" << std::endl
+          << "         RTI config name: '" << config_name << "'" << std::endl
+          << "  RTI config rti-address: '" << config_rti_addr << "'" << std::endl
+          << "RTI config addl-settings: '" << config_addl_settings << "'";
+      return msg.str();
+   }
+
+   static std::string to_string(
+      RTI1516_NAMESPACE::ConfigurationResult const &config_result )
+   {
+      std::string additional_result_msg;
+      switch ( config_result.additionalSettingsResult ) {
+         case RTI1516_NAMESPACE::SETTINGS_IGNORED: {
+            additional_result_msg = "SETTINGS_IGNORED";
+            break;
+         }
+         case RTI1516_NAMESPACE::SETTINGS_FAILED_TO_PARSE: {
+            additional_result_msg = "SETTINGS_FAILED_TO_PARSE";
+            break;
+         }
+         case RTI1516_NAMESPACE::SETTINGS_APPLIED: {
+            additional_result_msg = "SETTINGS_APPLIED";
+            break;
+         }
+         default: {
+            additional_result_msg = "SETTINGS_UNKNOWN";
+            break;
+         }
+      }
+
+      std::string result_msg;
+      StringUtilities::to_string( result_msg, config_result.message );
+
+      std::ostringstream msg;
+      msg << " RTI Configuration Result" << std::endl
+          << "        configuration used: " << ( config_result.configurationUsed ? "Yes" : "No" ) << std::endl
+          << "              address used: " << ( config_result.addressUsed ? "Yes" : "No" ) << std::endl
+          << "additional-settings result: " << additional_result_msg << std::endl
+          << "     config result message: '" << result_msg << "'";
+      return msg.str();
+   }
+#endif // IEEE_1516_2025
 
    /*! @brief Convert a federate handle to a C string representation.
     *  @param output The output C++ string.
@@ -394,6 +449,9 @@ class StringUtilities
 
   private:
    // Do not allow the copy constructor or assignment operator.
+   /*! @brief Default constructor for the TrickHLA StringUtilities class. */
+   StringUtilities();
+
    /*! @brief Copy constructor for StringUtilities class.
     *  @details This constructor is private to prevent inadvertent copies. */
    StringUtilities( StringUtilities const &rhs );

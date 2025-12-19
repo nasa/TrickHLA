@@ -36,22 +36,21 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_EXECUTION_CONFIGURATION_HH
 #define SPACEFOM_EXECUTION_CONFIGURATION_HH
 
-// System include files.
+// System includes.
 #include <cstdint>
+#include <string>
 
-// TrickHLA include files.
-#include "TrickHLA/ExecutionConfigurationBase.hh"
-#include "TrickHLA/Packing.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/Types.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/ExecutionConfigurationBase.hh"
 
 namespace SpaceFOM
 {
 
 class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 {
-
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
    // exists - at least yet). This friend statement just tells Trick
@@ -64,7 +63,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
   public:
    // The members below are part of the FOM data ExCO exchange.
-   char *root_frame_name; /**<  @trick_units{--}
+   std::string root_frame_name; /**<  @trick_units{--}
       Specifies the name of the root coordinate frame in the federation
       execution's reference frame tree. This frame shall remain fixed
       throughout the federation execution. */
@@ -116,7 +115,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    ExecutionConfiguration();
    /*! @brief Initialization constructor for the TrickHLA ExecutionConfiguration class.
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   explicit ExecutionConfiguration( char const *s_define_name );
+   explicit ExecutionConfiguration( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the SpaceFOM ExecutionConfiguration class. */
    virtual ~ExecutionConfiguration();
 
@@ -135,10 +134,10 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    // FOM data public accessor interface.
    /*! @brief Set the root reference frame name.
     *  @param name Root reference frame name. */
-   virtual void set_root_frame_name( char const *name );
+   virtual void set_root_frame_name( std::string const &name );
    /*! @brief Get the root reference frame name.
     *  @return Root Reference Frame name as a constant string. */
-   virtual char const *get_root_frame_name()
+   virtual std::string const &get_root_frame_name()
    {
       return root_frame_name;
    }

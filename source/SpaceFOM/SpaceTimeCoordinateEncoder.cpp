@@ -23,32 +23,41 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-// System include files.
+// System includes.
 #include <cstring>
-#include <iostream>
+#include <ostream>
 #include <sstream>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
-
-// Model include files.
+// SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/StringUtilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA Encoder helper includes.
-#include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
-#pragma GCC diagnostic pop
+#include "RTI/encoding/EncodingExceptions.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -150,12 +159,12 @@ void SpaceTimeCoordinateEncoder::encode()
    // Encode the STC data into the VariableLengthData encoded data.
    try {
       encoder.encode( encoded_data );
-   } catch ( rti1516e::EncoderException &e ) {
+   } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
       ostringstream errmsg;
       std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::encode():" << __LINE__
-             << " Error: Encoder exception!" << std::endl;
+             << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -168,7 +177,7 @@ void SpaceTimeCoordinateEncoder::encode()
       // VariableLengthData instance but into a different data area that the
       // one set in the constructor above.  So, we have to copy the encoded
       // data into the transmission buffer.
-      memcpy( buffer, encoded_data.data(), encoded_data.size() );
+      memcpy( buffer, encoded_data.data(), encoded_data.size() ); // flawfinder: ignore
 
    } else {
 
@@ -194,12 +203,12 @@ void SpaceTimeCoordinateEncoder::decode()
    // directly into the STC data instance passed into the constructor.
    try {
       encoder.decode( encoded_data );
-   } catch ( rti1516e::EncoderException &e ) {
+   } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
       ostringstream errmsg;
       std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::decode():" << __LINE__
-             << " Error: Encoder exception!" << std::endl;
+             << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );

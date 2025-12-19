@@ -29,20 +29,28 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
-#include <string.h>
+#include <string>
+#include <vector>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
+// Trick includes.
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA model include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
+#include "SpaceFOM/LRTreeBase.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
+#include "SpaceFOM/RefFrameDataState.hh"
 #include "SpaceFOM/RefFrameTree.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -70,22 +78,6 @@ RefFrameTree::~RefFrameTree()
 bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 {
    return ( add_node( frame_ptr ) );
-}
-
-/*!
- * @job_class{initialization}
- */
-bool RefFrameTree::build_tree()
-{
-   return ( LRTreeBase::build_tree() );
-}
-
-/*!
- * @job_class{initialization}
- */
-bool RefFrameTree::check_tree()
-{
-   return ( LRTreeBase::check_tree() );
 }
 
 /*!
@@ -238,8 +230,8 @@ bool RefFrameTree::build_transform(
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                ostringstream errmsg;
-               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_parent:\n"
-                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
+               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_parent:" << endl
+                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << endl;
                out_frame_data.print_data( errmsg );
                message_publish( MSG_NORMAL, errmsg.str().c_str() );
             }
@@ -259,8 +251,8 @@ bool RefFrameTree::build_transform(
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                ostringstream errmsg;
-               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_child:\n"
-                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
+               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_child:" << endl
+                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << endl;
                out_frame_data.print_data( errmsg );
                message_publish( MSG_NORMAL, errmsg.str().c_str() );
             }

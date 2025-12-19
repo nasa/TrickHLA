@@ -24,10 +24,12 @@ NASA, Johnson Space Center\n
 
 */
 
+#include <algorithm>
 #include <cfloat>
+#include <cmath>
 #include <iostream>
 
-#include "../include/CabinAtmoMixture.hh"
+#include "DistIf/include/CabinAtmoMixture.hh"
 
 using namespace DistIf;
 
@@ -91,12 +93,12 @@ void CabinAtmoMixture::initialize(
    mCompoundSpecificHeats = compoundCp;
    for ( unsigned int i = 0; i < NBULK; ++i ) {
       if ( mCompoundSpecificHeats[i] < DBL_EPSILON ) {
-         std::cout << "ERROR: a compound specific heat constant < DBL_EPSILON!\n";
+         std::cout << "ERROR: A compound specific heat constant < DBL_EPSILON!\n";
       }
       mMoleFractions[i] = moleFractions[i];
    }
    if ( checkMoleFractionsSum() ) {
-      std::cout << "WARNING: normalized a CabinAtmoMixture initial mole fractions that did not sum to 1.\n";
+      std::cout << "WARNING: Normalized a CabinAtmoMixture initial mole fractions that did not sum to 1.\n";
       normalize();
    }
    updateSpecificHeat();
@@ -166,7 +168,7 @@ void CabinAtmoMixture::readMoleFractions(
          sum += mMoleFractions[i];
       }
       if ( std::abs( sum - 1.0 ) > 5.0e-16 ) {
-         std::cout << "WARNING: normalized a CabinAtmoMixture mole fractions that did not sum to 1.\n";
+         std::cout << "WARNING: Normalized a CabinAtmoMixture mole fractions that did not sum to 1.\n";
       }
       normalize();
    }

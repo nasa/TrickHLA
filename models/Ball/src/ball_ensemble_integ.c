@@ -35,45 +35,44 @@ NASA, Johnson Space Center\n
 /* Trick include files. */
 #include "sim_services/Integrator/include/integrator_c_intf.h"
 
-
 /* Model include files. */
 #include "../include/ball_state.h"
-
 
 /*!
  * @job_class{integration}
  */
-int ball_ensemble_integ( int num_balls, BallState *states[] ) {
+int ball_ensemble_integ( int num_balls, BallState *states[] )
+{
 
    int ipass;
 
    /* LOAD THE POSITION AND VELOCITY STATES */
-   for ( int iinc = 0 ; iinc < num_balls ; iinc++ ){
-      load_indexed_state( (iinc*4),   states[iinc]->output.position[0] );
-      load_indexed_state( (iinc*4)+1, states[iinc]->output.position[1] );
-      load_indexed_state( (iinc*4)+2, states[iinc]->output.velocity[0] );
-      load_indexed_state( (iinc*4)+3, states[iinc]->output.velocity[1] );
+   for ( int iinc = 0; iinc < num_balls; iinc++ ) {
+      load_indexed_state( ( iinc * 4 ), states[iinc]->output.position[0] );
+      load_indexed_state( ( iinc * 4 ) + 1, states[iinc]->output.position[1] );
+      load_indexed_state( ( iinc * 4 ) + 2, states[iinc]->output.velocity[0] );
+      load_indexed_state( ( iinc * 4 ) + 3, states[iinc]->output.velocity[1] );
    }
 
-    /* LOAD THE POSITION AND VELOCITY STATE DERIVATIVES */
-   for ( int iinc = 0 ; iinc < num_balls ; iinc++ ){
-      load_indexed_deriv( (iinc*4),   states[iinc]->output.velocity[0] );
-      load_indexed_deriv( (iinc*4)+1, states[iinc]->output.velocity[1] );
-      load_indexed_deriv( (iinc*4)+2, states[iinc]->output.acceleration[0] );
-      load_indexed_deriv( (iinc*4)+3, states[iinc]->output.acceleration[1] );
+   /* LOAD THE POSITION AND VELOCITY STATE DERIVATIVES */
+   for ( int iinc = 0; iinc < num_balls; iinc++ ) {
+      load_indexed_deriv( ( iinc * 4 ), states[iinc]->output.velocity[0] );
+      load_indexed_deriv( ( iinc * 4 ) + 1, states[iinc]->output.velocity[1] );
+      load_indexed_deriv( ( iinc * 4 ) + 2, states[iinc]->output.acceleration[0] );
+      load_indexed_deriv( ( iinc * 4 ) + 3, states[iinc]->output.acceleration[1] );
    }
 
    /* CALL THE TRICK INTEGRATION SERVICE */
    ipass = integrate();
 
    /* UNLOAD THE NEW POSITION AND VELOCITY STATES */
-   for ( int iinc = 0 ; iinc < num_balls ; iinc++ ){
-      states[iinc]->output.position[0] = unload_indexed_state( iinc*4 );
-      states[iinc]->output.position[1] = unload_indexed_state( (iinc*4)+1 );
-      states[iinc]->output.velocity[0] = unload_indexed_state( (iinc*4)+2 );
-      states[iinc]->output.velocity[1] = unload_indexed_state( (iinc*4)+3 );
+   for ( int iinc = 0; iinc < num_balls; iinc++ ) {
+      states[iinc]->output.position[0] = unload_indexed_state( iinc * 4 );
+      states[iinc]->output.position[1] = unload_indexed_state( ( iinc * 4 ) + 1 );
+      states[iinc]->output.velocity[0] = unload_indexed_state( ( iinc * 4 ) + 2 );
+      states[iinc]->output.velocity[1] = unload_indexed_state( ( iinc * 4 ) + 3 );
    }
 
    /* RETURN */
-   return( ipass );
+   return ( ipass );
 }

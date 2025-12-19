@@ -36,14 +36,7 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_HH
 #define SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_HH
 
-// System include files.
-
-// Trick includes.
-#include "trick/Integrator.hh"
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityLagCompInteg.hh"
 
 namespace SpaceFOM

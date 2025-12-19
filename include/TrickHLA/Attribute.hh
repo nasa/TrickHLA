@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../source/TrickHLA/RecordElement.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
 
@@ -29,6 +30,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, June 2025, --, Encoder helpers rewrite.}
 @revs_end
 
 */
@@ -42,29 +44,36 @@ NASA, Johnson Space Center\n
 #include <stdlib.h>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/reference.h"
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Conditional.hh"
-#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
 
-class Attribute
+class Attribute : public RecordElement
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -80,19 +89,16 @@ class Attribute
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   char *trick_name; ///< @trick_units{--} Trick name for the attribute.
-   char *FOM_name;   ///< @trick_units{--} FOM name for the attribute.
+   std::string FOM_name; ///< @trick_units{--} FOM name for the attribute.
 
    DataUpdateEnum config; ///< @trick_units{--} The attribute configuration.
 
-   TransportationEnum preferred_order; ///< @trick_units{--} Either Timestamp (default) or Receive Order.
+   TransportationEnum preferred_order; ///< @trick_units{--} Either Value specified in FOM (default), Timestamp or Receive Order.
 
    bool publish;   ///< @trick_units{--} True to publish attribute that is owned locally.
    bool subscribe; ///< @trick_units{--} True to subscribe to attribute.
 
    bool locally_owned; ///< @trick_units{--} Flag to indicate attribute is locally owned.
-
-   EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
 
    double cycle_time; ///< @trick_units{s} Send the cyclic attribute at the specified rate.
 
@@ -115,9 +121,13 @@ class Attribute
     *  @param object_index The array index to the parent Object.
     *  @param attribute_index The array index to this Attribute.
     */
-   void initialize( char const *obj_FOM_name,
-                    int const   object_index,
-                    int const   attribute_index );
+   void initialize( std::string const &obj_FOM_name,
+                    int const          object_index,
+                    int const          attribute_index );
+
+   RTI1516_NAMESPACE::VariableLengthData &encode();
+
+   bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
    /*! @brief Get the reflection rate configuration type.
     *  @return The reflection rate configuration type enumeration value. */
@@ -127,31 +137,15 @@ class Attribute
    }
 
    /*! @brief Set the reflection rate configuration type. */
-   void set_configuration( DataUpdateEnum const c )
+   void set_configuration( DataUpdateEnum const configuration )
    {
-      this->config = c;
+      this->config = configuration;
    }
 
    /*! @brief Determine the cycle-ratio given the core job cycle rate and the
     * cycle-time for this attribute.
     *  @param core_job_cycle_time Core job cycle time in seconds. */
    void determine_cycle_ratio( double const core_job_cycle_time );
-
-   /*! @brief Pack the attribute into the buffer using the appropriate encoding. */
-   void pack_attribute_buffer();
-
-   /*! @brief Unpack the attribute from the buffer into the trick-variable
-    *         using the appropriate decoding. */
-   void unpack_attribute_buffer();
-
-   /*! @brief Gets the encoded attribute value.
-    *  @return The attribute value that contains the buffer of the encoded attribute. */
-   RTI1516_NAMESPACE::VariableLengthData get_attribute_value();
-
-   /*! @brief Extract the data out of the HLA Attribute Value.
-    *  @param attr_value The variable length data buffer containing the attribute value.
-    *  @return True if successfully extracted data, false otherwise. */
-   bool extract_data( RTI1516_NAMESPACE::VariableLengthData const *attr_value );
 
    /*! @brief Determine if an attribute was received from another federate.
     *  @return True if new attribute value has been received. */
@@ -181,16 +175,9 @@ class Attribute
 
    /*! @brief Get the Federation Object Model attribute name.
     *  @return FOM name for the attribute. */
-   char const *get_FOM_name() const
+   std::string const &get_FOM_name() const
    {
       return FOM_name;
-   }
-
-   /*! @brief Get the associated Trick variable space name.
-    *  @return The Trick variable space name associated with this attribute. */
-   char const *get_trick_name() const
-   {
-      return trick_name;
    }
 
    /*! @brief Determine if the attribute is published.
@@ -301,13 +288,6 @@ class Attribute
       this->divest_requested = enable;
    }
 
-   /*! @brief Determine if byteswapping is required.
-    *  @return True is byte swapping of the attribute date is required. */
-   bool is_byteswap() const
-   {
-      return byteswap;
-   }
-
    /*! @brief Determine is the data cycle is ready for sending data.
     *  @return True if the data cycle is ready for a send, false otherwise.*/
    bool is_data_cycle_ready() const
@@ -368,31 +348,6 @@ class Attribute
       this->attr_handle = id;
    }
 
-   /*! @brief Get the Trick simulation variable associated with this attribute. */
-   void *get_sim_variable_address()
-   {
-      // Address to a string is different so handle differently.
-      if ( ( ref2->attr->type == TRICK_STRING )
-           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
-                && ( ref2->attr->num_index > 0 )
-                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         return ( *( static_cast< void ** >( ref2->address ) ) );
-      } else {
-         return ( ref2->address );
-      }
-   }
-
-   /*! @brief Prints the contents of buffer used to encode/decode the attribute
-    *         to the console on standard out. */
-   void print_buffer() const;
-
-   /*! @brief Get the Trick "Ref Attributes" associated with this attribute.
-    *  @return A pointer to the Trick "Ref Attributes" class. */
-   ATTRIBUTES get_ref2_attributes() const
-   {
-      return ( *( ref2->attr ) );
-   }
-
    /*! @brief Get the RTI encoding for this attribute.
     *  @return The RTI encoding type enumeration value. */
    EncodingEnum get_rti_encoding() const
@@ -405,117 +360,21 @@ class Attribute
    void set_encoding( EncodingEnum const in_type )
    {
       rti_encoding = in_type;
-
-      // Determine if we need to do a byteswap for data transmission.
-      byteswap = Utilities::is_transmission_byteswap( rti_encoding );
    }
-
-   /*! @brief Determines if the attribute is static in size.
-    *  @return True if attribute size is static. */
-   bool is_static_in_size() const;
-
-   /*! @brief Calculate the number of items in the attribute.
-    *  @return Number of items in the attribute. */
-   int const calculate_number_of_items()
-   {
-      calculate_size_and_number_of_items();
-      return num_items;
-   }
-
-   /*! @brief Gets the attribute size in bytes.
-    *  @return The size in bytes of the attribute. */
-   int get_attribute_size();
 
   private:
-   /*! @brief Calculates the attribute size in bytes and the number of items it contains. */
-   void calculate_size_and_number_of_items();
-
-   /*! @brief Calculates the number of items contained by the attribute. */
-   void calculate_static_number_of_items();
-
-   /*! @brief Ensure the attribute buffer has at least the specified capacity.
-    *  @param capacity Desired capacity of the buffer in bytes. */
-   void ensure_buffer_capacity( int const capacity );
-
-   /*! @brief Determines if the HLA object attribute type is supported given
-    *         the RTI encoding.
-    *  @return True if supported, false otherwise. */
-   bool is_supported_attribute_type() const;
-
-   /*! @brief Encode a boolean attribute into the buffer using the HLAboolean
-    * data type which is encoded as a HLAinteger32BE. */
-   void encode_boolean_to_buffer();
-
-   /*! @brief Decode a boolean attribute from the buffer using the HLAboolean
-    * data type which is encoded as a HLAinteger32BE. */
-   void decode_boolean_from_buffer() const;
-
-   /*! @brief Encode the object attribute using the HLAlogicalTime 64-bit
-    * integer encoding. */
-   void encode_logical_time();
-
-   /*! @brief Decode the object attribute that is using the HLAlogicalTime
-    * 64-bit integer encoding. */
-   void decode_logical_time();
-
-   /*! @brief Encode the data as HLA opaque data into the buffer. */
-   void encode_opaque_data_to_buffer();
-
-   /*! @brief Decode the opaque data in the buffer. */
-   void decode_opaque_data_from_buffer();
-
-   /*! @brief Decode the raw data in the buffer. */
-   void decode_raw_data_from_buffer();
-
-   /*! @brief Encode a string attribute into the buffer using the appropriate
-    * encoding. */
-   void encode_string_to_buffer();
-
-   /*! @brief Decode a string from the buffer into the attribute using the
-    * appropriate decoding. */
-   void decode_string_from_buffer();
-
-   /*! @brief Copy the data from the source to the destination and byteswap as
-    * needed.
-    *  @param dest      Destination to copy data to.
-    *  @param src       Source of the data to byteswap and copy from.
-    *  @param type      The type of the data.
-    *  @param num_bytes The number of bytes in the source array.
-    *  */
-   void byteswap_buffer_copy( void       *dest,
-                              void const *src,
-                              int const   type,
-                              int const   num_bytes ) const;
-
-   unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
-   int            buffer_capacity; ///< @trick_units{count} The capacity of the buffer.
-   int            buffer_size;     ///< @trick_units{count} The size of the encoded attribute in the buffer.
-
-   bool size_is_static; ///< @trick_units{--} Flag to indicate the size of this attribute is static.
-
-   int size;      ///< @trick_units{count} The size of the attribute in bytes.
-   int num_items; ///< @trick_units{count} Number of attribute items, length of the array.
-
    bool value_changed; ///< @trick_units{--} Flag to indicate the attribute value changed.
 
    bool update_requested; ///< @trick_units{--} Flag to indicate another federate has requested an attribute update.
 
-   unsigned int HLAtrue; ///< @trick_units{--} A 32-bit integer with a value of 1 on a Big Endian computer.
-
-   bool byteswap; ///< @trick_units{--} Flag to indicate byte-swap before RTI Rx/Tx.
-
    int cycle_ratio; ///< @trick_units{--} Ratio of the attribute cycle-time to the send_cyclic_and_requested_data job cycle time.
    int cycle_cnt;   ///< @trick_units{count} Internal cycle counter used to determine when cyclic data will be sent.
-
-   REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.
-
-   RTI1516_NAMESPACE::AttributeHandle attr_handle; ///< @trick_io{**} The RTI attribute handle.
 
    bool pull_requested;   ///< @trick_units{--} Has someone asked to own us?
    bool push_requested;   ///< @trick_units{--} Is someone giving up ownership?
    bool divest_requested; ///< @trick_units{--} Are we releasing ownership?
 
-   bool initialized; ///< @trick_units{--} Has this attribute been initialized?
+   RTI1516_NAMESPACE::AttributeHandle attr_handle; ///< @trick_io{**} The RTI attribute handle.
 
   private:
    // Do not allow the copy constructor or assignment operator.

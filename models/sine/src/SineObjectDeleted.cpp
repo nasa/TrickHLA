@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{sine/src/SineObjectDeleted.cpp}
 
 @revs_title
@@ -28,19 +29,21 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <ostream>
 #include <sstream>
-#include <string>
 
 // Trick include files.
-#include "trick/exec_proto.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
 
 // Model include files.
-#include "../include/SineObjectDeleted.hh"
+#include "sine/include/SineObjectDeleted.hh"
 
+using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
 
@@ -48,7 +51,7 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineObjectDeleted::SineObjectDeleted()
-   : TrickHLA::ObjectDeleted()
+   : TrickHLA::ObjectDeletedHandler()
 {
    return;
 }
@@ -63,8 +66,9 @@ SineObjectDeleted::~SineObjectDeleted()
 
 void SineObjectDeleted::deleted()
 {
-   std::ostringstream msg;
+   ostringstream msg;
    msg << "SineObjectDeleted::deleted():" << __LINE__
-       << " Object '" << object->get_name() << "' deleted from the federation.\n";
+       << " Object '" << object->get_name() << "' deleted from the federation."
+       << endl;
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }

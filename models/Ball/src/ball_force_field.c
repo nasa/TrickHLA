@@ -44,21 +44,20 @@ NASA, Johnson Space Center\n
 /* Trick include files. */
 
 /* Model include files. */
-#include "../include/ball_proto.h"
 #include "../include/ball_force.h"
-
+#include "../include/ball_proto.h"
 
 /*!
  * @job_class{derivative}
  */
 int ball_force_field(
-   BallForce * force,
-   BallState * state )
+   BallForce *force,
+   BallState *state )
 {
 
    /* GET SHORTHAND NOTATION FOR DATA STRUCTURES */
-   BallForce_In  * FI = &(force->input);
-   BallForce_Out * FO = &(force->output);
+   BallForce_In  *FI = &( force->input );
+   BallForce_Out *FO = &( force->output );
 
    /* LOCAL VARIABLE DECLARATIONS */
    double mag;
@@ -70,7 +69,7 @@ int ball_force_field(
    rel[1] = FI->origin[1] - state->output.position[1];
 
    /* GET UNIT VECTOR AND POSITION MAGNITUDE FROM BALL TO FORCE ORIGIN */
-   mag = sqrt( rel[0]*rel[0] + rel[1]*rel[1] );
+   mag     = sqrt( rel[0] * rel[0] + rel[1] * rel[1] );
    unit[0] = rel[0] / mag;
    unit[1] = rel[1] / mag;
 
@@ -79,7 +78,5 @@ int ball_force_field(
    FO->force[1] = FI->force * unit[1];
 
    /* RETURN */
-   return(0);
+   return ( 0 );
 }
-
-

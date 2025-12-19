@@ -25,7 +25,7 @@ NASA, Johnson Space Center\n
 
 */
 
-#include "../include/FluidDistributedIfLagBuffer.hh"
+#include "DistIf/include/FluidDistributedIfLagBuffer.hh"
 
 using namespace DistIf;
 

@@ -60,5 +60,4 @@ typedef struct {
 
 } BallForce;
 
-
 #endif /* MODELS_TRICKHLA_BALL_FORCE_H_ */

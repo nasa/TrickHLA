@@ -1,0 +1,293 @@
+//==========================================================================
+// Space Reference FOM: Sine wave simulation to test the TrickHLA APIs.
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// of an SpaceFOM compliant federate that services all SpaceFOM roles.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+#include "sim_objects/default_trick_sys.sm"
+
+//=============================================================================
+// Define the job calling intervals.
+//=============================================================================
+#define DYN_RATE  0.250 // The propagation rate of the reference object.
+#define LOG_CYCLE 0.250 // Data Logging Rate.
+
+//==========================================================================
+// Define the TrickHLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
+
+//==========================================================================
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
+// for input file instantiations.
+//==========================================================================
+##include "trick/integrator_c_intf.h"
+
+// TrickHLA includes.
+##include "TrickHLA/Federate.hh"
+##include "TrickHLA/Manager.hh"
+##include "TrickHLA/time/SimTimeline.hh"
+##include "TrickHLA/time/ScenarioTimeline.hh"
+
+// Sine model includes.
+##include "sine/include/SineData.hh"
+##include "sine/include/SinePacking.hh"
+##include "sine/include/SineLagCompensation.hh"
+##include "sine/include/SineOwnershipHandler.hh"
+##include "sine/include/SineConditional.hh"
+##include "sine/include/SineInteractionHandler.hh"
+##include "sine/include/SineObjectDeleted.hh"
+
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame
+// tree simulation object definition.
+//==========================================================================
+#include "SpaceFOM/TestRefFrameTree.sm"
+
+
+//=============================================================================
+// SIM_OBJECT: AnalyticSineSimObj
+// Sim-object for an analytic solution of a sine wave.
+//=============================================================================
+class AnalyticSineSimObj : public Trick::SimObject {
+
+ public:
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
+
+   TrickHLAModel::SineOwnershipHandler   ownership_handler;
+
+   TrickHLAModel::SinePacking            packing;
+
+   TrickHLAModel::SineLagCompensation    lag_compensation;
+
+   TrickHLAModel::SineConditional        conditional;
+
+   TrickHLAModel::SineObjectDeleted      obj_deleted;
+
+   TrickHLAModel::SineInteractionHandler interaction_handler;
+
+   AnalyticSineSimObj()
+   {
+      // Note: Make sure to initialize the data before it gets sent in
+      // the THLA_INIT simulation object.
+      //
+      // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
+      // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
+      P50 ("initialization") lag_compensation.set_data( &sim_data );
+      P50 ("initialization") lag_compensation.initialize();
+
+      P50 ("initialization") packing.set_data( &lag_compensation );
+      P50 ("initialization") packing.initialize();
+
+      P50 ("initialization") conditional.set_data( &packing );
+      P50 ("initialization") conditional.initialize();
+
+      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+
+      (DYN_RATE, "scheduled") sim_data.compute_value( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") sim_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+
+      (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
+   }
+
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   AnalyticSineSimObj( AnalyticSineSimObj const & rhs );
+   AnalyticSineSimObj & operator=( AnalyticSineSimObj const & rhs );
+};
+
+
+//=============================================================================
+// SIM_OBJECT: PropagatedSineSimObj
+// Sim-object for an propagated solution of a sine wave.
+//=============================================================================
+class PropagatedSineSimObj : public Trick::SimObject {
+
+ public:
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
+
+   TrickHLAModel::SinePacking            packing;
+
+   TrickHLAModel::SineLagCompensation    lag_compensation;
+
+   TrickHLAModel::SineConditional        conditional;
+
+   TrickHLAModel::SineObjectDeleted      obj_deleted;
+
+   TrickHLAModel::SineInteractionHandler interaction_handler;
+
+   PropagatedSineSimObj()
+   {
+      // Note: Make sure to initialize the data before it gets sent in
+      // the THLA_INIT simulation object.
+      //
+      // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
+      // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
+      P50 ("initialization") lag_compensation.set_data( &sim_data );
+      P50 ("initialization") lag_compensation.initialize();
+
+      P50 ("initialization") packing.set_data( &lag_compensation );
+      P50 ("initialization") packing.initialize();
+
+      P50 ("initialization") conditional.set_data( &packing );
+      P50 ("initialization") conditional.initialize();
+
+      /*
+       * -- Propagate the true sine state.
+       */
+      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+
+      /*
+       * -- Numerically propagate the simulated sine state
+       */
+      ("derivative") sim_data.compute_derivative( get_integ_time() );
+      ("integration") trick_ret = sim_data.integration();
+
+      /*
+       * The time is off by 0.005 seconds (DYN_RATE / 2) because the derivative
+       * is not being called after the last integration (depends on the type of
+       * integration being used), so we fix it by setting the correct time as a
+       * post integration job.
+       */
+      ("post_integration") sim_data.set_time( THLA.execution_control.get_scenario_time() );
+   }
+
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   PropagatedSineSimObj( PropagatedSineSimObj const & rhs );
+   PropagatedSineSimObj & operator=( PropagatedSineSimObj const & rhs );
+};
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject for the Propagated federate.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   TrickHLA::SimTimeline      sim_timeline;
+   TrickHLA::ScenarioTimeline scenario_timeline;
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                                TrickHLA::Federate & thla_fed,
+                                unsigned int         _MPI_1   = 100,
+                                unsigned int         _MPI_2   = 101,
+                                unsigned int         _MPI_3   = 102,
+                                unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
+      : scenario_timeline( sim_timeline, 0.0, 0.0 ),
+        thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Ownership transfer at initialization.
+      //
+      // Federate:"Other" does not participate in ownership transfer.
+
+      // Wait for all federates to reach this sync-point.
+      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
+
+
+      // Receive the Analytic sine data from Federate: "P" owned attributes.
+      P_MPI_2 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
+
+      // Wait for all federates to reach this sync-point.
+      P_MPI_2 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase1" );
+
+
+      // Receive the Analytic sine data from Federate: "A"
+      P_MPI_3 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
+
+      // Wait for all federates to reach this sync-point.
+      P_MPI_3 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase2" );
+
+
+      // Send the Propagated sine data from Federate: "P"
+      P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine" );
+
+      // Wait for all federates to reach this sync-point.
+      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
+
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+};
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// Main TrickHLA SimObject that supports SpaceFOM.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
+
+// Simulation specific multiphase initialization SimObject instances.
+THLAInitSimObject    THLA_INIT( THLA.manager, THLA.federate );
+
+// Sine Instantiations
+AnalyticSineSimObj   A;
+PropagatedSineSimObj P;
+
+// Define the simulation objects that have routines involved in integration.
+IntegLoop sim_integ_loop (DYN_RATE) P;
+
+// All code listed in the create_connections routine is copied into S_source.cpp
+// and is executed directly after sim-object instantiations. This routine may be
+// used to connect data structures between SimObjects.
+void create_connections() {
+
+   // Assign a default integrator, which can be overridden in the input file.
+   sim_integ_loop.getIntegrator( Runge_Kutta_4, 6 );
+}

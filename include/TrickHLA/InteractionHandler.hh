@@ -19,10 +19,11 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -37,20 +38,31 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_HANDLER_HH
 #define TRICKHLA_INTERACTION_HANDLER_HH
 
-// TrickHLA include files.
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/Types.hh"
+// System includes.
+#include <string>
+
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/Parameter.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
@@ -82,9 +94,21 @@ class InteractionHandler
    virtual ~InteractionHandler();
 
   public:
+   // Initialize the Interaction handler.
+   /*! @brief Finish the initialization of the TrickHLA Initialization handler. */
+   virtual void initialize() { initialized = true; }
+
    /*! @brief Initializes the callback to the interaction.
     *  @param inter Associated interaction for this handler. */
    virtual void initialize_callback( Interaction *inter );
+
+   /*! @brief Set the TrickHLA managed Interaction associated with this handler.
+    *  @param inter Pointer to the associated TrickHLA Interaction. */
+   virtual void set_interaction( TrickHLA::Interaction *inter );
+
+   /*! @brief Get the TrickHLA managed Interaction associated with this handler.
+    *  @return Pointer to the associated TrickHLA Interaction. */
+   virtual TrickHLA::Interaction *get_interaction() { return interaction; }
 
    /*! @brief Sends the interaction to to RTI using Receive Order.
     *  @return True if the interaction was sent; False otherwise. */
@@ -93,7 +117,7 @@ class InteractionHandler
    /*! @brief Sends the interaction to to RTI using Receive Order.
     *  @return True if the interaction was sent; False otherwise.
     *  @param the_user_supplied_tag Users tag. */
-   bool send_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
+   bool send_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    /*! @brief Sends the interaction to to RTI using Timestamp Order.
     *  @return True if the interaction was sent; False otherwise.
@@ -104,7 +128,7 @@ class InteractionHandler
     *  @return True if the interaction was sent; False otherwise.
     *  @param send_HLA_time User specified HLA logical time to send the interaction.
     *  @param the_user_supplied_tag Users tag. */
-   bool send_interaction( double send_HLA_time, RTI1516_USERDATA const &the_user_supplied_tag );
+   bool send_interaction( double send_HLA_time, RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    /*! @brief Return a copy of the interactions lookahead time.
     *  @return A copy of the federation lookahead time. */
@@ -116,24 +140,35 @@ class InteractionHandler
 
    /*! @brief Returns the current simulation time.
     *  @return Current simulation time. */
-   double get_sim_time();
+   double get_sim_time() const;
 
    /*! @brief Returns the current scenario time.
     *  @return Current scenario time. */
-   double get_scenario_time();
+   double get_scenario_time() const;
 
    /*! @brief Returns the current Central Timing Equipment (CTE) time.
     *  @return Current CTE time. */
-   double get_cte_time();
+   double get_cte_time() const;
+
+   /*! @brief Get the Parameter by FOM name.
+    *  @return Parameter for the given name.
+    *  @param param_FOM_name Parameter FOM name. */
+   Parameter *get_parameter( std::string const &param_FOM_name );
+
+   /*! @brief This function returns the Parameter for the given interaction FOM name.
+    *  @return Parameter for the given name.
+    *  @param param_FOM_name Parameter FOM name. */
+   Parameter *get_parameter_and_validate( std::string const &param_FOM_name );
 
    //-----------------------------------------------------------------
    // This is a virtual function and must be defined by a full class.
    //-----------------------------------------------------------------
    /*! @brief Called when the interaction is received from the RTI.
     *  @param the_user_supplied_tag Users tag. */
-   virtual void receive_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
+   virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
   protected:
+   bool         initialized; ///< @trick_units{--} Initialization status flag.
    Interaction *interaction; ///< @trick_io{**} Pointer to the TrickHLA interaction.
 
   private:

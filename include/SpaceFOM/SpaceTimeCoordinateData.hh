@@ -33,11 +33,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH
 #define SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH
 
-// System include files.
+// System includes.
 #include <iostream>
-
-// Trick includes.
-#include "trick/vector_macros.h"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"

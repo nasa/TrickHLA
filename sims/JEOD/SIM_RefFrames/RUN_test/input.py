@@ -17,10 +17,10 @@ import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
@@ -219,7 +219,7 @@ federate.set_time_constrained( True )
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
-# THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+# THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::TimeOfDayCTETimeline' )
 
 #---------------------------------------------------------------------------
 # Set up the Reference Frame objects.

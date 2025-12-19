@@ -27,28 +27,28 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstring>
-#include <iostream>
+// System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/constant.h"
+// Trick includes.
 #include "trick/message_proto.h"
-#include "trick/trick_math.h"
+#include "trick/message_type.h"
+#include "trick/vector_macros.h"
 
-// TrickHLA model include files.
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameTree.hh"
 #include "SpaceFOM/RelStateBase.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -66,10 +66,6 @@ RelStateBase::RelStateBase(
      express_frame( &wrt_frame ),
      frame_tree( &tree )
 {
-   this->name         = NULL;
-   this->type         = NULL;
-   this->status       = NULL;
-   this->parent_frame = NULL;
 
    this->accel[0] = 0.0;
    this->accel[1] = 0.0;
@@ -116,7 +112,7 @@ bool RelStateBase::set_frame(
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!\n";
+             << wrt_frame << " not found!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -142,7 +138,7 @@ bool RelStateBase::set_frame(
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!\n";
+             << wrt_frame << " not found!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -198,7 +194,7 @@ bool RelStateBase::compute_state(
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not find subject frame: %s!" << endl;
-         message_publish( MSG_WARNING, entity->parent_frame, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, entity->parent_frame.c_str(), errmsg.str().c_str() );
       }
       return ( false );
    }
@@ -212,8 +208,8 @@ bool RelStateBase::compute_state(
       // Print out the path transformation if debug is set.
       if ( debug ) {
          ostringstream msg;
-         msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
-         msg << "Path transformation for " << entity->name << "\n";
+         msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << endl;
+         msg << "Path transformation for " << entity->name << endl;
          path_transform.print_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -233,7 +229,7 @@ bool RelStateBase::compute_state(
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!" << endl;
-         message_publish( MSG_WARNING, entity->parent_frame, express_frame->name, errmsg.str().c_str() );
+         message_publish( MSG_WARNING, entity->parent_frame.c_str(), express_frame->name.c_str(), errmsg.str().c_str() );
       }
       return ( false );
    }
@@ -322,8 +318,8 @@ bool RelStateBase::compute_state(
    // Print out the path transformation if debug is set.
    if ( debug ) {
       ostringstream msg;
-      msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
-      msg << "\tPath transform: \n";
+      msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << endl;
+      msg << "\tPath transform:" << endl;
       path_transform.print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

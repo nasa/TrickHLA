@@ -33,24 +33,31 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_TYPES_HH
 
 // System include files.
-#include <cstdint>
-#include <limits.h>
 #include <map>
 #include <queue>
 #include <string>
 #include <vector>
 
-// TrickHLA include files.
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/Handle.h"
+#include "RTI/RTI1516.h"
+#include "RTI/RTIambassador.h"
+#include "RTI/Typedefs.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 // Default/desired padding time in seconds.
 #define THLA_PADDING_DEFAULT 0.5
@@ -66,15 +73,16 @@ static std::string const MULTIPHASE_INIT_SYNC_POINT_LIST = "Multiphase";
 */
 typedef enum {
 
-   HLA_BASE_TIME_SECONDS          = 0,  ///< Range +/-292471208677.536 years with 1 second resolution.
-   HLA_BASE_TIME_100_MILLISECONDS = 1,  ///< Range +/-29247120867.753 years with 100 millisecond resolution.
-   HLA_BASE_TIME_10_MILLISECONDS  = 2,  ///< Range +/-2924712086.775 years with 10 millisecond resolution.
-   HLA_BASE_TIME_MILLISECONDS     = 3,  ///< Range +/-292471208.677 years with 1 millisecond resolution.
-   HLA_BASE_TIME_100_MICROSECONDS = 4,  ///< Range +/-29247120.867 years with 100 microsecond resolution.
-   HLA_BASE_TIME_10_MICROSECONDS  = 5,  ///< Range +/-2924712.086 years with 10 microsecond resolution.
-   HLA_BASE_TIME_MICROSECONDS     = 6,  ///< Range +/-292471.208 years with 1 microsecond resolution.
-   HLA_BASE_TIME_100_NANOSECONDS  = 7,  ///< Range +/-29247.120 years with 100 nanosecond resolution.
-   HLA_BASE_TIME_10_NANOSECONDS   = 8,  ///< Range +/-2924.712 years with 10 nanosecond resolution.
+   HLA_BASE_TIME_FIRST_VALUE      = 0,
+   HLA_BASE_TIME_SECONDS          = 0,  ///< Range +/-292,471,208,677.536 years with 1 second resolution.
+   HLA_BASE_TIME_100_MILLISECONDS = 1,  ///< Range +/-29,247,120,867.753 years with 100 millisecond resolution.
+   HLA_BASE_TIME_10_MILLISECONDS  = 2,  ///< Range +/-2,924,712,086.775 years with 10 millisecond resolution.
+   HLA_BASE_TIME_MILLISECONDS     = 3,  ///< Range +/-292,471,208.677 years with 1 millisecond resolution.
+   HLA_BASE_TIME_100_MICROSECONDS = 4,  ///< Range +/-29,247,120.867 years with 100 microsecond resolution.
+   HLA_BASE_TIME_10_MICROSECONDS  = 5,  ///< Range +/-2,924,712.086 years with 10 microsecond resolution.
+   HLA_BASE_TIME_MICROSECONDS     = 6,  ///< Range +/-292,471.208 years with 1 microsecond resolution.
+   HLA_BASE_TIME_100_NANOSECONDS  = 7,  ///< Range +/-29,247.120 years with 100 nanosecond resolution.
+   HLA_BASE_TIME_10_NANOSECONDS   = 8,  ///< Range +/-2,924.712 years with 10 nanosecond resolution.
    HLA_BASE_TIME_NANOSECONDS      = 9,  ///< Range +/-292.471 years with 1 nanosecond resolution.
    HLA_BASE_TIME_100_PICOSECONDS  = 10, ///< Range +/-29.247 years with 100 picosecond resolution.
    HLA_BASE_TIME_10_PICOSECONDS   = 11, ///< Range +/-2.924 years with 10 picosecond resolution.
@@ -84,7 +92,9 @@ typedef enum {
    HLA_BASE_TIME_FEMTOSECONDS     = 15, ///< Range +/-2.562 hours with 1 femosecond resolution.
    HLA_BASE_TIME_100_ATTOSECONDS  = 16, ///< Range +/-922.337 seconds with 100 attosecond resolution.
    HLA_BASE_TIME_10_ATTOSECONDS   = 17, ///< Range +/-92.233 seconds with 10 attosecond resolution.
-   HLA_BASE_TIME_ATTOSECONDS      = 18  ///< Range +/-9.223 seconds with 1 attosecond resolution.
+   HLA_BASE_TIME_ATTOSECONDS      = 18, ///< Range +/-9.223 seconds with 1 attosecond resolution.
+   HLA_BASE_TIME_NOT_DEFINED      = 19, ///< HLA base time is not a pre-defined emum value.
+   HLA_BASE_TIME_LAST_VALUE       = 19
 
 } HLABaseTimeEnum;
 
@@ -119,18 +129,21 @@ typedef enum {
 */
 typedef enum {
 
-   ENCODING_FIRST_VALUE    = 0, ///< Set to the First value in the enumeration.
-   ENCODING_UNKNOWN        = 0, ///< Default encoding. The software automatically determines it for you. Otherwise, specify to one of the below values.
-   ENCODING_BIG_ENDIAN     = 1, ///< Big Endian.
-   ENCODING_LITTLE_ENDIAN  = 2, ///< Little Endian.
-   ENCODING_LOGICAL_TIME   = 3, ///< 64-bit Big Endian encoded integer representing microseconds.
-   ENCODING_C_STRING       = 4, ///< Null terminated C string (i.e. char *).
-   ENCODING_UNICODE_STRING = 5, ///< Variable length HLA Unicode string encoding.
-   ENCODING_ASCII_STRING   = 6, ///< Variable length HLA ASCII string encoding.
-   ENCODING_OPAQUE_DATA    = 7, ///< Variable length HLA Opaque data for a "char *" type.
-   ENCODING_BOOLEAN        = 8, ///< Boolean c++ type configured in the FOM to use HLAboolean HLA data type encoded as an HLAinteger32BE.
-   ENCODING_NONE           = 9, ///< Fixed length array of data for "char *" type sent as is.
-   ENCODING_LAST_VALUE     = 9  ///< Set to the Last value in the enumeration.
+   ENCODING_FIRST_VALUE    = 0,  ///< Set to the First value in the enumeration.
+   ENCODING_UNKNOWN        = 0,  ///< Default encoding. The software automatically determines it for you. Otherwise, specify to one of the below values.
+   ENCODING_BIG_ENDIAN     = 1,  ///< Big Endian.
+   ENCODING_LITTLE_ENDIAN  = 2,  ///< Little Endian.
+   ENCODING_BYTE           = 3,  ///< Byte encoding for octet type (i.e. char or unsigned char).
+   ENCODING_ASCII_CHAR     = 4,  ///< Variable length HLA ASCII character encoding.
+   ENCODING_ASCII_STRING   = 5,  ///< Variable length HLA ASCII string encoding.
+   ENCODING_UNICODE_CHAR   = 6,  ///< Variable length HLA Unicode character encoding.
+   ENCODING_UNICODE_STRING = 7,  ///< Variable length HLA Unicode string encoding.
+   ENCODING_OPAQUE_DATA    = 8,  ///< Variable length HLA Opaque data for a "char *" type.
+   ENCODING_BOOLEAN        = 9,  ///< Boolean c++ type configured in the FOM to use HLAboolean HLA data type encoded as an HLAinteger32BE.
+   ENCODING_LOGICAL_TIME   = 10, ///< 64-bit Big Endian encoded integer representing microseconds.
+   ENCODING_FIXED_RECORD   = 11, ///< Fixed record encoding.
+   ENCODING_NONE           = 12, ///< Fixed length array of data for "char *" type sent as is.
+   ENCODING_LAST_VALUE     = 12  ///< Set to the Last value in the enumeration.
 
 } EncodingEnum;
 
@@ -208,25 +221,25 @@ typedef enum {
    DEBUG_SOURCE_EXECUTION_CONTROL  = 0x00000800, ///< Adds TrickHLA::ExecutionControl (and subclass) debug messages
    DEBUG_SOURCE_EXECUTION_CONFIG   = 0x00001000, ///< Adds TrickHLA::ExecutionConfiguration (and subclass) debug messages
    DEBUG_SOURCE_THREAD_COORDINATOR = 0x00002000, ///< Adds TrickHLA::TrickThreadCoordinator (and subclass) debug messages
+   DEBUG_SOURCE_HLA_ENCODERS       = 0x00004000, ///< Adds TrickHLA Encoders (and subclass) debug messages
    DEBUG_SOURCE_ALL_MODULES        = 0x7FFFFFFF  ///< Default: Add debug messages from all code modules
 
 } DebugSourceEnum;
 
 /*!
-@enum FederateJoinEnum
+@enum FederateJoinConstraintsEnum
 @brief Define the TrickHLA federate join enumeration values.
 */
 typedef enum {
 
-   FEDERATE_JOIN_FIRST_VALUE = 0, ///< Set to the First value in the enumeration.
-   FEDERATE_JOIN_NOMINAL     = 0, ///< Normal Federate Execution (neither late joiner nor federate restore).
-   FEDERATE_JOIN_EARLY       = 0, ///< Early joining Federate.
-   FEDERATE_JOIN_LATE        = 1, ///< Late Joining Federate
-   FEDERATE_JOIN_RESTORING   = 2, ///< Federate Restore
-   FEDERATE_JOIN_UNKNOWN     = 3, ///< Unknown Federate state
-   FEDERATE_JOIN_LAST_VALUE  = 3  ///< Set to the Last value in the enumeration.
+   FEDERATE_JOIN_FIRST_VALUE   = 1, ///< Set to the First value in the enumeration.
+   FEDERATE_JOIN_EARLY         = 1, ///< Early joining Federate Only.
+   FEDERATE_JOIN_LATE          = 2, ///< Late Joining Federate Only.
+   FEDERATE_JOIN_EARLY_OR_LATE = 3, ///< Early or Late Joining Federate.
+   FEDERATE_JOIN_RESTORING     = 4, ///< Federate restoring from startup.
+   FEDERATE_JOIN_LAST_VALUE    = 4  ///< Set to the Last value in the enumeration.
 
-} FederateJoinEnum;
+} FederateJoinConstraintsEnum;
 
 /*!
 @emum InteractionTypeEnum
@@ -336,11 +349,6 @@ typedef enum {
 
 } TimeAdvanceStateEnum;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-typedef std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > TrickRTIAmbPtr;
-#pragma GCC diagnostic pop
-
 typedef std::queue< RTI1516_NAMESPACE::AttributeHandleValueMap > HLAAttributeMapQueue;
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, std::wstring > TrickHLAObjInstanceNameMap;
@@ -354,6 +362,11 @@ typedef std::vector< std::wstring > VectorOfWstrings;
 //
 // Helper methods for these enumerations.
 //
+/*! @brief Convert an EncodingEnum value into a printable string.
+ *  @return Encoding as a printable string.
+ *  @param encoding Encoding value. */
+std::string encoding_enum_to_string( EncodingEnum const encoding );
+
 // TrickHLA::ExecutionModeEnum methods.
 /*! @brief Convert an ExecutionModeEnum value into a printable string.
  *  @return Execution control mode as a printable string.

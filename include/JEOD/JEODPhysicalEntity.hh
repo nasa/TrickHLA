@@ -36,17 +36,13 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_JEOD_PHYSICAL_ENTITY_HH
 #define SPACEFOM_JEOD_PHYSICAL_ENTITY_HH
 
-// System include files.
-
-// Trick include files.
-
-// JEOD include files.
-#include "dynamics/dyn_body/include/dyn_body.hh"
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityBase.hh"
+
+namespace jeod
+{
+class DynBody;
+} /* namespace jeod */
 
 namespace TrickHLA
 {
@@ -75,10 +71,6 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    explicit JEODPhysicalEntity( jeod::DynBody &dyn_body_ref ); // Initialization constructor.
    virtual ~JEODPhysicalEntity();                              // Destructor.
 
-   /*! @brief Set the reference to the physical entity data.
-    *  @param dyn_body_ptr Pointer to the JEOD DynBody instance. */
-   virtual void configure( jeod::DynBody *dyn_body_ptr );
-
    /*! @brief Initialize the packing object. */
    virtual void initialize();
 
@@ -94,11 +86,7 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
    /*! @brief Set the reference to the physical entity data.
     *  @param dyn_body_data_ptr Pointer to the JEOD Dynbody instance. */
-   virtual void set_data( jeod::DynBody *dyn_body_data_ptr )
-   {
-      dyn_body_data = dyn_body_data_ptr;
-      return;
-   }
+   virtual void set_data( jeod::DynBody *dyn_body_data_ptr );
 
    /*! @brief Get the reference to the physical entity data.
     *  @return Pointer to the PhysicalEntity data. */

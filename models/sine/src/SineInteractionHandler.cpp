@@ -20,9 +20,10 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../../../source/TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{sine/src/SineInteractionHandler.cpp}
 
 @revs_title
@@ -33,31 +34,36 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
+// System includes.
+#include <cstring>
+#include <ostream>
 #include <sstream>
-#include <stdlib.h>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// Model include files.
-#include "../include/SineInteractionHandler.hh"
-
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionHandler.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
+
+// Sine model includes.
+#include "sine/include/SineInteractionHandler.hh"
+
+// HLA includes.
+#include "RTI/VariableLengthData.h"
 
 using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
+using namespace RTI1516_NAMESPACE;
 
 // Set to 1 to send interaction as Timestamp Order (TSO), 0 for Receive Order (RO).
 #define SINE_SEND_INTERACTION_TSO 1
@@ -94,7 +100,7 @@ void SineInteractionHandler::send_sine_interaction(
    ostringstream msg;
    msg << "SineInteractionHandler::send_sine_interaction():" << __LINE__
        << " Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" )
-       << "\" Send-count:" << ( send_cnt + 1 ) << '\n';
+       << "\" Send-count:" << ( send_cnt + 1 ) << endl;
    message_publish( MSG_NORMAL, msg.str().c_str() );
 
    if ( message != NULL ) {
@@ -106,11 +112,12 @@ void SineInteractionHandler::send_sine_interaction(
    message = trick_MM->mm_strdup( msg.str().c_str() );
 
    // Create a User Supplied Tag based off the name in this example.
-   RTI1516_USERDATA user_supplied_tag;
+   VariableLengthData user_supplied_tag;
    if ( name != NULL ) {
-      user_supplied_tag = RTI1516_USERDATA( name, strlen( name ) );
+      string name_str   = name;
+      user_supplied_tag = VariableLengthData( name_str.c_str(), name_str.size() );
    } else {
-      user_supplied_tag = RTI1516_USERDATA( 0, 0 );
+      user_supplied_tag = VariableLengthData( NULL, 0 );
    }
 
    // Get the HLA granted time and lookahead time.
@@ -145,23 +152,23 @@ void SineInteractionHandler::send_sine_interaction(
 #else
               << "Receive Order):"
 #endif
-              << __LINE__ << '\n'
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-              << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
-              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n'
-              << "  user-supplied-tag:'" << user_supplied_tag_string << "'\n"
-              << "  user-supplied-tag-size:" << user_supplied_tag.size() << '\n'
+              << __LINE__ << endl
+              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
+              << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl
+              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << endl // flawfinder: ignore
+              << "  user-supplied-tag:'" << user_supplied_tag_string << "'" << endl
+              << "  user-supplied-tag-size:" << user_supplied_tag.size() << endl
               << "  hla_granted_time:" << send_time << " ("
-              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_units() << ")\n"
+              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_base_unit() << ")" << endl
               << "  send_time:" << send_time << " ("
-              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_units() << ")\n"
+              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_base_unit() << ")" << endl
               << "  lookahead_time:" << lookahead_time << " ("
-              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_units() << ")\n"
+              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_base_unit() << ")" << endl
               << "  timestamp:" << timestamp << " ("
-              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_units() << ")\n"
-              << "  time:" << time << '\n'
-              << "  year:" << year << '\n'
-              << "  send_cnt:" << ( send_cnt + 1 ) << '\n';
+              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_base_unit() << ")" << endl
+              << "  time:" << time << endl
+              << "  year:" << year << endl
+              << "  send_cnt:" << ( send_cnt + 1 ) << endl;
          message_publish( MSG_NORMAL, msg2.str().c_str() );
       }
 
@@ -174,15 +181,15 @@ void SineInteractionHandler::send_sine_interaction(
          // The interaction was Not sent.
          ostringstream msg2;
          msg2 << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
-              << __LINE__ << '\n'
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n";
+              << __LINE__ << endl
+              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl;
          message_publish( MSG_NORMAL, msg2.str().c_str() );
       }
    }
 }
 
 void SineInteractionHandler::receive_interaction(
-   RTI1516_USERDATA const &the_user_supplied_tag )
+   VariableLengthData const &the_user_supplied_tag )
 {
    ++receive_cnt;
 
@@ -195,16 +202,16 @@ void SineInteractionHandler::receive_interaction(
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       ostringstream msg;
       msg << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
-          << __LINE__ << '\n'
-          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n"
-          << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'\n"
-          << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << '\n'
-          << "  user-supplied-tag:'" << user_tag_string << "'\n"
-          << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << '\n'
-          << "  scenario_time:" << get_scenario_time() << '\n'
-          << "  time:" << time << '\n'
-          << "  year:" << year << '\n'
-          << "  receive_cnt:" << receive_cnt << '\n';
+          << __LINE__ << endl
+          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
+          << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl
+          << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << endl // flawfinder: ignore
+          << "  user-supplied-tag:'" << user_tag_string << "'" << endl
+          << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << endl
+          << "  scenario_time:" << get_scenario_time() << endl
+          << "  time:" << time << endl
+          << "  year:" << year << endl
+          << "  receive_cnt:" << receive_cnt << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

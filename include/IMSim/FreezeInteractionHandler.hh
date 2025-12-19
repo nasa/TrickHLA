@@ -34,23 +34,25 @@ NASA, Johnson Space Center\n
 #ifndef IMSIM_FREEZE_INTERACTION_HANDLER_HH
 #define IMSIM_FREEZE_INTERACTION_HANDLER_HH
 
-// System include files.
-
-// Trick include files.
-
 // TrickHLA include files.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionHandler.hh"
-
-// IMSim include files.
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace IMSim
 {
@@ -92,7 +94,7 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Called when the interaction is received from the RTI.
     *  @param theUserSuppliedTag User tag. */
-   void receive_interaction( RTI1516_USERDATA const &theUserSuppliedTag );
+   void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
 
    // FIXME: This is not a good thing to do. Why have the data private?
    /*! @brief Get the address of the interaction time.

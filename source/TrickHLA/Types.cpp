@@ -24,16 +24,62 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstdint>
-#include <limits>
 #include <string>
 
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
+
+string TrickHLA::encoding_enum_to_string(
+   EncodingEnum const encoding )
+{
+   switch ( encoding ) {
+      case ENCODING_BIG_ENDIAN: {
+         return "ENCODING_BIG_ENDIAN";
+      }
+      case ENCODING_LITTLE_ENDIAN: {
+         return "ENCODING_LITTLE_ENDIAN";
+      }
+      case ENCODING_BYTE: {
+         return "ENCODING_BYTE";
+      }
+      case ENCODING_ASCII_CHAR: {
+         return "ENCODING_ASCII_CHAR";
+      }
+      case ENCODING_ASCII_STRING: {
+         return "ENCODING_ASCII_STRING";
+      }
+      case ENCODING_UNICODE_CHAR: {
+         return "ENCODING_UNICODE_CHAR";
+      }
+      case ENCODING_UNICODE_STRING: {
+         return "ENCODING_UNICODE_STRING";
+      }
+      case ENCODING_OPAQUE_DATA: {
+         return "ENCODING_OPAQUE_DATA";
+      }
+      case ENCODING_BOOLEAN: {
+         return "ENCODING_BOOLEAN";
+      }
+      case ENCODING_LOGICAL_TIME: {
+         return "ENCODING_LOGICAL_TIME";
+      }
+      case ENCODING_FIXED_RECORD: {
+         return "ENCODING_FIXED_RECORD";
+      }
+      case ENCODING_NONE: {
+         return "ENCODING_NONE";
+      }
+      default: {
+         return "UNKNOWN TrickHLA Encoding";
+      }
+   }
+   return "UNKNOWN TrickHLA Encoding";
+}
 
 string TrickHLA::execution_control_enum_to_string(
    ExecutionControlEnum const mode )

@@ -38,7 +38,7 @@ NASA, Johnson Space Center\n
 #include <stdbool.h>
 
 /* Trick includes. */
-#include "sim_services/Integrator/include/regula_falsi.h"
+#include "trick/compat/sim_services/Integrator/include/regula_falsi.h"
 
 /** @struct BallState_In
     @brief Ball state input parameters
@@ -47,7 +47,7 @@ typedef struct {
 
    /*=== Initial Ball States ===*/
    bool   print_state; /**< (--)  Ball state print control flag. */
-   double mass ;       /**< (kg)  Total mass. */
+   double mass;        /**< (kg)  Total mass. */
    double position[2]; /**< (m)   X(horizontal),Y(vertical) position. */
    double speed;       /**< (m/s) Linear speed. */
    double elevation;   /**< (rad) Trajectory angle with respect to the horizontal. */
@@ -71,7 +71,7 @@ typedef struct {
  */
 typedef struct {
 
-   void ** external_force; /**< ** (N) External forces, from 'collect'. */
+   void **external_force; /**< ** (N) External forces, from 'collect'. */
 
    REGULA_FALSI floor;      /**< (--) Dynamic event parameters for floor impact. */
    REGULA_FALSI right_wall; /**< (--) Dynamic event parameters for right wall impact. */
@@ -85,13 +85,12 @@ typedef struct {
  */
 typedef struct {
 
-   char           * name;   /**< (--)    Name of ball. */
-   unsigned int     id;     /**< (count) Ball ID. */
-   BallState_In     input;  /**< (--)    User inputs. */
-   BallState_Out    output; /**< (--)    User outputs. */
-   BallState_Work   work;   /**< (--)    EOM workspace. */
+   char          *name;   /**< (--)    Name of ball. */
+   unsigned int   id;     /**< (count) Ball ID. */
+   BallState_In   input;  /**< (--)    User inputs. */
+   BallState_Out  output; /**< (--)    User outputs. */
+   BallState_Work work;   /**< (--)    EOM workspace. */
 
 } BallState;
-
 
 #endif /* MODELS_TRICKHLA_BALL_STATE_H_ */

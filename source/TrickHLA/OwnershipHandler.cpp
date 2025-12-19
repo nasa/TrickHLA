@@ -20,14 +20,14 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Int64Interval.cpp}
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/Int64Interval.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -38,34 +38,32 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstdlib>
-#include <iostream>
+// System includes.
+#include <cstddef>
+#include <cstdint>
 #include <limits>
-#include <map>
+#include <ostream>
+#include <sstream>
 #include <string>
+#include <utility>
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CheckpointConversionBase.hh"
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/OwnershipItem.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -129,7 +127,8 @@ void OwnershipHandler::encode_checkpoint()
       if ( pull_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::encode_checkpoint():" << __LINE__
-                << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!\n";
+                << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
+                << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -165,7 +164,8 @@ void OwnershipHandler::encode_checkpoint()
       if ( push_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::encode_checkpoint():" << __LINE__
-                << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!\n";
+                << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
+                << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -217,7 +217,7 @@ void OwnershipHandler::decode_checkpoint()
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             message_publish( MSG_NORMAL, "OwnershipHandler::decode_checkpoint():%d Restoring ownership pull item attribute \"%s\"\n",
-                             __LINE__, pull_items[count].FOM_name );
+                             __LINE__, pull_items[count].FOM_name.c_str() );
          }
       }
    }
@@ -246,7 +246,7 @@ void OwnershipHandler::decode_checkpoint()
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             message_publish( MSG_NORMAL, "OwnershipHandler::decode_checkpoint():%d Restoring ownership push item attribute \"%s\"\n",
-                             __LINE__, push_items[count].FOM_name );
+                             __LINE__, push_items[count].FOM_name.c_str() );
          }
       }
    }
@@ -289,12 +289,12 @@ void OwnershipHandler::initialize_callback(
 
 string OwnershipHandler::get_object_name() const
 {
-   return ( ( this->object != NULL ) ? string( object->get_name() ) : string( "" ) );
+   return ( ( this->object != NULL ) ? object->get_name() : "" );
 }
 
 string OwnershipHandler::get_object_FOM_name() const
 {
-   return ( ( this->object != NULL ) ? string( object->get_FOM_name() ) : string( "" ) );
+   return ( ( this->object != NULL ) ? object->get_FOM_name() : "" );
 }
 
 int OwnershipHandler::get_attribute_count() const
@@ -308,34 +308,34 @@ VectorOfStrings const OwnershipHandler::get_attribute_FOM_names() const
 }
 
 Attribute *OwnershipHandler::get_attribute(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    return ( ( object != NULL ) ? object->get_attribute( attribute_FOM_name ) : NULL );
 }
 
 bool OwnershipHandler::is_locally_owned(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_locally_owned() : false );
 }
 
 bool OwnershipHandler::is_remotely_owned(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_remotely_owned() : false );
 }
 
 bool OwnershipHandler::is_published(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_publish() : false );
 }
 
 bool OwnershipHandler::is_subscribed(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_subscribe() : false );
@@ -394,14 +394,14 @@ void OwnershipHandler::pull_ownership(
 }
 
 void OwnershipHandler::pull_ownership( // RETURN: -- None.
-   char const *attribute_FOM_name )    // IN: -- Attribute FOM name.
+   string const &attribute_FOM_name )  // IN: -- Attribute FOM name.
 {
    pull_ownership( attribute_FOM_name, -std::numeric_limits< double >::max() );
 }
 
 void OwnershipHandler::pull_ownership(
-   char const *attribute_FOM_name,
-   double      time )
+   std::string const &attribute_FOM_name,
+   double             time )
 {
    // Find the attribute for the given attribute FOM name.
    Attribute *attribute = get_attribute( attribute_FOM_name );
@@ -413,7 +413,7 @@ void OwnershipHandler::pull_ownership(
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G \n",
-                       attribute_FOM_name, time, __LINE__, get_scenario_time(),
+                       attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
                        get_lookahead().get_time_in_seconds() );
    }
@@ -497,14 +497,14 @@ void OwnershipHandler::push_ownership(
 }
 
 void OwnershipHandler::push_ownership(
-   char const *attribute_FOM_name )
+   string const &attribute_FOM_name )
 {
    push_ownership( attribute_FOM_name, -std::numeric_limits< double >::max() );
 }
 
 void OwnershipHandler::push_ownership(
-   char const *attribute_FOM_name,
-   double      time )
+   string const &attribute_FOM_name,
+   double        time )
 {
    // Find the attribute for the given attribute FOM name.
    Attribute *attribute = get_attribute( attribute_FOM_name );
@@ -516,7 +516,7 @@ void OwnershipHandler::push_ownership(
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G \n",
-                       attribute_FOM_name, time, __LINE__, get_scenario_time(),
+                       attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
                        get_lookahead().get_time_in_seconds() );
    }
@@ -552,13 +552,7 @@ void OwnershipHandler::push_ownership(
  */
 Int64Interval OwnershipHandler::get_lookahead() const
 {
-   Int64Interval di;
-   if ( object != NULL ) {
-      di = object->get_lookahead();
-   } else {
-      di = Int64Interval( -1.0 );
-   }
-   return di;
+   return ( object != NULL ) ? object->get_lookahead() : Int64Interval( -1.0 );
 }
 
 /*!
@@ -566,30 +560,33 @@ Int64Interval OwnershipHandler::get_lookahead() const
  *  is assigned to the returned object. */
 Int64Time OwnershipHandler::get_granted_time() const
 {
-   Int64Time dt;
-   if ( object != NULL ) {
-      dt = object->get_granted_time();
-   } else {
-      dt = Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
-   }
-   return dt;
+   return ( object != NULL ) ? object->get_granted_time()
+                             : Int64Time( INT64_MAX );
 }
 
-double OwnershipHandler::get_scenario_time()
+double OwnershipHandler::get_scenario_time() const
 {
-   if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = object->get_federate()->get_execution_control();
-      return ( execution_control->get_scenario_time() );
+   if ( object != NULL ) {
+      Federate *fed = object->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_scenario_time();
+         }
+      }
    }
    return -std::numeric_limits< double >::max();
 }
 
-double OwnershipHandler::get_cte_time()
+double OwnershipHandler::get_cte_time() const
 {
-   if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
-      ExecutionControlBase *execution_control = object->get_federate()->get_execution_control();
-      if ( execution_control->does_cte_timeline_exist() ) {
-         return execution_control->get_cte_time();
+   if ( object != NULL ) {
+      Federate *fed = object->get_federate();
+      if ( fed != NULL ) {
+         ExecutionControlBase const *exec_control = fed->get_execution_control();
+         if ( exec_control != NULL ) {
+            return exec_control->get_cte_time();
+         }
       }
    }
    return -std::numeric_limits< double >::max();

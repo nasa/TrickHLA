@@ -29,24 +29,21 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <float.h>
-#include <iostream>
-#include <sstream>
-#include <string>
+// System includes.
+#include <cstddef>
+#include <ostream>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/trick_math.h"
+// Trick includes.
+#include "trick/reference_frame.h"
 #include "trick/trick_math_proto.h"
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
+// TrickHLA includes.
+#include "TrickHLA/LagCompensation.hh"
+#include "TrickHLA/Object.hh"
 
-// SpaceFOM include files.
+// SpaceFOM includes.
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/RefFrameLagCompBase.hh"
 
 using namespace std;
@@ -57,7 +54,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameLagCompBase::RefFrameLagCompBase( RefFrameBase &ref_frame_ref ) // RETURN: -- None.
-   : debug( false ),
+   : TrickHLA::LagCompensation( "RefFrameLagCompBase" ),
+     debug( false ),
      ref_frame( ref_frame_ref ),
      state_attr( NULL ),
      compensate_dt( 0.0 )
@@ -78,6 +76,9 @@ RefFrameLagCompBase::~RefFrameLagCompBase() // RETURN: -- None.
  */
 void RefFrameLagCompBase::initialize()
 {
+   // Call the base class.
+   TrickHLA::LagCompensation::initialize();
+
    // Return to calling routine.
    return;
 }
@@ -183,34 +184,34 @@ void RefFrameLagCompBase::print_lag_comp_data( std::ostream &stream ) const
    // Compute the attitude Euler angles.
    euler_quat( euler_angles, quat, 1, Pitch_Yaw_Roll );
 
-   stream << "\tScenario time: " << get_scenario_time() << '\n';
-   stream << "\tLag comp time: " << this->lag_comp_data.time << '\n';
+   stream << "\tScenario time: " << get_scenario_time() << endl;
+   stream << "\tLag comp time: " << this->lag_comp_data.time << endl;
    stream << "\tposition: "
           << "\t\t" << this->lag_comp_data.pos[0] << ", "
           << "\t\t" << this->lag_comp_data.pos[1] << ", "
-          << "\t\t" << this->lag_comp_data.pos[2] << '\n';
+          << "\t\t" << this->lag_comp_data.pos[2] << endl;
    stream << "\tvelocity: "
           << "\t\t" << this->lag_comp_data.vel[0] << ", "
           << "\t\t" << this->lag_comp_data.vel[1] << ", "
-          << "\t\t" << this->lag_comp_data.vel[2] << '\n';
+          << "\t\t" << this->lag_comp_data.vel[2] << endl;
    stream << "\tattitude (s;v): "
           << "\t\t" << this->lag_comp_data.att.scalar << "; "
           << "\t\t" << this->lag_comp_data.att.vector[0] << ", "
           << "\t\t" << this->lag_comp_data.att.vector[1] << ", "
-          << "\t\t" << this->lag_comp_data.att.vector[2] << '\n';
+          << "\t\t" << this->lag_comp_data.att.vector[2] << endl;
    stream << "\tattitude (PYR): "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
+          << "\t\t" << euler_angles[2] << endl;
    stream << "\tangular velocity: "
           << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
           << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "
-          << "\t\t" << this->lag_comp_data.ang_vel[2] << '\n';
+          << "\t\t" << this->lag_comp_data.ang_vel[2] << endl;
    stream << "\tattitude rate (s;v): "
           << "\t\t" << this->Q_dot.scalar << "; "
           << "\t\t" << this->Q_dot.vector[0] << ", "
           << "\t\t" << this->Q_dot.vector[1] << ", "
-          << "\t\t" << this->Q_dot.vector[2] << '\n';
+          << "\t\t" << this->Q_dot.vector[2] << endl;
 
    // Return to the calling routine.
    return;

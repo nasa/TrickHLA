@@ -20,8 +20,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
@@ -29,6 +27,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -42,27 +42,36 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_HH
 #define TRICKHLA_INTERACTION_HH
 
-// System include files.
+// System includes.
+#include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files
-#include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Int64Time.hh"
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/Handle.h"
+#include "RTI/RTI1516.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 // Special handling of SWIG limitations for forward declarations.
 #ifdef SWIG
@@ -104,7 +113,7 @@ class Interaction
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   char *FOM_name; ///< @trick_units{--} FOM name for the interaction.
+   std::string FOM_name; ///< @trick_units{--} FOM name for the interaction.
 
    bool publish;   ///< @trick_units{--} True to publish interaction.
    bool subscribe; ///< @trick_units{--} True to subscribe to interaction.
@@ -162,28 +171,28 @@ class Interaction
    /*! @brief Sends the interaction to the RTI using Receive Order.
     *  @return True if interaction was sent; False otherwise.
     *  @param the_user_supplied_tag Users tag. */
-   bool send( RTI1516_USERDATA const &the_user_supplied_tag );
+   bool send( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    /*! @brief ends the interaction to the RTI using Timestamp Order.
     *  @return True if interaction was sent; False otherwise.
     *  @param send_HLA_time The HLA logical time the user wants to send the interaction.
     *  @param the_user_supplied_tag Users tag. */
-   bool send( double                  send_HLA_time,
-              RTI1516_USERDATA const &the_user_supplied_tag );
+   bool send( double                                       send_HLA_time,
+              RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
    /*! @brief Process the interaction by decoding the parameter data into the
     * users simulation variables and calling the users interaction-handler. */
    void process_interaction();
 
-   /*! @brief Extracts the parameters for the received Interaction.
+   /*! @brief Decode the parameters for the received Interaction.
     *  @param interaction_item Interaction item.
-    *  @return True if successfull extracted data, false otherwise. */
-   bool extract_data( InteractionItem *interaction_item );
+    *  @return True if successfully decoded data, false otherwise. */
+   bool decode( InteractionItem *interaction_item );
 
    // Instance methods
    /*! @brief Get the FOM name for this interaction.
     *  @return Constant string with the FOM name for this interaction. */
-   char const *get_FOM_name() const
+   std::string const &get_FOM_name() const
    {
       return FOM_name;
    }
@@ -215,6 +224,11 @@ class Interaction
    {
       this->class_handle = id;
    }
+
+   /*! @brief Gets the parameter for the given FOM name.
+    *  @return Associated TrickHLA::Parameter.
+    *  @param inter_FOM_name Parameter FOM name. */
+   Parameter *get_parameter( std::string const &inter_FOM_name );
 
    /*! @brief Get the parameter count for this interaction.
     *  @return The parameter count for this interaction. */
@@ -293,15 +307,10 @@ class Interaction
 
    /*! @brief Set the FOM name for this interaction.
     *  @param in_name The FOM name for this interaction. */
-   void set_FOM_name( char const *in_name )
+   void set_FOM_name( std::string const &in_name )
    {
-      if ( this->FOM_name != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
-            message_publish( MSG_WARNING, "Interaction::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n", __LINE__ );
-         }
-         this->FOM_name = NULL;
-      }
-      this->FOM_name = trick_MM->mm_strdup( in_name );
+      // Make a copy.
+      this->FOM_name = std::string( in_name );
    }
 
    /*! @brief Set the received user supplied tag.
@@ -351,7 +360,8 @@ class Interaction
 
    Int64Time time; ///< @trick_units{--} Time used for Timestamp Order interaction.
 
-   Manager                                  *manager;      ///< @trick_units{--} TrickHLA Manager.
+   Manager *manager; ///< @trick_units{--} TrickHLA Manager.
+
    RTI1516_NAMESPACE::InteractionClassHandle class_handle; ///< @trick_io{**} RTI Interaction Class handle.
 
    int            user_supplied_tag_size;     ///< @trick_units{--} Number of bytes in the user supplied tag.

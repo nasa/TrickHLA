@@ -16,18 +16,18 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{CTETimelineBase.cpp}
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
-@trick_link_dependency{ScenarioTimeline.cpp}
-@trick_link_dependency{SimTimeline.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/CTETimelineBase.cpp}
+@trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/ScenarioTimeline.cpp}
+@trick_link_dependency{time/SimTimeline.cpp}
 
 @revs_title
 @revs_begin
@@ -37,48 +37,54 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstdint>
-#include <iomanip>
-#include <iostream>
+#include <cstring>
 #include <limits>
-#include <math.h>
+#include <ostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 // Trick includes.
 #include "trick/Clock.hh"
-#include "trick/Executive.hh"
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
+#include "trick/exec_proto.h"
 #include "trick/message_proto.h"
-#include "trick/trick_byteswap.h"
+#include "trick/message_type.h"
 
-// TrickHLA include files.
-#include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/CheckpointConversionBase.hh"
+// TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
-#include "TrickHLA/SimTimeline.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/time/SimTimeline.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/Handle.h"
+#include "RTI/Typedefs.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 // Access the Trick global objects the Clock.
 extern Trick::Clock *the_clock;
@@ -104,7 +110,7 @@ ExecutionControlBase::ExecutionControlBase()
      cte_timeline( NULL ),
      use_preset_master( false ),
      master( false ),
-     multiphase_init_sync_points( NULL ),
+     multiphase_init_sync_points(),
      time_padding( 0.0 ),
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
@@ -137,7 +143,7 @@ ExecutionControlBase::ExecutionControlBase(
      cte_timeline( NULL ),
      use_preset_master( false ),
      master( false ),
-     multiphase_init_sync_points( NULL ),
+     multiphase_init_sync_points(),
      time_padding( 0.0 ),
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
@@ -164,17 +170,7 @@ ExecutionControlBase::ExecutionControlBase(
  */
 ExecutionControlBase::~ExecutionControlBase()
 {
-   // TODO: Should not call a virtual function from within virtual destructor.
-   // clear_mode_values();
-
-   // Free the memory used for the multiphase initialization synchronization points.
-   if ( multiphase_init_sync_points != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( multiphase_init_sync_points ) ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::~ExecutionControlBase():%d WARNING failed to delete Trick Memory for 'multiphase_init_sync_points'\n",
-                          __LINE__ );
-      }
-      multiphase_init_sync_points = NULL;
-   }
+   return;
 }
 
 /*!
@@ -250,7 +246,7 @@ void ExecutionControlBase::initialize()
                 << " ERROR: The CTE timeline is specified but it is not"
                 << " configured as the Trick real time clock! Make sure"
                 << " the CTETimelineBase class constructor is calling"
-                << " real_time_change_clock( this );\n";
+                << " real_time_change_clock( this );" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -287,13 +283,13 @@ void ExecutionControlBase::initialize()
    if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::initialize():" << __LINE__
-             << " ERROR: Time constraints verification failed!\n";
+             << " ERROR: Time constraints verification failed!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( !does_scenario_timeline_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::initialize():%d WARNING: \
+         message_publish( MSG_WARNING, "ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
 Trick simulation time as the default scenario-timeline.\n",
                           __LINE__ );
@@ -304,7 +300,7 @@ Trick simulation time as the default scenario-timeline.\n",
       if ( scenario_timeline == NULL ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
-                << " FAILED to allocate enough memory for ScenarioTimeline class!\n";
+                << " FAILED to allocate enough memory for ScenarioTimeline class!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
@@ -416,7 +412,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          errmsg << "ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
                 << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
-                << "'! This conflicts with this being the designated Master federate!\n";
+                << "'! This conflicts with this being the designated Master federate!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -490,7 +486,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    // Add the user specified initialization synchronization points.
    // Parse the comma separated list of sync-point labels.
    vector< string > user_sync_pt_labels;
-   if ( this->multiphase_init_sync_points != NULL ) {
+   if ( !multiphase_init_sync_points.empty() ) {
       StringUtilities::tokenize( this->multiphase_init_sync_points, user_sync_pt_labels, "," );
    }
 
@@ -502,7 +498,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::add_multiphase_init_sync_points:" << __LINE__
                 << " ERROR: User specified multiphase init sync-point label '"
-                << user_sync_pt_labels[i] << "' already added!\n";
+                << user_sync_pt_labels[i] << "' already added!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
          add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
@@ -599,7 +595,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to send at least one object attribute. Make"
              << " sure at least one ExecutionConfiguration attribute has 'publish = true'"
              << " set. Please check your input or modified-data files to make"
-             << " sure the 'publish' value is correctly specified.\n";
+             << " sure the 'publish' value is correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -657,7 +653,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                         << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
@@ -685,7 +681,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one ExecutionConfiguration attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified.\n";
+             << " files to make sure the 'subscribe' value is correctly specified." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -744,7 +740,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    if ( execution_configuration != NULL ) {
 
       // Execution Configuration object.
-      if ( obj_instance_name == get_execution_configuration()->get_name_string() ) {
+      if ( obj_instance_name == get_execution_configuration()->get_name() ) {
          return ( execution_configuration );
       }
    }
@@ -815,8 +811,7 @@ Object *ExecutionControlBase::get_unregistered_remote_object(
            && ( execution_configuration->get_class_handle() == theObjectClass )
            && ( !execution_configuration->is_instance_handle_valid() )
            && ( !execution_configuration->is_name_required()
-                || ( execution_configuration->get_name() == NULL )
-                || ( *( execution_configuration->get_name() ) == '\0' ) ) ) {
+                || execution_configuration->get_name().empty() ) ) {
          return ( execution_configuration );
       }
    }
@@ -835,7 +830,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
          message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
-                          __LINE__, execution_configuration->get_name(), id_str.c_str(),
+                          __LINE__, execution_configuration->get_name().c_str(), id_str.c_str(),
                           ( instance_id.isValid() ? "Yes" : "No" ) );
       }
       execution_configuration->remove_object_instance();
@@ -857,7 +852,7 @@ void ExecutionControlBase::process_deleted_objects()
    }
 }
 
-double ExecutionControlBase::get_sim_time()
+double ExecutionControlBase::get_sim_time() const
 {
    if ( does_sim_timeline_exist() ) {
       return sim_timeline->get_time();
@@ -868,13 +863,13 @@ double ExecutionControlBase::get_sim_time()
       errmsg << "ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
-             << " file. Returning Trick simulation time instead!\n";
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+             << " file. Returning Trick simulation time instead!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    return exec_get_sim_time();
 }
 
-double ExecutionControlBase::get_scenario_time()
+double ExecutionControlBase::get_scenario_time() const
 {
    if ( does_scenario_timeline_exist() ) {
       return scenario_timeline->get_time();
@@ -885,14 +880,13 @@ double ExecutionControlBase::get_scenario_time()
       errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
-             << " file. Returning Trick simulation time instead!\n";
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+             << " file. Returning Trick simulation time instead!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
-
    return get_sim_time();
 }
 
-double ExecutionControlBase::get_cte_time()
+double ExecutionControlBase::get_cte_time() const
 {
    return does_cte_timeline_exist() ? cte_timeline->get_time()
                                     : -std::numeric_limits< double >::max();
@@ -985,7 +979,7 @@ void ExecutionControlBase::encode_checkpoint()
       // to ensure the restore process will wait for this object instance
       // to exist.
       if ( execution_configuration->is_instance_handle_valid() ) {
-         execution_configuration->mark_required();
+         execution_configuration->set_required( true );
       }
       execution_configuration->encode_checkpoint();
    }
@@ -1028,11 +1022,15 @@ void ExecutionControlBase::remove_execution_configuration()
 void ExecutionControlBase::set_least_common_time_step(
    double const lcts )
 {
-   // WARNING: Only the Master federate should ever set this.
-   if ( is_master() ) {
-      this->least_common_time_step_seconds = lcts;
-      this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
-   }
+   this->least_common_time_step_seconds = lcts;
+   this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
+}
+
+void ExecutionControlBase::set_least_common_time_step(
+   int64_t const lcts )
+{
+   this->least_common_time_step         = lcts;
+   this->least_common_time_step_seconds = Int64BaseTime::to_seconds( lcts );
 }
 
 void ExecutionControlBase::refresh_least_common_time_step()

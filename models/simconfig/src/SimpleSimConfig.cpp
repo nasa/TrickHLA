@@ -20,9 +20,9 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{simconfig/src/SimpleSimConfig.cpp}
 
 @revs_title
@@ -35,24 +35,25 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <stdlib.h>
-#include <string>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
 
 // Model include files.
-#include "../include/SimpleSimConfig.hh"
+#include "simconfig/include/SimpleSimConfig.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -152,7 +153,7 @@ void SimpleSimConfig::pack()
    ostringstream msg;
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "===================================================\n";
+      msg << "===================================================" << endl;
    }
 
    double terminate_time = exec_get_terminate_time();
@@ -163,7 +164,7 @@ void SimpleSimConfig::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          msg << "SimpleSimConfig::pack():" << __LINE__
              << " Setting simulation termination time to "
-             << run_duration << " seconds.\n";
+             << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    } else {
@@ -177,7 +178,7 @@ void SimpleSimConfig::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          msg << "SimpleSimConfig::pack(:" << __LINE__
              << " Setting simulation duration to "
-             << run_duration << " seconds.\n";
+             << run_duration << " seconds." << endl;
       }
    }
 
@@ -185,15 +186,15 @@ void SimpleSimConfig::pack()
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "SimpleSimConfig::pack():" << __LINE__ << '\n'
-          << "\t Object-Name:'" << object->get_name() << "'\n"
-          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
-          << "\t run_duration:" << run_duration << " seconds\n"
+      msg << "SimpleSimConfig::pack():" << __LINE__ << endl
+          << "\t Object-Name:'" << object->get_name() << "'" << endl
+          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
+          << "\t run_duration:" << run_duration << " seconds" << endl
           << "\t run_duration_base_time:" << run_duration_base_time << " "
-          << Int64BaseTime::get_units() << '\n'
-          << "\t num_federates:" << num_federates << '\n'
-          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
-          << "===================================================\n";
+          << Int64BaseTime::get_base_unit() << endl
+          << "\t num_federates:" << num_federates << endl
+          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
+          << "===================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -202,7 +203,7 @@ void SimpleSimConfig::unpack()
 {
    ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "===================================================\n";
+      msg << "===================================================" << endl;
    }
 
    // Decode the run duration from a 64 bit integer in the base time.
@@ -214,21 +215,21 @@ void SimpleSimConfig::unpack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          msg << "SimpleSimConfig::unpack():" << __LINE__
              << " Setting simulation duration to "
-             << run_duration << " seconds.\n";
+             << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "SimpleSimConfig::unpack():" << __LINE__ << '\n'
-          << "\t Object-Name:'" << object->get_name() << "'\n"
-          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
-          << "\t run_duration:" << run_duration << " seconds\n"
+      msg << "SimpleSimConfig::unpack():" << __LINE__ << endl
+          << "\t Object-Name:'" << object->get_name() << "'" << endl
+          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
+          << "\t run_duration:" << run_duration << " seconds" << endl
           << "\t run_duration_base_time:" << run_duration_base_time << " "
-          << Int64BaseTime::get_units() << '\n'
-          << "\t num_federates:" << num_federates << '\n'
-          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
-          << "===================================================\n";
+          << Int64BaseTime::get_base_unit() << endl
+          << "\t num_federates:" << num_federates << endl
+          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
+          << "===================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

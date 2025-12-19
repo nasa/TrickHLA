@@ -29,8 +29,8 @@
 
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
-##include "TrickHLA/ScenarioTimeline.hh"
-##include "TrickHLA/SimTimeline.hh"
+##include "TrickHLA/time/ScenarioTimeline.hh"
+##include "TrickHLA/time/SimTimeline.hh"
 
 ##include "sine/include/SineData.hh"
 ##include "sine/include/SinePacking.hh"
@@ -63,7 +63,7 @@ class ZeroLookaheadAnalyticSineSimObj : public THLAFedSimObject {
    ZeroLookaheadAnalyticSineSimObj( TrickHLA::Federate & thla_fed )
       : THLAFedSimObject( thla_fed )
    {
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_data( &sim_data );
       P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
@@ -108,7 +108,7 @@ class ZeroLookaheadPropagatedSineSimObj : public THLAFedSimObject {
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_data( &sim_data );
       P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
@@ -161,7 +161,7 @@ class AnalyticSineSimObj : public Trick::SimObject {
 
    AnalyticSineSimObj()
    {
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_data( &sim_data );
       P50 ("initialization") packing.initialize();
 
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
@@ -195,7 +195,7 @@ class PropagatedSineSimObj : public Trick::SimObject {
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.set_data( &sim_data );
       P50 ("initialization") packing.initialize();
 
       /*

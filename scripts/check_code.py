@@ -57,7 +57,7 @@ def main():
                                      epilog = textwrap.dedent( '''\n
 Options -s, -e, -u, -x: Default error suppression file: ''' + ccpcheck_suppresion_file + '''\n
 Option -a: Auto-generated error suppression file: ''' + cppcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file + '''\n
-Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustive\n  check_code -e -o -v --exhaustive\n  check_code -c -vv''' ) )
+Examples:\n  check_code -s -o -v --exhaustive --hla3\n  check_code -i -o -v --exhaustive --hla3\n  check_code -e -o -v --exhaustive\n  check_code -c -vv''' ) )
 
    parser.add_argument( '-a', '--autogen', \
                         help = 'Auto-generate a suppression file for all issues. Use this as a starting point for a project specific suppression file.', \
@@ -80,6 +80,12 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    parser.add_argument( '--exhaustive', \
                         help = 'Exhaustive checking, and it will take a while to complete.', \
                         action = 'store_true', dest = 'exhaustive' )
+   parser.add_argument( '--hla3', \
+                        help = 'Check against HLA 3 (default), IEEE 1516-2010', \
+                        action = 'store_true', dest = 'hla3' )
+   parser.add_argument( '--hla4', \
+                        help = 'Check against HLA 4, IEEE 1516-2025', \
+                        action = 'store_true', dest = 'hla4' )
    parser.add_argument( '-i', '--includes', help = 'Check the #include\'s.', \
                         action = 'store_true', dest = 'check_includes' )
    parser.add_argument( '-n', '--inconclusive', help = 'Allow cppcheck to report even though the analysis is inconclusive. Caution, there are false positives with this option.', \
@@ -180,6 +186,11 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       arg_error = True
       TrickHLAMessage.warning( 'Only specify one of \'-a\', \'-c\', \'-e\', \'-i\', \'-s\', \'-u\' or \'-x\'!' )
 
+   # Can only specify one of --hla3 or --hla4.
+   if args.hla3 and args.hla4:
+      arg_error = True
+      TrickHLAMessage.warning( 'Only specify one of \'--hla3\' or \'--hla4\'!' )
+
    if arg_error:
       TrickHLAMessage.failure( 'Error detected in parsing command arguments!' )
 
@@ -235,7 +246,10 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       TrickHLAMessage.status( 'Path to HLA RTI: ' + rti_home )
 
    # Determine the path to the HLA RTI include directory.
-   rti_include = rti_home + '/api/cpp/HLA_1516-2010'
+   if args.hla4:
+      rti_include = rti_home + '/api/cpp/HLA_1516-2025'
+   else:
+      rti_include = rti_home + '/api/cpp/HLA_1516-2010'
    if os.path.isdir( rti_include ) is False:
       rti_include = rti_home + '/include'
       if os.path.isdir( rti_include ) is False:
@@ -250,7 +264,10 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
 
    # Define preprocessor symbols we use for TrickHLA and set the TRICK_VER based on the
    # version of the Trick simulation environment we found in our Path.
-   trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2010', '-DFPU_CW_PROTECTION' ]
+   if args.hla4:
+      trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2025', '-DFPU_CW_PROTECTION' ]
+   else:
+      trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2010', '-DFPU_CW_PROTECTION' ]
 
    # Form relative paths to all the include directories used by TrickHLA.
    trickhla_include_dirs.extend( ['-I', './include'] )
@@ -258,39 +275,22 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    trickhla_include_dirs.extend( ['-I', trick_home + '/include/trick/compat'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/trick_source'] )
    trickhla_include_dirs.extend( ['-I', rti_include] )
+   trickhla_include_dirs.extend( ['-I', './models'] )
    if jeod_home:
       trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
-   if os.path.isdir( './models/DistIf/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/DistIf/include'] )
-   if os.path.isdir( './models/EntityDynamics/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
-   if os.path.isdir( './models/FrameDynamics/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/FrameDynamics/include'] )
-   if os.path.isdir( './models/SAIntegrator/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
-   if os.path.isdir( './models/simconfig/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/simconfig/include'] )
-   if os.path.isdir( './models/sine/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/sine/include'] )
-   if os.path.isdir( './models/Wheelbot/Battery/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Battery/include'] )
-   if os.path.isdir( './models/Wheelbot/Control/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Control/include'] )
-   if os.path.isdir( './models/Wheelbot/Electrical/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Electrical/include'] )
-   if os.path.isdir( './models/Wheelbot/Guidance/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Guidance/include'] )
-   if os.path.isdir( './models/Wheelbot/Motor/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Motor/include'] )
-   if os.path.isdir( './models/Wheelbot/Vehicle/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Vehicle/include'] )
 
-   # Form relative paths to all the source directories used by TrickHLA.
+   # Relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./source'] )
+   if os.path.isdir( './models/Ball/src' ):
+      trickhla_source_dirs.extend( ['./models/Ball/src'] )
    if os.path.isdir( './models/DistIf/src' ):
       trickhla_source_dirs.extend( ['./models/DistIf/src'] )
+   if os.path.isdir( './models/encoding/src' ):
+      trickhla_source_dirs.extend( ['./models/encoding/src'] )
    if os.path.isdir( './models/EntityDynamics/src' ):
       trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
+   if os.path.isdir( './models/FixedRecord/src' ):
+      trickhla_source_dirs.extend( ['./models/FixedRecord/src'] )
    if os.path.isdir( './models/FrameDynamics/src' ):
       trickhla_source_dirs.extend( ['./models/FrameDynamics/src'] )
    if os.path.isdir( './models/SAIntegrator/src' ):
@@ -299,18 +299,6 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       trickhla_source_dirs.extend ( ['./models/simconfig/src'] )
    if os.path.isdir( './models/sine/src' ):
       trickhla_source_dirs.extend ( ['./models/sine/src'] )
-   if os.path.isdir( './models/Wheelbot/Battery/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Battery/src'] )
-   if os.path.isdir( './models/Wheelbot/Control/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Control/src'] )
-   if os.path.isdir( './models/Wheelbot/Electrical/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Electrical/src'] )
-   if os.path.isdir( './models/Wheelbot/Guidance/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Guidance/src'] )
-   if os.path.isdir( './models/Wheelbot/Motor/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Motor/src'] )
-   if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
-      trickhla_source_dirs.extend( ['./models/Wheelbot/Vehicle/src'] )
 
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
@@ -402,6 +390,7 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
          trickhla_ignore.append( '--suppress=cstyleCast:' + jeod_home + '/models/utils/math/include/numerical_inline.hh' )
          trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/memory/include/jeod_alloc_construct_destruct.hh' )
          trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/integration/include/restartable_state_integrator.hh' )
+         trickhla_ignore.append( '--suppress=dangerousTypeCast:' + jeod_home + '/models/utils/math/include/numerical_inline.hh' )
          trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/jeod_vector.hh' )
          trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/pointer_container.hh' )
          trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/memory/include/memory_table.hh' )
@@ -410,6 +399,11 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
          trickhla_ignore.append( '--suppress=returnByReference:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
          trickhla_ignore.append( '--suppress=syntaxError:' + jeod_home + '/models/dynamics/mass/include/mass_point_init.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/environment/time/include/time_tt.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/utils/sim_interface/include/checkpoint_input_manager.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/dynamics/dyn_body/include/dyn_body.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/dynamics/mass/include/mass.hh' )
+         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/utils/ref_frames/include/ref_frame.hh' )
          trickhla_ignore.append( '--suppress=uselessOverride:' + jeod_home + '/models/utils/sim_interface/include/jeod_integrator_interface.hh' )
 
    if args.suppress_cstylecasts:

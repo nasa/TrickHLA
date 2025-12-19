@@ -72,7 +72,7 @@
 #define DYNAMICS       0.03125 // Vehicle and planetary dynamics interval (32Hz)
 
 //==========================================================================
-// Define the Trick HLA job cycle times.
+// Define the TrickHLA job cycle times.
 //==========================================================================
 #define THLA_DATA_CYCLE_TIME        HIGH_RATE_ENV // HLA data communication cycle time.
 #define THLA_INTERACTION_CYCLE_TIME DYNAMICS      // HLA Interaction cycle time.
@@ -271,12 +271,12 @@ vcollect passive_vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForc
 
 
 //==========================================================================
-// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
 // for input file instantiations.
 //==========================================================================
 
 // This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/CTETimelineBase.hh"
+##include "TrickHLA/time/TimeOfDayCTETimeline.hh"
 
 
 //==========================================================================
@@ -315,7 +315,6 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
 // SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
-//#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
 #include "JEOD/JEODRefFrameTree.sm"
 
 
@@ -336,16 +335,31 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
 
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject active_physical_entity( active_vehicle.dyn_body, P_HLA_INIT );
+JEODPhysicalEntiySimObject active_physical_entity( true,
+                                                   "active_physical_entity",
+                                                   "Lander",
+                                                   active_vehicle.dyn_body,
+                                                   P_HLA_INIT );
 
 // Instantiate the SpaceFOM PhysicalInterface object associated with the JEOD DynBody.
-JEODPhysicalInterfaceSimObject active_physical_interface( active_vehicle.dyn_body, 99 );
+JEODPhysicalInterfaceSimObject active_physical_interface( true,
+                                                          "active_physical_interface",
+                                                          "Lander.docking_port",
+                                                          active_vehicle.dyn_body,
+                                                          99 );
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject passive_physical_entity( passive_vehicle.dyn_body, P_HLA_INIT );
+JEODPhysicalEntiySimObject passive_physical_entity( true,
+                                                    "passive_physical_entity",
+                                                    "Station",
+                                                    passive_vehicle.dyn_body,
+                                                    P_HLA_INIT );
 
 // Instantiate the SpaceFOM PhysicalInterface object associated with the JEOD DynBody.
-JEODPhysicalInterfaceSimObject passive_physical_interface( passive_vehicle.dyn_body, 99 );
+JEODPhysicalInterfaceSimObject passive_physical_interface( true,
+                                                           "passive_physical_interface",
+                                                           "Station.docking_port",
+                                                           passive_vehicle.dyn_body, 99 );
 
 // Setup the integration loop.
 IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, active_vehicle, passive_vehicle, dynamics;

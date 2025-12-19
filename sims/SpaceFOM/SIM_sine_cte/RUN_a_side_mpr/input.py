@@ -15,17 +15,19 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
 ##############################################################################
+import socket
+import subprocess
 import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 # Load the sine specific Sine object.
-from Modified_data.sine.SineObject import *
+from TrickHLA_data.sine.SineObject import *
 
 
 def print_usage_message():
@@ -180,6 +182,7 @@ trick.sim_control_panel_set_enabled( True )
 # simControlPanel.set_host( "localhost" )
 # trick.add_external_application( simControlPanel )
 
+
 #---------------------------------------------
 # Set up data to record.
 #---------------------------------------------
@@ -199,6 +202,8 @@ federate = SpaceFOMFederateConfig(
    thla_federation_name = federation_name,
    thla_federate_name   = federate_name,
    thla_enabled         = True )
+
+federate.fix_var_server_source_address()
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -255,11 +260,9 @@ THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
 # go to run message to have a valid pending CTE start time.
 federate.set_time_padding( 1.0 )
 
-# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
-federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_100_NANOSECONDS )
-
-# Scale the Trick Time Tic value based on the HLA base time units.
-federate.scale_trick_tics_to_base_time_units()
+# Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
+# and scale the Trick time tics value.
+federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )

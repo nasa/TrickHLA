@@ -44,13 +44,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_L_R_TREE_NODE_BASE_HH
 #define SPACEFOM_L_R_TREE_NODE_BASE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
-#include <string>
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
 
 namespace SpaceFOM
 {
@@ -71,7 +66,7 @@ class LRTreeNodeBase
    friend class LRTreeBase;
 
   public:
-   char           *name;   ///< @trick_units{--} Node name.
+   std::string     name;   ///< @trick_units{--} Node name.
    LRTreeNodeBase *parent; ///< @trick_units{--} Pointer to parent node.
 
   public:
@@ -82,8 +77,8 @@ class LRTreeNodeBase
    /*! @brief Initialization constructor.
     *  @param node_name The name of the node to be constructed.
     *  @param node_parent The parent node in the tree for the constructed node. */
-   LRTreeNodeBase( char const     *node_name,
-                   LRTreeNodeBase *node_parent );
+   LRTreeNodeBase( std::string const &node_name,
+                   LRTreeNodeBase    *node_parent );
 
    /*! @brief Destructor. */
    virtual ~LRTreeNodeBase();
@@ -97,7 +92,11 @@ class LRTreeNodeBase
 
    /*! @brief Set the name of the node.
     *  @param node_name Name of the node. */
-   virtual void set_name( char const *node_name );
+   virtual void set_name( std::string const &node_name )
+   {
+      this->name = node_name;
+      return;
+   }
 
    /*! @brief Check to see if this is a root node for the tree.
     *  @return True if this is the root node, false otherwise. */

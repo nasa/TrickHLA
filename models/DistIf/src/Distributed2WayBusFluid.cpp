@@ -25,10 +25,13 @@ NASA, Johnson Space Center\n
 
 */
 
+#include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <string>
 
-#include "../include/Distributed2WayBusFluid.hh"
+#include "DistIf/include/Distributed2WayBusBase.hh"
+#include "DistIf/include/Distributed2WayBusFluid.hh"
 
 using namespace DistIf;
 

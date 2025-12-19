@@ -81,12 +81,28 @@ def main():
 
    # Add all the top level source code directories to format.
    trickhla_src_paths = []
+   # Files and one-level of sub-directories under include.
    trickhla_src_paths.append( os.path.join( trickhla_home, 'include' ) )
+   
+   # Sub-directories under include/TrickHLA (i.e. include/TrickHLA/encoding, include/TrickHLA/time).
+   trickhla_src_paths.append( os.path.join( trickhla_home, 'include/TrickHLA' ) )
+   
+   # Files and one-level of sub-directories under source.
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source' ) )
+   
+   # Sub-directories under source/TrickHLA (i.e. source/TrickHLA/encoding, source/TrickHLA/time).
+   trickhla_src_paths.append( os.path.join( trickhla_home, 'source/TrickHLA' ) )
+   
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Ball' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Ball' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/DistIf' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/DistIf' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/encoding' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/encoding' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/EntityDynamics' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/EntityDynamics' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/FixedRecord' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/FixedRecord' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/FrameDynamics' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/FrameDynamics' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/SAIntegrator' ) ):
@@ -95,18 +111,6 @@ def main():
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/simconfig' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/sine' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/sine' ) )
-   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Battery' ) ):
-      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Battery' ) )
-   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Control' ) ):
-      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Control' ) )
-   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Electrical' ) ):
-      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Electrical' ) )
-   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Guidance' ) ):
-      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Guidance' ) )
-   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Motor' ) ):
-      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Motor' ) )
-   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Vehicle' ) ):
-      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Vehicle' ) )
 
    # Find the CLANG format command.
    clang_format_cmd = find_clang_format( args.llvm_bin, args.verbose )

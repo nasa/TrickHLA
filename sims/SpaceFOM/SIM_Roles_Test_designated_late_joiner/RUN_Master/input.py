@@ -15,14 +15,16 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
 ##############################################################################
+import socket
+import subprocess
 import sys
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
@@ -189,6 +191,8 @@ federate = SpaceFOMFederateConfig(
    thla_federate_name   = federate_name,
    thla_enabled         = True )
 
+federate.fix_var_server_source_address()
+
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
 # to configure the ExCO. This is only needed for input file configuration.
@@ -226,11 +230,9 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 # Compute TT for 04 Jan 2019 12:00 PM. = 18487.75(days) + 37.0(s) + 32.184(s)
 federate.set_scenario_timeline_epoch( float( ( 18487.75 * 24.0 * 60.0 * 60.0 ) + 37.0 + 32.184 ) )
 
-# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
-federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
-
-# Scale the Trick Time Tic value based on the HLA base time units.
-federate.scale_trick_tics_to_base_time_units()
+# Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
+# and scale the Trick time tics value.
+federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
@@ -243,6 +245,12 @@ federate.set_least_common_time_step( 0.250 )
 # for the Least Common Time Step (LCTS) value set in the ExCO by the
 # Master federate. (LCTS >= RT) && (LCTS % RT = 0)
 trick.exec_set_software_frame( 0.250 )
+trick.exec_set_freeze_frame( 0.250 )
+
+# NOTE: Need more than enough time padding for the MTR message
+# to propagate to all federates in time for the coordinated CTE
+# go to run message to have a valid pending CTE start time.
+federate.set_time_padding( 1.0 )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
@@ -254,7 +262,7 @@ federate.set_time_constrained( True )
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
-THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::TimeOfDayCTETimeline' )
 
 #---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.

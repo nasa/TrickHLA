@@ -27,22 +27,25 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/ReflectedAttributesQueue.hh"
-#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/StandardsSupport.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/Typedefs.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -101,14 +104,13 @@ void ReflectedAttributesQueue::pop()
    attribute_map_queue.pop();
 }
 
-AttributeHandleValueMap const &ReflectedAttributesQueue::front()
+AttributeHandleValueMap &ReflectedAttributesQueue::front()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &queue_mutex );
 
-   AttributeHandleValueMap const &theAttributes = attribute_map_queue.front();
-   return theAttributes;
+   return attribute_map_queue.front();
 }
 
 void ReflectedAttributesQueue::clear()

@@ -34,14 +34,14 @@
 ##include "SpaceFOM/DynamicalEntityOwnershipHandler.hh"
 ##include "SpaceFOM/PhysicalEntityData.hh"
 
-// Include TrickHLA Packing object base simulation definition module.
-#include "THLAPackingBase.sm"
+// Include TrickHLA Object base simulation definition module.
+#include "THLAObjectBase.sm"
 
 //==========================================================================
 // SIM_OBJECT: SpaceFOMDynamicalEntitySimObject - A SpaceFOM DynamicalEntity
 // instance simulation object definition.
 //==========================================================================
-class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
+class SpaceFOMDynamicalEntitySimObject : public TrickHLAObjectBaseSimObject {
 
   private:
    // DynamicalEntity data.
@@ -65,10 +65,13 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
    SpaceFOM::DynamicalEntityDeleted deleted_callback;
 
    // SimObject constructor.
-   SpaceFOMDynamicalEntitySimObject( PhysicalEntityData  & pe,
+   SpaceFOMDynamicalEntitySimObject( bool                  create_object,
+                                     std::string const   & sim_obj_name,
+                                     std::string const   & obj_fed_name,
+                                     PhysicalEntityData  & pe,
                                      DynamicalEntityData & de,
                                      unsigned short        _INIT = P_HLA_INIT  )
-      : TrickHLAPackingBaseSimObject( _INIT ),
+      : TrickHLAObjectBaseSimObject( create_object, sim_obj_name, "entity_packing", obj_fed_name, _INIT ),
         pe_data(pe),
         de_data(de),
         entity_packing( pe, de ),
@@ -81,6 +84,59 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
+      
+      //
+      // Default data jobs.
+      //
+      // See TrickHLAObjectBaseSimObject:
+      // The base class default_config function will run the local function.
+
+      //
+      // Initialization jobs.
+      //
+      // See TrickHLAObjectBaseSimObject:
+      // The base class configure function will run the local function.
+      // The base class intialize function will run the local function.
+      
+   }
+
+  protected:
+   virtual int default_config()
+   {
+      int value;
+
+      // Call the PhysicalEntity packing base_config function first.
+      entity_packing.base_config( create,
+                                  sim_object_name,
+                                  object_packing_name,
+                                  object_fed_name,
+                                  thla_object );
+        
+      // Now call the base class default config function.
+      value = TrickHLAObjectBaseSimObject::default_config();
+        
+      return( value );
+   }
+
+   virtual int configure()
+   {
+      int value;
+        
+      // Now call the base class default config function.
+      value = TrickHLAObjectBaseSimObject::configure();
+        
+      return( value );
+   }
+
+   virtual int initialize()
+   {
+      int value;
+        
+      // Now call the base class default config function.
+      // NOTE: This will call the packing class initialize() function.
+      value = TrickHLAObjectBaseSimObject::initialize();
+        
+      return( value );
    }
 
   private:

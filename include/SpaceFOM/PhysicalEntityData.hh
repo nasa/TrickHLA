@@ -32,10 +32,10 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_DATA_HH
 #define SPACEFOM_PHYSICAL_ENTITY_DATA_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
@@ -46,10 +46,10 @@ class PhysicalEntityData
 {
 
   public:
-   char *name;         ///< @trick_units{--} Name of the physical entity.
-   char *type;         ///< @trick_units{--} String use to define entity type.
-   char *status;       ///< @trick_units{--} String use to define entity status.
-   char *parent_frame; ///< @trick_units{--} Parent frame for state representation.
+   std::string name;         ///< @trick_units{--} Name of the physical entity.
+   std::string type;         ///< @trick_units{--} String use to define entity type.
+   std::string status;       ///< @trick_units{--} String use to define entity status.
+   std::string parent_frame; ///< @trick_units{--} Parent frame for state representation.
 
    SpaceTimeCoordinateData state; ///< @trick_units{--} Space time coordinate state.
 
@@ -82,20 +82,36 @@ class PhysicalEntityData
    // Access functions.
    /*! @brief Set the name of the PhysicalEntityData instance.
     *  @param new_name Name of the PhysicalEntityData instance. */
-   virtual void set_name( char const *new_name );
+   virtual void set_name( std::string const &new_name )
+   {
+      name = new_name;
+      return;
+   }
 
    /*! @brief Set the type string of the PhysicalEntityData.
     *  @param new_type Type string associated with the PhysicalEntityData. */
-   virtual void set_type( char const *new_type );
+   virtual void set_type( std::string const &new_type )
+   {
+      type = new_type;
+      return;
+   }
 
    /*! @brief Set the status string of the PhysicalEntityData.
     *  @param new_status Status string associated with the PhysicalEntityData. */
-   virtual void set_status( char const *new_status );
+   virtual void set_status( std::string const &new_status )
+   {
+      status = new_status;
+      return;
+   }
 
    /*! @brief Set the name of the parent reference frame for the PhysicalEntityData.
     *  @param new_frame The name of the parent reference frame associated
     *  with the PhysicalEntityData. */
-   virtual void set_parent_frame( char const *new_frame );
+   virtual void set_parent_frame( std::string const &new_frame )
+   {
+      parent_frame = new_frame;
+      return;
+   }
 
    /*! @brief Print out the data values.
     *  @param stream Output stream. */

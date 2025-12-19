@@ -34,8 +34,7 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_INTERFACE_OWNERSHIP_HANDLER_HH
 #define SPACEFOM_PHYSICAL_INTERFACE_OWNERSHIP_HANDLER_HH
 
-// TrickHLA include files.
-#include "TrickHLA/Object.hh"
+// TrickHLA includes.
 #include "TrickHLA/OwnershipHandler.hh"
 
 namespace SpaceFOM

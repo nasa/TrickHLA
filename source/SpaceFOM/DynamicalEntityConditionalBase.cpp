@@ -29,21 +29,17 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <iostream>
-#include <string>
+// System includes.
+#include <cstddef>
 
-// Trick include files.
-#include "trick/exec_proto.h"
-
-// TrickHLA include files.
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Conditional.hh"
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 
-// Model include files.
+// SpaceFOM includes.
+#include "SpaceFOM/DynamicalEntityBase.hh"
 #include "SpaceFOM/DynamicalEntityConditionalBase.hh"
+#include "SpaceFOM/PhysicalEntityConditionalBase.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -80,6 +76,9 @@ DynamicalEntityConditionalBase::~DynamicalEntityConditionalBase()
  */
 void DynamicalEntityConditionalBase::initialize()
 {
+   // Call base class.
+   SpaceFOM::PhysicalEntityConditionalBase::initialize();
+
    // Return to calling routine.
    return;
 }

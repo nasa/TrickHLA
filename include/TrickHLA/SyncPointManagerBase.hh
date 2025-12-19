@@ -36,28 +36,34 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SYNC_POINT_MANAGER_BASE_HH
 
 // System includes.
-#include <map>
 #include <string>
-#include <vector>
 
-// Trick include files.
-
-// TrickHLA include files.
+// trickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPointList.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/Enums.h"
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 #define SYNC_POINT_LIST_TMM_ARRAY 1
 
@@ -123,6 +129,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    bool const contains_sync_point_list_name( std::string const &list_name );
 
+   bool const is_sync_point_list_empty( std::string const &list_name );
+
    bool const is_sync_point_registered( std::wstring const &label );
 
    bool const mark_sync_point_registered( std::wstring const &label );
@@ -137,7 +145,7 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    bool const is_sync_point_announced( std::wstring const &label );
 
-   bool const mark_sync_point_announced( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
+   bool const mark_sync_point_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    bool const wait_for_sync_point_announced( std::wstring const &label );
 
@@ -147,11 +155,13 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    bool const achieve_sync_point( std::wstring const &label );
 
-   bool const achieve_sync_point( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
+   bool const achieve_sync_point( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    bool const achieve_all_sync_points( std::string const &list_name );
 
    bool const is_sync_point_synchronized( std::wstring const &label );
+
+   bool const is_all_sync_points_synchronized( std::string const &list_name );
 
    bool const mark_sync_point_synchronized( std::wstring const &label );
 
@@ -165,6 +175,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    std::string to_string( std::wstring const &label );
 
+   std::string to_string( std::string const &list_name );
+
    void print_sync_points();
 
    // Callbacks from FedAmb.
@@ -173,8 +185,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
    virtual void sync_point_registration_failed( std::wstring const                                  &label,
                                                 RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
-   virtual void sync_point_announced( std::wstring const     &label,
-                                      RTI1516_USERDATA const &user_supplied_tag );
+   virtual void sync_point_announced( std::wstring const                          &label,
+                                      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 

@@ -29,26 +29,28 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <float.h>
-#include <iostream>
+// System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
+// Trick inlcudes.
 #include "trick/Integrator.hh"
 #include "trick/MemoryManager.hh"
+#include "trick/matrix_macros.h"
 #include "trick/message_proto.h"
-#include "trick/trick_math.h"
+#include "trick/message_type.h"
+#include "trick/vector_macros.h"
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
+#include "SpaceFOM/DynamicalEntityBase.hh"
 #include "SpaceFOM/DynamicalEntityLagComp.hh"
+#include "SpaceFOM/DynamicalEntityLagCompInteg.hh"
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -58,7 +60,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 DynamicalEntityLagComp::DynamicalEntityLagComp( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
-   : DynamicalEntityLagCompInteg( entity_ref )
+   : SpaceFOM::DynamicalEntityLagCompInteg( entity_ref )
 {
    // Assign the integrator state references.
    // Translational position
@@ -107,12 +109,12 @@ void DynamicalEntityLagComp::initialize()
       ostringstream errmsg;
 
       errmsg << "SpaceFOM::DynamicalEntityLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!\n";
+             << " ERROR: Unexpected NULL Trick integrator!" << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Call the base class initialize function.l
+   // Call the base class initialize function.
    DynamicalEntityLagCompInteg::initialize();
 
    // Return to calling routine.

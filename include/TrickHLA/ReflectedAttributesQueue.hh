@@ -34,19 +34,26 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH
 #define TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH
 
-// TrickHLA include files
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
@@ -97,7 +104,7 @@ class ReflectedAttributesQueue
 
    /*! @brief Get the first/oldest item in the queue.
     *  @return The first/oldest item in the queue. */
-   RTI1516_NAMESPACE::AttributeHandleValueMap const &front();
+   RTI1516_NAMESPACE::AttributeHandleValueMap &front();
 
    /*! @brief Clear the queue of all values. */
    void clear();

@@ -22,14 +22,15 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
-@trick_link_dependency{../../source/TrickHLA/TrickThreadCoordinator.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/TimeManagement.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
 
 @revs_title
 @revs_begin
@@ -45,30 +46,49 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_FEDERATE_HH
 
 // System includes.
-#include <cstdint>
+#include <map>
+#include <memory>
 #include <string>
 
-// Trick include files.
+// Trick includes.
 #include "trick/Flag.h"
 
-// TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64Time.hh"
+// TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/TrickThreadCoordinator.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/TimeManagement.hh"
+#include "TrickHLA/time/TrickThreadCoordinator.hh"
+
+#if defined( IEEE_1516_2025 )
+#   include "TrickHLA/FedAmbHLA4.hh"
+#else
+#   include "TrickHLA/FedAmbHLA3.hh"
+#endif // IEEE_1516_2025
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/Enums.h"
+#include "RTI/Handle.h"
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
@@ -77,7 +97,6 @@ namespace TrickHLA
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Manager;
-class FedAmb;
 class ExecutionControlBase;
 
 /*
@@ -93,7 +112,7 @@ typedef enum {
    Restore_Failed            = 6
 } THLASaveRestoreProcEnum;
 
-class Federate
+class Federate : public TimeManagement
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -109,28 +128,24 @@ class Federate
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   char *name;            ///< @trick_units{--} The federate name.
-   char *type;            ///< @trick_units{--} The federate type.
-   char *federation_name; ///< @trick_units{--} Federation execution name.
+   std::string name;            ///< @trick_units{--} The federate name.
+   std::string type;            ///< @trick_units{--} The federate type.
+   std::string federation_name; ///< @trick_units{--} Federation execution name.
 
-   char *local_settings; /**< @trick_units{--}
+   std::string rti_address; ///< @trick_units{--} RTI address of the form host:port.
+
+   std::string local_settings; /**< @trick_units{--}
       Vendor specific HLA-Evolved local settings for the connect API.
       Pitch RTI: "crcHost = 192.168.1.1\ncrcPort = 8989" \n
       MAK RTI: "(setqb RTI_tcpForwarderAddr \"192.168.1.1\") (setqb RTI_distributedForwarderPort 5000)" */
 
-   char *FOM_modules; /**< @trick_units{--}
+   std::string FOM_modules; /**< @trick_units{--}
       FOM filename for the IEEE 1516-2000 and SISO-STD-004.1-2004 standards,
       or a comma separated list of FOM-module filenames for IEEE 1516-2010. */
-   char *MIM_module;  /**< @trick_units{--}
+   std::string MIM_module;  /**< @trick_units{--}
       Filename for the MOM and Initialization Module (MIM) for HLA IEEE 1516-2010. */
 
-   // FIXME: Is this really needed?
-   // This is only used for checkpointing and restart.
-   double lookahead_time; ///< @trick_units{s} The HLA lookahead time in seconds.
-
-   bool time_regulating;  ///< @trick_units{--} HLA Time Regulation flag (default: true).
-   bool time_constrained; ///< @trick_units{--} HLA Time Constrained flag (default: true).
-   bool time_management;  ///< @trick_units{--} Enable HLA Time Management flag (default: true).
+   FederateJoinConstraintsEnum join_constraint; ///< @trick_units{--} The Join constraints for this federate.
 
    // The Federates known to be in the Federation, and specified in the input files.
    // TODO: change this to be an STL Array.
@@ -189,18 +204,19 @@ class Federate
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
    void initialize();
 
-   /*! @brief Get the HLA time advance cycle time.
-    *  @return HLA cycle time in seconds. */
-   double const get_HLA_cycle_time()
+   FederateJoinConstraintsEnum const get_join_constraint()
    {
-      return this->HLA_cycle_time;
+      return this->join_constraint;
    }
 
-   /*! @brief Get the HLA time advance cycle time.
-    *  @return HLA cycle time in base time units. */
-   int64_t const get_HLA_cycle_time_in_base_time()
+   void set_join_constraint( FederateJoinConstraintsEnum const fed_join_constraint )
    {
-      return this->HLA_cycle_time_in_base_time;
+      this->join_constraint = fed_join_constraint;
+   }
+
+   double get_wait_status_time()
+   {
+      return this->wait_status_time;
    }
 
    /*! @brief Begin the pre-multiphase initialization process of standing up
@@ -226,8 +242,8 @@ class Federate
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
-   void announce_sync_point( std::wstring const     &label,
-                             RTI1516_USERDATA const &user_supplied_tag );
+   void announce_sync_point( std::wstring const                          &label,
+                             RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    /*! @brief Marks a synchronization point as registered in the federation.
     *  @param label Sync-point label. */
@@ -301,6 +317,10 @@ class Federate
    //
    /*! @brief Load the running federate names from the RTI. */
    void load_and_print_running_federate_names();
+
+   /*! @brief Deallocate running federates based on current known information
+    * in preparation for re-size. */
+   void clear_known_feds();
 
    /*! @brief Deallocate running federates based on current known information
     * in preparation for re-size. */
@@ -652,88 +672,6 @@ class Federate
                                   RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
    // END: checkpoint / restore code
 
-   //
-   // Time management initialization functions.
-   //
-   /*! @brief Enable time constrained.
-    *  @param time the granted HLA Logical time */
-   void set_time_constrained_enabled( RTI1516_NAMESPACE::LogicalTime const &time );
-
-   /*! @brief Setup this federate's constrained time management. */
-   void setup_time_constrained();
-
-   /*! @brief Enable time regulating.
-    *  @param time the granted HLA Logical time */
-   void set_time_regulation_enabled( RTI1516_NAMESPACE::LogicalTime const &time );
-
-   /*! @brief Setup this federate's regulate time management. */
-   void setup_time_regulation();
-
-   /*! @brief Setup this federate's time management. */
-   void setup_time_management();
-
-   //
-   // Executive execution loop time functions.
-   //
-   /*! @brief Increment the requested time by the lookahead time and make a
-    *  HLA time advance request. */
-   void time_advance_request();
-
-   /*! @brief Moves the federates time to the Greatest Available Logical Time
-    * (GALT) that is an integer multiple of the Least-Common-Time-Step (LCTS)
-    * time if we are time constrained and Not time regulating. */
-   void time_advance_request_to_GALT();
-
-   /*! @brief Move the requested time to an integer multiple of the Greatest
-    *  Available Logical Time (GALT) and Least Common Time Step (LCTS). */
-   void time_advance_request_to_GALT_LCTS_multiple();
-
-   /*! @brief Wait for a HLA time-advance grant. */
-   void wait_for_time_advance_grant();
-
-   /*! @brief Initialize the thread memory associated with the Trick child threads. */
-   void initialize_thread_state( double const main_thread_data_cycle_time );
-
-   /*! @brief Associate a Trick child thread with TrickHLA. */
-   void associate_to_trick_child_thread( unsigned int const thread_id,
-                                         double const       data_cycle );
-
-   /*! @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA. */
-   void disable_trick_child_thread_associations( char const *thread_ids );
-
-   /*! @brief Verify the thread IDs associated to the objects. */
-   void verify_trick_child_thread_associations();
-
-   /*! @brief Get the main thread data cycle in the base time */
-   virtual int64_t const get_main_thread_data_cycle_base_time() const
-   {
-      return thread_coordinator.get_main_thread_data_cycle_base_time();
-   }
-
-   /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
-   virtual bool const verify_time_constraints();
-
-   /*! @brief Announce to all the child threads the main thread has data available. */
-   void announce_data_available();
-
-   /*! @brief Announce to all the child threads the main thread sent the data. */
-   void announce_data_sent();
-
-   /*! @brief Wait to send data until all Trick child threads are ready. */
-   void wait_to_send_data();
-
-   /*! @brief Wait to receive data when the Trick main thread is ready. */
-   void wait_to_receive_data();
-
-   /*! @brief Get the data cycle time in the base HLA Logical Time representation for the configured object
-    * index or return the default data cycle time in base time otherwise. */
-   int64_t const get_data_cycle_base_time_for_obj( unsigned int const obj_index,
-                                                   int64_t const      default_data_cycle_base_time ) const;
-
-   /*! @brief Is the object for the given index on a data cycle boundary. */
-   bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
-                                              int64_t const      sim_time_in_base_time ) const;
-
    /*! @brief Send zero lookahead or requested data for the specified object instance.
     *  @param obj_instance_name Object instance name to send data for. */
    void send_zero_lookahead_and_requested_data( std::string const &obj_instance_name );
@@ -766,16 +704,6 @@ class Federate
    //
    /*! @brief Shutdown the federate. */
    void shutdown();
-
-   /*! @brief Shutdown this federate's time management. */
-   void shutdown_time_management();
-
-   // TODO: Consider renaming these "shutdown" routines to disable.
-   /*! @brief Shutdown this federate's time constrained time management. */
-   void shutdown_time_constrained();
-
-   /*! @brief Shutdown this federate's time regulating time management. */
-   void shutdown_time_regulating();
 
    /*! @brief Resign from the federation. */
    void resign();
@@ -863,13 +791,6 @@ class Federate
    //
    // Routines to return federation state values.
    //
-   /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
-    *  @return Pointer to associated RTI Ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador()
-   {
-      return RTI_ambassador.get();
-   }
-
    /*! @brief Get the pointer to the associated TrickHLA Federate Ambassador instance.
     *  @return Pointer to associated TrickHLA::FedAmb. */
    FedAmb *get_fed_ambassador()
@@ -893,65 +814,23 @@ class Federate
 
    /*! @brief Get the pointer to the associated federate name.
     *  @return Pointer to associated federate name. */
-   char const *get_federate_name() const
+   std::string const &get_federate_name() const
    {
       return this->name;
    }
 
    /*! @brief Get the pointer to the associated federate type.
     *  @return Pointer to associated federate type. */
-   char const *get_federate_type() const
+   std::string const &get_federate_type() const
    {
       return this->type;
    }
 
    /*! @brief Get the pointer to the associated federation execution name.
     *  @return Pointer to associated federation execution name. */
-   char const *get_federation_name() const
+   std::string const &get_federation_name() const
    {
       return this->federation_name;
-   }
-
-   /*! @brief Get the current granted HLA federation execution time.
-    *  @return Reference to current granted HLA federation execution time. */
-   Int64Time const &get_granted_time() const
-   {
-      return this->granted_time;
-   }
-
-   /*! @brief Get the current granted HLA federation execution time in the base HLA Logical Time representation.
-    *  @return Reference to current granted HLA federation execution time. */
-   double const get_granted_base_time() const
-   {
-      return granted_time.get_base_time();
-   }
-
-   /*! @brief Get the requested HLA federation execution time.
-    *  @return Reference to requested HLA federation execution time. */
-   Int64Time const &get_requested_time() const
-   {
-      return this->requested_time;
-   }
-
-   /*! @brief Get the current federate lookahead time.
-    *  @return Reference to current federate lookahead time. */
-   Int64Interval const &get_lookahead() const
-   {
-      return this->lookahead;
-   }
-
-   /*! @brief Get the current federate lookahead time in seconds.
-    *  @return Current federate lookahead time in the base time. */
-   int64_t const get_lookahead_in_base_time() const
-   {
-      return lookahead.get_base_time();
-   }
-
-   /*! @brief Query of federate has a zero lookahead time.
-    *  @return True if lookahead time is zero; False otherwise. */
-   bool const is_zero_lookahead_time() const
-   {
-      return ( lookahead.get_base_time() <= 0LL );
    }
 
    /*! @brief Set the name of the save.
@@ -994,77 +873,6 @@ class Federate
     *  @param exec_name Federation execution name. */
    void set_federation_name( std::string const &exec_name );
 
-   /*! @brief Query if time advance has been granted.
-    *  @return True if time advance has been granted; False otherwise. */
-   bool is_time_advance_granted()
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-      return ( this->time_adv_state == TIME_ADVANCE_GRANTED );
-   }
-
-   /*! @brief Sets the granted time from the specified double.
-    *  @param time Granted time in seconds. */
-   void set_granted_time( double const time );
-
-   /*! @brief Sets the granted time from the specified LogicalTime.
-    *  @param time Granted time in HLA logical time. */
-   void set_granted_time( RTI1516_NAMESPACE::LogicalTime const &time );
-
-   /*! @brief Set the time advance as granted. */
-   void set_time_advance_granted( RTI1516_NAMESPACE::LogicalTime const &time );
-
-   /*! @brief Query if the federate is in a time regulating state.
-    *  @return True if time regulating; False otherwise. */
-   bool in_time_regulating_state() const
-   {
-      return this->time_regulating_state;
-   }
-
-   /*! @brief Set the state of time regulation.
-    *  @param regulation_state Desired state of time regulation for this federate. */
-   void set_time_regulation_state( bool const regulation_state )
-   {
-      this->time_regulating_state = regulation_state;
-   }
-
-   /*! @brief Set the state of time constraint.
-    *  @param constrained_state Desired state of time constraint for this federate. */
-   void set_time_constrained_state( bool const constrained_state )
-   {
-      this->time_constrained_state = constrained_state;
-   }
-
-   /*! @brief Sets the requested time from the specified double.
-    *  @param time Requested time in seconds. */
-   void set_requested_time( double const time );
-
-   /*! @brief Sets the requested time from the specified LogicalTime.
-    *  @param time Requested time in HLA logical time. */
-   void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
-
-   /*! @brief Sets the HLA base time units. */
-   HLABaseTimeEnum get_HLA_base_time_units() const;
-
-   /*! @brief Sets the HLA base time units.
-    *  @param base_time_units HLA base time units. */
-   void set_HLA_base_time_units( HLABaseTimeEnum const base_time_units );
-
-   /*! @brief Refresh the HLA time constants for the current base time units. */
-   void refresh_HLA_time_constants();
-
-   /*! @brief Scale the Trick Time Tic value given the HLA base time units. */
-   void scale_trick_tics_to_base_time_units();
-
-   /*! @brief Sets the HLA lookahead time.
-    *  @param value HLA lookahead time in seconds. */
-   void set_lookahead( double const value );
-
-   /*! @brief Refresh the HLA lookahead base time, which needs to be done if the HLA base time units change. */
-   void refresh_lookahead();
-
    /*! @brief Set start to save flag.
     *  @param save_flag True if save started; False otherwise. */
    void set_start_to_save( bool const save_flag )
@@ -1101,17 +909,9 @@ class Federate
       this->restart_cfg_flag = restart_cfg_now;
    }
 
-   /*! @brief Query if time management is enabled.
-    *  @return True if time management is enabled; False otherwise. */
-   bool is_time_management_enabled() const
-   {
-      // Time management is enabled if the local time-management flag is set.
-      return this->time_management;
-   }
-
    // Checkpoint restart initialization.
    /*! @brief Perform initialization after a restart. */
-   void restart_initialization();
+   virtual void restart_initialization();
 
    /*! @brief Query if federate can rejoin federation.
     *  @return True if federate can rejoin; False otherwise. */
@@ -1167,11 +967,6 @@ class Federate
    bool                              federation_joined;              ///< @trick_io{**} Federate joined federation flag.
    bool                              all_federates_joined;           ///< @trick_units{--} Master check for all federates joined.
 
-   Int64Interval lookahead; ///< @trick_units{--} Lookahead time for data.
-
-   double  HLA_cycle_time;              ///< @trick_units{--} HLA cycle time in seconds.
-   int64_t HLA_cycle_time_in_base_time; ///< @trick_io{**} HLA time advance cycle delta time step in base time units.
-
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
@@ -1221,20 +1016,10 @@ class Federate
    bool execution_has_begun; ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
    //-- END: checkpoint / restore data --
 
-   // Federation time management data.
-   //
-   unsigned int time_adv_state;       ///< @trick_units{--} HLA Time advance state.
-   MutexLock    time_adv_state_mutex; ///< @trick_units{--} HLA Time advance state mutex lock.
-   Int64Time    granted_time;         ///< @trick_units{--} HLA time given by RTI
-   Int64Time    requested_time;       ///< @trick_units{--} requested/desired HLA time
-   double       HLA_time;             ///< @trick_io{*io} @trick_units{s}  Current HLA time to allow for plotting.
-   bool         start_to_save;        ///< @trick_io{**} Save flag
-   bool         start_to_restore;     ///< @trick_io{**} Restore flag
-   bool         restart_flag;         ///< @trick_io{**} Restart flag
-   bool         restart_cfg_flag;     ///< @trick_io{**} Restart flag with new configuration
-
-   bool time_regulating_state;  ///< @trick_units{--} Internal flag, federates HLA Time Regulation state (default: false).
-   bool time_constrained_state; ///< @trick_units{--} Internal flag, federates HLA Time Constrained state (default: false).
+   bool start_to_save;    ///< @trick_io{**} Save flag
+   bool start_to_restore; ///< @trick_io{**} Restore flag
+   bool restart_flag;     ///< @trick_io{**} Restart flag
+   bool restart_cfg_flag; ///< @trick_io{**} Restart flag with new configuration
 
    bool got_startup_sync_point;     ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
    bool make_copy_of_run_directory; ///< @trick_units{--} Make a backup of RUN directory before restarting the federation via federation manager (default: false).
@@ -1261,14 +1046,8 @@ class Federate
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
 
-   TrickThreadCoordinator thread_coordinator; ///< @trick_units{--} Trick child thread coordinator with HLA.
-
    // Federation required associations.
    //
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
-   TrickRTIAmbPtr RTI_ambassador; ///< @trick_io{**} RTI ambassador
-#pragma GCC diagnostic pop
    FedAmb               *federate_ambassador; ///< @trick_units{--} Federate ambassador.
    Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
    ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */
@@ -1323,7 +1102,8 @@ class Federate
    /*! @brief Join a federation.
     *  @param federate_name Name of this federate.
     *  @param federate_type Type for this federate. */
-   void join_federation( char const *const federate_name, char const *const federate_type );
+   void join_federation( std::string const &federate_name,
+                         std::string const &federate_type );
 
    /*! @brief Determine if the specified federate name is a required federate.
     *  @return True if a name of required federate, otherwise false.
@@ -1333,18 +1113,12 @@ class Federate
    /*! @brief Determine if the specified federate name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.
     *  @param federate_name Federate name to test. */
-   bool is_joined_federate( char const *federate_name );
+   bool is_joined_federate( std::string const &federate_name );
 
    /*! @brief Determine if the specified federate name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.
     *  @param federate_name Federate name to test. */
    bool is_joined_federate( std::wstring const &federate_name );
-
-   /*! @brief Make the HLA time-advance request using the current requested_time value. */
-   void perform_time_advance_request();
-
-   /*! @brief Make time-advance request available and wait for time advance grant with zero lookahead. */
-   void wait_for_zero_lookahead_TARA_TAG();
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -212,7 +212,8 @@ Federation_name = "FLUID_DIST_IF_DEMO"
 Federate_name = "FED_1"
 
 # THLA configuration
-from Modified_data.TrickHLA.TrickHLAFederateConfig import *
+sys.path.append( '../../../' )
+from TrickHLA_data.TrickHLA.TrickHLAFederateConfig import *
 federate = TrickHLAFederateConfig(
    thla_federate        = THLA.federate,
    thla_manager         = THLA.manager,
@@ -222,12 +223,14 @@ federate = TrickHLAFederateConfig(
    thla_federate_name   = Federate_name,
    thla_enabled         = True )
 
+federate.fix_var_server_source_address()
+
 # Add required federates.
 federate.add_known_federate( True, "FED_1" )
 federate.add_known_federate( True, "FED_2" )
 
 # Set time management parameters
-federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_10_NANOSECONDS )
+federate.set_HLA_base_time_unit( trick.HLA_BASE_TIME_10_NANOSECONDS )
 federate.set_lookahead_time( 0.1 )
 federate.set_least_common_time_step( 0.1 )
 federate.set_time_regulating( True )

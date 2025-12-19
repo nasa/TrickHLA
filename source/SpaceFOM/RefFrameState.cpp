@@ -32,31 +32,22 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
+// System includes.
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
-#include <limits>
-#include <math.h>
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
-#include "trick/message_proto.h"
+// SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
+#include "SpaceFOM/RefFrameState.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
-// TrickHLA model include files.
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/Packing.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
-#include "SpaceFOM/ExecutionControl.hh"
-#include "SpaceFOM/RefFrameBase.hh"
-#include "SpaceFOM/RefFrameState.hh"
 
 using namespace std;
 using namespace SpaceFOM;
@@ -96,19 +87,18 @@ RefFrameState::~RefFrameState()
 /*!
  * @job_class{initialization}
  */
-void RefFrameState::configure(
+void RefFrameState::set_data(
    RefFrameData *ref_frame_data_ptr )
 {
-   // First call the base class pre_initialize function.
-   RefFrameBase::configure();
 
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    this->ref_frame_data = ref_frame_data_ptr;
 
@@ -125,9 +115,10 @@ void RefFrameState::initialize()
    if ( ref_frame_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Mark this as initialized.
@@ -144,31 +135,11 @@ void RefFrameState::pack_from_working_data()
 {
    int iinc;
 
-   // Check for parent frame change.
-   if ( ref_frame_data->parent_name != NULL ) {
-      if ( packing_data.parent_name != NULL ) {
-         // We have a parent frame; so, check to see if frame names are different.
-         if ( strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
-            // Frames are different, so reassign the new frame string.
-            if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
-               message_publish( MSG_WARNING, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
-                                __LINE__ );
-            }
-            packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
-         }
-      } else {
-         packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
-      }
-   } else {
-      if ( packing_data.parent_name != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
-            message_publish( MSG_WARNING, "RefFrameState::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'packing_data.parent_name'\n",
-                             __LINE__ );
-         }
-         // For a NULL parent frame, we must pack an 'empty' string.
-         packing_data.parent_name = trick_MM->mm_strdup( "" );
-      }
-   }
+   // Copy frame name.
+   packing_data.name = ref_frame_data->name;
+
+   // Copy parent frame name.
+   packing_data.parent_name = ref_frame_data->parent_name;
 
    // Pack the data.
    // Position and velocity vectors.
@@ -206,38 +177,11 @@ void RefFrameState::unpack_into_working_data()
 
    // Set the reference frame name and parent frame name.
    if ( name_attr->is_received() ) {
-      if ( ref_frame_data->name != NULL ) {
-         if ( !strcmp( ref_frame_data->name, packing_data.name ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( ref_frame_data->name ) ) ) {
-               message_publish( MSG_WARNING, "RefFrameState::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ref_frame_data->name'\n",
-                                __LINE__ );
-            }
-            ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
-         }
-      } else {
-         ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
-      }
+      ref_frame_data->name = packing_data.name;
    }
 
    if ( parent_name_attr->is_received() ) {
-      if ( ref_frame_data->parent_name != NULL ) {
-         if ( !strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
-            if ( trick_MM->delete_var( static_cast< void * >( ref_frame_data->parent_name ) ) ) {
-               message_publish( MSG_WARNING, "RefFrameState::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ref_frame_data->parent_name'\n",
-                                __LINE__ );
-            }
-
-            if ( packing_data.parent_name[0] != '\0' ) {
-               ref_frame_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
-            } else {
-               ref_frame_data->parent_name = NULL;
-            }
-         }
-      } else {
-         if ( packing_data.parent_name[0] != '\0' ) {
-            ref_frame_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
-         }
-      }
+      ref_frame_data->parent_name = packing_data.parent_name;
    }
 
    // Unpack the ReferenceFrame space-time coordinate state.

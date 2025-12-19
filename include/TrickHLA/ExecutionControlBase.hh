@@ -21,17 +21,16 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/CTETimelineBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/TrickHLA/ScenarioTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/CTETimelineBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/ScenarioTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/SimTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Timeline.cpp}
 
 @revs_title
 @revs_begin
@@ -47,22 +46,30 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <string>
 
-#include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
-#include "TrickHLA/SimTimeline.hh"
-#include "TrickHLA/StandardsSupport.hh"
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/CTETimelineBase.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/time/SimTimeline.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA Encoder helper includes.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {
@@ -102,7 +109,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
       initialization process. (default: false) */
 
    // TODO: May also want to change this into an STL Array.
-   char *multiphase_init_sync_points; /**< @trick_units{--}
+   std::string multiphase_init_sync_points; /**< @trick_units{--}
       Comma-separated list of multi-phase initialization sync-points. */
 
   public:
@@ -200,13 +207,6 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
     *  one of the predefined ExecutionControl synchronization points. */
    virtual void wait_for_all_multiphase_init_sync_points();
 
-   //*! @brief The RTI has announced the existence of a synchronization point.
-   //*  @param label             Sync-point label.
-   //*  @param user_supplied_tag Use supplied tag.*/
-   ///*  virtual void sync_point_announced(
-   //   std::wstring const     &label,
-   //   RTI1516_USERDATA const &user_supplied_tag ); */
-
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish() = 0;
    /*! Unpublish the ExecutionControl objects and interactions. */
@@ -296,7 +296,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    virtual bool receive_interaction(
       RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const                           &theUserSuppliedTag,
+      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool                                              received_as_TSO ) = 0;
    /*! @brief Send a mode transition request to the Master federate.
@@ -348,15 +348,15 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 
    /*! @brief Get the current simulation time from Simulation Timeline.
     *  @return The current simulation time in seconds. */
-   double get_sim_time();
+   double get_sim_time() const;
 
    /*! @brief Get the current Central Timing Equipment time from CTE Timeline.
     *  @return The current CTE time in seconds. */
-   double get_cte_time();
+   double get_cte_time() const;
 
    /*! @brief Get the current scenario time from Scenario Timeline.
     *  @return The current scenario time in seconds. */
-   double get_scenario_time();
+   double get_scenario_time() const;
 
    /*! @brief Convert the a given scenario time into simulation time.
     *  @return Corresponding simulation time in seconds.
@@ -572,7 +572,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name ) = 0;
+   virtual void start_federation_save_at_scenario_time( double             freeze_scenario_time,
+                                                        std::string const &file_name ) = 0;
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
    virtual void encode_checkpoint();
@@ -629,6 +630,10 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    /*! @brief Set the least common time step in seconds for the federation.
     *  @param lcts Least Common Time Step time in seconds. */
    virtual void set_least_common_time_step( double const lcts );
+
+   /*! @brief Set the least common time step in seconds for the federation.
+    *  @param lcts Least Common Time Step time in seconds. */
+   virtual void set_least_common_time_step( int64_t const lcts );
 
    /*! @brief Refresh the least common time step especially if the HLA base time units changed. */
    virtual void refresh_least_common_time_step();
@@ -748,8 +753,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    double simulation_freeze_time; ///< @trick_units{s} Trick simulation time for freeze.
    double scenario_freeze_time;   ///< @trick_units{s} Federation execution scenario time for freeze.
 
-   bool announce_freeze;       ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
-   bool freeze_the_federation; ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
+   bool announce_freeze;       ///< @trick_io{**} Flag to indicate that this federate is announcing go to freeze mode
+   bool freeze_the_federation; ///< @trick_io{**} Flag to indicate the federation is going into freeze now
 
    bool late_joiner;            ///< @trick_units{--} Flag that this federate is a late joiner.
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.

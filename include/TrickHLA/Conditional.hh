@@ -22,29 +22,33 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectCallbackBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
 @rev_entry{Tony Varesic, L3 Titan Group, IMSim, Oct 2009, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, November 2023, --, Added initialize_callback().}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, September 2025, --, Extends ObjectCallbackBase.}
 @revs_end
 */
 
 #ifndef TRICKHLA_CONDITIONAL_HH
 #define TRICKHLA_CONDITIONAL_HH
 
+// System includes.
+#include <string>
+
+// TrickHLA includes.
+#include "TrickHLA/ObjectCallbackBase.hh"
+
 namespace TrickHLA
 {
 
-// Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations. This
-// helps to limit issues with recursive includes.
-class Object;
 class Attribute;
 
-class Conditional
+class Conditional : public ObjectCallbackBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -62,34 +66,24 @@ class Conditional
    //-----------------------------------------------------------------
    /*! @brief Default constructor for the TrickHLA Conditional class. */
    Conditional();
+   /*! @brief Constructor for the TrickHLA Conditional class with a name. */
+   explicit Conditional( std::string name );
    /*! @brief Destructor for the TrickHLA Conditional class. */
    virtual ~Conditional();
-
-   /*! @brief Finish the initialization of the TrickHLA Conditional object. */
-   virtual void initialize() { initialized = true; }
-
-   /*! @brief Initialize the callback object to the supplied Object pointer.
-    *  @param obj Associated object for this class. */
-   virtual void initialize_callback( Object *obj );
 
    /*! @brief Indicate true if the attribute data should be sent, false otherwise.
     *  @return True if the attribute data should be sent, false otherwise.
     *  @param attr Pointer to TrickHLA Attribute. */
    virtual bool should_send( Attribute *attr );
 
-   /*! @brief Get the Attribute by FOM name.
-    *  @return Attribute for the given name.
-    *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( char const *attr_FOM_name );
-
-   /*! @brief This function returns the Attribute for the given attribute FOM name.
-    *  @return Attribute for the given name.
-    *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute_and_validate( char const *attr_FOM_name );
-
-  protected:
-   bool    initialized; ///< @trick_units{--} Initialization status flag.
-   Object *object;      ///< @trick_io{**} Object associated with this class.
+  private:
+   // Do not allow the copy constructor or assignment operator.
+   /*! @brief Copy constructor for Conditional class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   Conditional( Conditional const &rhs );
+   /*! @brief Assignment operator for Conditional class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
+   Conditional &operator=( Conditional const &rhs );
 };
 
 } // namespace TrickHLA

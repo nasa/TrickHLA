@@ -15,12 +15,14 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (June 2023) (--) (JEOD support and testing.)))
 ##############################################################################
+import socket
+import subprocess
 import sys
 sys.path.append( '../../../' )
 # Load the SpaceFOM specific federate configuration object.
-from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 # Load the SpaceFOM specific reference frame configuration object.
-from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
@@ -95,6 +97,30 @@ def parse_command_line():
    return
 
 
+def fix_var_server_source_address():
+   # The Trick variable server uses the local host name without verifying the
+   # IP address it resolves to is actually used by the local host computer.
+   # Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
+   # Otherwise the simulation control panel will not successfully connect.
+   try:
+      if ( trick.var_server_get_hostname() == socket.gethostname() ):
+         host_ip_addr = socket.gethostbyname( socket.gethostname() )
+         try:
+            ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode()
+            if ( ifconfig_out.find( host_ip_addr ) < 0 ):
+               print( 'WARNING: Invalid IP address ' + host_ip_addr
+                      + ' resolved for host \'' + trick.var_server_get_hostname()
+                      + '\', setting the variable server source address to 127.0.0.1!' )
+               trick.var_server_set_source_address( '127.0.0.1' )
+         except:
+            return  # Use host source address as is.
+   except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
+      print( 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
+             + '\' host name to an address, setting the variable server source address to 127.0.0.1!' )
+      trick.var_server_set_source_address( '127.0.0.1' )
+   return
+
+
 # Default: Don't show usage.
 print_usage = False
 
@@ -125,25 +151,27 @@ trick.exec_set_freeze_command( True )
 trick.sim_control_panel_set_enabled( True )
 trick.exec_set_stack_trace( True )
 
+fix_var_server_source_address()
+
 # =========================================================================
 # Set up the JEOD environment.
 # =========================================================================
 jeod_time.time_manager_init.initializer = "UTC"
 jeod_time.time_manager_init.sim_start_format = trick.TimeEnum.calendar
 
-jeod_time.time_utc.calendar_year = 2027
-jeod_time.time_utc.calendar_month = 8
-jeod_time.time_utc.calendar_day = 17
-jeod_time.time_utc.calendar_hour = 12
+jeod_time.time_utc.calendar_year   = 2027
+jeod_time.time_utc.calendar_month  = 8
+jeod_time.time_utc.calendar_day    = 17
+jeod_time.time_utc.calendar_hour   = 12
 jeod_time.time_utc.calendar_minute = 0
 jeod_time.time_utc.calendar_second = 0.0
 
 jeod_time.time_tai.initialize_from_name = "UTC"
-jeod_time.time_tt.initialize_from_name = "TAI"
+jeod_time.time_tt.initialize_from_name  = "TAI"
 
 jeod_time.time_tai.update_from_name = "Dyn"
 jeod_time.time_utc.update_from_name = "TAI"
-jeod_time.time_tt.update_from_name = "TAI"
+jeod_time.time_tt.update_from_name  = "TAI"
 
 # Configure the ephemeris model
 env.de4xx.set_model_number( 440 )
@@ -216,6 +244,17 @@ federate.set_lookahead_time( 0.250 )
 # federation execution.
 federate.set_least_common_time_step( 0.250 )
 
+# Must specify a Trick software frame that meets the time constraints
+# for the Least Common Time Step (LCTS) value set in the ExCO by the
+# Master federate. (LCTS >= RT) && (LCTS % RT = 0)
+trick.exec_set_software_frame( 0.250 )
+trick.exec_set_freeze_frame( 0.250 )
+
+# NOTE: Need more than enough time padding for the MTR message
+# to propagate to all federates in time for the coordinated CTE
+# go to run message to have a valid pending CTE start time.
+federate.set_time_padding( 1.0 )
+
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
@@ -226,7 +265,7 @@ federate.set_time_constrained( True )
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
-THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::TimeOfDayCTETimeline' )
 
 #---------------------------------------------------------------------------
 # Set up the Reference Frame objects.
@@ -234,14 +273,14 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose
-sun_inertial.frame_packing.debug = verbose
-earth_moon_barycenter.frame_packing.debug = verbose
+sun_inertial.frame_packing.debug            = verbose
+earth_moon_barycenter.frame_packing.debug   = verbose
 earth_centered_inertial.frame_packing.debug = verbose
-moon_centered_inertial.frame_packing.debug = verbose
-mars_centered_inertial.frame_packing.debug = verbose
-earth_centered_fixed.frame_packing.debug = verbose
-moon_centered_fixed.frame_packing.debug = verbose
-mars_centered_fixed.frame_packing.debug = verbose
+moon_centered_inertial.frame_packing.debug  = verbose
+mars_centered_inertial.frame_packing.debug  = verbose
+earth_centered_fixed.frame_packing.debug    = verbose
+moon_centered_fixed.frame_packing.debug     = verbose
+mars_centered_fixed.frame_packing.debug     = verbose
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

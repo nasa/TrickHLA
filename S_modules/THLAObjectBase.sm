@@ -1,0 +1,282 @@
+/*****************************************************************************
+ * General TrickHLA Simulation Definition module for the base Trick HLA
+ * Packing object.
+ *---------------------------------------------------------------------------*
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines the
+ *     standard base interface for a TrickHLA packing object instance.)
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: December 2023
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: 
+ *        Date: 
+ * Description: 
+ ****************************************************************************/
+
+#ifndef TRICKHLA_OBJECT_BASE_SIM_OBJECT
+#define TRICKHLA_OBJECT_BASE_SIM_OBJECT
+
+// System include files.
+##include <sstream>
+
+// TrickHLA include files.
+##include "TrickHLA/Conditional.hh"
+##include "TrickHLA/DebugHandler.hh"
+##include "TrickHLA/LagCompensation.hh"
+##include "TrickHLA/Object.hh"
+##include "TrickHLA/ObjectDeletedHandler.hh"
+##include "TrickHLA/OwnershipHandler.hh"
+##include "TrickHLA/Packing.hh"
+
+//==========================================================================
+// SIM_OBJECT: TrickHLAObjectBaseSimObject - A base simulation definition
+// module implementation to support a TrickHLA packing object instance.
+// This simulation definition module is entended to be extended.
+//==========================================================================
+class TrickHLAObjectBaseSimObject : public Trick::SimObject {
+
+ public:
+
+   /* Associated TrickHLA base Packing object reference. */
+   TrickHLA::Packing * packing_base_ptr;
+
+   /* HLA base Lag Compensation object reference. */
+   TrickHLA::LagCompensation * lag_comp_base_ptr;
+
+   /* HLA base Conditional object reference. */
+   TrickHLA::Conditional * conditional_base_ptr;
+
+   /* HLA base Ownership Handler object refereence. */
+   TrickHLA::OwnershipHandler * ownership_base_ptr;
+
+   /* HLA base Object Deleted object reference. */
+   TrickHLA::ObjectDeletedHandler * deleted_base_ptr;
+
+   // _INIT phase needs to be less than 60, when TrickHLA is initialized.
+   TrickHLAObjectBaseSimObject( bool                create_object,
+                                std::string const & sim_obj_name,
+                                std::string const & obj_packing_name,
+                                std::string const & obj_fed_name,
+                                unsigned short      _INIT = P_HLA_INIT )
+      : Trick::SimObject(),
+        packing_base_ptr( NULL ),
+        lag_comp_base_ptr( NULL ),
+        conditional_base_ptr( NULL ),
+        ownership_base_ptr( NULL ),
+        deleted_base_ptr( NULL ),
+        create( create_object ),
+        sim_object_configured( false ),
+        sim_object_name( sim_obj_name ),
+        object_packing_name( obj_packing_name ),
+        object_fed_name( obj_fed_name ),
+        thla_object( NULL )
+   {
+      //
+      // Default data jobs
+      //
+      P_INIT ("default_data") default_config();
+
+      //
+      // Initialization jobs
+      //
+      P_INIT ("initialization") configure();
+      P_INIT ("initialization") initialize();
+   }
+
+   virtual void set_object( TrickHLA::Object * object )
+   {
+      if ( packing_base_ptr == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
+                << " ERROR: Unexpected NULL Packing object!" << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      
+      if ( object == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAObjectBaseSimObject::set_object():" << __LINE__
+                << " ERROR: The TrickHLA::Object associated with object \'"
+                << name << "\' is NULL." << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      
+      // Set the references to the TrickHLA manager object.
+      thla_object = object;
+      packing_base_ptr->set_object( object );
+   }
+
+ protected:
+   virtual int default_config()
+   {
+      if ( packing_base_ptr == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
+                << " ERROR: Unexpected NULL Packing object!" << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
+      }
+
+      // Get the associated TrickHLA manager object.
+      TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
+      
+      // Check if the TrickHLA Object associated with the packing function
+      // has been instantiated and assigned.
+      if ( thla_object != NULL ) {
+         
+         // Check if the packing object is already assigned.
+         if ( pkg_obj_ptr != NULL ) {
+            
+            // Both are set and they MUST match!
+            if ( thla_object != pkg_obj_ptr ) {
+               std::ostringstream errmsg;
+               errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
+                      << " ERROR: Object references do NOT match!" << std::endl;
+               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               return( -1 );
+            }
+            
+         } else {
+            
+            // The packing object is not set; so, assign the thla_object.
+            packing_base_ptr->set_object( thla_object );
+            
+         }
+         
+      } else if ( pkg_obj_ptr != NULL ) {
+         
+         // The thla_object reference is not set but the packing object is.
+         // So, we'll use that.
+         thla_object = pkg_obj_ptr;
+         
+      } else {
+         
+         // Neither is set; so, we must be configuring at initialization.
+         // We're probably using the input file.
+         // So, just return.
+         return( 0 );
+         
+      }
+
+      // The packing object is set; so, configure the auxiliary services.
+      // This will probably only be true for configuring with defualt data.
+
+      // Setup lag compensation.
+      thla_object->lag_comp      = lag_comp_base_ptr;
+      thla_object->lag_comp_type = TrickHLA::LAG_COMPENSATION_NONE;
+
+      // Setup the auxiliary object management services.
+      thla_object->conditional = conditional_base_ptr;
+      thla_object->ownership   = ownership_base_ptr;
+      thla_object->deleted     = deleted_base_ptr;
+
+      return( 0 );
+   }
+
+   virtual int configure()
+   {
+      sim_object_configured = true;
+      return( 0 );
+   }
+
+   virtual int initialize()
+   {
+      if ( !sim_object_configured ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
+                << " ERROR: The sim-object configure function must be called"
+                << " before calling this initialize function!" << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
+      }
+
+      // We must have a Packing object.
+      if ( packing_base_ptr == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
+                << " ERROR: Unexpected NULL Packing object!" << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
+      } else {
+         packing_base_ptr->initialize();
+      }
+
+      // Get the associated TrickHLA manager object.
+      TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
+
+      // Check if the TrickHLA Object associated with the packing function
+      // has been instantiated and assigned.
+      if ( thla_object != NULL ) {
+         
+         // Check if the packing object is already assigned.
+         if ( pkg_obj_ptr != NULL ) {
+            
+            // Both are set and they MUST match!
+            if ( thla_object != pkg_obj_ptr ) {
+               std::ostringstream errmsg;
+               errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
+                      << " ERROR: Object references do NOT match!" << std::endl;
+               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               return( -1 );
+            }
+            
+         } else {
+            
+            // The packing object is not set; so, assign the thla_object.
+            packing_base_ptr->set_object( thla_object );
+            
+         }
+         
+      } else if ( pkg_obj_ptr != NULL ) {
+         
+         // The thla_object reference is not set but the packing object is.
+         // So, we'll use that.
+         thla_object = pkg_obj_ptr;
+         
+      } else {
+         
+         // Neither is set. This is an ERROR!
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
+                << " ERROR: The TrickHLA::Object associated with object \'"
+                << name << "\' is NULL." << std::endl;
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         return( -1 );
+      }
+
+      // Check for a Lag Compensation object.
+      if ( lag_comp_base_ptr != NULL ) {
+         lag_comp_base_ptr->initialize();
+      }
+
+      // Check for a Conditional object.
+      if ( conditional_base_ptr != NULL ) {
+         conditional_base_ptr->initialize();
+      }
+
+      return( 0 );
+   }
+  
+ protected:
+  bool        create;
+  bool        sim_object_configured;
+  std::string sim_object_name;
+  std::string object_packing_name;
+  std::string object_fed_name;
+  TrickHLA::Object * thla_object;
+
+ private:
+   // This object is not copyable
+   TrickHLAObjectBaseSimObject( TrickHLAObjectBaseSimObject const & );
+   TrickHLAObjectBaseSimObject & operator=( TrickHLAObjectBaseSimObject const & );
+};
+
+#endif // TRICKHLA_OBJECT_BASE_SIM_OBJECT: Do NOT put anything after this line!

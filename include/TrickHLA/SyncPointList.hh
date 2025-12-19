@@ -37,29 +37,34 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SYNC_POINT_LIST_HH
 
 // System includes.
-#include <map>
 #include <string>
-#include <vector>
 
-// Trick include files.
-
-// TrickHLA include files.
+// TrickHLA
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointTimed.hh"
+#include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
-#include RTI1516_HEADER
-#pragma GCC diagnostic pop
+#include "RTI/RTI1516.h"
+#include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
+
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 #define SYNC_POINT_TMM_ARRAY 1
 
@@ -114,6 +119,24 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    void clear();
 
+   bool const empty()
+   {
+#if SYNC_POINT_TMM_ARRAY
+      return ( list_count <= 0 );
+#else
+      return list.empty();
+#endif
+   }
+
+   int const size()
+   {
+#if SYNC_POINT_TMM_ARRAY
+      return ( ( list_count > 0 ) ? list_count : 0 );
+#else
+      return list.size();
+#endif
+   }
+
    SyncPoint *get( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
    bool const add( std::wstring const &label );
@@ -140,7 +163,7 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    bool const is_announced( std::wstring const &label );
 
-   bool const mark_announced( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
+   bool const mark_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
    bool const wait_for_announced( std::wstring const &label );
 
@@ -157,6 +180,8 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
    bool const achieve_sync_point( SyncPoint *sp );
 
    bool const is_synchronized( std::wstring const &label );
+
+   bool const is_all_synchronized();
 
    bool const mark_synchronized( std::wstring const &label );
 

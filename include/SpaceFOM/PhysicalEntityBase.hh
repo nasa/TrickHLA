@@ -41,19 +41,17 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_ENTITY_BASE_HH
 #define SPACEFOM_PHYSICAL_ENTITY_BASE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/OpaqueBuffer.hh"
-#include "TrickHLA/Packing.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/QuaternionEncoder.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Packing.hh"
 
 namespace SpaceFOM
 {
@@ -83,26 +81,17 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    // Default data.
    /*! @brief Sets up the attributes for a PhysicalEntity using default values.
+    *  @param create Does this federate create this PhysicalEntity instance.
     *  @param sim_obj_name Name of SimObject containing this PhysicalEntity.
-    *  @param entity_obj_name Name of the PhysicalEntity object in the SimObject.
-    *  @param entity_name Name of the PhysicalEntity instance.
-    *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this PhysicalEntity instance.
-    *  @param publishes Does this federate publish this PhysicalEntity.
+    *  @param entity_pkg_name Name of the PhysicalEntity object in the SimObject.
+    *  @param entity_fed_name Name of the PhysicalEntity instance.
     *  @param mngr_object TrickHLA::Object associated with this PhysicalEntity.
     *  */
-   virtual void base_config( char const       *sim_obj_name,
-                             char const       *entity_obj_name,
-                             char const       *entity_name,
-                             char const       *parent_ref_frame_name,
-                             bool              publishes,
-                             TrickHLA::Object *mngr_object = NULL );
-
-   /*! @brief Function to begin the configuration/initialization of the
-    *  PhysicalEntity.
-    *  This function needs to be called prior to TrickHLA initialization if
-    *  the PhysicalEntity object is not being configured with an
-    *  initialization constructor. */
-   void configure(); // cppcheck-suppress [duplInheritedMember]
+   virtual void base_config( bool               create,
+                             std::string const &sim_obj_name,
+                             std::string const &entity_pkg_name,
+                             std::string const &entity_fed_name,
+                             TrickHLA::Object  *mngr_object = NULL );
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
@@ -114,33 +103,33 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    // Access functions.
    /*! @brief Set the name of the PhysicalEntity object instance.
     *  @param new_name Name of the PhysicalEntity object instance. */
-   virtual void set_name( char const *new_name );
+   virtual void set_name( std::string const &new_name );
 
    /*! @brief Get the name of the PhysicalEntity object instance.
     *  @return Name of the PhysicalEntity object instance. */
-   virtual char const *get_name()
+   virtual std::string const &get_name()
    {
       return pe_packing_data.name;
    }
 
    /*! @brief Set the type string of the PhysicalEntity.
     *  @param new_type Type string associated with the PhysicalEntity. */
-   virtual void set_type( char const *new_type );
+   virtual void set_type( std::string const &new_type );
 
    /*! @brief Get the type string associated with the PhysicalEntity.
     *  @return Type string associated with the PhysicalEntity. */
-   virtual char const *get_type()
+   virtual std::string const &get_type()
    {
       return pe_packing_data.type;
    }
 
    /*! @brief Set the status string of the PhysicalEntity.
     *  @param new_status Status string associated with the PhysicalEntity. */
-   virtual void set_status( char const *new_status );
+   virtual void set_status( std::string const &new_status );
 
    /*! @brief Get the status string associated with the PhysicalEntity.
     *  @return Status string associated with the PhysicalEntity. */
-   virtual char const *get_status()
+   virtual std::string const &get_status()
    {
       return pe_packing_data.status;
    }
@@ -148,11 +137,11 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    /*! @brief Set the name of the parent reference frame for the PhysicalEntity.
     *  @param new_frame The name of the parent reference frame associated
     *  with the PhysicalEntity. */
-   virtual void set_parent_frame( char const *new_frame );
+   virtual void set_parent_frame( std::string const &new_frame );
 
    /*! @brief Get the name of the parent reference frame associated with the PhysicalEntity.
     *  @return Name of the parent reference frame associated with the PhysicalEntity. */
-   virtual char const *get_parent_frame()
+   virtual std::string const &get_parent_frame()
    {
       return pe_packing_data.parent_frame;
    }

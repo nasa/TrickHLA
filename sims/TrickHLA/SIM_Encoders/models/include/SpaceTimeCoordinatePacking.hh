@@ -73,6 +73,9 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
    friend void init_attrSpaceFOM__SpaceTimeCoordinatePacking();
 
   public:
+   SpaceTimeCoordinateData test_stc;  ///< @trick_units{--} Test STC.
+
+  public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the SpaceFOM SpaceTimeCoordinatePacking class. */
    SpaceTimeCoordinatePacking();
@@ -92,13 +95,6 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
                              char const                        *packing_name,
                              SpaceFOM::SpaceTimeCoordinateData *working_data = NULL,
                              TrickHLA::Object                  *mngr_object = NULL );
-
-   // Pre-initialize the packing object.
-   /*! @brief Function to begin the configuration/initialization of the RefFrame.
-    *  This function needs to be called prior to TrickHLA initialization if
-    *  the RefFrame object is not being configured with an initialization
-    *  constructor. */
-   void configure();
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */
@@ -139,12 +135,16 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
 
+   /*! @brief A routine to test the unpacked values against the test values. */
+   virtual void unpack_test();
+
    /*! @brief Print out the data values.
     *  @param stream Output stream. */
    virtual void print_data( std::ostream &stream = std::cout ) const;
 
   public:
    bool debug; ///< @trick_units{--} Debug output flag.
+   bool test;  ///< @trick_units{--} Flag to enable testing.
 
   protected:
    SpaceFOM::SpaceTimeCoordinateData * working_data; ///< @trick_units{--} Working data.

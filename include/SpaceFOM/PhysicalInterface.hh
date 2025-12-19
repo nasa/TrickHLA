@@ -35,13 +35,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PHYSICAL_INTERFACE_HH
 #define SPACEFOM_PHYSICAL_INTERFACE_HH
 
-// System include files.
-
-// TrickHLA include files.
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterfaceBase.hh"
-#include "SpaceFOM/PhysicalInterfaceData.hh"
 
 namespace SpaceFOM
 {
@@ -64,10 +59,6 @@ class PhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
    explicit PhysicalInterface( PhysicalInterfaceData &interface_data_ref ); // Initialization constructor.
    virtual ~PhysicalInterface();                                            // Destructor.
 
-   /*! @brief Set the reference to the physical interface data.
-    *  @param interface_data_ptr Pointer to the PhysicalInterface data instance. */
-   void configure( PhysicalInterfaceData *interface_data_ptr );
-
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data. */
    virtual void initialize();
@@ -75,12 +66,12 @@ class PhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
    // Access functions.
    /*! @brief Set the name of the PhysicalInterface object instance.
     *  @param new_name Name of the PhysicalInterface object instance. */
-   virtual void set_name( char const *new_name );
+   virtual void set_name( std::string const &new_name );
 
    /*! @brief Set the name of the parent reference frame for the PhysicalInterface.
     *  @param new_parent_name The name of the parent reference frame associated
     *  with the PhysicalInterface. */
-   virtual void set_parent( char const *new_parent_name );
+   virtual void set_parent( std::string const &new_parent_name );
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
@@ -94,11 +85,7 @@ class PhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
    /*! @brief Set the reference to the physical entity data.
     *  @param interface_data_ptr Pointer to the PhysicalInterface data instance. */
-   virtual void set_data( PhysicalInterfaceData *interface_data_ptr )
-   {
-      interface_data = interface_data_ptr;
-      return;
-   }
+   virtual void set_data( PhysicalInterfaceData *interface_data_ptr );
 
    /*! @brief Get the reference to the physical entity data.
     *  @return Pointer to the PhysicalInterface data. */

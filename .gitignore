@@ -23,6 +23,7 @@ docs/doxygen/*Err.txt
 
 # MacOS files
 .DS_Store
+*.memgraph
 
 # ctags tags files
 tags
@@ -76,6 +77,10 @@ SIM_*.xml
 # Allow the Modified_data/trick directory.
 !/sims/**/Modified_data/trick/**
 
+# Ignore Ball graphics build items.
+/models/Ball/graphics/dist/
+/models/Ball/graphics/manifest
+
 # Ignore trick-generated makefiles for unit tests
 Makefile.trick
 
@@ -100,3 +105,7 @@ Debug
 
 # Cppcheck output directory
 /cppcheck/
+
+# valgrind related files
+*.exe.dSYM
+valgrind*.txt

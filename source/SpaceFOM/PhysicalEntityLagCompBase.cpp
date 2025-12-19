@@ -29,26 +29,27 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <float.h>
-#include <iostream>
+// System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
+// Trick includes.
 #include "trick/message_proto.h"
-#include "trick/trick_math.h"
-#include "trick/trick_math_proto.h"
+#include "trick/message_type.h"
+#include "trick/reference_frame.h"
 
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
+#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/LagCompensation.hh"
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -58,7 +59,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase &entity_ref ) // RETURN: -- None.
-   : debug( false ),
+   : TrickHLA::LagCompensation( "PhysicalEntityLagCompBase" ),
+     debug( false ),
      entity( entity_ref ),
      name_attr( NULL ),
      type_attr( NULL ),
@@ -92,6 +94,9 @@ PhysicalEntityLagCompBase::~PhysicalEntityLagCompBase() // RETURN: -- None.
  */
 void PhysicalEntityLagCompBase::initialize()
 {
+   // Make sure to call the base class initialize.
+   LagCompensation::initialize();
+
    // Return to calling routine.
    return;
 }
@@ -162,10 +167,10 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* PhysicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << '\n'
-             << " scenario-time:" << get_scenario_time() << '\n'
-             << "     lookahead:" << this->compensate_dt << '\n'
-             << " adjusted-time:" << end_t << '\n';
+      errmsg << "******* PhysicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
+             << " scenario-time:" << get_scenario_time() << endl
+             << "     lookahead:" << this->compensate_dt << endl
+             << " adjusted-time:" << end_t << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -177,7 +182,7 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data before compensation: \n";
+      msg << "Send data before compensation:" << endl;
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -188,7 +193,7 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data after compensation: \n";
+      msg << "Send data after compensation:" << endl;
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -214,10 +219,10 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* PhysicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << '\n'
-             << "  scenario-time:" << end_t << '\n'
-             << "      data-time:" << data_t << '\n'
-             << " comp-time-step:" << this->compensate_dt << '\n';
+      errmsg << "******* PhysicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
+             << "  scenario-time:" << end_t << endl
+             << "      data-time:" << data_t << endl
+             << " comp-time-step:" << this->compensate_dt << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -232,7 +237,7 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data before compensation: \n";
+         msg << "Receive data before compensation:" << endl;
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -243,7 +248,7 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data after compensation: \n";
+         msg << "Receive data after compensation:" << endl;
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -330,51 +335,51 @@ void PhysicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream ) cons
    // Compute the attitude Euler angles.
    lag_comp_data.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
 
-   stream << "\tScenario time: " << get_scenario_time() << '\n';
-   stream << "\tLag comp time: " << this->lag_comp_data.time << '\n';
+   stream << "\tScenario time: " << get_scenario_time() << endl;
+   stream << "\tLag comp time: " << this->lag_comp_data.time << endl;
    stream << "\tposition: "
           << "\t\t" << this->lag_comp_data.pos[0] << ", "
           << "\t\t" << this->lag_comp_data.pos[1] << ", "
-          << "\t\t" << this->lag_comp_data.pos[2] << '\n';
+          << "\t\t" << this->lag_comp_data.pos[2] << endl;
    stream << "\tvelocity: "
           << "\t\t" << this->lag_comp_data.vel[0] << ", "
           << "\t\t" << this->lag_comp_data.vel[1] << ", "
-          << "\t\t" << this->lag_comp_data.vel[2] << '\n';
+          << "\t\t" << this->lag_comp_data.vel[2] << endl;
    stream << "\tacceleration: "
           << "\t\t" << this->accel[0] << ", "
           << "\t\t" << this->accel[1] << ", "
-          << "\t\t" << this->accel[2] << '\n';
+          << "\t\t" << this->accel[2] << endl;
    stream << "\tattitude (s;v): "
           << "\t\t" << this->lag_comp_data.att.scalar << "; "
           << "\t\t" << this->lag_comp_data.att.vector[0] << ", "
           << "\t\t" << this->lag_comp_data.att.vector[1] << ", "
-          << "\t\t" << this->lag_comp_data.att.vector[2] << '\n';
+          << "\t\t" << this->lag_comp_data.att.vector[2] << endl;
    stream << "\tattitude (RPY){deg}: "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << '\n';
+          << "\t\t" << euler_angles[2] << endl;
    stream << "\tangular velocity: "
           << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
           << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "
-          << "\t\t" << this->lag_comp_data.ang_vel[2] << '\n';
+          << "\t\t" << this->lag_comp_data.ang_vel[2] << endl;
    stream << "\tattitude rate (s;v): "
           << "\t\t" << this->Q_dot.scalar << "; "
           << "\t\t" << this->Q_dot.vector[0] << ", "
           << "\t\t" << this->Q_dot.vector[1] << ", "
-          << "\t\t" << this->Q_dot.vector[2] << '\n';
+          << "\t\t" << this->Q_dot.vector[2] << endl;
    stream << "\tangular acceleration: "
           << "\t\t" << this->ang_accel[0] << ", "
           << "\t\t" << this->ang_accel[1] << ", "
-          << "\t\t" << this->ang_accel[2] << '\n';
+          << "\t\t" << this->ang_accel[2] << endl;
    stream << "\tcenter of mass: "
           << "\t\t" << this->cm[0] << ", "
           << "\t\t" << this->cm[1] << ", "
-          << "\t\t" << this->cm[2] << '\n';
+          << "\t\t" << this->cm[2] << endl;
    stream << "\tbody wrt. struct (s;v): "
           << "\t\t" << this->body_wrt_struct.scalar << "; "
           << "\t\t" << this->body_wrt_struct.vector[0] << ", "
           << "\t\t" << this->body_wrt_struct.vector[1] << ", "
-          << "\t\t" << this->body_wrt_struct.vector[2] << '\n';
+          << "\t\t" << this->body_wrt_struct.vector[2] << endl;
 
    // Return to the calling routine.
    return;

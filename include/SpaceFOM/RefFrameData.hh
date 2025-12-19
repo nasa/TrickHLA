@@ -33,6 +33,10 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_DATA_HH
 #define SPACEFOM_REF_FRAME_DATA_HH
 
+// System includes.
+#include <iostream>
+
+// SpaceFOM includes.
 #include "SpaceFOM/RefFrameDataState.hh"
 
 namespace SpaceFOM
@@ -42,8 +46,8 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
 {
 
   public:
-   char *name;        ///< @trick_units{--} Name of the reference frame.
-   char *parent_name; ///< @trick_units{--} Name of this frames parent frame.
+   std::string name;        ///< @trick_units{--} Name of the reference frame.
+   std::string parent_name; ///< @trick_units{--} Name of this frames parent frame.
 
    // Default constructor.
    RefFrameData();
@@ -74,22 +78,30 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
    // Access functions.
    /*! @brief Access function to set the name for the reference frame.
     *  @param new_name Name for this reference frame. */
-   virtual void set_name( char const *new_name );
+   virtual void set_name( std::string const &new_name )
+   {
+      this->name = new_name;
+      return;
+   }
 
    /*! @brief Access function to get the name for the reference frame.
     *  @return Name for this reference frame. */
-   virtual char const *get_name()
+   virtual std::string const &get_name()
    {
       return name;
    }
 
    /*! @brief Access function to set the name for the parent reference frame.
     *  @param name Name for the parent reference frame. */
-   virtual void set_parent_name( char const *name );
+   virtual void set_parent_name( std::string const &name )
+   {
+      this->parent_name = name;
+      return;
+   }
 
    /*! @brief Access function to get the name for the parent reference frame.
     *  @return Name for the parent reference frame. */
-   virtual char const *get_parent_name()
+   virtual std::string const &get_parent_name()
    {
       return parent_name;
    }

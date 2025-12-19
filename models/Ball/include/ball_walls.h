@@ -47,5 +47,4 @@ typedef struct {
 
 } BallWalls;
 
-
 #endif /* MODELS_TRICKHLA_BALL_WALLS_H_ */

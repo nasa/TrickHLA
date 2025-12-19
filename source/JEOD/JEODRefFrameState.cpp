@@ -33,32 +33,32 @@ NASA, Johnson Space Center\n
 
 */
 
-// System include files.
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <limits>
-#include <math.h>
+// System includes.
+#include <cstddef>
+#include <ostream>
 #include <sstream>
-#include <string>
 
-// Trick include files.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
+// JEOD model includes.
+#include "environment/time/include/time_tt.hh"
+#include "utils/quaternion/include/quat.hh"
+#include "utils/ref_frames/include/ref_frame_state.hh"
+
+// JEOD includes.
+#include "JEOD/JEODRefFrameState.hh"
+
+// Trick includes.
+#include "trick/exec_proto.h"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
-// JEOD include files.
-#include "utils/orientation/include/orientation.hh"
+// SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
 
-// TrickHLA model include files.
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/Packing.hh"
-#include "TrickHLA/Types.hh"
-
-// SpaceFOM include files.
-#include "JEOD/JEODRefFrameState.hh"
 
 using namespace std;
 using namespace SpaceFOM;
@@ -101,44 +101,13 @@ JEODRefFrameState::~JEODRefFrameState()
 /*!
  * @job_class{initialization}
  */
-void JEODRefFrameState::configure(
-   jeod::TimeTT        *time_tt_in,
-   jeod::RefFrameState *ref_frame_state_ptr )
-{
-   // First call the base class pre_initialize function.
-   RefFrameBase::configure();
-
-   // Set the reference to the reference frame.
-   if ( ref_frame_state_ptr == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << '\n';
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   this->ref_frame_state = ref_frame_state_ptr;
-
-   // Set the JEOD time reference.
-   if ( time_tt_in == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << '\n';
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   time_tt = time_tt_in;
-}
-
-/*!
- * @job_class{initialization}
- */
 void JEODRefFrameState::initialize()
 {
    // Check for the reference frame data.
    if ( this->ref_frame_state == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << '\n';
+             << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -147,7 +116,7 @@ void JEODRefFrameState::initialize()
    if ( this->time_tt == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << '\n';
+             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << endl;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -194,16 +163,16 @@ void JEODRefFrameState::pack_from_working_data()
 
    if ( debug ) {
       ostringstream msg;
-      msg << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << '\n'
-          << "\tSim Sec: " << exec_get_sim_time() << '\n'
-          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << '\n'
+      msg << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << endl
+          << "\tSim Sec: " << exec_get_sim_time() << endl
+          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
           << "\tDate: " << time_tt->calendar_year
           << "-" << time_tt->calendar_month
           << "-" << time_tt->calendar_day
           << "::" << time_tt->calendar_hour
           << ":" << time_tt->calendar_minute
-          << ":" << time_tt->calendar_second << '\n'
-          << '\n';
+          << ":" << time_tt->calendar_second << endl
+          << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -254,16 +223,45 @@ void JEODRefFrameState::unpack_into_working_data()
 
    if ( debug ) {
       ostringstream msg;
-      msg << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << '\n'
-          << "\tSim Sec: " << exec_get_sim_time() << '\n'
-          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << '\n'
+      msg << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << endl
+          << "\tSim Sec: " << exec_get_sim_time() << endl
+          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
           << "\tDate: " << time_tt->calendar_year
           << "-" << time_tt->calendar_month
           << "-" << time_tt->calendar_day
           << "::" << time_tt->calendar_hour
           << ":" << time_tt->calendar_minute
-          << ":" << time_tt->calendar_second << '\n'
-          << '\n';
+          << ":" << time_tt->calendar_second << endl
+          << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void JEODRefFrameState::set_data(
+   jeod::TimeTT        *time_tt_in,
+   jeod::RefFrameState *ref_frame_state_ptr )
+{
+
+   // Set the reference to the reference frame.
+   if ( ref_frame_state_ptr == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->ref_frame_state = ref_frame_state_ptr;
+
+   // Set the JEOD time reference.
+   if ( time_tt_in == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << endl;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   time_tt = time_tt_in;
 }

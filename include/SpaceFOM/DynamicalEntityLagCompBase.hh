@@ -23,11 +23,11 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/SpaceFOM/DynamicalEntityLagCompBase.cpp}
-@trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
+@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/SpaceFOM/DynamicalEntityLagCompBase.cpp}
+@trick_link_dependency{../source/SpaceFOM/QuaternionData.cpp}
 
 @revs_title
 @revs_begin
@@ -39,21 +39,12 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_BASE_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_BASE_HH
 
-// System include files.
+// System includes.
 #include <iostream>
 
-// Trick includes.
-
-// TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/LagCompensation.hh"
-#include "TrickHLA/Object.hh"
-
-// SpaceFOM include files.
+// SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"
-#include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {
