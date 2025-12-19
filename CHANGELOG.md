@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added encoding support for Fixed Records including direct encoding and decoding of Trick simulation variables from memory.
 - Added encoding support for 8, 16, 32, and 64-bit integer enumerations (issue #181).
 - Improved the variable array encoder efficiency for dynamic arrays.
+- Added functions to TrickHLAFederateConfig.py to allow either the HLA base time unit or multiplier to be set and automatically scale the Trick time tics value.
+  - set_HLA_base_time_unit_and_scale_trick_tics( new_base_time_unit )
+  - set_HLA_base_time_multiplier_and_scale_trick_tics( new_base_time_multiplier )
 - Shutdown on notification of SpaceFOM Execution Configuration Object (ExCO) deletion (SpaceFOM PCR-002).
 - Added support for designated late joining federates (SpaceFOM PCR-003).
 - Added support for specifying the HLA time resolution at runtime using the SpaceFOM ExCO (SpaceFOM PCR-007).
@@ -54,9 +57,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added Ball simulation based off the Trick tutorial Ball simulation.
 - Added a check to the THLABaseSimObject to set the interaction cycle time to the data cycle time if a time is not set.
 - Added a check to the THLABaseSimObject to verify the interaction cycle time is an integer multiple of the data cycle time.
-- Added functions to TrickHLAFederateConfig.py to allow either the HLA base time unit or multiplier to be set and automatically scale the Trick time tics value.
-  - set_HLA_base_time_unit_and_scale_trick_tics( new_base_time_unit )
-  - set_HLA_base_time_multiplier_and_scale_trick_tics( new_base_time_multiplier )
 
 ### Changed
 
