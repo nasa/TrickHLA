@@ -2335,13 +2335,13 @@ void EncodingTest::fixed_record_test(
    string        explanation;
 
    if ( data1.compare( data2, explanation ) ) {
-      compare_msg << "fixed_rec_data1 == fixed_rec_data2" << endl;
+      compare_msg << "(ENCODING_FIXED_RECORD) fixed_rec_data1 == fixed_rec_data2" << endl;
       if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      compare_msg << "fixed_rec_data1 != fixed_rec_data2" << endl;
+      compare_msg << "(ENCODING_FIXED_RECORD) fixed_rec_data1 != fixed_rec_data2" << endl;
       if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
@@ -2472,13 +2472,13 @@ void EncodingTest::fixed_record_attribute_test(
    string        explanation;
 
    if ( data1.compare( data2, explanation ) ) {
-      compare_msg << "attribute_fixed_rec_data1 == attribute_fixed_rec_data2" << endl;
+      compare_msg << "(ENCODING_FIXED_RECORD) attribute_fixed_rec_data1 == attribute_fixed_rec_data2" << endl;
       if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       message_publish( MSG_INFO, compare_msg.str().c_str() );
    } else {
-      compare_msg << "attribute_fixed_rec_data1 != attribute_fixed_rec_data2" << endl;
+      compare_msg << "(ENCODING_FIXED_RECORD) attribute_fixed_rec_data1 != attribute_fixed_rec_data2" << endl;
       if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
