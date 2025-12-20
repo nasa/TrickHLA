@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [v3.2.0] - 2025-12-19
+## [v3.2.0] - 2025-12-22
 
 ### Notable Additions
 
@@ -61,6 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Changed to use IEEE 1516 HLA encoder helpers instead of the custom written encoders.
+- Changed TRICK_CFLAGS in S_hla.mk to remove the -std=c++14 setting (issue #177).
 - Changed the Execution Control to perform the Least Common Time Step (LCTS) time checks when an Execution Configuration Object (ExCO) change is processed (issue #179).
 - Changed the Timeline functions to be more const friendly (issue #180).
 - Removed wheelbot example simulation.

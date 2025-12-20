@@ -4,7 +4,6 @@
 ##include <climits>
 
 ##include "TrickHLA/CompileConfig.hh" // for TRICK_WSTRING_MM_SUPPORT
-##include "TrickHLA/DebugHandler.hh"
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
@@ -156,14 +155,9 @@ class TestSimObj : public Trick::SimObject {
 
    TestSimObj()
    {
-      ("initialization") DebugHandler::set( TrickHLA::DEBUG_LEVEL_1_TRACE,
-                                            TrickHLA::DEBUG_SOURCE_ALL_MODULES );
-
-#if 0
       ("initialization") encoder_test.char_test( "T.char_data1", char_data1,
                                                  "T.char_data2", char_data2,
-                                                 TrickHLA::ENCODING_NONE );
-#endif
+                                                 TrickHLA::ENCODING_BYTE );
       ("initialization") encoder_test.char_test( "T.char_data3", char_data3,
                                                  "T.char_data4", char_data4,
                                                  TrickHLA::ENCODING_ASCII_CHAR );

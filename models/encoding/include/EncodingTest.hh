@@ -58,6 +58,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 
 // TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
 
 #include "BoolData.hh"
@@ -105,6 +106,11 @@ class EncodingTest
    EncodingTest();
    /*! @brief Destructor for the TrickHLAModel EncodingTest class. */
    virtual ~EncodingTest();
+
+   void set_debug_level( TrickHLA::DebugLevelEnum const level )
+   {
+      TrickHLA::DebugHandler::debug_level = level;
+   }
 
    void char_test( std::string const           &data1_trick_base_name,
                    CharData                    &data1,
