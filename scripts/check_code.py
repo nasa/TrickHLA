@@ -359,52 +359,15 @@ Examples:\n  check_code -s -o -v --exhaustive --hla3\n  check_code -i -o -v --ex
    if args.check_includes:
       trickhla_ignore.append( '--suppress=unmatchedSuppression' )
       # Ignore/suppress the Trick header file warnings.
-      trickhla_ignore.append( '--suppress=missingInclude:' + trick_home + '/include/trick/rand_generator.h' )
-      trickhla_ignore.append( '--suppress=preprocessorErrorDirective:' + trick_home + '/trick_source/er7_utils/interface/include/er7_class.hh' )
+      trickhla_ignore.append( '--suppress=*:' + trick_home + '/*' )
    else:
       # Ignore/suppress the HLA Evolved standard header file warnings.
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/Exception.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/Typedefs.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/encoding/EncodingExceptions.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/time/HLAinteger64Interval.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/time/HLAinteger64Time.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/encoding/DataElement.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/encoding/HLAfixedRecord.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/time/HLAinteger64Time.h' )
+      trickhla_ignore.append( '--suppress=*:' + rti_include + '/*' )
       # Ignore/suppress the Trick header file warnings.
-      trickhla_ignore.append( '--suppress=constParameterReference:' + trick_home + '/trick_source/er7_utils/integration/core/include/first_order_ode_integrator.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/DataRecordGroup.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/InstrumentBase.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/RealtimeSync.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/SysThread.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadBase.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/Threads.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadTrigger.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/trick_source/er7_utils/integration/core/include/integrator_result.hh' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/trick_source/er7_utils/integration/core/include/integrator_result_merger_container.hh' )
-      trickhla_ignore.append( '--suppress=preprocessorErrorDirective:' + trick_home + '/trick_source/er7_utils/interface/include/er7_class.hh' )
-      trickhla_ignore.append( '--suppress=uninitMemberVar:' + trick_home + '/include/trick/SimObject.hh' )
-      trickhla_ignore.append( '--suppress=uselessOverride:' + trick_home + '/trick_source/er7_utils/integration/core/include/integrator_result_merger.hh' )
+      trickhla_ignore.append( '--suppress=*:' + trick_home + '/*' )
       # Ignore/suppress the JEOD header file warnings.
       if jeod_home:
-         trickhla_ignore.append( '--suppress=cstyleCast:' + jeod_home + '/models/utils/math/include/numerical_inline.hh' )
-         trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/memory/include/jeod_alloc_construct_destruct.hh' )
-         trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/integration/include/restartable_state_integrator.hh' )
-         trickhla_ignore.append( '--suppress=dangerousTypeCast:' + jeod_home + '/models/utils/math/include/numerical_inline.hh' )
-         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/jeod_vector.hh' )
-         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/pointer_container.hh' )
-         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/memory/include/memory_table.hh' )
-         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/container/include/container.hh' )
-         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/memory/include/memory_type.hh' )
-         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
-         trickhla_ignore.append( '--suppress=returnByReference:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
-         trickhla_ignore.append( '--suppress=syntaxError:' + jeod_home + '/models/dynamics/mass/include/mass_point_init.hh' )
-         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/environment/time/include/time_tt.hh' )
-         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/utils/sim_interface/include/checkpoint_input_manager.hh' )
-         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/dynamics/dyn_body/include/dyn_body.hh' )
-         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/dynamics/mass/include/mass.hh' )
-         trickhla_ignore.append( '--suppress=unmatchedSuppression:' + jeod_home + '/models/utils/ref_frames/include/ref_frame.hh' )
-         trickhla_ignore.append( '--suppress=uselessOverride:' + jeod_home + '/models/utils/sim_interface/include/jeod_integrator_interface.hh' )
+         trickhla_ignore.append( '--suppress=*:' + jeod_home + '/models/*' )
 
    if args.suppress_cstylecasts:
       # Suppress C-style casts.
