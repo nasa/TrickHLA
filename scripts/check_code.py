@@ -355,19 +355,19 @@ Examples:\n  check_code -s -o -v --exhaustive --hla3\n  check_code -i -o -v --ex
    #
    # Let's start building the cppcheck command arguments.
    #
+   # Ignore/suppress the HLA Evolved standard header file warnings.
+   trickhla_ignore.append( '--suppress=*:' + rti_include + '/*' )
+
+   # Ignore/suppress the Trick header file warnings.
+   trickhla_ignore.append( '--suppress=*:' + trick_home + '/*' )
+
+   # Ignore/suppress the JEOD header file warnings.
+   if jeod_home:
+      trickhla_ignore.append( '--suppress=*:' + jeod_home + '/models/*' )
+
    # Suppress directives for non-TrickHLA include header files.
    if args.check_includes:
       trickhla_ignore.append( '--suppress=unmatchedSuppression' )
-      # Ignore/suppress the Trick header file warnings.
-      trickhla_ignore.append( '--suppress=*:' + trick_home + '/*' )
-   else:
-      # Ignore/suppress the HLA Evolved standard header file warnings.
-      trickhla_ignore.append( '--suppress=*:' + rti_include + '/*' )
-      # Ignore/suppress the Trick header file warnings.
-      trickhla_ignore.append( '--suppress=*:' + trick_home + '/*' )
-      # Ignore/suppress the JEOD header file warnings.
-      if jeod_home:
-         trickhla_ignore.append( '--suppress=*:' + jeod_home + '/models/*' )
 
    if args.suppress_cstylecasts:
       # Suppress C-style casts.
