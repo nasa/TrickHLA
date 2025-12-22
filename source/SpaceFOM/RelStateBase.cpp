@@ -99,10 +99,8 @@ RelStateBase::~RelStateBase()
 bool RelStateBase::set_frame(
    char const *wrt_frame )
 {
-   RefFrameBase *lookup_frame;
-
    // Look up the frame by name.
-   lookup_frame = frame_tree->find_frame( wrt_frame );
+   RefFrameBase const *lookup_frame = frame_tree->find_frame( wrt_frame );
    if ( lookup_frame ) {
       express_frame = lookup_frame;
       set_parent_frame( express_frame->name );
@@ -125,10 +123,8 @@ bool RelStateBase::set_frame(
 bool RelStateBase::set_frame(
    std::string const &wrt_frame )
 {
-   RefFrameBase *lookup_frame;
-
    // Look up the frame by name.
-   lookup_frame = frame_tree->find_frame( wrt_frame );
+   RefFrameBase const *lookup_frame = frame_tree->find_frame( wrt_frame );
    if ( lookup_frame ) {
       express_frame = lookup_frame;
       set_parent_frame( express_frame->name );

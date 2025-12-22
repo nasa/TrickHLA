@@ -104,7 +104,7 @@ int const SleepTimeout::sleep() const
 }
 
 // Current time as an integer in microseconds.
-int64_t const SleepTimeout::time() const
+int64_t const SleepTimeout::time()
 {
    // Make sure the time is always an integer in microseconds.
    int const time_tic_value = exec_get_time_tic_value();

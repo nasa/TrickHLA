@@ -193,7 +193,7 @@ void CabinAtmoVolume::initialize(
 ///           the allocation name.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void CabinAtmoVolume::convertNameForTmm(
-   std::string &name ) const
+   std::string &name )
 {
    std::string tokFrom;
    std::string tokTo;

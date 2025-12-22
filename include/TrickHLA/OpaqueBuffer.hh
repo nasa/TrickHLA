@@ -151,8 +151,10 @@ class OpaqueBuffer
     *  @param src      Source data.
     *  @param size     Number of bytes to copy.
     *  @param encoding One of ENCODING_LITTLE_ENDIAN, ENCODING_BIG_ENDIAN, or ENCODING_NONE. */
-   void byteswap_buffer_copy( void *dest, void const *src,
-                              size_t const size, EncodingEnum const encoding );
+   static void byteswap_buffer_copy( void              *dest,
+                                     void const        *src,
+                                     size_t const       size,
+                                     EncodingEnum const encoding );
 
   public:
    unsigned int alignment; ///< @trick_units{--} The byte alignment to use for the buffer.

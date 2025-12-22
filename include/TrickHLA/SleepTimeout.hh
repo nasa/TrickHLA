@@ -90,7 +90,7 @@ class SleepTimeout
 
    /*! @brief Gets the wall clock time in microseconds.
     *  @return The wall clock time in microseconds. */
-   int64_t const time() const;
+   static int64_t const time();
 
    /*! @brief Determine if we cumulatively slept for the configured timeout time.
     *  @return True if timeout exceeded, false otherwise. */

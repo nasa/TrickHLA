@@ -78,6 +78,7 @@ Enum64Data::Enum64Data(
       errmsg << "Enum64Data::Enum64Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum64!" << endl;
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    for ( int i = 0; i < ptr_enum64_size; ++i ) {
       ptr_enum64[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? Int64Enum::one64 : Int64Enum::two64;

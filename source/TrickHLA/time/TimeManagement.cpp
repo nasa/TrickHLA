@@ -289,7 +289,7 @@ void TimeManagement::set_requested_time(
    requested_time.set( time );
 }
 
-HLABaseTimeEnum TimeManagement::get_HLA_base_time_unit() const
+HLABaseTimeEnum TimeManagement::get_HLA_base_time_unit()
 {
    return Int64BaseTime::get_base_unit_enum();
 }

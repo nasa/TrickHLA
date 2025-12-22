@@ -78,6 +78,7 @@ Enum16Data::Enum16Data(
       errmsg << "Enum16Data::Enum16Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum16!" << endl;
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    for ( int i = 0; i < ptr_enum16_size; ++i ) {
       ptr_enum16[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? Int16Enum::one16 : Int16Enum::two16;

@@ -288,14 +288,14 @@ void ExecutionConfigurationBase::wait_for_registration()
       }
 
       // Determine if we have any unregistered objects.
-      any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
+      any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt );
 
       // Wait a little while to allow the objects to be registered.
       if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse]
          sleep_timer.sleep();
 
          // Check again to determine if we have any unregistered objects.
-         any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
+         any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [redundantAssignment]
 
          if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 

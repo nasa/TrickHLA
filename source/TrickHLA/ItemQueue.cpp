@@ -179,7 +179,7 @@ void ItemQueue::dump_linked_list(
 
    ostringstream msg;
    msg << "ItemQueue::dump_linked_list(" << name << "):" << __LINE__ << " ";
-   for ( Item *item = head; item != NULL; item = item->next ) {
+   for ( Item const *item = head; item != NULL; item = item->next ) {
       msg << item << "->";
    }
    msg << "NULL" << endl;

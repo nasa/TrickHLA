@@ -99,13 +99,13 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
    /*! @brief Set the Vehicle Point references.
     *  @param vehicle_point_ptr Pointer to the associated BodyRefFrame. */
-   void set_data( jeod::BodyRefFrame *vehicle_point_ptr );
+   void set_data( jeod::BodyRefFrame const *vehicle_point_ptr );
 
    /*! @brief Set the DynBody and Vehicle Point references.
     *  @param dyn_body_ptr      Pointer to the associated DynBody.
     *  @param vehicle_point_ptr Pointer to the associated BodyRefFrame. */
-   void set_data( jeod::DynBody      *dyn_body_ptr,
-                  jeod::BodyRefFrame *vehicle_point_ptr );
+   void set_data( jeod::DynBody            *dyn_body_ptr,
+                  jeod::BodyRefFrame const *vehicle_point_ptr );
 
    /*! @brief Get the reference to the JEOD vehicle point data.
     *  @return Pointer to the vehicle point data. */

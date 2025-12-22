@@ -253,7 +253,7 @@ Federate::~Federate()
 /*!
  * @job_class{initialization}
  */
-void Federate::print_version() const
+void Federate::print_version()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string rti_name;

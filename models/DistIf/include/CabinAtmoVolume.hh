@@ -152,7 +152,7 @@ class CabinAtmoVolume
    /// @brief  Validates the configuration data.
    void validateConfig() const;
    /// @brief  Converts the given variable name string for giving to the Trick Memory Manager.
-   void convertNameForTmm( std::string &name ) const;
+   static void convertNameForTmm( std::string &name );
    /// @brief  Applies lower bound limit on air moles.
    void limitMoles();
 

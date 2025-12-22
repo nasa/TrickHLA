@@ -78,6 +78,7 @@ Enum8Data::Enum8Data(
       errmsg << "Enum8Data::Enum8Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum8!" << endl;
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    for ( int i = 0; i < ptr_enum8_size; ++i ) {
       ptr_enum8[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? Int8Enum::one8 : Int8Enum::two8;
