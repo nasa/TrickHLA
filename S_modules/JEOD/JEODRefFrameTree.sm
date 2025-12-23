@@ -56,7 +56,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
                               jeod::Planet               & mars_in,
                               unsigned short               _CONFIG = 35,
                               unsigned short               _BUILD  = (P_HLA_INIT+1) )
-      : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _BUILD ),
+      : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, P_HLA_INIT, _BUILD ),
         time_tt( time_tt_in ),
         dyn_manager( dyn_manager_in ),
         sun( sun_in ),

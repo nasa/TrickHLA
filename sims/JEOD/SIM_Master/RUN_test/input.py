@@ -29,10 +29,11 @@ def print_usage_message():
 
    print( ' ' )
    print( 'TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:' )
-   print( '  -h --help          : Print this help message.' )
-   print( '  --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --nostop           : Set no stop time on simulation.' )
-   print( '  --verbose [on|off] : on: Show verbose messages (Default), off: disable messages.' )
+   print( '  --default_data_config : Configure simulation in default data.' )
+   print( '  -h --help             : Print this help message.' )
+   print( '  --stop [time]         : Time to stop simulation, default is 10.0 seconds.' )
+   print( '  --nostop              : Set no stop time on simulation.' )
+   print( '  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -87,7 +88,11 @@ def parse_command_line():
 
       elif ( str( argv[index] ) == '-d' ):
          # Catch the Trick debug command line option an do NOT terminate.
-         print( 'DEBUG: Specified input file debug uption to Trick.' )
+         print( 'DEBUG: Specified input file debug option to Trick.' )
+
+      elif ( str( argv[index] ) == '--default_data_config' ):
+         # Catch the default data configuration command line option an do NOT terminate.
+         break;
 
       else:
          print( 'ERROR: Unknown command line argument ' + str( argv[index] ) )
@@ -150,6 +155,10 @@ trick.exec_set_enable_freeze( True )
 trick.exec_set_freeze_command( True )
 trick.sim_control_panel_set_enabled( True )
 trick.exec_set_stack_trace( True )
+
+# FIXME: Use echo jobs to debug an initialization issue.
+#trick.echo_jobs_on()
+#trick.echo_jobs_off()
 
 fix_var_server_source_address()
 
