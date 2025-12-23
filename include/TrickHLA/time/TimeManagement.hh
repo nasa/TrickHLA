@@ -198,7 +198,7 @@ class TimeManagement : public TrickThreadCoordinator
    //
    /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
     *  @return Pointer to associated RTI Ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() // cppcheck-suppress [functionStatic]
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() // cppcheck-suppress [functionStatic, unmatchedSuppression]
    {
       return RTI_ambassador.get();
    }
