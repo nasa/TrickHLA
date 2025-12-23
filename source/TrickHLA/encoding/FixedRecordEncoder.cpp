@@ -73,12 +73,12 @@ FixedRecordEncoder::~FixedRecordEncoder()
 
 void FixedRecordEncoder::update_before_encode()
 {
-   HLAfixedRecord *fixed_rec = dynamic_cast< HLAfixedRecord * >( this->data_encoder );
+   HLAfixedRecord const *fixed_rec = dynamic_cast< HLAfixedRecord * >( this->data_encoder );
    update_before_encode( fixed_rec );
 }
 
 void FixedRecordEncoder::update_before_encode(
-   HLAfixedRecord *fixed_rec )
+   HLAfixedRecord const *fixed_rec )
 {
    if ( fixed_rec != NULL ) {
       for ( int i = 0; i < fixed_rec->size(); ++i ) {
@@ -101,12 +101,12 @@ void FixedRecordEncoder::update_before_encode(
 
 void FixedRecordEncoder::update_after_decode()
 {
-   HLAfixedRecord *fixed_rec = dynamic_cast< HLAfixedRecord * >( this->data_encoder );
+   HLAfixedRecord const *fixed_rec = dynamic_cast< HLAfixedRecord * >( this->data_encoder );
    update_after_decode( fixed_rec );
 }
 
 void FixedRecordEncoder::update_after_decode(
-   HLAfixedRecord *fixed_rec )
+   HLAfixedRecord const *fixed_rec )
 {
    if ( fixed_rec != NULL ) {
       for ( int i = 0; i < fixed_rec->size(); ++i ) {

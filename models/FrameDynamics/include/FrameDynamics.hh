@@ -57,7 +57,7 @@ class FrameDynamics
    explicit FrameDynamics(); // Default constructor.
    virtual ~FrameDynamics(); // Destructor.
 
-   void default_data();
+   static void default_data();
 
    void initialize();
 

@@ -13,8 +13,10 @@ Trick Build Process Complete
 
 ---
 ### Running the Simulation
-In the SIM_encoders_test directory (note there is no input file):
+In the SIM_encoders_test directory:
 
 ```
-./S_main_*.exe
+./S_main_*.exe RUN_test/input.py
+
+./S_main_*.exe RUN_test/input.py --verbose on
 ```

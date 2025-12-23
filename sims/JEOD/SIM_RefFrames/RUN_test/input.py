@@ -85,7 +85,7 @@ def parse_command_line():
 
       elif ( str( argv[index] ) == '-d' ):
          # Catch the Trick debug command line option an do NOT terminate.
-         print( 'DEBUG: Specified input file debug uption to Trick.' )
+         print( 'DEBUG: Specified input file debug option to Trick.' )
 
       else:
          print( 'ERROR: Unknown command line argument ' + str( argv[index] ) )
@@ -124,6 +124,10 @@ trick.exec_set_enable_freeze( True )
 trick.exec_set_freeze_command( True )
 trick.sim_control_panel_set_enabled( False )
 trick.exec_set_stack_trace( False )
+
+# FIXME: Use echo jobs to debug an initialization issue.
+#trick.echo_jobs_on()
+#trick.echo_jobs_off()
 
 # =========================================================================
 # Set up the JEOD environment.

@@ -57,7 +57,7 @@ WStringData::WStringData(
    // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
 
    int value = 1 + offset;
-   _wstring  = L"wstring-" + std::to_wstring( value ); // cppcheck-suppress [useInitializationList]
+   _wstring  = L"wstring-" + std::to_wstring( value );
 
    for ( int i = 0; i < 3; ++i ) {
       value           = i + 1 + offset;

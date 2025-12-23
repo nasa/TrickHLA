@@ -58,7 +58,7 @@ class EntityDynamics
    explicit EntityDynamics(); // Default constructor.
    virtual ~EntityDynamics(); // Destructor.
 
-   void default_data();
+   static void default_data();
 
    void initialize();
 

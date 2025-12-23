@@ -2054,7 +2054,7 @@ void Manager::wait_for_registration_of_required_objects()
          sleep_timer.sleep();
 
          // Check again to see if we have any unregistered objects.
-         any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse]
+         any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse,redundantAssignment]
 
          if ( any_unregistered_required_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 

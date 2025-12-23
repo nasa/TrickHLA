@@ -39,6 +39,8 @@
 class JEODHLAInitSimObject : public Trick::SimObject {
 
  public:
+   
+   bool config_with_default_data;
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    JEODHLAInitSimObject( jeod::TimeManager          & time_manager_in,

@@ -91,9 +91,9 @@ class FixedRecordEncoder : public EncoderBase
 
    virtual int const get_data_size();
 
-   void update_before_encode( RTI1516_NAMESPACE::HLAfixedRecord *fixed_rec );
+   static void update_before_encode( RTI1516_NAMESPACE::HLAfixedRecord const *fixed_rec );
 
-   void update_after_decode( RTI1516_NAMESPACE::HLAfixedRecord *fixed_rec );
+   static void update_after_decode( RTI1516_NAMESPACE::HLAfixedRecord const *fixed_rec );
 
    virtual std::string to_string()
    {

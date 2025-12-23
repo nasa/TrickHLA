@@ -198,7 +198,7 @@ class TimeManagement : public TrickThreadCoordinator
    //
    /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
     *  @return Pointer to associated RTI Ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador()
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() // cppcheck-suppress [functionStatic, unmatchedSuppression]
    {
       return RTI_ambassador.get();
    }
@@ -297,7 +297,7 @@ class TimeManagement : public TrickThreadCoordinator
    void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
 
    /*! @brief Sets the HLA base time unit. */
-   HLABaseTimeEnum get_HLA_base_time_unit() const;
+   static HLABaseTimeEnum get_HLA_base_time_unit();
 
    /*! @brief Sets the HLA base time unit.
     *  @param base_time_unit HLA base time unit. */
@@ -319,7 +319,7 @@ class TimeManagement : public TrickThreadCoordinator
    void refresh_HLA_time_constants();
 
    /*! @brief Scale the Trick Time Tic value given the HLA base time multiplier. */
-   void scale_trick_tics_to_HLA_base_time_multiplier();
+   static void scale_trick_tics_to_HLA_base_time_multiplier();
 
    /*! @brief Sets the HLA lookahead time.
     *  @param value HLA lookahead time in seconds. */

@@ -253,7 +253,7 @@ Federate::~Federate()
 /*!
  * @job_class{initialization}
  */
-void Federate::print_version() const
+void Federate::print_version()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string rti_name;
@@ -2262,7 +2262,7 @@ void Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
-void Federate::publish_interaction_class(
+void Federate::publish_interaction_class( // cppcheck-suppress [functionStatic, unmatchedSuppression]
    RTI1516_NAMESPACE::InteractionClassHandle const &class_handle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -2300,7 +2300,7 @@ void Federate::publish_interaction_class(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
-void Federate::unpublish_interaction_class(
+void Federate::unpublish_interaction_class( // cppcheck-suppress [functionStatic, unmatchedSuppression]
    RTI1516_NAMESPACE::InteractionClassHandle const &class_handle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -2338,7 +2338,7 @@ void Federate::unpublish_interaction_class(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
-void Federate::send_interaction(
+void Federate::send_interaction( // cppcheck-suppress [functionStatic, unmatchedSuppression]
    RTI1516_NAMESPACE::InteractionClassHandle const  &class_handle,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &parameter_list )
 {
@@ -3853,7 +3853,7 @@ void Federate::wait_to_receive_blocking_io_data(
 /*!
  *  @job_class{scheduled}
  */
-bool Federate::is_execution_member()
+bool Federate::is_execution_member() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
    if ( RTI_ambassador.get() != NULL ) {
       bool is_exec_member = true;
@@ -5920,7 +5920,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
    }
 }
 
-void Federate::request_federation_save_status()
+void Federate::request_federation_save_status() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::request_federation_save_status():%d\n",
@@ -5954,7 +5954,7 @@ void Federate::request_federation_save_status()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
-void Federate::request_federation_restore_status()
+void Federate::request_federation_restore_status() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::request_federation_restore_status():%d\n",

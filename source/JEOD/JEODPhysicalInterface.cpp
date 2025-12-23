@@ -322,7 +322,7 @@ void JEODPhysicalInterface::set_data(
  * @job_class{initialization}
  */
 void JEODPhysicalInterface::set_data(
-   jeod::BodyRefFrame *vehicle_point_ptr )
+   jeod::BodyRefFrame const *vehicle_point_ptr )
 {
    // Set the reference to the JEODPhysicalInterface data.
    if ( vehicle_point_ptr == NULL ) {
@@ -342,8 +342,8 @@ void JEODPhysicalInterface::set_data(
  * @job_class{initialization}
  */
 void JEODPhysicalInterface::set_data(
-   jeod::DynBody      *dyn_body_ptr,
-   jeod::BodyRefFrame *vehicle_point_ptr )
+   jeod::DynBody            *dyn_body_ptr,
+   jeod::BodyRefFrame const *vehicle_point_ptr )
 {
    // Make sure that we have a dyn_body pointer to assign.
    if ( dyn_body_ptr == NULL ) {

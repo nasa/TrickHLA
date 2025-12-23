@@ -78,6 +78,7 @@ Enum32Data::Enum32Data(
       errmsg << "Enum32Data::Enum32Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum32!" << endl;
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
    for ( int i = 0; i < ptr_enum32_size; ++i ) {
       ptr_enum32[i] = ( ( ( i + 1 + offset ) % 2 ) == 0 ) ? Int32Enum::one32 : Int32Enum::two32;

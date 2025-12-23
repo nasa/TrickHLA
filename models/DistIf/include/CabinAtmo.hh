@@ -166,7 +166,7 @@ class CabinAtmo
    /// @brief  Computes total conserved parameters.
    void updateConservation();
    /// @brief  Limits the given input to the given range.
-   double limitRange( double const min, double const input, double const max ) const;
+   static double limitRange( double const min, double const input, double const max );
 
   private:
    /// @brief  Copy constructor unavailable since declared private and not implemented.
@@ -188,7 +188,7 @@ class CabinAtmo
 ///
 /// @details  Returns the given input limited to the range [min, max].
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline double DistIf::CabinAtmo::limitRange( double const min, double const input, double const max ) const
+inline double DistIf::CabinAtmo::limitRange( double const min, double const input, double const max )
 {
    return std::max( std::min( input, max ), min );
 }

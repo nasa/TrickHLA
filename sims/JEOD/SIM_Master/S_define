@@ -82,6 +82,13 @@
 #include "SpaceFOM/SpaceFOM.sm"
 
 
+//--------------------------------------------------------------------------
+// SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
+// simulation object definition.
+//--------------------------------------------------------------------------
+#include "JEOD/JEODRefFrameTree.sm"
+
+
 //==========================================================================
 // SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
 // initialization SimObject.
@@ -108,26 +115,40 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
                                 THLA.federate,
                                 THLA.execution_control,
                                 P_SF_INIT_EPOCH_RRF,
-                                10,
+                                P_SF_INIT_EPOCH_RRF,
                                 P_HLA_INIT );
-
-
-//==========================================================================
-// SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
-// simulation object definition.
-//==========================================================================
-#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
-#include "JEOD/JEODRefFrameTree.sm"
 
 
 // Setup the integration loop.
 IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, dynamics;
 
 
+// Make the command line argument available to create_connections.
+##include "trick/command_line_protos.h"
+
 //==========================================================================
 // Create the THLA connections for the SpaceFOM Reference Frame Tree.
 //==========================================================================
 void create_connections() {
+   
+   unsigned int object_count = 0;
+   unsigned int interaction_count = 0;
+   
+   int     argc = command_line_args_get_argc();
+   char ** argv = command_line_args_get_argv();
+   
+   // Choose to configure with default data or not.  The default is 'false'.
+   THLA_INIT.config_with_default_data = false;
+   
+   // Let's check for default data configurations with command line arguments.
+   for ( int iinc = 0 ; iinc < argc ; iinc++ ){
+      if ( !strcmp( argv[iinc], "--default_data_config" ) ) {
+         THLA_INIT.config_with_default_data = true;
+      }
+   }
+   
+   // FIXME: For now, we are going to override the default data flag and set it to True!
+   THLA_INIT.config_with_default_data = true;
 
    // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.
    ref_frame_tree.ssbary_frame_ptr     = &solar_system_barycenter.frame_packing;
@@ -139,27 +160,54 @@ void create_connections() {
    ref_frame_tree.earth_pfix_frame_ptr = &earth_centered_fixed.frame_packing;
    ref_frame_tree.moon_pfix_frame_ptr  = &moon_centered_fixed.frame_packing;
    ref_frame_tree.mars_pfix_frame_ptr  = &mars_centered_fixed.frame_packing;
-
-#ifdef DEFAULT_DATA_CONFIG
-
-   //
-   // This code will only be executed when we want to configure the reference
-   // frame tree using default data instead of in the input file.
-   //
-   // Allocate the HLA objects for the Reference Frame tree.
-   THLA.manager.obj_count = 9;
-   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
-                                                                    THLA.manager.obj_count );
-   // Assign the HLA objects to the associated frame.
-   solar_system_barycenter.frame_packing.set_object( &(THLA.manager.objects[0]) );
-   sun_inertial.frame_packing.set_object( &(THLA.manager.objects[1]) );
-   earth_moon_barycenter.frame_packing.set_object( &(THLA.manager.objects[2]) );
-   earth_centered_inertial.frame_packing.set_object( &(THLA.manager.objects[3]) );
-   moon_centered_inertial.frame_packing.set_object( &(THLA.manager.objects[4]) );
-   mars_centered_inertial.frame_packing.set_object( &(THLA.manager.objects[5]) );
-   earth_centered_fixed.frame_packing.set_object( &(THLA.manager.objects[6]) );
-   moon_centered_fixed.frame_packing.set_object( &(THLA.manager.objects[7]) );
-   mars_centered_fixed.frame_packing.set_object( &(THLA.manager.objects[8]) );
-
-#endif
+   
+   // Allocate THLA objects and interactions here if using default_data
+   // to configure the TrickHLA objects and interactions.
+   if ( THLA_INIT.config_with_default_data ) {
+      
+      //
+      // This code will only be executed when we want to configure the reference
+      // frame tree using default data instead of in the input file.
+      //
+      // Allocate the HLA objects for the Reference Frame tree.
+      THLA.manager.obj_count = 9;
+      THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                       THLA.manager.obj_count );
+      // Assign the HLA objects to the associated frame.
+      solar_system_barycenter.set_object( &(THLA.manager.objects[object_count++]) );
+      sun_inertial.set_object( &(THLA.manager.objects[object_count++]) );
+      earth_moon_barycenter.set_object( &(THLA.manager.objects[object_count++]) );
+      earth_centered_inertial.set_object( &(THLA.manager.objects[object_count++]) );
+      moon_centered_inertial.set_object( &(THLA.manager.objects[object_count++]) );
+      mars_centered_inertial.set_object( &(THLA.manager.objects[object_count++]) );
+      earth_centered_fixed.set_object( &(THLA.manager.objects[object_count++]) );
+      moon_centered_fixed.set_object( &(THLA.manager.objects[object_count++]) );
+      mars_centered_fixed.set_object( &(THLA.manager.objects[object_count++]) );
+      
+   }
+   
+   // Check the object and interaction counts against the allocations.
+   if ( object_count != THLA.manager.obj_count ){
+      std::ostringstream errmsg;
+      errmsg << "S_define::create_connections():" << __LINE__
+             << ": ERROR: Object count mismatch: allocated = " << THLA.manager.obj_count
+             << " but set = " << object_count << std::endl;
+      // Print message and terminate.
+      //TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      exit( 1 );
+   }
+   if ( interaction_count != THLA.manager.inter_count ){
+      std::ostringstream errmsg;
+      errmsg << "S_define::create_connections():" << __LINE__
+             << ": ERROR: Interaction count mismatch: allocated = " << THLA.manager.inter_count
+             << " but set = " << interaction_count << std::endl;
+      // Print message and terminate.
+      //TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      exit(1);
+   }
+   
+   return;
+   
 }

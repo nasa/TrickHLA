@@ -184,7 +184,7 @@ class Federate : public TimeManagement
    virtual ~Federate();
 
    /*! @brief Print the TrickHLA version string. */
-   void print_version() const;
+   static void print_version();
 
    // Federation initialization functions.
    /*! @brief Check, and if necessary, fix the FPU Control Word. */
@@ -580,7 +580,7 @@ class Federate : public TimeManagement
 
    /*! @brief Prints the reason for the federation save failure.
     * @param reason Save failure reason. */
-   void print_save_failure_reason( RTI1516_NAMESPACE::SaveFailureReason reason );
+   static void print_save_failure_reason( RTI1516_NAMESPACE::SaveFailureReason reason );
 
    /*! @brief Save the supplied checkpoint file name.
     * @param name Checkpoint file name. */
@@ -956,7 +956,7 @@ class Federate : public TimeManagement
    void exit_freeze();
 
    /*! @brief Unfreeze the simulation. */
-   void un_freeze();
+   static void un_freeze();
 
   private:
    // Federation state variables.

@@ -39,6 +39,7 @@ def print_usage_message():
    print( ' ' )
    print( 'TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:' )
    print( '  -a --active [name]    : Name of the active vehicle, default is Lander.' )
+   print( '  --default_data_config : Configure simulation in default data.' )
    print( '  -h --help             : Print this help message.' )
    print( '  -f --fed_name [name]  : Name of the Federate, default is EntityTest.' )
    print( '  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_JEOD_Test.' )
@@ -148,7 +149,11 @@ def parse_command_line():
 
       elif ( str( argv[index] ) == '-d' ):
          # Catch the Trick debug command line option an do NOT terminate.
-         print( 'DEBUG: Specified input file debug uption to Trick.' )
+         print( 'DEBUG: Specified input file debug option to Trick.' )
+
+      elif ( str( argv[index] ) == '--default_data_config' ):
+         # Catch the default data configuration command line option an do NOT terminate.
+         break;
 
       else:
          print( 'ERROR: Unknown command line argument ' + str( argv[index] ) )
@@ -209,6 +214,10 @@ trick.exec_set_enable_freeze( True )
 trick.exec_set_freeze_command( True )
 trick.sim_control_panel_set_enabled( False )
 trick.exec_set_stack_trace( True )
+
+# FIXME: Use echo jobs to debug an initialization issue.
+#trick.echo_jobs_on()
+#trick.echo_jobs_off()
 
 # =========================================================================
 # Set up the JEOD environment.
