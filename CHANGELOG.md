@@ -31,13 +31,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - TO: ObjectDeletedHandler
 - Renamed the *TrickHLAPackingBaseSimObject* simulation object to *TrickHLAObjectBaseSimObject* including the corresponding simulation module filename.
   - FROM: TrickHLAPackingBaseSimObject (S_modules/THLAPackingBase.sm)
-  - TO: TrickHLAObjectBaseSimObject (S_module/THLAObjectBase.sm)
+  - TO: TrickHLAObjectBaseSimObject (S_modules/THLAObjectBase.sm)
 - Renamed the *Modified_data* directory to *TrickHLA_data* to better support Default Data.
   - FROM: Modified_data
   - TO: TrickHLA_data
 - Configure and initialize TrickHLA from default data instead of the input file.
-  - Extend your simulation objects with TrickHLAObjectBaseSimObject and include the S_models/THLAObjectBase.sm file in your simulation S_define file to allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
-  - If the simulation object that defines and instantiates your *Conditional*, *LagCompensation*, or *Packing* implementations does not extend TrickHLAObjectBaseSimObject (defined in S_models/THLAObjectBase.sm), then make sure to explicitly call the *initialize()* function for each from the S_define file.
+  - Extend your simulation objects with TrickHLAObjectBaseSimObject and include the S_modules/THLAObjectBase.sm file in your simulation S_define file to allow you to configure and initialize the TrickHLA settings using default data instead of using an input.py file.
+  - If the simulation object that defines and instantiates your *Conditional*, *LagCompensation*, or *Packing* implementations does not extend TrickHLAObjectBaseSimObject (defined in S_modules/THLAObjectBase.sm), then make sure to explicitly call the *initialize()* function for each from the S_define file.
 
 ```
       # Example from sims/SpaceFOM/SIM_sine/S_define
