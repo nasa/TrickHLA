@@ -1321,7 +1321,7 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
 }
 
 /*
- * @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt).
+ * @brief Verify the time constraints (i.e. Lookahead, LCTS, Me, Mhla, RT, and dt).
  */
 bool const TimeManagement::verify_time_constraints()
 {

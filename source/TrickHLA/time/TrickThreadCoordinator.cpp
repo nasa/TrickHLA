@@ -1561,7 +1561,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       if ( manager->get_execution_control()->is_master()
            && manager->get_execution_control()->does_cte_timeline_exist() ) {
 
-         double time_padding = manager->get_execution_control()->get_time_padding();
+         double const time_padding = manager->get_execution_control()->get_time_padding();
 
          if ( time_padding <= ( 2.0 * exec_get_freeze_frame() ) ) {
             ostringstream errmsg;
