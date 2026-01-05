@@ -25,7 +25,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
-@trick_link_dependency{time/Int64BaseTime.cpp}
 @trick_link_dependency{time/TimeManagement.cpp}
 @trick_link_dependency{time/TrickThreadCoordinator.cpp}
 
@@ -77,7 +76,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
-#include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/TimeManagement.hh"
 
 #if defined( IEEE_1516_2025 )
