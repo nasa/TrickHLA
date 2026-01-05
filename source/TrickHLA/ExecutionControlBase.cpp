@@ -243,7 +243,7 @@ void ExecutionControlBase::initialize()
       if ( cte_timeline != the_clock ) {
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
-                << " ERROR: The CTE timeline is specified but it is not"
+                << " ERROR: The CTE timeline is specified, but it is not"
                 << " configured as the Trick real time clock! Make sure"
                 << " the CTETimelineBase class constructor is calling"
                 << " real_time_change_clock( this );" << endl;
@@ -300,7 +300,8 @@ Trick simulation time as the default scenario-timeline.\n",
       if ( scenario_timeline == NULL ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
-                << " FAILED to allocate enough memory for ScenarioTimeline class!" << endl;
+                << " FAILED to allocate enough memory for ScenarioTimeline class!"
+                << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
@@ -412,7 +413,8 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          errmsg << "ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
                 << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
-                << "'! This conflicts with this being the designated Master federate!" << endl;
+                << "'! This conflicts with this being the designated Master federate!"
+                << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -681,7 +683,8 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one ExecutionConfiguration attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified." << endl;
+             << " files to make sure the 'subscribe' value is correctly specified."
+             << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
