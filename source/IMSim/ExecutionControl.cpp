@@ -261,8 +261,6 @@ void ExecutionControl::initialize()
          }
       }
    */
-
-   return;
 }
 
 /*!

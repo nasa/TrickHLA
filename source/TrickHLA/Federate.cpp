@@ -380,6 +380,33 @@ void Federate::initialize()
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+   // Check to make sure we have a reference to the TrickHLA::FedAmb.
+   if ( federate_ambassador == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL TrickHLA::FedAmb." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // Check to make sure we have a reference to the TrickHLA::Manager.
+   if ( manager == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
+   if ( execution_control == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL TrickHLA::ExecutionControlBase." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
    // Make sure the federate name has been specified.
    if ( name.empty() ) {
       ostringstream errmsg;
@@ -399,54 +426,10 @@ void Federate::initialize()
                        __LINE__, name.c_str(), type.c_str() );
    }
 
-   // Determine if the Trick time Tic resolution can support the HLA base time.
-   if ( exec_get_time_tic_value() < Int64BaseTime::get_base_time_multiplier() ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
-             << ") cannot support the HLA base time resolution ("
-             << Int64BaseTime::get_base_unit()
-             << ") corresponding to THLA.federate.set_HLA_base_time_unit("
-             << Int64BaseTime::get_base_unit_enum()
-             << "). Please update the Trick time tic value in your input.py file"
-             << " (i.e. by calling 'trick.exec_set_time_tic_value()')." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Check to make sure we have a reference to the TrickHLA::FedAmb.
-   if ( federate_ambassador == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::FedAmb." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
-   // Initialize the TrickHLA::FedAmb object instance.
    federate_ambassador->initialize();
 
-   // Check to make sure we have a reference to the TrickHLA::Manager.
-   if ( manager == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
-   // Verify the user specified object and interaction arrays and counts.
    manager->verify_object_and_interaction_arrays();
 
-   // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
-   if ( execution_control == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::ExecutionControlBase." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
-   // Initialize the TrickHLA::ExecutionControl object instance.
    execution_control->initialize();
 
    // Finish doing the initialization.
