@@ -464,18 +464,7 @@ int64_t const Int64BaseTime::to_base_time(
 double const Int64BaseTime::to_seconds(
    int64_t const time_in_base_unit )
 {
-   double const seconds    = (double)( time_in_base_unit / base_time_multiplier );
-   double const fractional = (double)( time_in_base_unit % base_time_multiplier ) / (double)base_time_multiplier;
+   double const seconds    = (double)to_whole_seconds( time_in_base_unit );
+   double const fractional = (double)to_fractional_seconds( time_in_base_unit ) / (double)base_time_multiplier;
    return ( seconds + fractional );
-}
-
-/*!
- * @brief Converts the given integer time to an integer time representing whole seconds.
- * @return Time value in whole seconds.
- * @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class.
- */
-int64_t const Int64BaseTime::to_whole_seconds(
-   int64_t const time_in_base_unit )
-{
-   return ( time_in_base_unit / base_time_multiplier );
 }

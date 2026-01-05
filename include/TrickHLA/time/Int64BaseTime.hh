@@ -145,17 +145,28 @@ class Int64BaseTime
     *  @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class. */
    static double const to_seconds( int64_t const time_in_base_unit );
 
-   /*! @brief Converts the given integer time to an integer time representing whole seconds.
-    *  @return Time value in whole seconds.
-    *  @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class. */
-   static int64_t const to_whole_seconds( int64_t const time_in_base_unit );
-
   protected:
    static HLABaseTimeEnum base_unit;            ///< @trick_units{--} Base time unit.
    static std::string     base_unit_string;     ///< @trick_units{--} Base time unit as a string.
    static int64_t         base_time_multiplier; ///< @trick_units{--} Multiplier for the base unit.
 
   private:
+   /*! @brief Converts the given integer time to an integer time representing whole seconds.
+    *  @return Time value in whole seconds.
+    *  @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class. */
+   static int64_t const to_whole_seconds( int64_t const time_in_base_unit )
+   {
+      return ( time_in_base_unit / base_time_multiplier );
+   }
+
+   /*! @brief Return the the fractional part of the given time.
+    *  @return The the fractional secnods part of the given time.
+    *  @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class. */
+   static int64_t const to_fractional_seconds( int64_t const time_in_base_unit )
+   {
+      return ( time_in_base_unit % base_time_multiplier );
+   }
+
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Int64BaseTime class.
     *  @details This constructor is private to prevent inadvertent copies. */
