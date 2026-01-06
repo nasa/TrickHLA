@@ -99,10 +99,8 @@ EncoderBase *EncoderFactory::create(
       return NULL;
    }
 
-   EncoderBase *encoder = create( ref2->address,
-                                  ref2->attr,
-                                  hla_encoding,
-                                  trick_name );
+   EncoderBase *encoder = create( ref2->address, ref2->attr, hla_encoding, trick_name );
+
    free( ref2 );
 
    return encoder;
