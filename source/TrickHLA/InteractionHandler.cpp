@@ -53,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 
@@ -113,7 +114,7 @@ void InteractionHandler::set_interaction( TrickHLA::Interaction *inter )
 bool InteractionHandler::send_interaction()
 {
    return ( ( interaction != NULL )
-               ? interaction->send( VariableLengthData( NULL, 0 ) )
+               ? interaction->send( TrickHLA::EMPTY_USER_SUPPLIED_TAG )
                : false );
 }
 
@@ -129,7 +130,7 @@ bool InteractionHandler::send_interaction(
    double send_HLA_time )
 {
    return ( ( interaction != NULL )
-               ? interaction->send( send_HLA_time, VariableLengthData( NULL, 0 ) )
+               ? interaction->send( send_HLA_time, TrickHLA::EMPTY_USER_SUPPLIED_TAG )
                : false );
 }
 

@@ -143,7 +143,7 @@ void MTRInteractionHandler::send_interaction(
    if ( !name.empty() ) {
       rti_user_supplied_tag = VariableLengthData( name.c_str(), name.size() );
    } else {
-      rti_user_supplied_tag = VariableLengthData( NULL, 0 );
+      rti_user_supplied_tag = TrickHLA::EMPTY_USER_SUPPLIED_TAG;
    }
 
    // Get the current time line values.

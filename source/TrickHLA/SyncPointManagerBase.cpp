@@ -584,7 +584,7 @@ bool const SyncPointManagerBase::is_sync_point_achieved(
 bool const SyncPointManagerBase::achieve_sync_point(
    wstring const &label )
 {
-   return achieve_sync_point( label, VariableLengthData( NULL, 0 ) );
+   return achieve_sync_point( label, TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 }
 
 bool const SyncPointManagerBase::achieve_sync_point(

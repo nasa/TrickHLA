@@ -1129,7 +1129,7 @@ void Interaction::process_interaction()
       if ( user_supplied_tag_size > 0 ) {
          handler->receive_interaction( VariableLengthData( user_supplied_tag, user_supplied_tag_size ) );
       } else {
-         handler->receive_interaction( VariableLengthData( NULL, 0 ) );
+         handler->receive_interaction( TrickHLA::EMPTY_USER_SUPPLIED_TAG );
       }
    }
 

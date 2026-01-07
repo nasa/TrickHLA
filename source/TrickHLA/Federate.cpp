@@ -2074,7 +2074,7 @@ void Federate::request_attribute_update(
       // Request initial values.
       RTI_ambassador->requestAttributeValueUpdate( class_handle,
                                                    attribute_list,
-                                                   VariableLengthData( NULL, 0 ) );
+                                                   TrickHLA::EMPTY_USER_SUPPLIED_TAG );
    } catch ( ObjectClassNotDefined const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::request_attribute_update():%d ObjectClassNotDefined: Attribute update request FAILED!\n",
@@ -2328,7 +2328,7 @@ void Federate::send_interaction( // cppcheck-suppress [functionStatic, unmatched
 
    bool error_flag = false;
    try {
-      RTI_ambassador->sendInteraction( class_handle, parameter_list, VariableLengthData( NULL, 0 ) );
+      RTI_ambassador->sendInteraction( class_handle, parameter_list, TrickHLA::EMPTY_USER_SUPPLIED_TAG );
    } catch ( InteractionClassNotPublished const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::send_interaction():%d InteractionClassNotPublished: Send interaction FAILED!\n",

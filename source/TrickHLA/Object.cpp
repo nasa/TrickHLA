@@ -626,11 +626,11 @@ void Object::remove()
                if ( federate->in_time_regulating_state() ) {
                   Int64Time update_time( get_granted_time() + get_lookahead() );
                   rti_amb->deleteObjectInstance( instance_handle,
-                                                 VariableLengthData( NULL, 0 ),
+                                                 TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                  update_time.get() );
                } else {
                   rti_amb->deleteObjectInstance( instance_handle,
-                                                 VariableLengthData( NULL, 0 ) );
+                                                 TrickHLA::EMPTY_USER_SUPPLIED_TAG );
                }
             }
          }
@@ -1869,7 +1869,7 @@ void Object::request_attribute_value_update()
    try {
       rti_amb->requestAttributeValueUpdate( this->instance_handle,
                                             attr_handle_set,
-                                            VariableLengthData( NULL, 0 ) );
+                                            TrickHLA::EMPTY_USER_SUPPLIED_TAG );
       // Must free the memory
       attr_handle_set.clear();
 
@@ -2083,7 +2083,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             // Send as Timestamp Order
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            VariableLengthData( NULL, 0 ),
+                                            TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                             update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2094,7 +2094,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             // Send as Receive Order
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            VariableLengthData( NULL, 0 ) );
+                                            TrickHLA::EMPTY_USER_SUPPLIED_TAG );
          }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
@@ -2335,7 +2335,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Timestamp Order
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               VariableLengthData( NULL, 0 ),
+                                               TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2346,7 +2346,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Receive Order (i.e. with no timestamp).
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               VariableLengthData( NULL, 0 ) );
+                                               TrickHLA::EMPTY_USER_SUPPLIED_TAG );
             }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -2604,7 +2604,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Timestamp Order
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               VariableLengthData( NULL, 0 ),
+                                               TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2616,7 +2616,7 @@ Object '%s', Receive Order (RO) Attribute update.\n",
                // Send as Receive Order (i.e. with no timestamp).
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               VariableLengthData( NULL, 0 ) );
+                                               TrickHLA::EMPTY_USER_SUPPLIED_TAG );
             }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -2863,7 +2863,7 @@ Object '%s', Receive Order (RO) Attribute update.\n",
             // Send as Receive Order (i.e. with no timestamp).
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            VariableLengthData( NULL, 0 ) );
+                                            TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -3345,7 +3345,7 @@ void Object::send_init_data()
          // so no need to store it.
          rti_amb->updateAttributeValues( this->instance_handle,
                                          *attribute_values_map,
-                                         VariableLengthData( NULL, 0 ) );
+                                         TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
 #endif
@@ -3827,7 +3827,7 @@ void Object::release_ownership()
       // IEEE 1516.1-2010 section 7.6
       rti_amb->confirmDivestiture( this->instance_handle,
                                    attrs,
-                                   VariableLengthData( NULL, 0 ) );
+                                   TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 
       AttributeHandleSet::iterator divest_iter;
 
@@ -4422,7 +4422,7 @@ void Object::grant_pull_request()
          // IEEE 1516.1-2025 section 7.13
          rti_amb->attributeOwnershipDivestitureIfWanted( this->instance_handle,
                                                          attrs_to_divest,
-                                                         VariableLengthData( NULL, 0 ),
+                                                         TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                          *divested_attrs );
 #else
          // IEEE 1516.1-2010 section 7.12
