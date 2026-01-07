@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Notable Additions
 
-- Improved performance by reusing a common empty user supplied tag instead of creating new one for every RTI call that used one.
+- Improved performance by reusing a common empty user supplied tag instead of creating a new tag for every RTI call that needed one.
 
 ### Breaking Changes
 
