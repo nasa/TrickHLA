@@ -52,9 +52,8 @@ NASA, Johnson Space Center\n
 #include <map>
 #include <string>
 
-// TrickHLA inlcudes.
+// TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/BasicClock.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/ElapsedTimeStats.hh"
@@ -64,6 +63,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ReflectedAttributesQueue.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/BasicClock.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 

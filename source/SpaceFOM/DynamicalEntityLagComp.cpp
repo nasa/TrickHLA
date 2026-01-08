@@ -34,7 +34,7 @@ NASA, Johnson Space Center\n
 #include <ostream>
 #include <sstream>
 
-// Trick inlcudes.
+// Trick includes.
 #include "trick/Integrator.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/matrix_macros.h"

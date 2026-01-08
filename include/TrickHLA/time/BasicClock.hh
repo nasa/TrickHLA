@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/BasicClock.hh
+@file TrickHLA/time/BasicClock.hh
 @ingroup TrickHLA
 @brief This class provides a function to get the current GMT time by using
 either the CTE external clock if enabled or the system time-of-day.
