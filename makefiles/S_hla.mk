@@ -22,12 +22,15 @@ endif
 
 # Set the IEEE-1516 standard and RTI include paths based on the
 # RTI vendor and version specified.
+IS_PITCH_RTI = 0
 ifeq ($(RTI_VENDOR),Pitch_HLA_4)
+   IS_PITCH_RTI   = 1
    HLA_STANDARD   =  IEEE_1516_2025
    RTI_INCLUDE    =  ${RTI_HOME}/api/cpp/HLA_1516-2025
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
+   IS_PITCH_RTI = 1
    HLA_STANDARD = IEEE_1516_2010
    RTI_INCLUDE  = ${RTI_HOME}/api/cpp/HLA_1516-2010
    ifeq ("$(wildcard ${RTI_INCLUDE})","")
@@ -46,7 +49,7 @@ endif
 
 # Ensure the environment variables set by the Pitch RTI are consistent with
 # the RTI home directory specified.
-ifneq ($(RTI_VENDOR),MAK_HLA_Evolved)
+ifeq ($(IS_PITCH_RTI),1)
    ifdef PRTI6_ROOT
       ifneq ($(PRTI6_ROOT),$(RTI_HOME))
          export PRTI6_ROOT = ${RTI_HOME}
