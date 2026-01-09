@@ -26,9 +26,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../../../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../../../source/TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -51,12 +51,12 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/MutexLock.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
 
 #if defined( IEEE_1516_2025 )
 #   include "TrickHLA/FedAmbHLA4.hh"

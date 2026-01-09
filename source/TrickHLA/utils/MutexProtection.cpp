@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/MutexProtection.cpp
+@file TrickHLA/utils/MutexProtection.cpp
 @ingroup TrickHLA
 @brief Mutex protection, automatically unlocks mutex when this object goes out of scope.
 
@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/utils/MutexLock.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
 
 using namespace TrickHLA;
 

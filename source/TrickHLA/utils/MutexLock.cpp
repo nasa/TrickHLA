@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/MutexLock.cpp
+@file TrickHLA/utils/MutexLock.cpp
 @ingroup TrickHLA
 @brief TrickHLA Mutex Lock wrapper.
 
@@ -27,7 +27,7 @@ NASA, Johnson Space Center\n
 #include <pthread.h>
 
 // TrickHLA includes.
-#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 
 using namespace TrickHLA;
 

@@ -17,8 +17,8 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{Item.cpp}
 @trick_link_dependency{ItemQueue.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
+@trick_link_dependency{utils/MutexLock.cpp}
+@trick_link_dependency{utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -43,7 +43,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
-#include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
 
 using namespace std;
 using namespace TrickHLA;

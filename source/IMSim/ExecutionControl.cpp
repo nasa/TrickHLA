@@ -19,13 +19,13 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
-@trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../TrickHLA/SyncPointTimed.cpp}
 @trick_link_dependency{../TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
-@trick_link_dependency{../TrickHLA/Utilities.cpp}
 @trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
+@trick_link_dependency{../TrickHLA/utils/SleepTimeout.cpp}
+@trick_link_dependency{../TrickHLA/utils/Utilities.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{FreezeInteractionHandler.cpp}
@@ -72,8 +72,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Parameter.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
@@ -81,6 +79,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/time/SimTimeline.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // IMSim includes.
 #include "IMSim/ExecutionControl.hh"

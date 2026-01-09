@@ -28,9 +28,9 @@ execution.
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Types.cpp}
-@trick_link_dependency{Utilities.cpp}
+@trick_link_dependency{utils/SleepTimeout.cpp}
+@trick_link_dependency{utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -59,9 +59,9 @@ execution.
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Packing.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

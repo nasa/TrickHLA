@@ -22,11 +22,11 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../ExecutionControlBase.cpp}
 @trick_link_dependency{../FedAmb.cpp}
 @trick_link_dependency{../Manager.cpp}
-@trick_link_dependency{../MutexLock.cpp}
-@trick_link_dependency{../MutexProtection.cpp}
-@trick_link_dependency{../SleepTimeout.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
+@trick_link_dependency{../utils/MutexLock.cpp}
+@trick_link_dependency{../utils/MutexProtection.cpp}
+@trick_link_dependency{../utils/SleepTimeout.cpp}
+@trick_link_dependency{../utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -61,15 +61,15 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/TimeManagement.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

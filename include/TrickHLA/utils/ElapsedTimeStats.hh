@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/ElapsedTimeStats.hh
+@file TrickHLA/utils/ElapsedTimeStats.hh
 @ingroup TrickHLA
 @brief This class gathers statistics on the elapsed time between calls to the
 measure function.
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/ElapsedTimeStats.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/ElapsedTimeStats.cpp}
 
 @revs_title
 @revs_begin

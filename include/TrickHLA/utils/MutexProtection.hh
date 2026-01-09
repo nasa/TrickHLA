@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/MutexProtection.hh
+@file TrickHLA/utils/MutexProtection.hh
 @ingroup TrickHLA
 @brief Mutex protection, automatically unlocks mutex when this object goes out of scope.
 
@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -32,7 +32,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_MUTEX_PROTECTION_HH
 
 // TrickHLA includes.
-#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 
 namespace TrickHLA
 {

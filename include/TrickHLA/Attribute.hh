@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
 @trick_link_dependency{../../source/TrickHLA/RecordElement.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

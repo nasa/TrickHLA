@@ -23,7 +23,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/RecordElement.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin

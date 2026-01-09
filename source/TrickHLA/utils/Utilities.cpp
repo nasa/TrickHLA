@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Utilities.cpp
+@file TrickHLA/utils/Utilities.cpp
 @ingroup TrickHLA
 @brief Implementation of the TrickHLA utilities.
 
@@ -15,7 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Types.cpp}
+@trick_link_dependency{../Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 
 @revs_title
@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/Version.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // For a Mac, add support for the FPU control word value at program start.
 #if defined( FPU_CW_PROTECTION ) && defined( __APPLE__ ) && ( defined( __i386__ ) || defined( __x86_64__ ) )

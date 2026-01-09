@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/MutexLock.hh
+@file TrickHLA/utils/MutexLock.hh
 @ingroup TrickHLA
 @brief TrickHLA Mutex Lock wrapper.
 
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
 
 @revs_title
 @revs_begin

@@ -40,9 +40,9 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.

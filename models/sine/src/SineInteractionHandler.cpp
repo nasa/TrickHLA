@@ -49,10 +49,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionHandler.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // Sine model includes.
 #include "sine/include/SineInteractionHandler.hh"

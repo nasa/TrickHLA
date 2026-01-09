@@ -21,12 +21,12 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Federate.cpp}
 @trick_link_dependency{../Manager.cpp}
-@trick_link_dependency{../MutexLock.cpp}
-@trick_link_dependency{../MutexProtection.cpp}
 @trick_link_dependency{../Object.cpp}
-@trick_link_dependency{../SleepTimeout.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
+@trick_link_dependency{../utils/MutexLock.cpp}
+@trick_link_dependency{../utils/MutexProtection.cpp}
+@trick_link_dependency{../utils/SleepTimeout.cpp}
+@trick_link_dependency{../utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -60,13 +60,13 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 using namespace std;
 using namespace TrickHLA;

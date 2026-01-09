@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 #include "trick/memorymanager_c_intf.h"
 
 // TrickHLA include files.
-#include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // Model include files.
 #include "encoding/include/WStringData.hh"

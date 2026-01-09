@@ -37,9 +37,9 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // HLA includes.
 #include "RTI/VariableLengthData.h"

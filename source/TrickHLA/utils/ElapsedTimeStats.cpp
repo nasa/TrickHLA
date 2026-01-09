@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/ElapsedTimeStats.cpp
+@file TrickHLA/utils/ElapsedTimeStats.cpp
 @ingroup TrickHLA
 @brief This class gathers statistics on the elapsed time between calls to the
 measure function.
@@ -38,7 +38,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 
 // TrickHLA includes.
-#include "TrickHLA/ElapsedTimeStats.hh"
+#include "TrickHLA/utils/ElapsedTimeStats.hh"
 
 using namespace std;
 using namespace TrickHLA;

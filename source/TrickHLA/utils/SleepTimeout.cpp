@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SleepTimeout.cpp
+@file TrickHLA/utils/SleepTimeout.cpp
 @ingroup TrickHLA
 @brief TrickHLA sleep timer for use in spin locks to detect a timeout.
 
@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 
 // TrickHLA includes.
-#include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
 
 using namespace TrickHLA;
 

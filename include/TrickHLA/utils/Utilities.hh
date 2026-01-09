@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Utilities.hh
+@file TrickHLA/utils/Utilities.hh
 @ingroup TrickHLA
 @brief Definition of the TrickHLA utilities.
 
@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
-@trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/Utilities.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin

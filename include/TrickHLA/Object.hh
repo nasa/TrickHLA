@@ -22,12 +22,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
-@trick_link_dependency{../../source/TrickHLA/ElapsedTimeStats.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
@@ -35,6 +32,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/ElapsedTimeStats.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -56,16 +56,16 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
-#include "TrickHLA/ElapsedTimeStats.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/ReflectedAttributesQueue.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/BasicClock.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/ElapsedTimeStats.hh"
+#include "TrickHLA/utils/MutexLock.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

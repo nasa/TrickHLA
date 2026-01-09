@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SleepTimeout.hh
+@file TrickHLA/utils/SleepTimeout.hh
 @ingroup TrickHLA
 @brief TrickHLA sleep timer for use in spin locks to detect a timeout.
 
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/SleepTimeout.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/SleepTimeout.cpp}
 
 @revs_title
 @revs_begin

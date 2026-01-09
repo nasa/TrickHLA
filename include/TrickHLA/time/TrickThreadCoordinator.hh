@@ -23,7 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -41,8 +41,8 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 
 namespace TrickHLA
 {

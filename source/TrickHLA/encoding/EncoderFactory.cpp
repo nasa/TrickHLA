@@ -31,7 +31,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
 
 
 @revs_title
