@@ -48,16 +48,22 @@ endif
 # the RTI home directory specified.
 ifneq ($(RTI_VENDOR),MAK_HLA_Evolved)
    ifdef PRTI6_ROOT
-      export PRTI6_ROOT = ${RTI_HOME}
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PRTI6_ROOT = ${PRTI6_ROOT}${RESET_TXT})
+      ifneq ($(PRTI6_ROOT),$(RTI_HOME))
+         export PRTI6_ROOT = ${RTI_HOME}
+         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PRTI6_ROOT = ${PRTI6_ROOT}${RESET_TXT})
+      endif
    endif
    ifdef PRTI1516E_HOME
-      export PRTI1516E_HOME = ${RTI_HOME}
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PRTI1516E_HOME = ${PRTI1516E_HOME}${RESET_TXT})
+      ifneq ($(PRTI1516E_HOME),$(RTI_HOME))
+         export PRTI1516E_HOME = ${RTI_HOME}
+         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PRTI1516E_HOME = ${PRTI1516E_HOME}${RESET_TXT})
+      endif
    endif
    ifdef PitchRTI_ROOT
-      export PitchRTI_ROOT = ${RTI_HOME}
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PitchRTI_ROOT = ${PitchRTI_ROOT}${RESET_TXT})
+      ifneq ($(PitchRTI_ROOT),$(RTI_HOME))
+         export PitchRTI_ROOT = ${RTI_HOME}
+         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PitchRTI_ROOT = ${PitchRTI_ROOT}${RESET_TXT})
+      endif
    endif
 endif
 
