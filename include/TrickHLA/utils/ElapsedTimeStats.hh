@@ -72,6 +72,8 @@ class ElapsedTimeStats
   private:
    bool first_pass; ///< @trick_units{--} Flag indicates first pass to determine external clock.
 
+   int time_tic_value; ///< @trick_units{--}Trick time tics per second multiplier.
+
    int64_t prev_time; ///< @trick_units{microseconds} Previous elapsed time.
 
    uint64_t count; ///< @trick_units{--} Number of elapsed times measured.

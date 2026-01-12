@@ -48,6 +48,7 @@ using namespace TrickHLA;
  */
 ElapsedTimeStats::ElapsedTimeStats()
    : first_pass( true ),
+     time_tic_value( exec_get_time_tic_value() ),
      prev_time( 0 ),
      count( 0 ),
      elapsed_time( 0.0 ),
@@ -72,16 +73,21 @@ ElapsedTimeStats::~ElapsedTimeStats()
  */
 void ElapsedTimeStats::measure()
 {
-   // Number of time tics per second.
-   int const time_tic_value = exec_get_time_tic_value();
-
-   // Get the integer time in microseconds.
-   int64_t const time = ( time_tic_value == 1000000 )
-                           ? clock_wall_time()
-                           : ( ( clock_wall_time() * 1000000 ) / time_tic_value );
    if ( first_pass ) {
+      time_tic_value = exec_get_time_tic_value();
+
+      // Integer time in microseconds.
+      prev_time = ( time_tic_value == 1000000 )
+                     ? clock_wall_time()
+                     : ( ( clock_wall_time() * 1000000 ) / time_tic_value );
+
       first_pass = false;
    } else {
+      // Integer time in microseconds.
+      int64_t const time = ( time_tic_value == 1000000 )
+                              ? clock_wall_time()
+                              : ( ( clock_wall_time() * 1000000 ) / time_tic_value );
+
       elapsed_time = ( time - prev_time ) * 0.001; // milliseconds
       if ( count == 0 ) {
          max = elapsed_time; // milliseconds
@@ -96,8 +102,9 @@ void ElapsedTimeStats::measure()
       time_sum += elapsed_time;                        // milliseconds
       time_squared_sum += elapsed_time * elapsed_time; // milliseconds^2
       ++count;
+
+      prev_time = time;
    }
-   prev_time = time;
 }
 
 /*!
@@ -149,7 +156,7 @@ std::string const ElapsedTimeStats::to_string()
    msg << "ElapsedTimeStats::to_string():" << __LINE__ << endl;
 
    if ( count > 0 ) {
-      double mean = time_sum / (double)count; // milliseconds
+      double const mean = time_sum / (double)count; // milliseconds
 
       // Calculate the corrected sample standard deviation from the unbiased
       // sample variance.
@@ -160,7 +167,7 @@ std::string const ElapsedTimeStats::to_string()
       if ( count > 1 ) {
          variance *= (double)count / (double)( count - 1 );
       }
-      double std_dev = sqrt( abs( variance ) ); // milliseconds
+      double const std_dev = sqrt( abs( variance ) ); // milliseconds
 
       // Determine the number of samples for statistical significance.
       // http://www.itl.nist.gov/div898//handbook/prc/section2/prc222.htm
@@ -168,8 +175,8 @@ std::string const ElapsedTimeStats::to_string()
       // N >= ((Z * std_dev)/M)^2 for 99.9% confidence level with a margin of
       // error of M (i.e. mean +/- M).
       //
-      double confidence = 0.999;
-      double Z          = confidence_to_Z( confidence );
+      double       confidence = 0.999;
+      double const Z          = confidence_to_Z( confidence );
 
       // Goal: To estimate the average elapsed time between reads to within
       // some percent (? milliseconds) of the mean (margin of error) with a
@@ -177,19 +184,19 @@ std::string const ElapsedTimeStats::to_string()
       // statistics.
       //
       // Use a Margin of Error (M) that is 0.25% within the mean value.
-      double M_percent = 0.0025;
-      double M         = mean * M_percent; // milliseconds
+      double const M_percent = 0.0025;
+      double const M         = mean * M_percent; // milliseconds
 
       // √N >= (Z * std_dev) / M
-      double sqrt_N = Z * std_dev / M;
+      double const sqrt_N = Z * std_dev / M;
 
       // N >= ((Z * std_dev) / M)^2
-      int64_t min_sample_size = (int64_t)ceil( sqrt_N * sqrt_N );
+      int64_t const min_sample_size = (int64_t)ceil( sqrt_N * sqrt_N );
 
       // Calculate the margin of error based on the statistics.
       // M = (Z * std_dev) / √N
-      double moe         = ( Z * std_dev ) / sqrt( count ); // milliseconds
-      double moe_percent = moe / mean;
+      double const moe         = ( Z * std_dev ) / sqrt( count ); // milliseconds
+      double const moe_percent = moe / mean;
 
       // We have to double escape the % sign so that message_publish() will
       // print the percent character '%' correctly and not as a c-string
@@ -200,13 +207,13 @@ std::string const ElapsedTimeStats::to_string()
           << "            mean: " << mean << " milliseconds" << endl
           << "  sample-std-dev: " << std_dev << " milliseconds" << endl
           << " margin-of-error: " << ( moe_percent * 100.0 )
-          << "%%%% (" << moe << " milliseconds) with "
-          << ( confidence * 100.0 ) << "%%%% confidence" << endl
+          << "%% (" << moe << " milliseconds) with "
+          << ( confidence * 100.0 ) << "%% confidence" << endl
           << " min-sample-size: " << min_sample_size << endl
           << "        guidance: To estimate the average elapsed time between reads to within a "
-          << ( M_percent * 100.0 ) << "%%%% ("
+          << ( M_percent * 100.0 ) << "%% ("
           << M << " milliseconds) margin of error with a "
-          << ( confidence * 100.0 ) << "%%%% confidence level we need at least "
+          << ( confidence * 100.0 ) << "%% confidence level we need at least "
           << min_sample_size << " samples based on the statistics.";
    } else {
       msg << "    sample-count: " << count << endl
