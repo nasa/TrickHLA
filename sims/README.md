@@ -33,7 +33,7 @@
 
 ---
 
-## [Integrated Mission Simulation (IMSim)](../docs/IMSim/IMSim_Multiphase_Init_Design_Document.pdf) Execution Control Based Example Simulation
+## [Integrated Mission Simulation (IMSim)](<../docs/IMSim/IMSim_Multiphase_Init_Design_Document.pdf>) Execution Control Based Example Simulation
 * [SIM_IMSim_Test](./IMSim/SIM_IMSim_Test/README.md)
 
 
