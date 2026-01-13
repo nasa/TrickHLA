@@ -59,13 +59,13 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
                         help = 'Process the core TrickHLA source code.', \
                         action = 'store_true', dest = 'process_TrickHLA' )
    parser.add_argument( '--Encoding', \
-                        help = 'Process the core TrickHLA encoding source code.', \
+                        help = 'Process the TrickHLA/encoding source code.', \
                         action = 'store_true', dest = 'process_TrickHLA_encoding' )
    parser.add_argument( '--Time', \
-                        help = 'Process the TrickHLA time source code.', \
+                        help = 'Process the TrickHLA/time source code.', \
                         action = 'store_true', dest = 'process_TrickHLA_time' )
    parser.add_argument( '--Utils', \
-                        help = 'Process the TrickHLA utils source code.', \
+                        help = 'Process the TrickHLA/utils source code.', \
                         action = 'store_true', dest = 'process_TrickHLA_utils' )
    parser.add_argument( '--SpaceFOM', \
                         help = 'Process the SpaceFOM source code.', \
