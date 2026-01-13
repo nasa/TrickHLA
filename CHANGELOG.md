@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Changed the S_hla.mk file to override the environment variables (PRTI6_ROOT, PRTI1516E_HOME, or PitchRTI_ROOT) set by the Pitch RTI if they are defined and not configured to the same path set by the RTI_HOME environment variable.
+
 
 ## [v3.2.0] - 2025-12-23
 
