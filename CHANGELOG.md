@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Breaking Changes
 
-- Moved StringUtilities.hh to the $TRICKHLA_HOME/include/TrickHLA/utils directory.
+- Moved StringUtilities.hh to the include/TrickHLA/utils directory.
   - FROM: $TRICKHLA_HOME/include/TrickHLA/StringUtilities.hh
   - TO: $TRICKHLA_HOME/include/TrickHLA/utils/StringUtilities.hh
 
