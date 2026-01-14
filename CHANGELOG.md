@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Breaking Changes
 
+- Moved StringUtilities.hh to the $TRICKHLA_HOME/include/TrickHLA/utils directory.
+
 ### Added
 
 - Added a [README](./sims/README.md) file for the example simulations.
