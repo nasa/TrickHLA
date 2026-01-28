@@ -9,6 +9,19 @@ exec(open("Modified_data/realtime.py").read())
 exec(open("Modified_data/graphics.py").read())
 
 #---------------------------------------------------------------------------
+# Set the Trick check point information.
+#---------------------------------------------------------------------------
+trick.checkpoint_pre_init(True)
+trick.checkpoint_post_init(True)
+trick.checkpoint_end(True)
+
+trick.TMM_reduced_checkpoint(False)
+trick.TMM_hexfloat_checkpoint(True)
+
+# Check point at 5 seconds.
+trick.checkpoint(5.0)
+
+#---------------------------------------------------------------------------
 # Set the Walls information.
 #---------------------------------------------------------------------------
 ensemble.walls.print_contact    = False
