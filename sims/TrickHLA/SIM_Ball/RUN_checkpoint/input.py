@@ -71,18 +71,18 @@ trick.TMM_hexfloat_checkpoint(True)
 trick.exec_set_enable_freeze( False )
 #trick.load_checkpoint( 'RUN_test/chkpnt_5.000000' )
 trick.exec_set_freeze_command( False )
-trick.add_read(0.0, 'trick.load_checkpoint("RUN_test/chkpnt_5.000000")')
+trick.add_read(0.0, 'trick.load_checkpoint("RUN_checkpoint/chkpnt_5.000000")')
 
 
 #---------------------------------------------------------------------------
 # Setup the Data Recording Groups.
 #---------------------------------------------------------------------------
-ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
-ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
-ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
+#ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
+#ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
+#ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
 
 # Initialize all the Data Recording Groups.
-TrickDataRecordingGroup.initialize_groups()
+#TrickDataRecordingGroup.initialize_groups()
 
 
 #---------------------------------------------------------------------------
