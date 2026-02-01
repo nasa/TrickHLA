@@ -85,9 +85,7 @@ NASA, Johnson Space Center\n
 #include "RTI/RTIambassadorFactory.h"
 #include "RTI/time/HLAinteger64Time.h"
 
-#if defined( IEEE_1516_2025 )
-#   include "RTI/RtiConfiguration.h"
-#else
+#if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
 #endif // IEEE_1516_2025
 
