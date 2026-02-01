@@ -14,14 +14,16 @@ cd ${TRICKHLA_HOME}
 sim_pkgs_list=($(ls ${TRICKHLA_HOME}/sims))
 for sim_pkg in "${sim_pkgs_list[@]}"
 do
-   sim_list=($(ls ${TRICKHLA_HOME}/sims/${sim_pkg}))
-   for sim in "${sim_list[@]}"
-   do
-      echo "----------------------------------------------------------"
-      echo "sims/${sim_pkg}/${sim}"
-      cd ${TRICKHLA_HOME}/sims/${sim_pkg}/${sim}
-      if [ -f makefile ]; then
-         make spotless
-      fi
-   done
+   if [ -d ${TRICKHLA_HOME}/sims/${sim_pkg} ]; then
+      sim_list=($(ls ${TRICKHLA_HOME}/sims/${sim_pkg}))
+      for sim in "${sim_list[@]}"
+      do
+         echo "----------------------------------------------------------"
+         echo "sims/${sim_pkg}/${sim}"
+         cd ${TRICKHLA_HOME}/sims/${sim_pkg}/${sim}
+         if [ -f makefile ]; then
+            make spotless
+         fi
+      done
+   fi
 done
