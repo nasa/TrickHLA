@@ -18,11 +18,13 @@ do
       sim_list=($(ls ${TRICKHLA_HOME}/sims/${sim_pkg}))
       for sim in "${sim_list[@]}"
       do
-         echo "----------------------------------------------------------"
-         echo "sims/${sim_pkg}/${sim}"
-         cd ${TRICKHLA_HOME}/sims/${sim_pkg}/${sim}
-         if [ -f makefile ]; then
-            make spotless
+         if [ -d ${TRICKHLA_HOME}/sims/${sim_pkg}/${sim} ]; then
+            echo "----------------------------------------------------------"
+            echo "sims/${sim_pkg}/${sim}"
+            cd ${TRICKHLA_HOME}/sims/${sim_pkg}/${sim}
+            if [ -f makefile ]; then
+               make spotless
+            fi
          fi
       done
    fi
