@@ -68,15 +68,23 @@ trick.TMM_hexfloat_checkpoint(True)
 #---------------------------------------------------------------------------
 # Read in the 5 second checkpoint from the RUN_test directory.
 #---------------------------------------------------------------------------
-trick.exec_set_enable_freeze( False )
+trick.exec_set_enable_freeze( True)
+trick.exec_set_freeze_command( True)
+# Start up in Freeze and manually load the modified checkpoint.
+# Eventually, the Trick team will have an ability to restart from a
+# checkpoint without entering into Freeze and manually loading the
+# desired checkpoint.  You will be able to do it from the input file
+# as part of initialization.
+# The following don't currently work.
 #trick.load_checkpoint( 'RUN_test/chkpnt_5.000000' )
-trick.exec_set_freeze_command( False )
-trick.add_read(0.0, 'trick.load_checkpoint("RUN_checkpoint/chkpnt_5.000000")')
+#trick.add_read(0.0, 'trick.load_checkpoint("RUN_checkpoint/chkpnt_5.000000")')
 
 
 #---------------------------------------------------------------------------
 # Setup the Data Recording Groups.
 #---------------------------------------------------------------------------
+# Since we are restoring from a checkpoint, these will get overridden anyway.
+# So, don't bother specifying them here.
 #ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
 #ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
 #ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
