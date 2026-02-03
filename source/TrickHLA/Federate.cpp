@@ -49,6 +49,9 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 #include <vector>
+#if defined( IEEE_1516_2025 )
+#   include <memory>
+#endif // IEEE_1516_2025
 
 // Trick includes.
 #include "trick/CheckPointRestart.hh"

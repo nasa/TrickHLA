@@ -341,8 +341,11 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
    clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )
    clang_tidy_extra_args.append( '--' )
    clang_tidy_extra_args.extend( include_dirs )
-   clang_tidy_extra_args.append( '-std=c++11' )
    clang_tidy_extra_args.extend( trickhla_defines )
+   if args.hla4:
+      clang_tidy_extra_args.append( '-std=c++14' )
+   else:
+      clang_tidy_extra_args.append( '-std=c++11' )
 
    # Echo check the data if verbose is selected.
    if args.verbose:
