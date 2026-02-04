@@ -45,15 +45,16 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
-# Load in the Trick realtime parameter setting.
-exec(open("Modified_data/realtime.py").read())
+# Import in the Ball realtime parameter settings.
+from Modified_data.BallRealtime import BallRealtime
+ball_realtime = BallRealtime()
 
-# Load in the graphics definition and startup functions.
-exec(open("Modified_data/graphics.py").read())
+# Import in the Ball graphics definition and startup functions.
+from Modified_data.BallGraphics import BallGraphics
+ball_graphics = BallGraphics()
 
-# Load the Ball State Data Recording Group class.
-#from TrickHLA_data.Trick.TrickDataRecordingGroup import *
-from BallStateDRG import *
+# Import the Ball State Data Recording Group class.
+from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
 
 #---------------------------------------------------------------------------
 # Set the Trick check point information.
@@ -68,8 +69,8 @@ trick.TMM_hexfloat_checkpoint(True)
 #---------------------------------------------------------------------------
 # Read in the 5 second checkpoint from the RUN_test directory.
 #---------------------------------------------------------------------------
-trick.exec_set_enable_freeze( True)
-trick.exec_set_freeze_command( True)
+trick.exec_set_enable_freeze( True )
+trick.exec_set_freeze_command( True )
 # Start up in Freeze and manually load the modified checkpoint.
 # Eventually, the Trick team will have an ability to restart from a
 # checkpoint without entering into Freeze and manually loading the
@@ -91,6 +92,15 @@ trick.exec_set_freeze_command( True)
 
 # Initialize all the Data Recording Groups.
 #TrickDataRecordingGroup.initialize_groups()
+
+
+#---------------------------------------------------------------------------
+# Start up the Ball graphics if this isn't just an input file verification.
+#---------------------------------------------------------------------------
+if trick_ip.ip.verify_input:
+   print ( 'Input File Verification: Would have started the Ball graphics.' )
+else:
+   ball_graphics.start()
 
 
 #---------------------------------------------------------------------------

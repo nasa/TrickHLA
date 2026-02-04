@@ -45,18 +45,26 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
-# Load in the data recording definition function.
-#exec(open("Modified_data/data_record.py").read())
+# Import in the Ball realtime parameter settings.
+#from Modified_data.BallRealtime import BallRealtime
+#ball_realtime = BallRealtime()
 
-# Load in the Trick realtime parameter setting.
-exec(open("Modified_data/realtime.py").read())
+# Import the Ball Simulation Configuration class.
+from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 
-# Load in the graphics definition and startup functions.
-exec(open("Modified_data/graphics.py").read())
+# Import in the Ball graphics definition and startup functions.
+#from Modified_data.BallGraphics import BallGraphics
+#ball_graphics = BallGraphics()
 
-# Load the Ball State Data Recording Group class.
-#from TrickHLA_data.Trick.TrickDataRecordingGroup import *
-from BallStateDRG import *
+# Import the Ball State Data Recording Group class.
+from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
+
+#---------------------------------------------------------------------------
+# Configure the Ball simulation.
+#---------------------------------------------------------------------------
+ball_sim_config = BallSimConfig( 'Ball Sim' )
+ball_sim_config.realtime()
+ball_sim_config.sim_control_panel()
 
 #---------------------------------------------------------------------------
 # Set the Trick check point information.
@@ -91,8 +99,6 @@ ball1.state.id   = 0
 ball1.state.input.print_state = False
 ball1.state.input.speed = 10.0
 ball1.state.input.elevation = trick.sim_services.attach_units("degree", 45.0)
-# Add Ball 1 to data recording.
-#add_dr_group( 'ball1', 'Ball1' )
 
 #
 # Ball #2
@@ -103,8 +109,6 @@ ball2.state.id   = 1
 ball2.state.input.print_state = False
 ball2.state.input.speed = 5.0
 ball2.state.input.elevation = trick.sim_services.attach_units("degree", -45.0)
-# Add Ball 2 to data recording.
-#add_dr_group( 'ball2', 'Ball2' )
 
 #
 # Ball #3
@@ -115,8 +119,6 @@ ball3.state.id   = 2
 ball3.state.input.print_state = False
 ball3.state.input.speed = 7.5
 ball3.state.input.elevation = trick.sim_services.attach_units("degree", 30.0)
-# Add Ball 3 to data recording.
-#add_dr_group( 'ball3', 'Ball3' )
 
 
 #---------------------------------------------------------------------------
@@ -128,6 +130,16 @@ ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
 
 # Initialize all the Data Recording Groups.
 TrickDataRecordingGroup.initialize_groups()
+
+
+#---------------------------------------------------------------------------
+# Start up the Ball graphics if this isn't just an input file verification.
+#---------------------------------------------------------------------------
+#if trick_ip.ip.verify_input:
+#   print ( 'Input File Verification: Would have started the Ball graphics.' )
+#else:
+#   ball_graphics.start()
+ball_sim_config.ball_graphics()
 
 
 #---------------------------------------------------------------------------
