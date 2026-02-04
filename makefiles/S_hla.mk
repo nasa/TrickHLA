@@ -359,11 +359,3 @@ else
    endif
 
 endif
-
-all: Modified_data/TrickHLA_data
-Modified_data/TrickHLA_data:
-	ln -s ${TRICKHLA_HOME}/TrickHLA_data $@
-
-clean: clean_trickhla_links
-clean_trickhla_links:
-	rm -f Modified_data/TrickHLA_data
