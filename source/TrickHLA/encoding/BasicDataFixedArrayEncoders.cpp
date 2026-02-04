@@ -93,7 +93,7 @@ using namespace TrickHLA;
       return;                                                                                                                          \
    }                                                                                                                                   \
                                                                                                                                        \
-   int const EncoderClassName::get_data_size()                                                                                         \
+   int EncoderClassName::get_data_size()                                                                                               \
    {                                                                                                                                   \
       int byte_count = 0;                                                                                                              \
       if ( data_encoder != NULL ) {                                                                                                    \

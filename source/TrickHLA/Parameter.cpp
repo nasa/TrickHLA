@@ -260,7 +260,7 @@ VariableLengthData &Parameter::encode()
    return encoder->data;
 }
 
-bool const Parameter::decode(
+bool Parameter::decode(
    VariableLengthData const &encoded_data )
 {
    try {

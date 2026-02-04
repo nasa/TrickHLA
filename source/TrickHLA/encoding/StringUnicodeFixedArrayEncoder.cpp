@@ -138,7 +138,7 @@ void StringUnicodeFixedArrayEncoder::update_after_decode()
    }
 }
 
-int const StringUnicodeFixedArrayEncoder::get_data_size()
+int StringUnicodeFixedArrayEncoder::get_data_size()
 {
    int byte_count = 0;
    if ( data_encoder != NULL ) {

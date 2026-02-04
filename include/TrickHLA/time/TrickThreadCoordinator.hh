@@ -102,33 +102,33 @@ class TrickThreadCoordinator
    void wait_to_receive_data();
 
    /*! @brief On receive boundary if sim-time is an integer multiple of a valid cycle-time. */
-   bool const on_receive_data_cycle_boundary_for_obj( int const     obj_index,
-                                                      int64_t const sim_time_in_base_time ) const;
+   bool on_receive_data_cycle_boundary_for_obj( int const     obj_index,
+                                                int64_t const sim_time_in_base_time ) const;
 
    /*! @brief Get the data cycle time for the configured object index or return
     * the default data cycle time. */
-   int64_t const get_data_cycle_base_time_for_obj( int const     obj_index,
-                                                   int64_t const default_data_cycle_base_time ) const;
+   int64_t get_data_cycle_base_time_for_obj( int const     obj_index,
+                                             int64_t const default_data_cycle_base_time ) const;
 
    /*! @brief Get the main thread data cycle in the base time. */
-   int64_t const get_main_thread_data_cycle_base_time() const
+   int64_t get_main_thread_data_cycle_base_time() const
    {
       return this->main_thread_data_cycle_base_time;
    }
 
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
-   virtual bool const verify_time_constraints();
+   virtual bool verify_time_constraints();
 
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
-   virtual bool const verify_time_constraints( unsigned int const thread_id,
-                                               int64_t const      data_cycle_base_time );
+   virtual bool verify_time_constraints( unsigned int const thread_id,
+                                         int64_t const      data_cycle_base_time );
 
   protected:
    /*! @brief On receive boundary if the main thread simulation-time is an integer
     * multiple of a valid thread cycle-time.
     * Note: This is thread safe because this function is only local to this class
     * and it is called from a locked mutex critical section. */
-   bool const on_receive_data_cycle_boundary_for_thread(
+   bool on_receive_data_cycle_boundary_for_thread(
       unsigned int const thread_id,
       int64_t const      sim_time_in_base_time ) const
    {
@@ -144,7 +144,7 @@ class TrickThreadCoordinator
     * multiple of a valid thread cycle-time for the send frame.
     * Note: This is thread safe because this function is only local to this class
     * and it is called from a locked mutex critical section. */
-   bool const on_send_data_cycle_boundary_for_thread(
+   bool on_send_data_cycle_boundary_for_thread(
       unsigned int const thread_id,
       int64_t const      sim_time_in_base_time ) const
    {
@@ -172,7 +172,7 @@ class TrickThreadCoordinator
    void wait_to_send_data_for_child_thread( unsigned int const thread_id );
 
    /*! @brief True if the specified thread ID is for an enabled Trick child thread association. */
-   bool const is_enabled_child_thread_association(
+   bool is_enabled_child_thread_association(
       unsigned int const thread_id ) const
    {
       return ( any_child_thread_associated

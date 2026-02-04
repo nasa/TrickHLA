@@ -148,7 +148,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
     *  @return Current time associated with the PhysicalEntity. */
-   virtual double const get_time()
+   virtual double get_time()
    {
       return pe_packing_data.state.time;
    }

@@ -290,6 +290,8 @@ new freeze HLA time:%lf \n",
    }
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void FreezeInteractionHandler::receive_interaction(
    VariableLengthData const &theUserSuppliedTag )
 {
@@ -325,3 +327,4 @@ void FreezeInteractionHandler::receive_interaction(
 #endif
    }
 }
+#pragma GCC diagnostic pop

@@ -17,7 +17,6 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{CharRawDataEncoder.cpp}
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
-
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
 
@@ -29,10 +28,10 @@ NASA, Johnson Space Center\n
 
 */
 
+#if defined( IEEE_1516_2010 )
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated"
 #endif
@@ -133,6 +132,8 @@ void CharRawDataEncoder::decode( VariableLengthData const &inData ) throw( Encod
 }
 #endif // IEEE_1516_2025
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 size_t CharRawDataEncoder::decodeFrom(
    vector< Octet > const &buffer,
    size_t                 index )
@@ -147,10 +148,9 @@ size_t CharRawDataEncoder::decodeFrom(
    DebugHandler::terminate_with_message( errmsg.str() );
    return index;
 }
+#pragma GCC diagnostic pop
 
-// C++11 deprecated dynamic exception specifications for a function so we
-// need to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
 #if defined( IEEE_1516_2010 )
+// Pop off the stack the GCC arguments specific to this file.
 #   pragma GCC diagnostic pop
 #endif

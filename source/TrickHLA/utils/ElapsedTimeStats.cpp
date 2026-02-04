@@ -110,7 +110,7 @@ void ElapsedTimeStats::measure()
 /*!
  * @job_class{scheduled}
  */
-double const ElapsedTimeStats::confidence_to_Z(
+double ElapsedTimeStats::confidence_to_Z(
    double &confidence )
 {
    // The confidence level to Z values used below can be found here:

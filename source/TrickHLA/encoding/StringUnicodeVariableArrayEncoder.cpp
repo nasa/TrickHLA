@@ -147,7 +147,7 @@ void StringUnicodeVariableArrayEncoder::update_after_decode()
    }
 }
 
-int const StringUnicodeVariableArrayEncoder::get_data_size()
+int StringUnicodeVariableArrayEncoder::get_data_size()
 {
    int byte_count = 0;
    if ( data_encoder != NULL ) {

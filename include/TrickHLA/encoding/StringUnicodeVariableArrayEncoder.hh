@@ -92,7 +92,7 @@ class StringUnicodeVariableArrayEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
-   virtual int const get_data_size();
+   virtual int get_data_size();
 
    virtual std::string to_string()
    {

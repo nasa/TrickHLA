@@ -384,6 +384,8 @@ void ExecutionConfiguration::set_required_federates(
 /*!
  * @details WARNING: This function is BROKEN!
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionConfiguration::setup_ref_attributes(
    TrickHLA::Packing *packing_obj )
 {
@@ -392,6 +394,7 @@ void ExecutionConfiguration::setup_ref_attributes(
             << " ERROR: This routine does NOT work and should not be called!" << endl;
    DebugHandler::terminate_with_message( errormsg.str() );
 }
+#pragma GCC diagnostic pop
 
 void ExecutionConfiguration::print_execution_configuration() const
 {

@@ -188,7 +188,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
     *  @param sync_point_label Name of the synchronization point label.
     *  @return True if the multiphase init sync-point list contains the sync-point,
     *  false otherwise. */
-   bool const contains_multiphase_init_sync_point( std::wstring const &sync_point_label );
+   bool contains_multiphase_init_sync_point( std::wstring const &sync_point_label );
    /*! Add initialization synchronization points to regulate startup. */
    virtual void add_initialization_sync_points() = 0;
    /*! Add user defined multiphase initialization synchronization points to
@@ -474,7 +474,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 
    /*! @brief Is the federation execution freeze pending.
     *  @return True for federate freeze is pending; False otherwise. */
-   bool const is_freeze_pending()
+   bool is_freeze_pending()
    {
       return this->freeze_the_federation;
    }
@@ -647,7 +647,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 
    /*! @brief Get the value of the least common time step.
     *  @return The value of the least common time step. */
-   virtual bool const is_enabled_least_common_time_step()
+   virtual bool is_enabled_least_common_time_step()
    {
       return this->enable_least_common_time_step;
    }

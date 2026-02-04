@@ -204,7 +204,7 @@ class Federate : public TimeManagement
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
    void initialize();
 
-   FederateJoinConstraintsEnum const get_join_constraint()
+   FederateJoinConstraintsEnum get_join_constraint()
    {
       return this->join_constraint;
    }

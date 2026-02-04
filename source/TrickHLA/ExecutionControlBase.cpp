@@ -70,10 +70,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
+#if defined( IEEE_1516_2010 )
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated"
 #endif
@@ -81,10 +81,6 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/Handle.h"
 #include "RTI/Typedefs.h"
-
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic pop
-#endif
 
 // Access the Trick global objects the Clock.
 extern Trick::Clock *the_clock;
@@ -474,7 +470,7 @@ void ExecutionControlBase::add_object_to_map(
  * @return True if the multiphase init sync-point list contains the sync-point,
  *  false otherwise.
  */
-bool const ExecutionControlBase::contains_multiphase_init_sync_point(
+bool ExecutionControlBase::contains_multiphase_init_sync_point(
    wstring const &sync_point_label )
 {
    return contains_sync_point( sync_point_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
@@ -945,10 +941,13 @@ void ExecutionControlBase::exit_freeze()
    return;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControlBase::check_pause( double const check_pause_delta )
 {
    return;
 }
+#pragma GCC diagnostic pop
 
 void ExecutionControlBase::check_pause_at_init( double const check_pause_delta )
 {
@@ -1047,3 +1046,8 @@ void ExecutionControlBase::set_time_padding( double const t )
 {
    this->time_padding = t;
 }
+
+#if defined( IEEE_1516_2010 )
+// Pop off the stack the GCC arguments specific to this file.
+#   pragma GCC diagnostic pop
+#endif

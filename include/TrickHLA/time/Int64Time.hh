@@ -557,14 +557,14 @@ class Int64Time
   private:
    /*! @brief Return the whole seconds part of the current timestamp.
     *  @return The whole seconds part of the timestamp in seconds. */
-   int64_t const get_whole_seconds() const
+   int64_t get_whole_seconds() const
    {
       return ( (int64_t)( hla_time.getTime() / Int64BaseTime::get_base_time_multiplier() ) );
    }
 
    /*! @brief Return the the fractional time part of the current timestamp.
     *  @return The the fractional part of the current timestamp. */
-   int64_t const get_fractional_seconds() const
+   int64_t get_fractional_seconds() const
    {
       return ( (int64_t)( hla_time.getTime() % Int64BaseTime::get_base_time_multiplier() ) );
    }

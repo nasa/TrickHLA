@@ -185,6 +185,8 @@ void PhysicalEntityLagComp::unload()
 }
 
 /*! @job_class{derivative} */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void PhysicalEntityLagComp::derivative_first(
    void *user_data )
 {
@@ -194,3 +196,4 @@ void PhysicalEntityLagComp::derivative_first(
 
    return;
 }
+#pragma GCC diagnostic pop

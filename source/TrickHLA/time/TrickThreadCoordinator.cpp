@@ -1219,7 +1219,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
 }
 
 /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
-bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
+bool TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
    int const     obj_index,
    int64_t const sim_time_in_base_time ) const
 {
@@ -1233,7 +1233,7 @@ bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
 
 /*! @brief Get the data cycle time for the specified object index, otherwise
  * return the default data cycle time. */
-int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
+int64_t TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
    int const     obj_index,
    int64_t const default_data_cycle_base_time ) const
 {
@@ -1244,7 +1244,7 @@ int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
              : default_data_cycle_base_time;
 }
 
-bool const TrickThreadCoordinator::verify_time_constraints()
+bool TrickThreadCoordinator::verify_time_constraints()
 {
    bool verified = true;
    for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
@@ -1265,7 +1265,7 @@ bool const TrickThreadCoordinator::verify_time_constraints()
  * ∧ (dt[i] > 0) ∧ (dt[i] ≥ L[i]) ∧ (LCTS ≥ dt[i]) ∧ (LCTS % dt[i] = 0)
  * i=1
  */
-bool const TrickThreadCoordinator::verify_time_constraints(
+bool TrickThreadCoordinator::verify_time_constraints(
    unsigned int const thread_id,
    int64_t const      data_cycle_base_time )
 {

@@ -78,7 +78,7 @@ ItemQueue::~ItemQueue()
  * @brief Query if the item queue is empty.
  * @return True if empty; False otherwise.
  */
-bool const ItemQueue::empty()
+bool ItemQueue::empty()
 {
    MutexProtection auto_unlock_mutex( &mutex );
    return ( head == NULL );
@@ -88,7 +88,7 @@ bool const ItemQueue::empty()
  * @brief Get the size of the item queue.
  * @return Number of elements in the queue.
  */
-unsigned int const ItemQueue::size()
+unsigned int ItemQueue::size()
 {
    MutexProtection auto_unlock_mutex( &mutex );
    return count;

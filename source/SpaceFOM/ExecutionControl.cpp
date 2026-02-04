@@ -2990,6 +2990,8 @@ void ExecutionControl::receive_root_ref_frame()
    }
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::start_federation_save_at_scenario_time(
    double        freeze_scenario_time,
    string const &file_name )
@@ -2999,6 +3001,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << endl;
    DebugHandler::terminate_with_message( errmsg.str() );
 }
+#pragma GCC diagnostic pop
 
 /*!
  * @details WARNING: Only the Master federate should ever set this.

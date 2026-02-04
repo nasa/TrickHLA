@@ -85,12 +85,12 @@ class ScenarioTimeline : public Timeline
    //-----------------------------------------------------------------
    /*! @brief Get the current scenario time.
     *  @return Current scenario time in seconds. */
-   virtual double const get_time() const;
+   virtual double get_time() const;
 
    /*! Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the minimum time resolution in seconds. */
-   virtual double const get_min_resolution() const;
+   virtual double get_min_resolution() const;
 
    //
    // Additional function specific to this implementation.
@@ -98,12 +98,12 @@ class ScenarioTimeline : public Timeline
    /*! @brief Compute a simulation time from a given scenario time.
     *  @return Simulation time in seconds.
     *  @param scenario_time Desired scenario time in seconds. */
-   virtual double const compute_simulation_time( double const scenario_time );
+   virtual double compute_simulation_time( double const scenario_time );
 
    /*! @brief Compute a scenario time from a given simulation time.
     *  @return Scenario time in seconds.
     *  @param sim_time Desired simulation time. */
-   virtual double const time_from_simulation_time( double const sim_time );
+   virtual double time_from_simulation_time( double const sim_time );
 
    /*! @brief Compute a HLA Logical Time (HLT) from a given scenario time.
     *  @return HLT in the base HLA Logical Time representation.
@@ -113,13 +113,13 @@ class ScenarioTimeline : public Timeline
    /*! @brief Compute a scenario time from and given HLA Logical Time (HLT).
     *  @return Scenario time in seconds.
     *  @param hlt Desired HLT in the base HLA Logical Time representation. */
-   virtual double const time_from_HLT( Int64Time const &hlt );
+   virtual double time_from_HLT( Int64Time const &hlt );
 
    // Accessor functions.
    /*! @brief Get the offset of the simulation time line from the scenario
     * timeline epoch.
     *  @return Offset time in seconds. */
-   virtual double const get_sim_offset()
+   virtual double get_sim_offset()
    {
       return this->sim_offset;
    }

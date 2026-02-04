@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Changed the S_hla.mk file to override the environment variables (PRTI6_ROOT, PRTI1516E_HOME, or PitchRTI_ROOT) set by the Pitch RTI if they are defined and not configured to the same path set by the RTI_HOME environment variable.
+- Fixed ignored-qualifiers and unused-parameter compile time warnings.
 - Fixed the clean_sims.sh, make_sims.sh, and spotless_make_sims.sh scripts to verify an entry in the sims directory listing is a directory before processing it.
 
 

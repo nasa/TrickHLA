@@ -86,20 +86,20 @@ class SleepTimeout
 
    /*! @brief Sleep for the configured sleep time.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
-   int const sleep() const;
+   int sleep() const;
 
    /*! @brief Gets the wall clock time in microseconds.
     *  @return The wall clock time in microseconds. */
-   static int64_t const time();
+   static int64_t time();
 
    /*! @brief Determine if we cumulatively slept for the configured timeout time.
     *  @return True if timeout exceeded, false otherwise. */
-   bool const timeout() const;
+   bool timeout() const;
 
    /*! @brief Determine if we cumulatively slept for the configured timeout time.
     *  @param time_in_micros Wall clock time in microseconds.
     *  @return True if timeout exceeded, false otherwise. */
-   bool const timeout( int64_t const time_in_micros ) const;
+   bool timeout( int64_t const time_in_micros ) const;
 
    /*! @brief Reset the internal timeout time. */
    void reset();

@@ -74,13 +74,15 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #if defined( IEEE_1516_2025 )
 #   include "TrickHLA/FedAmbHLA4.hh"
 #else
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated"
 
 #   include "TrickHLA/FedAmbHLA3.hh"
@@ -1859,9 +1861,5 @@ FedAmb::requestRetraction():%d \n",
                     federate->get_federate_name().c_str(), __LINE__ );
 }
 
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic pop
-#endif // IEEE_1516_2010
+// Pop off the stack the GCC arguments specific to this file.
+#pragma GCC diagnostic pop

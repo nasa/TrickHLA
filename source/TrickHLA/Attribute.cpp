@@ -286,7 +286,7 @@ VariableLengthData &Attribute::encode()
    return encoder->data;
 }
 
-bool const Attribute::decode(
+bool Attribute::decode(
    VariableLengthData const &encoded_data )
 {
    try {

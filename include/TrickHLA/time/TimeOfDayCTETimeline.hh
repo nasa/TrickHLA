@@ -83,7 +83,7 @@ class TimeOfDayCTETimeline : public CTETimelineBase
    /*! Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the minimum time resolution in seconds. */
-   virtual double const get_min_resolution() const;
+   virtual double get_min_resolution() const;
 
    /*! @brief Update the clock tics per second resolution of this clock
     *  to match the Trick executive resolution. */
@@ -91,7 +91,7 @@ class TimeOfDayCTETimeline : public CTETimelineBase
 
    /*! @brief Get the current CTE time.
     *  @return Current time of day in seconds. */
-   virtual double const get_time() const;
+   virtual double get_time() const;
 
    /*! @brief Initialize the Trick::Clock functions. */
    virtual int clock_init();
@@ -109,7 +109,7 @@ class TimeOfDayCTETimeline : public CTETimelineBase
 
    /*! @brief Gets the current clock ID (system clock type).
     *  @return The system clock type in use. */
-   virtual clockid_t const get_clock_ID();
+   virtual clockid_t get_clock_ID();
 
   protected:
    clockid_t clk_id; /**< @trick_io{**} System clock type used. The default clock ID is <i>CLOCK_MONOTONIC</i>. */

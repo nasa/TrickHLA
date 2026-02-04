@@ -79,10 +79,13 @@ class PhysicalEntityLagComp : public PhysicalEntityLagCompInteg
    virtual void derivative_first( void *user_data = NULL );
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
-    *  @details This function is called for second order integrators to compute
+    *  @details This function is called for second order integrator's to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
    virtual void derivative_second( void *user_data ) { return; }
+#pragma GCC diagnostic pop
 
   private:
    // This object is not copyable

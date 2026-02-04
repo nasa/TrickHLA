@@ -107,69 +107,69 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    void clear();
 
-   int const get_list_index_for_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
+   int get_list_index_for_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
-   int const get_list_index_for_list_name( std::string const &list_name );
+   int get_list_index_for_list_name( std::string const &list_name );
 
-   SyncPtStateEnum const get_sync_point_state( std::wstring const &label );
+   SyncPtStateEnum get_sync_point_state( std::wstring const &label );
 
-   bool const add_sync_point_list( std::string const &list_name );
+   bool add_sync_point_list( std::string const &list_name );
 
    /*! @brief Add the given synchronization point label to the named list.
     *  @param label Synchronization point label.
     *  @param list_name The name of the list of sync-points to add to.
     *  @return True if the synchronization point is added, false otherwise. */
-   bool const add_sync_point( std::wstring const &label, std::string const &list_name );
+   bool add_sync_point( std::wstring const &label, std::string const &list_name );
 
-   bool const add_sync_point( std::wstring const &label, std::string const &list_name, Int64Time const &time );
+   bool add_sync_point( std::wstring const &label, std::string const &list_name, Int64Time const &time );
 
-   bool const contains_sync_point( std::wstring const &label );
+   bool contains_sync_point( std::wstring const &label );
 
-   bool const contains_sync_point( std::wstring const &label, std::string const &list_name );
+   bool contains_sync_point( std::wstring const &label, std::string const &list_name );
 
-   bool const contains_sync_point_list_name( std::string const &list_name );
+   bool contains_sync_point_list_name( std::string const &list_name );
 
-   bool const is_sync_point_list_empty( std::string const &list_name );
+   bool is_sync_point_list_empty( std::string const &list_name );
 
-   bool const is_sync_point_registered( std::wstring const &label );
+   bool is_sync_point_registered( std::wstring const &label );
 
-   bool const mark_sync_point_registered( std::wstring const &label );
+   bool mark_sync_point_registered( std::wstring const &label );
 
-   bool const register_sync_point( std::wstring const &label );
+   bool register_sync_point( std::wstring const &label );
 
-   bool const register_sync_point( std::wstring const &label, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool register_sync_point( std::wstring const &label, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool const register_all_sync_points( std::string const &list_name );
+   bool register_all_sync_points( std::string const &list_name );
 
-   bool const register_all_sync_points( std::string const &list_name, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool register_all_sync_points( std::string const &list_name, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool const is_sync_point_announced( std::wstring const &label );
+   bool is_sync_point_announced( std::wstring const &label );
 
-   bool const mark_sync_point_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
+   bool mark_sync_point_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
-   bool const wait_for_sync_point_announced( std::wstring const &label );
+   bool wait_for_sync_point_announced( std::wstring const &label );
 
-   bool const wait_for_all_sync_points_announced( std::string const &list_name );
+   bool wait_for_all_sync_points_announced( std::string const &list_name );
 
-   bool const is_sync_point_achieved( std::wstring const &label );
+   bool is_sync_point_achieved( std::wstring const &label );
 
-   bool const achieve_sync_point( std::wstring const &label );
+   bool achieve_sync_point( std::wstring const &label );
 
-   bool const achieve_sync_point( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
+   bool achieve_sync_point( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
-   bool const achieve_all_sync_points( std::string const &list_name );
+   bool achieve_all_sync_points( std::string const &list_name );
 
-   bool const is_sync_point_synchronized( std::wstring const &label );
+   bool is_sync_point_synchronized( std::wstring const &label );
 
-   bool const is_all_sync_points_synchronized( std::string const &list_name );
+   bool is_all_sync_points_synchronized( std::string const &list_name );
 
-   bool const mark_sync_point_synchronized( std::wstring const &label );
+   bool mark_sync_point_synchronized( std::wstring const &label );
 
-   bool const wait_for_sync_point_synchronized( std::wstring const &label );
+   bool wait_for_sync_point_synchronized( std::wstring const &label );
 
-   bool const wait_for_all_sync_points_synchronized( std::string const &list_name );
+   bool wait_for_all_sync_points_synchronized( std::string const &list_name );
 
-   bool const achieve_sync_point_and_wait_for_synchronization( std::wstring const &label );
+   bool achieve_sync_point_and_wait_for_synchronization( std::wstring const &label );
 
    std::string to_string();
 
