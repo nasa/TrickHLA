@@ -117,7 +117,7 @@ void VariableArrayEncoderBase::update_after_decode()
    return;
 }
 
-int const VariableArrayEncoderBase::get_data_size()
+int VariableArrayEncoderBase::get_data_size()
 {
    int byte_count = 0;
 

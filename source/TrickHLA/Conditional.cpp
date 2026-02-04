@@ -71,8 +71,11 @@ Conditional::~Conditional() // RETURN: -- None.
 /*!
  * @job_class{scheduled}
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 bool Conditional::should_send( // RETURN: -- None.
    Attribute *attr )           // IN: ** Attribute data to send
 {
    return true;
 }
+#pragma GCC diagnostic pop

@@ -98,13 +98,13 @@ void SleepTimeout::set(
    reset();
 }
 
-int const SleepTimeout::sleep() const
+int SleepTimeout::sleep() const
 {
    return nanosleep( &sleep_time, NULL ); // NOLINT
 }
 
 // Current time as an integer in microseconds.
-int64_t const SleepTimeout::time()
+int64_t SleepTimeout::time()
 {
    // Make sure the time is always an integer in microseconds.
    int const time_tic_value = exec_get_time_tic_value();
@@ -113,12 +113,12 @@ int64_t const SleepTimeout::time()
              : ( ( clock_wall_time() * 1000000 ) / time_tic_value );
 }
 
-bool const SleepTimeout::timeout() const
+bool SleepTimeout::timeout() const
 {
    return timeout( time() );
 }
 
-bool const SleepTimeout::timeout(
+bool SleepTimeout::timeout(
    int64_t const time_in_micros ) const
 {
    return ( time_in_micros >= this->timeout_clock_time );

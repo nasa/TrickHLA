@@ -70,11 +70,11 @@ class ItemQueue
   public:
    /*! @brief Query if the item queue is empty.
     *  @return True if empty; False otherwise. */
-   bool const empty();
+   bool empty();
 
    /*! @brief Get the size of the item queue.
     *  @return Number of elements in the queue. */
-   unsigned int const size();
+   unsigned int size();
 
    /*! @brief Gets the front item on the item queue.
     *  @return The front or head item on the item queue. */

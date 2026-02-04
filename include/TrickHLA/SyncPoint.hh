@@ -92,32 +92,32 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    /*! @brief Check if the synchronization point has been created and is_known
     *  in at least on valid state.
     *  @return True if the synchronization point has a valid state. */
-   virtual bool const is_valid() const;
+   virtual bool is_valid() const;
 
    // Functions to check synchronization point state.
    /*! @brief Check if the synchronization point is known.
     *  @return True if the synchronization point is known. */
-   virtual bool const is_known() const;
+   virtual bool is_known() const;
 
    /*! @brief Check if the synchronization point is registered.
     *  @return True if the synchronization point is registered. */
-   virtual bool const is_registered() const;
+   virtual bool is_registered() const;
 
    /*! @brief Check if the synchronization point is announced.
     *  @return True if the synchronization point is announced. */
-   virtual bool const is_announced() const;
+   virtual bool is_announced() const;
 
    /*! @brief Check if the synchronization point is achieved.
     *  @return True if the synchronization point is achieved. */
-   virtual bool const is_achieved() const;
+   virtual bool is_achieved() const;
 
    /*! @brief Check if the synchronization point is synchronized.
     *  @return True if the synchronization point is synchronized. */
-   virtual bool const is_synchronized() const;
+   virtual bool is_synchronized() const;
 
    /*! @brief Check if the synchronization point has a bad state.
     *  @return True if the synchronization point has a bad state. */
-   virtual bool const is_error() const;
+   virtual bool is_error() const;
 
    // Accessor functions.
    /*! @brief Get the synchronization point label.
@@ -136,7 +136,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
 
    /*! @brief Get the synchronization point state.
     *  @return The current state for this synchronization point. */
-   virtual SyncPtStateEnum const get_state() const
+   virtual SyncPtStateEnum get_state() const
    {
       return this->state;
    }

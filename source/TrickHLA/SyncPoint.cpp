@@ -81,7 +81,7 @@ SyncPoint::~SyncPoint()
    return;
 }
 
-bool const SyncPoint::is_valid() const
+bool SyncPoint::is_valid() const
 {
    return ( ( this->state == TrickHLA::SYNC_PT_STATE_KNOWN )
             || ( this->state == TrickHLA::SYNC_PT_STATE_REGISTERED )
@@ -90,32 +90,32 @@ bool const SyncPoint::is_valid() const
             || ( this->state == TrickHLA::SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
-bool const SyncPoint::is_known() const
+bool SyncPoint::is_known() const
 {
    return ( this->state == TrickHLA::SYNC_PT_STATE_KNOWN );
 }
 
-bool const SyncPoint::is_registered() const
+bool SyncPoint::is_registered() const
 {
    return ( this->state == TrickHLA::SYNC_PT_STATE_REGISTERED );
 }
 
-bool const SyncPoint::is_announced() const
+bool SyncPoint::is_announced() const
 {
    return ( this->state == TrickHLA::SYNC_PT_STATE_ANNOUNCED );
 }
 
-bool const SyncPoint::is_achieved() const
+bool SyncPoint::is_achieved() const
 {
    return ( this->state == TrickHLA::SYNC_PT_STATE_ACHIEVED );
 }
 
-bool const SyncPoint::is_synchronized() const
+bool SyncPoint::is_synchronized() const
 {
    return ( this->state == TrickHLA::SYNC_PT_STATE_SYNCHRONIZED );
 }
 
-bool const SyncPoint::is_error() const
+bool SyncPoint::is_error() const
 {
    return ( ( this->state != TrickHLA::SYNC_PT_STATE_KNOWN )
             && ( this->state != TrickHLA::SYNC_PT_STATE_REGISTERED )

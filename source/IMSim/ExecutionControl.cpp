@@ -1331,11 +1331,14 @@ bool ExecutionControl::receive_interaction(
    return false;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::send_mode_transition_interaction(
    ModeTransitionEnum requested_mode )
 {
    return;
 }
+#pragma GCC diagnostic pop
 
 bool ExecutionControl::set_pending_mtr(
    MTREnum mtr_value )
@@ -2191,6 +2194,8 @@ void ExecutionControl::exit_freeze()
    }
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::check_pause( double const check_pause_delta )
 {
    // For IMSim, check_pause is only used at init time to handle start in freeze mode.
@@ -2210,6 +2215,7 @@ void ExecutionControl::check_pause( double const check_pause_delta )
       }
    }
 }
+#pragma GCC diagnostic pop
 
 // FIXME: See if this is still needed. Trick 17 may have fixed this.
 /*!

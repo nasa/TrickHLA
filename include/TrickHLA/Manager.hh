@@ -274,7 +274,7 @@ class Manager : public CheckpointConversionBase
 
    /*! @brief Return the granted HLA logical time in seconds.
     *  @return The granted federation time in seconds */
-   int64_t const get_granted_base_time() const;
+   int64_t get_granted_base_time() const;
 
    // Interactions
    /*! @brief Process the received interactions. */

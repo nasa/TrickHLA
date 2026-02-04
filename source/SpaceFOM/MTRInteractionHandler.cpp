@@ -84,6 +84,8 @@ using namespace RTI1516_NAMESPACE;
 /*!
  * @job_class{initialization}
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 MTRInteractionHandler::MTRInteractionHandler(
    Federate const *fed )
    : name(),
@@ -98,6 +100,7 @@ MTRInteractionHandler::MTRInteractionHandler(
 {
    return;
 }
+#pragma GCC diagnostic pop
 
 /*!
  * @job_class{shutdown}

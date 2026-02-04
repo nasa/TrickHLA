@@ -60,19 +60,19 @@ class MutexLock
 
    /*! @brief Initialize the mutex.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
-   int const initialize();
+   int initialize();
 
    /*! @brief Lock the mutex.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
-   int const lock();
+   int lock();
 
    /*! @brief Unlock the mutex.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
-   int const unlock();
+   int unlock();
 
    /*! @brief Destroy the mutex lock.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
-   int const destroy();
+   int destroy();
 
    pthread_mutex_t mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 

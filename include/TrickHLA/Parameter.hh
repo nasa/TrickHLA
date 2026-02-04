@@ -114,7 +114,7 @@ class Parameter : public RecordElement
 
    RTI1516_NAMESPACE::VariableLengthData &encode();
 
-   bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+   bool decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
    /*! @brief Get the FOM name for this parameter.
     *  @return The FOM name of this parameter. */

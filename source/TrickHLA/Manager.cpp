@@ -3001,7 +3001,7 @@ Int64Time Manager::get_granted_time() const
 /*!
  * @details Returns the granted time in base time.
  */
-int64_t const Manager::get_granted_base_time() const
+int64_t Manager::get_granted_base_time() const
 {
    return federate->get_granted_base_time();
 }

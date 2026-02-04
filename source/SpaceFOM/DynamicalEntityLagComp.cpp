@@ -198,6 +198,8 @@ void DynamicalEntityLagComp::unload()
 /*!
  * @job_class{derivative}
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void DynamicalEntityLagComp::derivative_first(
    void *user_data )
 {
@@ -254,3 +256,4 @@ void DynamicalEntityLagComp::derivative_first(
 
    return;
 }
+#pragma GCC diagnostic pop

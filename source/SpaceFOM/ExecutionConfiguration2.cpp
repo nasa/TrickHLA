@@ -263,7 +263,7 @@ void ExecutionConfiguration2::unpack()
 
 /*! @brief Get the value of the ExCO base time multiplier.
  *  @return Base time multiplier. */
-int64_t const ExecutionConfiguration2::get_exco_base_time_multiplier() const
+int64_t ExecutionConfiguration2::get_exco_base_time_multiplier() const
 {
    return hla_base_time_multiplier;
 }

@@ -92,7 +92,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    virtual void update_after_decode() = 0;
 
    /*! @brief Number of data bytes */
-   virtual int const get_data_size() = 0;
+   virtual int get_data_size() = 0;
 
    virtual std::string to_string()
    {

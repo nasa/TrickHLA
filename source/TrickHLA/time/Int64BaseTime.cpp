@@ -404,7 +404,7 @@ std::string const Int64BaseTime::get_base_unit_enum_string(
  * @return The best supporting base time enum value.
  * @param value Time value as a floating point double in seconds.
  */
-HLABaseTimeEnum const Int64BaseTime::best_base_time_resolution(
+HLABaseTimeEnum Int64BaseTime::best_base_time_resolution(
    double const value )
 {
    int resolution = (int)HLA_BASE_TIME_SECONDS;
@@ -423,7 +423,7 @@ HLABaseTimeEnum const Int64BaseTime::best_base_time_resolution(
  *  @return True if the value exceeds the resolution of the base time.
  * @param value Time value as a floating point double in seconds.
  */
-bool const Int64BaseTime::exceeds_base_time_resolution(
+bool Int64BaseTime::exceeds_base_time_resolution(
    double const value )
 {
    return exceeds_base_time_resolution( value, base_time_multiplier );
@@ -436,7 +436,7 @@ bool const Int64BaseTime::exceeds_base_time_resolution(
  * @param value Time value as a floating point double in seconds.
  * @param multiplier Base time multiplier.
  */
-bool const Int64BaseTime::exceeds_base_time_resolution(
+bool Int64BaseTime::exceeds_base_time_resolution(
    double const value,
    int64_t      multiplier )
 {
@@ -450,7 +450,7 @@ bool const Int64BaseTime::exceeds_base_time_resolution(
  * @return Time value in the HLA Logical base time.
  * @param time The time in seconds as a floating point double.
  */
-int64_t const Int64BaseTime::to_base_time(
+int64_t Int64BaseTime::to_base_time(
    double const time )
 {
    return llround( time * base_time_multiplier );
@@ -461,7 +461,7 @@ int64_t const Int64BaseTime::to_base_time(
  * @return Time value in seconds.
  * @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class.
  */
-double const Int64BaseTime::to_seconds(
+double Int64BaseTime::to_seconds(
    int64_t const time_in_base_unit )
 {
    double const seconds    = (double)to_whole_seconds( time_in_base_unit );

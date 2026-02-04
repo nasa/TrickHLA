@@ -88,7 +88,7 @@ class ExecutionConfiguration2 : public SpaceFOM::ExecutionConfiguration
 
    /*! @brief Get the value of the ExCO base time multiplier.
     *  @return Base time multiplier. */
-   virtual int64_t const get_exco_base_time_multiplier() const;
+   virtual int64_t get_exco_base_time_multiplier() const;
 
    // ExecutionConfiguration2 specific functions.
    /*! @brief Print the current ExCO state to the console. */

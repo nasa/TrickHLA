@@ -143,12 +143,15 @@ bool InteractionHandler::send_interaction(
                : false );
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void InteractionHandler::receive_interaction(
    VariableLengthData const &the_user_supplied_tag )
 {
    message_publish( MSG_NORMAL, "InteractionHandler::receive_interaction():%d \n",
                     __LINE__ );
 }
+#pragma GCC diagnostic pop
 
 Int64Interval InteractionHandler::get_lookahead() const
 {
