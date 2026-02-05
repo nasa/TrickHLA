@@ -45,26 +45,21 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
-# Import in the Ball realtime parameter settings.
-#from Modified_data.BallRealtime import BallRealtime
-#ball_realtime = BallRealtime()
-
 # Import the Ball Simulation Configuration class.
 from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 
-# Import in the Ball graphics definition and startup functions.
-#from Modified_data.BallGraphics import BallGraphics
-#ball_graphics = BallGraphics()
-
 # Import the Ball State Data Recording Group class.
 from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
+
 
 #---------------------------------------------------------------------------
 # Configure the Ball simulation.
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball Sim' )
 ball_sim_config.realtime()
+ball_sim_config.fix_var_server_source_address()
 ball_sim_config.sim_control_panel()
+
 
 #---------------------------------------------------------------------------
 # Set the Trick check point information.
@@ -79,6 +74,7 @@ trick.TMM_hexfloat_checkpoint(True)
 # Check point at 5 seconds.
 trick.checkpoint(5.0)
 
+
 #---------------------------------------------------------------------------
 # Set the Walls information.
 #---------------------------------------------------------------------------
@@ -87,6 +83,7 @@ ensemble.walls.floor_y_pos      = -10.0;
 ensemble.walls.right_wall_x_pos =  10.0;
 ensemble.walls.ceiling_y_pos    =  10.0;
 ensemble.walls.left_wall_x_pos  = -10.0;
+
 
 #---------------------------------------------------------------------------
 # Set the Ball information.
@@ -133,12 +130,8 @@ TrickDataRecordingGroup.initialize_groups()
 
 
 #---------------------------------------------------------------------------
-# Start up the Ball graphics if this isn't just an input file verification.
+# Setup Ball graphics and add to the Trick external applications list.
 #---------------------------------------------------------------------------
-#if trick_ip.ip.verify_input:
-#   print ( 'Input File Verification: Would have started the Ball graphics.' )
-#else:
-#   ball_graphics.start()
 ball_sim_config.ball_graphics()
 
 

@@ -27,19 +27,11 @@ else:
                +trickhla_home\
                +'\033[0m\n' )
 
-# Construct the path to the TrickHLA python modules.
-trickhla_py_path = trickhla_home + '/scripts'
-
-# Check to see if the python modules directory exists.
-if os.path.isdir( trickhla_py_path ) is False:
-   sys.exit( '\033[91m'\
-            +'ERROR: TrickHLA Python modules path not found: '\
-            +trickhla_py_path\
-            +'\033[0m\n' )
-
-# Add this to the Python package search path.
-sys.path.append( trickhla_py_path )
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
 
 # Import useful TrickHLA support modules
-import trickhla_message
+from TrickHLA_data.TrickHLAUtils.TrickHLAMessage import *
 import trickhla_models

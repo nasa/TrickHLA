@@ -23,7 +23,6 @@ import subprocess
 import argparse
 import shutil
 
-from trickhla_message import *
 from trickhla_environment import *
 
 

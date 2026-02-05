@@ -45,16 +45,18 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
-# Import in the Ball realtime parameter settings.
-from Modified_data.BallRealtime import BallRealtime
-ball_realtime = BallRealtime()
+# Import the Ball Simulation Configuration class.
+from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 
-# Import in the Ball graphics definition and startup functions.
-from Modified_data.BallGraphics import BallGraphics
-ball_graphics = BallGraphics()
 
-# Import the Ball State Data Recording Group class.
-from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
+#---------------------------------------------------------------------------
+# Configure the Ball simulation.
+#---------------------------------------------------------------------------
+ball_sim_config = BallSimConfig( 'Ball Sim' )
+ball_sim_config.realtime()
+ball_sim_config.fix_var_server_source_address()
+ball_sim_config.sim_control_panel()
+
 
 #---------------------------------------------------------------------------
 # Set the Trick check point information.
@@ -65,6 +67,7 @@ trick.checkpoint_end(True)
 
 trick.TMM_reduced_checkpoint(False)
 trick.TMM_hexfloat_checkpoint(True)
+
 
 #---------------------------------------------------------------------------
 # Read in the 5 second checkpoint from the RUN_test directory.
@@ -95,12 +98,9 @@ trick.exec_set_freeze_command( True )
 
 
 #---------------------------------------------------------------------------
-# Start up the Ball graphics if this isn't just an input file verification.
+# Setup Ball graphics and add to the Trick external applications list.
 #---------------------------------------------------------------------------
-if trick_ip.ip.verify_input:
-   print ( 'Input File Verification: Would have started the Ball graphics.' )
-else:
-   ball_graphics.start()
+ball_sim_config.ball_graphics()
 
 
 #---------------------------------------------------------------------------

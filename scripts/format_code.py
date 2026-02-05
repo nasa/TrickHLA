@@ -19,7 +19,6 @@ import sys
 import textwrap
 
 from trickhla_environment import *
-from trickhla_message import *
 
 
 # Main routine.

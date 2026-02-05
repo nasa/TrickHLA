@@ -27,7 +27,7 @@
 ##############################################################################
 
 
-# Load the TrickHLA base Trick Data Recording Classes.
+# Import the TrickHLA base Trick Data Recording Classes.
 from TrickHLA_data.Trick.TrickDataRecordingGroup import *
 
 class BallStateDRG( TrickDataRecordingGroup ):
