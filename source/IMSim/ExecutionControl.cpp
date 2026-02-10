@@ -320,6 +320,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
              << " ERROR: For this Master federate, the time padding ("
              << get_time_padding() << " seconds) must be greater than zero!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Verify the federate time constraints.
@@ -328,6 +329,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
              << " ERROR: Time constraints verification failed!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Don't forget to enable asynchronous delivery of messages.
@@ -371,7 +373,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
             // read the required federates data from external file, replacing
             // the contents of 'known_feds'.
-            federate->read_running_feds_file( string( tRestoreName ) );
+            federate->read_running_feds_file( tRestoreName );
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
@@ -387,10 +389,11 @@ Waiting for the required federates to join.\n",
                errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                       << " ERROR: " << return_string << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
+               return;
             }
 
             // Load the MASTER federate from the checkpoint file...
-            federate->restore_checkpoint( string( tRestoreName ) );
+            federate->restore_checkpoint( tRestoreName );
 
             //
             // Even though the multiphase initialization document does not tell
@@ -419,7 +422,7 @@ initiating restore request for '%s' with the RTI.\n",
                                 __LINE__, tRestoreName );
             }
             // request federation restore from RTI
-            federate->initiate_restore_announce( string( tRestoreName ) );
+            federate->initiate_restore_announce( tRestoreName );
 
             // wait for the success / failure response from the RTI
             federate->wait_for_restore_request_callback();
@@ -437,6 +440,7 @@ initiating restore request for '%s' with the RTI.\n",
                       << "further info for the reasons why the RTI would reject"
                       << " the federation restore request..." << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
+               return;
             }
 
             // Wait for RTI to inform us that the federation restore has
@@ -467,6 +471,7 @@ initiating restore request for '%s' with the RTI.\n",
                errmsg << endl
                       << tStr;
                DebugHandler::terminate_with_message( errmsg.str() );
+               return;
             }
 
             // Rebuild the 'federate handle set' because the federation was restored
@@ -520,6 +525,7 @@ Simulation has started and is now running...\n",
                    << " => I AM THE MASTER <= but you failed to specify the"
                    << "  checkpoint FILE NAME!" << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
+            return;
          }
       } else { // MASTER but restore was not specified
 
@@ -665,6 +671,7 @@ loading of the federate from the checkpoint file '%s'.\n",
                    << endl
                    << tStr;
             DebugHandler::terminate_with_message( errmsg.str() );
+            return;
          }
 
          // Wait for the announcement of "STARTUP" sync-point before proceeding.
@@ -759,6 +766,7 @@ Simulation has started and is now running...\n",
                       << " ERROR: Late joining federates that do not use HLA"
                       << " time management are not supported yet!" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
+               return;
             }
 
             // Subscribe to the simulation configuration attributes.
@@ -1178,6 +1186,7 @@ void ExecutionControl::sync_point_announced(
              << " sync-points configured for this federate:" << endl
              << to_string( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 }
 
@@ -1417,6 +1426,7 @@ void ExecutionControl::set_next_execution_control_mode(
       errmsg << "IMSim::ExecutionControl::set_next_execution_mode():" << __LINE__
              << " ERROR: This should only be called by the Master federate!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    switch ( exec_control ) {
@@ -1982,6 +1992,7 @@ bool ExecutionControl::run_mode_transition()
         errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
                << " ERROR: The 'mtr_run' sync-point was not found!" << endl;
         DebugHandler::terminate_with_message( errmsg.str() );
+        return;
      } else {
 
         // Wait for 'mtr_run' sync-point announce.
@@ -2071,6 +2082,7 @@ bool ExecutionControl::freeze_mode_transition()
       errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_freeze' sync-point was not found!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
@@ -2432,6 +2444,7 @@ bool ExecutionControl::is_save_initiated()
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return false;
                }
             }
 
@@ -2443,7 +2456,7 @@ bool ExecutionControl::is_save_initiated()
          }
       }
    }
-   return ( true );
+   return true;
 }
 
 bool ExecutionControl::perform_save()

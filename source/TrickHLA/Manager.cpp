@@ -253,8 +253,8 @@ void Manager::restart_initialization()
 
    // The set_master() function set's additional parameter so call it again to
    // force the a complete master state.
-   bool master_flag = execution_control->is_master(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
-   execution_control->set_master( master_flag );      // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   bool master_flag = execution_control->is_master();
+   execution_control->set_master( master_flag );
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
@@ -318,6 +318,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " modified-data files to make sure the 'Manager::objects'"
              << " array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // If we have a non-NULL objects array but the object-count is invalid
@@ -330,6 +331,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " Please check your input or modified-data files to make sure"
              << " the 'Manager::objects' array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Reset the TrickHLA Object count if negative.
@@ -354,6 +356,7 @@ void Manager::verify_object_and_interaction_arrays()
                          << " input or modified-data files to make sure the"
                          << " object instance names are unique with no duplicates." << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return;
                }
             }
          }
@@ -370,6 +373,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " modified-data files to make sure the 'Manager::interactions'"
              << " array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // If we have a non-NULL interactions array but the interactions-count is
@@ -382,6 +386,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " array. Please check your input or modified-data files to make"
              << " sure the 'Manager::interactions' array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Reset the TrickHLA Interaction count if negative.
@@ -407,6 +412,7 @@ void Manager::verify_object_and_interaction_arrays()
                          << " input or modified-data files to make sure the"
                          << " interaction FOM names are unique with no duplicates." << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return;
                }
             }
          }
@@ -434,6 +440,7 @@ void Manager::verify_object_and_interaction_arrays()
                    << " make sure only one interaction implementation exists per"
                    << " HLA interaction class FOM name." << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
+            return;
          }
       }
 
@@ -451,6 +458,7 @@ void Manager::verify_object_and_interaction_arrays()
                    << " make sure the interaction FOM names are unique with"
                    << " no duplicates." << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
+            return;
          }
       }
    }
@@ -642,6 +650,7 @@ federate so this call will be ignored.\n",
                                << " execution because someone forced our resignation at"
                                << " the Central RTI Component (CRC) level!" << endl;
                         DebugHandler::terminate_with_message( errmsg.str() );
+                        return;
                      }
                   }
 
@@ -761,6 +770,7 @@ void Manager::receive_init_data(
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!" << endl;
                      DebugHandler::terminate_with_message( errmsg.str() );
+                     return;
                   }
                }
 
@@ -862,6 +872,7 @@ void Manager::wait_for_init_sync_point(
                 << " ERROR: Unexpected error waiting for sync-point '"
                 << sync_point_label << "'!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         return;
       }
    } else {
       ostringstream errmsg;
@@ -874,6 +885,7 @@ void Manager::wait_for_init_sync_point(
              << "federate.add_multiphase_init_sync_point( '"
              << sync_point_label << "' )" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 }
 
@@ -2074,6 +2086,7 @@ void Manager::wait_for_registration_of_required_objects()
                          << " execution because someone forced our resignation"
                          << " at the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return;
                }
             }
 
@@ -2226,6 +2239,7 @@ void Manager::set_object_instance_handles_by_name(
                       << " ERROR: Object Instance Not Known for '"
                       << instance_name << "'" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
+               return;
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                   summary << "\n    Object:'" << data_objects[n].get_name()
@@ -2457,7 +2471,7 @@ void Manager::process_interactions()
                    << "type defined in 'ManagerTypeOfInteractionEnum' enum "
                    << "found in 'Manager.hh' and re-run." << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
-            break;
+            return;
          }
       }
 
@@ -3361,6 +3375,7 @@ void Manager::wait_for_discovery_of_objects()
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return;
                }
             }
 
