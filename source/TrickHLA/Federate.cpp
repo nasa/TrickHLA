@@ -671,10 +671,10 @@ void Federate::create_RTI_ambassador_and_connect()
       this->RTI_ambassador = rti_amb_factory->createRTIambassador();
 
       ConfigurationResult config_result;
-      config_result = RTI_ambassador->connect( *federate_ambassador,
-                                               RTI1516_NAMESPACE::HLA_IMMEDIATE,
-                                               rti_config );
-      set_connected( true );
+      config_result   = RTI_ambassador->connect( *federate_ambassador,
+                                                 RTI1516_NAMESPACE::HLA_IMMEDIATE,
+                                                 rti_config );
+      this->connected = true;
 
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream msg;
@@ -698,7 +698,7 @@ void Federate::create_RTI_ambassador_and_connect()
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE,
                                   local_settings_ws );
       }
-      set_connected( true );
+      this->connected = true;
 
       // Make sure we delete the factory now that we are done with it.
       delete rti_amb_factory;
@@ -986,14 +986,11 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         set_connected( false );
-
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
                 << " ERROR: When decoding 'FederateHandle': EXCEPTION: NotConnected" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
-         exit( 1 );
+         set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1171,18 +1168,15 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      set_connected( false );
-
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
-
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
              << " ERROR: NotConnected" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1283,11 +1277,9 @@ void Federate::determine_federate_MOM_object_instance_names()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      set_connected( false );
-
       message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: NotConnected\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1653,11 +1645,11 @@ NameNotFound ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')
 FederateNotExecutionMember ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1685,11 +1677,11 @@ InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle( MOM_federation_c
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAfederatesInFederation')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAfederatesInFederation')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1717,11 +1709,11 @@ InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle( MOM_federation_c
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1743,11 +1735,11 @@ NameNotFound ERROR for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.H
 FederateNotExecutionMember ERROR for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.HLAfederate')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.HLAfederate')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1774,11 +1766,11 @@ InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_clas
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1805,11 +1797,11 @@ InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_clas
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1836,11 +1828,11 @@ InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_clas
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1863,11 +1855,11 @@ NameNotFound ERROR for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederat
 FederateNotExecutionMember ERROR for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederation.HLAadjust.HLAsetSwitches')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederation.HLAadjust.HLAsetSwitches')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1893,11 +1885,11 @@ InvalidInteractionClassHandle ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSw
 FederateNotExecutionMember ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
@@ -1972,10 +1964,10 @@ void Federate::subscribe_attributes(
       message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d InvalidUpdateRateDesignator: MOM Object Attributed Subscribe FAILED!!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d NotConnected: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d RTIinternalError: MOM Object Attributed Subscribe FAILED!\n",
@@ -2044,10 +2036,10 @@ void Federate::unsubscribe_attributes(
       message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d RestoreInProgress: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d NotConnected: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d RTIinternalError: MOM Object Attributed Subscribe FAILED!\n",
@@ -2119,10 +2111,10 @@ void Federate::request_attribute_update(
       message_publish( MSG_WARNING, "Federate::request_attribute_update():%d RestoreInProgress: Attribute update request FAILED!\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::request_attribute_update():%d NotConnected: Attribute update request FAILED!\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::request_attribute_update():%d RTIinternalError: MOM Object Attributed update request FAILED!\n",
@@ -2217,9 +2209,9 @@ void Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM()
       message_publish( MSG_WARNING, "Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM():%d RestoreInProgress: Unsubscribe object class FAILED!\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM():%d NotConnected: Unsubscribe object class FAILED!\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM():%d RTIinternalError: Unsubscribe object class FAILED!\n",
                        __LINE__ );
@@ -2256,9 +2248,9 @@ void Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM()
       message_publish( MSG_WARNING, "Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM():%d RestoreInProgress: Unsubscribe object class FAILED!\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM():%d NotConnected: Unsubscribe object class FAILED!\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM():%d RTIinternalError: Unsubscribe object class FAILED!\n",
                        __LINE__ );
@@ -2295,9 +2287,9 @@ void Federate::publish_interaction_class( // cppcheck-suppress [functionStatic, 
       message_publish( MSG_WARNING, "Federate::publish_interaction_class():%d RestoreInProgress: Publish interaction class FAILED!\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::publish_interaction_class():%d NotConnected: Publish interaction class FAILED!\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "Federate::publish_interaction_class():%d RTIinternalError: Publish interaction class FAILED!\n",
                        __LINE__ );
@@ -2334,9 +2326,9 @@ void Federate::unpublish_interaction_class( // cppcheck-suppress [functionStatic
       message_publish( MSG_WARNING, "Federate::unpublish_interaction_class():%d RestoreInProgress: Unpublish interaction class FAILED!\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::unpublish_interaction_class():%d NotConnected: Unpublish interaction class FAILED!\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "Federate::unpublish_interaction_class():%d RTIinternalError: Unpublish interaction class FAILED!\n",
                        __LINE__ );
@@ -2382,10 +2374,10 @@ void Federate::send_interaction( // cppcheck-suppress [functionStatic, unmatched
       message_publish( MSG_WARNING, "Federate::send_interaction():%d FederateNotExecutionMember: Send interaction FAILED!\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::send_interaction():%d NotConnected: Send interaction FAILED!\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       error_flag = true;
       message_publish( MSG_WARNING, "Federate::send_interaction():%d RTIinternalError: Send interaction FAILED!\n",
@@ -2728,9 +2720,9 @@ void Federate::setup_checkpoint()
       message_publish( MSG_WARNING, "Federate::setup_checkpoint():%d EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::setup_checkpoint():%d EXCEPTION: NotConnected\n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -2786,9 +2778,9 @@ void Federate::post_checkpoint()
          message_publish( MSG_WARNING, "Federate::post_checkpoint():%d EXCEPTION: RestoreInProgress\n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         set_connected( false );
          message_publish( MSG_WARNING, "Federate::post_checkpoint():%d EXCEPTION: NotConnected\n",
                           __LINE__ );
+         set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -3053,9 +3045,9 @@ void Federate::post_restore()
          message_publish( MSG_WARNING, "Federate::post_restore():%d queryLogicalTime EXCEPTION: RestoreInProgress\n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         set_connected( false );
          message_publish( MSG_WARNING, "Federate::post_restore():%d queryLogicalTime EXCEPTION: NotConnected\n",
                           __LINE__ );
+         set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          message_publish( MSG_WARNING, "Federate::post_restore():%d queryLogicalTime EXCEPTION: RTIinternalError\n",
                           __LINE__ );
@@ -3224,13 +3216,11 @@ void Federate::create_federation()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      set_connected( false );
-
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
              << " EXCEPTION: NotConnected" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -3451,14 +3441,11 @@ void Federate::join_federation(
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      set_connected( false );
-
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
              << " EXCEPTION: NotConnected" << endl;
-
       DebugHandler::terminate_with_message( errmsg.str() );
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::CallNotAllowedFromWithinCallback const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -3598,14 +3585,11 @@ void Federate::enable_async_delivery()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      set_connected( false );
-
       ostringstream errmsg;
       errmsg << "Federate::enable_async_delivery():" << __LINE__
              << " EXCEPTION: NotConnected" << endl;
-
       DebugHandler::terminate_with_message( errmsg.str() );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -3649,6 +3633,14 @@ bool Federate::check_for_shutdown()
  */
 bool Federate::check_for_shutdown_with_termination()
 {
+   if ( !connected ) {
+      ostringstream errmsg;
+      errmsg << "Federate::check_for_shutdown_with_termination():" << __LINE__
+             << " ERROR: Lost the connection to the RTI. Terminating the simulation!"
+             << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    return ( execution_control->check_for_shutdown_with_termination() );
 }
 
@@ -3869,12 +3861,25 @@ void Federate::wait_to_receive_blocking_io_data(
    obj->receive_blocking_io_data();
 }
 
+/*! @brief Is the federate connected to the RTI.
+ *  @param connected_state True if the federate is connected; False otherwise. */
+void Federate::set_connection_lost()
+{
+   this->connected = false;
+
+   ostringstream errmsg;
+   errmsg << "Federate::set_connection_lost():" << __LINE__
+          << " ERROR: Lost the connection to the RTI. Terminating the simulation!"
+          << endl;
+   DebugHandler::terminate_with_message( errmsg.str() );
+}
+
 /*!
  *  @job_class{scheduled}
  */
 bool Federate::is_execution_member() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
-   if ( this->connected && ( RTI_ambassador.get() != NULL ) ) {
+   if ( connected && ( RTI_ambassador.get() != NULL ) ) {
       bool is_exec_member = true;
       try {
          RTI_ambassador->getOrderName( RTI1516_NAMESPACE::TIMESTAMP );
@@ -3883,8 +3888,8 @@ bool Federate::is_execution_member() // cppcheck-suppress [functionStatic, unmat
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          is_exec_member = false;
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         set_connected( false );
          is_exec_member = false;
+         set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Do nothing
       }
@@ -4097,10 +4102,7 @@ void Federate::resign()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      set_connected( false );
       this->federation_joined = false;
-
       ostringstream errmsg;
       errmsg << "Federate::resign():" << __LINE__
              << " Failed to resign Federate from the '"
@@ -4110,6 +4112,7 @@ void Federate::resign()
 
       // Just display an error message and don't terminate if we are not connected.
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+      set_connection_lost();
    } catch ( CallNotAllowedFromWithinCallback const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4240,17 +4243,14 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      set_connected( false );
-
       ostringstream errmsg;
       errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
              << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "NotConnected" << endl;
-
       DebugHandler::terminate_with_message( errmsg.str() );
+      set_connection_lost();
    } catch ( CallNotAllowedFromWithinCallback const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4377,7 +4377,6 @@ void Federate::destroy()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      set_connected( false );
       this->federation_exists = false;
       this->federation_joined = false;
 
@@ -4385,6 +4384,7 @@ void Federate::destroy()
          message_publish( MSG_WARNING, "Federate::destroy():%d Federation '%s' destroy failed because we are NOT CONNECTED to the federation.\n",
                           __LINE__, get_federation_name().c_str() );
       }
+      set_connection_lost();
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4409,15 +4409,14 @@ void Federate::destroy()
       }
 
       RTI_ambassador->disconnect();
-
       this->federation_exists = false;
       this->federation_joined = false;
-      set_connected( false );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::destroy():%d Disconnected from RTI \n",
                           __LINE__ );
       }
+      this->connected = false;
    } catch ( RTI1516_NAMESPACE::FederateIsExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -5226,9 +5225,9 @@ void Federate::request_federation_save()
       message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: RestoreInProgress \n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: NotConnected \n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -5312,9 +5311,9 @@ void Federate::inform_RTI_of_restore_completion()
          message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: SaveInProgress \n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         set_connected( false );
          message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: NotConnected \n",
                           __LINE__ );
+         set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -5342,9 +5341,9 @@ void Federate::inform_RTI_of_restore_completion()
          message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: SaveInProgress \n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         set_connected( false );
          message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: NotConnected \n",
                           __LINE__ );
+         set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -5470,9 +5469,9 @@ void Federate::restart_checkpoint()
       message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: RestoreInProgress \n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: NotConnected \n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: RTIinternalError \n",
                        __LINE__ );
@@ -5968,9 +5967,9 @@ void Federate::request_federation_save_status() // cppcheck-suppress [functionSt
       message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: RestoreInProgress \n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: NotConnected \n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -6006,9 +6005,9 @@ void Federate::request_federation_restore_status() // cppcheck-suppress [functio
       message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: RestoreInProgress \n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      set_connected( false );
       message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: NotConnected \n",
                        __LINE__ );
+      set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -6047,9 +6046,9 @@ void Federate::requested_federation_restore_status(
          message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: SaveInProgress \n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         set_connected( false );
          message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: NotConnected \n",
                           __LINE__ );
+         set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: RTIinternalError \n",
                           __LINE__ );
@@ -6302,9 +6301,9 @@ restore with label '%s'.\n",
          message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: RestoreInProgress \n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         set_connected( false );
          message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: NotConnected \n",
                           __LINE__ );
+         set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -6648,13 +6647,11 @@ void Federate::rebuild_federate_handles(
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         set_connected( false );
-
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():" << __LINE__
                 << " EXCEPTION: NotConnected" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;

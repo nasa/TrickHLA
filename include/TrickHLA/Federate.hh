@@ -932,12 +932,8 @@ class Federate : public TimeManagement
       return this->federation_created_by_federate;
    }
 
-   /*! @brief Is the federate connected to the RTI.
-    *  @param is_connected True if the federate is connected; False otherwise. */
-   void set_connected( bool const is_connected )
-   {
-      this->connected = is_connected;
-   }
+   /*! @brief Set connection to the RTI as lost. */
+   void set_connection_lost();
 
    /*! @brief Is the federate an execution member, which means is it connected
     * and joined to a federation execution.

@@ -674,10 +674,6 @@ void Object::remove()
                 << " RestoreInProgress: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( NotConnected const &e ) {
-         Federate *federate = get_federate();
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          ostringstream errmsg;
@@ -685,6 +681,10 @@ void Object::remove()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -890,10 +890,6 @@ void Object::publish_object_attributes()
              << " RestoreInProgress: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
-      Federate *federate = get_federate();
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
@@ -901,6 +897,10 @@ void Object::publish_object_attributes()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -993,10 +993,6 @@ void Object::unpublish_all_object_attributes()
                 << " RestoreInProgress: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         Federate *federate = get_federate();
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          ostringstream errmsg;
@@ -1004,6 +1000,10 @@ void Object::unpublish_all_object_attributes()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1120,10 +1120,6 @@ void Object::subscribe_to_object_attributes()
              << " InvalidUpdateRateDesignator: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
-      Federate *federate = get_federate();
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
@@ -1131,6 +1127,10 @@ void Object::subscribe_to_object_attributes()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1216,10 +1216,6 @@ void Object::unsubscribe_all_object_attributes()
                 << " RestoreInProgress: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         Federate *federate = get_federate();
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          ostringstream errmsg;
@@ -1227,6 +1223,10 @@ void Object::unsubscribe_all_object_attributes()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1337,10 +1337,6 @@ Requesting reservation of Object instance name '%s'.\n",
                 << " RestoreInProgress: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( NotConnected const &e ) {
-         Federate *federate = get_federate();
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          ostringstream errmsg;
@@ -1348,6 +1344,10 @@ Requesting reservation of Object instance name '%s'.\n",
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1550,10 +1550,6 @@ Detected object already registered '%s' Instance-ID:%s\n",
                 << " RestoreInProgress: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       } catch ( NotConnected const &e ) {
-         Federate *federate = get_federate();
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          ostringstream errmsg;
@@ -1561,6 +1557,10 @@ Detected object already registered '%s' Instance-ID:%s\n",
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1611,10 +1611,6 @@ Detected object already registered '%s' Instance-ID:%s\n",
                    << " FederateNotExecutionMember: " << rti_err_msg << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
          } catch ( NotConnected const &e ) {
-            Federate *federate = get_federate();
-            if ( federate != NULL ) {
-               federate->set_connected( false );
-            }
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
             ostringstream errmsg;
@@ -1622,6 +1618,10 @@ Detected object already registered '%s' Instance-ID:%s\n",
                    << " Object '" << get_name() << "'"
                    << " NotConnected: " << rti_err_msg << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
+            Federate *federate = get_federate();
+            if ( federate != NULL ) {
+               federate->set_connection_lost();
+            }
          } catch ( RTIinternalError const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1843,10 +1843,6 @@ void Object::setup_preferred_order_with_RTI()
              << " RestoreInProgress: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
-      Federate *federate = get_federate();
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
@@ -1854,6 +1850,10 @@ void Object::setup_preferred_order_with_RTI()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1949,10 +1949,6 @@ void Object::request_attribute_value_update()
              << " RestoreInProgress: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected const &e ) {
-      Federate *federate = get_federate();
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
@@ -1960,6 +1956,10 @@ void Object::request_attribute_value_update()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -2242,7 +2242,6 @@ exception for '%s' with error message '%s'.\n",
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
-      federate->set_connected( false );
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
       message_publish( MSG_WARNING, "Object::send_requested_data():%d not connected error for '%s'\n",
@@ -2255,6 +2254,7 @@ exception for '%s' with error message '%s'.\n",
              << "    lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+      federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2494,7 +2494,6 @@ exception for '%s' with error message '%s'.\n",
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
-         federate->set_connected( false );
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d not connected for '%s'\n",
@@ -2507,6 +2506,7 @@ exception for '%s' with error message '%s'.\n",
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
@@ -2766,7 +2766,6 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
-         federate->set_connected( false );
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d not connected for '%s'\n",
@@ -2779,6 +2778,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
@@ -3005,7 +3005,6 @@ exception for '%s' with error message '%s'.\n",
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
-         federate->set_connected( false );
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d not connected for '%s'\n",
@@ -3017,6 +3016,7 @@ exception for '%s' with error message '%s'.\n",
                 << "  granted=" << get_granted_time().get_time_in_seconds() << endl
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
@@ -3485,7 +3485,6 @@ void Object::send_init_data()
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
-      federate->set_connected( false );
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
       message_publish( MSG_WARNING, "Object::send_init_data():%d not connected error for '%s'\n",
@@ -3497,6 +3496,7 @@ void Object::send_init_data()
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+      federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -3946,15 +3946,15 @@ RTIAmbassador::confirmDivestiture() generated SaveInProgress: '%s'\n",
 RTIAmbassador::confirmDivestiture() generated RestoreInProgress: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
    } catch ( NotConnected const &e ) {
-      Federate *federate = get_federate();
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "Object::release_ownership():%d call to \
 RTIAmbassador::confirmDivestiture() generated NotConnected: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -4026,8 +4026,8 @@ void Object::pull_ownership()
       } catch ( RestoreInProgress const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: RestoreInProgress \n", __LINE__ );
       } catch ( NotConnected const &e ) {
-         federate->set_connected( false );
          message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: NotConnected \n", __LINE__ );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -4791,10 +4791,6 @@ void Object::negotiated_attribute_ownership_divestiture(
              << " RestoreInProgress: " << rti_err_msg << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
-      Federate *federate = get_federate();
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
@@ -4802,6 +4798,10 @@ void Object::negotiated_attribute_ownership_divestiture(
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -4900,7 +4900,6 @@ void Object::push_ownership()
                 << " RestoreInProgress: " << rti_err_msg << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
-         federate->set_connected( false );
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          ostringstream errmsg;
@@ -4908,6 +4907,7 @@ void Object::push_ownership()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );

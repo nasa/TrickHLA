@@ -187,7 +187,7 @@ void FedAmb::connectionLost(
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
 
-      federate->set_connected( false );
+      federate->set_connection_lost();
 
    } else {
       string fault_msg;

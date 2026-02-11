@@ -483,11 +483,11 @@ void TimeManagement::time_advance_request_to_GALT()
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: NotConnected\n",
                        __LINE__ );
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RTIinternalError\n",
                        __LINE__ );
@@ -545,11 +545,11 @@ void TimeManagement::time_advance_request_to_GALT_LCTS_multiple()
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: NotConnected\n",
                        __LINE__ );
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RTIinternalError\n",
                        __LINE__ );
@@ -788,13 +788,11 @@ void TimeManagement::setup_time_constrained()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      federate->set_connected( false );
-
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": ERROR: NotConnected : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
+      federate->set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1001,13 +999,11 @@ void TimeManagement::setup_time_regulation()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      federate->set_connected( false );
-
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: NotConnected : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
+      federate->set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1162,9 +1158,9 @@ void TimeManagement::perform_time_advance_request()
          message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: RestoreInProgress\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         federate->set_connected( false );
          message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: NotConnected\n",
                           __LINE__ );
+         federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1246,9 +1242,9 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
             message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RestoreInProgress\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-            federate->set_connected( false );
             message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected\n",
                              __LINE__ );
+            federate->set_connection_lost();
          } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1536,12 +1532,10 @@ void TimeManagement::shutdown_time_constrained()
          message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": RestoreInProgress EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
          this->time_constrained_state = false;
          message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": NotConnected EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
+         federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1600,12 +1594,10 @@ void TimeManagement::shutdown_time_regulating()
          message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": RestoreInProgress EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
          this->time_constrained_state = false;
          message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": NotConnected EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
+         federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );

@@ -911,8 +911,13 @@ bool SyncPointList::achieve_sync_point(
          // Keep sync-point state the same, and return false.
       } catch ( NotConnected const &e ) {
          // Keep sync-point state the same, and return false.
+         ostringstream msg;
+         msg << "SyncPointList::achieve_sync_point():" << __LINE__
+             << " For Known Sync-point " << sp->to_string()
+             << ", Not Connected to RTI!" << endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
          if ( federate != NULL ) {
-            federate->set_connected( false );
+            federate->set_connection_lost();
          }
       } catch ( RTIinternalError const &e ) {
          // Keep sync-point state the same, and return false.

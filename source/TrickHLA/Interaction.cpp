@@ -438,17 +438,15 @@ Published Interaction '%s' Preferred-Order:%s\n",
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      Federate *federate = get_federate();
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
-
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -547,17 +545,15 @@ void Interaction::publish_interaction()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      Federate *federate = get_federate();
-      if ( federate != NULL ) {
-         federate->set_connected( false );
-      }
-
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -643,17 +639,15 @@ void Interaction::unpublish_interaction()
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         Federate *federate = get_federate();
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
-
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -771,17 +765,15 @@ void Interaction::subscribe_to_interaction()
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         Federate *federate = get_federate();
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
-
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -870,17 +862,15 @@ void Interaction::unsubscribe_from_interaction()
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         Federate *federate = get_federate();
-         if ( federate != NULL ) {
-            federate->set_connected( false );
-         }
-
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
