@@ -4333,7 +4333,7 @@ void Federate::destroy()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy():%d Attempting to Destroy Federation '%s'\n",
+         message_publish( MSG_NORMAL, "Federate::destroy():%d Attempting to Destroy Federation '%s'.\n",
                           __LINE__, get_federation_name().c_str() );
       }
 
@@ -4343,7 +4343,7 @@ void Federate::destroy()
       this->federation_joined = false;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy():%d Destroyed Federation '%s'\n",
+         message_publish( MSG_NORMAL, "Federate::destroy():%d Destroyed Federation '%s'.\n",
                           __LINE__, get_federation_name().c_str() );
       }
    } catch ( RTI1516_NAMESPACE::FederatesCurrentlyJoined const &e ) {
@@ -4404,26 +4404,26 @@ void Federate::destroy()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy():%d Attempting to disconnect from RTI \n",
+         message_publish( MSG_NORMAL, "Federate::destroy():%d Attempting to disconnect from RTI.\n",
                           __LINE__ );
       }
 
       RTI_ambassador->disconnect();
       this->federation_exists = false;
       this->federation_joined = false;
+      this->connected         = false;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy():%d Disconnected from RTI \n",
+         message_publish( MSG_NORMAL, "Federate::destroy():%d Disconnected from RTI.\n",
                           __LINE__ );
       }
-      this->connected = false;
    } catch ( RTI1516_NAMESPACE::FederateIsExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "Federate::destroy():%d Cannot disconnect from RTI because this federate is still joined.\n",
+         message_publish( MSG_WARNING, "Federate::destroy():%d Cannot disconnect from RTI because this federate is still an execution member.\n",
                           __LINE__ );
       }
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -4438,7 +4438,6 @@ void Federate::destroy()
              << " ERROR: Unexpected RTI exception when disconnecting from RTI!\n"
              << "RTI Exception: RTIinternalError: '"
              << rti_err_msg << "'" << endl;
-
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
