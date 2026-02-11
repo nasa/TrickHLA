@@ -176,14 +176,28 @@ void FedAmb::connectionLost(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   string fault_msg;
-   StringUtilities::to_string( fault_msg, faultDescription );
-   ostringstream errmsg;
-   errmsg << "FedAmb::connectionLost():" << __LINE__
-          << " ERROR: Lost the connection to the Central RTI Component (CRC)."
-          << " Reason:'" << fault_msg << "'."
-          << " Terminating the simulation!" << endl;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   if ( federate != NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+         string fault_msg;
+         StringUtilities::to_string( fault_msg, faultDescription );
+         ostringstream errmsg;
+         errmsg << "FedAmb::connectionLost():" << __LINE__
+                << " WARNING: Lost the connection to the RTI. Reason:'"
+                << fault_msg << "'" << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+
+      federate->set_connected( false );
+
+   } else {
+      string fault_msg;
+      StringUtilities::to_string( fault_msg, faultDescription );
+      ostringstream errmsg;
+      errmsg << "FedAmb::connectionLost():" << __LINE__
+             << " ERROR: Lost the connection to the RTI. Reason:'"
+             << fault_msg << "' Terminating the simulation!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 }
 
 void FedAmb::reportFederationExecutions(

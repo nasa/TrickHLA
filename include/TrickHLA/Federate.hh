@@ -917,7 +917,7 @@ class Federate : public TimeManagement
     *  @return True if federate can rejoin; False otherwise. */
    bool federate_can_rejoin_federation() const
    {
-      return can_rejoin_federation;
+      return this->can_rejoin_federation;
    }
 
    /*! @brief Query if a federate is required at startup.
@@ -929,7 +929,14 @@ class Federate : public TimeManagement
     *  @return True if created by this federate; False otherwise. */
    bool is_federation_created_by_federate() const
    {
-      return federation_created_by_federate;
+      return this->federation_created_by_federate;
+   }
+
+   /*! @brief Is the federate connected to the RTI.
+    *  @param is_connected True if the federate is connected; False otherwise. */
+   void set_connected( bool const is_connected )
+   {
+      this->connected = is_connected;
    }
 
    /*! @brief Is the federate an execution member, which means is it connected
@@ -966,6 +973,7 @@ class Federate : public TimeManagement
    bool                              federation_exists;              ///< @trick_io{**} Federation exists.
    bool                              federation_joined;              ///< @trick_io{**} Federate joined federation flag.
    bool                              all_federates_joined;           ///< @trick_units{--} Master check for all federates joined.
+   bool                              connected;                      ///< @trick_units{--} True if connected to RTI, False otherwise.
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 

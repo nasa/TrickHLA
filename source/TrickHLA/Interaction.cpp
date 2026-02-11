@@ -439,6 +439,11 @@ Published Interaction '%s' Preferred-Order:%s\n",
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connected( false );
+      }
+
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: NotConnected for Interaction '"
@@ -543,6 +548,11 @@ void Interaction::publish_interaction()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connected( false );
+      }
+
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: NotConnected for Interaction '"
@@ -633,6 +643,11 @@ void Interaction::unpublish_interaction()
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connected( false );
+         }
 
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
@@ -757,6 +772,11 @@ void Interaction::subscribe_to_interaction()
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connected( false );
+         }
+
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
@@ -850,6 +870,11 @@ void Interaction::unsubscribe_from_interaction()
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connected( false );
+         }
 
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
