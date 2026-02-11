@@ -336,7 +336,7 @@ void ExecutionControlBase::join_federation_process()
    // a running federation execution that is shutting down. This is an
    // unlikely but possible race condition.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControl::join_federation_process():%d Checking for shutdown \n",
+      message_publish( MSG_NORMAL, "ExecutionControl::join_federation_process():%d Checking for shutdown\n",
                        __LINE__ );
    }
    fed->check_for_shutdown_with_termination();
@@ -521,7 +521,7 @@ joining federate so this call will be ignored.\n",
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d \n",
+      message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d\n",
                        __LINE__ );
    }
 
@@ -828,7 +828,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
-         message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+         message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
                           __LINE__, execution_configuration->get_name().c_str(), id_str.c_str(),
                           ( instance_id.isValid() ? "Yes" : "No" ) );
       }

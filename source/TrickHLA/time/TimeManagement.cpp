@@ -178,7 +178,7 @@ void TimeManagement::initialize_thread_state(
 void TimeManagement::restart_initialization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::restart_initialization():%d \n",
+      message_publish( MSG_NORMAL, "TimeManagement::restart_initialization():%d\n",
                        __LINE__ );
    }
 
@@ -574,7 +574,7 @@ void TimeManagement::time_advance_request_to_GALT_LCTS_multiple()
 void TimeManagement::setup_time_management()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s \n",
+      message_publish( MSG_NORMAL, "TimeManagement::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s\n",
                        __LINE__,
                        ( this->time_management ? "Yes" : "No" ),
                        ( this->time_regulating ? "Yes" : "No" ),
@@ -641,7 +641,7 @@ void TimeManagement::set_time_constrained_enabled(
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "TimeManagement::set_time_constrained_enabled():%d TimeManagement \
-\"%s\" Time granted to: %.12G \n",
+\"%s\" Time granted to: %.12G\n",
                        __LINE__, federate->get_federate_name().c_str(),
                        get_granted_time().get_time_in_seconds() );
    }
@@ -669,7 +669,7 @@ void TimeManagement::setup_time_constrained()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED \n",
+         message_publish( MSG_NORMAL, "TimeManagement::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED\n",
                           __LINE__, federate->get_federation_name().c_str() );
       }
 
@@ -836,7 +836,7 @@ void TimeManagement::set_time_regulation_enabled(
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "TimeManagement::set_time_regulation_enabled():%d TimeManagement \
-\"%s\" Time granted to: %.12G \n",
+\"%s\" Time granted to: %.12G\n",
                        __LINE__, federate->get_federate_name().c_str(),
                        get_granted_time().get_time_in_seconds() );
    }

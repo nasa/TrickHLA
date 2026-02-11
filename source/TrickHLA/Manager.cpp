@@ -1060,20 +1060,20 @@ void Manager::setup_all_ref_attributes()
 
    if ( is_execution_configuration_used() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Execution-Configuration \n",
+         message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Execution-Configuration\n",
                           __LINE__ );
       }
       setup_object_ref_attributes( 1, get_execution_configuration() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Objects: %d \n",
+      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Objects: %d\n",
                        __LINE__, obj_count );
    }
    setup_object_ref_attributes( obj_count, objects );
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Interactions \n",
+      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Interactions\n",
                        __LINE__ );
    }
    setup_interaction_ref_attributes();
@@ -1094,7 +1094,7 @@ void Manager::setup_object_ref_attributes(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_object_ref_attributes():%d \n",
+      message_publish( MSG_NORMAL, "Manager::setup_object_ref_attributes():%d\n",
                        __LINE__ );
    }
 
@@ -2768,7 +2768,7 @@ void Manager::mark_object_as_deleted_from_federation(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string id_str;
             StringUtilities::to_string( id_str, instance_id );
-            message_publish( MSG_NORMAL, "Manager::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+            message_publish( MSG_NORMAL, "Manager::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
                              __LINE__, obj->get_name().c_str(), id_str.c_str(),
                              ( instance_id.isValid() ? "Yes" : "No" ) );
          }

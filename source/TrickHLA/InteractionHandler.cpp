@@ -148,7 +148,7 @@ bool InteractionHandler::send_interaction(
 void InteractionHandler::receive_interaction(
    VariableLengthData const &the_user_supplied_tag )
 {
-   message_publish( MSG_NORMAL, "InteractionHandler::receive_interaction():%d \n",
+   message_publish( MSG_NORMAL, "InteractionHandler::receive_interaction():%d\n",
                     __LINE__ );
 }
 #pragma GCC diagnostic pop

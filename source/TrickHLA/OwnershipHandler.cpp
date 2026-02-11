@@ -354,7 +354,7 @@ void OwnershipHandler::pull_ownership(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-      message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G \n",
+      message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G\n",
                        time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
                        get_lookahead().get_time_in_seconds() );
@@ -412,7 +412,7 @@ void OwnershipHandler::pull_ownership(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-      message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G \n",
+      message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G\n",
                        attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
                        get_lookahead().get_time_in_seconds() );
@@ -457,7 +457,7 @@ void OwnershipHandler::push_ownership(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-      message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G \n",
+      message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G\n",
                        time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
                        get_lookahead().get_time_in_seconds() );
@@ -515,7 +515,7 @@ void OwnershipHandler::push_ownership(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-      message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G \n",
+      message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G\n",
                        attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
                        get_lookahead().get_time_in_seconds() );

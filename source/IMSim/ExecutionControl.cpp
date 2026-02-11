@@ -2052,7 +2052,7 @@ bool ExecutionControl::run_mode_transition()
            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
               double curr_cte_time = get_cte_time();
               diff                 = curr_cte_time - go_to_run_time;
-              message_publish( MSG_NORMAL, "IMSim::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.\n",
+              message_publish( MSG_NORMAL, "IMSim::ExecutionControl::run_mode_transition():%d\n  Going to run at CTE time %.18G seconds.\n  Current CTE time %.18G seconds.\n  Difference: %.9lf seconds.\n",
                        __LINE__, go_to_run_time, curr_cte_time, diff );
            }
         }
@@ -2164,7 +2164,7 @@ void ExecutionControl::enter_freeze()
 
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL,
-                             "IMSim::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g \n",
+                             "IMSim::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g\n",
                              __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
                              ( is_freeze_pending() ? "Yes" : "No" ),
                              freeze_scenario_time );

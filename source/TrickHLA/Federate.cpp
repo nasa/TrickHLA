@@ -446,7 +446,7 @@ void Federate::initialize()
 void Federate::restart_initialization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::restart_initialization():%d \n",
+      message_publish( MSG_NORMAL, "Federate::restart_initialization():%d\n",
                        __LINE__ );
    }
 
@@ -902,7 +902,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str;
          StringUtilities::to_string( id_str, id );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate OID:%s name:'%s' size:%d \n",
+         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate OID:%s name:'%s' size:%d\n",
                           __LINE__, id_str.c_str(), federate_name_ws.c_str(),
                           (int)federate_name_ws.size() );
       }
@@ -1017,7 +1017,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          string id_str, fed_id;
          StringUtilities::to_string( id_str, id );
          StringUtilities::to_string( fed_id, fed_handle );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s num_bytes:%d Federate-ID:%s \n",
+         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s num_bytes:%d Federate-ID:%s\n",
                           __LINE__, id_str.c_str(), size, fed_id.c_str() );
       }
 
@@ -1078,7 +1078,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str;
          StringUtilities::to_string( id_str, id );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d FederateHandle Not found for Federate OID:%s \n",
+         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d FederateHandle Not found for Federate OID:%s\n",
                           __LINE__, id_str.c_str() );
       }
    }
@@ -2549,7 +2549,7 @@ void Federate::perform_checkpoint()
       // If I announced the save, sim control panel was clicked and invokes the checkpoint
       if ( !announce_save ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "Federate::perform_checkpoint():%d Federate Save Started \n",
+            message_publish( MSG_NORMAL, "Federate::perform_checkpoint():%d Federate Save Started\n",
                              __LINE__ );
          }
          // Create the filename from the Federation name and the "save-name".
@@ -2600,7 +2600,7 @@ void Federate::setup_checkpoint()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::setup_checkpoint():%d Federate Save Pre-checkpoint \n",
+      message_publish( MSG_NORMAL, "Federate::setup_checkpoint():%d Federate Save Pre-checkpoint\n",
                        __LINE__ );
    }
 
@@ -2700,7 +2700,7 @@ void Federate::setup_checkpoint()
          }
          this->initiate_save_flag = false;
       } else {
-         message_publish( MSG_NORMAL, "Federate::setup_checkpoint():%d Federation Save is already in progress! \n",
+         message_publish( MSG_NORMAL, "Federate::setup_checkpoint():%d Federation Save is already in progress!\n",
                           __LINE__ );
          return;
       }
@@ -3537,7 +3537,7 @@ void Federate::enable_async_delivery()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::enable_async_delivery():%d Enabling Asynchronous Delivery \n",
+         message_publish( MSG_NORMAL, "Federate::enable_async_delivery():%d Enabling Asynchronous Delivery\n",
                           __LINE__ );
       }
 
@@ -3912,7 +3912,7 @@ void Federate::shutdown()
    this->shutdown_called = true;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::shutdown():%d \n", __LINE__ );
+      message_publish( MSG_NORMAL, "Federate::shutdown():%d\n", __LINE__ );
    }
 
 #if defined( TRICKHLA_COLLECT_TAG_STATS )
@@ -4918,12 +4918,12 @@ void Federate::update_running_feds()
          StringUtilities::to_string( fed_name_str, MOM_HLAfederate_instance_name_map[map_iter->first] );
          string obj_name_str;
          StringUtilities::to_string( obj_name_str, map_iter->second );
-         message_publish( MSG_NORMAL, "Federate::update_running_feds():%d joined_federate_name_map[%s]=%s \n",
+         message_publish( MSG_NORMAL, "Federate::update_running_feds():%d joined_federate_name_map[%s]=%s\n",
                           __LINE__, fed_name_str.c_str(), obj_name_str.c_str() );
       }
 
       for ( int i = 0; i < running_feds_count; ++i ) {
-         message_publish( MSG_NORMAL, "Federate::update_running_feds():%d running_feds[%d]=%s \n",
+         message_publish( MSG_NORMAL, "Federate::update_running_feds():%d running_feds[%d]=%s\n",
                           __LINE__, i, running_feds[i].name.c_str() );
       }
 
@@ -5005,7 +5005,7 @@ void Federate::add_a_single_entry_into_running_feds()
                   __LINE__, t, running_feds[t].MOM_instance_name, '\n');
          message_publish( MSG_NORMAL, "Federate::add_a_single_entry_into_running_feds():%d running_feds[%d].name='%s'\n",
                   __LINE__, t, running_feds[t].name, '\n');
-         message_publish( MSG_NORMAL, "Federate::add_a_single_entry_into_running_feds():%d running_feds[%d].required=%d \n",
+         message_publish( MSG_NORMAL, "Federate::add_a_single_entry_into_running_feds():%d running_feds[%d].required=%d\n",
                   __LINE__, t, running_feds[t].required, '\n');
       }
    }
@@ -5120,7 +5120,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
       string id_str;
       StringUtilities::to_string( id_str, instance_hndl );
       message_publish( MSG_INFO, "Federate::remove_MOM_HLAfederate_instance_id():%d \
-Removed Federate '%s' Instance-ID:%s Valid-ID:%s \n",
+Removed Federate '%s' Instance-ID:%s Valid-ID:%s\n",
                        __LINE__, tFedName.c_str(), id_str.c_str(),
                        ( instance_hndl.isValid() ? "Yes" : "No" ) );
    }
@@ -5210,21 +5210,21 @@ void Federate::request_federation_save()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string name_str;
          StringUtilities::to_string( name_str, this->save_name );
-         message_publish( MSG_NORMAL, "Federate::request_federation_save():%d save_name:%s \n",
+         message_publish( MSG_NORMAL, "Federate::request_federation_save():%d save_name:%s\n",
                           __LINE__, name_str.c_str() );
       }
       RTI_ambassador->requestFederationSave( this->save_name );
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: FederateNotExecutionMember \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: SaveInProgress \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: SaveInProgress\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: RestoreInProgress \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: NotConnected \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_save():%d EXCEPTION: NotConnected\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTIinternalError const &e ) {
@@ -5301,16 +5301,16 @@ void Federate::inform_RTI_of_restore_completion()
       try {
          RTI_ambassador->federateRestoreComplete();
       } catch ( RestoreNotRequested const &e ) {
-         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: RestoreNotRequested \n",
+         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: RestoreNotRequested\n",
                           __LINE__ );
       } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: FederateNotExecutionMember \n",
+         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__ );
       } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: SaveInProgress \n",
+         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: SaveInProgress\n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: NotConnected \n",
+         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore complete -- EXCEPTION: NotConnected\n",
                           __LINE__ );
          set_connection_lost();
       } catch ( RTIinternalError const &e ) {
@@ -5331,16 +5331,16 @@ void Federate::inform_RTI_of_restore_completion()
       try {
          RTI_ambassador->federateRestoreNotComplete();
       } catch ( RestoreNotRequested const &e ) {
-         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: RestoreNotRequested \n",
+         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: RestoreNotRequested\n",
                           __LINE__ );
       } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: FederateNotExecutionMember \n",
+         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__ );
       } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: SaveInProgress \n",
+         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: SaveInProgress\n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: NotConnected \n",
+         message_publish( MSG_WARNING, "Federate::inform_RTI_of_restore_completion():%d -- restore NOT complete -- EXCEPTION: NotConnected\n",
                           __LINE__ );
          set_connection_lost();
       } catch ( RTIinternalError const &e ) {
@@ -5459,20 +5459,20 @@ void Federate::restart_checkpoint()
       RTI_ambassador->queryLogicalTime( fedTime );
       set_granted_time( fedTime );
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember \n",
+      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: SaveInProgress \n",
+      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: SaveInProgress\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: RestoreInProgress \n",
+      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: NotConnected \n",
+      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: NotConnected\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTIinternalError const &e ) {
-      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: RTIinternalError \n",
+      message_publish( MSG_WARNING, "Federate::restart_checkpoint():%d queryLogicalTime EXCEPTION: RTIinternalError\n",
                        __LINE__ );
    }
 
@@ -5960,20 +5960,20 @@ void Federate::request_federation_save_status() // cppcheck-suppress [functionSt
    try {
       RTI_ambassador->queryFederationSaveStatus();
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: FederateNotExecutionMember \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: RestoreInProgress \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: NotConnected \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: NotConnected\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
 
-      message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: RTIinternalError: '%s' \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_save_status():%d EXCEPTION: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
    }
 
@@ -5995,16 +5995,16 @@ void Federate::request_federation_restore_status() // cppcheck-suppress [functio
    try {
       RTI_ambassador->queryFederationRestoreStatus();
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: FederateNotExecutionMember \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: SaveInProgress \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: SaveInProgress\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: RestoreInProgress \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: NotConnected \n",
+      message_publish( MSG_WARNING, "Federate::request_federation_restore_status():%d EXCEPTION: NotConnected\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTIinternalError const &e ) {
@@ -6039,17 +6039,17 @@ void Federate::requested_federation_restore_status(
       try {
          RTI_ambassador->queryFederationRestoreStatus();
       } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: FederateNotExecutionMember \n",
+         message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__ );
       } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: SaveInProgress \n",
+         message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: SaveInProgress\n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: NotConnected \n",
+         message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: NotConnected\n",
                           __LINE__ );
          set_connection_lost();
       } catch ( RTIinternalError const &e ) {
-         message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: RTIinternalError \n",
+         message_publish( MSG_WARNING, "Federate::requested_federation_restore_status():%d EXCEPTION: RTIinternalError\n",
                           __LINE__ );
       }
 
@@ -6289,18 +6289,18 @@ restore with label '%s'.\n",
          // this way, when the count decreases, we know someone has resigned!
          this->running_feds_count_at_time_of_restore = this->running_feds_count;
       } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: FederateNotExecutionMember \n",
+         message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__ );
          this->restore_process = No_Restore;
       } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: SaveInProgress \n",
+         message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: SaveInProgress\n",
                           __LINE__ );
          this->restore_process = No_Restore;
       } catch ( RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: RestoreInProgress \n",
+         message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: RestoreInProgress\n",
                           __LINE__ );
       } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: NotConnected \n",
+         message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d EXCEPTION: NotConnected\n",
                           __LINE__ );
          set_connection_lost();
       } catch ( RTIinternalError const &e ) {
@@ -6315,7 +6315,7 @@ restore with label '%s'.\n",
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_WARNING, "Federate::initiate_restore_announce():%d \
 After communicating with RTI, restore_process != Initiate_Restore, \
-Something went WRONG! \n",
+Something went WRONG!\n",
                           __LINE__ );
       }
    }
@@ -6467,7 +6467,7 @@ void Federate::check_HLA_save_directory()
 void Federate::restore_federate_handles_from_MOM()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::restore_federate_handles_from_MOM:%d \n",
+      message_publish( MSG_NORMAL, "Federate::restore_federate_handles_from_MOM:%d\n",
                        __LINE__ );
    }
 

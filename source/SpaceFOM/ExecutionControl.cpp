@@ -1785,7 +1785,7 @@ bool ExecutionControl::process_mode_transition_request()
          shutdown_mode_announce();
 
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN \n",
+            message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN\n",
                              __LINE__ );
          }
 
@@ -1945,7 +1945,7 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
 
@@ -1981,7 +1981,7 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
 
@@ -2045,7 +2045,7 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
 
@@ -2116,7 +2116,7 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
 
@@ -2414,7 +2414,7 @@ void ExecutionControl::shutdown_mode_transition()
 bool ExecutionControl::check_for_shutdown()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown \n",
+      message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown\n",
                        __LINE__ );
    }
 
@@ -2689,7 +2689,7 @@ void ExecutionControl::exit_freeze()
 
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
-                        + "\n BEFORE CLOCK RESET \n" );
+                        + "\n BEFORE CLOCK RESET\n" );
 #endif
 
    // Reset the Trick realtime clock. We need to do this since the exit_freeze
@@ -2715,7 +2715,7 @@ void ExecutionControl::exit_freeze()
 
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
-                        + "\n AFTER CLOCK RESET \n"
+                        + "\n AFTER CLOCK RESET\n"
                         + "clock_reset to: " + std::to_string( ref ) + endl );
 #endif
 }

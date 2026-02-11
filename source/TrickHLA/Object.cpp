@@ -741,7 +741,7 @@ void Object::remove_object_instance()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_NORMAL, "Object::remove_object_instance():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+      message_publish( MSG_NORMAL, "Object::remove_object_instance():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
                        __LINE__, get_name().c_str(),
                        id_str.c_str(), ( is_instance_handle_valid() ? "Yes" : "No" ) );
    }
@@ -758,7 +758,7 @@ void Object::process_deleted_object()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_NORMAL, "Object::process_deleted_object():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+         message_publish( MSG_NORMAL, "Object::process_deleted_object():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
                           __LINE__, get_name().c_str(),
                           id_str.c_str(), ( is_instance_handle_valid() ? "Yes" : "No" ) );
       }
@@ -4020,13 +4020,13 @@ void Object::pull_ownership()
          // Get the current HLA logical time.
          current_time = fedTime.get_time_in_seconds();
       } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: FederateNotExecutionMember \n", __LINE__ );
+         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: FederateNotExecutionMember\n", __LINE__ );
       } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: SaveInProgress \n", __LINE__ );
+         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: SaveInProgress\n", __LINE__ );
       } catch ( RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: RestoreInProgress \n", __LINE__ );
+         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: RestoreInProgress\n", __LINE__ );
       } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: NotConnected \n", __LINE__ );
+         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: NotConnected\n", __LINE__ );
          federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
@@ -5660,23 +5660,23 @@ Ownership check of Attribute '%s'->'%s' from object '%s' => RTI informed us that
          }
       } catch ( ObjectInstanceNotKnown const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: ObjectInstanceNotKnown \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: ObjectInstanceNotKnown\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( AttributeNotDefined const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: AttributeNotDefined \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: AttributeNotDefined\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( FederateNotExecutionMember const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: FederateNotExecutionMember \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( SaveInProgress const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: SaveInProgress \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: SaveInProgress\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( RestoreInProgress const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: RestoreInProgress \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: RestoreInProgress\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;

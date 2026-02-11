@@ -191,7 +191,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
 
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
-Late joining federate, Freeze Interaction will now be sent for HLA time:%lf \n",
+Late joining federate, Freeze Interaction will now be sent for HLA time:%lf\n",
                           __LINE__, interaction_hla_time.get_time_in_seconds() );
       }
    }
@@ -233,7 +233,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf \n",
          if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Freeze HLA time is not an integer multiple of the lookahead time:%lf, using \
-new freeze HLA time:%lf \n",
+new freeze HLA time:%lf\n",
                              __LINE__, lookahead.get_time_in_seconds(),
                              freeze_hla_time );
          }
@@ -271,7 +271,7 @@ new freeze HLA time:%lf \n",
       execution_control->add_freeze_scenario_time( time );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf \n",
+         message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf\n",
                           __LINE__, time );
       }
    } else {
