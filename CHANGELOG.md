@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Added a [README](./sims/README.md) file for the example simulations.
+- Added detection of lost RTI connection.
+- Added the SISO 2026 Simulation Innovation Workshop (SIW) Time Compatibility paper and presentation slides.
 
 ### Changed
 
