@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstdlib>
 #include <cstring>
 #include <map>
 #include <ostream>
@@ -197,6 +198,7 @@ void FedAmb::connectionLost(
              << " ERROR: Lost the connection to the RTI. Reason:'"
              << fault_msg << "' Terminating the simulation!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      exit( -1 );
    }
 }
 
