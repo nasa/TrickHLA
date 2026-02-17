@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{OpaqueBuffer.cpp}
-@trick_link_dependency{Utilities.cpp}
+@trick_link_dependency{utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -47,7 +47,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 using namespace std;
 using namespace TrickHLA;

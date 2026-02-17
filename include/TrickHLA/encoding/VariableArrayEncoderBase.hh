@@ -98,7 +98,7 @@ class VariableArrayEncoderBase : public EncoderBase
 
    virtual void update_after_decode();
 
-   virtual int const get_data_size();
+   virtual int get_data_size();
 
    virtual std::string to_string()
    {
@@ -109,27 +109,27 @@ class VariableArrayEncoderBase : public EncoderBase
 
    void resize_trick_var( std::size_t const new_size );
 
-   bool const is_array()
+   bool is_array()
    {
       return is_array_flag;
    }
 
-   bool const is_1d_array()
+   bool is_1d_array()
    {
       return is_1d_array_flag;
    }
 
-   bool const is_static_array()
+   bool is_static_array()
    {
       return is_static_array_flag;
    }
 
-   bool const is_dynamic_array()
+   bool is_dynamic_array()
    {
       return is_dynamic_array_flag;
    }
 
-   bool const is_static_in_size()
+   bool is_static_in_size()
    {
       return ( !is_array() || is_static_array() );
    }

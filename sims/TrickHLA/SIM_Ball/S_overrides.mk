@@ -18,8 +18,19 @@ endif
 TRICK_CFLAGS   += -I.
 TRICK_CXXFLAGS += -I.
 
+RUN_DIRS = $(wildcard RUN*)
+
 # Use the Trick Stand-Alone Integrators if the SAIntegrator/lib directory exists.
 # NOTE: You will also have to build the Trick SAInteg library.
 ifneq ($(wildcard ${TRICK_HOME}/trick_source/trick_utils/SAIntegrator/lib/.*),)
    TRICK_USER_LINK_LIBS += -L${TRICK_HOME}/trick_source/trick_utils/SAIntegrator/lib -lSAInteg
 endif
+
+.PHONY: clean_runs $(RUN_DIRS)
+
+clean_runs: $(RUN_DIRS)
+
+$(RUN_DIRS):
+	@echo "Cleaning up run directory: $@"
+	@cd $@; rm -f _init_log.csv chkpnt_* log_* S_job_execution S_run_summary send_hs varserver_log
+

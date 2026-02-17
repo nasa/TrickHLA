@@ -22,11 +22,11 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../ExecutionControlBase.cpp}
 @trick_link_dependency{../FedAmb.cpp}
 @trick_link_dependency{../Manager.cpp}
-@trick_link_dependency{../MutexLock.cpp}
-@trick_link_dependency{../MutexProtection.cpp}
-@trick_link_dependency{../SleepTimeout.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
+@trick_link_dependency{../utils/MutexLock.cpp}
+@trick_link_dependency{../utils/MutexProtection.cpp}
+@trick_link_dependency{../utils/SleepTimeout.cpp}
+@trick_link_dependency{../utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -61,15 +61,15 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/TimeManagement.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -85,9 +85,7 @@ NASA, Johnson Space Center\n
 #include "RTI/RTIambassadorFactory.h"
 #include "RTI/time/HLAinteger64Time.h"
 
-#if defined( IEEE_1516_2025 )
-#   include "RTI/RtiConfiguration.h"
-#else
+#if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
 #endif // IEEE_1516_2025
 
@@ -180,7 +178,7 @@ void TimeManagement::initialize_thread_state(
 void TimeManagement::restart_initialization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::restart_initialization():%d \n",
+      message_publish( MSG_NORMAL, "TimeManagement::restart_initialization():%d\n",
                        __LINE__ );
    }
 
@@ -487,6 +485,9 @@ void TimeManagement::time_advance_request_to_GALT()
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: NotConnected\n",
                        __LINE__ );
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RTIinternalError\n",
                        __LINE__ );
@@ -546,6 +547,9 @@ void TimeManagement::time_advance_request_to_GALT_LCTS_multiple()
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: NotConnected\n",
                        __LINE__ );
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RTIinternalError\n",
                        __LINE__ );
@@ -570,7 +574,7 @@ void TimeManagement::time_advance_request_to_GALT_LCTS_multiple()
 void TimeManagement::setup_time_management()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s \n",
+      message_publish( MSG_NORMAL, "TimeManagement::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s\n",
                        __LINE__,
                        ( this->time_management ? "Yes" : "No" ),
                        ( this->time_regulating ? "Yes" : "No" ),
@@ -637,7 +641,7 @@ void TimeManagement::set_time_constrained_enabled(
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "TimeManagement::set_time_constrained_enabled():%d TimeManagement \
-\"%s\" Time granted to: %.12G \n",
+\"%s\" Time granted to: %.12G\n",
                        __LINE__, federate->get_federate_name().c_str(),
                        get_granted_time().get_time_in_seconds() );
    }
@@ -665,7 +669,7 @@ void TimeManagement::setup_time_constrained()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED \n",
+         message_publish( MSG_NORMAL, "TimeManagement::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED\n",
                           __LINE__, federate->get_federation_name().c_str() );
       }
 
@@ -784,11 +788,11 @@ void TimeManagement::setup_time_constrained()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": ERROR: NotConnected : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
+      federate->set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -832,7 +836,7 @@ void TimeManagement::set_time_regulation_enabled(
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "TimeManagement::set_time_regulation_enabled():%d TimeManagement \
-\"%s\" Time granted to: %.12G \n",
+\"%s\" Time granted to: %.12G\n",
                        __LINE__, federate->get_federate_name().c_str(),
                        get_granted_time().get_time_in_seconds() );
    }
@@ -995,11 +999,11 @@ void TimeManagement::setup_time_regulation()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: NotConnected : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
+      federate->set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1156,6 +1160,7 @@ void TimeManagement::perform_time_advance_request()
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: NotConnected\n",
                           __LINE__ );
+         federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1239,6 +1244,7 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
          } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
             message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected\n",
                              __LINE__ );
+            federate->set_connection_lost();
          } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1321,9 +1327,9 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
 }
 
 /*
- * @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt).
+ * @brief Verify the time constraints (i.e. Lookahead, LCTS, Me, Mhla, RT, and dt).
  */
-bool const TimeManagement::verify_time_constraints()
+bool TimeManagement::verify_time_constraints()
 {
    // Determine if the Trick time Tic resolution can support the HLA base time.
    // Constraint: Me >= Mhla
@@ -1529,6 +1535,7 @@ void TimeManagement::shutdown_time_constrained()
          this->time_constrained_state = false;
          message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": NotConnected EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
+         federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1590,6 +1597,7 @@ void TimeManagement::shutdown_time_regulating()
          this->time_constrained_state = false;
          message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": NotConnected EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
+         federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );

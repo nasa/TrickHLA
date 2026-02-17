@@ -56,10 +56,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -84,6 +84,8 @@ using namespace RTI1516_NAMESPACE;
 /*!
  * @job_class{initialization}
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 MTRInteractionHandler::MTRInteractionHandler(
    Federate const *fed )
    : name(),
@@ -98,6 +100,7 @@ MTRInteractionHandler::MTRInteractionHandler(
 {
    return;
 }
+#pragma GCC diagnostic pop
 
 /*!
  * @job_class{shutdown}
@@ -143,7 +146,7 @@ void MTRInteractionHandler::send_interaction(
    if ( !name.empty() ) {
       rti_user_supplied_tag = VariableLengthData( name.c_str(), name.size() );
    } else {
-      rti_user_supplied_tag = VariableLengthData( NULL, 0 );
+      rti_user_supplied_tag = TrickHLA::EMPTY_USER_SUPPLIED_TAG;
    }
 
    // Get the current time line values.

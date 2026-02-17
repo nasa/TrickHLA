@@ -25,12 +25,12 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/TimeManagement.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -57,13 +57,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TimeManagement.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/MutexLock.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
 
 #if defined( IEEE_1516_2025 )
 #   include "TrickHLA/FedAmbHLA4.hh"
@@ -204,7 +204,7 @@ class Federate : public TimeManagement
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
    void initialize();
 
-   FederateJoinConstraintsEnum const get_join_constraint()
+   FederateJoinConstraintsEnum get_join_constraint()
    {
       return this->join_constraint;
    }
@@ -917,7 +917,7 @@ class Federate : public TimeManagement
     *  @return True if federate can rejoin; False otherwise. */
    bool federate_can_rejoin_federation() const
    {
-      return can_rejoin_federation;
+      return this->can_rejoin_federation;
    }
 
    /*! @brief Query if a federate is required at startup.
@@ -929,8 +929,11 @@ class Federate : public TimeManagement
     *  @return True if created by this federate; False otherwise. */
    bool is_federation_created_by_federate() const
    {
-      return federation_created_by_federate;
+      return this->federation_created_by_federate;
    }
+
+   /*! @brief Set connection to the RTI as lost. */
+   void set_connection_lost();
 
    /*! @brief Is the federate an execution member, which means is it connected
     * and joined to a federation execution.
@@ -966,6 +969,7 @@ class Federate : public TimeManagement
    bool                              federation_exists;              ///< @trick_io{**} Federation exists.
    bool                              federation_joined;              ///< @trick_io{**} Federate joined federation flag.
    bool                              all_federates_joined;           ///< @trick_units{--} Master check for all federates joined.
+   bool                              connected;                      ///< @trick_units{--} True if connected to RTI, False otherwise.
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 

@@ -131,16 +131,6 @@ void Int64Time::decode(
    hla_time.decode( user_supplied_tag );
 }
 
-int64_t Int64Time::get_seconds() const
-{
-   return ( (int64_t)( hla_time.getTime() / Int64BaseTime::get_base_time_multiplier() ) );
-}
-
-int64_t Int64Time::get_fractional_seconds() const
-{
-   return ( (int64_t)( hla_time.getTime() % Int64BaseTime::get_base_time_multiplier() ) );
-}
-
 int64_t Int64Time::get_base_time() const
 {
    return ( hla_time.getTime() );
@@ -148,7 +138,7 @@ int64_t Int64Time::get_base_time() const
 
 double Int64Time::get_time_in_seconds() const
 {
-   double const seconds    = (double)get_seconds();
+   double const seconds    = (double)get_whole_seconds();
    double const fractional = (double)get_fractional_seconds() / (double)Int64BaseTime::get_base_time_multiplier();
    return ( seconds + fractional );
 }

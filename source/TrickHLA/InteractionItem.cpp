@@ -18,11 +18,11 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{InteractionItem.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{utils/MutexLock.cpp}
+@trick_link_dependency{utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -51,10 +51,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionItem.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

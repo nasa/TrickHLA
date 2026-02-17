@@ -26,11 +26,11 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -52,11 +52,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/ItemQueue.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -274,7 +274,7 @@ class Manager : public CheckpointConversionBase
 
    /*! @brief Return the granted HLA logical time in seconds.
     *  @return The granted federation time in seconds */
-   int64_t const get_granted_base_time() const;
+   int64_t get_granted_base_time() const;
 
    // Interactions
    /*! @brief Process the received interactions. */

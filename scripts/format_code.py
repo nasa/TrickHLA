@@ -19,7 +19,6 @@ import sys
 import textwrap
 
 from trickhla_environment import *
-from trickhla_message import *
 
 
 # Main routine.
@@ -483,7 +482,7 @@ def format_directory(
 
    # Move into the directory.
    if verbose:
-      TrickHLAMessage.status( 'Formatting ' + dir_path + ' directory:' )
+      TrickHLAMessage.status( 'Formatting \'' + dir_path + '\' directory:' )
    original_dir = os.path.abspath( os.path.curdir )
    os.chdir( dir_path )
 

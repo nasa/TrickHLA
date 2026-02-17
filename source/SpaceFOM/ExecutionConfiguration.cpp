@@ -28,9 +28,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
-@trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
+@trick_link_dependency{../TrickHLA/utils/SleepTimeout.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 
@@ -74,12 +74,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
-#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

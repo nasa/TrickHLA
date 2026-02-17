@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Item.cpp}
 @trick_link_dependency{../../source/TrickHLA/ItemQueue.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Item.hh"
-#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 
 namespace TrickHLA
 {
@@ -70,11 +70,11 @@ class ItemQueue
   public:
    /*! @brief Query if the item queue is empty.
     *  @return True if empty; False otherwise. */
-   bool const empty();
+   bool empty();
 
    /*! @brief Get the size of the item queue.
     *  @return Number of elements in the queue. */
-   unsigned int const size();
+   unsigned int size();
 
    /*! @brief Gets the front item on the item queue.
     *  @return The front or head item on the item queue. */

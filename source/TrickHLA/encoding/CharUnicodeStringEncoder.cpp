@@ -43,9 +43,9 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.

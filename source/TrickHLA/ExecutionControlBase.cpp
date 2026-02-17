@@ -21,13 +21,13 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Manager.cpp}
-@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/CTETimelineBase.cpp}
 @trick_link_dependency{time/Int64BaseTime.cpp}
 @trick_link_dependency{time/ScenarioTimeline.cpp}
 @trick_link_dependency{time/SimTimeline.cpp}
+@trick_link_dependency{utils/SleepTimeout.cpp}
 
 @revs_title
 @revs_begin
@@ -60,8 +60,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
@@ -69,11 +67,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/time/SimTimeline.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
+#if defined( IEEE_1516_2010 )
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated"
 #endif
@@ -81,10 +81,6 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/Handle.h"
 #include "RTI/Typedefs.h"
-
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic pop
-#endif
 
 // Access the Trick global objects the Clock.
 extern Trick::Clock *the_clock;
@@ -243,7 +239,7 @@ void ExecutionControlBase::initialize()
       if ( cte_timeline != the_clock ) {
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
-                << " ERROR: The CTE timeline is specified but it is not"
+                << " ERROR: The CTE timeline is specified, but it is not"
                 << " configured as the Trick real time clock! Make sure"
                 << " the CTETimelineBase class constructor is calling"
                 << " real_time_change_clock( this );" << endl;
@@ -300,7 +296,8 @@ Trick simulation time as the default scenario-timeline.\n",
       if ( scenario_timeline == NULL ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
-                << " FAILED to allocate enough memory for ScenarioTimeline class!" << endl;
+                << " FAILED to allocate enough memory for ScenarioTimeline class!"
+                << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
@@ -339,7 +336,7 @@ void ExecutionControlBase::join_federation_process()
    // a running federation execution that is shutting down. This is an
    // unlikely but possible race condition.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControl::join_federation_process():%d Checking for shutdown \n",
+      message_publish( MSG_NORMAL, "ExecutionControl::join_federation_process():%d Checking for shutdown\n",
                        __LINE__ );
    }
    fed->check_for_shutdown_with_termination();
@@ -412,7 +409,8 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          errmsg << "ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
                 << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
-                << "'! This conflicts with this being the designated Master federate!" << endl;
+                << "'! This conflicts with this being the designated Master federate!"
+                << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -472,7 +470,7 @@ void ExecutionControlBase::add_object_to_map(
  * @return True if the multiphase init sync-point list contains the sync-point,
  *  false otherwise.
  */
-bool const ExecutionControlBase::contains_multiphase_init_sync_point(
+bool ExecutionControlBase::contains_multiphase_init_sync_point(
    wstring const &sync_point_label )
 {
    return contains_sync_point( sync_point_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
@@ -523,7 +521,7 @@ joining federate so this call will be ignored.\n",
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d \n",
+      message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d\n",
                        __LINE__ );
    }
 
@@ -681,7 +679,8 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one ExecutionConfiguration attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified." << endl;
+             << " files to make sure the 'subscribe' value is correctly specified."
+             << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -829,7 +828,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
-         message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+         message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
                           __LINE__, execution_configuration->get_name().c_str(), id_str.c_str(),
                           ( instance_id.isValid() ? "Yes" : "No" ) );
       }
@@ -942,10 +941,13 @@ void ExecutionControlBase::exit_freeze()
    return;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControlBase::check_pause( double const check_pause_delta )
 {
    return;
 }
+#pragma GCC diagnostic pop
 
 void ExecutionControlBase::check_pause_at_init( double const check_pause_delta )
 {
@@ -1044,3 +1046,8 @@ void ExecutionControlBase::set_time_padding( double const t )
 {
    this->time_padding = t;
 }
+
+#if defined( IEEE_1516_2010 )
+// Pop off the stack the GCC arguments specific to this file.
+#   pragma GCC diagnostic pop
+#endif

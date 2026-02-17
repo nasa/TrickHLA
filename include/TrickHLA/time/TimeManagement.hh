@@ -26,9 +26,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../../../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../../../source/TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -51,12 +51,12 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MutexLock.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/MutexLock.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
 
 #if defined( IEEE_1516_2025 )
 #   include "TrickHLA/FedAmbHLA4.hh"
@@ -126,14 +126,14 @@ class TimeManagement : public TrickThreadCoordinator
 
    /*! @brief Get the HLA time advance cycle time.
     *  @return HLA cycle time in seconds. */
-   double const get_HLA_cycle_time()
+   double get_HLA_cycle_time()
    {
       return this->HLA_cycle_time;
    }
 
    /*! @brief Get the HLA time advance cycle time.
     *  @return HLA cycle time in base time unit. */
-   int64_t const get_HLA_cycle_time_in_base_time()
+   int64_t get_HLA_cycle_time_in_base_time()
    {
       return this->HLA_cycle_time_in_base_time;
    }
@@ -181,7 +181,7 @@ class TimeManagement : public TrickThreadCoordinator
    void initialize_thread_state( double const main_thread_data_cycle_time );
 
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
-   virtual bool const verify_time_constraints();
+   virtual bool verify_time_constraints();
 
    /*! @brief Shutdown this federate's time management. */
    void shutdown_time_management();
@@ -212,7 +212,7 @@ class TimeManagement : public TrickThreadCoordinator
 
    /*! @brief Get the current granted HLA federation execution time in the base HLA Logical Time representation.
     *  @return Reference to current granted HLA federation execution time. */
-   double const get_granted_base_time() const
+   double get_granted_base_time() const
    {
       return granted_time.get_base_time();
    }
@@ -233,14 +233,14 @@ class TimeManagement : public TrickThreadCoordinator
 
    /*! @brief Get the current federate lookahead time in seconds.
     *  @return Current federate lookahead time in the base time. */
-   int64_t const get_lookahead_in_base_time() const
+   int64_t get_lookahead_in_base_time() const
    {
       return lookahead.get_base_time();
    }
 
    /*! @brief Query of federate has a zero lookahead time.
     *  @return True if lookahead time is zero; False otherwise. */
-   bool const is_zero_lookahead_time() const
+   bool is_zero_lookahead_time() const
    {
       return ( lookahead.get_base_time() <= 0LL );
    }

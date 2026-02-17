@@ -21,12 +21,12 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Federate.cpp}
 @trick_link_dependency{../Manager.cpp}
-@trick_link_dependency{../MutexLock.cpp}
-@trick_link_dependency{../MutexProtection.cpp}
 @trick_link_dependency{../Object.cpp}
-@trick_link_dependency{../SleepTimeout.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
+@trick_link_dependency{../utils/MutexLock.cpp}
+@trick_link_dependency{../utils/MutexProtection.cpp}
+@trick_link_dependency{../utils/SleepTimeout.cpp}
+@trick_link_dependency{../utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -60,13 +60,13 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -1219,7 +1219,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
 }
 
 /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
-bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
+bool TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
    int const     obj_index,
    int64_t const sim_time_in_base_time ) const
 {
@@ -1233,7 +1233,7 @@ bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
 
 /*! @brief Get the data cycle time for the specified object index, otherwise
  * return the default data cycle time. */
-int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
+int64_t TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
    int const     obj_index,
    int64_t const default_data_cycle_base_time ) const
 {
@@ -1244,7 +1244,7 @@ int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
              : default_data_cycle_base_time;
 }
 
-bool const TrickThreadCoordinator::verify_time_constraints()
+bool TrickThreadCoordinator::verify_time_constraints()
 {
    bool verified = true;
    for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
@@ -1265,7 +1265,7 @@ bool const TrickThreadCoordinator::verify_time_constraints()
  * ∧ (dt[i] > 0) ∧ (dt[i] ≥ L[i]) ∧ (LCTS ≥ dt[i]) ∧ (LCTS % dt[i] = 0)
  * i=1
  */
-bool const TrickThreadCoordinator::verify_time_constraints(
+bool TrickThreadCoordinator::verify_time_constraints(
    unsigned int const thread_id,
    int64_t const      data_cycle_base_time )
 {
@@ -1561,7 +1561,7 @@ bool const TrickThreadCoordinator::verify_time_constraints(
       if ( manager->get_execution_control()->is_master()
            && manager->get_execution_control()->does_cte_timeline_exist() ) {
 
-         double time_padding = manager->get_execution_control()->get_time_padding();
+         double const time_padding = manager->get_execution_control()->get_time_padding();
 
          if ( time_padding <= ( 2.0 * exec_get_freeze_frame() ) ) {
             ostringstream errmsg;

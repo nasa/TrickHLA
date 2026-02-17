@@ -16,8 +16,8 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{ReflectedAttributesQueue.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
+@trick_link_dependency{utils/MutexLock.cpp}
+@trick_link_dependency{utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -30,7 +30,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/ReflectedAttributesQueue.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

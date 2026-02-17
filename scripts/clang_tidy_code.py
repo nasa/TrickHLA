@@ -20,7 +20,6 @@ import textwrap
 import time
 
 from trickhla_environment import *
-from trickhla_message import *
 
 
 # Main routine.
@@ -30,6 +29,7 @@ def main():
    trickhla_home = '.'
    trick_home = None
    jeod_home = None
+   tsync_home = None
 
    # Initialize the lists that go into the clang-tidy command argument list.
    system_includes = []
@@ -59,11 +59,14 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
                         help = 'Process the core TrickHLA source code.', \
                         action = 'store_true', dest = 'process_TrickHLA' )
    parser.add_argument( '--Encoding', \
-                        help = 'Process the core TrickHLA Encoding source code.', \
+                        help = 'Process the TrickHLA/encoding source code.', \
                         action = 'store_true', dest = 'process_TrickHLA_encoding' )
    parser.add_argument( '--Time', \
-                        help = 'Process the TrickHLA Time source code.', \
+                        help = 'Process the TrickHLA/time source code.', \
                         action = 'store_true', dest = 'process_TrickHLA_time' )
+   parser.add_argument( '--Utils', \
+                        help = 'Process the TrickHLA/utils source code.', \
+                        action = 'store_true', dest = 'process_TrickHLA_utils' )
    parser.add_argument( '--SpaceFOM', \
                         help = 'Process the SpaceFOM source code.', \
                         action = 'store_true', dest = 'process_SpaceFOM' )
@@ -120,6 +123,9 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
    parser.add_argument( '--trick-home', \
                         help = 'Provide a path to the Trick installation directory.', \
                         dest = 'trick_home' )
+   parser.add_argument( '--tsync-home', \
+                        help = 'Provide a path to the TSync driver installation directory.', \
+                        dest = 'tsync_home' )
    parser.add_argument( '-v', '--verbose', \
                         help = 'Check source code with verbose detailed error information.', \
                         action = 'store_true', dest = 'verbose' )
@@ -144,6 +150,9 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
       required_arg_cnt += 1
    if args.process_TrickHLA_time:
       # --Time
+      required_arg_cnt += 1
+   if args.process_TrickHLA_utils:
+      # --Utils
       required_arg_cnt += 1
    if args.process_SpaceFOM:
       # --SpaceFOM
@@ -238,6 +247,14 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
    if args.very_verbose and jeod_home:
       TrickHLAMessage.status( 'Path to JEOD: ' + jeod_home )
 
+   # Check for TSync Central Timing Equipment (CTE) driver home directory.
+   if args.tsync_home:
+      tsync_home = args.tsync_home
+   else:
+      tsync_home = os.environ.get( 'TSYNC_HOME' )
+   if tsync_home and not os.path.isdir( tsync_home ):
+      TrickHLAMessage.failure( 'Could not find the TSync Home directory: ' + tsync_home )
+
    # Define preprocessor symbols we use for TrickHLA and set the TRICK_VER based on the
    # version of the Trick simulation environment we found in our Path.
    if args.hla4:
@@ -251,6 +268,9 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
    include_dirs.extend( ['-I' + trick_home + '/include/trick/compat'] )
    include_dirs.extend( ['-I' + trick_home + '/trick_source'] )
    include_dirs.extend( ['-I' + rti_include] )
+   if tsync_home:
+      include_dirs.extend( ['-I' + tsync_home + '/libtsync/include'] )
+      include_dirs.extend( ['-I' + tsync_home + '/tsync-driver/include'] )
 
    # Add models source code and include paths to process.
    if args.process_all or args.process_models:
@@ -297,6 +317,10 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
    if args.process_all or args.process_TrickHLA_time:
       source_dirs.extend ( ['./source/TrickHLA/time'] )
 
+   # TrickHLA Utils
+   if args.process_all or args.process_TrickHLA_utils:
+      source_dirs.extend ( ['./source/TrickHLA/utils'] )
+
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
       include_dirs.extend( ['-I/usr/local/include'] )
@@ -331,8 +355,11 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
    clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )
    clang_tidy_extra_args.append( '--' )
    clang_tidy_extra_args.extend( include_dirs )
-   clang_tidy_extra_args.append( '-std=c++11' )
    clang_tidy_extra_args.extend( trickhla_defines )
+   if args.hla4:
+      clang_tidy_extra_args.append( '-std=c++14' )
+   else:
+      clang_tidy_extra_args.append( '-std=c++11' )
 
    # Echo check the data if verbose is selected.
    if args.verbose:
@@ -342,6 +369,8 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
       TrickHLAMessage.status( 'source_dirs      = ' + ' '.join( source_dirs ) )
       TrickHLAMessage.status( 'include_dirs     = ' + ' '.join( include_dirs ) )
       TrickHLAMessage.status( 'trick_home       = ' + trick_home )
+      if tsync_home:
+         TrickHLAMessage.status( 'tsync_home       = ' + tsync_home )
       TrickHLAMessage.status( 'clang_tidy_cmd   = ' + clang_tidy_cmd )
       TrickHLAMessage.status( 'clang_tidy_ver   = ' + clang_tidy_ver )
       TrickHLAMessage.status( 'clang_tidy_args  = ' + ' '.join( clang_tidy_args ) )

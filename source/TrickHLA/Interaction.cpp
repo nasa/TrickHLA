@@ -21,14 +21,14 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{InteractionHandler.cpp}
 @trick_link_dependency{InteractionItem.cpp}
 @trick_link_dependency{Manager.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/Int64BaseTime.cpp}
 @trick_link_dependency{time/Int64Interval.cpp}
 @trick_link_dependency{time/Int64Time.cpp}
+@trick_link_dependency{utils/MutexLock.cpp}
+@trick_link_dependency{utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -62,14 +62,14 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -438,12 +438,15 @@ Published Interaction '%s' Preferred-Order:%s\n",
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
       ostringstream errmsg;
       errmsg << "Interaction::setup_preferred_order_with_RTI():" << __LINE__
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -542,12 +545,15 @@ void Interaction::publish_interaction()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
       ostringstream errmsg;
       errmsg << "Interaction::publish_interaction():" << __LINE__
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -633,12 +639,15 @@ void Interaction::unpublish_interaction()
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
          ostringstream errmsg;
          errmsg << "Interaction::unpublish_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -756,12 +765,15 @@ void Interaction::subscribe_to_interaction()
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
          ostringstream errmsg;
          errmsg << "Interaction::subscribe_to_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -850,12 +862,15 @@ void Interaction::unsubscribe_from_interaction()
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
          ostringstream errmsg;
          errmsg << "Interaction::unsubscribe_from_interaction():" << __LINE__
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1129,7 +1144,7 @@ void Interaction::process_interaction()
       if ( user_supplied_tag_size > 0 ) {
          handler->receive_interaction( VariableLengthData( user_supplied_tag, user_supplied_tag_size ) );
       } else {
-         handler->receive_interaction( VariableLengthData( NULL, 0 ) );
+         handler->receive_interaction( TrickHLA::EMPTY_USER_SUPPLIED_TAG );
       }
    }
 

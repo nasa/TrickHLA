@@ -190,6 +190,8 @@ void RefFrameLagComp::unload()
 }
 
 /*! @job_class{derivative} */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void RefFrameLagComp::derivative_first(
    void *user_data )
 {
@@ -199,3 +201,4 @@ void RefFrameLagComp::derivative_first(
 
    return;
 }
+#pragma GCC diagnostic pop

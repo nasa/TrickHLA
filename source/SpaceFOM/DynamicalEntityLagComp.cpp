@@ -34,7 +34,7 @@ NASA, Johnson Space Center\n
 #include <ostream>
 #include <sstream>
 
-// Trick inlcudes.
+// Trick includes.
 #include "trick/Integrator.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/matrix_macros.h"
@@ -198,6 +198,8 @@ void DynamicalEntityLagComp::unload()
 /*!
  * @job_class{derivative}
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void DynamicalEntityLagComp::derivative_first(
    void *user_data )
 {
@@ -254,3 +256,4 @@ void DynamicalEntityLagComp::derivative_first(
 
    return;
 }
+#pragma GCC diagnostic pop

@@ -66,11 +66,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 #include "TrickHLA/encoding/FixedRecordEncoder.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // Model include files.
 #include "FixedRecord/include/FixedRecData.hh"

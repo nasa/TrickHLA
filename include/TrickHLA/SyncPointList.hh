@@ -22,9 +22,9 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/SyncPointList.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPointTimed.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -43,11 +43,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -115,11 +115,11 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    void set_federate( Federate *fed );
 
-   SyncPtStateEnum const get_state( std::wstring const &label );
+   SyncPtStateEnum get_state( std::wstring const &label );
 
    void clear();
 
-   bool const empty()
+   bool empty()
    {
 #if SYNC_POINT_TMM_ARRAY
       return ( list_count <= 0 );
@@ -128,7 +128,7 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 #endif
    }
 
-   int const size()
+   int size()
    {
 #if SYNC_POINT_TMM_ARRAY
       return ( ( list_count > 0 ) ? list_count : 0 );
@@ -139,57 +139,57 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    SyncPoint *get( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
-   bool const add( std::wstring const &label );
+   bool add( std::wstring const &label );
 
-   bool const add( std::wstring const &label, Int64Time const &time );
+   bool add( std::wstring const &label, Int64Time const &time );
 
-   bool const contains( std::wstring const &label );
+   bool contains( std::wstring const &label );
 
-   bool const is_registered( std::wstring const &label );
+   bool is_registered( std::wstring const &label );
 
-   bool const mark_registered( std::wstring const &label );
+   bool mark_registered( std::wstring const &label );
 
-   bool const register_sync_point( std::wstring const &label );
+   bool register_sync_point( std::wstring const &label );
 
-   bool const register_sync_point( std::wstring const &label, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool register_sync_point( std::wstring const &label, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool const register_all();
+   bool register_all();
 
-   bool const register_all( RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool register_all( RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool const register_sync_point( SyncPoint *sp );
+   bool register_sync_point( SyncPoint *sp );
 
-   bool const register_sync_point( SyncPoint *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool register_sync_point( SyncPoint *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool const is_announced( std::wstring const &label );
+   bool is_announced( std::wstring const &label );
 
-   bool const mark_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
+   bool mark_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
-   bool const wait_for_announced( std::wstring const &label );
+   bool wait_for_announced( std::wstring const &label );
 
-   bool const wait_for_all_announced();
+   bool wait_for_all_announced();
 
-   bool const wait_for_announced( SyncPoint *sp );
+   bool wait_for_announced( SyncPoint *sp );
 
-   bool const is_achieved( std::wstring const &label );
+   bool is_achieved( std::wstring const &label );
 
-   bool const achieve( std::wstring const &label );
+   bool achieve( std::wstring const &label );
 
-   bool const achieve_all();
+   bool achieve_all();
 
-   bool const achieve_sync_point( SyncPoint *sp );
+   bool achieve_sync_point( SyncPoint *sp );
 
-   bool const is_synchronized( std::wstring const &label );
+   bool is_synchronized( std::wstring const &label );
 
-   bool const is_all_synchronized();
+   bool is_all_synchronized();
 
-   bool const mark_synchronized( std::wstring const &label );
+   bool mark_synchronized( std::wstring const &label );
 
-   bool const wait_for_synchronized( std::wstring const &label );
+   bool wait_for_synchronized( std::wstring const &label );
 
-   bool const wait_for_all_synchronized();
+   bool wait_for_all_synchronized();
 
-   bool const wait_for_synchronized( SyncPoint const *sp );
+   bool wait_for_synchronized( SyncPoint const *sp );
 
    std::string to_string();
 

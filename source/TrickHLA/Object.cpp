@@ -18,21 +18,20 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Attribute.cpp}
 @trick_link_dependency{Conditional.cpp}
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{ElapsedTimeStats.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{LagCompensation.cpp}
 @trick_link_dependency{Manager.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{ObjectDeletedHandler.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
 @trick_link_dependency{Packing.cpp}
-@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/Int64BaseTime.cpp}
 @trick_link_dependency{time/Int64Interval.cpp}
 @trick_link_dependency{time/Int64Time.cpp}
+@trick_link_dependency{utils/MutexLock.cpp}
+@trick_link_dependency{utils/MutexProtection.cpp}
+@trick_link_dependency{utils/SleepTimeout.cpp}
 
 @revs_title
 @revs_begin
@@ -70,18 +69,18 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -626,11 +625,11 @@ void Object::remove()
                if ( federate->in_time_regulating_state() ) {
                   Int64Time update_time( get_granted_time() + get_lookahead() );
                   rti_amb->deleteObjectInstance( instance_handle,
-                                                 VariableLengthData( NULL, 0 ),
+                                                 TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                  update_time.get() );
                } else {
                   rti_amb->deleteObjectInstance( instance_handle,
-                                                 VariableLengthData( NULL, 0 ) );
+                                                 TrickHLA::EMPTY_USER_SUPPLIED_TAG );
                }
             }
          }
@@ -682,6 +681,10 @@ void Object::remove()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -738,7 +741,7 @@ void Object::remove_object_instance()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_NORMAL, "Object::remove_object_instance():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+      message_publish( MSG_NORMAL, "Object::remove_object_instance():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
                        __LINE__, get_name().c_str(),
                        id_str.c_str(), ( is_instance_handle_valid() ? "Yes" : "No" ) );
    }
@@ -755,7 +758,7 @@ void Object::process_deleted_object()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_NORMAL, "Object::process_deleted_object():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+         message_publish( MSG_NORMAL, "Object::process_deleted_object():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
                           __LINE__, get_name().c_str(),
                           id_str.c_str(), ( is_instance_handle_valid() ? "Yes" : "No" ) );
       }
@@ -894,6 +897,10 @@ void Object::publish_object_attributes()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -993,6 +1000,10 @@ void Object::unpublish_all_object_attributes()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1116,6 +1127,10 @@ void Object::subscribe_to_object_attributes()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1208,6 +1223,10 @@ void Object::unsubscribe_all_object_attributes()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1325,6 +1344,10 @@ Requesting reservation of Object instance name '%s'.\n",
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1534,6 +1557,10 @@ Detected object already registered '%s' Instance-ID:%s\n",
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         Federate *federate = get_federate();
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1591,6 +1618,10 @@ Detected object already registered '%s' Instance-ID:%s\n",
                    << " Object '" << get_name() << "'"
                    << " NotConnected: " << rti_err_msg << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
+            Federate *federate = get_federate();
+            if ( federate != NULL ) {
+               federate->set_connection_lost();
+            }
          } catch ( RTIinternalError const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1819,6 +1850,10 @@ void Object::setup_preferred_order_with_RTI()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1869,7 +1904,7 @@ void Object::request_attribute_value_update()
    try {
       rti_amb->requestAttributeValueUpdate( this->instance_handle,
                                             attr_handle_set,
-                                            VariableLengthData( NULL, 0 ) );
+                                            TrickHLA::EMPTY_USER_SUPPLIED_TAG );
       // Must free the memory
       attr_handle_set.clear();
 
@@ -1921,6 +1956,10 @@ void Object::request_attribute_value_update()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -2052,7 +2091,7 @@ void Object::send_requested_data(
    // Create the map of "requested" attribute values we will be updating.
    create_requested_attribute_set();
 
-   Federate const *federate = get_federate();
+   Federate *federate = get_federate();
 
    // The message will only be sent as TSO if our Federate is in the HLA Time
    // Regulating state and we have at least one attribute with a preferred
@@ -2083,7 +2122,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             // Send as Timestamp Order
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            VariableLengthData( NULL, 0 ),
+                                            TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                             update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2094,7 +2133,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             // Send as Receive Order
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            VariableLengthData( NULL, 0 ) );
+                                            TrickHLA::EMPTY_USER_SUPPLIED_TAG );
          }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
@@ -2215,6 +2254,7 @@ exception for '%s' with error message '%s'.\n",
              << "    lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+      federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2307,7 +2347,7 @@ void Object::send_cyclic_and_requested_data(
    // Make sure we don't send an empty attribute map to the other federates.
    if ( !attribute_values_map->empty() ) {
 
-      Federate const *federate = get_federate();
+      Federate *federate = get_federate();
 
       // The message will only be sent as TSO if our Federate is in the HLA Time
       // Regulating state and we have at least one attribute with a preferred
@@ -2335,7 +2375,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Timestamp Order
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               VariableLengthData( NULL, 0 ),
+                                               TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2346,7 +2386,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Receive Order (i.e. with no timestamp).
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               VariableLengthData( NULL, 0 ) );
+                                               TrickHLA::EMPTY_USER_SUPPLIED_TAG );
             }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -2466,6 +2506,7 @@ exception for '%s' with error message '%s'.\n",
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
@@ -2576,7 +2617,7 @@ void Object::send_zero_lookahead_and_requested_data(
       }
    } else {
 
-      Federate const *federate = get_federate();
+      Federate *federate = get_federate();
 
       // The message will only be sent as TSO if our Federate is in the HLA Time
       // Regulating state and we have at least one attribute with a preferred
@@ -2604,7 +2645,7 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                // Send as Timestamp Order
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               VariableLengthData( NULL, 0 ),
+                                               TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2616,7 +2657,7 @@ Object '%s', Receive Order (RO) Attribute update.\n",
                // Send as Receive Order (i.e. with no timestamp).
                rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
-                                               VariableLengthData( NULL, 0 ) );
+                                               TrickHLA::EMPTY_USER_SUPPLIED_TAG );
             }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -2737,6 +2778,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
@@ -2845,7 +2887,7 @@ void Object::send_blocking_io_data()
       }
    } else {
 
-      Federate const *federate = get_federate();
+      Federate *federate = get_federate();
 
       try {
          // Do not send any data if federate save or restore has begun (see
@@ -2863,7 +2905,7 @@ Object '%s', Receive Order (RO) Attribute update.\n",
             // Send as Receive Order (i.e. with no timestamp).
             rti_amb->updateAttributeValues( this->instance_handle,
                                             *attribute_values_map,
-                                            VariableLengthData( NULL, 0 ) );
+                                            TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
@@ -2974,6 +3016,7 @@ exception for '%s' with error message '%s'.\n",
                 << "  granted=" << get_granted_time().get_time_in_seconds() << endl
                 << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
@@ -3308,8 +3351,8 @@ void Object::send_init_data()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   Federate const *federate = get_federate();
-   RTIambassador  *rti_amb  = get_RTI_ambassador();
+   Federate      *federate = get_federate();
+   RTIambassador *rti_amb  = get_RTI_ambassador();
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3345,7 +3388,7 @@ void Object::send_init_data()
          // so no need to store it.
          rti_amb->updateAttributeValues( this->instance_handle,
                                          *attribute_values_map,
-                                         VariableLengthData( NULL, 0 ) );
+                                         TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
 #endif
@@ -3453,6 +3496,7 @@ void Object::send_init_data()
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+      federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -3827,7 +3871,7 @@ void Object::release_ownership()
       // IEEE 1516.1-2010 section 7.6
       rti_amb->confirmDivestiture( this->instance_handle,
                                    attrs,
-                                   VariableLengthData( NULL, 0 ) );
+                                   TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 
       AttributeHandleSet::iterator divest_iter;
 
@@ -3907,6 +3951,10 @@ RTIAmbassador::confirmDivestiture() generated RestoreInProgress: '%s'\n",
       message_publish( MSG_WARNING, "Object::release_ownership():%d call to \
 RTIAmbassador::confirmDivestiture() generated NotConnected: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -3972,13 +4020,14 @@ void Object::pull_ownership()
          // Get the current HLA logical time.
          current_time = fedTime.get_time_in_seconds();
       } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: FederateNotExecutionMember \n", __LINE__ );
+         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: FederateNotExecutionMember\n", __LINE__ );
       } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: SaveInProgress \n", __LINE__ );
+         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: SaveInProgress\n", __LINE__ );
       } catch ( RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: RestoreInProgress \n", __LINE__ );
+         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: RestoreInProgress\n", __LINE__ );
       } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: NotConnected \n", __LINE__ );
+         message_publish( MSG_WARNING, "Object::pull_ownership():%d EXCEPTION: NotConnected\n", __LINE__ );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -4422,7 +4471,7 @@ void Object::grant_pull_request()
          // IEEE 1516.1-2025 section 7.13
          rti_amb->attributeOwnershipDivestitureIfWanted( this->instance_handle,
                                                          attrs_to_divest,
-                                                         VariableLengthData( NULL, 0 ),
+                                                         TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                          *divested_attrs );
 #else
          // IEEE 1516.1-2010 section 7.12
@@ -4749,6 +4798,10 @@ void Object::negotiated_attribute_ownership_divestiture(
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
+      Federate *federate = get_federate();
+      if ( federate != NULL ) {
+         federate->set_connection_lost();
+      }
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -4854,6 +4907,7 @@ void Object::push_ownership()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
+         federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -5606,23 +5660,23 @@ Ownership check of Attribute '%s'->'%s' from object '%s' => RTI informed us that
          }
       } catch ( ObjectInstanceNotKnown const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: ObjectInstanceNotKnown \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: ObjectInstanceNotKnown\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( AttributeNotDefined const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: AttributeNotDefined \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: AttributeNotDefined\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( FederateNotExecutionMember const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: FederateNotExecutionMember \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( SaveInProgress const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: SaveInProgress \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: SaveInProgress\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( RestoreInProgress const &e ) {
          message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d \
-rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: RestoreInProgress \n",
+rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generated an EXCEPTION: RestoreInProgress\n",
                           __LINE__, attributes[i].get_FOM_name().c_str() );
       } catch ( RTIinternalError const &e ) {
          string rti_err_msg;

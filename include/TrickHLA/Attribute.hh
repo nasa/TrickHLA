@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
 @trick_link_dependency{../../source/TrickHLA/RecordElement.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
+@trick_link_dependency{../../source/TrickHLA/utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -127,11 +127,11 @@ class Attribute : public RecordElement
 
    RTI1516_NAMESPACE::VariableLengthData &encode();
 
-   bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+   bool decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
    /*! @brief Get the reflection rate configuration type.
     *  @return The reflection rate configuration type enumeration value. */
-   DataUpdateEnum const get_configuration() const
+   DataUpdateEnum get_configuration() const
    {
       return config;
    }
@@ -297,7 +297,7 @@ class Attribute : public RecordElement
 
    /*! @brief Determine is the data cycle is ready for sending data.
     *  @return True if the data cycle is ready for a send, false otherwise.*/
-   bool const check_data_cycle_ready() // RETURN: -- True if the data cycle is ready for a send, false otherwise.
+   bool check_data_cycle_ready() // RETURN: -- True if the data cycle is ready for a send, false otherwise.
    {
       if ( ( cycle_ratio <= 1 ) || ( ( ++cycle_cnt ) >= cycle_ratio ) ) {
          cycle_cnt = 0;

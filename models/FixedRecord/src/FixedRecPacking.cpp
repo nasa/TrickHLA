@@ -41,8 +41,8 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // FixedRecord model includes.
 #include "FixedRecord/include/FixedRecPacking.hh"

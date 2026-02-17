@@ -213,11 +213,17 @@ class Int64Interval
   private:
    /*! @brief Return the whole seconds part of the current timestamp.
     *  @return The whole seconds part of the timestamp in seconds. */
-   int64_t get_seconds() const;
+   int64_t get_whole_seconds() const
+   {
+      return ( (int64_t)( hla_interval.getInterval() / Int64BaseTime::get_base_time_multiplier() ) );
+   }
 
    /*! @brief Return the the fractional part of the current timestamp.
     *  @return The the fractional part of the current timestamp. */
-   int64_t get_fractional_seconds() const;
+   int64_t get_fractional_seconds() const
+   {
+      return ( (int64_t)( hla_interval.getInterval() % Int64BaseTime::get_base_time_multiplier() ) );
+   }
 
    RTI1516_NAMESPACE::HLAinteger64Interval hla_interval; /**< @trick_io{**}
       The HLA standard's class representation of integer64 interval. */

@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/MutexLock.cpp
+@file TrickHLA/utils/MutexLock.cpp
 @ingroup TrickHLA
 @brief TrickHLA Mutex Lock wrapper.
 
@@ -27,7 +27,7 @@ NASA, Johnson Space Center\n
 #include <pthread.h>
 
 // TrickHLA includes.
-#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 
 using namespace TrickHLA;
 
@@ -54,7 +54,7 @@ MutexLock::~MutexLock()
  * @brief Initialize the mutex.
  * @return Integer value of 0 for success, otherwise non-zero for an error.
  */
-int const MutexLock::initialize()
+int MutexLock::initialize()
 {
    pthread_mutexattr_t attr; // NOLINT
    pthread_mutexattr_init( &attr );
@@ -66,7 +66,7 @@ int const MutexLock::initialize()
  * @brief Lock the mutex.
  * @return Integer value of 0 for success, otherwise non-zero for an error.
  */
-int const MutexLock::lock()
+int MutexLock::lock()
 {
    return ( pthread_mutex_lock( &mutex ) );
 }
@@ -75,7 +75,7 @@ int const MutexLock::lock()
  * @brief Unlock the mutex.
  * @return Integer value of 0 for success, otherwise non-zero for an error.
  */
-int const MutexLock::unlock()
+int MutexLock::unlock()
 {
    return ( pthread_mutex_unlock( &mutex ) );
 }
@@ -84,7 +84,7 @@ int const MutexLock::unlock()
  * @brief Destroy the mutex lock.
  * @return Integer value of 0 for success, otherwise non-zero for an error.
  */
-int const MutexLock::destroy()
+int MutexLock::destroy()
 {
    while ( unlock() == 0 ) {
       // Recursive mutex so keep releasing the lock.

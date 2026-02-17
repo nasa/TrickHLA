@@ -20,9 +20,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{RecordElement.cpp}
 @trick_link_dependency{Types.cpp}
-@trick_link_dependency{Utilities.cpp}
 @trick_link_dependency{encoding/EncoderBase.cpp}
 @trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{utils/Utilities.cpp}
 
 
 @revs_title
@@ -51,10 +51,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/RecordElement.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -260,7 +260,7 @@ VariableLengthData &Parameter::encode()
    return encoder->data;
 }
 
-bool const Parameter::decode(
+bool Parameter::decode(
    VariableLengthData const &encoded_data )
 {
    try {

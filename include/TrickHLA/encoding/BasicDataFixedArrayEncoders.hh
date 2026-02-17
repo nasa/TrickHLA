@@ -100,7 +100,7 @@ namespace TrickHLA
          return;                                                                    \
       }                                                                             \
                                                                                     \
-      virtual int const get_data_size();                                            \
+      virtual int get_data_size();                                                  \
                                                                                     \
       virtual std::string to_string()                                               \
       {                                                                             \

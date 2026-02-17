@@ -20,43 +20,60 @@ ifeq ("$(wildcard ${RTI_HOME})","")
    $(error ${RED_TXT}S_hla.mk:ERROR: Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME}${RESET_TXT})
 endif
 
-# Either IEEE_1516_2010 for HLA Evolved or IEEE_1516_2025 for HLA 4.
+# Set the IEEE-1516 standard and RTI include paths based on the
+# RTI vendor and version specified.
+IS_PITCH_RTI = 0
 ifeq ($(RTI_VENDOR),Pitch_HLA_4)
-   HLA_STANDARD = IEEE_1516_2025
-else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
-   HLA_STANDARD = IEEE_1516_2010
-else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
-   HLA_STANDARD = IEEE_1516_2010
-else
-   $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or MAK_HLA_Evolved.${RESET_TXT})
-endif
-
-# Needed for TrickHLA.
-TRICK_SFLAGS   += -I${TRICKHLA_HOME}/S_modules
-TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
-TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
-
-# Needed for the HLA IEEE 1516 header files.
-ifeq ($(RTI_VENDOR),Pitch_HLA_4)
-   # Determine the Pitch RTI include path based on the HLA Standard specififed.
+   IS_PITCH_RTI   = 1
+   HLA_STANDARD   =  IEEE_1516_2025
    RTI_INCLUDE    =  ${RTI_HOME}/api/cpp/HLA_1516-2025
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
-   # Determine the Pitch RTI include path based on the HLA Standard specififed.
-   RTI_INCLUDE = ${RTI_HOME}/api/cpp/HLA_1516-2010
+   IS_PITCH_RTI = 1
+   HLA_STANDARD = IEEE_1516_2010
+   RTI_INCLUDE  = ${RTI_HOME}/api/cpp/HLA_1516-2010
    ifeq ("$(wildcard ${RTI_INCLUDE})","")
       RTI_INCLUDE = ${RTI_HOME}/include
    endif
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
+   HLA_STANDARD   =  IEEE_1516_2010
    RTI_INCLUDE    =  ${RTI_HOME}/include/HLA1516E
    TRICK_CFLAGS   += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
 else
    $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or MAK_HLA_Evolved.${RESET_TXT})
 endif
+
+# Ensure the environment variables set by the Pitch RTI are consistent with
+# the RTI home directory specified.
+ifeq ($(IS_PITCH_RTI),1)
+   ifdef PRTI6_ROOT
+      ifneq ($(PRTI6_ROOT),$(RTI_HOME))
+         export PRTI6_ROOT = ${RTI_HOME}
+         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PRTI6_ROOT = ${PRTI6_ROOT}${RESET_TXT})
+      endif
+   endif
+   ifdef PRTI1516E_HOME
+      ifneq ($(PRTI1516E_HOME),$(RTI_HOME))
+         export PRTI1516E_HOME = ${RTI_HOME}
+         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PRTI1516E_HOME = ${PRTI1516E_HOME}${RESET_TXT})
+      endif
+   endif
+   ifdef PitchRTI_ROOT
+      ifneq ($(PitchRTI_ROOT),$(RTI_HOME))
+         export PitchRTI_ROOT = ${RTI_HOME}
+         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PitchRTI_ROOT = ${PitchRTI_ROOT}${RESET_TXT})
+      endif
+   endif
+endif
+
+# Needed for TrickHLA.
+TRICK_SFLAGS   += -I${TRICKHLA_HOME}/S_modules
+TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
+TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
 
 # Configure the ICG and swig excludes.
 ifdef TRICK_ICG_EXCLUDE

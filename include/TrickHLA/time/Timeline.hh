@@ -68,19 +68,19 @@ class Timeline
    //-----------------------------------------------------------------
    /*! @brief Get the current time for this timeline in seconds.
     *  @return Returns the current timeline time in seconds. */
-   virtual double const get_time() const = 0;
+   virtual double get_time() const = 0;
 
    /*! @brief Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the minimum time resolution in seconds. */
-   virtual double const get_min_resolution() const = 0;
+   virtual double get_min_resolution() const = 0;
 
    //-----------------------------------------------------------------
    // These are virtual functions for the class.
    //-----------------------------------------------------------------
    /*! @brief Get the elapsed time for this timeline in seconds from epoch.
     *  @return Returns the elapsed time from epoch in seconds. */
-   virtual double const get_elapsed_time() const
+   virtual double get_elapsed_time() const
    {
       return ( get_time() - epoch );
    }
@@ -94,7 +94,7 @@ class Timeline
 
    /*! @brief Get the epoch for this timeline in seconds.
     *  @return Returns the epoch for this timeline in seconds. */
-   virtual double const get_epoch() const
+   virtual double get_epoch() const
    {
       return ( this->epoch );
    }
@@ -102,7 +102,7 @@ class Timeline
    /*! @brief Convert value to a time on the timeline with the minimum time resolution.
     *  @return Returns the time in seconds on the timeline with the minimum resolution.
     *  @param value The time value to convert. */
-   virtual double const convert( double const value )
+   virtual double convert( double const value )
    {
       double const min_resolution = get_min_resolution();
       if ( min_resolution > DBL_MIN ) {

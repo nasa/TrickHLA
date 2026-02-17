@@ -82,7 +82,10 @@ class DynamicalEntityLagComp : public DynamicalEntityLagCompInteg
     *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
    virtual void derivative_second( void *user_data ) { return; }
+#pragma GCC diagnostic pop
 
   private:
    // This object is not copyable

@@ -90,7 +90,7 @@ class StringUnicodeEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
-   virtual int const get_data_size()
+   virtual int get_data_size()
    {
       return ( sizeof( wchar_t ) * wstring_data.size() );
    }

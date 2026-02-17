@@ -18,14 +18,14 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
-@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPointList.cpp}
 @trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
-@trick_link_dependency{Utilities.cpp}
 @trick_link_dependency{time/Int64Time.cpp}
+@trick_link_dependency{utils/MutexLock.cpp}
+@trick_link_dependency{utils/MutexProtection.cpp}
+@trick_link_dependency{utils/SleepTimeout.cpp}
+@trick_link_dependency{utils/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -49,12 +49,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -172,7 +172,7 @@ void SyncPointManagerBase::clear()
 #endif
 }
 
-int const SyncPointManagerBase::get_list_index_for_sync_point(
+int SyncPointManagerBase::get_list_index_for_sync_point(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -189,7 +189,7 @@ int const SyncPointManagerBase::get_list_index_for_sync_point(
    return -1;
 }
 
-int const SyncPointManagerBase::get_list_index_for_list_name(
+int SyncPointManagerBase::get_list_index_for_list_name(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -206,7 +206,7 @@ int const SyncPointManagerBase::get_list_index_for_list_name(
    return -1;
 }
 
-SyncPtStateEnum const SyncPointManagerBase::get_sync_point_state(
+SyncPtStateEnum SyncPointManagerBase::get_sync_point_state(
    std::wstring const &label )
 {
 #if SYNC_POINT_LIST_TMM_ARRAY
@@ -221,7 +221,7 @@ SyncPtStateEnum const SyncPointManagerBase::get_sync_point_state(
    return TrickHLA::SYNC_PT_STATE_UNKNOWN;
 }
 
-bool const SyncPointManagerBase::add_sync_point_list(
+bool SyncPointManagerBase::add_sync_point_list(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -273,7 +273,7 @@ bool const SyncPointManagerBase::add_sync_point_list(
    return false;
 }
 
-bool const SyncPointManagerBase::add_sync_point(
+bool SyncPointManagerBase::add_sync_point(
    wstring const &label,
    string const  &list_name )
 {
@@ -320,7 +320,7 @@ bool const SyncPointManagerBase::add_sync_point(
    return false;
 }
 
-bool const SyncPointManagerBase::add_sync_point(
+bool SyncPointManagerBase::add_sync_point(
    wstring const   &label,
    string const    &list_name,
    Int64Time const &time )
@@ -368,7 +368,7 @@ bool const SyncPointManagerBase::add_sync_point(
    return false;
 }
 
-bool const SyncPointManagerBase::contains_sync_point(
+bool SyncPointManagerBase::contains_sync_point(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -388,7 +388,7 @@ bool const SyncPointManagerBase::contains_sync_point(
 /*
  * Does the names list contain the sync-point label.
  */
-bool const SyncPointManagerBase::contains_sync_point(
+bool SyncPointManagerBase::contains_sync_point(
    wstring const     &label,
    std::string const &list_name )
 {
@@ -398,7 +398,7 @@ bool const SyncPointManagerBase::contains_sync_point(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->contains( label ) );
 }
 
-bool const SyncPointManagerBase::contains_sync_point_list_name(
+bool SyncPointManagerBase::contains_sync_point_list_name(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -406,7 +406,7 @@ bool const SyncPointManagerBase::contains_sync_point_list_name(
    return ( get_list_index_for_list_name( list_name ) >= 0 );
 }
 
-bool const SyncPointManagerBase::is_sync_point_list_empty(
+bool SyncPointManagerBase::is_sync_point_list_empty(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -415,7 +415,7 @@ bool const SyncPointManagerBase::is_sync_point_list_empty(
    return ( ( index < 0 ) || sync_pnt_lists[index]->empty() );
 }
 
-bool const SyncPointManagerBase::is_sync_point_registered(
+bool SyncPointManagerBase::is_sync_point_registered(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -427,7 +427,7 @@ bool const SyncPointManagerBase::is_sync_point_registered(
 /*!
  * @job_class{initialization}
  */
-bool const SyncPointManagerBase::mark_sync_point_registered(
+bool SyncPointManagerBase::mark_sync_point_registered(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -438,7 +438,7 @@ bool const SyncPointManagerBase::mark_sync_point_registered(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_registered( label ) );
 }
 
-bool const SyncPointManagerBase::register_sync_point(
+bool SyncPointManagerBase::register_sync_point(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -464,7 +464,7 @@ bool const SyncPointManagerBase::register_sync_point(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->register_sync_point( label ) );
 }
 
-bool const SyncPointManagerBase::register_sync_point(
+bool SyncPointManagerBase::register_sync_point(
    wstring const           &label,
    FederateHandleSet const &handle_set )
 {
@@ -492,7 +492,7 @@ bool const SyncPointManagerBase::register_sync_point(
 }
 
 // True if at least one sync-point is registered.
-bool const SyncPointManagerBase::register_all_sync_points(
+bool SyncPointManagerBase::register_all_sync_points(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -501,7 +501,7 @@ bool const SyncPointManagerBase::register_all_sync_points(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->register_all() );
 }
 
-bool const SyncPointManagerBase::register_all_sync_points(
+bool SyncPointManagerBase::register_all_sync_points(
    string const            &list_name,
    FederateHandleSet const &handle_set )
 {
@@ -511,7 +511,7 @@ bool const SyncPointManagerBase::register_all_sync_points(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->register_all( handle_set ) );
 }
 
-bool const SyncPointManagerBase::is_sync_point_announced(
+bool SyncPointManagerBase::is_sync_point_announced(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -520,7 +520,7 @@ bool const SyncPointManagerBase::is_sync_point_announced(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->is_announced( label ) );
 }
 
-bool const SyncPointManagerBase::mark_sync_point_announced(
+bool SyncPointManagerBase::mark_sync_point_announced(
    wstring const            &label,
    VariableLengthData const &user_supplied_tag )
 {
@@ -532,7 +532,7 @@ bool const SyncPointManagerBase::mark_sync_point_announced(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_announced( label, user_supplied_tag ) );
 }
 
-bool const SyncPointManagerBase::wait_for_sync_point_announced(
+bool SyncPointManagerBase::wait_for_sync_point_announced(
    wstring const &label )
 {
    int index;
@@ -563,7 +563,7 @@ bool const SyncPointManagerBase::wait_for_sync_point_announced(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_announced( label ) );
 }
 
-bool const SyncPointManagerBase::wait_for_all_sync_points_announced(
+bool SyncPointManagerBase::wait_for_all_sync_points_announced(
    string const &list_name )
 {
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
@@ -572,7 +572,7 @@ bool const SyncPointManagerBase::wait_for_all_sync_points_announced(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_all_announced() );
 }
 
-bool const SyncPointManagerBase::is_sync_point_achieved(
+bool SyncPointManagerBase::is_sync_point_achieved(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -581,13 +581,13 @@ bool const SyncPointManagerBase::is_sync_point_achieved(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->is_achieved( label ) );
 }
 
-bool const SyncPointManagerBase::achieve_sync_point(
+bool SyncPointManagerBase::achieve_sync_point(
    wstring const &label )
 {
-   return achieve_sync_point( label, VariableLengthData( NULL, 0 ) );
+   return achieve_sync_point( label, TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 }
 
-bool const SyncPointManagerBase::achieve_sync_point(
+bool SyncPointManagerBase::achieve_sync_point(
    std::wstring const       &label,
    VariableLengthData const &user_supplied_tag )
 {
@@ -622,7 +622,7 @@ bool const SyncPointManagerBase::achieve_sync_point(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->achieve( label ) );
 }
 
-bool const SyncPointManagerBase::achieve_all_sync_points(
+bool SyncPointManagerBase::achieve_all_sync_points(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -631,7 +631,7 @@ bool const SyncPointManagerBase::achieve_all_sync_points(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->achieve_all() );
 }
 
-bool const SyncPointManagerBase::is_sync_point_synchronized(
+bool SyncPointManagerBase::is_sync_point_synchronized(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -640,7 +640,7 @@ bool const SyncPointManagerBase::is_sync_point_synchronized(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->is_synchronized( label ) );
 }
 
-bool const SyncPointManagerBase::is_all_sync_points_synchronized(
+bool SyncPointManagerBase::is_all_sync_points_synchronized(
    std::string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -652,7 +652,7 @@ bool const SyncPointManagerBase::is_all_sync_points_synchronized(
 /*!
  * @job_class{initialization}
  */
-bool const SyncPointManagerBase::mark_sync_point_synchronized(
+bool SyncPointManagerBase::mark_sync_point_synchronized(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -663,7 +663,7 @@ bool const SyncPointManagerBase::mark_sync_point_synchronized(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_synchronized( label ) );
 }
 
-bool const SyncPointManagerBase::wait_for_sync_point_synchronized(
+bool SyncPointManagerBase::wait_for_sync_point_synchronized(
    wstring const &label )
 {
    int index;
@@ -694,7 +694,7 @@ bool const SyncPointManagerBase::wait_for_sync_point_synchronized(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_synchronized( label ) );
 }
 
-bool const SyncPointManagerBase::wait_for_all_sync_points_synchronized(
+bool SyncPointManagerBase::wait_for_all_sync_points_synchronized(
    string const &list_name )
 {
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
@@ -703,7 +703,7 @@ bool const SyncPointManagerBase::wait_for_all_sync_points_synchronized(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_all_synchronized() );
 }
 
-bool const SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
+bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
    std::wstring const &label )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {

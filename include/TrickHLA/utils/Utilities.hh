@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/Utilities.hh
+@file TrickHLA/utils/Utilities.hh
 @ingroup TrickHLA
 @brief Definition of the TrickHLA utilities.
 
@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
-@trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/Utilities.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -146,7 +146,7 @@ class Utilities
   public:
    /*! @brief Get the endianness.
     *  @return Either TRICK_BIG_ENDIAN (char)0x00 or TRICK_LITTLE_ENDIAN (char)0x01 */
-   static char const get_endianness()
+   static char get_endianness()
    {
       static char endianness = (char)( std::max( TRICK_LITTLE_ENDIAN, TRICK_BIG_ENDIAN ) + 1 );
       if ( ( endianness != TRICK_LITTLE_ENDIAN ) && ( endianness != TRICK_BIG_ENDIAN ) ) {
@@ -219,13 +219,13 @@ class Utilities
    /*! @brief Round to the next positive multiple of 8.
     *  @return The value rounded to the next positive multiple of 8.
     *  @param  value The value to round to next positive multiple of 8. */
-   static size_t const next_positive_multiple_of_8( size_t const value );
+   static size_t next_positive_multiple_of_8( size_t const value );
 
    /*! @brief Round to the next positive multiple of N.
     *  @return The value rounded to the next positive multiple of N.
     *  @param  value The value to round to next positive multiple of N.
     *  @param  n The number to round up the value to the next positive multiple of. */
-   static size_t const next_positive_multiple_of_N( size_t const value, unsigned int const n );
+   static size_t next_positive_multiple_of_N( size_t const value, unsigned int const n );
 
    /*! @brief Sleep for the specified number of microseconds. The usleep() C
     *  function is obsolete (see CWE-676). Create a wrapper around nanosleep()

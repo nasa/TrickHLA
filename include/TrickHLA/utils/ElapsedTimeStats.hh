@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/ElapsedTimeStats.hh
+@file TrickHLA/utils/ElapsedTimeStats.hh
 @ingroup TrickHLA
 @brief This class gathers statistics on the elapsed time between calls to the
 measure function.
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/ElapsedTimeStats.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/ElapsedTimeStats.cpp}
 
 @revs_title
 @revs_begin
@@ -64,13 +64,15 @@ class ElapsedTimeStats
    void measure();
 
    /*! @brief Convert confidence level to Z value. */
-   static double const confidence_to_Z( double &confidence );
+   static double confidence_to_Z( double &confidence );
 
    /*! @brief Returns a string summary of the elapsed time statistics. */
    std::string const to_string();
 
   private:
    bool first_pass; ///< @trick_units{--} Flag indicates first pass to determine external clock.
+
+   int time_tic_value; ///< @trick_units{--}Trick time tics per second multiplier.
 
    int64_t prev_time; ///< @trick_units{microseconds} Previous elapsed time.
 

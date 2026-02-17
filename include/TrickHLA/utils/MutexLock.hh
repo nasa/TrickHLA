@@ -1,7 +1,7 @@
 /*!
-@file TrickHLA/MutexProtection.hh
+@file TrickHLA/utils/MutexLock.hh
 @ingroup TrickHLA
-@brief Mutex protection, automatically unlocks mutex when this object goes out of scope.
+@brief TrickHLA Mutex Lock wrapper.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -19,8 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -28,16 +27,16 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-#ifndef TRICKHLA_MUTEX_PROTECTION_HH
-#define TRICKHLA_MUTEX_PROTECTION_HH
+#ifndef TRICKHLA_MUTEX_LOCK_HH
+#define TRICKHLA_MUTEX_LOCK_HH
 
-// TrickHLA includes.
-#include "TrickHLA/MutexLock.hh"
+// System includes.
+#include <pthread.h>
 
 namespace TrickHLA
 {
 
-class MutexProtection
+class MutexLock
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -47,29 +46,46 @@ class MutexProtection
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__MutexProtection();
+   friend void init_attrTrickHLA__MutexLock();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA MutexProtection class. */
-   explicit MutexProtection( TrickHLA::MutexLock *mutex_lock );
-   /*! @brief Destructor for the TrickHLA MutexProtection class. */
-   virtual ~MutexProtection();
+   /*! @brief Default constructor for the TrickHLA MutexLock class with mutex
+    * attribute PTHREAD_MUTEX_RECURSIVE. */
+   MutexLock();
+   /*! @brief Destructor for the TrickHLA MutexLock class. */
+   virtual ~MutexLock();
 
-   MutexLock *mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   /*! @brief Initialize the mutex.
+    *  @return Integer value of 0 for success, otherwise non-zero for an error. */
+   int initialize();
+
+   /*! @brief Lock the mutex.
+    *  @return Integer value of 0 for success, otherwise non-zero for an error. */
+   int lock();
+
+   /*! @brief Unlock the mutex.
+    *  @return Integer value of 0 for success, otherwise non-zero for an error. */
+   int unlock();
+
+   /*! @brief Destroy the mutex lock.
+    *  @return Integer value of 0 for success, otherwise non-zero for an error. */
+   int destroy();
+
+   pthread_mutex_t mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for MutexProtection class.
+   /*! @brief Copy constructor for MutexLock class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   MutexProtection( MutexProtection const &rhs );
-   /*! @brief Assignment operator for MutexProtection class.
+   MutexLock( MutexLock const &rhs );
+   /*! @brief Assignment operator for MutexLock class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   MutexProtection &operator=( MutexProtection const &rhs );
+   MutexLock &operator=( MutexLock const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_MUTEX_PROTECTION_HH: Do NOT put anything after this line!
+#endif // TRICKHLA_MUTEX_LOCK_HH: Do NOT put anything after this line!

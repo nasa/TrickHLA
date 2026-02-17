@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{EncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
+@trick_link_dependency{../utils/Utilities.cpp}
 
 
 @revs_title
@@ -45,9 +45,9 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -117,7 +117,7 @@ void VariableArrayEncoderBase::update_after_decode()
    return;
 }
 
-int const VariableArrayEncoderBase::get_data_size()
+int VariableArrayEncoderBase::get_data_size()
 {
    int byte_count = 0;
 

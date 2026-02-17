@@ -54,6 +54,7 @@ NASA, Johnson Space Center\n
 #include "RTI/RTI1516.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -358,6 +359,8 @@ typedef std::map< std::string, unsigned int > TrickHLAObjInstanceNameIndexMap;
 typedef std::vector< std::string > VectorOfStrings;
 
 typedef std::vector< std::wstring > VectorOfWstrings;
+
+static RTI1516_NAMESPACE::VariableLengthData const EMPTY_USER_SUPPLIED_TAG = RTI1516_NAMESPACE::VariableLengthData( NULL, 0 );
 
 //
 // Helper methods for these enumerations.

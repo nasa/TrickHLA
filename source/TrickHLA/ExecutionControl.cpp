@@ -390,6 +390,8 @@ void ExecutionControl::unsubscribe()
    return;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 /*!
  * @job_class{scheduled}
  */
@@ -415,6 +417,7 @@ void ExecutionControl::set_next_execution_control_mode(
 {
    return;
 }
+#pragma GCC diagnostic pop
 
 /*!
  * \par<b>Assumptions and Limitations:</b>
@@ -580,6 +583,8 @@ void ExecutionControl::set_time_padding( double t )
    this->time_padding = Int64BaseTime::to_seconds( padding_base_time );
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::start_federation_save_at_scenario_time(
    double        freeze_scenario_time,
    string const &file_name )
@@ -589,3 +594,4 @@ void ExecutionControl::start_federation_save_at_scenario_time(
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << endl;
    DebugHandler::terminate_with_message( errmsg.str() );
 }
+#pragma GCC diagnostic pop

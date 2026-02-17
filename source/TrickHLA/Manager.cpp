@@ -23,16 +23,16 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionItem.cpp}
 @trick_link_dependency{Manager.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
-@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/Int64BaseTime.cpp}
 @trick_link_dependency{time/Int64Interval.cpp}
 @trick_link_dependency{time/Int64Time.cpp}
+@trick_link_dependency{utils/MutexLock.cpp}
+@trick_link_dependency{utils/MutexProtection.cpp}
+@trick_link_dependency{utils/SleepTimeout.cpp}
 
 @revs_title
 @revs_begin
@@ -70,16 +70,16 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -253,8 +253,8 @@ void Manager::restart_initialization()
 
    // The set_master() function set's additional parameter so call it again to
    // force the a complete master state.
-   bool master_flag = execution_control->is_master(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
-   execution_control->set_master( master_flag );      // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   bool master_flag = execution_control->is_master();
+   execution_control->set_master( master_flag );
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
@@ -318,6 +318,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " modified-data files to make sure the 'Manager::objects'"
              << " array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // If we have a non-NULL objects array but the object-count is invalid
@@ -330,6 +331,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " Please check your input or modified-data files to make sure"
              << " the 'Manager::objects' array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Reset the TrickHLA Object count if negative.
@@ -354,6 +356,7 @@ void Manager::verify_object_and_interaction_arrays()
                          << " input or modified-data files to make sure the"
                          << " object instance names are unique with no duplicates." << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return;
                }
             }
          }
@@ -370,6 +373,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " modified-data files to make sure the 'Manager::interactions'"
              << " array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // If we have a non-NULL interactions array but the interactions-count is
@@ -382,6 +386,7 @@ void Manager::verify_object_and_interaction_arrays()
              << " array. Please check your input or modified-data files to make"
              << " sure the 'Manager::interactions' array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Reset the TrickHLA Interaction count if negative.
@@ -407,6 +412,7 @@ void Manager::verify_object_and_interaction_arrays()
                          << " input or modified-data files to make sure the"
                          << " interaction FOM names are unique with no duplicates." << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return;
                }
             }
          }
@@ -434,6 +440,7 @@ void Manager::verify_object_and_interaction_arrays()
                    << " make sure only one interaction implementation exists per"
                    << " HLA interaction class FOM name." << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
+            return;
          }
       }
 
@@ -451,6 +458,7 @@ void Manager::verify_object_and_interaction_arrays()
                    << " make sure the interaction FOM names are unique with"
                    << " no duplicates." << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
+            return;
          }
       }
    }
@@ -642,6 +650,7 @@ federate so this call will be ignored.\n",
                                << " execution because someone forced our resignation at"
                                << " the Central RTI Component (CRC) level!" << endl;
                         DebugHandler::terminate_with_message( errmsg.str() );
+                        return;
                      }
                   }
 
@@ -761,6 +770,7 @@ void Manager::receive_init_data(
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!" << endl;
                      DebugHandler::terminate_with_message( errmsg.str() );
+                     return;
                   }
                }
 
@@ -862,6 +872,7 @@ void Manager::wait_for_init_sync_point(
                 << " ERROR: Unexpected error waiting for sync-point '"
                 << sync_point_label << "'!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
+         return;
       }
    } else {
       ostringstream errmsg;
@@ -874,6 +885,7 @@ void Manager::wait_for_init_sync_point(
              << "federate.add_multiphase_init_sync_point( '"
              << sync_point_label << "' )" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 }
 
@@ -1048,20 +1060,20 @@ void Manager::setup_all_ref_attributes()
 
    if ( is_execution_configuration_used() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Execution-Configuration \n",
+         message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Execution-Configuration\n",
                           __LINE__ );
       }
       setup_object_ref_attributes( 1, get_execution_configuration() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Objects: %d \n",
+      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Objects: %d\n",
                        __LINE__, obj_count );
    }
    setup_object_ref_attributes( obj_count, objects );
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Interactions \n",
+      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Interactions\n",
                        __LINE__ );
    }
    setup_interaction_ref_attributes();
@@ -1082,7 +1094,7 @@ void Manager::setup_object_ref_attributes(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_object_ref_attributes():%d \n",
+      message_publish( MSG_NORMAL, "Manager::setup_object_ref_attributes():%d\n",
                        __LINE__ );
    }
 
@@ -2074,6 +2086,7 @@ void Manager::wait_for_registration_of_required_objects()
                          << " execution because someone forced our resignation"
                          << " at the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return;
                }
             }
 
@@ -2226,6 +2239,7 @@ void Manager::set_object_instance_handles_by_name(
                       << " ERROR: Object Instance Not Known for '"
                       << instance_name << "'" << endl;
                DebugHandler::terminate_with_message( errmsg.str() );
+               return;
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                   summary << "\n    Object:'" << data_objects[n].get_name()
@@ -2457,7 +2471,7 @@ void Manager::process_interactions()
                    << "type defined in 'ManagerTypeOfInteractionEnum' enum "
                    << "found in 'Manager.hh' and re-run." << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
-            break;
+            return;
          }
       }
 
@@ -2754,7 +2768,7 @@ void Manager::mark_object_as_deleted_from_federation(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string id_str;
             StringUtilities::to_string( id_str, instance_id );
-            message_publish( MSG_NORMAL, "Manager::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s \n",
+            message_publish( MSG_NORMAL, "Manager::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
                              __LINE__, obj->get_name().c_str(), id_str.c_str(),
                              ( instance_id.isValid() ? "Yes" : "No" ) );
          }
@@ -3001,7 +3015,7 @@ Int64Time Manager::get_granted_time() const
 /*!
  * @details Returns the granted time in base time.
  */
-int64_t const Manager::get_granted_base_time() const
+int64_t Manager::get_granted_base_time() const
 {
    return federate->get_granted_base_time();
 }
@@ -3361,6 +3375,7 @@ void Manager::wait_for_discovery_of_objects()
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
                   DebugHandler::terminate_with_message( errmsg.str() );
+                  return;
                }
             }
 

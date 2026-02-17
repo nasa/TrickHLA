@@ -21,7 +21,6 @@ import textwrap
 import time
 
 from trickhla_environment import *
-from trickhla_message import *
 
 
 # Main routine.

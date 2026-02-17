@@ -335,11 +335,14 @@ void ExecutionConfiguration::unpack()
 /*!
  * @details WARNING: This function is BROKEN!
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionConfiguration::setup_ref_attributes(
    Packing *packing_obj )
 {
    return;
 }
+#pragma GCC diagnostic pop
 
 void ExecutionConfiguration::print_execution_configuration() const
 {

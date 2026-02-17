@@ -22,11 +22,11 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/Parameter.cpp}
-@trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{../TrickHLA/time/CTETimelineBase.cpp}
 @trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/time/Int64Time.cpp}
+@trick_link_dependency{../TrickHLA/utils/SleepTimeout.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
@@ -76,16 +76,16 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Parameter.hh"
-#include "TrickHLA/SleepTimeout.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/time/SimTimeline.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -1785,7 +1785,7 @@ bool ExecutionControl::process_mode_transition_request()
          shutdown_mode_announce();
 
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN \n",
+            message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN\n",
                              __LINE__ );
          }
 
@@ -1945,7 +1945,7 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
 
@@ -1981,7 +1981,7 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
 
@@ -2045,7 +2045,7 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
 
@@ -2116,7 +2116,7 @@ bool ExecutionControl::process_execution_control_updates()
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
                if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN \n",
+                  message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
 
@@ -2414,7 +2414,7 @@ void ExecutionControl::shutdown_mode_transition()
 bool ExecutionControl::check_for_shutdown()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown \n",
+      message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown\n",
                        __LINE__ );
    }
 
@@ -2689,7 +2689,7 @@ void ExecutionControl::exit_freeze()
 
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
-                        + "\n BEFORE CLOCK RESET \n" );
+                        + "\n BEFORE CLOCK RESET\n" );
 #endif
 
    // Reset the Trick realtime clock. We need to do this since the exit_freeze
@@ -2715,7 +2715,7 @@ void ExecutionControl::exit_freeze()
 
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
-                        + "\n AFTER CLOCK RESET \n"
+                        + "\n AFTER CLOCK RESET\n"
                         + "clock_reset to: " + std::to_string( ref ) + endl );
 #endif
 }
@@ -2990,6 +2990,8 @@ void ExecutionControl::receive_root_ref_frame()
    }
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::start_federation_save_at_scenario_time(
    double        freeze_scenario_time,
    string const &file_name )
@@ -2999,6 +3001,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << endl;
    DebugHandler::terminate_with_message( errmsg.str() );
 }
+#pragma GCC diagnostic pop
 
 /*!
  * @details WARNING: Only the Master federate should ever set this.

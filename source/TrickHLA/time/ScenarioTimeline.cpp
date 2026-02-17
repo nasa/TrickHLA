@@ -66,14 +66,14 @@ ScenarioTimeline::~ScenarioTimeline()
 /*! @brief Compute a simulation time from a given scenario time.
  *  @return Simulation time in seconds.
  *  @param scenario_time Desired scenario time in seconds. */
-double const ScenarioTimeline::compute_simulation_time(
+double ScenarioTimeline::compute_simulation_time(
    double const scenario_time )
 {
    // Make sure to convert to a time on the sim-timeline for the minimum resolution.
    return ( sim_timeline.convert( scenario_time - ( epoch + sim_offset ) ) );
 }
 
-double const ScenarioTimeline::time_from_simulation_time(
+double ScenarioTimeline::time_from_simulation_time(
    double const sim_time )
 {
    return ( sim_time + ( epoch + sim_offset ) );
@@ -86,7 +86,7 @@ Int64Time const ScenarioTimeline::compute_HLT(
    return ( elapsed_time - hlt_offset );
 }
 
-double const ScenarioTimeline::time_from_HLT(
+double ScenarioTimeline::time_from_HLT(
    Int64Time const &hlt )
 {
    return ( hlt.get_time_in_seconds() + hlt_offset.get_time_in_seconds() + epoch );
@@ -95,7 +95,7 @@ double const ScenarioTimeline::time_from_HLT(
 /*!
  * @details Get the current scenario time.
  */
-double const ScenarioTimeline::get_time() const
+double ScenarioTimeline::get_time() const
 {
    return ( epoch + sim_offset + sim_timeline.get_time() );
 }
@@ -104,7 +104,7 @@ double const ScenarioTimeline::get_time() const
  * @details Get the minimum time resolution, which is the smallest time
  * representation for this timeline.
  */
-double const ScenarioTimeline::get_min_resolution() const
+double ScenarioTimeline::get_min_resolution() const
 {
    return ( 1.0 / (double)Int64BaseTime::get_base_time_multiplier() );
 }

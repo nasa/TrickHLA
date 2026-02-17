@@ -85,7 +85,7 @@ class Int64BaseTime
 
    /*! @brief The base_unit of the base time.
     *  @return The base_unit of the base time. */
-   static HLABaseTimeEnum const get_base_unit_enum()
+   static HLABaseTimeEnum get_base_unit_enum()
    {
       return base_unit;
    }
@@ -104,14 +104,14 @@ class Int64BaseTime
 
    /*! @brief The base time multiplier.
     *  @return The base time multiplier. */
-   static int64_t const get_base_time_multiplier()
+   static int64_t get_base_time_multiplier()
    {
       return base_time_multiplier;
    }
 
    /*! @brief The maximum base time.
     *  @return The maximum base time. */
-   static int64_t const get_max_base_time()
+   static int64_t get_max_base_time()
    {
       return INT64_MAX;
    }
@@ -119,36 +119,31 @@ class Int64BaseTime
    /*! @brief Determine the best supporting base time resolution for the value.
     *  @return The best supporting base time enum value.
     *  @param value Time value as a floating point double in seconds. */
-   static HLABaseTimeEnum const best_base_time_resolution( double const value );
+   static HLABaseTimeEnum best_base_time_resolution( double const value );
 
    /*! @brief Determine if the specified value exceeds the resolution of
     *  the base time (i.e. value is much smaller than base time resolution).
     *  @return True if the value exceeds the resolution of the base time.
     *  @param value Time value as a floating point double in seconds. */
-   static bool const exceeds_base_time_resolution( double const value );
+   static bool exceeds_base_time_resolution( double const value );
 
    /*! @brief Determine if the specified value exceeds the resolution of
     *  a base time with the corresponding multiplier.
     *  @return True if the value exceeds the resolution of the base time.
     *  @param value Time value as a floating point double in seconds.
     *  @param multiplier Base time multiplier. */
-   static bool const exceeds_base_time_resolution( double const value, int64_t multiplier );
+   static bool exceeds_base_time_resolution( double const value, int64_t multiplier );
 
    /*! @brief Converts the given floating point time to an integer representing
     *  the time in the HLA Logical base time.
     *  @return Time value in the HLA Logical base time.
     *  @param time The time in seconds as a floating point double. */
-   static int64_t const to_base_time( double const time );
+   static int64_t to_base_time( double const time );
 
    /*! @brief Converts the given integer time to an floating-point time representing seconds.
     *  @return Time value in seconds.
     *  @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class. */
-   static double const to_seconds( int64_t const time_in_base_unit );
-
-   /*! @brief Converts the given integer time to an integer time representing whole seconds.
-    *  @return Time value in whole seconds.
-    *  @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class. */
-   static int64_t const to_whole_seconds( int64_t const time_in_base_unit );
+   static double to_seconds( int64_t const time_in_base_unit );
 
   protected:
    static HLABaseTimeEnum base_unit;            ///< @trick_units{--} Base time unit.
@@ -156,6 +151,22 @@ class Int64BaseTime
    static int64_t         base_time_multiplier; ///< @trick_units{--} Multiplier for the base unit.
 
   private:
+   /*! @brief Converts the given integer time to an integer time representing whole seconds.
+    *  @return Time value in whole seconds.
+    *  @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class. */
+   static int64_t to_whole_seconds( int64_t const time_in_base_unit )
+   {
+      return ( time_in_base_unit / base_time_multiplier );
+   }
+
+   /*! @brief Return the the fractional part of the given time.
+    *  @return The the fractional secnods part of the given time.
+    *  @param time_in_base_unit Time value as a 64-bit integer in the base_unit_string specified for this class. */
+   static int64_t to_fractional_seconds( int64_t const time_in_base_unit )
+   {
+      return ( time_in_base_unit % base_time_multiplier );
+   }
+
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Int64BaseTime class.
     *  @details This constructor is private to prevent inadvertent copies. */

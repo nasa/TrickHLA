@@ -23,7 +23,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/RecordElement.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -115,7 +114,7 @@ class Parameter : public RecordElement
 
    RTI1516_NAMESPACE::VariableLengthData &encode();
 
-   bool const decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
+   bool decode( RTI1516_NAMESPACE::VariableLengthData const &encoded_data );
 
    /*! @brief Get the FOM name for this parameter.
     *  @return The FOM name of this parameter. */

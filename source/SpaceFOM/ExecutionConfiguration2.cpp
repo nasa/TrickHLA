@@ -28,7 +28,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
-@trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{ExecutionConfiguration2.cpp}
@@ -264,7 +263,7 @@ void ExecutionConfiguration2::unpack()
 
 /*! @brief Get the value of the ExCO base time multiplier.
  *  @return Base time multiplier. */
-int64_t const ExecutionConfiguration2::get_exco_base_time_multiplier() const
+int64_t ExecutionConfiguration2::get_exco_base_time_multiplier() const
 {
    return hla_base_time_multiplier;
 }

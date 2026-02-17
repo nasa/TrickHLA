@@ -31,7 +31,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{VariableArrayEncoderBase.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Types.cpp}
-@trick_link_dependency{../Utilities.cpp}
 
 
 @revs_title
@@ -99,10 +98,8 @@ EncoderBase *EncoderFactory::create(
       return NULL;
    }
 
-   EncoderBase *encoder = create( ref2->address,
-                                  ref2->attr,
-                                  hla_encoding,
-                                  trick_name );
+   EncoderBase *encoder = create( ref2->address, ref2->attr, hla_encoding, trick_name );
+
    free( ref2 );
 
    return encoder;

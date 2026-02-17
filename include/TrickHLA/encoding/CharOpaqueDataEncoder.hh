@@ -91,7 +91,7 @@ class CharOpaqueDataEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
-   virtual int const get_data_size()
+   virtual int get_data_size()
    {
       return ( ( data_encoder != NULL )
                   ? dynamic_cast< RTI1516_NAMESPACE::HLAopaqueData * >( data_encoder )->dataLength()
