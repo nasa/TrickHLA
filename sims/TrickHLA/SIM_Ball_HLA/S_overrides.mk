@@ -18,8 +18,36 @@ endif
 TRICK_CFLAGS   += -I.
 TRICK_CXXFLAGS += -I.
 
+TRICK_DP_FILES = \
+ DP_Product/DP_rt_frame.xml\
+ DP_Product/DP_rt_timeline_init.xml\
+ DP_Product/DP_rt_timeline.xml\
+ DP_Product/DP_rt_trickjobs.xml\
+ DP_Product/DP_rt_userjobs.xml
+
+# Get a list of the simulation run directories.
+RUN_DIRS = $(wildcard RUN*)
+
 # Use the Trick Stand-Alone Integrators if the SAIntegrator/lib directory exists.
 # NOTE: You will also have to build the Trick SAInteg library.
 ifneq ($(wildcard ${TRICK_HOME}/trick_source/trick_utils/SAIntegrator/lib/.*),)
    TRICK_USER_LINK_LIBS += -L${TRICK_HOME}/trick_source/trick_utils/SAIntegrator/lib -lSAInteg
 endif
+
+.PHONY: clean_runs $(RUN_DIRS) $(TRICK_DP_FILES)
+
+spotless: clean_runs clean_DP
+
+clean_DP: $(TRICK_DP_FILES)
+	@echo "Removed Trick generated DP files!"
+
+$(TRICK_DP_FILES):
+	@echo "Removing DP file: $@"
+	@rm -f $@
+
+clean_runs: $(RUN_DIRS)
+
+$(RUN_DIRS):
+	@echo "Cleaning up run directory: $@"
+	@cd $@; rm -f _init_log.csv chkpnt_* log_* S_job_execution S_run_summary send_hs varserver_log
+

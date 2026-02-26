@@ -1,3 +1,4 @@
+import trick
 
 def HLA_walls_config( THLA_object,
                       sim_obj_name,
