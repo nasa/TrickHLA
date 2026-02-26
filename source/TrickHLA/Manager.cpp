@@ -1111,13 +1111,13 @@ void Manager::setup_object_ref_attributes(
       Attribute *attrs      = data_objects[n].get_attributes();
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         msg << "Manager::setup_object_ref_attributes()" << __LINE__ << '\n'
+         msg << "Manager::setup_object_ref_attributes()" << __LINE__ << endl
              << "--------------- Trick REF-Attributes ---------------\n"
              << " Object:'" << data_objects[n].get_name() << "'"
              << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
              << " Create HLA Instance:"
              << ( data_objects[n].is_create_HLA_instance() ? "Yes" : "No" )
-             << " Attribute count:" << attr_count << '\n';
+             << " Attribute count:" << attr_count << endl;
       }
 
       // Process the attributes for this object.
@@ -1129,7 +1129,7 @@ void Manager::setup_object_ref_attributes(
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attrs[i].get_FOM_name() << "'"
-                << " Trick-Name:'" << attrs[i].get_trick_name() << "'" << '\n';
+                << " Trick-Name:'" << attrs[i].get_trick_name() << "'" << endl;
          }
       }
 
@@ -1161,7 +1161,7 @@ void Manager::setup_interaction_ref_attributes()
       ostringstream msg;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         msg << "Manager::setup_interaction_ref_attributes():" << __LINE__ << '\n'
+         msg << "Manager::setup_interaction_ref_attributes():" << __LINE__ << endl
              << "--------------- Trick REF-Attributes ---------------\n"
              << " FOM-Interaction:'" << interactions[n].get_FOM_name() << "'" << endl;
       }
@@ -1270,9 +1270,9 @@ void Manager::setup_object_RTI_handles(
          ostringstream msg;
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            msg << "Manager::setup_object_RTI_handles()" << __LINE__ << '\n'
+            msg << "Manager::setup_object_RTI_handles()" << __LINE__ << endl
                 << "----------------- RTI Handles (Objects & Attributes) ---------------"
-                << '\n'
+                << endl
                 << "Getting RTI Object-Class-Handle for"
                 << " Object:'" << data_objects[n].get_name() << "'"
                 << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'" << endl;
@@ -1292,7 +1292,7 @@ void Manager::setup_object_RTI_handles(
             msg << "  Result for"
                 << " Object:'" << data_objects[n].get_name() << "'"
                 << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
-                << " Class-ID:" << handle_str << '\n';
+                << " Class-ID:" << handle_str << endl;
          }
 
          int const  attr_count = data_objects[n].get_attribute_count();
@@ -1322,7 +1322,7 @@ void Manager::setup_object_RTI_handles(
                msg << "\t  Result for Attribute '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'"
-                   << " Attribute-ID:" << id_str << '\n';
+                   << " Attribute-ID:" << id_str << endl;
             }
          }
 
@@ -1473,7 +1473,7 @@ void Manager::setup_interaction_RTI_handles(
          StringUtilities::to_wstring( ws_FOM_name, inter_FOM_name );
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            msg << "Manager::setup_interaction_RTI_handles()" << __LINE__ << '\n'
+            msg << "Manager::setup_interaction_RTI_handles()" << __LINE__ << endl
                 << "----------------- RTI Handles (Interactions & Parameters) ---------------\n"
                 << "Getting RTI Interaction-Class-Handle for"
                 << " FOM-Name:'" << inter_FOM_name << "'" << endl;
@@ -1487,7 +1487,7 @@ void Manager::setup_interaction_RTI_handles(
             StringUtilities::to_string( handle_str, in_interactions[n].get_class_handle() );
             msg << "  Result for Interaction"
                 << " FOM-Name:'" << inter_FOM_name << "'"
-                << " Interaction-ID:" << handle_str << '\n';
+                << " Interaction-ID:" << handle_str << endl;
          }
 
          // The parameters.
@@ -1518,7 +1518,7 @@ void Manager::setup_interaction_RTI_handles(
                StringUtilities::to_string( handle_str, params[i].get_parameter_handle() );
                msg << "\t  Result for Parameter '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'"
-                   << " Parameter-ID:" << handle_str << '\n';
+                   << " Parameter-ID:" << handle_str << endl;
             }
          }
 
@@ -2048,7 +2048,7 @@ void Manager::wait_for_registration_of_required_objects()
                }
             }
          }
-         summary << '\n';
+         summary << endl;
 
          // Display the summary.
          message_publish( MSG_NORMAL, summary.str().c_str() );
@@ -2295,7 +2295,7 @@ void Manager::set_object_instance_handles_by_name(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      summary << '\n';
+      summary << endl;
       message_publish( MSG_NORMAL, summary.str().c_str() );
    }
 }
@@ -3277,23 +3277,23 @@ void Manager::print_checkpoint_interactions()
           << check_interactions_count << " elements:" << endl;
       for ( int i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
-             << check_interactions[i].index << '\n'
+             << check_interactions[i].index << endl
              << "check_interactions[" << i << "].interaction_type       = '"
              << check_interactions[i].interaction_type << "'\n"
              << "check_interactions[" << i << "].parm_items_count       = "
-             << check_interactions[i].parm_items_count << '\n';
+             << check_interactions[i].parm_items_count << endl;
          for ( int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
             msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
-                << check_interactions[i].parm_items[k].index << '\n'
+                << check_interactions[i].parm_items[k].index << endl
                 << "check_interactions[" << i << "].parm_items[" << k << "].size     = "
-                << check_interactions[i].parm_items[k].size << '\n';
+                << check_interactions[i].parm_items[k].size << endl;
          }
          msg << "check_interactions[" << i << "].user_supplied_tag_size = "
-             << check_interactions[i].user_supplied_tag_size << '\n'
+             << check_interactions[i].user_supplied_tag_size << endl
              << "check_interactions[" << i << "].order_is_TSO           = "
-             << check_interactions[i].order_is_TSO << '\n'
+             << check_interactions[i].order_is_TSO << endl
              << "check_interactions[" << i << "].time                   = "
-             << check_interactions[i].time.get_base_time() << '\n';
+             << check_interactions[i].time.get_base_time() << endl;
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
