@@ -3,7 +3,10 @@
 # Script to update the Pitch Environment variables.
 # February 26, 2026: Dan Dexter/dan.e.dexter@nasa.gov
 #
-# To run this script type: source $TRICKHLA_HOME/scripts/update_Pitch_env.sh
+# Add the following to your .bashrc or .zshrc file:
+# if [ -e ${TRICKHLA_HOME}/scripts/update_Pitch_env.sh ]; then
+#    source ${TRICKHLA_HOME}/scripts/update_Pitch_env.sh
+# fi
 #
 
 if [ ! -d $RTI_HOME ]; then 
