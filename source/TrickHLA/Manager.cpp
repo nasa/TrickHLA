@@ -622,7 +622,6 @@ federate so this call will be ignored.\n",
                                 ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
             }
 
-            int64_t      wallclock_time;
             SleepTimeout print_timer( federate->wait_status_time );
             SleepTimeout sleep_timer;
 
@@ -637,7 +636,7 @@ federate so this call will be ignored.\n",
                if ( !objects[n].is_changed() ) {
 
                   // To be more efficient, we get the time once and share it.
-                  wallclock_time = sleep_timer.time();
+                  int64_t wallclock_time = sleep_timer.time();
 
                   if ( sleep_timer.timeout( wallclock_time ) ) {
                      sleep_timer.reset();
@@ -742,7 +741,6 @@ void Manager::receive_init_data(
                              ( obj->is_required() ? "REQUIRED" : "not required" ) );
          }
 
-         int64_t      wallclock_time;
          SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
@@ -757,7 +755,7 @@ void Manager::receive_init_data(
             if ( !obj->is_changed() ) {
 
                // To be more efficient, we get the time once and share it.
-               wallclock_time = sleep_timer.time();
+               int64_t wallclock_time = sleep_timer.time();
 
                if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
@@ -1893,8 +1891,6 @@ void Manager::wait_for_registration_of_required_objects()
                        __LINE__ );
    }
 
-   int  required_obj_cnt;
-   int  registered_obj_cnt;
    int  current_registered_obj_cnt  = 0;
    int  total_obj_cnt               = obj_count;
    int  current_required_obj_cnt    = 0;
@@ -1921,7 +1917,6 @@ void Manager::wait_for_registration_of_required_objects()
       }
    }
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -1932,8 +1927,8 @@ void Manager::wait_for_registration_of_required_objects()
 
       // Data objects.
       if ( current_required_obj_cnt < total_required_obj_cnt ) {
-         required_obj_cnt   = 0;
-         registered_obj_cnt = 0;
+         int required_obj_cnt   = 0;
+         int registered_obj_cnt = 0;
 
          // Concurrency critical code section for discovered objects being set
          // in FedAmb callback.
@@ -2071,7 +2066,7 @@ void Manager::wait_for_registration_of_required_objects()
          if ( any_unregistered_required_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             // If we timeout check to see if we are still an execution member.
             if ( sleep_timer.timeout( wallclock_time ) ) {

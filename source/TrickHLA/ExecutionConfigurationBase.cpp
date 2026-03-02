@@ -231,7 +231,6 @@ void ExecutionConfigurationBase::wait_for_registration()
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -300,7 +299,7 @@ void ExecutionConfigurationBase::wait_for_registration()
          if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -342,7 +341,6 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    // Make sure we have at least one piece of Execution Configuration data we can receive.
    if ( any_remotely_owned_subscribed_init_attribute() ) {
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -357,7 +355,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
          if ( !is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
