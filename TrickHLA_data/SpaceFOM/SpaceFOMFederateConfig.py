@@ -11,7 +11,8 @@
 #     (Assumes that trick is available globally.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
+#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
+#     ((Dan Dexter) (NASA/ER6) (Mar 2026) (--) (Added support for Federate Type string.)))
 ##############################################################################
 import trick
 from trick.top import *

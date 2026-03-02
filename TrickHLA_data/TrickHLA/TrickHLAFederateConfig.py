@@ -11,8 +11,9 @@
 #
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA) (Jan 2019) (--) (SpaceFOM support and testing.))
-#     ((Dan Dexter) (NASA) (June 2021) (--) (Added set_wait_status_time.))
-#     ((Dan Dexter) (NASA) (July 2023) (--) (Added support for HLA base time unit.)))
+#     ((Dan Dexter) (NASA/ER6) (June 2021) (--) (Added set_wait_status_time.))
+#     ((Dan Dexter) (NASA/ER6) (July 2023) (--) (Added support for HLA base time unit.))
+#     ((Dan Dexter) (NASA/ER6) (Mar 2026) (--) (Added support for Federate Type string.)))
 ##############################################################################
 import socket
 import subprocess
