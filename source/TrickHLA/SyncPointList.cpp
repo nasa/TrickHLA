@@ -737,7 +737,6 @@ bool SyncPointList::wait_for_announced(
    }
 
    bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -770,7 +769,7 @@ bool SyncPointList::wait_for_announced(
       if ( !announced ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          // Check to make sure we're still a member of the federation execution.
          if ( sleep_timer.timeout( wallclock_time ) ) {
@@ -1106,7 +1105,6 @@ bool SyncPointList::wait_for_synchronized(
 
    bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
    bool         synchronized;
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -1138,7 +1136,7 @@ bool SyncPointList::wait_for_synchronized(
          sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          // Check to make sure we're still a member of the federation execution.
          if ( sleep_timer.timeout( wallclock_time ) ) {

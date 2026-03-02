@@ -690,7 +690,6 @@ void TimeManagement::setup_time_constrained()
       // simulation fed file we will receive TimeStamp Ordered messages.
       RTI_ambassador->enableTimeConstrained();
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->get_wait_status_time() );
       SleepTimeout sleep_timer;
 
@@ -705,7 +704,7 @@ void TimeManagement::setup_time_constrained()
          if ( !this->time_constrained_state ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -891,7 +890,6 @@ void TimeManagement::setup_time_regulation()
       // TimeStamp Ordered messages.
       RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->get_wait_status_time() );
       SleepTimeout sleep_timer;
 
@@ -906,7 +904,7 @@ void TimeManagement::setup_time_regulation()
          if ( !this->time_regulating_state ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1279,7 +1277,6 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
    // Wait for Time Advance Grant (TAG)
    if ( state != TIME_ADVANCE_GRANTED ) {
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->get_wait_status_time() );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -1300,7 +1297,7 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
          if ( state != TIME_ADVANCE_GRANTED ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1421,7 +1418,6 @@ void TimeManagement::wait_for_time_advance_grant()
                           __LINE__, requested_time.get_time_in_seconds() );
       }
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->get_wait_status_time() );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -1442,7 +1438,7 @@ void TimeManagement::wait_for_time_advance_grant()
          if ( state != TIME_ADVANCE_GRANTED ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
