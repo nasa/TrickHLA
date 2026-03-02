@@ -27,8 +27,9 @@ class SpaceFOMFederateConfig2( SpaceFOMFederateConfig ):
                  thla_config,
                  thla_federation_name,
                  thla_federate_name,
-                 thla_enabled,
-                 FOMs_path = None ):
+                 thla_federate_type = None,
+                 thla_enabled = True,
+                 thla_FOMs_path = None ):
 
       # Call the base class constructor.
       SpaceFOMFederateConfig.__init__( self,
@@ -38,8 +39,9 @@ class SpaceFOMFederateConfig2( SpaceFOMFederateConfig ):
                                        thla_config,
                                        thla_federation_name,
                                        thla_federate_name,
+                                       thla_federate_type,
                                        thla_enabled,
-                                       FOMs_path )
+                                       thla_FOMs_path )
 
       # Add in additional required Space FOM modules.
       self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_management2.xml' )
