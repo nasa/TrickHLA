@@ -420,7 +420,7 @@ void Federate::initialize()
 
    // If a federate type is not specified make it the same as the federate name.
    if ( type.empty() ) {
-      type = name;
+      this->type = name;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
