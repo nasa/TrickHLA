@@ -834,7 +834,6 @@ Simulation has started and is now running...\n",
  */
 FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
 {
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -879,7 +878,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
          if ( !late_joiner_determined && !manager->is_restore_determined() ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -2420,7 +2419,6 @@ bool ExecutionControl::is_save_initiated()
         && !federate->get_save_completed() ) {
       register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -2431,7 +2429,7 @@ bool ExecutionControl::is_save_initiated()
          if ( !federate->get_initiate_save_flag() ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
