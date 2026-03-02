@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [v3.2.1] - 2026-03-02
 
 ### Notable Additions
 
-- Improved performance by reusing a common empty user supplied tag instead of creating a new tag for every RTI call that needed one.
+- Improved performance by reusing a common empty user supplied tag instead of creating a new tag for every RTI call that requires a tag.
 
 ### Breaking Changes
 
@@ -21,12 +21,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added a [README](./sims/README.md) file for the example simulations.
 - Added detection and handling of a lost RTI connection.
 - Added the SISO 2026 Simulation Innovation Workshop (SIW) Time Compatibility paper and presentation slides.
+- Added the update_Pitch_env.sh script to update the Pitch pRTI specific environment variables to use the RTI set by the RTI_HOME environment variable.
+- Added support for setting the Federate Type string from either the TrickHLAFederateConfig.py or SpaceFOMFederateConfig.py Federate configurations.
 
 ### Changed
 
 - Changed the S_hla.mk file to override the environment variables (PRTI6_ROOT, PRTI1516E_HOME, or PitchRTI_ROOT) set by the Pitch RTI if they are defined and not configured to the same path set by the RTI_HOME environment variable.
 - Fixed ignored-qualifiers and unused-parameter compile time warnings.
 - Fixed the clean_sims.sh, make_sims.sh, and spotless_make_sims.sh scripts to verify an entry in the sims directory listing is a directory before processing it.
+- Fixed complier warnings when using the -Wextra option.
 
 
 ## [v3.2.0] - 2025-12-23
@@ -337,7 +340,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [d3.0.0] - 2024-11-22
 
 
-[Unreleased]: https://github.com/nasa/TrickHLA/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/nasa/TrickHLA/compare/v3.2.1...HEAD
+[v3.2.1]: https://github.com/nasa/TrickHLA/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/nasa/TrickHLA/compare/v3.1.18...v3.2.0
 [v3.1.18]: https://github.com/nasa/TrickHLA/compare/v3.1.17...v3.1.18
 [v3.1.17]: https://github.com/nasa/TrickHLA/compare/v3.1.16...v3.1.17
