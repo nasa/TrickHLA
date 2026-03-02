@@ -11,7 +11,8 @@
 #     (Assumes that trick is available globally.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
+#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
+#     ((Dan Dexter) (NASA/ER6) (Mar 2026) (--) (Added support for Federate Type string.)))
 ##############################################################################
 import trick
 from trick.top import *
@@ -48,12 +49,13 @@ class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
                  thla_config,
                  thla_federation_name,
                  thla_federate_name,
-                 thla_enabled,
-                 FOMs_path = None ):
+                 thla_federate_type = None,
+                 thla_enabled = True,
+                 thla_FOMs_path = None ):
 
       # Copy a FOM path if provided.
-      if FOMs_path:
-         self.SpaceFOMs_path = FOMs_path
+      if thla_FOMs_path:
+         self.SpaceFOMs_path = thla_FOMs_path
 
       # Call the base class constructor.
       TrickHLAFederateConfig.__init__( self,
@@ -63,6 +65,7 @@ class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
                                        thla_config,
                                        thla_federation_name,
                                        thla_federate_name,
+                                       thla_federate_type,
                                        thla_enabled )
 
       # Add in required Space FOM modules.
@@ -175,7 +178,7 @@ class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
       # attribute can be set to any empty string. It will be overwritten
       # on Root Reference Frame Discovery.
       #
-      if ( self.is_RRFP ):
+      if self.is_RRFP:
          self.config.set_root_frame_name( root_frame.get_instance_name() )
       else:
          self.config.set_root_frame_name( '' )

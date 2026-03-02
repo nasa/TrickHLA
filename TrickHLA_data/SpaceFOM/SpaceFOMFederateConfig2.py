@@ -11,8 +11,9 @@
 #     (Assumes that trick is available globally.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
-#    (((Dan Dexter) (NASA/ER6) (Oct 2025) (--) (Updated to add extended ExCO attributes.)))
+#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
+#     ((Dan Dexter) (NASA/ER6) (Oct 2025) (--) (Updated to add extended ExCO attributes.))
+#     ((Dan Dexter) (NASA/ER6) (Mar 2026) (--) (Added support for Federate Type string.)))
 ##############################################################################
 import trick
 from trick.top import *
@@ -27,8 +28,9 @@ class SpaceFOMFederateConfig2( SpaceFOMFederateConfig ):
                  thla_config,
                  thla_federation_name,
                  thla_federate_name,
-                 thla_enabled,
-                 FOMs_path = None ):
+                 thla_federate_type = None,
+                 thla_enabled = True,
+                 thla_FOMs_path = None ):
 
       # Call the base class constructor.
       SpaceFOMFederateConfig.__init__( self,
@@ -38,8 +40,9 @@ class SpaceFOMFederateConfig2( SpaceFOMFederateConfig ):
                                        thla_config,
                                        thla_federation_name,
                                        thla_federate_name,
+                                       thla_federate_type,
                                        thla_enabled,
-                                       FOMs_path )
+                                       thla_FOMs_path )
 
       # Add in additional required Space FOM modules.
       self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_management2.xml' )

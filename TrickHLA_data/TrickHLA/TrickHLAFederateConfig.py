@@ -11,8 +11,9 @@
 #
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA) (Jan 2019) (--) (SpaceFOM support and testing.))
-#     ((Dan Dexter) (NASA) (June 2021) (--) (Added set_wait_status_time.))
-#     ((Dan Dexter) (NASA) (July 2023) (--) (Added support for HLA base time unit.)))
+#     ((Dan Dexter) (NASA/ER6) (June 2021) (--) (Added set_wait_status_time.))
+#     ((Dan Dexter) (NASA/ER6) (July 2023) (--) (Added support for HLA base time unit.))
+#     ((Dan Dexter) (NASA/ER6) (Mar 2026) (--) (Added support for Federate Type string.)))
 ##############################################################################
 import socket
 import subprocess
@@ -65,6 +66,7 @@ class TrickHLAFederateConfig( object ):
                  thla_config,
                  thla_federation_name,
                  thla_federate_name,
+                 thla_federate_type = None,
                  thla_enabled = True ):
 
       self.federate = thla_federate
@@ -75,6 +77,7 @@ class TrickHLAFederateConfig( object ):
 
       self.set_federation_name( thla_federation_name )
       self.set_federate_name( thla_federate_name )
+      self.set_federate_type( thla_federate_type )
 
       # Set up the default HLA time management policy.
       self.setup_HLA_time_management()
@@ -226,18 +229,32 @@ class TrickHLAFederateConfig( object ):
       if self.initialized:
          print( 'TrickHLAFederateConfig.set_federation_name(): Warning, already initialized, function ignored!' )
       else:
-         self.federate.federation_name = str( name )
+         if name:
+            self.federate.federation_name = str( name )
 
       return
 
 
    def set_federate_name( self, name ):
 
-      # You can only set federate name before initialize method is called.
+      # You can only set the federate name before initialize method is called.
       if self.initialized:
          print( 'TrickHLAFederateConfig.set_federate_name(): Warning, already initialized, function ignored!' )
       else:
-         self.federate.name = str( name )
+         if name:
+            self.federate.name = str( name )
+
+      return
+
+
+   def set_federate_type( self, type ):
+
+      # You can only set the federate type before initialize method is called.
+      if self.initialized:
+         print( 'TrickHLAFederateConfig.set_federate_type(): Warning, already initialized, function ignored!' )
+      else:
+         if type:
+            self.federate.type = str( type )
 
       return
 
