@@ -16,17 +16,17 @@ if [ ! -d $RTI_HOME ]; then
 else
    # Pitch sets system environment variables, so update them to the RTI being used.
    if [ -n "${PRTI6_ROOT}" ]; then
-      if [ "$PRTI6_ROOT" != "$RTI_HOME" ]; then
+      if [ "${PRTI6_ROOT}" != "${RTI_HOME}" ]; then
          export PRTI6_ROOT="${RTI_HOME}"
       fi
    fi
    if [ -n "${PitchRTI_ROOT}" ]; then
-      if [ "$PitchRTI_ROOT" != "$RTI_HOME" ]; then
+      if [ "${PitchRTI_ROOT}" != "${RTI_HOME}" ]; then
          export PitchRTI_ROOT="${RTI_HOME}"
       fi
    fi
    if [ -n "${PRTI1516E_HOME}" ]; then
-      if [ "$PRTI1516E_HOME" != "$RTI_HOME" ]; then
+      if [ "${PRTI1516E_HOME}" != "${RTI_HOME}" ]; then
          export PRTI1516E_HOME="${RTI_HOME}"
       fi
    fi
