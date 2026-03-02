@@ -36,10 +36,10 @@ namespace TrickHLA
 // Version of the form: "Major.Minor.Patch"
 static unsigned int const TRICKHLA_MAJOR_VERSION = 3;
 static unsigned int const TRICKHLA_MINOR_VERSION = 2;
-static unsigned int const TRICKHLA_PATCH_VERSION = 0;
+static unsigned int const TRICKHLA_PATCH_VERSION = 1;
 
 // Release date of the form: "YYYY-MM-DD"
-static std::string const TRICKHLA_RELEASE_DATE = "2025-12-23";
+static std::string const TRICKHLA_RELEASE_DATE = "2026-03-02";
 
 } // namespace TrickHLA
 

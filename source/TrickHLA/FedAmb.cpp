@@ -788,14 +788,14 @@ void FedAmb::reflectAttributeValues(
          ostringstream summary;
          summary << "FedAmb::reflectAttributeValues():" << __LINE__
                  << " Received update to Unknown Object Instance:"
-                 << handle_str << '\n';
+                 << handle_str << endl;
 
          AttributeHandleValueMap::const_iterator attr_iter;
          for ( attr_iter = attributeValues.begin();
                attr_iter != attributeValues.end();
                ++attr_iter ) {
             StringUtilities::to_string( handle_str, attr_iter->first );
-            summary << "   + Attribute-Handle:" << handle_str << '\n';
+            summary << "   + Attribute-Handle:" << handle_str << endl;
          }
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
