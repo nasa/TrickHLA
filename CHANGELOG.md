@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Reduced the scope of variables.
+- Reduced the scope of local variables.
 
 
 ## [v3.2.1] - 2026-03-02
