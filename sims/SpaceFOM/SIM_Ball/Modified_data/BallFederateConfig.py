@@ -58,7 +58,7 @@ class BallFederateConfig( SpaceFOMFederateConfig2 ):
                                         thla_federation_name = federation_name,
                                         thla_federate_name   = federate_name,
                                         thla_enabled         = enabled,
-                                        FOMs_path            = 'FOMs/SpaceFOM/' )
+                                        thla_FOMs_path       = 'FOMs/SpaceFOM/' )
 
       # Add in required Ball FOM modules.
       self.add_FOM_module( 'FOMs/BallFOM.xml' )
@@ -82,7 +82,9 @@ class BallFederateConfig( SpaceFOMFederateConfig2 ):
 
       # Must specify the Least Common Time Step for all federates in the
       # federation execution.
-      self.set_least_common_time_step( 0.10 )
+      # NOTE: This needs to be set AFTER the Master role is set.  Only the
+      # Master federate can set the LCTS for a SpaceFOM simulation.
+      #self.set_least_common_time_step( 0.10 )
 
       # Configure the federate time management.
       self.set_time_regulating( True )

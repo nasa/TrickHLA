@@ -1,8 +1,8 @@
 ##############################################################################
 #
 # @file RUN_ball2/input.py
-# @ingroup TrickHLA
-# @brief A configuration input class for SIM_Ball_HLA.
+# @ingroup SpaceFOM
+# @brief A configuration input class for SpaceFOM SIM_Ball example.
 # 
 # This is a Trick Python input file class using the TrickHLA base
 # for configuring the Ball simulation with HLA.
@@ -22,7 +22,7 @@
 #
 # @revs_title
 # @revs_begin
-# @rev_entry{ Edwin Z. Crues, NASA JSC, TrickHLA, February 2026, --, Initial version. }
+# @rev_entry{ Edwin Z. Crues, NASA JSC, TrickHLA, March 2026, --, Initial version. }
 # @revs_end
 #
 ##############################################################################
@@ -55,10 +55,16 @@ from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
 from Modified_data.BallFederateConfig import BallFederateConfig
 
 # Import the Ball HLA Object Configuration function.
-from Modified_data.HLA_ball_config import *
+#from Modified_data.HLA_ball_config import *
+from TrickHLA_data.SpaceFOM.TestRefFrameTree import *
+
+# Import the Ball HLA Object Configuration function.
+#from Modified_data.HLA_ball_config import *
+from Modified_data.BallObject import *
 
 # Import the Wall HLA Object Configuration function.
-from Modified_data.HLA_walls_config import *
+#from Modified_data.HLA_walls_config import *
+from Modified_data.WallObject import *
 
 
 #---------------------------------------------------------------------------
@@ -155,42 +161,98 @@ TrickDataRecordingGroup.initialize_groups()
 ball_fed_config = BallFederateConfig( 
    thla            = THLA,
    thla_init       = THLA_INIT,
-   federate_name   = 'Ball2-Federate',
+   federate_name   = 'Ball 2 Sim',
    federation_name = 'BallFederation',
    enabled         = True )
 
+# Check to see if we need to fix the Trick variable server address.
+ball_fed_config.fix_var_server_source_address()
+
+# Set the TrickHLA debug reporting level.
+#federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_2_TRACE )
+
+# Configure this federate SpaceFOM roles for this federate.
+ball_fed_config.set_master_role( False )  # This is NOT the Master federate.
+ball_fed_config.set_pacing_role( False )  # This is NOT the Pacing federate.
+ball_fed_config.set_RRFP_role( False )    # This is NOT the Root Reference Frame Publisher.
+
+# Only the Master federate can set the LCTS in a SpaceFOM federate!
+# This call only sticks after the Master role is set!
+if ball_fed_config.is_master:
+   ball_fed_config.set_least_common_time_step( 0.10 )
+
+#
 # Add in known required federates.
+#
 ball_fed_config.add_known_federate( True, str( ball_fed_config.federate.name ) )
-ball_fed_config.add_known_federate( True, 'Ball1-Federate' )
-ball_fed_config.add_known_federate( True, 'Ball3-Federate' )
+ball_fed_config.add_known_federate( True, 'Ball 1 Sim' )
+ball_fed_config.add_known_federate( True, 'Ball 3 Sim' )
 
-# Allocate the federate HLA objects: Walls + number of Balls.
-THLA.manager.obj_count = ensemble.num_balls + 1
-THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 'TrickHLA::Object' )
-
-#
+#...........................................................................
 # Configure the Wall HLA data.
-#
-HLA_walls_config( THLA.manager.objects[0], 'walls_hla', 'walls', walls_hla.packing, False )
+#...........................................................................
+walls_config = WallsObject( 
+   create_walls_object          = False,
+   walls_instance_name          = 'walls',
+   walls_S_define_instance      = walls_hla.packing,
+   walls_S_define_instance_name = 'walls_hla.packing' )
+ball_fed_config.add_fed_object( walls_config )
 
-#
-# Configure the HLA data for each Ball.
-#
-HLA_ball_config( THLA.manager.objects[1], 'ball1_hla', ball1.state.name, ball1_hla.packing, False )
-HLA_ball_config( THLA.manager.objects[2], 'ball2_hla', ball2.state.name, ball2_hla.packing, True )
-HLA_ball_config( THLA.manager.objects[3], 'ball3_hla', ball3.state.name, ball3_hla.packing, False )
+#...........................................................................
+# Configure the HLA data for each Ball and add them to the list of managed
+# objects.
+#...........................................................................
+ball1_config = BallObject( 
+   create_ball_object          = False,
+   ball_instance_name          = str(ball1.state.name),
+   ball_S_define_instance      = ball1_hla.packing,
+   ball_S_define_instance_name = 'ball1_hla.packing' )
+ball_fed_config.add_fed_object( ball1_config )
 
-# 
-# Show or hide the TrickHLA debug messages.
-#
-THLA.federate.debug_level = trick.DEBUG_LEVEL_3_TRACE
+ball2_config = BallObject( 
+   create_ball_object          = True,
+   ball_instance_name          = str(ball2.state.name),
+   ball_S_define_instance      = ball2_hla.packing,
+   ball_S_define_instance_name = 'ball2_hla.packing' )
+ball_fed_config.add_fed_object( ball2_config )
+
+ball3_config = BallObject( 
+   create_ball_object          = False,
+   ball_instance_name          = str(ball3.state.name),
+   ball_S_define_instance      = ball3_hla.packing,
+   ball_S_define_instance_name = 'ball3_hla.packing' )
+ball_fed_config.add_fed_object( ball3_config )
 
 
-#---------------------------------------------------------------------------
+#...........................................................................
+# Set up a trivial test reference frame tree.
+#...........................................................................
+test_frame_tree = TestFrameTree(
+   federate_config    = ball_fed_config,
+   test_tree_sim_obj  = ref_frame_tree,
+   root_frame_sim_obj = root_ref_frame,
+   leaf_frame_sim_obj = leaf_ref_frame,
+   tree_debug         = False )
+
+
+#...........................................................................
+# Add the HLA SimObjects associated with this federate.
+# This is really only useful for turning on and off HLA objects.
+#...........................................................................
+ball_fed_config.add_sim_object( THLA )
+ball_fed_config.add_sim_object( THLA_INIT )
+ball_fed_config.add_sim_object( ref_frame_tree )
+ball_fed_config.add_sim_object( root_ref_frame )
+ball_fed_config.add_sim_object( leaf_ref_frame )
+ball_fed_config.add_sim_object( ball1_hla )
+ball_fed_config.add_sim_object( ball2_hla )
+ball_fed_config.add_sim_object( ball3_hla )
+
+
+#...........................................................................
 # Make sure that the federate configuration object is initialized.
-#---------------------------------------------------------------------------
-ball_fed_config.run_duration( run_duration )
-# ball_fed_config.disable()
+#...........................................................................
 ball_fed_config.initialize()
 
 

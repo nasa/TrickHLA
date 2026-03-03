@@ -1,7 +1,7 @@
 ##############################################################################
 #
 # @file RUN_test/input.py
-# @ingroup TrickHLA
+# @ingroup SpaceFOM
 # @brief A configuration input class for SIM_Ball_HLA.
 # 
 # This is a Trick Python input file class using the TrickHLA base
@@ -54,8 +54,9 @@ from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
 # Import the Ball HLA Federate Configuration class.
 from Modified_data.BallFederateConfig import BallFederateConfig
 
-# Load the SpaceFOM specific reference frame configuration object.
-from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
+# Import the Ball HLA Object Configuration function.
+#from Modified_data.HLA_ball_config import *
+from TrickHLA_data.SpaceFOM.TestRefFrameTree import *
 
 # Import the Ball HLA Object Configuration function.
 #from Modified_data.HLA_ball_config import *
@@ -171,25 +172,26 @@ ball_fed_config.fix_var_server_source_address()
 
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
-ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_2_TRACE )
 
 # Configure this federate SpaceFOM roles for this federate.
 ball_fed_config.set_master_role( True )  # This is the Master federate.
 ball_fed_config.set_pacing_role( True )  # This is the Pacing federate.
 ball_fed_config.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 
-# Setup Time Management parameters.
-ball_fed_config.set_time_regulating( True )
-ball_fed_config.set_time_constrained( True )
+# Only the Master federate can set the LCTS in a SpaceFOM federate!
+# This call only sticks after the Master role is set!
+if ball_fed_config.is_master:
+   ball_fed_config.set_least_common_time_step( 0.10 )
 
 #
 # Add in known required federates.
 #
 ball_fed_config.add_known_federate( True, str( ball_fed_config.federate.name ) )
 
-#
+#...........................................................................
 # Configure the Wall HLA data.
-#
+#...........................................................................
 walls_config = WallsObject( 
    create_walls_object          = True,
    walls_instance_name          = 'walls',
@@ -197,9 +199,10 @@ walls_config = WallsObject(
    walls_S_define_instance_name = 'walls_hla.packing' )
 ball_fed_config.add_fed_object( walls_config )
 
-#
-# Configure the HLA data for each Ball and add them to the list of managed objects.
-#
+#...........................................................................
+# Configure the HLA data for each Ball and add them to the list of managed
+# objects.
+#...........................................................................
 ball1_config = BallObject( 
    create_ball_object          = True,
    ball_instance_name          = str(ball1.state.name),
@@ -221,68 +224,25 @@ ball3_config = BallObject(
    ball_S_define_instance_name = 'ball3_hla.packing' )
 ball_fed_config.add_fed_object( ball3_config )
 
-# 
-# Show or hide the TrickHLA debug messages.
-#
-THLA.federate.debug_level = trick.DEBUG_LEVEL_3_TRACE
 
-#---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
-#---------------------------------------------------------------------------
-root_frame = SpaceFOMRefFrameObject( 
-   create_frame_object          = ball_fed_config.is_RRFP,
-   frame_instance_name          = 'RootFrame',
-   frame_S_define_instance      = root_ref_frame.frame_packing,
-   frame_S_define_instance_name = 'root_ref_frame.frame_packing',
-   frame_conditional            = root_ref_frame.conditional )
+#...........................................................................
+# Set up a trivial test reference frame tree.
+#...........................................................................
+test_frame_tree = TestFrameTree(
+   federate_config    = ball_fed_config,
+   test_tree_sim_obj  = ref_frame_tree,
+   root_frame_sim_obj = root_ref_frame,
+   leaf_frame_sim_obj = leaf_ref_frame,
+   tree_debug         = False )
 
-# Set the debug flag for the root reference frame.
-root_ref_frame.frame_packing.debug = False
 
-# Set the root frame for the federate.
-ball_fed_config.set_root_frame( root_frame )
-
-# Set the lag compensation parameters.
-# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
-
-#---------------------------------------------------------------------------
-# Set up an alternate vehicle reference frame object for discovery.
-#---------------------------------------------------------------------------
-frame_A = SpaceFOMRefFrameObject( 
-   create_frame_object          = True,
-   frame_instance_name          = 'FrameA',
-   frame_S_define_instance      = leaf_ref_frame.frame_packing,
-   frame_S_define_instance_name = 'leaf_ref_frame.frame_packing',
-   parent_S_define_instance     = root_ref_frame.frame_packing,
-   parent_name                  = 'RootFrame',
-   frame_conditional            = leaf_ref_frame.conditional,
-   frame_lag_comp               = leaf_ref_frame.lag_compensation,
-   frame_ownership              = leaf_ref_frame.ownership_handler,
-   frame_deleted                = leaf_ref_frame.deleted_callback )
-
-# Set the debug flag for the root reference frame.
-leaf_ref_frame.frame_packing.debug = False
-
-# Add this reference frame to the list of managed object.
-ball_fed_config.add_fed_object( frame_A )
-
-# Set the lag compensation parameters.
-# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
-leaf_ref_frame.lag_compensation.debug = False
-leaf_ref_frame.lag_compensation.set_integ_tolerance( 1.0e-6 )
-leaf_ref_frame.lag_compensation.set_integ_dt( 0.025 )
-
-# frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
-frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
-
-#---------------------------------------------------------------------------
+#...........................................................................
 # Add the HLA SimObjects associated with this federate.
 # This is really only useful for turning on and off HLA objects.
-#---------------------------------------------------------------------------
+#...........................................................................
 ball_fed_config.add_sim_object( THLA )
 ball_fed_config.add_sim_object( THLA_INIT )
+ball_fed_config.add_sim_object( ref_frame_tree )
 ball_fed_config.add_sim_object( root_ref_frame )
 ball_fed_config.add_sim_object( leaf_ref_frame )
 ball_fed_config.add_sim_object( ball1_hla )
@@ -290,9 +250,9 @@ ball_fed_config.add_sim_object( ball2_hla )
 ball_fed_config.add_sim_object( ball3_hla )
 
 
-#---------------------------------------------------------------------------
+#...........................................................................
 # Make sure that the federate configuration object is initialized.
-#---------------------------------------------------------------------------
+#...........................................................................
 # ball_fed_config.disable()
 ball_fed_config.initialize()
 
