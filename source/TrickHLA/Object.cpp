@@ -1402,7 +1402,6 @@ Waiting on reservation of Object Instance Name '%s'.\n",
    }
 
    Federate    *federate = get_federate();
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -1416,7 +1415,7 @@ Waiting on reservation of Object Instance Name '%s'.\n",
       if ( !name_registered ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -1665,7 +1664,6 @@ void Object::wait_for_object_registration()
    }
 
    Federate    *federate = get_federate();
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -1679,7 +1677,7 @@ void Object::wait_for_object_registration()
       if ( !is_instance_handle_valid() ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -4277,7 +4275,6 @@ object '%s' because of error: '%s'\n",
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       Federate    *federate = get_federate();
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
       bool         acquired;
@@ -4305,7 +4302,7 @@ object '%s' because of error: '%s'\n",
          if ( !acquired ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -4351,7 +4348,6 @@ void Object::handle_pulled_ownership_at_init()
    }
 
    Federate    *federate = get_federate();
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
    bool         requested;
@@ -4379,7 +4375,7 @@ void Object::handle_pulled_ownership_at_init()
       if ( !requested ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5170,7 +5166,6 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
 
       Federate *federate = get_federate();
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -5199,7 +5194,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
          if ( !divest_req_flag ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -5248,7 +5243,6 @@ void Object::handle_pushed_ownership_at_init()
 
    Federate *federate = get_federate();
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
    bool         acquired;
@@ -5274,7 +5268,7 @@ void Object::handle_pushed_ownership_at_init()
       if ( !acquired ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5723,7 +5717,6 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
       Federate *federate = get_federate();
 
       int          i;
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -5802,7 +5795,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
          if ( ownership_counter < (int)attr_hdl_set.size() ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();

@@ -689,7 +689,6 @@ void ExecutionControl::role_determination_process()
       }
 
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -728,7 +727,7 @@ void ExecutionControl::role_determination_process()
             if ( !this->late_joiner_determined ) { // cppcheck-suppress [knownConditionTrueFalse]
 
                // To be more efficient, we get the time once and share it.
-               wallclock_time = sleep_timer.time();
+               int64_t wallclock_time = sleep_timer.time();
 
                if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
@@ -899,7 +898,6 @@ void ExecutionControl::designated_late_joiner_init_process()
    }
 
    bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
-   int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -917,7 +915,7 @@ void ExecutionControl::designated_late_joiner_init_process()
       if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -2931,7 +2929,6 @@ void ExecutionControl::receive_root_ref_frame()
    // Make sure we have at least one piece of root reference frame data we can receive.
    if ( rrf_object->any_remotely_owned_subscribed_init_attribute() ) {
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -2946,7 +2943,7 @@ void ExecutionControl::receive_root_ref_frame()
          if ( !rrf_object->is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();

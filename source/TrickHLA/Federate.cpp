@@ -1411,7 +1411,7 @@ string Federate::wait_for_required_federates_to_join()
    // Subscribe to Federate names using MOM interface and request an update.
    ask_MOM_for_federate_names();
 
-   int i, req_fed_cnt;
+   int i;
    int joined_fed_cnt = 0;
 
    bool print_summary                = false;
@@ -1419,7 +1419,6 @@ string Federate::wait_for_required_federates_to_join()
 
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -1448,7 +1447,7 @@ string Federate::wait_for_required_federates_to_join()
             joined_fed_cnt = joined_federate_names.size();
 
             // Count the number of joined Required federates.
-            req_fed_cnt = 0;
+            int req_fed_cnt = 0;
             for ( i = 0; i < (int)joined_federate_names.size(); ++i ) {
                if ( is_required_federate( joined_federate_names[i] ) ) {
                   ++req_fed_cnt;
@@ -1529,7 +1528,7 @@ string Federate::wait_for_required_federates_to_join()
       if ( !this->all_federates_joined ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -2660,7 +2659,6 @@ void Federate::setup_checkpoint()
 
          request_federation_save();
 
-         int64_t      wallclock_time;
          SleepTimeout print_timer( this->wait_status_time );
          SleepTimeout sleep_timer;
 
@@ -2675,7 +2673,7 @@ void Federate::setup_checkpoint()
             if ( !this->start_to_save ) {
 
                // To be more efficient, we get the time once and share it.
-               wallclock_time = sleep_timer.time();
+               int64_t wallclock_time = sleep_timer.time();
 
                if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
@@ -2917,7 +2915,6 @@ void Federate::setup_restore()
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
       initiate_restore_announce( restore_name_str );
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -2932,7 +2929,7 @@ void Federate::setup_restore()
          if ( !this->start_to_restore ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -4535,7 +4532,6 @@ void Federate::ask_MOM_for_auto_provide_setting()
    requestedAttributes.insert( MOM_HLAautoProvide_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -4550,7 +4546,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
       if ( this->auto_provide_setting < 0 ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5544,7 +5540,6 @@ void Federate::wait_for_federation_restore_begun()
                        __LINE__ );
    }
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5558,7 +5553,7 @@ void Federate::wait_for_federation_restore_begun()
       if ( !this->restore_begun ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5594,7 +5589,6 @@ void Federate::wait_until_federation_is_ready_to_restore()
                        __LINE__ );
    }
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5608,7 +5602,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
       if ( !this->start_to_restore ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5669,7 +5663,6 @@ string Federate::wait_for_federation_restore_to_complete()
       return return_string;
    }
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5693,7 +5686,7 @@ string Federate::wait_for_federation_restore_to_complete()
          if ( !this->restore_completed ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -5743,7 +5736,6 @@ void Federate::wait_for_restore_request_callback()
                        __LINE__ );
    }
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5759,7 +5751,7 @@ void Federate::wait_for_restore_request_callback()
            && !has_restore_process_restore_request_succeeded() ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5795,7 +5787,6 @@ void Federate::wait_for_restore_status_to_complete()
                        __LINE__ );
    }
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5809,7 +5800,7 @@ void Federate::wait_for_restore_status_to_complete()
       if ( !this->restore_request_complete ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5845,7 +5836,6 @@ void Federate::wait_for_save_status_to_complete()
                        __LINE__ );
    }
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5859,7 +5849,7 @@ void Federate::wait_for_save_status_to_complete()
       if ( !this->save_request_complete ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5895,7 +5885,6 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
                        __LINE__ );
    }
 
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5918,7 +5907,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
       if ( !this->federation_restore_failed_callback_complete ) {
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -6508,7 +6497,6 @@ void Federate::restore_federate_handles_from_MOM()
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
    bool         all_found = false;
-   int64_t      wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -6534,7 +6522,7 @@ void Federate::restore_federate_handles_from_MOM()
          sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();

@@ -943,7 +943,6 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
    // sleeps, which adds more wait latency.
    if ( !all_ready_to_send ) {
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -993,7 +992,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
          if ( !all_ready_to_send ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1067,7 +1066,6 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
    // sleep. This will have more wait latency.
    if ( !sent_data ) {
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -1089,7 +1087,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
          if ( !sent_data ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1163,7 +1161,6 @@ void TrickThreadCoordinator::wait_to_receive_data()
    // See if the main thread has announced it has received data.
    if ( !ready_to_receive ) {
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -1185,7 +1182,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
          if ( !ready_to_receive ) {
 
             // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            int64_t wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
