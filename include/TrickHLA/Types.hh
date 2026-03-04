@@ -116,11 +116,11 @@ typedef enum {
    CONFIG_BLOCKING_IO                   = 0x0020, ///< Blocking I/O with Receiver Order (RO) data updates.
    CONFIG_INITIALIZE_AND_BLOCKING_IO    = CONFIG_INITIALIZE + CONFIG_BLOCKING_IO,
    CONFIG_MAX_VALUE                     = ( CONFIG_NONE
-                        + CONFIG_INITIALIZE
-                        + CONFIG_INTERMITTENT
-                        + CONFIG_CYCLIC
-                        + CONFIG_ZERO_LOOKAHEAD
-                        + CONFIG_BLOCKING_IO ) ///< Maximum configuration bit field value.
+                                            + CONFIG_INITIALIZE
+                                            + CONFIG_INTERMITTENT
+                                            + CONFIG_CYCLIC
+                                            + CONFIG_ZERO_LOOKAHEAD
+                                            + CONFIG_BLOCKING_IO ) ///< Maximum configuration bit field value.
 
 } DataUpdateEnum;
 
