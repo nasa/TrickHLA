@@ -45,15 +45,6 @@ class CheckpointConversionBase
    friend void init_attrTrickHLA__CheckpointConversionBase();
 
   public:
-   //
-   // Public constructors and destructor.
-   //
-   /*! @brief Don't allowdDefault constructor. */
-   CheckpointConversionBase()
-   {
-      return;
-   }
-
    /*! @brief Destructor for the TrickHLA CheckpointConversionBase class. */
    virtual ~CheckpointConversionBase()
    {
