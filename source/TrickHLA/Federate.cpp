@@ -108,6 +108,8 @@ extern Trick::CheckPointRestart *the_cpr;
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
+#include "RTI/encoding/EncodingExceptions.h"
+#include "RTI/encoding/HLAvariableArray.h"
 #include "RTI/time/HLAinteger64Time.h"
 
 #if defined( IEEE_1516_2025 )
@@ -852,6 +854,147 @@ bool Federate::is_federate_instance_id(
    return ( joined_federate_name_map.find( id ) != joined_federate_name_map.end() );
 }
 
+/*! @brief Decode the specified encoded Federate Handle.
+ *  @return Federate Handle.
+ *  @param enc_handle encoded Federate Handle */
+FederateHandle Federate::decode_federate_handle(
+   VariableLengthData const &enc_handle )
+{
+   // Handles defined by the MOM interface have a an encoding of
+   // HLAvariableArray, which is different than the Handles returned
+   // by the  RTI-ambassador with the encoding of VariableLengthData.
+   //
+   // From IEEE 1516.1-2025:
+   // Table 15 — MOM array data type table, page 327
+   // Name: HLAfederateHandle
+   // Element Type: HLAbyte
+   // Cardinality: Dynamic
+   // Encoding: HLAvariableArray
+   //
+   // Table 26 — Noncomplex C++ encoding helpers, page 380
+   // HLA data representation: HLAfederateHandle
+   // Encoding helper class: HLAfederateHandle
+   // C++ type/macro: VariableLengthData
+   //
+   // Table 28 — Handle C++ encoding helpers, page 382
+   // C++ handle representation FederateHandle
+   // Encoding helper class: HLAfederateHandle
+   // HLA data representation: HLAfederateHandle
+
+   // Need an encoded handle that is of the VariableLengthData form.
+   VariableLengthData encoded_fed_handle;
+
+   if ( enc_handle.size() > 4 ) {
+      // MOM defined Handle so convert to RTI-ambassador encoded handle.
+
+      // The HLAfederateHandle has the HLAhandle data type which has the
+      // HLAvariableArray encoding with an HLAbyte element type.
+      //  0 0 0 4 0 0 0 2
+      //  ---+--- | | | |
+      //     |    ---+---
+      // #elem=4  fedID = 2
+      //
+      // First 4 bytes (first 32-bit integer) is the number of elements
+      // in the HLAvariableArray.
+      unsigned char const *data = static_cast< unsigned char const * >( enc_handle.data() );
+
+      // Point to the start of the federate handle ID in the encoded data.
+      encoded_fed_handle.setData( data + 4, enc_handle.size() - 4 );
+
+   } else if ( enc_handle.size() == 4 ) {
+      // RTI-ambassador defined Handle so use as is.
+      encoded_fed_handle = enc_handle;
+   } else {
+      ostringstream errmsg;
+      errmsg << "Federate::decode_federate_handle():"
+             << __LINE__ << " ERROR: Unexpected number of bytes in the"
+             << " Encoded FederateHandle because the byte count is "
+             << enc_handle.size() << ", but expected 4 or more bytes!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      exit( 1 );
+   }
+
+   FederateHandle fed_handle;
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   try {
+      fed_handle = RTI_ambassador->decodeFederateHandle( encoded_fed_handle );
+   } catch ( CouldNotDecode const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      ostringstream errmsg;
+      errmsg << "Federate::decode_federate_handle():" << __LINE__
+             << " ERROR: When decoding 'FederateHandle': EXCEPTION: CouldNotDecode" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      exit( 1 );
+   } catch ( FederateNotExecutionMember const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      ostringstream errmsg;
+      errmsg << "Federate::decode_federate_handle():" << __LINE__
+             << " ERROR: When decoding 'FederateHandle': EXCEPTION: FederateNotExecutionMember" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      exit( 1 );
+   } catch ( NotConnected const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+      ostringstream errmsg;
+      errmsg << "Federate::decode_federate_handle():" << __LINE__
+             << " ERROR: When decoding 'FederateHandle': EXCEPTION: NotConnected" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      set_connection_lost();
+   } catch ( RTIinternalError const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+
+      ostringstream errmsg;
+      errmsg << "Federate::decode_federate_handle():" << __LINE__
+             << " ERROR: When decoding 'FederateHandle': EXCEPTION: "
+             << "RTIinternalError: %s" << rti_err_msg << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      exit( 1 );
+   }
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+#if 0 // TEMP
+   // DEBUG code
+   VariableLengthData encoded_fed2 = fed_handle.encode(); // TEMP
+   FederateHandle     fed2_handle  = RTI_ambassador->decodeFederateHandle( encoded_fed2 ); // TEMP
+   string             fed1_id, fed2_id; // TEMP
+   StringUtilities::to_string( fed1_id, fed_handle ); // TEMP
+   StringUtilities::to_string( fed2_id, fed2_handle ); // TEMP
+   ostringstream errmsg; // TEMP
+   errmsg << "Federate::decode_federate_handle():" << __LINE__ << endl
+          << " encoded_handle.size()=" << enc_handle.size() << endl
+          << " fed_handle=" << fed1_id << endl
+          << " encoded_fed2.size()=" << encoded_fed2.size() << endl
+          << " fed2_handle=" << fed2_id << endl; // TEMP
+   message_publish( MSG_INFO, errmsg.str().c_str() ); // TEMP
+#endif // TEMP
+
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      string fed_id;
+      StringUtilities::to_string( fed_id, fed_handle );
+      message_publish( MSG_NORMAL, "Federate::decode_federate_handle():%d Federate-Handle:%s\n",
+                       __LINE__, fed_id.c_str() );
+   }
+
+   return fed_handle;
+}
+
 void Federate::set_MOM_HLAfederate_instance_attributes(
    ObjectInstanceHandle const    &id,
    AttributeHandleValueMap const &values )
@@ -914,101 +1057,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    // Determine if we have a federate handle attribute.
    if ( attr_iter != values.end() ) {
 
-      // Do a sanity check on the overall encoded data size.
-      if ( attr_iter->second.size() != 8 ) {
-         ostringstream errmsg;
-         errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
-                << __LINE__ << " ERROR: Unexpected number of bytes in the"
-                << " Encoded FederateHandle because the byte count is "
-                << attr_iter->second.size()
-                << " but we expected 8!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-         exit( 1 );
-      }
-
-      // The HLAfederateHandle has the HLAhandle datatype which has the
-      // HLAvariableArray encoding with an HLAbyte element type.
-      //  0 0 0 4 0 0 0 2
-      //  ---+--- | | | |
-      //     |    ---+---
-      // #elem=4  fedID = 2
-      //
-      // First 4 bytes (first 32-bit integer) is the number of elements.
-      // Decode size from Big Endian encoded integer.
-      unsigned char const *data = static_cast< unsigned char const * >( attr_iter->second.data() );
-
-      int size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                    ? Utilities::byteswap_int( *reinterpret_cast< int const * >( data ) )
-                    : *reinterpret_cast< int const * >( data );
-      if ( size != 4 ) {
-         ostringstream errmsg;
-         errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
-                << __LINE__ << " ERROR: FederateHandle size is "
-                << size << " but expected it to be 4!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-         exit( 1 );
-      }
-
-      // Point to the start of the federate handle ID in the encoded data.
-      data += 4;
-
-      VariableLengthData encoded_fed_handle;
-      encoded_fed_handle.setData( data, size );
-
-      FederateHandle fed_handle;
-
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-      try {
-         fed_handle = RTI_ambassador->decodeFederateHandle( encoded_fed_handle );
-      } catch ( CouldNotDecode const &e ) {
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         ostringstream errmsg;
-         errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: CouldNotDecode" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-         exit( 1 );
-      } catch ( FederateNotExecutionMember const &e ) {
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         ostringstream errmsg;
-         errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: FederateNotExecutionMember" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-         exit( 1 );
-      } catch ( NotConnected const &e ) {
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-         ostringstream errmsg;
-         errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: NotConnected" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-         set_connection_lost();
-      } catch ( RTIinternalError const &e ) {
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-
-         ostringstream errmsg;
-         errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << " ERROR: When decoding 'FederateHandle': EXCEPTION: "
-                << "RTIinternalError: %s" << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-         exit( 1 );
-      }
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+      FederateHandle fed_handle = decode_federate_handle( attr_iter->second );
 
       // Add this FederateHandle to the set of joined federates.
       joined_federate_handles.insert( fed_handle );
@@ -1017,8 +1066,8 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          string id_str, fed_id;
          StringUtilities::to_string( id_str, id );
          StringUtilities::to_string( fed_id, fed_handle );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s num_bytes:%d Federate-ID:%s\n",
-                          __LINE__, id_str.c_str(), size, fed_id.c_str() );
+         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Federate-ID:%s\n",
+                          __LINE__, id_str.c_str(), fed_id.c_str() );
       }
 
       // If this federate is running, add the new entry into running_feds.
@@ -6368,57 +6417,63 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
    for ( attr_iter = values.begin(); attr_iter != values.end(); ++attr_iter ) {
 
       if ( attr_iter->first == MOM_HLAautoProvide_handle ) {
+
          // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
-         int const *data = static_cast< int const * >( attr_iter->second.data() );
-
-         int auto_provide_state = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                                     ? Utilities::byteswap_int( data[0] )
-                                     : data[0];
-
+         try {
+            HLAinteger32BE auto_provide_encoder;
+            auto_provide_encoder.decode( attr_iter->second );
+            this->auto_provide_setting = auto_provide_encoder.get();
+         } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
+            string rti_err_msg;
+            StringUtilities::to_string( rti_err_msg, e.what() );
+            ostringstream errmsg;
+            errmsg << "Federate::set_federation_instance_attributes():" << __LINE__
+                   << " ERROR: Encoder exception '" << rti_err_msg << "'"
+                   << " trying to decode auto-provide switch setting"
+                   << " (HLAautoProvide)!" << endl;
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d Auto-Provide:%s value:%d\n",
-                             __LINE__, ( ( auto_provide_state != 0 ) ? "Yes" : "No" ),
-                             auto_provide_state );
+                             __LINE__, ( ( auto_provide_setting != 0 ) ? "Yes" : "No" ),
+                             auto_provide_setting );
          }
-
-         this->auto_provide_setting = auto_provide_state;
 
       } else if ( attr_iter->first == MOM_HLAfederatesInFederation_handle ) {
 
-         // Extract the size of the data and the data bytes.
-         int const *data = static_cast< int const * >( attr_iter->second.data() );
+         // HLAfederatesInFederation has a data type of HLAfederateReferenceList,
+         // which is an HLAvariableArray of HLAfederateReferences.
+         // HLAfederateReference is a HLAfederateHandle representation that is
+         // an HLAvariableArray of HLAbyte elements.
+         try {
+            HLAbyte          byte_proto;
+            HLAvariableArray fed_handle_proto( byte_proto );
+            HLAvariableArray feds_list( fed_handle_proto );
 
-         // The HLAfederatesInFederation has the HLAhandle datatype which has
-         // the HLAvariableArray encoding with an HLAbyte element type. The
-         // entry is the number of elements, followed by that number of
-         // HLAvariableArrays.
-         //  0 0 0 2 0 0 0 4 0 0 0 3 0 0 0 4 0 0 0 2
-         //  ---+--- | | | | ---+--- | | | | ---+---
-         //     |    ---+---    |    ---+---    |
-         //   count   size   id #1    size   id #2
-         //
-         // The first 4 bytes (first 32-bit integer) is the number
-         // of elements. WE ARE INTERESTED ONLY IN THIS VALUE!
-         //
-         // Determine if we need to byteswap or not since the FederateHandle
-         // is in Big Endian. First 4 bytes (first 32-bit integer) is the number
-         // of elements.
-         int num_elements = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                               ? Utilities::byteswap_int( data[0] )
-                               : data[0];
+            feds_list.decode( attr_iter->second );
 
-         // save the count into running_feds_count
-         this->running_feds_count = num_elements;
+            // Since this list of federate id's is current, there is no reason
+            // to thrash the RTI and chase down each federate handle ID and
+            // convert into a name. The wait_for_required_federates_to_join()
+            // method already queries the names from the RTI for all required
+            // federates. We will eventually utilize the same MOM interface to
+            // rebuild this list.
+            this->running_feds_count = feds_list.size();
 
-         // Since this list of federate id's is current, there is no reason to
-         // thrash the RTI and chase down each federate id into a name. The
-         // wait_for_required_federates_to_join() method already queries the
-         // names from the RTI for all required federates. We will eventually
-         // utilize the same MOM interface to rebuild this list...
+         } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
+            string rti_err_msg;
+            StringUtilities::to_string( rti_err_msg, e.what() );
+            ostringstream errmsg;
+            errmsg << "Federate::set_federation_instance_attributes():" << __LINE__
+                   << " ERROR: Encoder exception '" << rti_err_msg << "'"
+                   << " trying to decode HLAfederatesInFederation variable array!"
+                   << endl;
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d Found a FederationID list with %d elements.\n",
-                             __LINE__, num_elements );
+                             __LINE__, running_feds_count );
          }
       }
    }
@@ -6565,97 +6620,7 @@ void Federate::rebuild_federate_handles(
    // Loop through all federate handles
    for ( attr_iter = values.begin(); attr_iter != values.end(); ++attr_iter ) {
 
-      // Do a sanity check on the overall encoded data size.
-      if ( attr_iter->second.size() != 8 ) {
-         ostringstream errmsg;
-         errmsg << "Federate::rebuild_federate_handles():"
-                << __LINE__ << " ERROR: Unexpected number of bytes in the"
-                << " Encoded FederateHandle because the byte count is "
-                << attr_iter->second.size()
-                << " but we expected 8!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-
-      // The HLAfederateHandle has the HLAhandle datatype which is has the
-      // HLAvariableArray encoding with an HLAbyte element type.
-      //  0 0 0 4 0 0 0 2
-      //  ---+--- | | | |
-      //     |    ---+---
-      // #elem=4  fedID = 2
-      //
-      // First 4 bytes (first 32-bit integer) is the number of elements.
-      // Decode size from Big Endian encoded integer.
-      unsigned char const *dataPtr = reinterpret_cast< unsigned char const * >( attr_iter->second.data() );
-
-      int size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                    ? Utilities::byteswap_int( *reinterpret_cast< int const * >( dataPtr ) )
-                    : *reinterpret_cast< int const * >( dataPtr );
-
-      if ( size != 4 ) {
-         ostringstream errmsg;
-         errmsg << "Federate::rebuild_federate_handles():"
-                << __LINE__ << " ERROR: FederateHandle size is "
-                << size << " but expected it to be 4!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-
-      // Point to the start of the federate handle ID in the encoded data.
-      dataPtr += 4;
-
-      VariableLengthData t;
-      t.setData( dataPtr, size );
-
-      FederateHandle tHandle;
-
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-      try {
-         tHandle = RTI_ambassador->decodeFederateHandle( t );
-      } catch ( CouldNotDecode const &e ) {
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         ostringstream errmsg;
-         errmsg << "Federate::rebuild_federate_handles():" << __LINE__
-                << " EXCEPTION: CouldNotDecode" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( FederateNotExecutionMember const &e ) {
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         ostringstream errmsg;
-         errmsg << "Federate::rebuild_federate_handles():" << __LINE__
-                << " EXCEPTION: FederateNotExecutionMember" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( NotConnected const &e ) {
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-         ostringstream errmsg;
-         errmsg << "Federate::rebuild_federate_handles():" << __LINE__
-                << " EXCEPTION: NotConnected" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-         set_connection_lost();
-      } catch ( RTIinternalError const &e ) {
-         // Macro to restore the saved FPU Control Word register value.
-         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-
-         ostringstream errmsg;
-         errmsg << "Federate::rebuild_federate_handles():" << __LINE__
-                << " EXCEPTION: RTIinternalError: %s" << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+      FederateHandle fed_handle = decode_federate_handle( attr_iter->second );
 
       // Concurrency critical code section because joined-federate state is changed
       // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
@@ -6666,15 +6631,15 @@ void Federate::rebuild_federate_handles(
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
          // Add this FederateHandle to the set of joined federates.
-         joined_federate_handles.insert( tHandle );
+         joined_federate_handles.insert( fed_handle );
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str, fed_id;
          StringUtilities::to_string( id_str, instance_hndl );
-         StringUtilities::to_string( fed_id, tHandle );
-         message_publish( MSG_NORMAL, "Federate::rebuild_federate_handles():%d Federate OID:%s num_bytes:%d Federate-ID:%s\n",
-                          __LINE__, id_str.c_str(), size, fed_id.c_str() );
+         StringUtilities::to_string( fed_id, fed_handle );
+         message_publish( MSG_NORMAL, "Federate::rebuild_federate_handles():%d Federate OID:%s Federate-ID:%s\n",
+                          __LINE__, id_str.c_str(), fed_id.c_str() );
       }
    }
 }

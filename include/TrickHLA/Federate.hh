@@ -723,6 +723,11 @@ class Federate : public TimeManagement
     *  @param id MOM HLAfederate instance ID. */
    bool is_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &id );
 
+   /*! @brief Decode the specified encoded Federate Handle.
+    *  @return Federate Handle.
+    *  @param encoded_handle encoded Federate Handle */
+   RTI1516_NAMESPACE::FederateHandle decode_federate_handle( RTI1516_NAMESPACE::VariableLengthData const &encoded_handle );
+
    //
    // MOM HLAfederate class and attributes.
    //
