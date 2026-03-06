@@ -1,4 +1,4 @@
-# SIM_Ball_HLA
+# SIM_Ball
 
 ---
 ### Building the Simulation
@@ -10,7 +10,7 @@ cd $TRICKHLA_HOME/models/Ball/graphics
 make
 ```
 
-In the SIM_Ball_HLA directory, type **trick-CP** to build the simulation executable. When it's complete, you should see:
+In the SIM_Ball directory, type **trick-CP** to build the simulation executable. When it's complete, you should see:
 
 ```
 Trick Build Process Complete
@@ -19,7 +19,7 @@ Trick Build Process Complete
 ---
 ### Running the Simulation
 
-In the SIM_Ball_HLA directory:
+In the SIM_Ball directory:
 
 Run federate for ball 1:
 
