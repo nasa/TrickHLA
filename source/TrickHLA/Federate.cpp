@@ -969,7 +969,7 @@ FederateHandle Federate::decode_federate_handle(
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-#if 0 // TEMP
+#if 0  // TEMP
    // DEBUG code
    VariableLengthData encoded_fed2 = fed_handle.encode(); // TEMP
    FederateHandle     fed2_handle  = RTI_ambassador->decodeFederateHandle( encoded_fed2 ); // TEMP
@@ -1045,7 +1045,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str;
          StringUtilities::to_string( id_str, id );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate OID:%s name:'%s' size:%d\n",
+         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Name:'%s' size:%d\n",
                           __LINE__, id_str.c_str(), federate_name_ws.c_str(),
                           (int)federate_name_ws.size() );
       }
@@ -1055,7 +1055,14 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    attr_iter = values.find( MOM_HLAfederate_handle );
 
    // Determine if we have a federate handle attribute.
-   if ( attr_iter != values.end() ) {
+   if ( attr_iter == values.end() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string id_str;
+         StringUtilities::to_string( id_str, id );
+         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d FederateHandle Not found for Federate-OID:%s\n",
+                          __LINE__, id_str.c_str() );
+      }
+   } else {
 
       FederateHandle fed_handle = decode_federate_handle( attr_iter->second );
 
@@ -1122,13 +1129,6 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                }
             }
          }
-      }
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string id_str;
-         StringUtilities::to_string( id_str, id );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d FederateHandle Not found for Federate OID:%s\n",
-                          __LINE__, id_str.c_str() );
       }
    }
 }
