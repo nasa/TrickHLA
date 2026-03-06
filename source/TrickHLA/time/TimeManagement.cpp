@@ -389,7 +389,7 @@ void TimeManagement::scale_trick_tics_to_HLA_base_time_multiplier()
       errmsg << "TimeManagement::scale_trick_tics_to_HLA_base_time_multiplier():" << __LINE__
              << " ERROR: Trick cannot represent the required time Tic value "
              << setprecision( 18 ) << time_res
-             << " in order to support the HLA base units of '"
+             << " in order to support the HLA base unit of '"
              << Int64BaseTime::get_base_unit()
              << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
