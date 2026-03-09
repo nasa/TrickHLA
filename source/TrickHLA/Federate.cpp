@@ -1032,7 +1032,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
       // Make sure that the federate name does not exist before adding.
       bool found = false;
-      for ( int i = 0; !found && ( i < (int)joined_federate_names.size() ); ++i ) {
+      for ( size_t i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
          if ( joined_federate_names[i] == federate_name_ws ) {
             found = true;
          }
@@ -1460,8 +1460,7 @@ string Federate::wait_for_required_federates_to_join()
    // Subscribe to Federate names using MOM interface and request an update.
    ask_MOM_for_federate_names();
 
-   int i;
-   int joined_fed_cnt = 0;
+   size_t joined_fed_cnt = 0;
 
    bool print_summary                = false;
    bool found_an_unrequired_federate = false;
@@ -1492,12 +1491,12 @@ string Federate::wait_for_required_federates_to_join()
 
          // Determine what federates have joined only if the joined federate
          // count has changed.
-         if ( joined_fed_cnt != (int)joined_federate_names.size() ) {
+         if ( joined_fed_cnt != joined_federate_names.size() ) {
             joined_fed_cnt = joined_federate_names.size();
 
             // Count the number of joined Required federates.
             int req_fed_cnt = 0;
-            for ( i = 0; i < (int)joined_federate_names.size(); ++i ) {
+            for ( size_t i = 0; i < joined_federate_names.size(); ++i ) {
                if ( is_required_federate( joined_federate_names[i] ) ) {
                   ++req_fed_cnt;
                } else {
@@ -1536,7 +1535,7 @@ string Federate::wait_for_required_federates_to_join()
 
             // Summarize the required federates first.
             int cnt = 0;
-            for ( i = 0; i < known_feds_count; ++i ) {
+            for ( int i = 0; i < known_feds_count; ++i ) {
                ++cnt;
                if ( known_feds[i].required ) {
                   if ( is_joined_federate( known_feds[i].name ) ) {
@@ -1554,7 +1553,7 @@ string Federate::wait_for_required_federates_to_join()
             }
 
             // Summarize all the remaining non-required joined federates.
-            for ( i = 0; i < (int)joined_federate_names.size(); ++i ) {
+            for ( size_t i = 0; i < joined_federate_names.size(); ++i ) {
                if ( !is_required_federate( joined_federate_names[i] ) ) {
                   ++cnt;
 
@@ -1635,7 +1634,7 @@ string Federate::wait_for_required_federates_to_join()
       errmsg << names << endl
              << "\tThe required federates are: ";
       names = "";
-      for ( i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_feds_count; ++i ) {
          if ( known_feds[i].required ) {
             names += known_feds[i].name;
             names += ", ";
@@ -1684,23 +1683,23 @@ void Federate::initialize_MOM_handles()
       this->MOM_HLAfederation_class_handle = RTI_ambassador->getObjectClassHandle( L"HLAmanager.HLAfederation" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')\n",
                        __LINE__ );
    }
@@ -1711,28 +1710,28 @@ RTIinternalError for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')\n
                                                                                       L"HLAfederatesInFederation" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAfederatesInFederation')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAfederatesInFederation')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAfederatesInFederation')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAfederatesInFederation')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAfederatesInFederation')\n",
                        __LINE__ );
    }
@@ -1743,28 +1742,28 @@ RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, '
                                                                             L"HLAautoProvide" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    }
@@ -1774,23 +1773,23 @@ RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, '
       this->MOM_HLAfederate_class_handle = RTI_ambassador->getObjectClassHandle( L"HLAobjectRoot.HLAmanager.HLAfederate" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.HLAfederate')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.HLAfederate')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.HLAfederate')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.HLAfederate')\n",
                        __LINE__ );
    }
@@ -1800,28 +1799,28 @@ RTIinternalError for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.HLA
       this->MOM_HLAfederateName_handle = RTI_ambassador->getAttributeHandle( MOM_HLAfederate_class_handle, L"HLAfederateName" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')\n",
                        __LINE__ );
    }
@@ -1831,28 +1830,28 @@ RTIinternalError for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLA
       this->MOM_HLAfederateType_handle = RTI_ambassador->getAttributeHandle( MOM_HLAfederate_class_handle, L"HLAfederateType" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')\n",
                        __LINE__ );
    }
@@ -1862,28 +1861,28 @@ RTIinternalError for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLA
       this->MOM_HLAfederate_handle = RTI_ambassador->getAttributeHandle( MOM_HLAfederate_class_handle, L"HLAfederateHandle" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')\n",
                        __LINE__ );
    }
@@ -1894,23 +1893,23 @@ RTIinternalError for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLA
       this->MOM_HLAsetSwitches_class_handle = RTI_ambassador->getInteractionClassHandle( L"HLAmanager.HLAfederation.HLAadjust.HLAsetSwitches" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederation.HLAadjust.HLAsetSwitches')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederation.HLAadjust.HLAsetSwitches')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederation.HLAadjust.HLAsetSwitches')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederation.HLAadjust.HLAsetSwitches')\n",
                        __LINE__ );
    }
@@ -1919,28 +1918,28 @@ RTIinternalError for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederatio
       this->MOM_HLAautoProvide_param_handle = RTI_ambassador->getParameterHandle( MOM_HLAsetSwitches_class_handle, L"HLAautoProvide" );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::InvalidInteractionClassHandle const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 InvalidInteractionClassHandle ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 FederateNotExecutionMember ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 NotConnected ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::initialize_MOM_handles():%d \
+      message_publish( MSG_ERROR, "Federate::initialize_MOM_handles():%d \
 RTIinternalError for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')\n",
                        __LINE__ );
    }
@@ -1989,36 +1988,36 @@ void Federate::subscribe_attributes(
       RTI_ambassador->subscribeObjectClassAttributes( class_handle, attribute_list, true );
    } catch ( RTI1516_NAMESPACE::ObjectClassNotDefined const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d ObjectClassNotDefined: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::subscribe_attributes():%d ObjectClassNotDefined: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::AttributeNotDefined const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d AttributeNotDefined: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::subscribe_attributes():%d AttributeNotDefined: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d FederateNotExecutionMember: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::subscribe_attributes():%d FederateNotExecutionMember: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d SaveInProgress: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::subscribe_attributes():%d SaveInProgress: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d RestoreInProgress: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::subscribe_attributes():%d RestoreInProgress: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::InvalidUpdateRateDesignator const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d InvalidUpdateRateDesignator: MOM Object Attributed Subscribe FAILED!!\n",
+      message_publish( MSG_ERROR, "Federate::subscribe_attributes():%d InvalidUpdateRateDesignator: MOM Object Attributed Subscribe FAILED!!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d NotConnected: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::subscribe_attributes():%d NotConnected: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::subscribe_attributes():%d RTIinternalError: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::subscribe_attributes():%d RTIinternalError: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    }
 
@@ -2065,32 +2064,32 @@ void Federate::unsubscribe_attributes(
       RTI_ambassador->unsubscribeObjectClassAttributes( class_handle, attribute_list );
    } catch ( RTI1516_NAMESPACE::ObjectClassNotDefined const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d ObjectClassNotDefined: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::unsubscribe_attributes():%d ObjectClassNotDefined: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::AttributeNotDefined const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d AttributeNotDefined: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::unsubscribe_attributes():%d AttributeNotDefined: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d FederateNotExecutionMember: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::unsubscribe_attributes():%d FederateNotExecutionMember: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d SaveInProgress: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::unsubscribe_attributes():%d SaveInProgress: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d RestoreInProgress: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::unsubscribe_attributes():%d RestoreInProgress: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d NotConnected: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::unsubscribe_attributes():%d NotConnected: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::unsubscribe_attributes():%d RTIinternalError: MOM Object Attributed Subscribe FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::unsubscribe_attributes():%d RTIinternalError: MOM Object Attributed Subscribe FAILED!\n",
                        __LINE__ );
    }
 
@@ -2140,32 +2139,32 @@ void Federate::request_attribute_update(
                                                    TrickHLA::EMPTY_USER_SUPPLIED_TAG );
    } catch ( ObjectClassNotDefined const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::request_attribute_update():%d ObjectClassNotDefined: Attribute update request FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::request_attribute_update():%d ObjectClassNotDefined: Attribute update request FAILED!\n",
                        __LINE__ );
    } catch ( AttributeNotDefined const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::request_attribute_update():%d AttributeNotDefined: Attribute update request FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::request_attribute_update():%d AttributeNotDefined: Attribute update request FAILED!\n",
                        __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::request_attribute_update():%d FederateNotExecutionMember: Attribute update request FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::request_attribute_update():%d FederateNotExecutionMember: Attribute update request FAILED!\n",
                        __LINE__ );
    } catch ( SaveInProgress const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::request_attribute_update():%d SaveInProgress: Attribute update request FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::request_attribute_update():%d SaveInProgress: Attribute update request FAILED!\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::request_attribute_update():%d RestoreInProgress: Attribute update request FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::request_attribute_update():%d RestoreInProgress: Attribute update request FAILED!\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::request_attribute_update():%d NotConnected: Attribute update request FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::request_attribute_update():%d NotConnected: Attribute update request FAILED!\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::request_attribute_update():%d RTIinternalError: MOM Object Attributed update request FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::request_attribute_update():%d RTIinternalError: MOM Object Attributed update request FAILED!\n",
                        __LINE__ );
    }
 
@@ -2399,36 +2398,36 @@ void Federate::send_interaction( // cppcheck-suppress [functionStatic, unmatched
       RTI_ambassador->sendInteraction( class_handle, parameter_list, TrickHLA::EMPTY_USER_SUPPLIED_TAG );
    } catch ( InteractionClassNotPublished const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::send_interaction():%d InteractionClassNotPublished: Send interaction FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::send_interaction():%d InteractionClassNotPublished: Send interaction FAILED!\n",
                        __LINE__ );
    } catch ( InteractionParameterNotDefined const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::send_interaction():%d InteractionParameterNotDefined: Send interaction FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::send_interaction():%d InteractionParameterNotDefined: Send interaction FAILED!\n",
                        __LINE__ );
    } catch ( InteractionClassNotDefined const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::send_interaction():%d InteractionClassNotDefined: Send interaction FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::send_interaction():%d InteractionClassNotDefined: Send interaction FAILED!\n",
                        __LINE__ );
    } catch ( SaveInProgress const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::send_interaction():%d SaveInProgress: Send interaction FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::send_interaction():%d SaveInProgress: Send interaction FAILED!\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::send_interaction():%d RestoreInProgress: Send interaction FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::send_interaction():%d RestoreInProgress: Send interaction FAILED!\n",
                        __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::send_interaction():%d FederateNotExecutionMember: Send interaction FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::send_interaction():%d FederateNotExecutionMember: Send interaction FAILED!\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::send_interaction():%d NotConnected: Send interaction FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::send_interaction():%d NotConnected: Send interaction FAILED!\n",
                        __LINE__ );
       set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       error_flag = true;
-      message_publish( MSG_WARNING, "Federate::send_interaction():%d RTIinternalError: Send interaction FAILED!\n",
+      message_publish( MSG_ERROR, "Federate::send_interaction():%d RTIinternalError: Send interaction FAILED!\n",
                        __LINE__ );
    }
 
@@ -2605,7 +2604,7 @@ void Federate::perform_checkpoint()
          string save_name_str;
          StringUtilities::to_string( save_name_str, this->save_name );
          string str_save_label = get_federation_name() + "_" + save_name_str;
-         for ( int i = 0; i < (int)str_save_label.length(); ++i ) {
+         for ( size_t i = 0; i < str_save_label.length(); ++i ) {
             if ( str_save_label[i] == '/' ) {
                str_save_label[i] = '_';
             }
@@ -2871,7 +2870,7 @@ void Federate::perform_restore()
          string restore_name_str;
          StringUtilities::to_string( restore_name_str, restore_name );
          string str_restore_label = get_federation_name() + "_" + restore_name_str;
-         for ( int i = 0; i < (int)str_restore_label.length(); ++i ) {
+         for ( size_t i = 0; i < str_restore_label.length(); ++i ) {
             if ( str_restore_label[i] == '/' ) {
                str_restore_label[i] = '_';
             }
