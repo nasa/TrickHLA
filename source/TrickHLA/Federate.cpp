@@ -4634,19 +4634,8 @@ void Federate::ask_MOM_for_auto_provide_setting()
 void Federate::enable_MOM_auto_provide_setting(
    bool enable )
 {
-   // Keep the auto-provide setting in sync with our enable request and set the
-   // Big Endian value the RTI expects for the auto-provide setting.
-   int requested_auto_provide;
-   if ( enable ) {
-      this->auto_provide_setting = 1;
-      // 1 as 32-bit Big Endian as required for the HLAautoProvide parameter.
-      requested_auto_provide = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                                  ? Utilities::byteswap_int( 1 )
-                                  : 1;
-   } else {
-      this->auto_provide_setting = 0;
-      requested_auto_provide     = 0;
-   }
+   // Keep the auto-provide setting in sync with our enable request.
+   this->auto_provide_setting = enable ? 1 : 0;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
@@ -4657,9 +4646,20 @@ void Federate::enable_MOM_auto_provide_setting(
    publish_interaction_class( MOM_HLAsetSwitches_class_handle );
 
    ParameterHandleValueMap param_values_map;
-   param_values_map[MOM_HLAautoProvide_param_handle] =
-      VariableLengthData( &requested_auto_provide,
-                          sizeof( requested_auto_provide ) );
+   try {
+      // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
+      HLAinteger32BE auto_provide_encoder( auto_provide_setting );
+      param_values_map[MOM_HLAautoProvide_param_handle] = auto_provide_encoder.encode();
+   } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      ostringstream errmsg;
+      errmsg << "Federate::enable_MOM_auto_provide_setting():" << __LINE__
+             << " ERROR: Encoder exception '" << rti_err_msg << "'"
+             << " trying to encode auto-provide switch setting"
+             << " (HLAautoProvide)!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    send_interaction( MOM_HLAsetSwitches_class_handle, param_values_map );
 
@@ -6419,12 +6419,11 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
    for ( attr_iter = values.begin(); attr_iter != values.end(); ++attr_iter ) {
 
       if ( attr_iter->first == MOM_HLAautoProvide_handle ) {
-
-         // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
          try {
-            HLAinteger32BE auto_provide_encoder;
+            // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
+            // Decode directly into the auto_provide_setting variable.
+            HLAinteger32BE auto_provide_encoder( &auto_provide_setting );
             auto_provide_encoder.decode( attr_iter->second );
-            this->auto_provide_setting = auto_provide_encoder.get();
          } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
