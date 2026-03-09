@@ -772,11 +772,11 @@ void FedAmb::reflectAttributeValues(
          federate->set_MOM_HLAfederate_instance_attributes( objectInstance, attributeValues );
       }
    } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_instance_id( objectInstance ) ) {
-      // This was an instance-ID for the Federation and not a federate.
+      // This was an instance-ID for the MOV interface.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, objectInstance );
-         message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues():%d Setting name for Federation ID:%s\n",
+         message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues():%d Setting MOM Federation Attributes for ID:%s\n",
                           __LINE__, id_str.c_str() );
       }
       federate->set_MOM_HLAfederation_instance_attributes( objectInstance, attributeValues );

@@ -287,6 +287,17 @@ class Federate : public TimeManagement
    /*! @brief Unsubscribe from all MOM federation class attributes. */
    void unsubscribe_all_HLAfederation_class_attributes_from_MOM();
 
+   /*! @brief Get the auto-provide switch status as a string.
+    *  @param auto_provide The Auto-provide switch status.
+    *  @return The auto-provide switch status as a string. */
+   static std::string get_auto_provide_status_string( int const auto_provide )
+   {
+      if ( auto_provide < 0 ) {
+         return "Unknown";
+      }
+      return ( auto_provide > 0 ) ? "Yes" : "No";
+   }
+
    /*! @brief Ask MOM for the current "auto-provide" setting from the switches table. */
    void ask_MOM_for_auto_provide_setting();
 

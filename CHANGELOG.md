@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Updated auto-provide switch setting status string and value checks.
 - Reduced the scope of local variables.
 
 

@@ -4622,9 +4622,9 @@ void Federate::ask_MOM_for_auto_provide_setting()
    unsubscribe_attributes( MOM_HLAfederation_class_handle, fedMomAttributes );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
       message_publish( MSG_NORMAL, "Federate::ask_MOM_for_auto_provide_setting():%d Auto-Provide:%s value:%d\n",
-                       __LINE__, ( ( auto_provide_setting != 0 ) ? "Yes" : "No" ),
-                       auto_provide_setting );
+                       __LINE__, auto_provide_status.c_str(), auto_provide_setting );
    }
 
    fedMomAttributes.clear();
@@ -4649,8 +4649,9 @@ void Federate::enable_MOM_auto_provide_setting(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
       message_publish( MSG_NORMAL, "Federate::enable_MOM_auto_provide_setting():%d Auto-Provide:%s\n",
-                       __LINE__, ( enable ? "Yes" : "No" ) );
+                       __LINE__, auto_provide_status.c_str() );
    }
 
    publish_interaction_class( MOM_HLAsetSwitches_class_handle );
@@ -4675,10 +4676,10 @@ void Federate::backup_auto_provide_setting_from_MOM_then_disable()
    ask_MOM_for_auto_provide_setting();
 
    // Backup the original auto-provide setting.
-   this->orig_auto_provide_setting = this->auto_provide_setting;
+   this->orig_auto_provide_setting = auto_provide_setting;
 
-   // Disable Auto-Provide if it is enabled.
-   if ( this->auto_provide_setting != 0 ) {
+   // Disable Auto-Provide only if it is enabled or an unknown state (i.e. -1).
+   if ( auto_provide_setting != 0 ) {
       enable_MOM_auto_provide_setting( false );
    }
 }
@@ -4689,10 +4690,12 @@ void Federate::restore_orig_MOM_auto_provide_setting()
    // match the current setting.
    if ( auto_provide_setting != orig_auto_provide_setting ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::restore_orig_MOM_auto_provide_setting():%d Auto-Provide:%s\n",
-                          __LINE__, ( ( orig_auto_provide_setting != 0 ) ? "Yes" : "No" ) );
+         string auto_provide_status = get_auto_provide_status_string( orig_auto_provide_setting );
+         message_publish( MSG_NORMAL, "Federate::restore_orig_MOM_auto_provide_setting():%d Auto-Provide:%s value:%d\n",
+                          __LINE__, auto_provide_status.c_str(),
+                          orig_auto_provide_setting );
       }
-      enable_MOM_auto_provide_setting( orig_auto_provide_setting != 0 );
+      enable_MOM_auto_provide_setting( orig_auto_provide_setting > 0 );
    }
 }
 
@@ -6433,8 +6436,9 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             DebugHandler::terminate_with_message( errmsg.str() );
          }
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
             message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d Auto-Provide:%s value:%d\n",
-                             __LINE__, ( ( auto_provide_setting != 0 ) ? "Yes" : "No" ),
+                             __LINE__, auto_provide_status.c_str(),
                              auto_provide_setting );
          }
 
