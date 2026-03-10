@@ -706,7 +706,7 @@ void ExecutionControl::role_determination_process()
             this->late_joiner_determined = true;
          }
 
-         // Determine if the Initialization Complete sync-point is announded,
+         // Determine if the Initialization Complete sync-point is announced,
          // which means at this point we are a late joining federate.
          if ( ( !late_joiner_determined ) && is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
             this->late_joiner            = true;
@@ -1230,7 +1230,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       //
 
       // Jump to the a logical time that is a GALT time that is an integer
-      // multiple of the least-common-lookahead (CL) time, otherwise we
+      // multiple of the least-common-time-step (LCTS), otherwise we
       // will not be in sync with the other federates on the HLA logical
       // timeline.
       federate->time_advance_request_to_GALT_LCTS_multiple();
@@ -1242,7 +1242,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       // Print diagnostic message if appropriate.
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          ostringstream msg;
-         msg << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
+         msg << "SpaceFOM::ExecutionControl::post_multi_phase_init_processes()\n"
              << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << endl
              << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
              << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
