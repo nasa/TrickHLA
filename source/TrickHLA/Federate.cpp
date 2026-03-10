@@ -166,7 +166,6 @@ Federate::Federate()
      save_label_generated( false ),
      save_request_complete( false ),
      save_completed( false ),
-     stale_data_counter( 0 ),
      restore_label( "" ),
      announce_restore( false ),
      restore_label_generated( false ),

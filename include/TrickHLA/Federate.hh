@@ -872,13 +872,6 @@ class Federate : public TimeManagement
       return this->restart_cfg_flag;
    }
 
-   /*! @brief Get stale data counter (DIS only).
-    *  @param s Pointer to stale data counter. */
-   void get_stale_data_counter( int *s )
-   {
-      *s = this->stale_data_counter;
-   }
-
    // Routines to set federation state values.
    /*! @brief Set the name of the federation execution.
     *  @param exec_name Federation execution name. */
@@ -984,11 +977,11 @@ class Federate : public TimeManagement
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
+   //-- BEGIN: checkpoint / restore data --
   public:
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
    std::wstring restore_name; ///< @trick_io{**} Name for a restore file
 
-   //-- BEGIN: checkpoint / restore data --
    std::string HLA_save_directory; ///< @trick_io{*i} @trick_units{--} HLA Save directory
    bool        initiate_save_flag; ///< @trick_io{**} Save announce flag
 
@@ -999,13 +992,11 @@ class Federate : public TimeManagement
    bool                    restore_failed;        ///< @trick_io{**} Restore of the federate failed
    bool                    restore_is_imminent;   ///< @trick_io{**} Restore has been signalled by the Manager
 
-   std::string save_label;            ///< @trick_io{**} Save file label
+   std::string save_label;            ///< @trick_io{**} Save label
    bool        announce_save;         ///< @trick_io{**} flag to indicate whether we have announced the federation save
    bool        save_label_generated;  ///< @trick_io{**} Save filename has been generated.
    bool        save_request_complete; ///< @trick_io{**} save status request complete
    bool        save_completed;        ///< @trick_io{**} Save completed.
-
-   int stale_data_counter; ///< @trick_units{--} For DIS only: Number of cycles since the last time we received data via HLA.
 
    std::string restore_label;                               ///< @trick_io{**} Restore file label.
    bool        announce_restore;                            ///< @trick_io{**} flag to indicate whether we have announced the federation restore
