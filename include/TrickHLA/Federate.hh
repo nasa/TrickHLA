@@ -293,9 +293,9 @@ class Federate : public TimeManagement
    static std::string get_auto_provide_status_string( int const auto_provide )
    {
       if ( auto_provide < 0 ) {
-         return "Unknown";
+         return ( "Unknown" );
       }
-      return ( auto_provide > 0 ) ? "Yes" : "No";
+      return ( ( auto_provide > 0 ) ? "Yes" : "No" );
    }
 
    /*! @brief Ask MOM for the current "auto-provide" setting from the switches table. */
@@ -379,11 +379,6 @@ class Federate : public TimeManagement
 
    /*! @brief Complete federate restore and prepare to restart execution. */
    void post_restore();
-
-   /*! @brief Returns true if HLA save and restore is supported by the user
-    *  specified simulation initialization scheme.
-    *  @return True if HLA save and restore are supported, false otherwise. */
-   bool is_HLA_save_and_restore_supported();
 
    /*! @brief Restore checkpoint.
     *  @param file_name Checkpoint file name. */
@@ -877,13 +872,6 @@ class Federate : public TimeManagement
       return this->restart_cfg_flag;
    }
 
-   /*! @brief Get stale data counter (DIS only).
-    *  @param s Pointer to stale data counter. */
-   void get_stale_data_counter( int *s )
-   {
-      *s = this->stale_data_counter;
-   }
-
    // Routines to set federation state values.
    /*! @brief Set the name of the federation execution.
     *  @param exec_name Federation execution name. */
@@ -989,10 +977,11 @@ class Federate : public TimeManagement
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
+   //-- BEGIN: checkpoint / restore data --
+  public:
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
    std::wstring restore_name; ///< @trick_io{**} Name for a restore file
 
-   //-- BEGIN: checkpoint / restore data --
    std::string HLA_save_directory; ///< @trick_io{*i} @trick_units{--} HLA Save directory
    bool        initiate_save_flag; ///< @trick_io{**} Save announce flag
 
@@ -1003,13 +992,11 @@ class Federate : public TimeManagement
    bool                    restore_failed;        ///< @trick_io{**} Restore of the federate failed
    bool                    restore_is_imminent;   ///< @trick_io{**} Restore has been signalled by the Manager
 
-   std::string save_label;            ///< @trick_io{**} Save file label
+   std::string save_label;            ///< @trick_io{**} Save label
    bool        announce_save;         ///< @trick_io{**} flag to indicate whether we have announced the federation save
    bool        save_label_generated;  ///< @trick_io{**} Save filename has been generated.
    bool        save_request_complete; ///< @trick_io{**} save status request complete
    bool        save_completed;        ///< @trick_io{**} Save completed.
-
-   int stale_data_counter; ///< @trick_units{--} For DIS only: Number of cycles since the last time we received data via HLA.
 
    std::string restore_label;                               ///< @trick_io{**} Restore file label.
    bool        announce_restore;                            ///< @trick_io{**} flag to indicate whether we have announced the federation restore
@@ -1019,6 +1006,7 @@ class Federate : public TimeManagement
    bool        restore_completed;                           ///< @trick_io{**} Restore completed.
    bool        federation_restore_failed_callback_complete; ///< @trick_io{**} federation not restored callback complete
 
+  private:
    bool federate_has_been_restarted; /**< @trick_io{**} Federate has restarted; so, do not restart again! */
 
    bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
@@ -1034,13 +1022,15 @@ class Federate : public TimeManagement
    Flag        checkpoint_rt_itimer; ///< @trick_io{**} loaded checkpoint RT ITIMER
 
    bool execution_has_begun; ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
-   //-- END: checkpoint / restore data --
 
+  public:
    bool start_to_save;    ///< @trick_io{**} Save flag
    bool start_to_restore; ///< @trick_io{**} Restore flag
    bool restart_flag;     ///< @trick_io{**} Restart flag
    bool restart_cfg_flag; ///< @trick_io{**} Restart flag with new configuration
+                          //-- END: checkpoint / restore data --
 
+  private:
    bool got_startup_sync_point;     ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
    bool make_copy_of_run_directory; ///< @trick_units{--} Make a backup of RUN directory before restarting the federation via federation manager (default: false).
 
@@ -1072,7 +1062,7 @@ class Federate : public TimeManagement
    Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
    ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */
 
-  private:
+  public:
    /*! @brief Dumps the contents of the running_feds object into the supplied
     *  file name with ".running_feds" appended to it.
     *  @param file_name Checkpoint file name. */
@@ -1081,6 +1071,7 @@ class Federate : public TimeManagement
    /*! @brief Request federation save from the RTI. */
    void request_federation_save();
 
+  private:
    /*! @brief Subscribe to the specified attributes for the given class handle.
     *  @param class_handle   Class handle.
     *  @param attribute_list Attributes handles. */

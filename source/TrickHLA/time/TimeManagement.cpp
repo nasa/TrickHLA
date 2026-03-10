@@ -287,6 +287,13 @@ void TimeManagement::set_requested_time(
    requested_time.set( time );
 }
 
+/*! @brief Sets the requested time to the granted time. */
+void TimeManagement::set_requested_time_to_granted_time()
+{
+   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+   requested_time.set( granted_time );
+}
+
 HLABaseTimeEnum TimeManagement::get_HLA_base_time_unit()
 {
    return Int64BaseTime::get_base_unit_enum();

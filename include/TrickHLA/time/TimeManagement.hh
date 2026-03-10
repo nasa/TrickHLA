@@ -296,6 +296,9 @@ class TimeManagement : public TrickThreadCoordinator
     *  @param time Requested time in HLA logical time. */
    void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
 
+   /*! @brief Sets the requested time to the granted time. */
+   void set_requested_time_to_granted_time();
+
    /*! @brief Sets the HLA base time unit. */
    static HLABaseTimeEnum get_HLA_base_time_unit();
 
@@ -371,7 +374,7 @@ class TimeManagement : public TrickThreadCoordinator
 #if defined( IEEE_1516_2025 )
 #   if !defined( SWIG )
    std::unique_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
-#   endif                                                              // SWIG
+#   endif
 #else
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated"

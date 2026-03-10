@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Notable Additions
 
+- Added checkpoint (i.e. save/restore) virtual functions to the ExecutionControlBase class to allow for different checkpoint implementations (issue #184).
+  - virtual void setup_checkpoint();
+  - virtual void perform_checkpoint();
+  - virtual void post_checkpoint();
+  - virtual void setup_restore();
+  - virtual void perform_restore();
+  - virtual void post_restore();
+
 ### Breaking Changes
 
 ### Added
