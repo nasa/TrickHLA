@@ -4649,15 +4649,17 @@ void Federate::enable_MOM_auto_provide_setting(
    try {
       // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
       HLAinteger32BE auto_provide_encoder( auto_provide_setting );
+
       param_values_map[MOM_HLAautoProvide_param_handle] = auto_provide_encoder.encode();
+
    } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Federate::enable_MOM_auto_provide_setting():" << __LINE__
              << " ERROR: Encoder exception '" << rti_err_msg << "'"
-             << " trying to encode auto-provide switch setting"
-             << " (HLAautoProvide)!" << endl;
+             << " trying to encode auto-provide switch setting (HLAautoProvide)"
+             << " for value " << auto_provide_setting << "!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -6423,7 +6425,9 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
             // Decode directly into the auto_provide_setting variable.
             HLAinteger32BE auto_provide_encoder( &auto_provide_setting );
+
             auto_provide_encoder.decode( attr_iter->second );
+
          } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
