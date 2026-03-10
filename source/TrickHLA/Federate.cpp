@@ -54,7 +54,6 @@ NASA, Johnson Space Center\n
 #endif // IEEE_1516_2025
 
 // Trick includes.
-#include "trick/CheckPointRestart.hh"
 #include "trick/CheckPointRestart_c_intf.hh"
 #include "trick/Flag.h"
 #include "trick/MemoryManager.hh"
@@ -86,9 +85,6 @@ NASA, Johnson Space Center\n
 #else
 #   include "TrickHLA/FedAmbHLA3.hh"
 #endif // IEEE_1516_2025
-
-// Access the Trick global objects for CheckPoint restart and the Clock.
-extern Trick::CheckPointRestart *the_cpr;
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -2509,7 +2505,7 @@ void Federate::enter_freeze()
 
 /*!
  * \par<b>Assumptions and Limitations:</b>
- * - Currently only used with DIS and IMSIM initialization schemes.
+ * - Currently only used with DIS and IMSim initialization schemes.
  *  @job_class{unfreeze}
  */
 void Federate::exit_freeze()
@@ -2567,560 +2563,68 @@ void Federate::un_freeze()
 }
 
 /*!
- * \par<b>Assumptions and Limitations:</b>
- * - Currently only used with DIS and IMSIM initialization schemes.
- */
-bool Federate::is_HLA_save_and_restore_supported()
-{
-   // Dispatch to the ExecutionControl mechanism.
-   return ( execution_control->is_save_and_restore_supported() );
-}
-
-/*!
- *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSIM initialization schemes.
- *  @job_class{freeze}
- */
-void Federate::perform_checkpoint()
-{
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_HLA_save_and_restore_supported() ) {
-      return;
-   }
-
-   // Dispatch to the ExecutionControl method.
-   bool force_checkpoint = execution_control->perform_save();
-
-   if ( this->start_to_save || force_checkpoint ) {
-      // If I announced the save, sim control panel was clicked and invokes the checkpoint
-      if ( !announce_save ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "Federate::perform_checkpoint():%d Federate Save Started\n",
-                             __LINE__ );
-         }
-         // Create the filename from the Federation name and the "save-name".
-         // Replace all directory characters with an underscore.
-         string save_name_str;
-         StringUtilities::to_string( save_name_str, this->save_name );
-         string str_save_label = get_federation_name() + "_" + save_name_str;
-         for ( size_t i = 0; i < str_save_label.length(); ++i ) {
-            if ( str_save_label[i] == '/' ) {
-               str_save_label[i] = '_';
-            }
-         }
-
-         // calls setup_checkpoint first
-         checkpoint( str_save_label.c_str() );
-      }
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::perform_checkpoint():%d Checkpoint Dump Completed.\n",
-                          __LINE__ );
-      }
-
-      post_checkpoint();
-   }
-}
-
-/*!
  *  \par<b>Assumptions and Limitations:</b>
  *  - Currently only used with IMSim initialization scheme.
  *  @job_class{checkpoint}
  */
 void Federate::setup_checkpoint()
 {
-   string str_save_label( this->save_label );
-
-   // Don't do federate save during Init or Exit (this allows "regular" init and shutdown checkpoints)
-   if ( ( exec_get_mode() == Initialization ) || ( exec_get_mode() == ExitMode ) ) {
-      return;
-   }
-
-   // Determine if I am the federate that clicked Dump Chkpnt on sim control panel
-   // or I am the federate that called start_federation_save
-   this->announce_save = !this->start_to_save;
-
-   // Check to see if the save has been initiated in the ExecutionControl process?
-   // If not then just return.
-   if ( !execution_control->is_save_initiated() ) {
-      return;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::setup_checkpoint():%d Federate Save Pre-checkpoint\n",
-                       __LINE__ );
-   }
-
-   // If I announced the save, must initiate federation save
-   if ( this->announce_save ) {
-      if ( save_name.length() ) {
-         // When user calls start_federation_save, save_name is already set
-      } else {
-         // When user clicks Dump Chkpnt, we need to set the save_name here
-         string trick_filename;
-         string slash( "/" );
-         int    found;
-         string save_name_str;
-
-         // get checkpoint file name specified in control panel
-         trick_filename = checkpoint_get_output_file();
-
-         // Trick filename contains dir/filename,
-         // need to prepend federation name to filename entered in sim control panel popup
-         found = trick_filename.rfind( slash );
-         if ( found != (int)string::npos ) {
-            save_name_str              = trick_filename.substr( found + 1 );
-            string federation_name_str = get_federation_name();
-            if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
-               // dir/federation_filename
-               trick_filename.replace( found, slash.length(), slash + federation_name_str + "_" );
-            } else {
-               // If it already has federation name prepended, output_file name
-               // is good to go but remove it from save_name_str so our
-               // str_save_label setting below is correct
-               save_name_str = trick_filename.substr( found + 1 + federation_name_str.length() + 1 ); // filename
-            }
-         } else {
-            save_name_str = trick_filename;
-         }
-
-         // TODO: Clean this up later.
-         // Set the checkpoint restart files name.
-         the_cpr->output_file = trick_filename;
-
-         // federation_filename
-         str_save_label = get_federation_name() + "_" + save_name_str;
-
-         // Set the federate save_name to filename (without the federation name)
-         // - this gets announced to other feds
-         wstring save_name_ws;
-         StringUtilities::to_wstring( save_name_ws, save_name_str );
-
-         set_save_name( save_name_ws );
-      } // end set save_name
-
-      // Don't request a save if another federate has already requested one
-      if ( this->initiate_save_flag ) {
-         // initiate_save_flag becomes false if another save is occurring
-         request_federation_save_status();
-         wait_for_save_status_to_complete();
-
-         request_federation_save();
-
-         SleepTimeout print_timer( this->wait_status_time );
-         SleepTimeout sleep_timer;
-
-         // need to wait for federation to initiate save
-         while ( !start_to_save ) {
-
-            // Check for shutdown.
-            check_for_shutdown_with_termination();
-
-            sleep_timer.sleep();
-
-            if ( !this->start_to_save ) {
-
-               // To be more efficient, we get the time once and share it.
-               int64_t wallclock_time = sleep_timer.time();
-
-               if ( sleep_timer.timeout( wallclock_time ) ) {
-                  sleep_timer.reset();
-                  if ( !is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "Federate::setup_checkpoint():" << __LINE__
-                            << " ERROR: Unexpectedly the Federate is no longer an execution"
-                            << " member. This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!" << endl;
-                     DebugHandler::terminate_with_message( errmsg.str() );
-                  }
-               }
-
-               if ( print_timer.timeout( wallclock_time ) ) {
-                  print_timer.reset();
-                  message_publish( MSG_NORMAL, "Federate::setup_checkpoint():%d Federate Save Pre-checkpoint, wiating...\n",
-                                   __LINE__ );
-               }
-            }
-         }
-         this->initiate_save_flag = false;
-      } else {
-         message_publish( MSG_NORMAL, "Federate::setup_checkpoint():%d Federation Save is already in progress!\n",
-                          __LINE__ );
-         return;
-      }
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-   try {
-      RTI_ambassador->federateSaveBegun();
-   } catch ( SaveNotInitiated const &e ) {
-      message_publish( MSG_WARNING, "Federate::setup_checkpoint():%d EXCEPTION: SaveNotInitiated\n",
-                       __LINE__ );
-   } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "Federate::setup_checkpoint():%d EXCEPTION: FederateNotExecutionMember\n",
-                       __LINE__ );
-   } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "Federate::setup_checkpoint():%d EXCEPTION: RestoreInProgress\n",
-                       __LINE__ );
-   } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "Federate::setup_checkpoint():%d EXCEPTION: NotConnected\n",
-                       __LINE__ );
-      set_connection_lost();
-   } catch ( RTIinternalError const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::setup_checkpoint():%d EXCEPTION: RTIinternalError: '%s'\n",
-                       __LINE__, rti_err_msg.c_str() );
-   }
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   // This is a shortcut so that we can enforce that only these federates exist
-   // when we restore
-   write_running_feds_file( str_save_label );
-
-   // Tell the manager to setup the checkpoint data structures.
-   manager->encode_checkpoint();
-
-   // Save any synchronization points.
-   convert_sync_pts();
+   // Delegate to the Execution Control specific implementation.
+   execution_control->setup_checkpoint();
 }
 
 /*!
  *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSIM initialization schemes.
+ *  - Currently only used with DIS and IMSim initialization schemes.
+ *  @job_class{freeze}
+ */
+void Federate::perform_checkpoint()
+{
+   // Delegate to the Execution Control specific implementation.
+   execution_control->perform_checkpoint();
+}
+
+/*!
+ *  \par<b>Assumptions and Limitations:</b>
+ *  - Currently only used with DIS and IMSim initialization schemes.
  *  @job_class{post_checkpoint}
  */
 void Federate::post_checkpoint()
 {
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_HLA_save_and_restore_supported() ) {
-      return;
-   }
-
-   if ( this->start_to_save ) {
-
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-      try {
-         RTI_ambassador->federateSaveComplete();
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "Federate::post_checkpoint():%d Federate Save Completed.\n",
-                             __LINE__ );
-         }
-         start_to_save = false;
-      } catch ( FederateHasNotBegunSave const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_checkpoint():%d EXCEPTION: FederateHasNotBegunSave\n",
-                          __LINE__ );
-      } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_checkpoint():%d EXCEPTION: FederateNotExecutionMember\n",
-                          __LINE__ );
-      } catch ( RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_checkpoint():%d EXCEPTION: RestoreInProgress\n",
-                          __LINE__ );
-      } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_checkpoint():%d EXCEPTION: NotConnected\n",
-                          __LINE__ );
-         set_connection_lost();
-      } catch ( RTIinternalError const &e ) {
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Federate::post_checkpoint():%d EXCEPTION: RTIinternalError: '%s'\n",
-                          __LINE__, rti_err_msg.c_str() );
-      }
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::post_checkpoint():%d Federate Save Already Completed.\n",
-                          __LINE__ );
-      }
-   }
+   // Delegate to the Execution Control specific implementation.
+   execution_control->post_checkpoint();
 }
 
 /*!
  *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSIM initialization schemes.
- *  @job_class{freeze}
- */
-void Federate::perform_restore()
-{
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_HLA_save_and_restore_supported() ) {
-      return;
-   }
-
-   if ( this->start_to_restore ) {
-      // if I announced the restore, sim control panel was clicked and invokes the load
-      if ( !this->announce_restore ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "Federate::perform_restore():%d Federate Restore Started.\n",
-                             __LINE__ );
-         }
-
-         // Create the filename from the Federation name and the "restore-name".
-         // Replace all directory characters with an underscore.
-         string restore_name_str;
-         StringUtilities::to_string( restore_name_str, restore_name );
-         string str_restore_label = get_federation_name() + "_" + restore_name_str;
-         for ( size_t i = 0; i < str_restore_label.length(); ++i ) {
-            if ( str_restore_label[i] == '/' ) {
-               str_restore_label[i] = '_';
-            }
-         }
-         message_publish( MSG_NORMAL, "Federate::perform_restore():%d LOADING %s\n",
-                          __LINE__, str_restore_label.c_str() );
-
-         // make sure we have a save directory specified
-         check_HLA_save_directory();
-
-         // This will run pre-load-checkpoint jobs, clear memory, read checkpoint file, and run restart jobs
-         load_checkpoint( ( this->HLA_save_directory + "/" + str_restore_label ).c_str() );
-
-         load_checkpoint_job();
-
-         // exec_freeze();
-      }
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::perform_restore():%d Checkpoint Load Completed.\n",
-                          __LINE__ );
-      }
-
-      post_restore();
-   }
-}
-
-/*!
- *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSIM initialization schemes.
+ *  - Currently only used with DIS and IMSim initialization schemes.
  *  @job_class{preload_checkpoint}
  */
 void Federate::setup_restore()
 {
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_HLA_save_and_restore_supported() ) {
-      return;
-   }
-
-   // if restoring at startup, do nothing here (that is handled in restore_checkpoint)
-   if ( !is_federate_executing() ) {
-      return;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::setup_restore():%d Federate Restore Pre-load.\n",
-                       __LINE__ );
-   }
-   // Determine if I am the federate that clicked Load Chkpnt on sim control panel
-   this->announce_restore = !this->start_to_restore;
-   execution_control->set_freeze_announced( this->announce_restore );
-
-   // if I announced the restore, must initiate federation restore
-   if ( this->announce_restore ) {
-      string trick_filename;
-      string slash_fedname( "/" + get_federation_name() + "_" );
-      int    found;
-
-      // Otherwise set restore_name_str using trick's file name
-      trick_filename = checkpoint_get_load_file();
-
-      // Trick memory manager load_checkpoint_file_name already contains correct dir/federation_filename
-      // (chosen in sim control panel popup) we need just the filename minus the federation name to initiate restore
-      found = trick_filename.rfind( slash_fedname );
-      string restore_name_str;
-      if ( found != (int)string::npos ) {
-         restore_name_str = trick_filename.substr( found + slash_fedname.length() ); // filename
-      } else {
-         restore_name_str = trick_filename;
-      }
-      // federation_filename
-      string str_restore_label = get_federation_name() + "_" + restore_name_str;
-
-      // make sure we have a save directory specified
-      check_HLA_save_directory();
-
-      // make sure only the required federates are in the federation before we do the restore
-      read_running_feds_file( str_restore_label );
-
-      string return_string;
-      return_string = wait_for_required_federates_to_join(); // sets running_feds_count
-      if ( !return_string.empty() ) {
-         return_string += '\n';
-         ostringstream errmsg;
-         errmsg << "Federate::setup_restore():" << __LINE__ << endl
-                << "ERROR: " << return_string;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-      // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
-      initiate_restore_announce( restore_name_str );
-
-      SleepTimeout print_timer( this->wait_status_time );
-      SleepTimeout sleep_timer;
-
-      // need to wait for federation to initiate restore
-      while ( !this->start_to_restore ) {
-
-         // Check for shutdown.
-         check_for_shutdown_with_termination();
-
-         sleep_timer.sleep();
-
-         if ( !this->start_to_restore ) {
-
-            // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
-
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::setup_restore():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
-               }
-            }
-
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               message_publish( MSG_NORMAL, "Federate::setup_restore():%d Federate Restore Pre-load, waiting...\n",
-                                __LINE__ );
-            }
-         }
-      }
-   }
-
-   this->restore_process = Restore_In_Progress;
+   // Delegate to the Execution Control specific implementation.
+   execution_control->setup_restore();
 }
 
 /*!
  *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSIM initialization schemes.
+ *  - Currently only used with DIS and IMSim initialization schemes.
+ *  @job_class{freeze}
+ */
+void Federate::perform_restore()
+{
+   // Delegate to the Execution Control specific implementation.
+   execution_control->perform_restore();
+}
+
+/*!
+ *  \par<b>Assumptions and Limitations:</b>
+ *  - Currently only used with DIS and IMSim initialization schemes.
  */
 void Federate::post_restore()
 {
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_HLA_save_and_restore_supported() ) {
-      return;
-   }
-
-   if ( this->start_to_restore ) {
-      restore_process = Restore_Complete;
-
-      // Make a copy of restore_process because it is used in the
-      // inform_RTI_of_restore_completion() function.
-      // (backward compatibility with previous restore process)
-      this->prev_restore_process = this->restore_process;
-
-      copy_running_feds_into_known_feds();
-
-      // wait for RTI to inform us that the federation restore has
-      // begun before informing the RTI that we are done.
-      wait_for_federation_restore_begun();
-
-      // signal RTI that this federate has already been loaded
-      inform_RTI_of_restore_completion();
-
-      // wait until we get a callback to inform us that the federation restore is complete
-      string tStr = wait_for_federation_restore_to_complete();
-      if ( tStr.length() ) {
-         wait_for_federation_restore_failed_callback_to_complete();
-         ostringstream errmsg;
-         errmsg << "TrickFederate::post_restore():" << __LINE__
-                << " ERROR: " << tStr << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::post_restore():%d Federation Restore Completed.\n",
-                          __LINE__ );
-         message_publish( MSG_NORMAL, "Federate::post_restore():%d Rebuilding HLA Handles.\n",
-                          __LINE__ );
-      }
-
-      // get us restarted again...
-      // reset RTI data to the state it was in when checkpointed
-      manager->reset_mgr_initialized();
-      manager->setup_all_ref_attributes();
-      manager->setup_all_RTI_handles();
-      manager->set_all_object_instance_handles_by_name();
-
-      if ( this->announce_restore ) {
-         set_all_federate_MOM_instance_handles_by_name();
-         restore_federate_handles_from_MOM();
-      }
-
-      // Restore interactions and sync points
-      manager->decode_checkpoint_interactions();
-      reinstate_logged_sync_pts();
-
-      // Restore ownership transfer data for all objects
-      Object *objects   = manager->get_objects();
-      int     obj_count = manager->get_object_count();
-      for ( int i = 0; i < obj_count; ++i ) {
-         objects[i].decode_checkpoint();
-      }
-
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-      try {
-         HLAinteger64Time time;
-         RTI_ambassador->queryLogicalTime( time );
-         set_granted_time( time );
-      } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_restore():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember\n",
-                          __LINE__ );
-      } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_restore():%d queryLogicalTime EXCEPTION: SaveInProgress\n",
-                          __LINE__ );
-      } catch ( RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_restore():%d queryLogicalTime EXCEPTION: RestoreInProgress\n",
-                          __LINE__ );
-      } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_restore():%d queryLogicalTime EXCEPTION: NotConnected\n",
-                          __LINE__ );
-         set_connection_lost();
-      } catch ( RTIinternalError const &e ) {
-         message_publish( MSG_WARNING, "Federate::post_restore():%d queryLogicalTime EXCEPTION: RTIinternalError\n",
-                          __LINE__ );
-      }
-
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-         this->requested_time = this->granted_time;
-      }
-
-      federation_restored();
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::post_restore():%d Federate Restart Completed.\n",
-                          __LINE__ );
-      }
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::post_restore():%d Federate Restore Already Completed.\n",
-                          __LINE__ );
-      }
-   }
+   // Delegate to the Execution Control specific implementation.
+   execution_control->post_restore();
 }
 
 /*!
@@ -5248,7 +4752,7 @@ void Federate::request_federation_save()
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
-   if ( !is_HLA_save_and_restore_supported() ) {
+   if ( !execution_control->is_save_and_restore_supported() ) {
       return;
    }
 
@@ -5490,7 +4994,7 @@ void Federate::copy_running_feds_into_known_feds()
 
 /*!
  * \par<b>Assumptions and Limitations:</b>
- * - Currently only used Used with IMSIM initialization scheme; only for restore at simulation startup.
+ * - Currently only used with IMSim initialization scheme; only for restore at simulation startup.
  *  @job_class{environment}
  */
 void Federate::restart_checkpoint()
@@ -6266,7 +5770,7 @@ void Federate::initiate_save_announce()
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
-   if ( !is_HLA_save_and_restore_supported() ) {
+   if ( !execution_control->is_save_and_restore_supported() ) {
       return;
    }
 
@@ -6294,7 +5798,7 @@ void Federate::initiate_restore_announce(
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
-   if ( !is_HLA_save_and_restore_supported() ) {
+   if ( !execution_control->is_save_and_restore_supported() ) {
       return;
    }
 

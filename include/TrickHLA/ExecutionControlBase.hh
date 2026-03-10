@@ -584,6 +584,24 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
    virtual void free_checkpoint();
 
+   /*! @brief Perform setup for federate save. */
+   virtual void setup_checkpoint();
+
+   /*! @brief Federates that did not announce the save, perform a checkpoint. */
+   virtual void perform_checkpoint();
+
+   /*! @brief Complete federate save. */
+   virtual void post_checkpoint();
+
+   /*! @brief Perform setup for federate restore. */
+   virtual void setup_restore();
+
+   /*! @brief Federates that did not announce the restore, perform a restore. */
+   virtual void perform_restore();
+
+   /*! @brief Complete federate restore and prepare to restart execution. */
+   virtual void post_restore();
+
    //
    // Execution Control association methods.
    /*! @brief Set the reference to the associated TrickHLA::Federate.

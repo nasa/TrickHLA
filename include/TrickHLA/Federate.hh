@@ -293,9 +293,9 @@ class Federate : public TimeManagement
    static std::string get_auto_provide_status_string( int const auto_provide )
    {
       if ( auto_provide < 0 ) {
-         return "Unknown";
+         return ( "Unknown" );
       }
-      return ( auto_provide > 0 ) ? "Yes" : "No";
+      return ( ( auto_provide > 0 ) ? "Yes" : "No" );
    }
 
    /*! @brief Ask MOM for the current "auto-provide" setting from the switches table. */
@@ -379,11 +379,6 @@ class Federate : public TimeManagement
 
    /*! @brief Complete federate restore and prepare to restart execution. */
    void post_restore();
-
-   /*! @brief Returns true if HLA save and restore is supported by the user
-    *  specified simulation initialization scheme.
-    *  @return True if HLA save and restore are supported, false otherwise. */
-   bool is_HLA_save_and_restore_supported();
 
    /*! @brief Restore checkpoint.
     *  @param file_name Checkpoint file name. */
@@ -989,6 +984,7 @@ class Federate : public TimeManagement
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
+  public:
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
    std::wstring restore_name; ///< @trick_io{**} Name for a restore file
 
@@ -1019,6 +1015,7 @@ class Federate : public TimeManagement
    bool        restore_completed;                           ///< @trick_io{**} Restore completed.
    bool        federation_restore_failed_callback_complete; ///< @trick_io{**} federation not restored callback complete
 
+  private:
    bool federate_has_been_restarted; /**< @trick_io{**} Federate has restarted; so, do not restart again! */
 
    bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
@@ -1034,13 +1031,15 @@ class Federate : public TimeManagement
    Flag        checkpoint_rt_itimer; ///< @trick_io{**} loaded checkpoint RT ITIMER
 
    bool execution_has_begun; ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
-   //-- END: checkpoint / restore data --
 
+  public:
    bool start_to_save;    ///< @trick_io{**} Save flag
    bool start_to_restore; ///< @trick_io{**} Restore flag
    bool restart_flag;     ///< @trick_io{**} Restart flag
    bool restart_cfg_flag; ///< @trick_io{**} Restart flag with new configuration
+                          //-- END: checkpoint / restore data --
 
+  private:
    bool got_startup_sync_point;     ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
    bool make_copy_of_run_directory; ///< @trick_units{--} Make a backup of RUN directory before restarting the federation via federation manager (default: false).
 
@@ -1072,7 +1071,7 @@ class Federate : public TimeManagement
    Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
    ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */
 
-  private:
+  public:
    /*! @brief Dumps the contents of the running_feds object into the supplied
     *  file name with ".running_feds" appended to it.
     *  @param file_name Checkpoint file name. */
@@ -1081,6 +1080,7 @@ class Federate : public TimeManagement
    /*! @brief Request federation save from the RTI. */
    void request_federation_save();
 
+  private:
    /*! @brief Subscribe to the specified attributes for the given class handle.
     *  @param class_handle   Class handle.
     *  @param attribute_list Attributes handles. */
