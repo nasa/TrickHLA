@@ -2286,7 +2286,7 @@ void ExecutionControl::add_freeze_scenario_time(
 {
    if ( manager->is_late_joining_federate() ) {
 
-      if ( federate->get_announce_save() ) {
+      if ( federate->is_announce_save() ) {
          freeze_scenario_times.insert( t );
       } else {
          // If we received the interaction, save on the current frame.
@@ -2325,7 +2325,7 @@ bool ExecutionControl::check_freeze_time()
       exec_freeze(); // go to freeze at top of next frame (other federates MUST have their software frame set in input.py file!)
       // If we are to initiate the federation save, register a sync point
       // which must be acknowledged only in freeze mode!!!
-      if ( federate->get_announce_save() ) {
+      if ( federate->is_announce_save() ) {
          register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
          set_freeze_announced( true );
       }
@@ -2414,19 +2414,19 @@ bool ExecutionControl::is_save_initiated()
    // set in federation_synchronized when feds sync to FEDSAVE_v2 sync point
    // if it's not set, we are here because Dump Chkpnt was clicked, so we
    // need to register sync point
-   if ( federate->get_announce_save()
-        && !federate->get_initiate_save_flag()
-        && !federate->get_save_completed() ) {
+   if ( federate->is_announce_save()
+        && !federate->is_initiate_save_flag()
+        && !federate->is_save_completed() ) {
       register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
-      while ( !federate->get_initiate_save_flag() ) { // wait for federation to be synced
+      while ( !federate->is_initiate_save_flag() ) { // wait for federation to be synced
 
          sleep_timer.sleep();
 
-         if ( !federate->get_initiate_save_flag() ) {
+         if ( !federate->is_initiate_save_flag() ) {
 
             // To be more efficient, we get the time once and share it.
             int64_t wallclock_time = sleep_timer.time();
@@ -2459,9 +2459,9 @@ bool ExecutionControl::is_save_initiated()
 
 bool ExecutionControl::perform_save()
 {
-   if ( federate->get_announce_save()
-        && federate->get_initiate_save_flag()
-        && !federate->get_start_to_save() ) {
+   if ( federate->is_announce_save()
+        && federate->is_initiate_save_flag()
+        && !federate->is_start_to_save() ) {
       // We are here because user called start_federation_save, so
       // must force the perform_checkpoint code to execute.
       federate->set_announce_save( false );
