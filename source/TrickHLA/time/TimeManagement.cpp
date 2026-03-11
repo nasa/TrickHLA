@@ -1054,7 +1054,7 @@ void TimeManagement::time_advance_request()
    }
 
    // -- start of checkpoint additions --
-   // TEMP   this->save_completed = false; // reset ONLY at the bottom of the frame...
+   // TEMP   federate->set_save_completed( false ); // reset ONLY at the bottom of the frame...
    //  -- end of checkpoint additions --
 
    {
@@ -1083,7 +1083,7 @@ void TimeManagement::time_advance_request()
 void TimeManagement::perform_time_advance_request()
 {
    // -- start of checkpoint additions --
-   // TEMP   this->save_completed = false; // reset ONLY at the bottom of the frame...
+   // TEMP   federate->set_save_completed( false ); // reset ONLY at the bottom of the frame...
    //  -- end of checkpoint additions --
 
    // Skip requesting time-advancement if we are not time-regulating and

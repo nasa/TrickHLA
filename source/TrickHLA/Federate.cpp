@@ -926,22 +926,6 @@ FederateHandle Federate::decode_federate_handle(
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-#if 0  // TEMP
-   // DEBUG code
-   VariableLengthData encoded_fed2 = fed_handle.encode(); // TEMP
-   FederateHandle     fed2_handle  = RTI_ambassador->decodeFederateHandle( encoded_fed2 ); // TEMP
-   string             fed1_id, fed2_id; // TEMP
-   StringUtilities::to_string( fed1_id, fed_handle ); // TEMP
-   StringUtilities::to_string( fed2_id, fed2_handle ); // TEMP
-   ostringstream errmsg; // TEMP
-   errmsg << "Federate::decode_federate_handle():" << __LINE__ << endl
-          << " encoded_handle.size()=" << enc_handle.size() << endl
-          << " fed_handle=" << fed1_id << endl
-          << " encoded_fed2.size()=" << encoded_fed2.size() << endl
-          << " fed2_handle=" << fed2_id << endl; // TEMP
-   message_publish( MSG_INFO, errmsg.str().c_str() ); // TEMP
-#endif // TEMP
-
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string fed_id;
       StringUtilities::to_string( fed_id, fed_handle );

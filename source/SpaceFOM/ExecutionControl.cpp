@@ -2673,8 +2673,8 @@ void ExecutionControl::exit_freeze()
    run_mode_transition();
 
 #if 0 // TEST ONLY
-   // TEMP Test adding a delay to non-master federates to make them late to
-   // go to run. This will allow us to verify we calculate the correct clock
+   // TEST ONLY Test adding a delay to non-master federates to make them late
+   // to go to run. This will allow us to verify we calculate the correct clock
    // reset value with the expected behavior being the federates only overrun
    // for a few frames until they catch back up to realtime.
    if ( !is_master() ) {

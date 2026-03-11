@@ -2172,7 +2172,6 @@ void ExecutionControl::enter_freeze()
          trigger_freeze_interaction( freeze_scenario_time );
 
          set_freeze_pending( true ); // TEMP
-
          // TEMP   federate->un_freeze(); // will freeze again for real when we hit the freeze interaction time
       }
    }
