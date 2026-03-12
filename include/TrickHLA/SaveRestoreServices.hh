@@ -527,7 +527,7 @@ class SaveRestoreServices
    void request_federation_save();
 
   protected:
-   Federate *federate;
+   Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
 
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
    std::wstring restore_name; ///< @trick_io{**} Name for a restore file
