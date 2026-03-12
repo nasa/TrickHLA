@@ -315,9 +315,6 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
     * @param instance_hndl Federate instance to remove. */
    void remove_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
-   //
-   // BEGIN: checkpoint / restore code
-   //
    /*! @brief Deallocate running federates based on current known information
     * in preparation for re-size. */
    void clear_known_feds();
@@ -378,7 +375,6 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
     *  @param values        Attribute values. */
    void rebuild_federate_handles( RTI1516_NAMESPACE::ObjectInstanceHandle const    &instance_hndl,
                                   RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
-   // END: checkpoint / restore code
 
    /*! @brief Send zero lookahead or requested data for the specified object instance.
     *  @param obj_instance_name Object instance name to send data for. */
