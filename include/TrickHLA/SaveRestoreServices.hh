@@ -19,16 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../../source/TrickHLA/FedAmb.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/SaveRestoreServices.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
-@trick_link_dependency{../../source/TrickHLA/time/TimeManagement.cpp}
-@trick_link_dependency{../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
-@trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
-@trick_link_dependency{../../source/TrickHLA/utils/MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -53,18 +46,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/time/Int64Interval.hh"
-#include "TrickHLA/time/Int64Time.hh"
-#include "TrickHLA/time/TimeManagement.hh"
-#include "TrickHLA/time/TrickThreadCoordinator.hh"
-#include "TrickHLA/utils/MutexLock.hh"
-#include "TrickHLA/utils/MutexProtection.hh"
-
-#if defined( IEEE_1516_2025 )
-#   include "TrickHLA/FedAmbHLA4.hh"
-#else
-#   include "TrickHLA/FedAmbHLA3.hh"
-#endif // IEEE_1516_2025
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -99,7 +80,12 @@ typedef enum {
    RESTORE_IN_PROGRESS       = 4,
    RESTORE_COMPLETE          = 5,
    RESTORE_FAILED            = 6
-} THLASaveRestoreProcEnum;
+} THLARestoreProcessEnum;
+
+// Forward Declared Classes: Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
+class Federate;
 
 class SaveRestoreServices
 {
@@ -267,14 +253,14 @@ class SaveRestoreServices
 
    /*! @brief Get the restore process state.
     *  @return The Restore process state. */
-   THLASaveRestoreProcEnum get_restore_process()
+   THLARestoreProcessEnum get_restore_process()
    {
       return restore_process;
    }
 
    /*! @brief Set the restore process state.
     *  @param process_state The Restore process state. */
-   void set_restore_process( THLASaveRestoreProcEnum process_state )
+   void set_restore_process( THLARestoreProcessEnum process_state )
    {
       this->restore_process = process_state;
    }
@@ -435,7 +421,7 @@ class SaveRestoreServices
 
    /*! @brief Get the name of the save.
     *  @return Save name as a wide string. */
-   std::wstring get_save_name()
+   std::wstring const &get_save_name()
    {
       return save_name;
    }
@@ -449,7 +435,7 @@ class SaveRestoreServices
 
    /*! @brief Get the name of the restore.
     *  @return Restore name. */
-   std::wstring get_restore_name()
+   std::wstring const &get_restore_name()
    {
       return restore_name;
    }
@@ -549,12 +535,12 @@ class SaveRestoreServices
    std::string HLA_save_directory; ///< @trick_io{*i} @trick_units{--} HLA Save directory
    bool        initiate_save_flag; ///< @trick_io{**} Save announce flag
 
-   THLASaveRestoreProcEnum restore_process;       ///< @trick_io{**} Where we are in the restore process
-   THLASaveRestoreProcEnum prev_restore_process;  ///< @trick_io{**} previous state of the restore process
-   bool                    initiate_restore_flag; ///< @trick_io{**} Restore announce flag
-   bool                    restore_in_progress;   ///< @trick_io{**} Restore in progress flag
-   bool                    restore_failed;        ///< @trick_io{**} Restore of the federate failed
-   bool                    restore_is_imminent;   ///< @trick_io{**} Restore has been signalled by the Manager
+   THLARestoreProcessEnum restore_process;       ///< @trick_io{**} Where we are in the restore process
+   THLARestoreProcessEnum prev_restore_process;  ///< @trick_io{**} previous state of the restore process
+   bool                   initiate_restore_flag; ///< @trick_io{**} Restore announce flag
+   bool                   restore_in_progress;   ///< @trick_io{**} Restore in progress flag
+   bool                   restore_failed;        ///< @trick_io{**} Restore of the federate failed
+   bool                   restore_is_imminent;   ///< @trick_io{**} Restore has been signalled by the Manager
 
    std::string save_label;            ///< @trick_io{**} Save label
    bool        announce_save;         ///< @trick_io{**} flag to indicate whether we have announced the federation save

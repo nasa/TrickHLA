@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/time/TimeManagement.cpp
+@file TrickHLA/time/TimeManagementServices.cpp
 @ingroup TrickHLA
 @brief This class provides basic services for HLA time management.
 
@@ -15,12 +15,13 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{TimeManagement.cpp}
+@trick_link_dependency{TimeManagementServices.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{TrickThreadCoordinator.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../ExecutionControlBase.cpp}
 @trick_link_dependency{../FedAmb.cpp}
+@trick_link_dependency{../Federate.cpp}
 @trick_link_dependency{../Manager.cpp}
 @trick_link_dependency{../Types.cpp}
 @trick_link_dependency{../utils/MutexLock.cpp}
@@ -59,12 +60,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
-#include "TrickHLA/time/TimeManagement.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
@@ -103,7 +105,7 @@ using namespace TrickHLA;
  *
  * @job_class{initialization}
  */
-TimeManagement::TimeManagement(
+TimeManagementServices::TimeManagementServices(
    Federate *fed )
    : TrickThreadCoordinator( fed ),
      lookahead_time( 0.0 ),
@@ -135,7 +137,7 @@ TimeManagement::TimeManagement(
  * of this class.
  * @job_class{shutdown}
  */
-TimeManagement::~TimeManagement()
+TimeManagementServices::~TimeManagementServices()
 {
    // Make sure we destroy the mutex.
    time_adv_state_mutex.destroy();
@@ -144,14 +146,14 @@ TimeManagement::~TimeManagement()
 /*!
  * @brief Initialize the thread memory associated with the Trick child threads.
  */
-void TimeManagement::initialize_thread_state(
+void TimeManagementServices::initialize_thread_state(
    double const main_thread_data_cycle_time )
 {
    this->HLA_cycle_time              = main_thread_data_cycle_time;
    this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).\n",
+      message_publish( MSG_NORMAL, "TimeManagementServices::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).\n",
                        __LINE__, this->HLA_cycle_time );
    }
 
@@ -175,10 +177,10 @@ void TimeManagement::initialize_thread_state(
 /*!
  * @job_class{initialization}
  */
-void TimeManagement::restart_initialization()
+void TimeManagementServices::restart_initialization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::restart_initialization():%d\n",
+      message_publish( MSG_NORMAL, "TimeManagementServices::restart_initialization():%d\n",
                        __LINE__ );
    }
 
@@ -190,7 +192,7 @@ void TimeManagement::restart_initialization()
    // The lookahead time can not be negative.
    if ( lookahead_time < 0.0 ) {
       ostringstream errmsg;
-      errmsg << "TimeManagement::restart_initialization():" << __LINE__
+      errmsg << "TimeManagementServices::restart_initialization():" << __LINE__
              << " ERROR: Invalid HLA lookahead time!"
              << " Lookahead time (" << lookahead_time << " seconds)"
              << " must be greater than or equal to zero and not negative. Make"
@@ -203,7 +205,7 @@ void TimeManagement::restart_initialization()
 }
 
 /*! @brief Set the time advance as granted. */
-void TimeManagement::set_time_advance_granted(
+void TimeManagementServices::set_time_advance_granted(
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
    Int64Time int64_time( time );
@@ -227,12 +229,12 @@ void TimeManagement::set_time_advance_granted(
       this->time_adv_state = TIME_ADVANCE_GRANTED;
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::set_time_advance_granted():%d Granted-time:%f, Requested-time:%f.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::set_time_advance_granted():%d Granted-time:%f, Requested-time:%f.\n",
                           __LINE__, this->HLA_time, requested_time.get_time_in_seconds() );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "TimeManagement::set_time_advance_granted():%d WARNING: TimeManagement \"%s\" \
+         message_publish( MSG_WARNING, "TimeManagementServices::set_time_advance_granted():%d WARNING: TimeManagementServices \"%s\" \
 IGNORING GRANTED TIME %.12G because it is less then requested time %.12G.\n",
                           __LINE__, federate->get_federate_name().c_str(),
                           int64_time.get_time_in_seconds(),
@@ -241,7 +243,7 @@ IGNORING GRANTED TIME %.12G because it is less then requested time %.12G.\n",
    }
 }
 
-void TimeManagement::set_granted_time(
+void TimeManagementServices::set_granted_time(
    double const time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -255,7 +257,7 @@ void TimeManagement::set_granted_time(
    this->HLA_time = granted_time.get_time_in_seconds();
 }
 
-void TimeManagement::set_granted_time(
+void TimeManagementServices::set_granted_time(
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -269,7 +271,7 @@ void TimeManagement::set_granted_time(
    this->HLA_time = granted_time.get_time_in_seconds();
 }
 
-void TimeManagement::set_requested_time(
+void TimeManagementServices::set_requested_time(
    double const time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -278,7 +280,7 @@ void TimeManagement::set_requested_time(
    requested_time.set( time );
 }
 
-void TimeManagement::set_requested_time(
+void TimeManagementServices::set_requested_time(
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -288,20 +290,20 @@ void TimeManagement::set_requested_time(
 }
 
 /*! @brief Sets the requested time to the granted time. */
-void TimeManagement::set_requested_time_to_granted_time()
+void TimeManagementServices::set_requested_time_to_granted_time()
 {
    MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
    requested_time.set( granted_time );
 }
 
-HLABaseTimeEnum TimeManagement::get_HLA_base_time_unit()
+HLABaseTimeEnum TimeManagementServices::get_HLA_base_time_unit()
 {
    return Int64BaseTime::get_base_unit_enum();
 }
 
 /*! @brief Sets the HLA base time unit.
  *  @param base_time_unit HLA base time unit. */
-void TimeManagement::set_HLA_base_time_unit(
+void TimeManagementServices::set_HLA_base_time_unit(
    HLABaseTimeEnum const base_time_unit )
 {
    if ( base_time_unit != Int64BaseTime::get_base_unit_enum() ) {
@@ -313,7 +315,7 @@ void TimeManagement::set_HLA_base_time_unit(
 
 /*! @brief Sets the HLA base time unit and scale Trick tics multiplier.
  *  @param base_time_unit HLA base time unit. */
-void TimeManagement::set_HLA_base_time_unit_and_scale_trick_tics(
+void TimeManagementServices::set_HLA_base_time_unit_and_scale_trick_tics(
    HLABaseTimeEnum const base_time_unit )
 {
    if ( base_time_unit != Int64BaseTime::get_base_unit_enum() ) {
@@ -329,7 +331,7 @@ void TimeManagement::set_HLA_base_time_unit_and_scale_trick_tics(
 
 /*! @brief Sets the HLA base time multiplier.
  *  @param multiplier HLA base time multiplier. */
-void TimeManagement::set_HLA_base_time_multiplier(
+void TimeManagementServices::set_HLA_base_time_multiplier(
    int64_t const multiplier )
 {
    if ( multiplier != Int64BaseTime::get_base_time_multiplier() ) {
@@ -341,7 +343,7 @@ void TimeManagement::set_HLA_base_time_multiplier(
 
 /*! @brief Sets the HLA base time multiplier and scale Trick tics multiplier.
  *  @param multiplier HLA base time multiplier. */
-void TimeManagement::set_HLA_base_time_multiplier_and_scale_trick_tics(
+void TimeManagementServices::set_HLA_base_time_multiplier_and_scale_trick_tics(
    int64_t const multiplier )
 {
    if ( multiplier != Int64BaseTime::get_base_time_multiplier() ) {
@@ -355,7 +357,7 @@ void TimeManagement::set_HLA_base_time_multiplier_and_scale_trick_tics(
    }
 }
 
-void TimeManagement::refresh_HLA_time_constants()
+void TimeManagementServices::refresh_HLA_time_constants()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -370,7 +372,7 @@ void TimeManagement::refresh_HLA_time_constants()
    refresh_thread_base_times();
 }
 
-void TimeManagement::scale_trick_tics_to_HLA_base_time_multiplier()
+void TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier()
 {
    int64_t const time_res  = Int64BaseTime::get_base_time_multiplier();
    int64_t       tic_value = exec_get_time_tic_value();
@@ -387,13 +389,13 @@ void TimeManagement::scale_trick_tics_to_HLA_base_time_multiplier()
          exec_set_time_tic_value( tic_value );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_INFO, "TimeManagement::scale_trick_tics_to_HLA_base_time_multiplier():%d New Trick time tics:%d.\n",
+            message_publish( MSG_INFO, "TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier():%d New Trick time tics:%d.\n",
                              __LINE__, tic_value );
          }
       }
    } else {
       ostringstream errmsg;
-      errmsg << "TimeManagement::scale_trick_tics_to_HLA_base_time_multiplier():" << __LINE__
+      errmsg << "TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier():" << __LINE__
              << " ERROR: Trick cannot represent the required time Tic value "
              << setprecision( 18 ) << time_res
              << " in order to support the HLA base unit of '"
@@ -403,14 +405,14 @@ void TimeManagement::scale_trick_tics_to_HLA_base_time_multiplier()
    }
 }
 
-void TimeManagement::set_lookahead(
+void TimeManagementServices::set_lookahead(
    double const value )
 {
    // Determine if the lookahead time needs a resolution that exceeds the
    // configured HLA base time.
    if ( Int64BaseTime::exceeds_base_time_resolution( value ) ) {
       ostringstream errmsg;
-      errmsg << "TimeManagement::set_lookahead():" << __LINE__
+      errmsg << "TimeManagementServices::set_lookahead():" << __LINE__
              << " ERROR: The lookahead time specified (" << setprecision( 18 ) << value
              << " seconds) requires more resolution than whole "
              << Int64BaseTime::get_base_unit()
@@ -425,7 +427,7 @@ void TimeManagement::set_lookahead(
              << " )' in your input.py file. The current HLA base time resolution is "
              << Int64BaseTime::get_base_unit_enum_string( Int64BaseTime::get_base_unit_enum() )
              << ". You also need to update both the Federation Execution"
-             << " Specific Federation Agreement (FESFA) and TimeManagement Compliance"
+             << " Specific Federation Agreement (FESFA) and TimeManagementServices Compliance"
              << " Declaration (FCD) documents for your Federation to document"
              << " the change in timing class resolution." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -434,7 +436,7 @@ void TimeManagement::set_lookahead(
    // Determine if the Trick time Tic can represent the lookahead time.
    if ( Int64BaseTime::exceeds_base_time_resolution( value, exec_get_time_tic_value() ) ) {
       ostringstream errmsg;
-      errmsg << "TimeManagement::set_lookahead():" << __LINE__
+      errmsg << "TimeManagementServices::set_lookahead():" << __LINE__
              << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
              << ") does not have enough resolution to represent the HLA lookahead time ("
              << setprecision( 18 ) << value
@@ -451,13 +453,13 @@ void TimeManagement::set_lookahead(
 }
 
 /*! @brief Update the HLA lookahead base time. */
-void TimeManagement::refresh_lookahead()
+void TimeManagementServices::refresh_lookahead()
 {
    // Recalculate the lookahead HLA time in base time units.
    set_lookahead( this->lookahead_time );
 }
 
-void TimeManagement::time_advance_request_to_GALT()
+void TimeManagementServices::time_advance_request_to_GALT()
 {
    // Simply return if we are the master federate that created the federation,
    // or if time management is not enabled.
@@ -481,22 +483,22 @@ void TimeManagement::time_advance_request_to_GALT()
          set_requested_time( time );
       }
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: SaveInProgress\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: SaveInProgress\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RestoreInProgress\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: NotConnected\n",
                        __LINE__ );
       if ( federate != NULL ) {
          federate->set_connection_lost();
       }
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RTIinternalError\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: RTIinternalError\n",
                        __LINE__ );
    }
 
@@ -505,7 +507,7 @@ void TimeManagement::time_advance_request_to_GALT()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::time_advance_request_to_GALT():%d Requested-Time:%lf\n",
+      message_publish( MSG_NORMAL, "TimeManagementServices::time_advance_request_to_GALT():%d Requested-Time:%lf\n",
                        __LINE__, requested_time.get_time_in_seconds() );
    }
 
@@ -513,7 +515,7 @@ void TimeManagement::time_advance_request_to_GALT()
    perform_time_advance_request();
 }
 
-void TimeManagement::time_advance_request_to_GALT_LCTS_multiple()
+void TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple()
 {
    // Simply return if we are the master federate that created the federation,
    // or if time management is not enabled.
@@ -543,22 +545,22 @@ void TimeManagement::time_advance_request_to_GALT_LCTS_multiple()
          set_requested_time( time );
       }
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: SaveInProgress\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: SaveInProgress\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RestoreInProgress\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: NotConnected\n",
                        __LINE__ );
       if ( federate != NULL ) {
          federate->set_connection_lost();
       }
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-      message_publish( MSG_WARNING, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RTIinternalError\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: RTIinternalError\n",
                        __LINE__ );
    }
 
@@ -567,7 +569,7 @@ void TimeManagement::time_advance_request_to_GALT_LCTS_multiple()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::time_advance_request_to_GALT_LCTS_multiple():%d Requested-Time:%lf\n",
+      message_publish( MSG_NORMAL, "TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple():%d Requested-Time:%lf\n",
                        __LINE__, requested_time.get_time_in_seconds() );
    }
 
@@ -578,10 +580,10 @@ void TimeManagement::time_advance_request_to_GALT_LCTS_multiple()
 /*!
  * @job_class{initialization}.
  */
-void TimeManagement::setup_time_management()
+void TimeManagementServices::setup_time_management()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s\n",
+      message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s\n",
                        __LINE__,
                        ( this->time_management ? "Yes" : "No" ),
                        ( this->time_regulating ? "Yes" : "No" ),
@@ -631,7 +633,7 @@ void TimeManagement::setup_time_management()
    }
 }
 
-void TimeManagement::set_time_constrained_enabled(
+void TimeManagementServices::set_time_constrained_enabled(
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
    {
@@ -647,7 +649,7 @@ void TimeManagement::set_time_constrained_enabled(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::set_time_constrained_enabled():%d TimeManagement \
+      message_publish( MSG_NORMAL, "TimeManagementServices::set_time_constrained_enabled():%d TimeManagementServices \
 \"%s\" Time granted to: %.12G\n",
                        __LINE__, federate->get_federate_name().c_str(),
                        get_granted_time().get_time_in_seconds() );
@@ -657,7 +659,7 @@ void TimeManagement::set_time_constrained_enabled(
 /*!
  * @job_class{initialization}.
  */
-void TimeManagement::setup_time_constrained()
+void TimeManagementServices::setup_time_constrained()
 {
    // Just return if HLA time management is not enabled, the user does
    // not want time constrained enabled, or if we are already constrained.
@@ -670,13 +672,13 @@ void TimeManagement::setup_time_constrained()
 
    // Sanity check.
    if ( RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate_with_message( "TimeManagement::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
+      DebugHandler::terminate_with_message( "TimeManagementServices::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
       return;
    }
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED\n",
                           __LINE__, federate->get_federation_name().c_str() );
       }
 
@@ -717,8 +719,8 @@ void TimeManagement::setup_time_constrained()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "TimeManagement::setup_time_constrained():" << __LINE__
-                         << " ERROR: Unexpectedly the TimeManagement is no longer an execution"
+                  errmsg << "TimeManagementServices::setup_time_constrained():" << __LINE__
+                         << " ERROR: Unexpectedly the TimeManagementServices is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -729,7 +731,7 @@ void TimeManagement::setup_time_constrained()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TimeManagement::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED, waiting...\n",
+               message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED, waiting...\n",
                                 __LINE__, federate->get_federation_name().c_str() );
             }
          }
@@ -743,7 +745,7 @@ void TimeManagement::setup_time_constrained()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": Time Constrained Already Enabled : '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_constrained():%d \"%s\": Time Constrained Already Enabled : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::InTimeAdvancingState const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -752,7 +754,7 @@ void TimeManagement::setup_time_constrained()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": ERROR: InTimeAdvancingState : '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_constrained():%d \"%s\": ERROR: InTimeAdvancingState : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::RequestForTimeConstrainedPending const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -761,7 +763,7 @@ void TimeManagement::setup_time_constrained()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": ERROR: RequestForTimeConstrainedPending : '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_constrained():%d \"%s\": ERROR: RequestForTimeConstrainedPending : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -770,7 +772,7 @@ void TimeManagement::setup_time_constrained()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": ERROR: FederateNotExecutionMember : '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_constrained():%d \"%s\": ERROR: FederateNotExecutionMember : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -788,7 +790,7 @@ void TimeManagement::setup_time_constrained()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": ERROR: RestoreInProgress : '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_constrained():%d \"%s\": ERROR: RestoreInProgress : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -796,7 +798,7 @@ void TimeManagement::setup_time_constrained()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": ERROR: NotConnected : '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_constrained():%d \"%s\": ERROR: NotConnected : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
       federate->set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -806,7 +808,7 @@ void TimeManagement::setup_time_constrained()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": ERROR: RTIinternalError : '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_constrained():%d \"%s\": ERROR: RTIinternalError : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -815,7 +817,7 @@ void TimeManagement::setup_time_constrained()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_constrained():%d \"%s\": Unexpected RTI exception!\nRTI Exception: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_constrained():%d \"%s\": Unexpected RTI exception!\nRTI Exception: RTIinternalError: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -825,7 +827,7 @@ void TimeManagement::setup_time_constrained()
 
 /*! @brief Enable time regulating.
  *  @param time the granted HLA Logical time */
-void TimeManagement::set_time_regulation_enabled(
+void TimeManagementServices::set_time_regulation_enabled(
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
    {
@@ -841,7 +843,7 @@ void TimeManagement::set_time_regulation_enabled(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::set_time_regulation_enabled():%d TimeManagement \
+      message_publish( MSG_NORMAL, "TimeManagementServices::set_time_regulation_enabled():%d TimeManagementServices \
 \"%s\" Time granted to: %.12G\n",
                        __LINE__, federate->get_federate_name().c_str(),
                        get_granted_time().get_time_in_seconds() );
@@ -851,7 +853,7 @@ void TimeManagement::set_time_regulation_enabled(
 /*!
  * @job_class{initialization}.
  */
-void TimeManagement::setup_time_regulation()
+void TimeManagementServices::setup_time_regulation()
 {
    // Just return if HLA time management is not enabled, the user does
    // not want time regulation enabled, or if we are already regulating.
@@ -864,13 +866,13 @@ void TimeManagement::setup_time_regulation()
 
    // Sanity check.
    if ( RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate_with_message( "TimeManagement::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
+      DebugHandler::terminate_with_message( "TimeManagementServices::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
       return;
    }
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds.\n",
                           __LINE__, federate->get_federation_name().c_str(),
                           lookahead.get_time_in_seconds() );
       }
@@ -917,8 +919,8 @@ void TimeManagement::setup_time_regulation()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "TimeManagement::setup_time_regulation():" << __LINE__
-                         << " ERROR: Unexpectedly the TimeManagement is no longer an execution"
+                  errmsg << "TimeManagementServices::setup_time_regulation():" << __LINE__
+                         << " ERROR: Unexpectedly the TimeManagementServices is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -929,7 +931,7 @@ void TimeManagement::setup_time_regulation()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TimeManagement::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds, waiting...\n",
+               message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds, waiting...\n",
                                 __LINE__, federate->get_federation_name().c_str(), lookahead.get_time_in_seconds() );
             }
          }
@@ -944,7 +946,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": Time Regulation Already Enabled: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": Time Regulation Already Enabled: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::InvalidLookahead const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -953,7 +955,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: InvalidLookahead: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": ERROR: InvalidLookahead: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::InTimeAdvancingState const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -962,7 +964,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: InTimeAdvancingState: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": ERROR: InTimeAdvancingState: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::RequestForTimeRegulationPending const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -971,7 +973,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: RequestForTimeRegulationPending: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": ERROR: RequestForTimeRegulationPending: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -980,7 +982,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: FederateNotExecutionMember: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": ERROR: FederateNotExecutionMember: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -989,7 +991,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: SaveInProgress: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": ERROR: SaveInProgress: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -998,7 +1000,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: RestoreInProgress: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": ERROR: RestoreInProgress: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1006,7 +1008,7 @@ void TimeManagement::setup_time_regulation()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: NotConnected : '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": ERROR: NotConnected : '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
       federate->set_connection_lost();
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -1016,7 +1018,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": ERROR: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": ERROR: RTIinternalError: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1025,7 +1027,7 @@ void TimeManagement::setup_time_regulation()
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "TimeManagement::setup_time_regulation():%d \"%s\": Unexpected RTI exception!\nRTI Exception: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "TimeManagementServices::setup_time_regulation():%d \"%s\": Unexpected RTI exception!\nRTI Exception: RTIinternalError: '%s'\n",
                        __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1036,7 +1038,7 @@ void TimeManagement::setup_time_regulation()
 /*!
  * @job_class{scheduled}
  */
-void TimeManagement::time_advance_request()
+void TimeManagementServices::time_advance_request()
 {
    // Skip requesting time-advancement if we are not time-regulating and
    // not time-constrained (i.e. not using time management).
@@ -1047,7 +1049,7 @@ void TimeManagement::time_advance_request()
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::time_advance_request():%d exec_init_pass() == true so returning.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::time_advance_request():%d exec_init_pass() == true so returning.\n",
                           __LINE__ );
       }
       return;
@@ -1080,7 +1082,7 @@ void TimeManagement::time_advance_request()
 /*!
  * @job_class{scheduled}
  */
-void TimeManagement::perform_time_advance_request()
+void TimeManagementServices::perform_time_advance_request()
 {
    // -- start of checkpoint additions --
    // TEMP   federate->set_save_completed( false ); // reset ONLY at the bottom of the frame...
@@ -1094,10 +1096,10 @@ void TimeManagement::perform_time_advance_request()
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       if ( is_zero_lookahead_time() ) {
-         message_publish( MSG_NORMAL, "TimeManagement::perform_time_advance_request():%d Time Advance Request Available (TARA) to %.12G seconds.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::perform_time_advance_request():%d Time Advance Request Available (TARA) to %.12G seconds.\n",
                           __LINE__, requested_time.get_time_in_seconds() );
       } else {
-         message_publish( MSG_NORMAL, "TimeManagement::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.\n",
                           __LINE__, requested_time.get_time_in_seconds() );
       }
    }
@@ -1111,7 +1113,7 @@ void TimeManagement::perform_time_advance_request()
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
       if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d WARNING: Already in time requested state!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d WARNING: Already in time requested state!\n",
                           __LINE__ );
       }
 
@@ -1133,10 +1135,10 @@ void TimeManagement::perform_time_advance_request()
          this->time_adv_state = TIME_ADVANCE_REQUESTED;
 
       } catch ( RTI1516_NAMESPACE::InvalidLogicalTime const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: InvalidLogicalTime\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d EXCEPTION: InvalidLogicalTime\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::LogicalTimeAlreadyPassed const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: LogicalTimeAlreadyPassed\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d EXCEPTION: LogicalTimeAlreadyPassed\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::InTimeAdvancingState const &e ) {
          // A time advance request is still being processed by the RTI so show
@@ -1145,31 +1147,31 @@ void TimeManagement::perform_time_advance_request()
          // Indicate we are in the time advance requested state.
          this->time_adv_state = TIME_ADVANCE_REQUESTED;
 
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::RequestForTimeRegulationPending const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: RequestForTimeRegulationPending\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d EXCEPTION: RequestForTimeRegulationPending\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::RequestForTimeConstrainedPending const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: RequestForTimeConstrainedPending\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d EXCEPTION: RequestForTimeConstrainedPending\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: FederateNotExecutionMember\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: SaveInProgress\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d EXCEPTION: SaveInProgress\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: RestoreInProgress\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d EXCEPTION: RestoreInProgress\n",
                           __LINE__ );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d EXCEPTION: NotConnected\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d EXCEPTION: NotConnected\n",
                           __LINE__ );
          federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "TimeManagement::perform_time_advance_request():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'\n",
                           __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
       }
    }
@@ -1182,7 +1184,7 @@ void TimeManagement::perform_time_advance_request()
 /*!
  * @job_class{scheduled}
  */
-void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
+void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
 {
    // Skip requesting time-advancement if we are not time-regulating and
    // not time-constrained (i.e. not using time management).
@@ -1196,7 +1198,7 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
       if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
-         message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Already in time requested state!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Already in time requested state!\n",
                           __LINE__ );
       } else {
 
@@ -1217,10 +1219,10 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
             this->time_adv_state = TIME_ADVANCE_REQUESTED;
 
          } catch ( RTI1516_NAMESPACE::InvalidLogicalTime const &e ) {
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: InvalidLogicalTime\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: InvalidLogicalTime\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::LogicalTimeAlreadyPassed const &e ) {
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: LogicalTimeAlreadyPassed\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: LogicalTimeAlreadyPassed\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::InTimeAdvancingState const &e ) {
             // A time advance request is still being processed by the RTI so show
@@ -1229,31 +1231,31 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
             // Indicate we are in the time advance requested state.
             this->time_adv_state = TIME_ADVANCE_REQUESTED;
 
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::RequestForTimeRegulationPending const &e ) {
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeRegulationPending\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeRegulationPending\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::RequestForTimeConstrainedPending const &e ) {
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeConstrainedPending\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeConstrainedPending\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: FederateNotExecutionMember\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: FederateNotExecutionMember\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: SaveInProgress\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: SaveInProgress\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RestoreInProgress\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RestoreInProgress\n",
                              __LINE__ );
          } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected\n",
                              __LINE__ );
             federate->set_connection_lost();
          } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
-            message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'\n",
+            message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'\n",
                              __LINE__, federate->get_federation_name().c_str(),
                              rti_err_msg.c_str() );
          }
@@ -1265,7 +1267,7 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
          // We had an error if we are not in the time advance requested state.
          if ( this->time_adv_state != TIME_ADVANCE_REQUESTED ) {
             if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-               message_publish( MSG_WARNING, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Request Available call made!\n",
+               message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Request Available call made!\n",
                                 __LINE__ );
             }
             return;
@@ -1310,8 +1312,8 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "TimeManagement::wait_for_zero_lookahead_TARA_TAG():" << __LINE__
-                         << " ERROR: Unexpectedly the TimeManagement is no longer an execution"
+                  errmsg << "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():" << __LINE__
+                         << " ERROR: Unexpectedly the TimeManagementServices is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -1322,7 +1324,7 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TimeManagement::wait_for_zero_lookahead_TARA_TAG():%d Waiting...\n",
+               message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d Waiting...\n",
                                 __LINE__ );
             }
          }
@@ -1333,13 +1335,13 @@ void TimeManagement::wait_for_zero_lookahead_TARA_TAG()
 /*
  * @brief Verify the time constraints (i.e. Lookahead, LCTS, Me, Mhla, RT, and dt).
  */
-bool TimeManagement::verify_time_constraints()
+bool TimeManagementServices::verify_time_constraints()
 {
    // Determine if the Trick time Tic resolution can support the HLA base time.
    // Constraint: Me >= Mhla
    if ( exec_get_time_tic_value() < Int64BaseTime::get_base_time_multiplier() ) {
       ostringstream errmsg;
-      errmsg << "TimeManagement::verify_time_constraints():" << __LINE__
+      errmsg << "TimeManagementServices::verify_time_constraints():" << __LINE__
              << " ERROR: The Trick executive time tic value (" << exec_get_time_tic_value()
              << ") cannot support the HLA base time multiplier resolution ("
              << Int64BaseTime::get_base_time_multiplier() << ")";
@@ -1360,7 +1362,7 @@ bool TimeManagement::verify_time_constraints()
    // Constraint: Me % Mhla == 0
    if ( ( exec_get_time_tic_value() % Int64BaseTime::get_base_time_multiplier() ) != 0 ) {
       ostringstream errmsg;
-      errmsg << "TimeManagement::verify_time_constraints():" << __LINE__
+      errmsg << "TimeManagementServices::verify_time_constraints():" << __LINE__
              << " ERROR: The Trick executive time tic value (" << exec_get_time_tic_value()
              << ") must be an integer multiple of the HLA base time multiplier ("
              << Int64BaseTime::get_base_time_multiplier() << ")";
@@ -1382,7 +1384,7 @@ bool TimeManagement::verify_time_constraints()
 /*!
  *  @job_class{scheduled}
  */
-void TimeManagement::wait_for_time_advance_grant()
+void TimeManagementServices::wait_for_time_advance_grant()
 {
 #if defined( TRICKHLA_COLLECT_TAG_STATS )
    int64_t const tag_wait_start_time = clock_wall_time();
@@ -1396,7 +1398,7 @@ void TimeManagement::wait_for_time_advance_grant()
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::wait_for_time_advance_grant():%d In Initialization mode so returning.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_time_advance_grant():%d In Initialization mode so returning.\n",
                           __LINE__ );
       }
       return;
@@ -1412,7 +1414,7 @@ void TimeManagement::wait_for_time_advance_grant()
 
    if ( state == TIME_ADVANCE_RESET ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "TimeManagement::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!\n",
                           __LINE__ );
       }
       return;
@@ -1421,7 +1423,7 @@ void TimeManagement::wait_for_time_advance_grant()
    if ( state != TIME_ADVANCE_GRANTED ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.\n",
                           __LINE__, requested_time.get_time_in_seconds() );
       }
 
@@ -1451,8 +1453,8 @@ void TimeManagement::wait_for_time_advance_grant()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "TimeManagement::wait_for_time_advance_grant():" << __LINE__
-                         << " ERROR: Unexpectedly the TimeManagement is no longer an execution"
+                  errmsg << "TimeManagementServices::wait_for_time_advance_grant():" << __LINE__
+                         << " ERROR: Unexpectedly the TimeManagementServices is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -1463,7 +1465,7 @@ void TimeManagement::wait_for_time_advance_grant()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TimeManagement::wait_for_time_advance_grant():%d Waiting...\n",
+               message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_time_advance_grant():%d Waiting...\n",
                                 __LINE__ );
             }
          }
@@ -1477,7 +1479,7 @@ void TimeManagement::wait_for_time_advance_grant()
 
    // Add the line number for a higher trace level.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "TimeManagement::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.\n",
+      message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.\n",
                        __LINE__, granted_time.get_time_in_seconds() );
    }
 }
@@ -1487,7 +1489,7 @@ void TimeManagement::wait_for_time_advance_grant()
  *  constraint management and time regulating management.
  *  @job_class{shutdown}
  */
-void TimeManagement::shutdown_time_management()
+void TimeManagementServices::shutdown_time_management()
 {
    shutdown_time_constrained();
    shutdown_time_regulating();
@@ -1496,11 +1498,11 @@ void TimeManagement::shutdown_time_management()
 /*!
  *  @job_class{shutdown}
  */
-void TimeManagement::shutdown_time_constrained()
+void TimeManagementServices::shutdown_time_constrained()
 {
    if ( !this->time_constrained_state ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::shutdown_time_constrained():%d HLA Time Constrained Already Disabled.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::shutdown_time_constrained():%d HLA Time Constrained Already Disabled.\n",
                           __LINE__ );
       }
    } else {
@@ -1513,7 +1515,7 @@ void TimeManagement::shutdown_time_constrained()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::shutdown_time_constrained():%d Disabling HLA Time Constrained.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::shutdown_time_constrained():%d Disabling HLA Time Constrained.\n",
                           __LINE__ );
       }
 
@@ -1522,30 +1524,30 @@ void TimeManagement::shutdown_time_constrained()
          this->time_constrained_state = false;
       } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled const &e ) {
          this->time_constrained_state = false;
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_constrained():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          this->time_constrained_state = false;
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": FederateNotExecutionMember EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_constrained():%d \"%s\": FederateNotExecutionMember EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": SaveInProgress EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_constrained():%d \"%s\": SaveInProgress EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": RestoreInProgress EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_constrained():%d \"%s\": RestoreInProgress EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          this->time_constrained_state = false;
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": NotConnected EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_constrained():%d \"%s\": NotConnected EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
          federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": RTIinternalError EXCEPTION: '%s'\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_constrained():%d \"%s\": RTIinternalError EXCEPTION: '%s'\n",
                           __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_constrained():%d \"%s\": Unexpected RTI EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_constrained():%d \"%s\": Unexpected RTI EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       }
 
@@ -1558,11 +1560,11 @@ void TimeManagement::shutdown_time_constrained()
 /*!
  *  @job_class{shutdown}
  */
-void TimeManagement::shutdown_time_regulating()
+void TimeManagementServices::shutdown_time_regulating()
 {
    if ( !this->time_regulating_state ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::shutdown_time_regulating():%d HLA Time Regulation Already Disabled.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::shutdown_time_regulating():%d HLA Time Regulation Already Disabled.\n",
                           __LINE__ );
       }
    } else {
@@ -1575,7 +1577,7 @@ void TimeManagement::shutdown_time_regulating()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "TimeManagement::shutdown_time_regulating():%d Disabling HLA Time Regulation.\n",
+         message_publish( MSG_NORMAL, "TimeManagementServices::shutdown_time_regulating():%d Disabling HLA Time Regulation.\n",
                           __LINE__ );
       }
 
@@ -1584,30 +1586,30 @@ void TimeManagement::shutdown_time_regulating()
          this->time_regulating_state = false;
       } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled const &e ) {
          this->time_regulating_state = false;
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_regulating():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          this->time_regulating_state = false;
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": FederateNotExecutionMember EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_regulating():%d \"%s\": FederateNotExecutionMember EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": SaveInProgress EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_regulating():%d \"%s\": SaveInProgress EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": RestoreInProgress EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_regulating():%d \"%s\": RestoreInProgress EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          this->time_constrained_state = false;
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": NotConnected EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_regulating():%d \"%s\": NotConnected EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
          federate->set_connection_lost();
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": RTIinternalError EXCEPTION: '%s'\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_regulating():%d \"%s\": RTIinternalError EXCEPTION: '%s'\n",
                           __LINE__, federate->get_federation_name().c_str(), rti_err_msg.c_str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-         message_publish( MSG_WARNING, "TimeManagement::shutdown_time_regulating():%d \"%s\": Unexpected RTI EXCEPTION!\n",
+         message_publish( MSG_WARNING, "TimeManagementServices::shutdown_time_regulating():%d \"%s\": Unexpected RTI EXCEPTION!\n",
                           __LINE__, federate->get_federation_name().c_str() );
       }
 

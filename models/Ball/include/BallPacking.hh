@@ -182,7 +182,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
 
    /*! @brief Get the current scenario time associated with the Ball.
     *  @return Current time associated with the Ball. */
-   virtual double const get_time()
+   virtual double get_time()
    {
       return time;
    }

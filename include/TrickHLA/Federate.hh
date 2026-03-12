@@ -28,7 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/SaveRestoreServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
-@trick_link_dependency{../../source/TrickHLA/time/TimeManagement.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/TimeManagementServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
 @trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/utils/MutexProtection.cpp}
@@ -62,7 +62,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
-#include "TrickHLA/time/TimeManagement.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
@@ -101,7 +101,7 @@ namespace TrickHLA
 class Manager;
 class ExecutionControlBase;
 
-class Federate : public TimeManagement, public SaveRestoreServices
+class Federate : public TimeManagementServices, public SaveRestoreServices
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

@@ -22,7 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{SaveRestoreServices.cpp}
 @trick_link_dependency{Types.cpp}
-@trick_link_dependency{time/TimeManagement.cpp}
+@trick_link_dependency{time/TimeManagementServices.cpp}
 @trick_link_dependency{time/TrickThreadCoordinator.cpp}
 @trick_link_dependency{utils/MutexLock.cpp}
 @trick_link_dependency{utils/MutexProtection.cpp}
@@ -71,7 +71,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/time/TimeManagement.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
@@ -125,7 +125,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Federate::Federate()
-   : TimeManagement( this ),
+   : TimeManagementServices( this ),
      SaveRestoreServices( this ),
      name(),
      type(),
@@ -409,7 +409,7 @@ void Federate::restart_initialization()
                        __LINE__ );
    }
 
-   TimeManagement::restart_initialization();
+   TimeManagementServices::restart_initialization();
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 

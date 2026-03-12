@@ -15,15 +15,11 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{SaveRestoreServices.cpp}
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{FedAmb.cpp}
+@trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Manager.cpp}
 @trick_link_dependency{Types.cpp}
-@trick_link_dependency{time/TimeManagement.cpp}
-@trick_link_dependency{time/TrickThreadCoordinator.cpp}
-@trick_link_dependency{utils/MutexLock.cpp}
-@trick_link_dependency{utils/MutexProtection.cpp}
 @trick_link_dependency{utils/SleepTimeout.cpp}
 @trick_link_dependency{utils/Utilities.cpp}
 
@@ -57,22 +53,15 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
-#include "TrickHLA/Manager.hh"
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
-
-#if defined( IEEE_1516_2025 )
-#   include "TrickHLA/FedAmbHLA4.hh"
-#else
-#   include "TrickHLA/FedAmbHLA3.hh"
-#endif // IEEE_1516_2025
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

@@ -15,10 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - virtual void setup_restore();
   - virtual void perform_restore();
   - virtual void post_restore();
+- Refactored the HLA save and restore services into a SaveRestoreServices class.
 
 ### Breaking Changes
 
 ### Added
+
+- Added missing forward declared class statements.
 
 ### Changed
 
