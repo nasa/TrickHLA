@@ -113,7 +113,8 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__Federate();
 
-   // Allow the Save and Restore services access to the Federate data.
+   // Allow the save and restore services access to the Federate protected
+   // and private data.
    friend class SaveRestoreServices;
 
    //----------------------------- USER VARIABLES -----------------------------
