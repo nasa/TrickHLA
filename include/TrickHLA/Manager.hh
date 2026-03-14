@@ -420,36 +420,6 @@ class Manager : public CheckpointConversionBase
     *  @return True if the manager is shutting down the federate. */
    bool is_shutdown_called() const;
 
-   //
-   // Private data.
-   //
-  private:
-   ItemQueue interactions_queue; ///< @trick_io{**} Interactions queue.
-
-   int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
-   InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
-
-   bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
-
-   bool mgr_initialized; ///< @trick_units{--} Internal flag to indicate Manager is initialized.
-
-   MutexLock obj_discovery_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
-
-   ObjectInstanceMap object_map; ///< @trick_io{**} Map of all the Objects this federate uses, the Key is the object instance-handle.
-
-   TrickHLAObjInstanceNameIndexMap obj_name_index_map; ///< @trick_io{**} Map of object instance names to array index.
-
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
-
-   ExecutionControlBase *execution_control; /**< @trick_units{--}
-      Execution control object. This has to point to an allocated execution
-      control class that inherits from the ExecutionControlBase interface
-      class. For instance SRFOM::ExecutionControl. */
-
-   //
-   // Public member functions.
-   //
-  public:
    /*! @brief Set up the Trick ref-attributes for the user specified objects
     * and attributes.
     * @param data_obj_count Number of objects.
@@ -570,6 +540,32 @@ class Manager : public CheckpointConversionBase
 
    /*! @brief Echoes the contents of checkpoint InteractionItem linear array. */
    void print_converted_interactions_checkpoint();
+
+   //
+   // Private data.
+   //
+  private:
+   ItemQueue interactions_queue; ///< @trick_io{**} Interactions queue.
+
+   int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
+   InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
+
+   bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
+
+   bool mgr_initialized; ///< @trick_units{--} Internal flag to indicate Manager is initialized.
+
+   MutexLock obj_discovery_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
+
+   ObjectInstanceMap object_map; ///< @trick_io{**} Map of all the Objects this federate uses, the Key is the object instance-handle.
+
+   TrickHLAObjInstanceNameIndexMap obj_name_index_map; ///< @trick_io{**} Map of object instance names to array index.
+
+   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
+
+   ExecutionControlBase *execution_control; /**< @trick_units{--}
+    Execution control object. This has to point to an allocated execution
+    control class that inherits from the ExecutionControlBase interface
+    class. For instance SRFOM::ExecutionControl. */
 
   private:
    // Do not allow the copy constructor or assignment operator.
