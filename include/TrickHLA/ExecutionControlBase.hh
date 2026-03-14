@@ -576,13 +576,13 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
                                                         std::string const &file_name ) = 0;
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void encode_checkpoint();
+   virtual void convert_data_before_checkpoint();
 
    /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void decode_checkpoint();
+   virtual void restore_data_after_checkpoint();
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_checkpoint();
+   virtual void free_conversion_data_for_checkpoint();
 
    /*! @brief Perform setup for federate save. */
    virtual void setup_checkpoint();

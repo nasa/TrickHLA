@@ -284,11 +284,11 @@ void Manager::restart_initialization()
 
    // Restore ownership_transfer data for all objects.
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].decode_checkpoint();
+      objects[n].restore_data_after_checkpoint();
    }
 
    // Restore checkpointed interactions.
-   decode_checkpoint_interactions();
+   restore_checkpoint_interactions();
 
    // The manager is now initialized.
    this->mgr_initialized = true;
@@ -3056,10 +3056,10 @@ void Manager::start_federation_save_at_scenario_time(
 /*!
  * @job_class{initialization}
  */
-void Manager::encode_checkpoint()
+void Manager::convert_data_before_checkpoint()
 {
    // Call the ExecutionControl method.
-   execution_control->encode_checkpoint();
+   execution_control->convert_data_before_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
       // Any object with a valid instance handle must be marked as required
@@ -3068,42 +3068,42 @@ void Manager::encode_checkpoint()
       if ( objects[n].is_instance_handle_valid() ) {
          objects[n].set_required( true );
       }
-      // Setup the ownership handler checkpoint data structures.
-      objects[n].encode_checkpoint();
+      // Convert the ownership handler checkpoint data structures.
+      objects[n].convert_data_before_checkpoint();
    }
 
-   encode_checkpoint_interactions();
+   convert_checkpoint_interactions();
 }
 
-void Manager::decode_checkpoint()
+void Manager::restore_data_after_checkpoint()
 {
-   // Restore the state of this class from the Trick checkpoint.
+   // Restore the data structures of this class from the Trick checkpoint.
 
    // Call the ExecutionControl method.
-   execution_control->decode_checkpoint();
+   execution_control->restore_data_after_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].decode_checkpoint();
+      objects[n].restore_data_after_checkpoint();
    }
 
-   decode_checkpoint_interactions();
+   restore_checkpoint_interactions();
 }
 
-void Manager::free_checkpoint()
+void Manager::free_conversion_data_for_checkpoint()
 {
    // Clear/release the memory used for the checkpoint data structures.
 
    // Call the ExecutionControl method.
-   execution_control->free_checkpoint();
+   execution_control->free_conversion_data_for_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].free_checkpoint();
+      objects[n].free_conversion_data_for_checkpoint();
    }
 
    free_checkpoint_interactions();
 }
 
-void Manager::encode_checkpoint_interactions()
+void Manager::convert_checkpoint_interactions()
 {
    // Clear the checkpoint for the interactions so that we don't leak memory.
    free_checkpoint_interactions();
@@ -3114,7 +3114,7 @@ void Manager::encode_checkpoint_interactions()
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::encode_checkpoint_interactions():%d interactions_queue.size():%d\n",
+         message_publish( MSG_NORMAL, "Manager::convert_checkpoint_interactions():%d interactions_queue.size():%d\n",
                           __LINE__, interactions_queue.size() );
       }
 
@@ -3126,7 +3126,7 @@ void Manager::encode_checkpoint_interactions()
          alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
-         errmsg << "Manager::encode_checkpoint_interactions():" << __LINE__
+         errmsg << "Manager::convert_checkpoint_interactions():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
                 << " linear array of " << check_interactions_count << " elements." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -3134,7 +3134,7 @@ void Manager::encode_checkpoint_interactions()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         interactions_queue.dump_linked_list( "Manager::encode_checkpoint_interactions()" );
+         interactions_queue.dump_linked_list( "Manager::convert_checkpoint_interactions()" );
       }
 
       int              i;
@@ -3146,7 +3146,7 @@ void Manager::encode_checkpoint_interactions()
             ++i, item = static_cast< InteractionItem * >( item->next ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            message_publish( MSG_NORMAL, "Manager::encode_checkpoint_interactions():%d \
+            message_publish( MSG_NORMAL, "Manager::convert_checkpoint_interactions():%d \
 Checkpointing into check_interactions[%d] from interaction index %d.\n",
                              __LINE__, i, item->index );
          }
@@ -3178,11 +3178,11 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
    }
 }
 
-void Manager::decode_checkpoint_interactions()
+void Manager::restore_checkpoint_interactions()
 {
    if ( check_interactions_count > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::decode_checkpoint_interactions():%d check_interactions_count=%d\n",
+         message_publish( MSG_NORMAL, "Manager::restore_checkpoint_interactions():%d check_interactions_count=%d\n",
                           __LINE__, check_interactions_count );
       }
 
@@ -3195,7 +3195,7 @@ void Manager::decode_checkpoint_interactions()
          InteractionItem *item = new InteractionItem();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            message_publish( MSG_NORMAL, "Manager::decode_checkpoint_interactions():%d \
+            message_publish( MSG_NORMAL, "Manager::restore_checkpoint_interactions():%d \
 restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
                              __LINE__, i, check_interactions[i].index,
                              check_interactions[i].parm_items_count );

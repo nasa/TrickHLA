@@ -3817,7 +3817,7 @@ void Object::release_ownership()
             message_publish( MSG_NORMAL, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.\n",
                              __LINE__ );
          }
-         ownership->free_checkpoint();
+         ownership->free_conversion_data_for_checkpoint();
       }
 
       if ( !this->divest_requested ) {
@@ -5183,36 +5183,36 @@ void Object::handle_pushed_ownership_at_init()
    }
 }
 
-void Object::encode_checkpoint()
+void Object::convert_data_before_checkpoint()
 {
    if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          message_publish( MSG_NORMAL, "Object::encode_checkpoint():%d Object: %s.\n",
                           __LINE__, get_name().c_str() );
       }
-      ownership->encode_checkpoint();
+      ownership->convert_data_before_checkpoint();
    }
 }
 
-void Object::decode_checkpoint()
+void Object::restore_data_after_checkpoint()
 {
    if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          message_publish( MSG_NORMAL, "Object::decode_checkpoint():%d Object: %s.\n",
                           __LINE__, get_name().c_str() );
       }
-      ownership->decode_checkpoint();
+      ownership->restore_data_after_checkpoint();
    }
 }
 
-void Object::free_checkpoint()
+void Object::free_conversion_data_for_checkpoint()
 {
    if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          message_publish( MSG_NORMAL, "Object::free_checkpoint():%d Object: %s.\n",
                           __LINE__, get_name().c_str() );
       }
-      ownership->free_checkpoint();
+      ownership->free_conversion_data_for_checkpoint();
    }
 }
 

@@ -174,21 +174,21 @@ std::string SyncPoint::to_string()
    return result;
 }
 
-void SyncPoint::encode_checkpoint()
+void SyncPoint::convert_data_before_checkpoint()
 {
-   free_checkpoint();
+   free_conversion_data_for_checkpoint();
 
    // Checkpointable copy of the label.
    this->label_chkpt = StringUtilities::mm_strdup_wstring( this->label );
 }
 
-void SyncPoint::decode_checkpoint()
+void SyncPoint::restore_data_after_checkpoint()
 {
    // Update the label from the checkpointable c-string.
    StringUtilities::to_wstring( this->label, this->label_chkpt );
 }
 
-void SyncPoint::free_checkpoint()
+void SyncPoint::free_conversion_data_for_checkpoint()
 {
    if ( this->label_chkpt != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->label_chkpt ) ) ) {

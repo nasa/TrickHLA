@@ -90,7 +90,7 @@ OwnershipHandler::~OwnershipHandler()
    return;
 }
 
-void OwnershipHandler::encode_checkpoint()
+void OwnershipHandler::convert_data_before_checkpoint()
 {
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -99,7 +99,7 @@ void OwnershipHandler::encode_checkpoint()
 
    // To keep from leaking memory make sure we clear all checkpointing
    // structures before we create new ones.
-   free_checkpoint();
+   free_conversion_data_for_checkpoint();
 
    AttributeOwnershipMap::const_iterator owner_map_iter;
    THLAAttributeMap::const_iterator      attrib_iter;
@@ -182,7 +182,7 @@ void OwnershipHandler::encode_checkpoint()
    }
 }
 
-void OwnershipHandler::decode_checkpoint()
+void OwnershipHandler::restore_data_after_checkpoint()
 {
    THLAAttributeMap                     *attr_map;
    AttributeOwnershipMap::const_iterator ownership_iter;
@@ -251,7 +251,7 @@ void OwnershipHandler::decode_checkpoint()
    }
 }
 
-void OwnershipHandler::free_checkpoint()
+void OwnershipHandler::free_conversion_data_for_checkpoint()
 {
    // If there are any pull_request entries, delete them
    if ( pull_items_cnt > 0 ) {

@@ -344,15 +344,15 @@ class Object : public CheckpointConversionBase
    void negotiated_attribute_ownership_divestiture( RTI1516_NAMESPACE::AttributeHandleSet *attr_hdl_set );
 
    /*! @brief Setup the checkpoint data structures. */
-   virtual void encode_checkpoint();
+   virtual void convert_data_before_checkpoint();
 
    /*! @brief If an ownership_transfer object has been created by the user,
     * trigger it's restore() method is re-establish the pull / push
     * AttributeOwnershipMaps. */
-   virtual void decode_checkpoint();
+   virtual void restore_data_after_checkpoint();
 
    /*! @brief Clears out the push / pull checkpoint-able queues. */
-   virtual void free_checkpoint();
+   virtual void free_conversion_data_for_checkpoint();
 
    // Instance methods
 

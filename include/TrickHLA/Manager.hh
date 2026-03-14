@@ -311,13 +311,13 @@ class Manager : public CheckpointConversionBase
                                                 std::string const &file_name );
 
    /*! @brief Encode/setup the checkpoint data structures. */
-   virtual void encode_checkpoint();
+   virtual void convert_data_before_checkpoint();
 
    /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void decode_checkpoint();
+   virtual void restore_data_after_checkpoint();
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_checkpoint();
+   virtual void free_conversion_data_for_checkpoint();
 
    /*! @brief Publishes Object & Interaction classes and their member data. */
    void publish();
@@ -630,12 +630,12 @@ class Manager : public CheckpointConversionBase
    //
    // Checkpoint / clear / restore any interactions
    //
-   /*! @brief Decodes interactions queue into an InteractionItem linear array. */
-   void encode_checkpoint_interactions();
+   /*! @brief Convert interaction queue items into an InteractionItem linear array. */
+   void convert_checkpoint_interactions();
 
-   /*! @brief Decodes checkpoint InteractionItem linear arrays back into the
+   /*! @brief Restore checkpoint InteractionItem linear arrays back into the
     * main interaction queue. */
-   void decode_checkpoint_interactions();
+   void restore_checkpoint_interactions();
 
    /*! @brief Free/clear InteractionItem checkpoint linear array. */
    void free_checkpoint_interactions();

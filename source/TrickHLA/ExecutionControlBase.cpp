@@ -984,9 +984,9 @@ void ExecutionControlBase::set_master( bool master_flag )
    }
 }
 
-void ExecutionControlBase::encode_checkpoint()
+void ExecutionControlBase::convert_data_before_checkpoint()
 {
-   SyncPointManagerBase::encode_checkpoint();
+   SyncPointManagerBase::convert_data_before_checkpoint();
 
    // Setup checkpoint for ExecutionConfiguration if we have one.
    if ( execution_configuration != NULL ) {
@@ -996,27 +996,27 @@ void ExecutionControlBase::encode_checkpoint()
       if ( execution_configuration->is_instance_handle_valid() ) {
          execution_configuration->set_required( true );
       }
-      execution_configuration->encode_checkpoint();
+      execution_configuration->convert_data_before_checkpoint();
    }
 }
 
-void ExecutionControlBase::decode_checkpoint()
+void ExecutionControlBase::restore_data_after_checkpoint()
 {
-   SyncPointManagerBase::decode_checkpoint();
+   SyncPointManagerBase::restore_data_after_checkpoint();
 
    // Decode checkpoint for ExecutionConfiguration if we have one.
    if ( execution_configuration != NULL ) {
-      execution_configuration->decode_checkpoint();
+      execution_configuration->restore_data_after_checkpoint();
    }
 }
 
-void ExecutionControlBase::free_checkpoint()
+void ExecutionControlBase::free_conversion_data_for_checkpoint()
 {
-   SyncPointManagerBase::free_checkpoint();
+   SyncPointManagerBase::free_conversion_data_for_checkpoint();
 
    // Clear/release the memory used for the checkpoint data structures.
    if ( execution_configuration != NULL ) {
-      execution_configuration->free_checkpoint();
+      execution_configuration->free_conversion_data_for_checkpoint();
    }
 }
 
@@ -1180,7 +1180,7 @@ void ExecutionControlBase::setup_checkpoint()
    federate->write_running_feds_file( str_save_label );
 
    // Tell the manager to setup the checkpoint data structures.
-   manager->encode_checkpoint();
+   manager->convert_data_before_checkpoint();
 
    // Save any synchronization points.
    federate->convert_sync_pts();
@@ -1494,14 +1494,14 @@ void ExecutionControlBase::post_restore()
       }
 
       // Restore interactions and sync points
-      manager->decode_checkpoint_interactions();
+      manager->restore_checkpoint_interactions();
       reinstate_logged_sync_pts();
 
       // Restore ownership transfer data for all objects
       Object *objects   = manager->get_objects();
       int     obj_count = manager->get_object_count();
       for ( int i = 0; i < obj_count; ++i ) {
-         objects[i].decode_checkpoint();
+         objects[i].restore_data_after_checkpoint();
       }
 
       // Macro to save the FPU Control Word register value.
