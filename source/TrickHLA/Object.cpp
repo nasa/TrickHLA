@@ -5185,6 +5185,9 @@ void Object::handle_pushed_ownership_at_init()
 
 void Object::convert_data_before_checkpoint()
 {
+   // TODO: Convert other data structures to checkpoint form such as
+   // the ReflectedAttributesQueue.
+
    if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          message_publish( MSG_NORMAL, "Object::convert_data_before_checkpoint():%d Object: %s.\n",
@@ -5196,6 +5199,9 @@ void Object::convert_data_before_checkpoint()
 
 void Object::restore_data_after_checkpoint()
 {
+   // TODO: Restore other data structures from checkpoint form such as
+   // the ReflectedAttributesQueue.
+
    if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          message_publish( MSG_NORMAL, "Object::restore_data_after_checkpoint():%d Object: %s.\n",
@@ -5207,6 +5213,9 @@ void Object::restore_data_after_checkpoint()
 
 void Object::free_converted_data_for_checkpoint()
 {
+   // TODO: Free other data structures in checkpoint form such as
+   // the ReflectedAttributesQueue.
+
    if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          message_publish( MSG_NORMAL, "Object::free_converted_data_for_checkpoint():%d Object: %s.\n",

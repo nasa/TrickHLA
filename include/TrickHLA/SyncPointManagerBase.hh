@@ -190,6 +190,9 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 
+   //
+   // Checkpoint
+   //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint();
 

@@ -195,6 +195,9 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    std::string to_string( std::wstring const &label );
 
+   //
+   // Checkpoint
+   //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint();
 
