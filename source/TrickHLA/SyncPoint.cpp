@@ -176,7 +176,7 @@ std::string SyncPoint::to_string()
 
 void SyncPoint::convert_data_before_checkpoint()
 {
-   free_conversion_data_for_checkpoint();
+   free_converted_data_for_checkpoint();
 
    // Checkpointable copy of the label.
    this->label_chkpt = StringUtilities::mm_strdup_wstring( this->label );
@@ -188,11 +188,11 @@ void SyncPoint::restore_data_after_checkpoint()
    StringUtilities::to_wstring( this->label, this->label_chkpt );
 }
 
-void SyncPoint::free_conversion_data_for_checkpoint()
+void SyncPoint::free_converted_data_for_checkpoint()
 {
    if ( this->label_chkpt != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->label_chkpt ) ) ) {
-         message_publish( MSG_WARNING, "SyncPoint::free_checkpoint():%d WARNING failed to delete Trick Memory for 'label_chkpt'\n", __LINE__ );
+         message_publish( MSG_WARNING, "SyncPoint::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'label_chkpt'\n", __LINE__ );
       }
       this->label_chkpt = NULL;
    }

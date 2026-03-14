@@ -99,7 +99,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Destructor for the IMSim ExecutionControl class. */
    virtual ~ExecutionControl();
 
-  public:
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
@@ -312,6 +311,34 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * @return True if Save can proceed, False if not. */
    virtual bool perform_save();
 
+   /*! @brief IMSim: Check to see if this federate is to be restored.
+    *  @return federate restore state. */
+   bool is_restore_determined() const
+   {
+      return restore_determined;
+   }
+
+   /*! @brief IMSim: Set the federate to be restored state.
+    *  @param state Restore state of the federate. */
+   void set_restore_determined( bool state )
+   {
+      restore_determined = state;
+   }
+
+   /*! @brief IMSim: Check to see if this is a restored federate.
+    *  @return True is this is a restored federate, false otherwise. */
+   bool is_restore_federate() const
+   {
+      return restore_federate;
+   }
+
+   /*! @brief IMSim: Mark if this is a restored federate.
+    *  @param state True is federate is restored, false otherwise. */
+   void set_restore_federate( bool state )
+   {
+      restore_federate = state;
+   }
+
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.
 
@@ -343,6 +370,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       used in conjunction with the cte_mode_time, sim_mode_time and
       associated sync point mechanisms to coordinate federation execution
       mode transitions.*/
+
+   bool restore_determined; ///< @trick_io{**} Internal flag to indicate that the restore status has been determined.
+   bool restore_federate;   ///< @trick_io{**} Internal flag to indicate if the federate is to be restored
 
   private:
    // Do not allow the copy constructor.

@@ -123,10 +123,6 @@ class Manager : public CheckpointConversionBase
    int          inter_count;  ///< @trick_units{--} Number of TrickHLA Interactions.
    Interaction *interactions; ///< @trick_units{--} Array of TrickHLA Interactions.
 
-   bool        restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore.
-   std::string restore_file_name;           ///< @trick_io{*i} @trick_units{--} Filename, which will be the label name.
-   bool        initiated_a_federation_save; ///< @trick_io{**} Did this federate initiate the federation save?
-
   public:
    //
    // Public constructors and destructor.
@@ -294,22 +290,6 @@ class Manager : public CheckpointConversionBase
     * were deleted from the RTI. */
    void process_deleted_objects();
 
-   /*! @brief Start the federation save as soon as possible.
-    *  @param file_name Checkpoint file name. */
-   void start_federation_save( std::string const &file_name );
-
-   /*! @brief Start the Federation save at the specified simulation time.
-    *  @param freeze_sim_time Simulation time to freeze.
-    *  @param file_name       Checkpoint file name. */
-   void start_federation_save_at_sim_time( double             freeze_sim_time,
-                                           std::string const &file_name );
-
-   /*! @brief Start the Federation save at the specified scenario time.
-    *  @param freeze_scenario_time Scenario time to freeze.
-    *  @param file_name            Checkpoint file name. */
-   void start_federation_save_at_scenario_time( double             freeze_scenario_time,
-                                                std::string const &file_name );
-
    /*! @brief Encode/setup the checkpoint data structures. */
    virtual void convert_data_before_checkpoint();
 
@@ -317,7 +297,7 @@ class Manager : public CheckpointConversionBase
    virtual void restore_data_after_checkpoint();
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_conversion_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint();
 
    /*! @brief Publishes Object & Interaction classes and their member data. */
    void publish();
@@ -421,15 +401,7 @@ class Manager : public CheckpointConversionBase
    /*! @brief Reset the manager as initialized. */
    void reset_mgr_initialized()
    {
-      mgr_initialized            = false;
-      federate_has_been_restored = true;
-   }
-
-   /*! @brief Check if the federate has been restored.
-    *  @return True if the federate has been restored. */
-   bool has_federate_been_restored() const
-   {
-      return federate_has_been_restored;
+      mgr_initialized = false;
    }
 
    /*! @brief Set the execution configuration object.
@@ -467,8 +439,6 @@ class Manager : public CheckpointConversionBase
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
 
    bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
-   bool restore_determined; ///< @trick_io{**} Internal flag to indicate that the restore status has been determined.
-   bool restore_federate;   ///< @trick_io{**} Internal flag to indicate if the federate is to be restored
 
    bool mgr_initialized; ///< @trick_units{--} Internal flag to indicate Manager is initialized.
 
@@ -478,8 +448,6 @@ class Manager : public CheckpointConversionBase
 
    TrickHLAObjInstanceNameIndexMap obj_name_index_map; ///< @trick_io{**} Map of object instance names to array index.
 
-   bool federate_has_been_restored; ///< @trick_io{**} Federate has been restored. do not reserve the object names again!
-
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
    ExecutionControlBase *execution_control; /**< @trick_units{--}
@@ -488,44 +456,9 @@ class Manager : public CheckpointConversionBase
       class. For instance SRFOM::ExecutionControl. */
 
    //
-   // Private member functions.
+   // Public member functions.
    //
   public:
-   /*! @brief Initializes the federation execution control scheme, which must
-    * occur after the TrickHLA::Federate and TrickHLA::FedAmb has been
-    * initialized. */
-   // void initialize_execution_control();
-
-   /*! @brief Check to see if this federate is to be restored.
-    *  @return federate restore state. */
-   bool is_restore_determined() const
-   {
-      return restore_determined;
-   }
-
-   /*! @brief Set the federate to be restored state.
-    *  @param state Restore state of the federate. */
-   void set_restore_determined( bool state )
-   {
-      restore_determined = state;
-      return;
-   }
-
-   /*! @brief Check to see if this is a restored federate.
-    *  @return True is this is a restored federate, false otherwise. */
-   bool is_restore_federate() const
-   {
-      return restore_federate;
-   }
-
-   /*! @brief Mark if this is a restored federate.
-    *  @param state True is federate is restored, false otherwise. */
-   void set_restore_federate( bool state )
-   {
-      restore_federate = state;
-      return;
-   }
-
    /*! @brief Set up the Trick ref-attributes for the user specified objects
     * and attributes.
     * @param data_obj_count Number of objects.
@@ -622,26 +555,21 @@ class Manager : public CheckpointConversionBase
    /*! @brief Release ownership if we have a request to divest. */
    void release_ownership();
 
-   /*! @brief Tell the federate to initiate a save announce with the
-    * user-supplied checkpoint name set for the current frame.
-    *  @param file_name Checkpoint file name. */
-   void initiate_federation_save( std::string const &file_name );
-
    //
    // Checkpoint / clear / restore any interactions
    //
    /*! @brief Convert interaction queue items into an InteractionItem linear array. */
-   void convert_checkpoint_interactions();
+   void convert_interactions_before_checkpoint();
 
    /*! @brief Restore checkpoint InteractionItem linear arrays back into the
     * main interaction queue. */
-   void restore_checkpoint_interactions();
+   void restore_interactions_after_checkpoint();
 
    /*! @brief Free/clear InteractionItem checkpoint linear array. */
-   void free_checkpoint_interactions();
+   void free_converted_interactions_checkpoint();
 
    /*! @brief Echoes the contents of checkpoint InteractionItem linear array. */
-   void print_checkpoint_interactions();
+   void print_converted_interactions_checkpoint();
 
   private:
    // Do not allow the copy constructor or assignment operator.

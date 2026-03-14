@@ -99,6 +99,14 @@ class SaveRestoreServices
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__SaveRestoreServices();
 
+   //----------------------------- USER VARIABLES -----------------------------
+   // The variables below this point are configured by the user in either the
+   // input or modified-data files.
+  public:
+   bool        restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore.
+   std::string restore_file_name;           ///< @trick_io{*i} @trick_units{--} Filename, which will be the label name.
+   bool        initiated_a_federation_save; ///< @trick_io{**} Did this federate initiate the federation save?
+
    //--------------------------------------------------------------------------
    // Public member functions.
    //--------------------------------------------------------------------------
@@ -110,6 +118,27 @@ class SaveRestoreServices
    explicit SaveRestoreServices( Federate *fed );
    /*! @brief Destructor for the TrickHLA SaveRestoreServices class. */
    virtual ~SaveRestoreServices();
+
+   /*! @brief Tell the federate to initiate a save announce with the
+    * user-supplied checkpoint name set for the current frame.
+    *  @param file_name Checkpoint file name. */
+   void initiate_federation_save( std::string const &file_name );
+
+   /*! @brief Start the federation save as soon as possible.
+    *  @param file_name Checkpoint file name. */
+   void start_federation_save( std::string const &file_name );
+
+   /*! @brief Start the Federation save at the specified simulation time.
+    *  @param freeze_sim_time Simulation time to freeze.
+    *  @param file_name       Checkpoint file name. */
+   void start_federation_save_at_sim_time( double             freeze_sim_time,
+                                           std::string const &file_name );
+
+   /*! @brief Start the Federation save at the specified scenario time.
+    *  @param freeze_scenario_time Scenario time to freeze.
+    *  @param file_name            Checkpoint file name. */
+   void start_federation_save_at_scenario_time( double             freeze_scenario_time,
+                                                std::string const &file_name );
 
    /*! @brief Load the running federate names from the RTI. */
    void load_and_print_running_federate_names();

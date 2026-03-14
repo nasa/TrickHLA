@@ -961,7 +961,7 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointManagerBase::convert_data_before_checkpoint()
 {
-   free_conversion_data_for_checkpoint();
+   free_converted_data_for_checkpoint();
 
 #if SYNC_POINT_LIST_TMM_ARRAY
    for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
@@ -985,13 +985,13 @@ void SyncPointManagerBase::restore_data_after_checkpoint()
 }
 
 /*! @brief Free/release the memory used for the checkpoint data structures. */
-void SyncPointManagerBase::free_conversion_data_for_checkpoint()
+void SyncPointManagerBase::free_converted_data_for_checkpoint()
 {
 #if SYNC_POINT_LIST_TMM_ARRAY
    for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
 #else
    for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
 #endif
-      sync_pnt_lists[index]->free_conversion_data_for_checkpoint();
+      sync_pnt_lists[index]->free_converted_data_for_checkpoint();
    }
 }

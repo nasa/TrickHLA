@@ -169,7 +169,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    virtual void restore_data_after_checkpoint();
 
    /*! @brief Free/release the memory used for the checkpoint data structures. */
-   virtual void free_conversion_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint();
 
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.

@@ -99,7 +99,10 @@ using namespace TrickHLA;
  */
 SaveRestoreServices::SaveRestoreServices(
    Federate *fed )
-   : federate( fed ),
+   : restore_federation( false ),
+     restore_file_name(),
+     initiated_a_federation_save( false ),
+     federate( fed ),
      save_name( L"" ),
      restore_name( L"" ),
      HLA_save_directory( "" ),
@@ -147,6 +150,45 @@ SaveRestoreServices::~SaveRestoreServices()
 {
    // Free the memory used by the array of running Federates for the Federation.
    clear_running_feds();
+}
+
+/*!
+ * @details Trigger federation save, at current time or user-specified time.\n
+ * NOTE: These routines do not coordinate a federation save via interactions
+ * so make these internal routines so that the user does not accidentally call
+ * them and mess things up.
+ */
+void SaveRestoreServices::initiate_federation_save(
+   string const &file_name )
+{
+   set_checkpoint_file_name( file_name );
+   initiate_save_announce();
+
+   this->initiated_a_federation_save = true;
+}
+
+void SaveRestoreServices::start_federation_save(
+   string const &file_name )
+{
+   start_federation_save_at_scenario_time( -DBL_MAX, file_name );
+}
+
+void SaveRestoreServices::start_federation_save_at_sim_time(
+   double        freeze_sim_time,
+   string const &file_name )
+{
+   start_federation_save_at_scenario_time(
+      federate->get_execution_control()->convert_sim_time_to_scenario_time( freeze_sim_time ),
+      file_name );
+}
+
+void SaveRestoreServices::start_federation_save_at_scenario_time(
+   double        freeze_scenario_time,
+   string const &file_name )
+{
+   // Call the ExecutionControl method.
+   federate->get_execution_control()->start_federation_save_at_scenario_time(
+      freeze_scenario_time, file_name );
 }
 
 void SaveRestoreServices::load_and_print_running_federate_names()
