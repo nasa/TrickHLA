@@ -290,15 +290,6 @@ class Manager : public CheckpointConversionBase
     * were deleted from the RTI. */
    void process_deleted_objects();
 
-   /*! @brief Encode/setup the checkpoint data structures. */
-   virtual void convert_data_before_checkpoint();
-
-   /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint();
-
-   /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint();
-
    /*! @brief Publishes Object & Interaction classes and their member data. */
    void publish();
 
@@ -556,8 +547,17 @@ class Manager : public CheckpointConversionBase
    void release_ownership();
 
    //
-   // Checkpoint / clear / restore any interactions
+   // Checkpoint
    //
+   /*! @brief Encode/setup the checkpoint data structures. */
+   virtual void convert_data_before_checkpoint();
+
+   /*! @brief Restore the state of this class from the Trick checkpoint. */
+   virtual void restore_data_after_checkpoint();
+
+   /*! @brief Clear/release the memory used for the checkpoint data structures. */
+   virtual void free_converted_data_for_checkpoint();
+
    /*! @brief Convert interaction queue items into an InteractionItem linear array. */
    void convert_interactions_before_checkpoint();
 
