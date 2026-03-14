@@ -280,26 +280,18 @@ class Interaction
    // needed so that my InteractionHandler can signal the Manager to do something...
    /*! @brief Get the associated TrickHLA::Manager instance.
     *  @return Pointer to the associated TrickHLA::Manager instance. */
-   Manager *get_manager()
+   Manager *get_manager() const
    {
       return manager;
    }
 
    /*! @brief Returns a pointer to our federate, or NULL if one does not exist yet.
     *  @return A pointer to this federate's TrickHLA::Federate instance. */
-   Federate *get_federate();
+   Federate *get_federate() const;
 
    /*! @brief Returns a pointer to the RTI ambassador, or NULL if one does not exist yet.
     *  @return Pointer to this federate's associated RTIambassador instance. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador();
-
-   /*! @brief Return a copy of the federate's lookahead time.
-    *  @return A copy of the federate's lookahead time. */
-   Int64Interval get_lookahead() const;
-
-   /*! @brief Return a copy of the granted HLA logical time.
-    *  @return A copy of the federation granted time. */
-   Int64Time get_granted_time() const;
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const;
 
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */

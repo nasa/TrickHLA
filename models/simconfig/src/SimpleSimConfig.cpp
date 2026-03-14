@@ -170,7 +170,7 @@ void SimpleSimConfig::pack()
    } else {
       // Set the run_duration based on the Trick simulation termination time
       // and the current granted HLA time.
-      this->run_duration = terminate_time - object->get_granted_time().get_time_in_seconds();
+      this->run_duration = terminate_time - get_granted_time().get_time_in_seconds();
       if ( run_duration < 0.0 ) {
          run_duration = 0.0;
       }

@@ -110,13 +110,13 @@ class ObjectCallbackBase
     *  @param attr_FOM_name Attribute FOM name. */
    Attribute *get_attribute_and_validate( std::string const &attr_FOM_name );
 
-   /*! @brief Returns a copy of the object's lookahead time.
-    *  @return A copy of the federate's lookahead time. */
-   Int64Interval get_lookahead() const;
+   /*! @brief Returns a reference to the object's lookahead time.
+    *  @return A reference to the federate's lookahead time. */
+   Int64Interval const &get_lookahead() const;
 
-   /*! @brief Returns a copy of the object's granted federation time.
-    *  @return A copy of the federate's current granted time. */
-   Int64Time get_granted_time() const;
+   /*! @brief Returns a reference to the object's granted federation time.
+    *  @return A reference to the federate's current granted time. */
+   Int64Time const &get_granted_time() const;
 
    /*! @brief Get the current scenario time.
     *  @return Returns the current scenario time. */

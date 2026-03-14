@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -195,7 +196,7 @@ class TimeManagementServices : public TrickThreadCoordinator
    //
    /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
     *  @return Pointer to associated RTI Ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() // cppcheck-suppress [functionStatic, unmatchedSuppression]
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const // cppcheck-suppress [functionStatic, unmatchedSuppression]
    {
       return RTI_ambassador.get();
    }
@@ -205,13 +206,6 @@ class TimeManagementServices : public TrickThreadCoordinator
    Int64Time const &get_granted_time() const
    {
       return this->granted_time;
-   }
-
-   /*! @brief Get the current granted HLA federation execution time in the base HLA Logical Time representation.
-    *  @return Reference to current granted HLA federation execution time. */
-   double get_granted_base_time() const
-   {
-      return granted_time.get_base_time();
    }
 
    /*! @brief Get the requested HLA federation execution time.
@@ -226,13 +220,6 @@ class TimeManagementServices : public TrickThreadCoordinator
    Int64Interval const &get_lookahead() const
    {
       return this->lookahead;
-   }
-
-   /*! @brief Get the current federate lookahead time in seconds.
-    *  @return Current federate lookahead time in the base time. */
-   int64_t get_lookahead_in_base_time() const
-   {
-      return lookahead.get_base_time();
    }
 
    /*! @brief Query of federate has a zero lookahead time.

@@ -70,7 +70,7 @@ class SimTimeline : public Timeline
    virtual double get_time() const;
 
    /*! Get the minimum time resolution which is the smallest nonzero
-    *  time for the given timeline.
+    *  time for the given timeline in seconds.
     *  @return Returns the minimum time resolution in seconds. */
    virtual double get_min_resolution() const;
 

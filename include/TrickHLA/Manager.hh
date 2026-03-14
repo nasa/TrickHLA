@@ -110,7 +110,7 @@ class Manager : public CheckpointConversionBase
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__Manager();
-   // Federate needs to call some of manager's private methods during restore
+   // Federate needs to call some of manager's private methods during restore.
    friend class Federate;
 
    //----------------------------- USER VARIABLES -----------------------------
@@ -123,9 +123,9 @@ class Manager : public CheckpointConversionBase
    int          inter_count;  ///< @trick_units{--} Number of TrickHLA Interactions.
    Interaction *interactions; ///< @trick_units{--} Array of TrickHLA Interactions.
 
-   bool        restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore
-   std::string restore_file_name;           ///< @trick_io{*i} @trick_units{--} File name, which will be the label name
-   bool        initiated_a_federation_save; ///< @trick_io{**} Did this manager initiate the federation save?
+   bool        restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore.
+   std::string restore_file_name;           ///< @trick_io{*i} @trick_units{--} Filename, which will be the label name.
+   bool        initiated_a_federation_save; ///< @trick_io{**} Did this federate initiate the federation save?
 
   public:
    //
@@ -247,7 +247,7 @@ class Manager : public CheckpointConversionBase
 
    /*! @brief Get the pointer to the associated TrickHLA::Federate instance.
     *  @return Pointer to the associated TrickHLA::Federate instance. */
-   Federate *get_federate()
+   Federate *get_federate() const
    {
       return federate;
    }
@@ -262,19 +262,7 @@ class Manager : public CheckpointConversionBase
    /*! @brief Returns a pointer to the RTI ambassador, or NULL if one does not
     * exist yet.
     * @return Pointer to the RTI ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador();
-
-   /*! @brief Return a copy of the federate's lookahead time.
-    *  @return This federate's lookahead time interval. */
-   Int64Interval get_lookahead() const;
-
-   /*! @brief Return a copy of the granted HLA logical time.
-    *  @return The granted federation time. */
-   Int64Time get_granted_time() const;
-
-   /*! @brief Return the granted HLA logical time in seconds.
-    *  @return The granted federation time in seconds */
-   int64_t get_granted_base_time() const;
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const;
 
    // Interactions
    /*! @brief Process the received interactions. */

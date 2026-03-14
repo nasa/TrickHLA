@@ -40,7 +40,6 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstdint>
 #include <cstring>
 #include <map>
 #include <ostream>
@@ -66,7 +65,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
-#include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -1246,31 +1244,12 @@ void Interaction::mark_unchanged()
    }
 }
 
-/*!
- * @details If the manager does not exist, -1.0 seconds is assigned to the returned object.
- */
-Int64Interval Interaction::get_lookahead() const
-{
-   return ( ( manager != NULL ) ? manager->get_lookahead() : Int64Interval( -1.0 ) );
-}
-
-/*!
- * @details If the manager does not exist, Int64BaseTime::get_max_logical_time_in_seconds()
- * is assigned to the returned object.
- */
-Int64Time Interaction::get_granted_time() const
-{
-   return ( ( manager != NULL )
-               ? manager->get_granted_time()
-               : Int64Time( INT64_MAX ) );
-}
-
-Federate *Interaction::get_federate()
+Federate *Interaction::get_federate() const
 {
    return ( ( this->manager != NULL ) ? manager->get_federate() : NULL );
 }
 
-RTIambassador *Interaction::get_RTI_ambassador()
+RTIambassador *Interaction::get_RTI_ambassador() const
 {
    return ( ( this->manager != NULL ) ? manager->get_RTI_ambassador() : NULL );
 }

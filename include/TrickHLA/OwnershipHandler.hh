@@ -148,42 +148,42 @@ class OwnershipHandler : public CheckpointConversionBase
    /*! @brief Pull ownership of all object attributes as soon as possible. */
    void pull_ownership();
 
-   /*! @brief Pull ownership of all object attributes at the specified time.
-    *  @param time Requested time to pull ownership. */
+   /*! @brief Pull ownership of all object attributes at the specified simulation elapsed time.
+    *  @param time Requested simulation elapsed time to pull ownership. */
    void pull_ownership( double time );
 
    /*! @brief Pull ownership of the specified attribute as soon as possible.
     *  @param attribute_FOM_name Attribute FOM name. */
    void pull_ownership( std::string const &attribute_FOM_name );
 
-   /*! @brief Pull ownership of the specified attribute at the given time.
+   /*! @brief Pull ownership of the specified attribute at the given simulation elapsed time.
     *  @param attribute_FOM_name Attribute FOM name.
-    *  @param time               Requested time to pull ownership. */
+    *  @param time               Requested simulation elapsed time to pull ownership. */
    void pull_ownership( std::string const &attribute_FOM_name, double time );
 
    /*! @brief Push ownership of all the object attributes as soon as possible. */
    void push_ownership();
 
-   /*! @brief Push ownership of all the object attributes at the specified time.
-    *  @param time Requested time to push ownership. */
+   /*! @brief Push ownership of all the object attributes at the specified simulation elapsed time.
+    *  @param time Requested simulation elapsed time to push ownership. */
    void push_ownership( double const time );
 
    /*! @brief Push ownership of the specified attribute as soon as possible.
     *  @param attribute_FOM_name Attribute FOM name. */
    void push_ownership( std::string const &attribute_FOM_name );
 
-   /*! @brief Push ownership of the specified attribute at the given time.
+   /*! @brief Push ownership of the specified attribute at the given simulation elapsed time.
     *  @param attribute_FOM_name Attribute FOM name.
-    *  @param time Requested time to push ownership. */
+    *  @param time Requested simulation elapsed time to push ownership. */
    void push_ownership( std::string const &attribute_FOM_name, double time );
 
-   /*! @brief Return a copy of the object's lookahead time.
-    *  @return A copy of the fedetate's lookahead time */
-   Int64Interval get_lookahead() const;
+   /*! @brief Return a reference to the object's lookahead time.
+    *  @return A reference to the fedetate's lookahead time */
+   Int64Interval const &get_lookahead() const;
 
-   /*! @brief Return a copy of the granted HLA logical time.
-    *  @return A copy of the federation granted time. */
-   Int64Time get_granted_time() const;
+   /*! @brief Return a reference to the granted HLA logical time.
+    *  @return A reference to the federation granted time. */
+   Int64Time const &get_granted_time() const;
 
    /*! @brief Get the current scenario time.
     *  @return Returns the current scenario time in seconds. */

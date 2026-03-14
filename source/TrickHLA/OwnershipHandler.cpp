@@ -40,7 +40,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
-#include <cstdint>
 #include <limits>
 #include <ostream>
 #include <sstream>
@@ -547,21 +546,14 @@ void OwnershipHandler::push_ownership(
    attr_map->insert( make_pair( key, attribute ) );
 }
 
-/*!
- *  @details If the manager does not exist, -1.0 seconds is assigned to the returned object.
- */
-Int64Interval OwnershipHandler::get_lookahead() const
+Int64Interval const &OwnershipHandler::get_lookahead() const
 {
-   return ( object != NULL ) ? object->get_lookahead() : Int64Interval( -1.0 );
+   return object->get_federate()->get_lookahead();
 }
 
-/*!
- *  @details If the object does not exist, Int64BaseTime::get_max_logical_time_in_seconds()
- *  is assigned to the returned object. */
-Int64Time OwnershipHandler::get_granted_time() const
+Int64Time const &OwnershipHandler::get_granted_time() const
 {
-   return ( object != NULL ) ? object->get_granted_time()
-                             : Int64Time( INT64_MAX );
+   return object->get_federate()->get_granted_time();
 }
 
 double OwnershipHandler::get_scenario_time() const

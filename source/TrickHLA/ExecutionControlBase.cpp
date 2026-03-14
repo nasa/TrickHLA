@@ -873,7 +873,7 @@ double ExecutionControlBase::get_sim_time() const
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::get_sim_time():" << __LINE__
-             << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
+             << " WARNING: The simulation timeline has not been set!"
              << " Please make sure you specify a sim-timeline in your input"
              << " file. Returning Trick simulation time instead!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -890,9 +890,9 @@ double ExecutionControlBase::get_scenario_time() const
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
-             << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
-             << " Please make sure you specify a scenario-timeline in your input"
-             << " file. Returning Trick simulation time instead!" << endl;
+             << " WARNING: The scenario timeline has not been set!"
+             << " Please make sure you specify a scenario timeline in your input"
+             << " file. Returning simulation elapsed time instead!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    return get_sim_time();

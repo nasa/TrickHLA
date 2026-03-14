@@ -112,7 +112,7 @@ Manager::Manager()
      objects( NULL ),
      inter_count( 0 ),
      interactions( NULL ),
-     restore_federation( 0 ),
+     restore_federation( false ),
      restore_file_name(),
      initiated_a_federation_save( false ),
      interactions_queue(),
@@ -2318,10 +2318,10 @@ void Manager::send_cyclic_and_requested_data()
 {
    // Current time values.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
-   int64_t const granted_base_time     = get_granted_base_time();
+   int64_t const granted_base_time     = federate->get_granted_time().get_base_time();
    int64_t const lookahead_base_time   = federate->is_zero_lookahead_time()
                                             ? 0LL
-                                            : federate->get_lookahead_in_base_time();
+                                            : federate->get_lookahead().get_base_time();
 
    // The update_time should be the current granted time plus the data cycle
    // delta time for this job if HLA Time Management is enabled otherwise it
@@ -2989,32 +2989,6 @@ void Manager::release_ownership()
    }
 }
 
-/*!
- * @details If the federate does not exist, -1.0 seconds is assigned to the
- * returned object.
- */
-Int64Interval Manager::get_lookahead() const
-{
-   return federate->get_lookahead();
-}
-
-/*!
- * @details If the federate does not exist, Int64BaseTime::get_max_logical_time_in_seconds()
- * is assigned to the returned object.
- */
-Int64Time Manager::get_granted_time() const
-{
-   return federate->get_granted_time();
-}
-
-/*!
- * @details Returns the granted time in base time.
- */
-int64_t Manager::get_granted_base_time() const
-{
-   return federate->get_granted_base_time();
-}
-
 bool Manager::is_RTI_ready(
    string const &method_name )
 {
@@ -3431,7 +3405,7 @@ bool Manager::is_this_a_rejoining_federate()
    return false;
 }
 
-RTIambassador *Manager::get_RTI_ambassador()
+RTIambassador *Manager::get_RTI_ambassador() const
 {
    return ( ( federate != NULL ) ? federate->get_RTI_ambassador() : NULL );
 }

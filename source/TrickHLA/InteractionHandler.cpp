@@ -33,7 +33,6 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
@@ -153,15 +152,14 @@ void InteractionHandler::receive_interaction(
 }
 #pragma GCC diagnostic pop
 
-Int64Interval InteractionHandler::get_lookahead() const
+Int64Interval const &InteractionHandler::get_lookahead() const
 {
-   return ( interaction != NULL ) ? interaction->get_lookahead() : Int64Interval( -1.0 );
+   return interaction->get_federate()->get_lookahead();
 }
 
-Int64Time InteractionHandler::get_granted_time() const
+Int64Time const &InteractionHandler::get_granted_time() const
 {
-   return ( interaction != NULL ) ? interaction->get_granted_time()
-                                  : Int64Time( INT64_MAX );
+   return interaction->get_federate()->get_granted_time();
 }
 
 double InteractionHandler::get_sim_time() const

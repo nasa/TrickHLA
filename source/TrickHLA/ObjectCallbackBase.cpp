@@ -30,7 +30,6 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstdint>
 #include <cstring>
 #include <limits>
 #include <ostream>
@@ -174,21 +173,20 @@ Attribute *ObjectCallbackBase::get_attribute_and_validate(
    return attr;
 }
 
-/*! @brief Returns a copy of the object's lookahead time.
- *  @return A copy of the federate's lookahead time.
+/*! @brief Returns a reference to the object's lookahead time.
+ *  @return A reference to the federate's lookahead time.
  */
-Int64Interval ObjectCallbackBase::get_lookahead() const
+Int64Interval const &ObjectCallbackBase::get_lookahead() const
 {
-   return ( object != NULL ) ? object->get_lookahead() : Int64Interval( -1.0 );
+   return object->get_federate()->get_lookahead();
 }
 
-/*! @brief Returns a copy of the object's granted federation time.
- *  @return A copy of the federate's current granted time.
+/*! @brief Returns a reference to the object's granted federation time.
+ *  @return A reference to the federate's current granted time.
  */
-Int64Time ObjectCallbackBase::get_granted_time() const
+Int64Time const &ObjectCallbackBase::get_granted_time() const
 {
-   return ( object != NULL ) ? object->get_granted_time()
-                             : Int64Time( INT64_MAX );
+   return object->get_federate()->get_granted_time();
 }
 
 /*!

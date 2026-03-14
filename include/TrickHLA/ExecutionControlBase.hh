@@ -346,8 +346,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
       return ( cte_timeline != NULL );
    }
 
-   /*! @brief Get the current simulation time from Simulation Timeline.
-    *  @return The current simulation time in seconds. */
+   /*! @brief Get the current simulation elapsed time from Simulation Timeline.
+    *  @return The current simulation elapsed time in seconds. */
    double get_sim_time() const;
 
    /*! @brief Get the current Central Timing Equipment time from CTE Timeline.
@@ -359,16 +359,16 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    double get_scenario_time() const;
 
    /*! @brief Convert the a given scenario time into simulation time.
-    *  @return Corresponding simulation time in seconds.
+    *  @return Corresponding simulation elapsed time in seconds.
     *  @param scenario_time Scenario time to convert. */
    double convert_scenario_time_to_sim_time( double scenario_time )
    {
       return ( get_sim_time() + ( scenario_time - get_scenario_time() ) );
    }
 
-   /*! @brief Convert the a given simulation time into scenario time.
+   /*! @brief Convert the a given simulation elapsed time into scenario time.
     *  @return Corresponding scenario time in seconds.
-    *  @param sim_time Simulation time to convert. */
+    *  @param sim_time Simulation elapsed time to convert. */
    double convert_sim_time_to_scenario_time( double sim_time )
    {
       return ( get_scenario_time() + ( sim_time - get_sim_time() ) );

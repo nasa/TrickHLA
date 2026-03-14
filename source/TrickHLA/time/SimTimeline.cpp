@@ -52,7 +52,7 @@ SimTimeline::~SimTimeline()
 }
 
 /*!
- * @details Get the current simulation time.
+ * @details Get the current simulation elapsed time.
  */
 double SimTimeline::get_time() const
 {
@@ -61,7 +61,7 @@ double SimTimeline::get_time() const
 
 /*!
  * @details Get the minimum time resolution, which is the smallest time
- * representation for this timeline.
+ * representation for this timeline in seconds.
  */
 double SimTimeline::get_min_resolution() const
 {

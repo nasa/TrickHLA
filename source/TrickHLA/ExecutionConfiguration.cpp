@@ -66,7 +66,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
-#include "TrickHLA/time/Int64Time.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -264,7 +263,7 @@ void ExecutionConfiguration::pack()
    } else {
       // Set the run_duration based on the Trick simulation termination time
       // and the current granted HLA time.
-      this->run_duration = terminate_time - object->get_granted_time().get_time_in_seconds();
+      this->run_duration = terminate_time - get_federate()->get_granted_time().get_time_in_seconds();
       if ( run_duration < 0.0 ) {
          run_duration = 0.0;
       }

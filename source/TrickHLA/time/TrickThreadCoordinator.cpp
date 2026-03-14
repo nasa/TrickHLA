@@ -1281,7 +1281,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
    Manager *manager = federate->get_manager();
 
    // Lookahead and LCTS times in the integer base time.
-   int64_t const lookahead_base_time = federate->get_lookahead_in_base_time();
+   int64_t const lookahead_base_time = federate->get_lookahead().get_base_time();
    int64_t const lcts_base_time      = manager->get_execution_control()->get_least_common_time_step();
 
    // Verify the lookahead time.

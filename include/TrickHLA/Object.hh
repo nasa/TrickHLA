@@ -178,7 +178,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Gets the a pointer to our federate.
     *  @return Pointer to TrickHLA::Federate instance. */
-   Federate *get_federate();
+   Federate *get_federate() const;
 
    //-----------------------------------------------------------------
    // HLA
@@ -664,14 +664,6 @@ class Object : public CheckpointConversionBase
       this->pull_requested = request;
    }
 
-   /*! @brief Return a copy of the federate's lookahead time.
-    *  @return Lookahead time interval. */
-   Int64Interval get_lookahead() const;
-
-   /*! @brief Get the currently granted federation HLA logical time.
-    *  @return A copy of the granted HLA logical time. */
-   Int64Time get_granted_time() const;
-
    /*! @brief Gets the attribute for the given HLA Attribute-Handle.
     *  @return Associated TrickHLA::Attribute.
     *  @param attr_handle Attribute ID. */
@@ -743,7 +735,7 @@ class Object : public CheckpointConversionBase
   protected:
    /*! @brief Gets the RTI Ambassador.
     *  @return Pointer to associated HLA RTIambassador instance. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador();
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const;
 
    BasicClock clock; ///< @trick_units{--} Clock time object.
 
@@ -767,8 +759,6 @@ class Object : public CheckpointConversionBase
    VectorOfStrings attribute_FOM_names; ///< @trick_io{**} String array containing the Attribute FOM names.
 
    Manager *manager; ///< @trick_units{--} Reference to the TrickHLA Manager.
-
-   RTI1516_NAMESPACE::RTIambassador *rti_ambassador; ///< @trick_io{**} Reference to the RTI ambassador.
 
    RTI1516_NAMESPACE::AttributeHandleValueMap *attribute_values_map; ///< @trick_io{**} Map of attributes that will be sent as an update to other federates.
 
