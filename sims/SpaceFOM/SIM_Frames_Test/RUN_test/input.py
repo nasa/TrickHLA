@@ -39,7 +39,7 @@ def print_usage_message():
    print( '  --stop [time]        : Time to stop simulation, default is 0.5 seconds.' )
    print( '  -t --tree            : Print the frame tree data.' )
    print( '  -v --vehicle [file]  : Set the name for the vehicle definition file.' )
-   print( '  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.' )
+   print( '  --verbose [on|off]   : on: Show verbose messages, off: disable messages (Default).' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,

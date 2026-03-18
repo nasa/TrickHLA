@@ -36,7 +36,7 @@ def print_usage_message():
    print( '  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_sine.' )
    print( '  --nostop              : Set no stop time on simulation.' )
    print( '  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.' )
+   print( '  --verbose [on|off]    : on: Show verbose messages, off: disable messages (Default).' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,

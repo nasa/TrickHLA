@@ -30,7 +30,7 @@ def print_usage_message():
    print( '  -h --help          : Print this help message.' )
    print( '  --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
    print( '  --nostop           : Set no stop time on simulation.' )
-   print( '  --verbose [on|off] : on: Show verbose messages (Default), off: disable messages.' )
+   print( '  --verbose [on|off] : on: Show verbose messages, off: disable messages (Default).' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
