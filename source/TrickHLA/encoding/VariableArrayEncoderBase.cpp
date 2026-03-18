@@ -65,6 +65,15 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
      var_element_count( 0 ),
      data_elements()
 {
+   if ( this->address == NULL ) {
+      ostringstream errmsg;
+      errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
+             << " ERROR: The variable address is NULL for variable '"
+             << data_name << "'. Please make sure the Trick variable"
+             << " is allocated memory by the Trick Memory Manager." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    if ( attr == NULL ) {
       ostringstream errmsg;
       errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
@@ -80,15 +89,6 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
    this->is_1d_array_flag      = ( attr->num_index == 1 );
    this->is_static_array_flag  = is_array() && ( attr->index[attr->num_index - 1].size != 0 );
    this->is_dynamic_array_flag = is_array() && ( attr->index[attr->num_index - 1].size == 0 );
-
-   if ( this->address == NULL ) {
-      ostringstream errmsg;
-      errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
-             << " ERROR: The variable address is NULL for variable '"
-             << data_name << "'. Please make sure the Trick variable"
-             << " is allocated memory by the Trick Memory Manager." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
 
    if ( is_static_in_size() ) {
       this->var_element_count = Utilities::get_static_var_element_count( attr );
