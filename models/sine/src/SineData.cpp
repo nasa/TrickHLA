@@ -15,6 +15,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineData.cpp}
 @trick_link_dependency{sine/src/SinePacking.cpp}
 
@@ -38,9 +40,14 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 #include "trick/trick_math.h"
 
+// TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Types.hh"
+
 // Model include files.
 #include "sine/include/SineData.hh"
 
+using namespace TrickHLA;
 using namespace TrickHLAModel;
 
 /*!
@@ -226,8 +233,11 @@ void SineData::adjust_phase() // RETURN: -- None.
          }
       }
       phase -= fmod( ( freq * time ), ( 2.0 * M_PI ) );
-      message_publish( MSG_NORMAL, "Adjusting phase, old=%f, new=%f\n",
-                       old_phase, phase );
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         message_publish( MSG_NORMAL, "SineData::adjust_phase():%d Adjusting phase, old=%f, new=%f\n",
+                          __LINE__, old_phase, phase );
+      }
    }
 }
 

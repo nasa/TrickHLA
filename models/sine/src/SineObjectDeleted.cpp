@@ -16,8 +16,10 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../../source/TrickHLA/ObjectDeletedHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineObjectDeleted.cpp}
 
 @revs_title
@@ -37,8 +39,10 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
+#include "TrickHLA/Types.hh"
 
 // Model include files.
 #include "sine/include/SineObjectDeleted.hh"
@@ -66,9 +70,11 @@ SineObjectDeleted::~SineObjectDeleted()
 
 void SineObjectDeleted::deleted()
 {
-   ostringstream msg;
-   msg << "SineObjectDeleted::deleted():" << __LINE__
-       << " Object '" << object->get_name() << "' deleted from the federation."
-       << endl;
-   message_publish( MSG_NORMAL, msg.str().c_str() );
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      ostringstream msg;
+      msg << "SineObjectDeleted::deleted():" << __LINE__
+          << " Object '" << object->get_name() << "' deleted from the federation."
+          << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
 }

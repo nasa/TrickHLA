@@ -101,7 +101,10 @@ void SineInteractionHandler::send_sine_interaction(
    msg << "SineInteractionHandler::send_sine_interaction():" << __LINE__
        << " Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" )
        << "\" Send-count:" << ( send_cnt + 1 ) << endl;
-   message_publish( MSG_NORMAL, msg.str().c_str() );
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
 
    if ( message != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
@@ -141,7 +144,7 @@ void SineInteractionHandler::send_sine_interaction(
 #endif
 
    if ( was_sent ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          string user_supplied_tag_string;
          StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
 
@@ -177,7 +180,7 @@ void SineInteractionHandler::send_sine_interaction(
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file. Use a higher debug level.
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // The interaction was Not sent.
          ostringstream msg2;
          msg2 << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
@@ -199,7 +202,7 @@ void SineInteractionHandler::receive_interaction(
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       ostringstream msg;
       msg << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
           << __LINE__ << endl
