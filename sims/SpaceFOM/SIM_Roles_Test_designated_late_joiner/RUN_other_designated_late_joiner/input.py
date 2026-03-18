@@ -33,7 +33,7 @@ def print_usage_message():
    print( '  -p --pacing [name]    : Name of the Pacing federate, default is Pacing.' )
    print( '  -r --rrfp [name]      : Name of the Root Reference Frame Publishing federate, default is RRFP.' )
    print( '  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.' )
+   print( '  --verbose [on|off]    : on: Show verbose messages, off: disable messages (Default).' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,

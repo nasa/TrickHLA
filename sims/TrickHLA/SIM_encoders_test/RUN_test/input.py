@@ -20,7 +20,7 @@ def print_usage_message():
    print( ' ' )
    print( 'TrickHLA Encoders Test Simulation Command Line Configuration Options:' )
    print( '  -h --help              : Print this help message.' )
-   print( '  --verbose [on|off]     : on: Show verbose messages (Default), off: disable messages.' )
+   print( '  --verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
