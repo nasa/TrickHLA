@@ -148,14 +148,14 @@ Manager::~Manager()
  * @job_class{default_data}
  */
 void Manager::setup(
-   Federate             &federate,
-   ExecutionControlBase &execution_control )
+   Federate             &fed,
+   ExecutionControlBase &exec_control )
 {
    // Set the TrickHLA::Federate instace reference.
-   this->federate = &federate;
+   this->federate = &fed;
 
    // Set the TrickHLA::ExecutionControlBase instance reference.
-   this->execution_control = &execution_control;
+   this->execution_control = &exec_control;
 }
 
 /*!

@@ -525,7 +525,7 @@ void BallPacking::debug_print( std::ostream &stream ) const
           << "\tposition:      " << position[0] << ", " << position[1] << "\n"
           << "\tvelocity:      " << velocity[0] << ", " << velocity[1] << "\n"
           << "\tacceleration:  " << acceleration[0] << ", " << acceleration[1] << "\n"
-          << "\external force: " << external_force[0] << ", " << external_force[1] << "\n";
+          << "\texternal force: " << external_force[0] << ", " << external_force[1] << "\n";
 
    return;
 }
