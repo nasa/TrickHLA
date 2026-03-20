@@ -89,14 +89,13 @@ class FedAmbBase
    virtual void initialize() = 0;
 
    /*! @brief Setup the required class instance associations.
-    *  @param federate  Associated TrickHLA::Federate class instance.
-    *  @param manager   Associated TrickHLA::Manager class instance. */
-   void setup( Federate &federate,
-               Manager  &manager )
+    *  @param fed  Associated TrickHLA::Federate class instance.
+    *  @param mgr   Associated TrickHLA::Manager class instance. */
+   void setup( Federate &fed, Manager  &mgr )
    {
       // Set the associated TrickHLA Federate and Manager references.
-      this->federate = &federate;
-      this->manager  = &manager;
+      this->federate = &fed;
+      this->manager  = &mgr;
    }
 
    Manager *get_manager()

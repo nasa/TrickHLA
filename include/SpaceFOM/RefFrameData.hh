@@ -92,10 +92,10 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
    }
 
    /*! @brief Access function to set the name for the parent reference frame.
-    *  @param name Name for the parent reference frame. */
-   virtual void set_parent_name( std::string const &name )
+    *  @param new_parent_name Name for the parent reference frame. */
+   virtual void set_parent_name( std::string const &new_parent_name )
    {
-      this->parent_name = name;
+      this->parent_name = new_parent_name;
       return;
    }
 

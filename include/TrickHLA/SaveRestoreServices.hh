@@ -441,10 +441,10 @@ class SaveRestoreServices
    }
 
    /*! @brief Set the name of the restore.
-    *  @param restore_label Restore name. */
-   void set_restore_name( std::wstring const &restore_label )
+    *  @param name Restore label name. */
+   void set_restore_name( std::wstring const &name )
    {
-      this->restore_name = restore_label;
+      this->restore_name = name;
    }
 
    /*! @brief Get announce restore flag.
