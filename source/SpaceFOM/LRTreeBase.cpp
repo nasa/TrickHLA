@@ -161,9 +161,9 @@ bool LRTreeBase::build_tree()
    }
 
    // Sweep through the nodes vector to populate the paths matrix.
-   for ( unsigned int iinc = 0; iinc < nodes.size(); ++iinc ) {
+   for ( size_t iinc = 0; iinc < nodes.size(); ++iinc ) {
 
-      for ( unsigned int jinc = 0; jinc <= iinc; ++jinc ) {
+      for ( size_t jinc = 0; jinc <= iinc; ++jinc ) {
          // Any diagonal elements just have themselves.
          if ( jinc == iinc ) {
 
@@ -208,7 +208,7 @@ bool LRTreeBase::check_tree()
    bool check_state = true;
 
    // Iterate through all the nodes.
-   for ( unsigned int iinc = 0; iinc < nodes.size(); ++iinc ) {
+   for ( size_t iinc = 0; iinc < nodes.size(); ++iinc ) {
 
       // Get the reference to the node in the vector.
       LRTreeNodeBase *node_ptr = this->nodes[iinc];
@@ -307,7 +307,7 @@ bool LRTreeBase::check_tree()
 /*!
  * @job_class{scheduled}
  */
-bool LRTreeBase::has_node( unsigned int const node_id )
+bool LRTreeBase::has_node( size_t const node_id )
 {
    return ( node_id < nodes.size() );
 }
@@ -356,7 +356,7 @@ bool LRTreeBase::has_node( LRTreeNodeBase const *node )
 /*!
  * @job_class{scheduled}
  */
-LRTreeNodeBase *LRTreeBase::find_node( unsigned int const node_id )
+LRTreeNodeBase *LRTreeBase::find_node( size_t const node_id )
 {
    return ( this->nodes[node_id] );
 }
@@ -397,7 +397,7 @@ LRTreeNodeBase *LRTreeBase::find_node( string const &name )
  */
 void LRTreeBase::print_nodes( std::ostream &stream ) const
 {
-   for ( unsigned int iinc = 0; iinc < nodes.size(); ++iinc ) {
+   for ( size_t iinc = 0; iinc < nodes.size(); ++iinc ) {
       nodes[iinc]->print_node( stream );
    }
    return;
@@ -427,11 +427,11 @@ void LRTreeBase::print_path(
  * @job_class{scheduled}
  */
 void LRTreeBase::print_path(
-   unsigned int  start,
-   unsigned int  end,
+   size_t        start,
+   size_t        end,
    std::ostream &stream ) const
 {
-   unsigned int num_nodes = nodes.size();
+   size_t num_nodes = nodes.size();
 
    // Perform a few sanity checks.
    if ( ( start >= num_nodes ) || ( end >= num_nodes ) ) {
@@ -444,13 +444,13 @@ void LRTreeBase::print_path(
    if ( paths != NULL ) {
 
       // Get the size of the path.
-      unsigned int path_size = paths[start][end].size();
+      size_t path_size = paths[start][end].size();
 
       // Print out header tag.
       stream << "[" << start << "][" << end << "]: ";
 
       // Loop through the node path vector.
-      for ( unsigned int kinc = 0; kinc < path_size; ++kinc ) {
+      for ( size_t kinc = 0; kinc < path_size; ++kinc ) {
          stream << paths[start][end][kinc]->name << " [" << paths[start][end][kinc]->node_id << "]";
          if ( kinc < path_size - 1 ) {
             // stream << ", ";
@@ -483,27 +483,27 @@ void LRTreeBase::print_paths( std::ostream &stream ) const
    if ( paths != NULL ) {
 
       // Get the size of the path matrix.
-      unsigned int num_nodes = nodes.size();
+      size_t num_nodes = nodes.size();
 
       // Print out header tag.
       stream << "LRTreeBase::print_paths: " << endl;
 
       // Iterate through the rows.
-      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( size_t iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have be allocated.
          if ( paths[iinc] != NULL ) {
 
             // Iterate through the columns.
-            for ( unsigned int jinc = 0; jinc < num_nodes; ++jinc ) {
+            for ( size_t jinc = 0; jinc < num_nodes; ++jinc ) {
 
-               unsigned int path_size = paths[iinc][jinc].size();
+               size_t path_size = paths[iinc][jinc].size();
 
                stream << "paths[" << iinc << "][" << jinc << "]: ";
 
                if ( path_size > 0 ) {
                   // Loop through the node path vector.
-                  for ( unsigned int kinc = 0; kinc < path_size; ++kinc ) {
+                  for ( size_t kinc = 0; kinc < path_size; ++kinc ) {
                      stream << paths[iinc][jinc][kinc]->node_id;
                      if ( kinc < path_size - 1 ) {
                         // stream << ", ";
@@ -544,7 +544,7 @@ bool LRTreeBase::allocate_paths()
    free_paths();
 
    // Size the path matrix.
-   unsigned int num_nodes = nodes.size();
+   size_t num_nodes = nodes.size();
 
    // Allocate the rows of the matrix.
    this->paths = new LRTreeNodeVector *[num_nodes];
@@ -561,7 +561,7 @@ bool LRTreeBase::allocate_paths()
 
       // Allocate the columns of the path matrix.
       // Note that this is always a square matrix.
-      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( size_t iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Allocate the columns of the matrix.
          this->paths[iinc] = new LRTreeNodeVector[num_nodes];
@@ -587,16 +587,16 @@ void LRTreeBase::free_paths()
    if ( paths != NULL ) {
 
       // Size the path matrix.
-      unsigned int num_nodes = nodes.size();
+      size_t num_nodes = nodes.size();
 
       // Iterate through and free the path matrix.
       // Iterate through the rows.
-      for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
+      for ( size_t iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have been allocated.
          if ( paths[iinc] != NULL ) {
 
-            for ( unsigned int jinc = 0; jinc < num_nodes; ++jinc ) {
+            for ( size_t jinc = 0; jinc < num_nodes; ++jinc ) {
 
                // Clear the path vector.
                paths[iinc][jinc].clear();
@@ -626,10 +626,10 @@ void LRTreeBase::free_paths()
  */
 LRTreeNodeBase *LRTreeBase::find_root()
 {
-   unsigned int    num_nodes;
+   size_t          num_nodes;
    LRTreeNodeBase *node_ptr;
    LRTreeNodeBase *root_node;
-   unsigned int    root_id;
+   size_t          root_id;
    bool            found_root = false;
 
    // Get the number of nodes in the tree.
@@ -637,7 +637,7 @@ LRTreeNodeBase *LRTreeBase::find_root()
 
    // Iterate through all the nodes.
    // for ( node_iter = nodes.begin(); node_iter < nodes.end(); ++node_iter ) {
-   for ( unsigned int iinc = 0; iinc < num_nodes; ++iinc ) {
+   for ( size_t iinc = 0; iinc < num_nodes; ++iinc ) {
 
       // Get the reference to the node in the vector.
       node_ptr = this->nodes[iinc];
@@ -687,10 +687,10 @@ LRTreeNodeBase *LRTreeBase::find_root()
  */
 bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
 {
-   unsigned int node_id;
-   unsigned int level = 0;
-   unsigned int num_nodes;
-   bool         cyclic = false;
+   size_t node_id;
+   size_t level = 0;
+   size_t num_nodes;
+   bool   cyclic = false;
 
    LRTreeNodeBase const *current_node = node;
 
@@ -740,7 +740,7 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
 /*
  * @job_class{scheduled}
  */
-LRTreeNodeVector *LRTreeBase::get_path_to_root( unsigned int const node_id )
+LRTreeNodeVector *LRTreeBase::get_path_to_root( size_t const node_id )
 {
    LRTreeNodeBase   *node_ptr;
    LRTreeNodeVector *return_vector = NULL;
@@ -771,7 +771,6 @@ LRTreeNodeVector *LRTreeBase::get_path_to_root( unsigned int const node_id )
  */
 LRTreeNodeVector *LRTreeBase::get_path_to_root( LRTreeNodeBase const *node )
 {
-
    // Protect against NULL pointers.
    if ( node == NULL ) {
       message_publish( MSG_WARNING, "LRTreeBase::get_path_to_root():%d WARNING: NULL node pointer.\n",
@@ -786,8 +785,8 @@ LRTreeNodeVector *LRTreeBase::get_path_to_root( LRTreeNodeBase const *node )
 /*!
  * @job_class{scheduled}
  */
-LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
-                                         unsigned int const wrt )
+LRTreeNodeVector *LRTreeBase::find_path( size_t const local,
+                                         size_t const wrt )
 {
    LRTreeNodeVector *up_path     = NULL;
    LRTreeNodeVector *down_path   = NULL;
@@ -899,8 +898,8 @@ LRTreeNodeVector *LRTreeBase::find_path( LRTreeNodeBase const *local,
 /*!
  * @job_class{scheduled}
  */
-LRTreeNodeBase *LRTreeBase::find_common_node( unsigned int const local,
-                                              unsigned int const wrt )
+LRTreeNodeBase *LRTreeBase::find_common_node( size_t const local,
+                                              size_t const wrt )
 {
    LRTreeNodeVector *up_path         = NULL;
    LRTreeNodeVector *down_path       = NULL;

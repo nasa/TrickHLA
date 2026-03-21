@@ -74,7 +74,7 @@ using namespace TrickHLA;
       return;                                                                                                                         \
    }                                                                                                                                  \
                                                                                                                                       \
-   int EncoderClassName::get_data_size()                                                                                              \
+   std::size_t EncoderClassName::get_data_size()                                                                                      \
    {                                                                                                                                  \
       if ( data_encoder != NULL ) {                                                                                                   \
          if ( typeid( SimpleDataType ) == typeid( std::string ) ) {                                                                   \

@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_FLOAT64_TO_LOGICAL_TIME_ENCODER_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // Trick includes.
@@ -91,7 +92,7 @@ class Float64ToLogicalTimeEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
-   virtual int get_data_size()
+   virtual std::size_t get_data_size()
    {
       return sizeof( time_data );
    }

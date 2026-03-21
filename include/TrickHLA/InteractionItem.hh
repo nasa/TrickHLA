@@ -40,6 +40,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_ITEM_HH
 #define TRICKHLA_INTERACTION_ITEM_HH
 
+// System includes.
+#include <cstddef>
+
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
@@ -95,10 +98,10 @@ class InteractionItem : public Item
 
    InteractionTypeEnum interaction_type; ///< @trick_units{--} type of the containing interaction
 
-   int            parm_items_count; ///< @trick_units{--} Number of array elements
+   std::size_t    parm_items_count; ///< @trick_units{--} Number of array elements
    ParameterItem *parm_items;       ///< @trick_units{--} checkpoint-able parameter items array
 
-   int            user_supplied_tag_size; ///< @trick_units{--} Number of bytes in the user supplied tag.
+   std::size_t    user_supplied_tag_size; ///< @trick_units{--} Number of bytes in the user supplied tag.
    unsigned char *user_supplied_tag;      ///< @trick_units{--} User supplied tag data.
 
    bool      order_is_TSO; ///< @trick_units{--} True if Timestamp Order, false for Receive Order.

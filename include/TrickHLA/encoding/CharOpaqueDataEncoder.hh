@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_CHAR_OPAQUE_DATA_ENCODER_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // Trick includes.
@@ -91,7 +92,7 @@ class CharOpaqueDataEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
-   virtual int get_data_size()
+   virtual std::size_t get_data_size()
    {
       return ( ( data_encoder != NULL )
                   ? dynamic_cast< RTI1516_NAMESPACE::HLAopaqueData * >( data_encoder )->dataLength()

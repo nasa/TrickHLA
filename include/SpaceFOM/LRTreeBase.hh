@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_L_R_TREE_BASE_HH
 
 // System includes.
+#include <cstddef>
 #include <iostream>
 #include <map>
 #include <set>
@@ -104,7 +105,7 @@ class LRTreeBase
    /*! @brief Check if a node is in the tree.
     *  @return True if in the tree, false otherwise.
     *  @param node_id ID of the node to check for. */
-   virtual bool has_node( unsigned int const node_id );
+   virtual bool has_node( std::size_t const node_id );
 
    /*! @brief Check if a node is in the tree.
     *  @return True if in the tree, false otherwise.
@@ -123,7 +124,7 @@ class LRTreeBase
 
    /*! @brief Get the ID of the root node in the tree.
     *  @return ID of the root node in the tree. */
-   virtual unsigned int get_root_node_id() { return ( root_node_id ); }
+   virtual std::size_t get_root_node_id() { return ( root_node_id ); }
 
    /*! @brief Get a reference to the instance of the root node in the tree.
     *  @return Reference to the instance of the root node in the tree. */
@@ -132,7 +133,7 @@ class LRTreeBase
    /*! @brief Find a node in the tree.
     *  @return Tree node instance if found, NULL otherwise.
     *  @param node_id ID of the node to check for. */
-   LRTreeNodeBase *find_node( unsigned int const node_id );
+   LRTreeNodeBase *find_node( std::size_t const node_id );
 
    /*! @brief Find a node in the tree.
     *  @return Tree node instance if found, NULL otherwise.
@@ -160,8 +161,8 @@ class LRTreeBase
     *  @param start  Starting node for path.
     *  @paran end    Ending node for path.
     *  @param stream Output stream. */
-   virtual void print_path( unsigned int  start,
-                            unsigned int  end,
+   virtual void print_path( std::size_t   start,
+                            std::size_t   end,
                             std::ostream &stream = std::cout ) const;
 
   public:
@@ -171,7 +172,7 @@ class LRTreeBase
    LRTreeNodeVector nodes;    ///< @trick_io{**} Node vector used to build and manage the tree.
    LRTreeNodeMap    node_map; ///< @trick_io{**} Map used to build and manage the tree.
 
-   unsigned int       root_node_id;  ///< @trick_units{--} Tree root node ID.
+   std::size_t        root_node_id;  ///< @trick_units{--} Tree root node ID.
    LRTreeNodeBase    *root_node_ptr; ///< @trick_io{**} Reference to the tree's root node.
    LRTreeNodeVector **paths;         ///< @trick_io{**} Path matrix used to store and retrieve node-to-node paths.
 
@@ -198,7 +199,7 @@ class LRTreeBase
    /*! @brief Build up a path from a node to the tree root.
     *  @return Allocated LRTreeNodeVector path from node to root.
     *  @param node_id ID of node in the tree. */
-   virtual LRTreeNodeVector *get_path_to_root( unsigned int const node_id );
+   virtual LRTreeNodeVector *get_path_to_root( std::size_t const node_id );
 
    /*! @brief Build up a path from a node to the tree root.
     *  @return Allocated LRTreeNodeVector path from node to root.
@@ -209,8 +210,8 @@ class LRTreeBase
     *  @return Allocated LRTreeNodeVector path from local node to wrt node.
     *  @param local ID of local node.
     *  @param wrt ID of with-respect-to (wrt) node*/
-   virtual LRTreeNodeVector *find_path( unsigned int const local,
-                                        unsigned int const wrt );
+   virtual LRTreeNodeVector *find_path( std::size_t const local,
+                                        std::size_t const wrt );
 
    /*! @brief Find the path from the local node to the wrt node in the tree.
     *  @return Allocated LRTreeNodeVector path from local node to wrt node.
@@ -223,8 +224,8 @@ class LRTreeBase
     *  @return Reference to the instance of the common node.
     *  @param local ID of local node.
     *  @param wrt ID of with-respect-to (wrt) node*/
-   virtual LRTreeNodeBase *find_common_node( unsigned int const local,
-                                             unsigned int const wrt );
+   virtual LRTreeNodeBase *find_common_node( std::size_t const local,
+                                             std::size_t const wrt );
 
    /*! @brief Find the common node on a path up from the local node and up from the wrt node.
     *  @return Reference to the instance of the common node.

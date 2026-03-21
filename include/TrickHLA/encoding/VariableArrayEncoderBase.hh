@@ -98,7 +98,7 @@ class VariableArrayEncoderBase : public EncoderBase
 
    virtual void update_after_decode();
 
-   virtual int get_data_size();
+   virtual std::size_t get_data_size();
 
    virtual std::string to_string()
    {

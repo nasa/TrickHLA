@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <climits>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -464,6 +465,14 @@ void Federate::restart_initialization()
          ostringstream errmsg;
          errmsg << "Federate::restart_initialization():" << __LINE__
                 << " ERROR: No Known Federates Specified for the Federation." << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      if ( known_feds_count >= INT_MAX ) {
+         ostringstream errmsg;
+         errmsg << "Federate::restart_initialization():" << __LINE__
+                << " ERROR: Known Federates count (" << known_feds_count
+                << ") is >= " << INT_MAX << "!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -1021,7 +1030,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // If this federate is running, add the new entry into running_feds.
       if ( is_federate_executing() ) {
          bool found = false;
-         for ( int loop = 0; loop < running_feds_count; ++loop ) {
+         for ( size_t loop = 0; loop < running_feds_count; ++loop ) {
             string tName;
             StringUtilities::to_string( tName, federate_name_ws );
 
@@ -4200,7 +4209,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // Search for the federate information from running_feds...
    foundName = false;
-   for ( int i = 0; i < running_feds_count; ++i ) {
+   for ( size_t i = 0; i < running_feds_count; ++i ) {
       if ( running_feds[i].MOM_instance_name != tMOMName ) {
          foundName = true;
          tFedName  = running_feds[i].name;
@@ -4219,7 +4228,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // allocate temporary list...
    tmp_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( this->running_feds_count - 1, "TrickHLA::KnownFederate" ) );
+      alloc_type( (int)( this->running_feds_count - 1 ), "TrickHLA::KnownFederate" ) );
    if ( tmp_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
@@ -4228,7 +4237,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    }
    // now, copy everything minus the requested name from the original list...
    int tmp_feds_cnt = 0;
-   for ( int i = 0; i < this->running_feds_count; ++i ) {
+   for ( size_t i = 0; i < this->running_feds_count; ++i ) {
       // if the name is not the one we are looking for...
       if ( running_feds[i].name != tFedName ) {
          if ( running_feds[i].MOM_instance_name.empty() ) {
@@ -4449,7 +4458,7 @@ void Federate::restore_federate_handles_from_MOM()
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
          // Determine if all the federate handles have been found.
-         all_found = ( (int)joined_federate_handles.size() >= running_feds_count );
+         all_found = ( joined_federate_handles.size() >= running_feds_count );
       }
 
       if ( !all_found ) {
@@ -4547,8 +4556,8 @@ bool Federate::is_a_required_startup_federate(
             // look for instance attributes of a required object. to do this,
             // check if the "required federate name" is found inside the supplied
             // federate name.
-            int found = fed_name.find( required_fed_name );
-            if ( found != (int)wstring::npos ) {
+            size_t found = fed_name.find( required_fed_name );
+            if ( found != wstring::npos ) {
                // found the "required federate name" inside the supplied federate name
                return true;
             }

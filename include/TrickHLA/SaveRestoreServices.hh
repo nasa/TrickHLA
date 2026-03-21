@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SAVE_RESTORE_SERVICES_HH
 
 // System includes.
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <string>
@@ -155,7 +156,7 @@ class SaveRestoreServices
 
    /*! @brief Get the count of the currently running federates.
     *  @return Count of the currently running federates. */
-   int get_running_feds_count() const
+   std::size_t get_running_feds_count() const
    {
       return running_feds_count;
    }
@@ -592,9 +593,9 @@ class SaveRestoreServices
    // The SaveRestoreServicess known at execution time. This is loaded when we join the
    // federation and is automatically kept current when other federates
    // join / resign from the federation.
-   int            running_feds_count;                    ///< @trick_units{--} Number of running SaveRestoreServicess (default: 0)
+   std::size_t    running_feds_count;                    ///< @trick_units{--} Number of running SaveRestoreServicess (default: 0)
    KnownFederate *running_feds;                          ///< @trick_units{--} Checkpoint-able Array of running Federation SaveRestoreServicess
-   int            running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of running SaveRestoreServicess at the time of the restore (default: 0)
+   std::size_t    running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of running SaveRestoreServicess at the time of the restore (default: 0)
 
    std::string checkpoint_file_name; ///< @trick_io{*i} @trick_units{--} label to attach to sync point
    Flag        checkpoint_rt_itimer; ///< @trick_io{**} loaded checkpoint RT ITIMER

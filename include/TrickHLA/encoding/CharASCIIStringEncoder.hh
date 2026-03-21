@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_CHAR_ASCII_STRING_ENCODER_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // Trick includes
@@ -89,7 +90,7 @@ class CharASCIIStringEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
-   virtual int get_data_size()
+   virtual std::size_t get_data_size()
    {
       return string_data.size();
    }

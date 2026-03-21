@@ -308,7 +308,7 @@ class Interaction
    /*! @brief Set the received user supplied tag.
     *  @param tag The user supplied tag.
     *  @param tag_size Size of the user supplied tag. */
-   void set_user_supplied_tag( unsigned char const *tag, int tag_size );
+   void set_user_supplied_tag( unsigned char const *tag, std::size_t tag_size );
 
    /*! @brief Mark this interaction as published. */
    void set_publish()
@@ -356,8 +356,8 @@ class Interaction
 
    RTI1516_NAMESPACE::InteractionClassHandle class_handle; ///< @trick_io{**} RTI Interaction Class handle.
 
-   int            user_supplied_tag_size;     ///< @trick_units{--} Number of bytes in the user supplied tag.
-   int            user_supplied_tag_capacity; ///< @trick_units{--} Capacity of the user supplied tag.
+   std::size_t    user_supplied_tag_size;     ///< @trick_units{--} Number of bytes in the user supplied tag.
+   std::size_t    user_supplied_tag_capacity; ///< @trick_units{--} Capacity of the user supplied tag.
    unsigned char *user_supplied_tag;          ///< @trick_units{--} User supplied tag data.
 
   private:

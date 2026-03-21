@@ -65,7 +65,7 @@ UInt32Data::UInt32Data(
       }
    }
 
-   int const ptr_ui32_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int const ptr_ui32_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_ui32 = static_cast< unsigned int * >( TMM_declare_var_1d( "unsigned int", ptr_ui32_size ) );
    for ( int i = 0; i < ptr_ui32_size; ++i ) {

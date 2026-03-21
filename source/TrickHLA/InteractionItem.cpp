@@ -207,7 +207,7 @@ void InteractionItem::initialize(
    user_supplied_tag_size = theUserSuppliedTag.size();
    if ( user_supplied_tag_size != 0 ) {
       user_supplied_tag = static_cast< unsigned char * >(
-         TMM_declare_var_1d( "unsigned char", user_supplied_tag_size ) );
+         TMM_declare_var_1d( "unsigned char", (int)user_supplied_tag_size ) );
       memcpy( user_supplied_tag, // flawfinder: ignore
               theUserSuppliedTag.data(),
               user_supplied_tag_size );
@@ -225,7 +225,7 @@ void InteractionItem::checkpoint_queue()
       parm_items_count = parameter_queue.size();
 
       parm_items = reinterpret_cast< ParameterItem * >(
-         alloc_type( parm_items_count, "TrickHLA::ParameterItem" ) );
+         alloc_type( (int)parm_items_count, "TrickHLA::ParameterItem" ) );
       if ( parm_items == NULL ) {
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
@@ -234,7 +234,7 @@ void InteractionItem::checkpoint_queue()
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      int            i;
+      size_t         i;
       ParameterItem *item;
 
       // Iterate through the parameter-queue.
@@ -248,9 +248,9 @@ void InteractionItem::checkpoint_queue()
             parm_items[i].data = NULL;
          } else {
             parm_items[i].data = static_cast< unsigned char * >(
-               TMM_declare_var_1d( "unsigned char", item->size ) );
+               TMM_declare_var_1d( "unsigned char", (int)item->size ) );
 
-            memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
+            memcpy( parm_items[i].data, item->data, (int)item->size ); // flawfinder: ignore
          }
       }
    }
@@ -259,7 +259,7 @@ void InteractionItem::checkpoint_queue()
 void InteractionItem::clear_parm_items()
 {
    if ( ( parm_items_count != 0 ) && ( parm_items != NULL ) ) {
-      for ( int i = 0; i < parm_items_count; ++i ) {
+      for ( size_t i = 0; i < parm_items_count; ++i ) {
          parm_items[i].clear();
       }
       if ( trick_MM->is_alloced( static_cast< void * >( parm_items ) )
@@ -280,7 +280,7 @@ void InteractionItem::restore_queue()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
 
-      for ( int i = 0; i < parm_items_count; ++i ) {
+      for ( size_t i = 0; i < parm_items_count; ++i ) {
 
          ParameterItem *item = new ParameterItem();
 
@@ -290,7 +290,7 @@ void InteractionItem::restore_queue()
             item->data = NULL;
          } else {
             item->data = static_cast< unsigned char * >(
-               TMM_declare_var_1d( "unsigned char", parm_items[i].size ) );
+               TMM_declare_var_1d( "unsigned char", (int)parm_items[i].size ) );
             memcpy( item->data, parm_items[i].data, parm_items[i].size ); // flawfinder: ignore
          }
 

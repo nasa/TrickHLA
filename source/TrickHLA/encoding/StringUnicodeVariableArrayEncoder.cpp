@@ -147,13 +147,13 @@ void StringUnicodeVariableArrayEncoder::update_after_decode()
    }
 }
 
-int StringUnicodeVariableArrayEncoder::get_data_size()
+size_t StringUnicodeVariableArrayEncoder::get_data_size()
 {
-   int byte_count = 0;
+   size_t byte_count = 0;
    if ( data_encoder != NULL ) {
       HLAvariableArray const *array_encoder = dynamic_cast< HLAvariableArray * >( data_encoder );
-      int const               array_size    = array_encoder->size();
-      for ( int i = 0; i < array_size; ++i ) {
+      size_t const            array_size    = array_encoder->size();
+      for ( size_t i = 0; i < array_size; ++i ) {
          byte_count += ( sizeof( wchar_t ) * dynamic_cast< HLAunicodeString const & >( array_encoder->get( i ) ).get().size() );
       }
    }

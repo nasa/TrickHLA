@@ -65,7 +65,7 @@ UInt64Data::UInt64Data(
       }
    }
 
-   int const ptr_ui64_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int const ptr_ui64_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_ui64 = static_cast< unsigned long long * >( TMM_declare_var_1d( "unsigned long long", ptr_ui64_size ) );
    for ( int i = 0; i < ptr_ui64_size; ++i ) {

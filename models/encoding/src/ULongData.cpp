@@ -65,7 +65,7 @@ ULongData::ULongData(
       }
    }
 
-   int const ptr_ulong_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int const ptr_ulong_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_ulong = static_cast< unsigned long * >( TMM_declare_var_1d( "unsigned long", ptr_ulong_size ) );
    for ( int i = 0; i < ptr_ulong_size; ++i ) {

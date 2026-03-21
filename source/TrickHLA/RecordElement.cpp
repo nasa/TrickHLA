@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <climits>
 #include <cstddef>
 #include <ostream>
 #include <sstream>
@@ -127,6 +128,18 @@ void RecordElement::initialize_element_encoder()
                 << " but 'elements' are specified. Please check your input.py"
                 << " or modified-data files to make sure the elements are"
                 << " correctly specified." << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+
+      if ( element_count >= INT_MAX ) {
+         ostringstream errmsg;
+         errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
+                << " ERROR: For element with trick_name '" << get_trick_name()
+                << "', the 'element_count' is " << element_count
+                << " and is unexpectantly >= " << INT_MAX
+                << ". Please check your input.py or modified-data files to make"
+                << " sure the elements are correctly specified." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }

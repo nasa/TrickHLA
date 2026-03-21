@@ -1055,7 +1055,7 @@ void ExecutionControlBase::setup_checkpoint()
          // When user clicks Dump Chkpnt, we need to set the save_name here
          string trick_filename;
          string slash( "/" );
-         int    found;
+         size_t found;
          string save_name_str;
 
          // get checkpoint file name specified in control panel
@@ -1064,7 +1064,7 @@ void ExecutionControlBase::setup_checkpoint()
          // Trick filename contains dir/filename,
          // need to prepend federation name to filename entered in sim control panel popup
          found = trick_filename.rfind( slash );
-         if ( found != (int)string::npos ) {
+         if ( found != string::npos ) {
             save_name_str              = trick_filename.substr( found + 1 );
             string federation_name_str = federate->get_federation_name();
             if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
@@ -1308,7 +1308,7 @@ void ExecutionControlBase::setup_restore()
    if ( federate->is_announce_restore() ) {
       string trick_filename;
       string slash_fedname( "/" + federate->get_federation_name() + "_" );
-      int    found;
+      size_t found;
 
       // Otherwise set restore_name_str using trick's file name
       trick_filename = checkpoint_get_load_file();
@@ -1317,7 +1317,7 @@ void ExecutionControlBase::setup_restore()
       // (chosen in sim control panel popup) we need just the filename minus the federation name to initiate restore
       found = trick_filename.rfind( slash_fedname );
       string restore_name_str;
-      if ( found != (int)string::npos ) {
+      if ( found != string::npos ) {
          restore_name_str = trick_filename.substr( found + slash_fedname.length() ); // filename
       } else {
          restore_name_str = trick_filename;

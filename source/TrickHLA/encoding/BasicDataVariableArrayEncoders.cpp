@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstddef>
 #include <cstdlib>
 #include <string>
 
@@ -88,7 +89,7 @@ using namespace TrickHLA;
       SimpleDataType   *array_data    = *static_cast< SimpleDataType ** >( address ); /* NOLINT(bugprone-macro-parentheses) */ \
                                                                                                                                \
       /* Copy the Trick array values to the data elements to be encoded. */                                                    \
-      for ( size_t i = 0; i < var_element_count; ++i ) {                                                                       \
+      for ( std::size_t i = 0; i < var_element_count; ++i ) {                                                                  \
          const_cast< EncodableDataType & >( /* NOLINT(bugprone-macro-parentheses) */                                           \
                                             dynamic_cast< EncodableDataType const & >(                                         \
                                                array_encoder->get( i ) ) )                                                     \
@@ -106,7 +107,7 @@ using namespace TrickHLA;
       SimpleDataType *array_data = *static_cast< SimpleDataType ** >( address ); /* NOLINT(bugprone-macro-parentheses) */      \
                                                                                                                                \
       /* Copy the decoded data element values to the Trick array. */                                                           \
-      for ( size_t i = 0; i < var_element_count; ++i ) {                                                                       \
+      for ( std::size_t i = 0; i < var_element_count; ++i ) {                                                                  \
          array_data[i] = dynamic_cast< EncodableDataType const & >(                                                            \
                             array_encoder->get( i ) )                                                                          \
                             .get();                                                                                            \
@@ -114,7 +115,7 @@ using namespace TrickHLA;
    }                                                                                                                           \
                                                                                                                                \
    void EncoderClassName::resize_data_elements(                                                                                \
-      size_t const new_size )                                                                                                  \
+      std::size_t const new_size )                                                                                             \
    {                                                                                                                           \
       HLAvariableArray *array_encoder = dynamic_cast< HLAvariableArray * >( data_encoder );                                    \
       if ( new_size != array_encoder->size() ) {                                                                               \
