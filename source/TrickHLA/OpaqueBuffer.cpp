@@ -128,9 +128,9 @@ void OpaqueBuffer::ensure_buffer_capacity(
    if ( requested_size > capacity ) {
       capacity = requested_size;
       if ( buffer == NULL ) {
-         buffer = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", capacity ) );
+         buffer = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", (int)capacity ) );
       } else {
-         buffer = static_cast< unsigned char * >( TMM_resize_array_1d_a( buffer, capacity ) );
+         buffer = static_cast< unsigned char * >( TMM_resize_array_1d_a( buffer, (int)capacity ) );
       }
    } else if ( buffer == NULL ) {
       // Handle the case where the buffer has not been created yet and we
@@ -138,7 +138,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
 
       // Make sure the capacity is at least the same size as the byte alignment.
       capacity = ( requested_size >= alignment ) ? requested_size : alignment;
-      buffer   = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", capacity ) );
+      buffer   = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", (int)capacity ) );
    }
 
    if ( buffer == NULL ) {

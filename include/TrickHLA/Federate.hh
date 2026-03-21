@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_FEDERATE_HH
 
 // System includes.
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <string>

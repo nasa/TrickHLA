@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <climits>
 #include <cstdint>
 #include <cstring>
 #include <float.h>
@@ -334,6 +335,15 @@ void Manager::verify_object_and_interaction_arrays()
       return;
    }
 
+   if ( obj_count >= INT_MAX ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected obj_count:" << obj_count << " >= " << INT_MAX
+             << ". Please check your input or modified-data files to make sure"
+             << " the 'Manager::objects' array is correctly configured." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // Reset the TrickHLA Object count if negative.
    if ( obj_count < 0 ) {
       obj_count = 0;
@@ -384,9 +394,20 @@ void Manager::verify_object_and_interaction_arrays()
              << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
              << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
              << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured." << endl;
+             << " sure the 'Manager::interactions' array is correctly configured."
+             << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
+   }
+
+   if ( inter_count >= INT_MAX ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected inter_count:" << inter_count << " >= " << INT_MAX
+             << ". Please check your input or modified-data files to make sure"
+             << " the 'Manager::interactions' array is correctly configured."
+             << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Reset the TrickHLA Interaction count if negative.
@@ -3165,7 +3186,7 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
             check_interactions[i].user_supplied_tag =
                static_cast< unsigned char * >(
                   trick_MM->declare_var( "unsigned char",
-                                         item->user_supplied_tag_size ) );
+                                         (int)item->user_supplied_tag_size ) );
 
             memcpy( check_interactions[i].user_supplied_tag, // flawfinder: ignore
                     item->user_supplied_tag,
@@ -3251,7 +3272,7 @@ void Manager::print_checkpoint_interactions()
              << check_interactions[i].interaction_type << "'\n"
              << "check_interactions[" << i << "].parm_items_count       = "
              << check_interactions[i].parm_items_count << endl;
-         for ( int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
+         for ( size_t k = 0; k < check_interactions[i].parm_items_count; ++k ) {
             msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
                 << check_interactions[i].parm_items[k].index << endl
                 << "check_interactions[" << i << "].parm_items[" << k << "].size     = "

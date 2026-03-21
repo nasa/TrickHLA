@@ -52,6 +52,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstddef>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -380,8 +381,8 @@ void EncodingTest::string_test(
       ostringstream msg3;
       msg3 << endl;
 
-      int const data1_string_size = data1_string_encoder->get_data_size();
-      int const data2_string_size = data2_string_encoder->get_data_size();
+      size_t const data1_string_size = data1_string_encoder->get_data_size();
+      size_t const data2_string_size = data2_string_encoder->get_data_size();
       msg3 << data1_string_encoder->to_string() << endl
            << "   data1_string_encoder->get_data_size():" << data1_string_size << endl
            << "   data1._string.size():" << data1._string.size() << endl
@@ -389,22 +390,22 @@ void EncodingTest::string_test(
            << "   data2_string_encoder->get_data_size():" << data2_string_size << endl
            << "   data2._string.size():" << data2._string.size() << endl;
 
-      int const data1_vec3_string_size = data1_vec3_string_encoder->get_data_size();
-      int const data2_vec3_string_size = data2_vec3_string_encoder->get_data_size();
+      size_t const data1_vec3_string_size = data1_vec3_string_encoder->get_data_size();
+      size_t const data2_vec3_string_size = data2_vec3_string_encoder->get_data_size();
       msg3 << data1_vec3_string_encoder->to_string() << endl
            << "   data1_vec3_string_encoder->get_data_size():" << data1_vec3_string_size << endl
            << data2_vec3_string_encoder->to_string() << endl
            << "   data2_vec3_string_encoder->get_data_size():" << data2_vec3_string_size << endl;
 
-      int const data1_m3x3_string_size = data1_m3x3_string_encoder->get_data_size();
-      int const data2_m3x3_string_size = data2_m3x3_string_encoder->get_data_size();
+      size_t const data1_m3x3_string_size = data1_m3x3_string_encoder->get_data_size();
+      size_t const data2_m3x3_string_size = data2_m3x3_string_encoder->get_data_size();
       msg3 << data1_m3x3_string_encoder->to_string() << endl
            << "   data1_m3x3_string_encoder->get_data_size():" << data1_m3x3_string_size << endl
            << data2_m3x3_string_encoder->to_string() << endl
            << "   data2_m3x3_string_encoder->get_data_size():" << data2_m3x3_string_size << endl;
 
-      int const data1_ptr_string_size = data1_ptr_string_encoder->get_data_size();
-      int const data2_ptr_string_size = data2_ptr_string_encoder->get_data_size();
+      size_t const data1_ptr_string_size = data1_ptr_string_encoder->get_data_size();
+      size_t const data2_ptr_string_size = data2_ptr_string_encoder->get_data_size();
       msg3 << data1_ptr_string_encoder->to_string() << endl
            << "   data1_ptr_string_encoder->get_data_size():" << data1_ptr_string_size << endl
            << data2_ptr_string_encoder->to_string() << endl
@@ -2395,7 +2396,7 @@ void EncodingTest::fixed_record_attribute_test(
    attr_data1[0].FOM_name      = StringUtilities::mm_strdup_string( "MainFixedRec" );
    attr_data1[0].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data1[0].element_count = 3;
-   attr_data1[0].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data1[0].element_count ) );
+   attr_data1[0].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", (int)attr_data1[0].element_count ) );
 
    attr_data1[0].elements[0].trick_name   = StringUtilities::mm_strdup_string( data1_trick_base_name + ".field_1_string" );
    attr_data1[0].elements[0].rti_encoding = ENCODING_UNICODE_STRING;
@@ -2406,7 +2407,7 @@ void EncodingTest::fixed_record_attribute_test(
    // field_3_rec
    attr_data1[0].elements[2].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data1[0].elements[2].element_count = 3;
-   attr_data1[0].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data1[0].elements[2].element_count ) );
+   attr_data1[0].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", (int)attr_data1[0].elements[2].element_count ) );
 
    attr_data1[0].elements[2].elements[0].trick_name   = StringUtilities::mm_strdup_string( data1_trick_base_name + ".elem_1_string" );
    attr_data1[0].elements[2].elements[0].rti_encoding = ENCODING_UNICODE_STRING;
@@ -2417,7 +2418,7 @@ void EncodingTest::fixed_record_attribute_test(
    // elem_3_record
    attr_data1[0].elements[2].elements[2].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data1[0].elements[2].elements[2].element_count = 2;
-   attr_data1[0].elements[2].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data1[0].elements[2].elements[2].element_count ) );
+   attr_data1[0].elements[2].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", (int)attr_data1[0].elements[2].elements[2].element_count ) );
 
    attr_data1[0].elements[2].elements[2].elements[0].trick_name   = StringUtilities::mm_strdup_string( data1_trick_base_name + ".element_1_count" );
    attr_data1[0].elements[2].elements[2].elements[0].rti_encoding = ENCODING_LITTLE_ENDIAN;
@@ -2431,7 +2432,7 @@ void EncodingTest::fixed_record_attribute_test(
    attr_data2[0].FOM_name      = StringUtilities::mm_strdup_string( "MainFixedRec" );
    attr_data2[0].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data2[0].element_count = 3;
-   attr_data2[0].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data2[0].element_count ) );
+   attr_data2[0].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", (int)attr_data2[0].element_count ) );
 
    attr_data2[0].elements[0].trick_name   = StringUtilities::mm_strdup_string( data2_trick_base_name + ".field_1_string" );
    attr_data2[0].elements[0].rti_encoding = ENCODING_UNICODE_STRING;
@@ -2442,7 +2443,7 @@ void EncodingTest::fixed_record_attribute_test(
    // field_3_rec
    attr_data2[0].elements[2].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data2[0].elements[2].element_count = 3;
-   attr_data2[0].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data2[0].elements[2].element_count ) );
+   attr_data2[0].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", (int)attr_data2[0].elements[2].element_count ) );
 
    attr_data2[0].elements[2].elements[0].trick_name   = StringUtilities::mm_strdup_string( data2_trick_base_name + ".elem_1_string" );
    attr_data2[0].elements[2].elements[0].rti_encoding = ENCODING_UNICODE_STRING;
@@ -2453,7 +2454,7 @@ void EncodingTest::fixed_record_attribute_test(
    // elem_3_record
    attr_data2[0].elements[2].elements[2].rti_encoding  = ENCODING_FIXED_RECORD;
    attr_data2[0].elements[2].elements[2].element_count = 2;
-   attr_data2[0].elements[2].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", attr_data2[0].elements[2].elements[2].element_count ) );
+   attr_data2[0].elements[2].elements[2].elements      = static_cast< RecordElement * >( TMM_declare_var_1d( "TrickHLA::RecordElement", (int)attr_data2[0].elements[2].elements[2].element_count ) );
 
    attr_data2[0].elements[2].elements[2].elements[0].trick_name   = StringUtilities::mm_strdup_string( data2_trick_base_name + ".element_1_count" );
    attr_data2[0].elements[2].elements[2].elements[0].rti_encoding = ENCODING_LITTLE_ENDIAN;

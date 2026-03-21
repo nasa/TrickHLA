@@ -35,7 +35,9 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_STRING_UTILITIES_HH
 
 // System includes.
+#include <cstddef>
 #include <cstring>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -100,7 +102,8 @@ class StringUtilities
     *  @return The duplicate wide string.*/
    static wchar_t *tmm_wstrdup( wchar_t const *s )
    {
-      int size = wcslen( s ) + 1;
+      std::size_t const len  = wcslen( s ) + 1;
+      int               size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
 
       /** @li Allocate the duplicate character string */
       wchar_t *addr = static_cast< wchar_t * >( TMM_declare_var( TRICK_WCHAR, "", 0, "", 1, &size ) );
@@ -175,7 +178,7 @@ class StringUtilities
       RTI1516_NAMESPACE::VariableLengthData const &data )
    {
       output.assign( static_cast< char const * >( data.data() ), data.size() );
-      for ( size_t i = 0; i < output.size(); ++i ) {
+      for ( std::size_t i = 0; i < output.size(); ++i ) {
          if ( !isprint( output[i] ) ) {
             output.replace( i, 1, 1, ' ' );
          }

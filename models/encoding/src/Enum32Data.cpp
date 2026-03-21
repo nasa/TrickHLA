@@ -69,7 +69,7 @@ Enum32Data::Enum32Data(
       }
    }
 
-   int ptr_enum32_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int ptr_enum32_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_enum32 = static_cast< TrickHLAModel::Int32Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int32Enum", ptr_enum32_size ) );

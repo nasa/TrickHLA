@@ -65,7 +65,7 @@ Float64Data::Float64Data(
       }
    }
 
-   int const ptr_f64_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int const ptr_f64_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_f64 = static_cast< double * >( TMM_declare_var_1d( "double", ptr_f64_size ) );
    for ( int i = 0; i < ptr_f64_size; ++i ) {

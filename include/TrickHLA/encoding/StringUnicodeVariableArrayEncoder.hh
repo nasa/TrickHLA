@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_STRING_UNICODE_VARIABLE_ARRAY_ENCODER_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -92,7 +93,7 @@ class StringUnicodeVariableArrayEncoder : public VariableArrayEncoderBase
 
    virtual void update_after_decode();
 
-   virtual int get_data_size();
+   virtual std::size_t get_data_size();
 
    virtual std::string to_string()
    {

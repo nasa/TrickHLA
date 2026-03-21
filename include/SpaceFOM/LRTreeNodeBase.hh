@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_L_R_TREE_NODE_BASE_HH
 
 // System includes.
+#include <cstddef>
 #include <iostream>
 
 namespace SpaceFOM
@@ -85,7 +86,7 @@ class LRTreeNodeBase
 
    /*! @brief Get the node's path index/ID.
     *  @return LRTree node's path index/ID. */
-   inline virtual unsigned int get_id() const
+   inline virtual std::size_t get_id() const
    {
       return ( node_id );
    }
@@ -116,7 +117,7 @@ class LRTreeNodeBase
   protected:
    bool is_root_node; ///< @trick_units{--} Indicator that this is the root node of the tree.
 
-   unsigned int node_id; /**< @trick_units{--} Index into the path matrix that is
+   std::size_t node_id; /**< @trick_units{--} Index into the path matrix that is
       assigned by the LRTreeBase class when a node is added. */
 
   private:

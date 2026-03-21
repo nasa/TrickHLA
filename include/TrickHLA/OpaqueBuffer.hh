@@ -36,6 +36,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OPAQUE_BUFFER_HH
 #define TRICKHLA_OPAQUE_BUFFER_HH
 
+// System includes.
+#include <cstddef>
+
 // TrickHLA includes.
 #include "TrickHLA/Types.hh"
 
@@ -76,14 +79,14 @@ class OpaqueBuffer
 
    /*! @brief Get the current buffer capacity.
     *  @return Buffer capacity. */
-   size_t get_capacity() const
+   std::size_t get_capacity() const
    {
       return capacity;
    }
 
    /*! @brief Ensure the buffer has at least the specified capacity.
     *  @param size Requested buffer capacity. */
-   void ensure_buffer_capacity( size_t const size );
+   void ensure_buffer_capacity( std::size_t const size );
 
    /*! @brief Reset the push buffer position. */
    void reset_push_position()
@@ -107,7 +110,7 @@ class OpaqueBuffer
    /*! @brief Push the specified data into the buffer with no encoding.
     *  @param src  Source of data to push into buffer.
     *  @param size Size of data in bytes. */
-   void push_to_buffer( void const *src, size_t const size )
+   void push_to_buffer( void const *src, std::size_t const size )
    {
       push_to_buffer( src, size, ENCODING_NONE );
    }
@@ -117,13 +120,13 @@ class OpaqueBuffer
     *  @param src      Source of data to push into buffer.
     *  @param size     Size of data in bytes.
     *  @param encoding One of ENCODING_LITTLE_ENDIAN, ENCODING_BIG_ENDIAN, or ENCODING_NONE. */
-   void push_to_buffer( void const *src, size_t const size, EncodingEnum const encoding );
+   void push_to_buffer( void const *src, std::size_t const size, EncodingEnum const encoding );
 
    /*! @brief Pull the specified number of data bytes from the buffer into the
     * specified destination with no encoding.
     *  @param dest Destination to pull data into from buffer.
     *  @param size Size of data in bytes. */
-   void pull_from_buffer( void *dest, size_t const size )
+   void pull_from_buffer( void *dest, std::size_t const size )
    {
       pull_from_buffer( dest, size, ENCODING_NONE );
    }
@@ -134,16 +137,16 @@ class OpaqueBuffer
     *  @param dest     Destination to pull data into from buffer.
     *  @param size     Size of data in bytes.
     *  @param encoding One of ENCODING_LITTLE_ENDIAN, ENCODING_BIG_ENDIAN, or ENCODING_NONE. */
-   void pull_from_buffer( void *dest, size_t const size, EncodingEnum const encoding );
+   void pull_from_buffer( void *dest, std::size_t const size, EncodingEnum const encoding );
 
   protected:
    /*! @brief Push the specified number of pad bytes to the buffer.
     *  @param pad_size Size of data in bytes. */
-   void push_pad_to_buffer( size_t const pad_size );
+   void push_pad_to_buffer( std::size_t const pad_size );
 
    /*! @brief Pull the specified number of pad bytes from the buffer.
     *  @param pad_size Size of data in bytes. */
-   void pull_pad_from_buffer( size_t const pad_size );
+   void pull_pad_from_buffer( std::size_t const pad_size );
 
    /*! @brief Copy the data from the source to the destination and byteswap
     * if needed.
@@ -153,15 +156,15 @@ class OpaqueBuffer
     *  @param encoding One of ENCODING_LITTLE_ENDIAN, ENCODING_BIG_ENDIAN, or ENCODING_NONE. */
    static void byteswap_buffer_copy( void              *dest,
                                      void const        *src,
-                                     size_t const       size,
+                                     std::size_t const  size,
                                      EncodingEnum const encoding );
 
   public:
    unsigned int alignment; ///< @trick_units{--} The byte alignment to use for the buffer.
 
-   size_t push_pos; ///< @trick_units{--} Position to push data to.
-   size_t pull_pos; ///< @trick_units{--} Position to pull data from.
-   size_t capacity; ///< @trick_units{--} Capacity of the buffer.
+   std::size_t push_pos; ///< @trick_units{--} Position to push data to.
+   std::size_t pull_pos; ///< @trick_units{--} Position to pull data from.
+   std::size_t capacity; ///< @trick_units{--} Capacity of the buffer.
 
    unsigned char *buffer; ///< @trick_units{--} Byte buffer.
 };

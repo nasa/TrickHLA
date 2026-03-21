@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_FIXED_RECORD_ENCODER_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // TrickHLA includes.
@@ -89,7 +90,7 @@ class FixedRecordEncoder : public EncoderBase
 
    virtual void update_after_decode();
 
-   virtual int get_data_size();
+   virtual std::size_t get_data_size();
 
    static void update_before_encode( RTI1516_NAMESPACE::HLAfixedRecord const *fixed_rec );
 

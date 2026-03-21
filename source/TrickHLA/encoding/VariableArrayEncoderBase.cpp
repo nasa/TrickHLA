@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstddef>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -117,9 +118,9 @@ void VariableArrayEncoderBase::update_after_decode()
    return;
 }
 
-int VariableArrayEncoderBase::get_data_size()
+size_t VariableArrayEncoderBase::get_data_size()
 {
-   int byte_count = 0;
+   size_t byte_count = 0;
 
    if ( address != NULL ) {
       calculate_var_element_count();

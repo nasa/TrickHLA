@@ -69,7 +69,7 @@ Enum8Data::Enum8Data(
       }
    }
 
-   int ptr_enum8_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int ptr_enum8_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_enum8 = static_cast< TrickHLAModel::Int8Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int8Enum", ptr_enum8_size ) );

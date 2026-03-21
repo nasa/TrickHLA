@@ -72,14 +72,14 @@ using namespace TrickHLA;
       std::string const &name )                                                                                                        \
       : EncoderBase( name )                                                                                                            \
    {                                                                                                                                   \
-      size_t const   length        = Utilities::get_static_var_element_count( attr );                                                  \
-      HLAfixedArray *array_encoder = new HLAfixedArray( EncodableDataType(), length );                                                 \
-      this->data_encoder           = array_encoder;                                                                                    \
+      std::size_t const length        = Utilities::get_static_var_element_count( attr );                                               \
+      HLAfixedArray    *array_encoder = new HLAfixedArray( EncodableDataType(), length );                                              \
+      this->data_encoder              = array_encoder;                                                                                 \
                                                                                                                                        \
       /* Connect the users array data to the encoder array elements. */                                                                \
       if ( addr != NULL ) {                                                                                                            \
          SimpleDataType *array_data = static_cast< SimpleDataType * >( addr );                                                         \
-         for ( size_t i = 0; i < length; ++i ) {                                                                                       \
+         for ( std::size_t i = 0; i < length; ++i ) {                                                                                  \
             const_cast< EncodableDataType & >( /* NOLINT(bugprone-macro-parentheses) */                                                \
                                                dynamic_cast< EncodableDataType const & >(                                              \
                                                   array_encoder->get( i ) ) )                                                          \
@@ -93,19 +93,19 @@ using namespace TrickHLA;
       return;                                                                                                                          \
    }                                                                                                                                   \
                                                                                                                                        \
-   int EncoderClassName::get_data_size()                                                                                               \
+   std::size_t EncoderClassName::get_data_size()                                                                                       \
    {                                                                                                                                   \
-      int byte_count = 0;                                                                                                              \
+      std::size_t byte_count = 0;                                                                                                      \
       if ( data_encoder != NULL ) {                                                                                                    \
          HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( data_encoder );                                         \
-         int const            array_size    = array_encoder->size();                                                                   \
+         std::size_t const    array_size    = array_encoder->size();                                                                   \
                                                                                                                                        \
          if ( typeid( SimpleDataType ) == typeid( std::string ) ) {                                                                    \
-            for ( int i = 0; i < array_size; ++i ) {                                                                                   \
+            for ( std::size_t i = 0; i < array_size; ++i ) {                                                                           \
                byte_count += dynamic_cast< HLAASCIIstring const & >( array_encoder->get( i ) ).get().size();                           \
             }                                                                                                                          \
          } else if ( typeid( SimpleDataType ) == typeid( std::wstring ) ) {                                                            \
-            for ( int i = 0; i < array_size; ++i ) {                                                                                   \
+            for ( std::size_t i = 0; i < array_size; ++i ) {                                                                           \
                byte_count += ( sizeof( wchar_t ) * dynamic_cast< HLAunicodeString const & >( array_encoder->get( i ) ).get().size() ); \
             }                                                                                                                          \
          } else {                                                                                                                      \

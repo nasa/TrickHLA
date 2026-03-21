@@ -74,7 +74,7 @@ StringData::StringData(
    ptr_string[0] = _string; // works
 //   ptr_string = &_string; // does not work
 #else
-   int const num_items = 1 + ( ( offset < 10 ) ? offset : 10 ); // Number of std::string in array.
+   int const num_items = (int)( 1 + ( ( offset < 10 ) ? offset : 10 ) ); // Number of std::string in array.
    ptr_string          = static_cast< std::string * >( TMM_declare_var_1d( "std::string", num_items ) );
    for ( int i = 0; i < num_items; ++i ) {
       value         = i + 1 + offset;

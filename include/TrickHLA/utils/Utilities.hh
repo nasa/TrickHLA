@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_UTILITIES_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // Trick includes.
@@ -155,7 +156,7 @@ class Utilities
       return endianness;
    }
 
-   static size_t get_static_var_element_count( ATTRIBUTES *attr );
+   static std::size_t get_static_var_element_count( ATTRIBUTES *attr );
 
    /*! @brief Determine if the RTI data needs a byteswap before transmission.
     *  @return True if byteswap is needed.
@@ -219,13 +220,13 @@ class Utilities
    /*! @brief Round to the next positive multiple of 8.
     *  @return The value rounded to the next positive multiple of 8.
     *  @param  value The value to round to next positive multiple of 8. */
-   static size_t next_positive_multiple_of_8( size_t const value );
+   static std::size_t next_positive_multiple_of_8( std::size_t const value );
 
    /*! @brief Round to the next positive multiple of N.
     *  @return The value rounded to the next positive multiple of N.
     *  @param  value The value to round to next positive multiple of N.
     *  @param  n The number to round up the value to the next positive multiple of. */
-   static size_t next_positive_multiple_of_N( size_t const value, unsigned int const n );
+   static std::size_t next_positive_multiple_of_N( std::size_t const value, unsigned int const n );
 
    /*! @brief Sleep for the specified number of microseconds. The usleep() C
     *  function is obsolete (see CWE-676). Create a wrapper around nanosleep()

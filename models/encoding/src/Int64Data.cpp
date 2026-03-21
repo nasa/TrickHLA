@@ -65,7 +65,7 @@ Int64Data::Int64Data(
       }
    }
 
-   int const ptr_i64_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int const ptr_i64_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_i64 = static_cast< long long * >( TMM_declare_var_1d( "long long", ptr_i64_size ) );
    for ( int i = 0; i < ptr_i64_size; ++i ) {

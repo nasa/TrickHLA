@@ -386,7 +386,7 @@ void TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier()
    if ( tic_value <= std::numeric_limits< int >::max() ) {
       // Update the Trick Time Tic value only if we are increasing the resolution.
       if ( tic_value > exec_get_time_tic_value() ) {
-         exec_set_time_tic_value( tic_value );
+         exec_set_time_tic_value( (int)tic_value );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_INFO, "TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier():%d New Trick time tics:%d.\n",

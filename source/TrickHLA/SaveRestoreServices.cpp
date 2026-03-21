@@ -173,7 +173,7 @@ void SaveRestoreServices::load_and_print_running_federate_names()
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
-   while ( this->running_feds_count <= 0 ) {
+   while ( this->running_feds_count == 0 ) {
 
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
@@ -181,7 +181,7 @@ void SaveRestoreServices::load_and_print_running_federate_names()
       // Sleep a little while to wait for the information to update.
       sleep_timer.sleep();
 
-      if ( this->running_feds_count <= 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( this->running_feds_count == 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
 
          // To be more efficient, we get the time once and share it.
          wallclock_time = sleep_timer.time();
@@ -219,7 +219,7 @@ MOM just informed us that there are %d federates currently running in the federa
 
    federate->ask_MOM_for_federate_names();
 
-   int joinedFedCount = 0;
+   size_t joinedFedCount = 0;
 
    // Wait for all the required federates to join.
    federate->all_federates_joined = false;
@@ -237,7 +237,7 @@ MOM just informed us that there are %d federates currently running in the federa
 
       // Determine what federates have joined only if the joined federate
       // count has changed.
-      if ( joinedFedCount != (int)federate->joined_federate_names.size() ) {
+      if ( joinedFedCount != federate->joined_federate_names.size() ) {
          joinedFedCount = federate->joined_federate_names.size();
 
          if ( joinedFedCount >= running_feds_count ) {
@@ -327,7 +327,7 @@ MOM just informed us that there are %d federates currently running in the federa
               << running_feds_count << " federates:";
 
       // Summarize the required federates first.
-      for ( int i = 0; i < running_feds_count; ++i ) {
+      for ( size_t i = 0; i < running_feds_count; ++i ) {
          ++cnt;
          summary << endl
                  << "    " << cnt
@@ -359,7 +359,7 @@ void SaveRestoreServices::update_running_feds()
 {
    // Make a copy of the updated known feds before restoring the saved copy...
    running_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( running_feds_count, "TrickHLA::KnownFederate" ) );
+      alloc_type( (int)running_feds_count, "TrickHLA::KnownFederate" ) );
 
    if ( running_feds == NULL ) {
       ostringstream errmsg;
@@ -368,7 +368,7 @@ void SaveRestoreServices::update_running_feds()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   if ( (int)federate->joined_federate_name_map.size() != running_feds_count ) {
+   if ( federate->joined_federate_name_map.size() != running_feds_count ) {
       // Show the contents of 'joined_federate_name_map'
       TrickHLAObjInstanceNameMap::const_iterator map_iter;
       for ( map_iter = federate->joined_federate_name_map.begin();
@@ -382,7 +382,7 @@ void SaveRestoreServices::update_running_feds()
                           __LINE__, fed_name_str.c_str(), obj_name_str.c_str() );
       }
 
-      for ( int i = 0; i < running_feds_count; ++i ) {
+      for ( size_t i = 0; i < running_feds_count; ++i ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::update_running_feds():%d running_feds[%d]=%s\n",
                           __LINE__, i, running_feds[i].name.c_str() );
       }
@@ -421,7 +421,7 @@ void SaveRestoreServices::update_running_feds()
 void SaveRestoreServices::clear_running_feds()
 {
    if ( this->running_feds != NULL ) {
-      for ( int i = 0; i < running_feds_count; ++i ) {
+      for ( size_t i = 0; i < running_feds_count; ++i ) {
          running_feds[i].MOM_instance_name = "";
          running_feds[i].name              = "";
       }
@@ -438,7 +438,7 @@ void SaveRestoreServices::add_a_single_entry_into_running_feds()
    // Allocate a new structure to absorb the original values plus the new one.
    KnownFederate *temp_feds;
    temp_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( running_feds_count + 1, "TrickHLA::KnownFederate" ) );
+      alloc_type( (int)( running_feds_count + 1 ), "TrickHLA::KnownFederate" ) );
 
    if ( temp_feds == NULL ) {
       ostringstream errmsg;
@@ -449,7 +449,7 @@ void SaveRestoreServices::add_a_single_entry_into_running_feds()
    } else {
 
       // copy current running_feds entries into temporary structure...
-      for ( int i = 0; i < running_feds_count; ++i ) {
+      for ( size_t i = 0; i < running_feds_count; ++i ) {
          temp_feds[i].MOM_instance_name = running_feds[i].MOM_instance_name;
          temp_feds[i].name              = running_feds[i].name;
          temp_feds[i].required          = running_feds[i].required;
@@ -499,7 +499,7 @@ void SaveRestoreServices::write_running_feds_file(
       file << this->running_feds_count << endl;
 
       // echo the contents of running_feds into file...
-      for ( int i = 0; i < this->running_feds_count; ++i ) {
+      for ( size_t i = 0; i < this->running_feds_count; ++i ) {
          file << running_feds[i].MOM_instance_name << endl;
          file << running_feds[i].name << endl;
          file << running_feds[i].required << endl;
@@ -709,7 +709,7 @@ void SaveRestoreServices::read_running_feds_file(
 
       // Re-allocate it...
       federate->known_feds = reinterpret_cast< KnownFederate * >(
-         alloc_type( federate->known_feds_count, "TrickHLA::KnownFederate" ) );
+         alloc_type( (int)federate->known_feds_count, "TrickHLA::KnownFederate" ) );
       if ( federate->known_feds == NULL ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_running_feds_file():" << __LINE__
@@ -744,7 +744,7 @@ void SaveRestoreServices::copy_running_feds_into_known_feds()
 
    // Re-allocate it...
    federate->known_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( running_feds_count, "TrickHLA::KnownFederate" ) );
+      alloc_type( (int)running_feds_count, "TrickHLA::KnownFederate" ) );
    if ( federate->known_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::copy_running_feds_into_known_feds():" << __LINE__
@@ -754,7 +754,7 @@ void SaveRestoreServices::copy_running_feds_into_known_feds()
 
    // Copy everything from running_feds into known_feds...
    federate->known_feds_count = 0;
-   for ( int i = 0; i < this->running_feds_count; ++i ) {
+   for ( size_t i = 0; i < this->running_feds_count; ++i ) {
       federate->known_feds[federate->known_feds_count].MOM_instance_name = running_feds[i].MOM_instance_name;
       federate->known_feds[federate->known_feds_count].name              = running_feds[i].name;
       federate->known_feds[federate->known_feds_count].required          = running_feds[i].required;

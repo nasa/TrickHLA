@@ -73,7 +73,7 @@ WStringData::WStringData(
       }
    }
 
-   int const ptr_wstring_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int const ptr_wstring_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
    ptr_wstring = static_cast< std::wstring * >( TMM_declare_var_1d( "std::wstring", ptr_wstring_size ) );

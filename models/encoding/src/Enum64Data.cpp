@@ -69,7 +69,7 @@ Enum64Data::Enum64Data(
       }
    }
 
-   int ptr_enum64_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int ptr_enum64_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_enum64 = static_cast< TrickHLAModel::Int64Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int64Enum", ptr_enum64_size ) );
