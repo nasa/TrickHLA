@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_TYPES_HH
 
 // System include files.
+#include <cstddef>
 #include <map>
 #include <queue>
 #include <string>
@@ -354,7 +355,7 @@ typedef std::queue< RTI1516_NAMESPACE::AttributeHandleValueMap > HLAAttributeMap
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, std::wstring > TrickHLAObjInstanceNameMap;
 
-typedef std::map< std::string, unsigned int > TrickHLAObjInstanceNameIndexMap;
+typedef std::map< std::string, std::size_t > TrickHLAObjInstanceNameIndexMap;
 
 typedef std::vector< std::string > VectorOfStrings;
 

@@ -30,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Updated auto-provide switch setting status string and value checks.
 - Reduced the scope of local variables.
 - Fixed shadowed variables.
-- Fixed integer conversions from 64-bit to 32-bit.
+- Fixed implicit integer conversions.
 
 
 ## [v3.2.1] - 2026-03-02

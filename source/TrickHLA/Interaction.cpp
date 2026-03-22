@@ -1198,7 +1198,7 @@ bool Interaction::decode(
       ParameterItem const *param_item = static_cast< ParameterItem * >( interaction_item->parameter_queue.front() );
 
       // Determine if we have a valid parameter-item.
-      if ( ( param_item != NULL ) && ( param_item->index >= 0 ) && ( param_item->index < param_count ) ) {
+      if ( ( param_item != NULL ) && ( param_item->index < (size_t)param_count ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             message_publish( MSG_NORMAL, "Interaction::decode():%d Decoding '%s' from parameter map.\n",

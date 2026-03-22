@@ -463,7 +463,7 @@ class Manager : public CheckpointConversionBase
   private:
    ItemQueue interactions_queue; ///< @trick_io{**} Interactions queue.
 
-   int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
+   std::size_t      check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
 
    bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.

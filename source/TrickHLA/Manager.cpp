@@ -1070,8 +1070,8 @@ void Manager::setup_all_ref_attributes()
 
    // Create the map of object instance names to object array indexes.
    obj_name_index_map.clear();
-   for ( int n = 0; n < obj_count; ++n ) {
-      obj_name_index_map[objects[n].get_name()] = n;
+   for ( size_t index = 0; index < (size_t)obj_count; ++index ) {
+      obj_name_index_map[objects[index].get_name()] = index;
    }
 
    // Make sure the object-map is empty/clear before we continue.
@@ -2468,8 +2468,7 @@ void Manager::process_interactions()
          case INTERACTION_TYPE_USER_DEFINED: {
             // Process the interaction if we subscribed to it and the interaction
             // index is valid.
-            if ( ( item->index >= 0 )
-                 && ( item->index < inter_count )
+            if ( ( item->index < (size_t)inter_count )
                  && interactions[item->index].is_subscribe() ) {
 
                interactions[item->index].decode( item );
@@ -3144,7 +3143,7 @@ void Manager::convert_checkpoint_interactions()
 
       // Allocate the interaction items base don the count.
       check_interactions = reinterpret_cast< InteractionItem * >(
-         alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
+         alloc_type( (int)check_interactions_count, "TrickHLA::InteractionItem" ) );
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
          errmsg << "Manager::convert_checkpoint_interactions():" << __LINE__
@@ -3158,7 +3157,7 @@ void Manager::convert_checkpoint_interactions()
          interactions_queue.dump_linked_list( "Manager::convert_checkpoint_interactions()" );
       }
 
-      int              i;
+      size_t           i;
       InteractionItem *item;
 
       // Iterate through the interactions-queue.
@@ -3180,9 +3179,7 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
          check_interactions[i].parm_items       = item->parm_items;
 
          check_interactions[i].user_supplied_tag_size = item->user_supplied_tag_size;
-         if ( item->user_supplied_tag_size == 0 ) {
-            check_interactions[i].user_supplied_tag = NULL;
-         } else {
+         if ( item->user_supplied_tag_size > 0 ) {
             check_interactions[i].user_supplied_tag =
                static_cast< unsigned char * >(
                   trick_MM->declare_var( "unsigned char",
@@ -3191,6 +3188,8 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
             memcpy( check_interactions[i].user_supplied_tag, // flawfinder: ignore
                     item->user_supplied_tag,
                     item->user_supplied_tag_size );
+         } else {
+            check_interactions[i].user_supplied_tag = NULL;
          }
 
          check_interactions[i].order_is_TSO = item->order_is_TSO;
@@ -3211,34 +3210,18 @@ void Manager::restore_checkpoint_interactions()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
 
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      if ( check_interactions != NULL ) {
+         for ( size_t i = 0; i < check_interactions_count; ++i ) {
 
-         InteractionItem *item = new InteractionItem();
-
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            message_publish( MSG_NORMAL, "Manager::restore_checkpoint_interactions():%d \
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+               message_publish( MSG_NORMAL, "Manager::restore_checkpoint_interactions():%d \
 restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
-                             __LINE__, i, check_interactions[i].index,
-                             check_interactions[i].parm_items_count );
+                                __LINE__, i, check_interactions[i].index,
+                                check_interactions[i].parm_items_count );
+            }
+
+            interactions_queue.push( new InteractionItem( check_interactions[i] ) );
          }
-         item->index            = check_interactions[i].index;
-         item->interaction_type = check_interactions[i].interaction_type;
-         item->parm_items_count = check_interactions[i].parm_items_count;
-         item->parm_items       = check_interactions[i].parm_items;
-
-         item->restore_queue();
-
-         item->user_supplied_tag_size = check_interactions[i].user_supplied_tag_size;
-         if ( check_interactions[i].user_supplied_tag_size == 0 ) {
-            item->user_supplied_tag = NULL;
-         } else {
-            item->user_supplied_tag = reinterpret_cast< unsigned char * >(
-               trick_MM->mm_strdup( reinterpret_cast< char const * >( check_interactions[i].user_supplied_tag ) ) );
-         }
-         item->order_is_TSO = check_interactions[i].order_is_TSO;
-         item->time         = check_interactions[i].time;
-
-         interactions_queue.push( item );
       }
    }
 }
@@ -3246,7 +3229,7 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
 void Manager::free_checkpoint_interactions()
 {
    if ( check_interactions_count > 0 ) {
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      for ( size_t i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
       if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
@@ -3265,7 +3248,7 @@ void Manager::print_checkpoint_interactions()
       msg << "Manager::print_checkpoint_interactions():" << __LINE__
           << "check_interactions contains these "
           << check_interactions_count << " elements:" << endl;
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      for ( size_t i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
              << check_interactions[i].index << endl
              << "check_interactions[" << i << "].interaction_type       = '"

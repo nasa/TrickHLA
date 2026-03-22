@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <map>
@@ -84,27 +85,10 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-InteractionItem::InteractionItem() // RETURN: -- None.
-   : index( -1 ),
-     parameter_queue(),
-     interaction_type( INTERACTION_TYPE_UNDEFINED ),
-     parm_items_count( 0 ),
-     parm_items( NULL ),
-     user_supplied_tag_size( 0 ),
-     user_supplied_tag( NULL ),
-     order_is_TSO( false ),
-     time()
-{
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 InteractionItem::InteractionItem(
-   int const                      inter_index,
+   size_t const                   inter_index,
    InteractionTypeEnum const      inter_type,
-   int const                      param_count,
+   size_t const                   param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
    VariableLengthData const      &theUserSuppliedTag )
@@ -124,9 +108,9 @@ InteractionItem::InteractionItem(
  * @job_class{initialization}
  */
 InteractionItem::InteractionItem(
-   int const                      inter_index,
+   size_t const                   inter_index,
    InteractionTypeEnum const      inter_type,
-   int const                      param_count,
+   size_t const                   param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
    VariableLengthData const      &theUserSuppliedTag,
@@ -143,6 +127,37 @@ InteractionItem::InteractionItem(
 
    // Decode the Interaction values into this Item.
    initialize( inter_type, param_count, parameters, theParameterValues, theUserSuppliedTag );
+}
+
+InteractionItem::InteractionItem(
+   InteractionItem const &rhs )
+   : index( rhs.index ),
+     parameter_queue(),
+     interaction_type( rhs.interaction_type ),
+     parm_items_count( rhs.parm_items_count ),
+     parm_items( rhs.parm_items ),
+     user_supplied_tag_size( rhs.user_supplied_tag_size ),
+     user_supplied_tag( NULL ),
+     order_is_TSO( rhs.order_is_TSO ),
+     time( rhs.time )
+{
+   if ( ( user_supplied_tag_size > 0 ) && ( rhs.user_supplied_tag != NULL ) ) {
+      user_supplied_tag = static_cast< unsigned char * >(
+         TMM_declare_var_1d( "unsigned char", (int)user_supplied_tag_size ) );
+      memcpy( user_supplied_tag, rhs.user_supplied_tag, user_supplied_tag_size ); // flawfinder: ignore
+   } else {
+      user_supplied_tag_size = 0;
+   }
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+
+   if ( parm_items != NULL ) {
+      for ( size_t i = 0; i < parm_items_count; ++i ) {
+         parameter_queue.push( new ParameterItem( parm_items[i] ) );
+      }
+   }
 }
 
 /*!
@@ -167,7 +182,7 @@ InteractionItem::~InteractionItem()
  */
 void InteractionItem::initialize(
    InteractionTypeEnum const      inter_type,
-   int const                      param_count,
+   size_t const                   param_count,
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
    VariableLengthData const      &theUserSuppliedTag )
@@ -179,17 +194,19 @@ void InteractionItem::initialize(
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
 
-      // Decode all the parameters from the map.
-      for ( int p = 0; p < param_count; ++p ) {
-         // Note that we are using a const_iterator since this map does not support
-         // an iterator.
-         ParameterHandleValueMap::const_iterator param_iter;
+      if ( parameters != NULL ) {
+         // Decode all the parameters from the map.
+         for ( size_t i = 0; i < param_count; ++i ) {
+            // Note that we are using a const_iterator since this map does not support
+            // an iterator.
+            ParameterHandleValueMap::const_iterator param_iter;
 
-         // Get the parameter from the map.
-         param_iter = theParameterValues.find( parameters[p].get_parameter_handle() );
+            // Get the parameter from the map.
+            param_iter = theParameterValues.find( parameters[i].get_parameter_handle() );
 
-         if ( param_iter != theParameterValues.end() ) {
-            parameter_queue.push( new ParameterItem( p, &( param_iter->second ) ) );
+            if ( param_iter != theParameterValues.end() ) {
+               parameter_queue.push( new ParameterItem( i, &( param_iter->second ) ) );
+            }
          }
       }
    }
@@ -205,12 +222,10 @@ void InteractionItem::initialize(
 
    // Put the user supplied tag into a buffer.
    user_supplied_tag_size = theUserSuppliedTag.size();
-   if ( user_supplied_tag_size != 0 ) {
+   if ( user_supplied_tag_size > 0 ) {
       user_supplied_tag = static_cast< unsigned char * >(
          TMM_declare_var_1d( "unsigned char", (int)user_supplied_tag_size ) );
-      memcpy( user_supplied_tag, // flawfinder: ignore
-              theUserSuppliedTag.data(),
-              user_supplied_tag_size );
+      memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size ); // flawfinder: ignore
    }
 }
 
@@ -244,13 +259,13 @@ void InteractionItem::checkpoint_queue()
 
          parm_items[i].index = item->index;
          parm_items[i].size  = item->size;
-         if ( item->size == 0 ) {
-            parm_items[i].data = NULL;
-         } else {
+         if ( item->size > 0 ) {
             parm_items[i].data = static_cast< unsigned char * >(
                TMM_declare_var_1d( "unsigned char", (int)item->size ) );
 
-            memcpy( parm_items[i].data, item->data, (int)item->size ); // flawfinder: ignore
+            memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
+         } else {
+            parm_items[i].data = NULL;
          }
       }
    }
@@ -258,7 +273,7 @@ void InteractionItem::checkpoint_queue()
 
 void InteractionItem::clear_parm_items()
 {
-   if ( ( parm_items_count != 0 ) && ( parm_items != NULL ) ) {
+   if ( parm_items != NULL ) {
       for ( size_t i = 0; i < parm_items_count; ++i ) {
          parm_items[i].clear();
       }
@@ -269,32 +284,5 @@ void InteractionItem::clear_parm_items()
       }
       parm_items       = NULL;
       parm_items_count = 0;
-   }
-}
-
-void InteractionItem::restore_queue()
-{
-   if ( parm_items_count != 0 ) {
-
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
-
-      for ( size_t i = 0; i < parm_items_count; ++i ) {
-
-         ParameterItem *item = new ParameterItem();
-
-         item->index = parm_items[i].index;
-         item->size  = parm_items[i].size;
-         if ( parm_items[i].size == 0 ) {
-            item->data = NULL;
-         } else {
-            item->data = static_cast< unsigned char * >(
-               TMM_declare_var_1d( "unsigned char", (int)parm_items[i].size ) );
-            memcpy( item->data, parm_items[i].data, parm_items[i].size ); // flawfinder: ignore
-         }
-
-         parameter_queue.push( item );
-      }
    }
 }
