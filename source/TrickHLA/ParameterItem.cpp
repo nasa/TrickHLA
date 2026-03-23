@@ -85,14 +85,12 @@ ParameterItem::ParameterItem(
 ParameterItem::ParameterItem(
    ParameterItem const &rhs )
    : index( rhs.index ),
-     size( rhs.size ),
+     size( ( rhs.data != NULL ) ? rhs.size : 0 ),
      data( NULL )
 {
    if ( ( size > 0 ) && ( rhs.data != NULL ) ) {
       data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", (int)size ) );
       memcpy( data, rhs.data, size ); // flawfinder: ignore
-   } else {
-      size = 0;
    }
 }
 
