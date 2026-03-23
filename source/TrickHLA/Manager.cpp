@@ -48,7 +48,6 @@ NASA, Johnson Space Center\n
 #include <climits>
 #include <cstdint>
 #include <cstring>
-#include <float.h>
 #include <map>
 #include <ostream>
 #include <sstream>
@@ -113,20 +112,14 @@ Manager::Manager()
      objects( NULL ),
      inter_count( 0 ),
      interactions( NULL ),
-     restore_federation( false ),
-     restore_file_name(),
-     initiated_a_federation_save( false ),
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
      rejoining_federate( false ),
-     restore_determined( false ),
-     restore_federate( false ),
      mgr_initialized( false ),
      obj_discovery_mutex(),
      object_map(),
      obj_name_index_map(),
-     federate_has_been_restored( false ),
      federate( NULL ),
      execution_control( NULL )
 {
@@ -141,7 +134,7 @@ Manager::~Manager()
 {
    object_map.clear();
    obj_name_index_map.clear();
-   free_checkpoint_interactions();
+   free_converted_interactions_checkpoint();
 
    // Make sure we destroy the mutex.
    obj_discovery_mutex.destroy();
@@ -289,7 +282,7 @@ void Manager::restart_initialization()
    }
 
    // Restore checkpointed interactions.
-   restore_checkpoint_interactions();
+   restore_interactions_after_checkpoint();
 
    // The manager is now initialized.
    this->mgr_initialized = true;
@@ -2495,7 +2488,7 @@ void Manager::process_interactions()
       interactions_queue.pop();
    }
 
-   free_checkpoint_interactions();
+   free_converted_interactions_checkpoint();
 }
 
 /*!
@@ -3036,44 +3029,6 @@ bool Manager::is_RTI_ready(
 }
 
 /*!
- * @details Trigger federation save, at current time or user-specified time.\n
- * NOTE: These routines do not coordinate a federation save via interactions
- * so make these internal routines so that the user does not accidentally call
- * them and mess things up.
- */
-void Manager::initiate_federation_save(
-   string const &file_name )
-{
-   federate->set_checkpoint_file_name( file_name );
-   federate->initiate_save_announce();
-
-   this->initiated_a_federation_save = true;
-}
-
-void Manager::start_federation_save(
-   string const &file_name )
-{
-   start_federation_save_at_scenario_time( -DBL_MAX, file_name );
-}
-
-void Manager::start_federation_save_at_sim_time(
-   double        freeze_sim_time,
-   string const &file_name )
-{
-   start_federation_save_at_scenario_time(
-      execution_control->convert_sim_time_to_scenario_time( freeze_sim_time ),
-      file_name );
-}
-
-void Manager::start_federation_save_at_scenario_time(
-   double        freeze_scenario_time,
-   string const &file_name )
-{
-   // Call the ExecutionControl method.
-   execution_control->start_federation_save_at_scenario_time( freeze_scenario_time, file_name );
-}
-
-/*!
  * @job_class{initialization}
  */
 void Manager::convert_data_before_checkpoint()
@@ -3092,7 +3047,7 @@ void Manager::convert_data_before_checkpoint()
       objects[n].convert_data_before_checkpoint();
    }
 
-   convert_checkpoint_interactions();
+   convert_interactions_before_checkpoint();
 }
 
 void Manager::restore_data_after_checkpoint()
@@ -3106,27 +3061,27 @@ void Manager::restore_data_after_checkpoint()
       objects[n].restore_data_after_checkpoint();
    }
 
-   restore_checkpoint_interactions();
+   restore_interactions_after_checkpoint();
 }
 
-void Manager::free_conversion_data_for_checkpoint()
+void Manager::free_converted_data_for_checkpoint()
 {
    // Clear/release the memory used for the checkpoint data structures.
 
    // Call the ExecutionControl method.
-   execution_control->free_conversion_data_for_checkpoint();
+   execution_control->free_converted_data_for_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].free_conversion_data_for_checkpoint();
+      objects[n].free_converted_data_for_checkpoint();
    }
 
-   free_checkpoint_interactions();
+   free_converted_interactions_checkpoint();
 }
 
-void Manager::convert_checkpoint_interactions()
+void Manager::convert_interactions_before_checkpoint()
 {
    // Clear the checkpoint for the interactions so that we don't leak memory.
-   free_checkpoint_interactions();
+   free_converted_interactions_checkpoint();
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3134,7 +3089,7 @@ void Manager::convert_checkpoint_interactions()
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::convert_checkpoint_interactions():%d interactions_queue.size():%d\n",
+         message_publish( MSG_NORMAL, "Manager::convert_interactions_before_checkpoint():%d interactions_queue.size():%d\n",
                           __LINE__, interactions_queue.size() );
       }
 
@@ -3146,7 +3101,7 @@ void Manager::convert_checkpoint_interactions()
          alloc_type( (int)check_interactions_count, "TrickHLA::InteractionItem" ) );
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
-         errmsg << "Manager::convert_checkpoint_interactions():" << __LINE__
+         errmsg << "Manager::convert_interactions_before_checkpoint():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
                 << " linear array of " << check_interactions_count << " elements." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -3154,7 +3109,7 @@ void Manager::convert_checkpoint_interactions()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         interactions_queue.dump_linked_list( "Manager::convert_checkpoint_interactions()" );
+         interactions_queue.dump_linked_list( "Manager::convert_interactions_before_checkpoint()" );
       }
 
       size_t           i;
@@ -3166,7 +3121,7 @@ void Manager::convert_checkpoint_interactions()
             ++i, item = static_cast< InteractionItem * >( item->next ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            message_publish( MSG_NORMAL, "Manager::convert_checkpoint_interactions():%d \
+            message_publish( MSG_NORMAL, "Manager::convert_interactions_before_checkpoint():%d \
 Checkpointing into check_interactions[%d] from interaction index %d.\n",
                              __LINE__, i, item->index );
          }
@@ -3198,11 +3153,11 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
    }
 }
 
-void Manager::restore_checkpoint_interactions()
+void Manager::restore_interactions_after_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::restore_checkpoint_interactions():%d check_interactions_count=%d\n",
+         message_publish( MSG_NORMAL, "Manager::restore_interactions_after_checkpoint():%d check_interactions_count=%d\n",
                           __LINE__, check_interactions_count );
       }
 
@@ -3214,7 +3169,7 @@ void Manager::restore_checkpoint_interactions()
          for ( size_t i = 0; i < check_interactions_count; ++i ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               message_publish( MSG_NORMAL, "Manager::restore_checkpoint_interactions():%d \
+               message_publish( MSG_NORMAL, "Manager::restore_interactions_after_checkpoint():%d \
 restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
                                 __LINE__, i, check_interactions[i].index,
                                 check_interactions[i].parm_items_count );
@@ -3226,14 +3181,14 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
    }
 }
 
-void Manager::free_checkpoint_interactions()
+void Manager::free_converted_interactions_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
       for ( size_t i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
       if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
-         message_publish( MSG_WARNING, "Manager::free_checkpoint_interactions():%d WARNING failed to delete Trick Memory for 'check_interactions'\n",
+         message_publish( MSG_WARNING, "Manager::free_converted_interactions_checkpoint():%d WARNING failed to delete Trick Memory for 'check_interactions'\n",
                           __LINE__ );
       }
       check_interactions       = NULL;
@@ -3241,11 +3196,11 @@ void Manager::free_checkpoint_interactions()
    }
 }
 
-void Manager::print_checkpoint_interactions()
+void Manager::print_converted_interactions_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
       ostringstream msg;
-      msg << "Manager::print_checkpoint_interactions():" << __LINE__
+      msg << "Manager::print_converted_interactions_checkpoint():" << __LINE__
           << "check_interactions contains these "
           << check_interactions_count << " elements:" << endl;
       for ( size_t i = 0; i < check_interactions_count; ++i ) {

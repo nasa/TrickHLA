@@ -582,7 +582,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    virtual void restore_data_after_checkpoint();
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_conversion_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint();
 
    /*! @brief Perform setup for federate save. */
    virtual void setup_checkpoint();

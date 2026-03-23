@@ -1010,13 +1010,13 @@ void ExecutionControlBase::restore_data_after_checkpoint()
    }
 }
 
-void ExecutionControlBase::free_conversion_data_for_checkpoint()
+void ExecutionControlBase::free_converted_data_for_checkpoint()
 {
-   SyncPointManagerBase::free_conversion_data_for_checkpoint();
+   SyncPointManagerBase::free_converted_data_for_checkpoint();
 
    // Clear/release the memory used for the checkpoint data structures.
    if ( execution_configuration != NULL ) {
-      execution_configuration->free_conversion_data_for_checkpoint();
+      execution_configuration->free_converted_data_for_checkpoint();
    }
 }
 
@@ -1494,7 +1494,7 @@ void ExecutionControlBase::post_restore()
       }
 
       // Restore interactions and sync points
-      manager->restore_checkpoint_interactions();
+      manager->restore_interactions_after_checkpoint();
       reinstate_logged_sync_pts();
 
       // Restore ownership transfer data for all objects

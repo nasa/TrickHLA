@@ -58,7 +58,7 @@ class CheckpointConversionBase
    virtual void restore_data_after_checkpoint() = 0;
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_conversion_data_for_checkpoint() = 0;
+   virtual void free_converted_data_for_checkpoint() = 0;
 };
 
 } // namespace TrickHLA

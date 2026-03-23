@@ -92,8 +92,9 @@ class OwnershipHandler : public CheckpointConversionBase
    virtual ~OwnershipHandler();
 
   public:
-   // The following routines decode / encode the push & pull
-   // AttributeOwnershipMaps into / from linear arrays.
+   //
+   // Checkpoint
+   //
    /*! @brief Encodes the push and pull attribute ownership maps into
     * checkpoint-able queues.*/
    virtual void convert_data_before_checkpoint();
@@ -103,8 +104,11 @@ class OwnershipHandler : public CheckpointConversionBase
    virtual void restore_data_after_checkpoint();
 
    /*! @brief Clears out the push / pull checkpoint-able queues. */
-   virtual void free_conversion_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint();
 
+   //
+   // Instance methods
+   //
    /*! @brief Initializes the callback to the interaction.
     *  @param obj Associated object for this class. */
    virtual void initialize_callback( Object *obj );

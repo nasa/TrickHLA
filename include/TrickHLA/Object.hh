@@ -343,6 +343,9 @@ class Object : public CheckpointConversionBase
     *  @param attr_hdl_set Attributes. */
    void negotiated_attribute_ownership_divestiture( RTI1516_NAMESPACE::AttributeHandleSet *attr_hdl_set );
 
+   //
+   // Checkpoint
+   //
    /*! @brief Setup the checkpoint data structures. */
    virtual void convert_data_before_checkpoint();
 
@@ -352,10 +355,11 @@ class Object : public CheckpointConversionBase
    virtual void restore_data_after_checkpoint();
 
    /*! @brief Clears out the push / pull checkpoint-able queues. */
-   virtual void free_conversion_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint();
 
+   //
    // Instance methods
-
+   //
    /*! @brief Get the object instance name.
     *  @return Object instance name. */
    std::string const &get_name() const
