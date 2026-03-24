@@ -220,7 +220,6 @@ void ExecutionControlBase::setup(
 
       // Configure the default Execution Configuration attributes.
       execution_configuration->configure_attributes();
-
    }
 
    return;

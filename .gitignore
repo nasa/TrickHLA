@@ -109,3 +109,6 @@ Debug
 # valgrind related files
 *.exe.dSYM
 valgrind*.txt
+
+# pRTI vmoptions
+prti.vmoptions

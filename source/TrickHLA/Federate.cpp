@@ -171,7 +171,8 @@ Federate::Federate()
      federate_ambassador( NULL ),
      manager( NULL ),
      save_restore_srvc( NULL ),
-     execution_control( NULL )
+     execution_control( NULL ),
+     execution_config( NULL )
 {
    TRICKHLA_INIT_FPU_CONTROL_WORD;
 
@@ -275,7 +276,7 @@ void Federate::setup(
    Manager                    &federate_manager,
    SaveRestoreServices        &federate_save_restore,
    ExecutionControlBase       &federate_execution_control,
-   ExecutionConfigurationBase &federate_execution_config  )
+   ExecutionConfigurationBase &federate_execution_config )
 {
    // Set the Federate ambassador.
    this->federate_ambassador = &federate_amb;

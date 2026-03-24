@@ -57,11 +57,11 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/ExecutionConfigurationBase.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
-#include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
@@ -197,7 +197,7 @@ class Federate : public TimeManagementServices
                Manager                    &federate_manager,
                SaveRestoreServices        &federate_save_restore,
                ExecutionControlBase       &federate_execution_control,
-               ExecutionConfigurationBase &federate_execution_config  );
+               ExecutionConfigurationBase &federate_execution_config );
 
    /*! @brief Initialization the debug settings. */
    void initialize_debug();
