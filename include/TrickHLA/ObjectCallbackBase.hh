@@ -41,16 +41,18 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/ExecutionControlBase.hh"
-#include "TrickHLA/ObjectCallbackBase.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 
 namespace TrickHLA
 {
 
+// Forward Declared Classes:  Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
 class Attribute;
 class Object;
+class ExecutionControlBase;
 
 class ObjectCallbackBase
 {

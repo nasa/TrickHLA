@@ -2987,6 +2987,16 @@ void ExecutionControl::receive_root_ref_frame()
    }
 }
 
+
+/*!
+ * @job_class{initialization}
+ */
+bool ExecutionControl::is_designated_late_joiner()
+{
+   return ( federate->get_join_constraint() == TrickHLA::FEDERATE_JOIN_LATE );
+}
+
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::start_federation_save_at_scenario_time(

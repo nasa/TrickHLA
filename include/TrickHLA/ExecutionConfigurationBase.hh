@@ -54,8 +54,9 @@ execution.
 namespace TrickHLA
 {
 
-// Forward declaration of the TrickHLA::Manager class.
-// This is to resolve a circular reference.
+// Forward Declared Classes:  Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
 class Manager;
 class ExecutionControlBase;
 

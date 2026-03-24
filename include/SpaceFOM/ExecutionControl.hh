@@ -288,10 +288,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    }
    /*! @brief Is this federate a designated late joiner federate.
     *  @return true if a designated later joiner federate. */
-   bool is_designated_late_joiner()
-   {
-      return ( federate->get_join_constraint() == TrickHLA::FEDERATE_JOIN_LATE );
-   }
+   bool is_designated_late_joiner();
 
    //
    // Federation save and checkpoint

@@ -81,6 +81,7 @@ class Federate;
 class Manager;
 class Object;
 class ExecutionConfigurationBase;
+class SaveRestoreServices;
 
 class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 {
@@ -93,6 +94,11 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__ExecutionControlBase();
+
+   // Allow the TrickHLA core classes to have direct access to protected
+   // and private data.
+   friend class Federate;
+   friend class SaveRestoreServices;
 
   public:
    // Principal timelines for federation execution control.
@@ -129,18 +135,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    //
    /*! @brief Setup the federate wide references in the ExecutionControl class
     * instance.
-    * @param fed         Associated federate manager class instance.
-    * @param mgr         Associated federate manager class instance.
-    * @param exec_config Associated Execution Configuration Object (ExCO). */
-   virtual void setup( TrickHLA::Federate                   &fed,
-                       TrickHLA::Manager                    &mgr,
-                       TrickHLA::ExecutionConfigurationBase &exec_config );
-   /*! @brief Setup the federate wide references in the ExecutionControl class
-    * instance.
-    * @param fed Associated federate manager class instance.
-    * @param mgr  Associated federate manager class instance. */
-   virtual void setup( TrickHLA::Federate &fed,
-                       TrickHLA::Manager  &mgr );
+    * @param fed Associated federate manager class instance. */
+   virtual void setup( TrickHLA::Federate &fed );
    /*! @brief Initialize the TrickHLA::ExecutionControlBase object instance. */
    virtual void initialize();
    /*! @brief Join federation execution process. */
@@ -756,6 +752,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
       synchronize the federates in a federation execution to be on a common
       logical time boundary. */
 
+   bool execution_has_begun; ///< @trick_units{--} Flag to indicate if the federate has begun simulation execution.
+
    ExecutionConfigurationBase *execution_configuration; /**< @trick_units{--}
       Associates TrickHLA::ExecutionConfigurationBase class object instance.
       Since this is an abstract class, the actual instance will be a concrete
@@ -778,7 +776,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.
 
    // Shortcuts to associated TrickHLA management and control objects.
-   TrickHLA::Manager *manager; ///< @trick_io{**} Associated manager.
+   TrickHLA::Manager             *manager;           ///< @trick_io{**} Associated manager.
+   TrickHLA::SaveRestoreServices *save_restore_srvc; ///< @trick_io{**} Associated Save & Restore service.
 
   private:
    // Do not allow the copy constructor.

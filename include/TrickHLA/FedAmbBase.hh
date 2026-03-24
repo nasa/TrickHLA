@@ -54,6 +54,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Federate;
 class Manager;
+class SaveRestoreServices;
 
 class FedAmbBase
 {
@@ -72,6 +73,7 @@ class FedAmbBase
    FedAmbBase()
       : federate( NULL ),
         manager( NULL ),
+        save_restore_srvc( NULL ),
         federation_restore_status_response_context_switch( false ), // process, not echo.
         federation_restored_rebuild_federate_handle_set( false )
    {
@@ -89,14 +91,8 @@ class FedAmbBase
    virtual void initialize() = 0;
 
    /*! @brief Setup the required class instance associations.
-    *  @param fed Associated TrickHLA::Federate class instance.
-    *  @param mgr Associated TrickHLA::Manager class instance. */
-   void setup( Federate &fed, Manager &mgr )
-   {
-      // Set the associated TrickHLA Federate and Manager references.
-      this->federate = &fed;
-      this->manager  = &mgr;
-   }
+    *  @param fed Associated TrickHLA::Federate class instance. */
+   virtual void setup( Federate &fed ) = 0;
 
    Manager *get_manager()
    {
@@ -126,8 +122,9 @@ class FedAmbBase
    }
 
   protected:
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
-   Manager  *manager;  ///< @trick_units{--} Associated TrickHLA::Manager.
+   Federate            *federate;          ///< @trick_units{--} Associated TrickHLA::Federate.
+   Manager             *manager;           ///< @trick_units{--} Associated TrickHLA::Manager.
+   SaveRestoreServices *save_restore_srvc; ///< @trick_units{--} Associated TrickHLA::SaveRestoreServices.
 
    bool federation_restore_status_response_context_switch;
    bool federation_restored_rebuild_federate_handle_set;

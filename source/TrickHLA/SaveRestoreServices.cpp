@@ -98,12 +98,12 @@ using namespace TrickHLA;
  *
  * @job_class{initialization}
  */
-SaveRestoreServices::SaveRestoreServices(
-   Federate *fed )
+SaveRestoreServices::SaveRestoreServices( )
    : restore_federation( false ),
      restore_file_name(),
      initiated_a_federation_save( false ),
-     federate( fed ),
+     federate( NULL ),
+     execution_control( NULL ),
      save_name( L"" ),
      restore_name( L"" ),
      HLA_save_directory( "" ),
@@ -127,13 +127,11 @@ SaveRestoreServices::SaveRestoreServices(
      restore_completed( false ),
      federation_restore_failed_callback_complete( false ),
      federate_has_been_restarted( false ),
-     publish_data( true ),
      running_feds_count( 0 ),
      running_feds( NULL ),
      running_feds_count_at_time_of_restore( 0 ),
      checkpoint_file_name( "" ),
      checkpoint_rt_itimer( Off ),
-     execution_has_begun( false ),
      start_to_save( false ),
      start_to_restore( false ),
      restart_flag( false ),
@@ -151,6 +149,16 @@ SaveRestoreServices::~SaveRestoreServices()
 {
    // Free the memory used by the array of running Federates for the Federation.
    clear_running_feds();
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void SaveRestoreServices::setup( Federate &fed )
+{
+   federate          = &fed;
+   execution_control = fed.get_execution_control();
+   return;
 }
 
 /*!
@@ -1410,6 +1418,50 @@ void SaveRestoreServices::requested_federation_restore_status(
    }
 }
 
+/*!
+ *  @job_class{freeze}
+ */
+void SaveRestoreServices::set_save_completed()
+{
+   this->save_completed   = true;
+   this->start_to_save    = false;
+   federate->publish_data = true;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void SaveRestoreServices::set_restore_begun()
+{
+   this->restore_begun     = true;
+   this->restore_completed = false;
+   federate->publish_data  = false;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void SaveRestoreServices::set_restore_completed()
+{
+   this->restore_process   = RESTORE_COMPLETE;
+   this->restore_completed = true;
+   this->restore_begun     = false;
+   this->start_to_restore  = false;
+   federate->publish_data  = true;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void SaveRestoreServices::set_restore_failed()
+{
+   this->restore_process   = RESTORE_FAILED;
+   this->restore_completed = true;
+   this->restore_begun     = false;
+   this->start_to_restore  = false;
+   federate->publish_data  = true;
+}
+
 void SaveRestoreServices::print_requested_federation_restore_status(
    FederateRestoreStatusVector const &status_vector )
 {
@@ -1732,7 +1784,7 @@ void SaveRestoreServices::check_HLA_save_directory()
 /*! @brief Set the federate has begun execution state. */
 void SaveRestoreServices::set_federate_has_begun_execution()
 {
-   execution_has_begun = true;
+   execution_control->execution_has_begun = true;
    federate->joined_federate_name_map.clear(); // clear out joined federate names
    check_HLA_save_directory();
 }

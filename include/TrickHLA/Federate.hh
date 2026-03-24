@@ -60,6 +60,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
@@ -102,7 +104,7 @@ namespace TrickHLA
 class Manager;
 class ExecutionControlBase;
 
-class Federate : public TimeManagementServices, public SaveRestoreServices
+class Federate : public TimeManagementServices
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -117,6 +119,7 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
    // Allow the save and restore services access to the Federate protected
    // and private data.
    friend class SaveRestoreServices;
+   friend class FedAmb;
 
    //----------------------------- USER VARIABLES -----------------------------
    // The variables below are configured by the user in the input files.
@@ -187,10 +190,14 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
    /*! @brief Setup the required class instance associations.
     *  @param federate_amb               Associated federate ambassador class instance.
     *  @param federate_manager           Associated federate manager class instance.
-    *  @param federate_execution_control Associated federate execution control class instance. */
-   void setup( FedAmb               &federate_amb,
-               Manager              &federate_manager,
-               ExecutionControlBase &federate_execution_control );
+    *  @param federate_save_restore      Associated federate save & restore service class instance.
+    *  @param federate_execution_control Associated federate execution control class instance.
+    *  @param federate_execution_config  Associated federate execution configuration class instance. */
+   void setup( FedAmb                     &federate_amb,
+               Manager                    &federate_manager,
+               SaveRestoreServices        &federate_save_restore,
+               ExecutionControlBase       &federate_execution_control,
+               ExecutionConfigurationBase &federate_execution_config  );
 
    /*! @brief Initialization the debug settings. */
    void initialize_debug();
@@ -516,11 +523,25 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
       return this->manager;
    }
 
-   /*! @brief Get the pointer to the associated TrickHLA::Manager instance.
-    *  @return Pointer to associated TrickHLA::Manager. */
+   /*! @brief Get the pointer to the associated TrickHLA::SaveRestoreService instance.
+    *  @return Pointer to the associated TrickHLA::SaveRestoreService instance. */
+   SaveRestoreServices *get_save_restore_service() const
+   {
+      return this->save_restore_srvc;
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::ExecutionControlBase instance.
+    *  @return Pointer to associated TrickHLA::ExecutionControlBase. */
    ExecutionControlBase *get_execution_control()
    {
       return this->execution_control;
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::ExecutionConfigurationBase instance.
+    *  @return Pointer to associated TrickHLA::ExecutionConfigurationBase. */
+   ExecutionConfigurationBase *get_execution_configuration()
+   {
+      return this->execution_config;
    }
 
    /*! @brief Get the pointer to the associated federate name.
@@ -601,6 +622,13 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
    /*! @brief Unfreeze the simulation. */
    static void un_freeze();
 
+   /*! @brief Query if federate should publish data.
+    *  @return True if data should be published; False otherwise. */
+   bool should_publish_data() const
+   {
+      return publish_data;
+   }
+
   private:
    // Federation state variables.
    //
@@ -616,6 +644,8 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
   private:
    bool got_startup_sync_point;     ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
    bool make_copy_of_run_directory; ///< @trick_units{--} Make a backup of RUN directory before restarting the federation via federation manager (default: false).
+
+   bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederatesInFederation_handle; ///< @trick_io{**} MOM attribute handle to Federate-count.
@@ -641,9 +671,11 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
 
    // Federation required associations.
    //
-   FedAmb               *federate_ambassador; ///< @trick_units{--} Federate ambassador.
-   Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
-   ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */
+   FedAmb                     *federate_ambassador; ///< @trick_units{--} Federate ambassador.
+   Manager                    *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
+   SaveRestoreServices        *save_restore_srvc;   ///< @trick_units{--} Associated TrickHLA Federate Save & Restore service.
+   ExecutionControlBase       *execution_control;   ///< @trick_units{--} Associated TrickHLA Federate ExecutionControlBase implementation.
+   ExecutionConfigurationBase *execution_config;    ///< @trick_units{--} Associated TrickHLA Federate ExecutionConfigurationBase implementation.
 
   private:
    /*! @brief Subscribe to the specified attributes for the given class handle.

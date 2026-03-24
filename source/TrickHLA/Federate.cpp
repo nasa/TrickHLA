@@ -127,7 +127,6 @@ using namespace TrickHLA;
  */
 Federate::Federate()
    : TimeManagementServices( this ),
-     SaveRestoreServices( this ),
      name(),
      type(),
      federation_name(),
@@ -153,6 +152,7 @@ Federate::Federate()
      shutdown_called( false ),
      got_startup_sync_point( false ),
      make_copy_of_run_directory( false ),
+     publish_data( true ),
      MOM_HLAfederation_class_handle(),
      MOM_HLAfederatesInFederation_handle(),
      MOM_HLAautoProvide_handle(),
@@ -170,6 +170,7 @@ Federate::Federate()
      joined_federate_names(),
      federate_ambassador( NULL ),
      manager( NULL ),
+     save_restore_srvc( NULL ),
      execution_control( NULL )
 {
    TRICKHLA_INIT_FPU_CONTROL_WORD;
@@ -270,9 +271,11 @@ void Federate::fix_FPU_control_word()
  * @job_class{default_data}
  */
 void Federate::setup(
-   FedAmb               &federate_amb,
-   Manager              &federate_manager,
-   ExecutionControlBase &federate_execution_control )
+   FedAmb                     &federate_amb,
+   Manager                    &federate_manager,
+   SaveRestoreServices        &federate_save_restore,
+   ExecutionControlBase       &federate_execution_control,
+   ExecutionConfigurationBase &federate_execution_config  )
 {
    // Set the Federate ambassador.
    this->federate_ambassador = &federate_amb;
@@ -280,17 +283,28 @@ void Federate::setup(
    // Set the Federate manager.
    this->manager = &federate_manager;
 
+   // Set the Save & Restore service.
+   this->save_restore_srvc = &federate_save_restore;
+
    // Set the Federate execution control.
    this->execution_control = &federate_execution_control;
 
+   // Set the Federate execution configuration.
+   this->execution_config = &federate_execution_config;
+
    // Setup the TrickHLA::FedAmb instance.
-   federate_ambassador->setup( *this, *( this->manager ) );
+   federate_ambassador->setup( *this );
 
    // Setup the TrickHLA::Manager instance.
-   manager->setup( *this, *( this->execution_control ) );
+   manager->setup( *this );
 
    // Set up the TrickHLA::ExecutionControl instance.
-   execution_control->setup( *this, *( this->manager ) );
+   execution_control->setup( *this );
+
+   // Setup the TrickHLA::SaveRestoreServices instance.
+   save_restore_srvc->setup( *this );
+
+   return;
 }
 
 /*! @brief Initialization the debug settings, show the version and apply
@@ -554,7 +568,7 @@ void Federate::post_multiphase_initialization()
    }
 
    // Mark the federate as having begun execution.
-   set_federate_has_begun_execution();
+   save_restore_srvc->set_federate_has_begun_execution();
 }
 
 /*!
@@ -1028,13 +1042,13 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       }
 
       // If this federate is running, add the new entry into running_feds.
-      if ( is_federate_executing() ) {
+      if ( this->is_federate_executing() ) {
          bool found = false;
-         for ( size_t loop = 0; loop < running_feds_count; ++loop ) {
+         for ( size_t loop = 0; loop < save_restore_srvc->running_feds_count; ++loop ) {
             string tName;
             StringUtilities::to_string( tName, federate_name_ws );
 
-            if ( running_feds[loop].name == tName ) {
+            if ( save_restore_srvc->running_feds[loop].name == tName ) {
                found = true;
                break;
             }
@@ -1042,7 +1056,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          // Update the running_feds if the federate name was not found.
          if ( !found ) {
             if ( joined_federate_name_map.size() == 1 ) {
-               add_a_single_entry_into_running_feds();
+               save_restore_srvc->add_a_single_entry_into_running_feds();
 
                // Clear the entry after it is absorbed into running_feds.
                joined_federate_name_map.clear();
@@ -1064,15 +1078,15 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                // After the purge, if there is only one value, process the
                // single element.
                if ( joined_federate_name_map.size() == 1 ) {
-                  add_a_single_entry_into_running_feds();
+                  save_restore_srvc->add_a_single_entry_into_running_feds();
 
                   // Clear the entry after it is absorbed into running_feds.
                   joined_federate_name_map.clear();
                } else {
                   // Process multiple joined_federate_name_map entries.
-                  clear_running_feds();
-                  ++running_feds_count;
-                  update_running_feds();
+                  save_restore_srvc->clear_running_feds();
+                  ++save_restore_srvc->running_feds_count;
+                  save_restore_srvc->update_running_feds();
 
                   // Clear the entries after they are absorbed into running_feds.
                   joined_federate_name_map.clear();
@@ -1453,7 +1467,7 @@ string Federate::wait_for_required_federates_to_join()
                   found_an_unrequired_federate = true;
                   string fedname;
                   StringUtilities::to_string( fedname, joined_federate_names[i] );
-                  if ( restore_is_imminent ) {
+                  if ( save_restore_srvc->restore_is_imminent ) {
                      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                         message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!\n",
                                          __LINE__, fedname.c_str() );
@@ -1558,7 +1572,7 @@ string Federate::wait_for_required_federates_to_join()
    // terminate the execution instead of the federation failing to restore
    // and the user is left to scratch their heads why the federation failed
    // to restore!
-   if ( restore_is_imminent && found_an_unrequired_federate ) {
+   if ( save_restore_srvc->restore_is_imminent && found_an_unrequired_federate ) {
       ostringstream errmsg;
       errmsg << "FATAL ERROR: You indicated a restore of a checkpoint set but "
              << "at least one federate which was NOT executing at the time of "
@@ -4209,10 +4223,10 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // Search for the federate information from running_feds...
    foundName = false;
-   for ( size_t i = 0; i < running_feds_count; ++i ) {
-      if ( running_feds[i].MOM_instance_name != tMOMName ) {
+   for ( size_t i = 0; i < save_restore_srvc->running_feds_count; ++i ) {
+      if ( save_restore_srvc->running_feds[i].MOM_instance_name != tMOMName ) {
          foundName = true;
-         tFedName  = running_feds[i].name;
+         tFedName  = save_restore_srvc->running_feds[i].name;
       }
    }
 
@@ -4228,7 +4242,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // allocate temporary list...
    tmp_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( (int)( this->running_feds_count - 1 ), "TrickHLA::KnownFederate" ) );
+      alloc_type( (int)( save_restore_srvc->running_feds_count - 1 ), "TrickHLA::KnownFederate" ) );
    if ( tmp_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
@@ -4237,26 +4251,26 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    }
    // now, copy everything minus the requested name from the original list...
    int tmp_feds_cnt = 0;
-   for ( size_t i = 0; i < this->running_feds_count; ++i ) {
+   for ( size_t i = 0; i < save_restore_srvc->running_feds_count; ++i ) {
       // if the name is not the one we are looking for...
-      if ( running_feds[i].name != tFedName ) {
-         if ( running_feds[i].MOM_instance_name.empty() ) {
-            tmp_feds[tmp_feds_cnt].MOM_instance_name = running_feds[i].MOM_instance_name;
+      if ( save_restore_srvc->running_feds[i].name != tFedName ) {
+         if ( save_restore_srvc->running_feds[i].MOM_instance_name.empty() ) {
+            tmp_feds[tmp_feds_cnt].MOM_instance_name = save_restore_srvc->running_feds[i].MOM_instance_name;
          }
-         tmp_feds[tmp_feds_cnt].name     = running_feds[i].name;
-         tmp_feds[tmp_feds_cnt].required = running_feds[i].required;
+         tmp_feds[tmp_feds_cnt].name     = save_restore_srvc->running_feds[i].name;
+         tmp_feds[tmp_feds_cnt].required = save_restore_srvc->running_feds[i].required;
          ++tmp_feds_cnt;
       }
    }
 
    // now, clear out the original memory...
-   clear_running_feds();
+   save_restore_srvc->clear_running_feds();
 
    // assign the new element count into running_feds_count.
-   this->running_feds_count = tmp_feds_cnt;
+   save_restore_srvc->running_feds_count = tmp_feds_cnt;
 
    // assign pointer from the temporary list to the permanent list...
-   this->running_feds = tmp_feds;
+   save_restore_srvc->running_feds = tmp_feds;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string id_str;
@@ -4310,7 +4324,7 @@ bool Federate::is_federate_executing() const
 {
    // Check if the manager has set a flag that the federate initialization has
    // completed and the federate is now executing.
-   return this->execution_has_begun;
+   return execution_control->execution_has_begun;
 }
 
 bool Federate::is_MOM_HLAfederation_instance_id(
@@ -4379,7 +4393,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             // method already queries the names from the RTI for all required
             // federates. We will eventually utilize the same MOM interface to
             // rebuild this list.
-            this->running_feds_count = feds_list.size();
+            save_restore_srvc->running_feds_count = feds_list.size();
 
          } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
             string rti_err_msg;
@@ -4394,7 +4408,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d Found a FederationID list with %d elements.\n",
-                             __LINE__, running_feds_count );
+                             __LINE__, save_restore_srvc->running_feds_count );
          }
       }
    }
@@ -4458,7 +4472,7 @@ void Federate::restore_federate_handles_from_MOM()
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
          // Determine if all the federate handles have been found.
-         all_found = ( joined_federate_handles.size() >= running_feds_count );
+         all_found = ( joined_federate_handles.size() >= save_restore_srvc->running_feds_count );
       }
 
       if ( !all_found ) {

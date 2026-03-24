@@ -65,7 +65,9 @@ class THLASimObject : public THLABaseSimObject {
       //-----------------------
       ("default_data") federate.setup( federate_amb,
                                        manager,
-                                       execution_control );
+                                       save_restore,
+                                       execution_control,
+                                       simple_sim_config );
    }
 
  private:

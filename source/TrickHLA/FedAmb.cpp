@@ -167,6 +167,16 @@ void FedAmb::initialize()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
+/*! @brief Setup the required class instance associations.
+ *  @param fed Associated TrickHLA::Federate class instance. */
+void FedAmb::setup( Federate &fed )
+{
+   // Set the associated TrickHLA Federate and Manager references.
+   this->federate          = &fed;
+   this->manager           = fed.get_manager();
+   this->save_restore_srvc = fed.get_save_restore_service();
+}
+
 ////////////////////////////////////
 // Federation Management Services //
 ////////////////////////////////////
@@ -330,8 +340,8 @@ void FedAmb::initiateFederateSave(
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d\n",
                        __LINE__ );
    }
-   federate->set_save_name( label );
-   federate->set_start_to_save( true );
+   save_restore_srvc->set_save_name( label );
+   save_restore_srvc->set_start_to_save( true );
 }
 
 void FedAmb::initiateFederateSave(
@@ -347,8 +357,8 @@ void FedAmb::initiateFederateSave(
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d HLA-time:%.12G seconds.\n",
                        __LINE__, i64time.get_time_in_seconds() );
    }
-   federate->set_save_name( label );
-   federate->set_start_to_save( true );
+   save_restore_srvc->set_save_name( label );
+   save_restore_srvc->set_start_to_save( true );
 }
 
 void FedAmb::federationSaved()
@@ -360,9 +370,9 @@ void FedAmb::federationSaved()
       message_publish( MSG_NORMAL, "FedAmb::federationSaved():%d\n",
                        __LINE__ );
    }
-   federate->set_start_to_save( false );
-   federate->set_save_completed();
-   federate->federation_saved();
+   save_restore_srvc->set_start_to_save( false );
+   save_restore_srvc->set_save_completed();
+   save_restore_srvc->federation_saved();
 }
 
 void FedAmb::federationNotSaved(
@@ -376,12 +386,12 @@ void FedAmb::federationNotSaved(
                        __LINE__ );
    }
 
-   federate->print_save_failure_reason( reason );
+   save_restore_srvc->print_save_failure_reason( reason );
 
    // TODO: Do we need to the steps below to exit freeze mode?
-   federate->set_start_to_save( false );
-   federate->set_save_completed();
-   federate->federation_saved();
+   save_restore_srvc->set_start_to_save( false );
+   save_restore_srvc->set_save_completed();
+   save_restore_srvc->federation_saved();
 }
 
 void FedAmb::federationSaveStatusResponse(
@@ -394,7 +404,7 @@ void FedAmb::federationSaveStatusResponse(
       message_publish( MSG_NORMAL, "FedAmb::federationSaveStatusResponse():%d\n",
                        __LINE__ );
    }
-   federate->process_requested_federation_save_status( response );
+   save_restore_srvc->process_requested_federation_save_status( response );
 }
 
 void FedAmb::requestFederationRestoreSucceeded(
@@ -407,8 +417,8 @@ void FedAmb::requestFederationRestoreSucceeded(
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreSucceeded():%d\n",
                        __LINE__ );
    }
-   federate->set_restore_request_succeeded();
-   federate->requested_federation_restore_status( true );
+   save_restore_srvc->set_restore_request_succeeded();
+   save_restore_srvc->requested_federation_restore_status( true );
 }
 
 void FedAmb::requestFederationRestoreFailed(
@@ -421,8 +431,8 @@ void FedAmb::requestFederationRestoreFailed(
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreFailed():%d\n",
                        __LINE__ );
    }
-   federate->set_restore_request_failed();
-   federate->requested_federation_restore_status( false );
+   save_restore_srvc->set_restore_request_failed();
+   save_restore_srvc->requested_federation_restore_status( false );
 }
 
 void FedAmb::federationRestoreBegun()
@@ -434,7 +444,7 @@ void FedAmb::federationRestoreBegun()
       message_publish( MSG_NORMAL, "FedAmb::federationRestoreBegun():%d\n",
                        __LINE__ );
    }
-   federate->set_restore_begun();
+   save_restore_srvc->set_restore_begun();
 }
 
 void FedAmb::initiateFederateRestore(
@@ -454,8 +464,8 @@ void FedAmb::initiateFederateRestore(
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateRestore():%d for federate '%s'\n",
                        __LINE__, name.c_str() );
    }
-   federate->set_start_to_restore( true );
-   federate->set_restore_name( label );
+   save_restore_srvc->set_start_to_restore( true );
+   save_restore_srvc->set_restore_name( label );
 }
 
 void FedAmb::federationRestored()
@@ -467,7 +477,7 @@ void FedAmb::federationRestored()
       message_publish( MSG_NORMAL, "FedAmb::federationRestored():%d\n",
                        __LINE__ );
    }
-   federate->set_restore_completed();
+   save_restore_srvc->set_restore_completed();
 }
 
 void FedAmb::federationNotRestored(
@@ -480,8 +490,8 @@ void FedAmb::federationNotRestored(
       message_publish( MSG_NORMAL, "FedAmb::federationNotRestored():%d\n",
                        __LINE__ );
    }
-   federate->set_restore_failed();
-   federate->print_restore_failure_reason( reason );
+   save_restore_srvc->set_restore_failed();
+   save_restore_srvc->print_restore_failure_reason( reason );
 }
 
 void FedAmb::federationRestoreStatusResponse(
@@ -496,10 +506,10 @@ void FedAmb::federationRestoreStatusResponse(
    }
    if ( !this->federation_restore_status_response_context_switch ) {
       // process
-      federate->process_requested_federation_restore_status( response );
+      save_restore_srvc->process_requested_federation_restore_status( response );
    } else {
       // echo
-      federate->print_requested_federation_restore_status( response );
+      save_restore_srvc->print_requested_federation_restore_status( response );
    }
 }
 

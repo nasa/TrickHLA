@@ -87,6 +87,7 @@ typedef enum {
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
+class ExecutionControlBase;
 
 class SaveRestoreServices
 {
@@ -99,6 +100,11 @@ class SaveRestoreServices
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__SaveRestoreServices();
+
+   // Allow the TrickHLA core classes to have direct access to protected
+   // and private data.
+   friend class Federate;
+   friend class ExecutionControlBase;
 
    //----------------------------- USER VARIABLES -----------------------------
    // The variables below this point are configured by the user in either the
@@ -116,9 +122,13 @@ class SaveRestoreServices
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA SaveRestoreServices class. */
-   explicit SaveRestoreServices( Federate *fed );
+   SaveRestoreServices();
    /*! @brief Destructor for the TrickHLA SaveRestoreServices class. */
    virtual ~SaveRestoreServices();
+
+   /*! @brief Setup the required class instance associations.
+    *  @param fed Associated federate class instance. */
+   void setup( Federate &fed );
 
    /*! @brief Tell the federate to initiate a save announce with the
     * user-supplied checkpoint name set for the current frame.
@@ -267,12 +277,7 @@ class SaveRestoreServices
    }
 
    /*! @brief Set the save completed state. */
-   void set_save_completed()
-   {
-      this->save_completed = true;
-      this->start_to_save  = false;
-      this->publish_data   = true;
-   }
+   void set_save_completed();
 
    /*! @brief Get save completed flag state.
     *  @return True if flag set, false otherwise. */
@@ -302,32 +307,13 @@ class SaveRestoreServices
    }
 
    /*! @brief Set the restore begun state. */
-   void set_restore_begun()
-   {
-      this->restore_begun     = true;
-      this->restore_completed = false;
-      this->publish_data      = false;
-   }
+   void set_restore_begun();
 
    /*! @brief Set the restore completed state. */
-   void set_restore_completed()
-   {
-      this->restore_process   = RESTORE_COMPLETE;
-      this->restore_completed = true;
-      this->restore_begun     = false;
-      this->start_to_restore  = false;
-      this->publish_data      = true;
-   }
+   void set_restore_completed();
 
    /*! @brief Set the restore failed state. */
-   void set_restore_failed()
-   {
-      this->restore_process   = RESTORE_FAILED;
-      this->restore_completed = true;
-      this->restore_begun     = false;
-      this->start_to_restore  = false;
-      this->publish_data      = true;
-   }
+   void set_restore_failed();
 
    /*! @brief Set the restore request failed state. */
    void set_restore_request_failed()
@@ -339,13 +325,6 @@ class SaveRestoreServices
    void set_restore_request_succeeded()
    {
       this->restore_process = RESTORE_REQUEST_SUCCEEDED;
-   }
-
-   /*! @brief Query if federate should publish data.
-    *  @return True if data should be published; False otherwise. */
-   bool should_publish_data() const
-   {
-      return publish_data;
    }
 
    /*! @brief Set the restore is imminent flag. */
@@ -557,7 +536,8 @@ class SaveRestoreServices
    void request_federation_save();
 
   protected:
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
+   Federate             *federate;          ///< @trick_units{--} Associated TrickHLA::Federate.
+   ExecutionControlBase *execution_control; ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
 
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
    std::wstring restore_name; ///< @trick_io{**} Name for a restore file
@@ -588,8 +568,6 @@ class SaveRestoreServices
 
    bool federate_has_been_restarted; /**< @trick_io{**} SaveRestoreServices has restarted; so, do not restart again! */
 
-   bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
-
    // The SaveRestoreServicess known at execution time. This is loaded when we join the
    // federation and is automatically kept current when other federates
    // join / resign from the federation.
@@ -600,8 +578,6 @@ class SaveRestoreServices
    std::string checkpoint_file_name; ///< @trick_io{*i} @trick_units{--} label to attach to sync point
    Flag        checkpoint_rt_itimer; ///< @trick_io{**} loaded checkpoint RT ITIMER
 
-   bool execution_has_begun; ///< @trick_units{--} Flag to indicate if the federate has begun simulation execution.
-
    bool start_to_save;    ///< @trick_io{**} Save flag
    bool start_to_restore; ///< @trick_io{**} Restore flag
    bool restart_flag;     ///< @trick_io{**} Restart flag
@@ -609,7 +585,6 @@ class SaveRestoreServices
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   SaveRestoreServices();
    /*! @brief Copy constructor for SaveRestoreServices class.
     *  @details This constructor is private to prevent inadvertent copies. */
    SaveRestoreServices( SaveRestoreServices const &rhs );

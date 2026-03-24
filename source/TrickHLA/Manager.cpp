@@ -148,15 +148,13 @@ Manager::~Manager()
  *
  * @job_class{default_data}
  */
-void Manager::setup(
-   Federate             &fed,
-   ExecutionControlBase &exec_control )
+void Manager::setup( Federate &fed )
 {
    // Set the TrickHLA::Federate instace reference.
    this->federate = &fed;
 
    // Set the TrickHLA::ExecutionControlBase instance reference.
-   this->execution_control = &exec_control;
+   this->execution_control = fed.get_execution_control();
 }
 
 /*!

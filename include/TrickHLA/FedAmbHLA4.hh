@@ -92,6 +92,10 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
     *  Federation Execution. */
    virtual void initialize();
 
+   /*! @brief Setup the required class instance associations.
+    *  @param fed Associated TrickHLA::Federate class instance. */
+   virtual void setup( Federate &fed ) = 0;
+
    // *****************************************************************
    // The following methods fill out the required virtual methods of
    // the rti1516_2025::FederateAmbassador abstract class to

@@ -49,6 +49,7 @@
 #endif // IEEE_1516_2025
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
+##include "TrickHLA/SaveRestoreServices.hh"
 
 // Include these TrickHLA header files here so that Trick can find and process
 // these forward declared classes because they are also not included by any
@@ -73,9 +74,10 @@ class THLABaseSimObject : public Trick::SimObject {
  public:
 
    //----- DATA STRUCTURE DECLARATIONS -----
-   TrickHLA::Federate federate;
-   TrickHLA::FedAmb   federate_amb;
-   TrickHLA::Manager  manager;
+   TrickHLA::Federate            federate;
+   TrickHLA::FedAmb              federate_amb;
+   TrickHLA::Manager             manager;
+   TrickHLA::SaveRestoreServices save_restore;
 
    double data_cycle_time;
 

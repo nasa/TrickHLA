@@ -80,7 +80,9 @@ class IMSimSimObject : public THLABaseSimObject {
       //-----------------------
       ("default_data") federate.setup( federate_amb,
                                        manager,
-                                       imsim_exec_control );
+                                       save_restore,
+                                       imsim_exec_control,
+                                       imsim_config );
 
       //-------------------------
       //-- INITIALIZATION JOBS --

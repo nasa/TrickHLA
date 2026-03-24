@@ -40,7 +40,6 @@ NASA, Johnson Space Center\n
 
 // trickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/Types.hh"
@@ -77,6 +76,11 @@ typedef std::vector< SyncPointList * > SyncPointListVector;
 #endif
 
 static std::string const UNKNOWN_SYNC_POINT_LIST = "Unknown";
+
+// Forward Declared Classes:  Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
+class Federate;
 
 class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 {

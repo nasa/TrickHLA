@@ -133,10 +133,8 @@ class Manager : public CheckpointConversionBase
    virtual ~Manager();
 
    /*! @brief Setup the required class instance associations.
-    *  @param fed          Associated TrickHLA::Federate class instance.
-    *  @param exec_control Associated ExecutionControl class instance. */
-   void setup( Federate             &fed,
-               ExecutionControlBase &exec_control );
+    *  @param fed          Associated TrickHLA::Federate class instance. */
+   void setup( Federate &fed );
 
    /*! @brief Initializes the federate using the a multiphase initialization
     * scheme, which must occur after the Federate and FedAmb have been
