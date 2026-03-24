@@ -134,9 +134,9 @@ InteractionItem::InteractionItem(
    : index( rhs.index ),
      parameter_queue(),
      interaction_type( rhs.interaction_type ),
-     parm_items_count( rhs.parm_items_count ),
+     parm_items_count( ( rhs.parm_items != NULL ) ? rhs.parm_items_count : 0 ),
      parm_items( rhs.parm_items ),
-     user_supplied_tag_size( rhs.user_supplied_tag_size ),
+     user_supplied_tag_size( ( rhs.user_supplied_tag != NULL ) ? rhs.user_supplied_tag_size : 0 ),
      user_supplied_tag( NULL ),
      order_is_TSO( rhs.order_is_TSO ),
      time( rhs.time )
@@ -145,8 +145,6 @@ InteractionItem::InteractionItem(
       user_supplied_tag = static_cast< unsigned char * >(
          TMM_declare_var_1d( "unsigned char", (int)user_supplied_tag_size ) );
       memcpy( user_supplied_tag, rhs.user_supplied_tag, user_supplied_tag_size ); // flawfinder: ignore
-   } else {
-      user_supplied_tag_size = 0;
    }
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
