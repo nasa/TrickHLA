@@ -1243,17 +1243,17 @@ void ExecutionControl::post_multi_phase_init_processes()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          ostringstream msg;
          msg << "SpaceFOM::ExecutionControl::post_multi_phase_init_processes()\n"
-             << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << endl
-             << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
-             << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-             << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
-             << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
-             << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
-             << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << endl
-             << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
+             << "     current_scenario_time: " << setprecision( 18 ) << scenario_timeline->get_time() << endl
+             << "       scenario_time_epoch: " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
+             << " scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
+             << "  scenario_time_sim_offset: " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
+             << "    Current HLA grant time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  Current HLA request time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
+             << "          current_sim_time: " << setprecision( 18 ) << sim_timeline->get_time() << endl
+             << "     simulation_time_epoch: " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
          if ( does_cte_timeline_exist() ) {
-            msg << "\t current_CTE_time:          " << setprecision( 18 ) << cte_timeline->get_time() << endl
-                << "\t CTE_time_epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+            msg << "          current_CTE_time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
+                << "            CTE_time_epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
          }
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
