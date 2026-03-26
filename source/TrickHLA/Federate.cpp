@@ -126,8 +126,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Federate::Federate()
-   : TimeManagementServices( this ),
-     name(),
+   : name(),
      type(),
      federation_name(),
      rti_address(),
@@ -169,10 +168,15 @@ Federate::Federate()
      joined_federate_handles(),
      joined_federate_names(),
      federate_ambassador( NULL ),
+     time_management_srvc( this ),
      manager( NULL ),
      save_restore_srvc( NULL ),
      execution_control( NULL ),
      execution_config( NULL )
+#if defined( IEEE_1516_2010 )
+     ,
+     RTI_ambassador( NULL )
+#endif
 {
    TRICKHLA_INIT_FPU_CONTROL_WORD;
 
@@ -210,7 +214,7 @@ Federate::~Federate()
    federate_ambassador = NULL;
 
    // Make sure we destroy the mutex.
-   time_adv_state_mutex.destroy();
+   time_management_srvc.time_adv_state_mutex.destroy();
    joined_federate_mutex.destroy();
 }
 
@@ -343,7 +347,7 @@ the documented ENUM values.\n",
 
    // Refresh the HLA time constants since the base time units may have changed
    // from a setting in the input file.
-   refresh_HLA_time_constants();
+   time_management_srvc.refresh_HLA_time_constants();
 }
 
 /*!
@@ -425,7 +429,7 @@ void Federate::restart_initialization()
                        __LINE__ );
    }
 
-   TimeManagementServices::restart_initialization();
+   time_management_srvc.restart_initialization();
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
@@ -522,7 +526,7 @@ void Federate::pre_multiphase_initialization()
    // job should be called before this one, but verify the HLA cycle time
    // again to catch the case where a user did not pick up the changes to
    // the THLABase.sm file.
-   if ( !verify_time_constraints() ) {
+   if ( !time_management_srvc.verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
              << " ERROR: Time Constraints verification failed!" << endl;
@@ -3169,7 +3173,7 @@ void Federate::send_zero_lookahead_and_requested_data(
                        __LINE__, obj_instance_name.c_str() );
    }
 
-   obj->send_zero_lookahead_and_requested_data( this->granted_time );
+   obj->send_zero_lookahead_and_requested_data( time_management_srvc.granted_time );
 }
 
 /*!
@@ -3208,7 +3212,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
    if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
 
       // The TARA will cause zero-lookahead data to be reflected before the TAG.
-      wait_for_zero_lookahead_TARA_TAG();
+      time_management_srvc.wait_for_zero_lookahead_TARA_TAG();
 
       int64_t      wallclock_time; // cppcheck-suppress [variableScope]
       SleepTimeout print_timer( this->wait_status_time );
@@ -3247,7 +3251,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
          }
 
          // The TARA will cause zero-lookahead data to be reflected before the TAG.
-         wait_for_zero_lookahead_TARA_TAG();
+         time_management_srvc.wait_for_zero_lookahead_TARA_TAG();
       }
    }
 
@@ -3457,7 +3461,7 @@ void Federate::shutdown()
    }
 
    // Disable Time Constrained and Time Regulation for this federate.
-   shutdown_time_management();
+   time_management_srvc.shutdown_time_management();
 
    // Resign from the federation.
    // If the federate can rejoin, resign in a way so we can rejoin later...

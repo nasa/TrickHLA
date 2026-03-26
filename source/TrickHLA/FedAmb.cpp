@@ -1838,7 +1838,7 @@ void FedAmb::timeRegulationEnabled(
       message_publish( MSG_NORMAL, "FedAmb::timeRegulationEnabled():%d Federate \"%s\"\n",
                        __LINE__, federate->get_federate_name().c_str() );
    }
-   federate->set_time_regulation_enabled( time );
+   federate->time_management_srvc.set_time_regulation_enabled( time );
 }
 
 void FedAmb::timeConstrainedEnabled(
@@ -1850,9 +1850,9 @@ void FedAmb::timeConstrainedEnabled(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::timeConstrainedEnabled():%d Federate \"%s\" Time granted to: %.12G\n",
                        __LINE__, federate->get_federate_name().c_str(),
-                       federate->get_granted_time().get_time_in_seconds() );
+                       federate->time_management_srvc.get_granted_time().get_time_in_seconds() );
    }
-   federate->set_time_constrained_enabled( time );
+   federate->time_management_srvc.set_time_constrained_enabled( time );
 }
 
 #if defined( IEEE_1516_2025 )
@@ -1872,7 +1872,7 @@ void FedAmb::timeAdvanceGrant(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   federate->set_time_advance_granted( time );
+   federate->time_management_srvc.set_time_advance_granted( time );
 }
 
 void FedAmb::requestRetraction(

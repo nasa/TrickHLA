@@ -321,8 +321,8 @@ void ExecutionConfiguration::pack()
           << "IMSim::ExecutionConfiguration::pack():" << __LINE__ << endl
           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
           << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-          << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
-          << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
+          << "\t Current HLA grant time:  " << federate->get_granted_time().get_time_in_seconds() << endl
+          << "\t Current HLA request time:" << federate->get_requested_time().get_time_in_seconds() << endl
           << "............................................................." << endl;
       print_simconfig( msg );
       msg << "=============================================================" << endl;
@@ -341,8 +341,8 @@ void ExecutionConfiguration::unpack()
           << "IMSim::ExecutionConfiguration::unpack():" << __LINE__ << endl
           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
           << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-          << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
-          << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
+          << "\t Current HLA grant time:  " << federate->get_granted_time().get_time_in_seconds() << endl
+          << "\t Current HLA request time:" << federate->get_requested_time().get_time_in_seconds() << endl
           << "............................................................." << endl;
       print_simconfig( msg );
       msg << "=============================================================" << endl;
@@ -423,7 +423,6 @@ void ExecutionConfiguration::print_simconfig( std::ostream &stream ) const
 
 bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 {
-   Federate *federate = get_federate();
 
    // We can only receive the exec-configuration if we are not the master.
    if ( execution_control->is_master() ) {

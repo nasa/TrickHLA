@@ -79,6 +79,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Federate;
 class Manager;
+class TimeManagementServices;
 class Object;
 class ExecutionConfigurationBase;
 class SaveRestoreServices;
@@ -776,8 +777,9 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.
 
    // Shortcuts to associated TrickHLA management and control objects.
-   TrickHLA::Manager             *manager;           ///< @trick_io{**} Associated manager.
-   TrickHLA::SaveRestoreServices *save_restore_srvc; ///< @trick_io{**} Associated Save & Restore service.
+   TrickHLA::Manager                *manager;              ///< @trick_io{**} Associated manager.
+   TrickHLA::TimeManagementServices *time_management_srvc; ///< @trick_io{**} Associated manager.
+   TrickHLA::SaveRestoreServices    *save_restore_srvc;    ///< @trick_io{**} Associated Save & Restore service.
 
   private:
    // Do not allow the copy constructor.

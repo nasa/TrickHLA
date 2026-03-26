@@ -264,10 +264,10 @@ void ExecutionConfiguration::pack()
           << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
           << "      Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
           << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl
-          << "     Current HLA Granted Time: " << setprecision( 18 ) << get_federate()->get_granted_time().get_time_in_seconds()
-          << " (" << get_federate()->get_granted_time().get_base_time() << ")" << endl
-          << "   Current HLA Requested Time: " << setprecision( 18 ) << get_federate()->get_requested_time().get_time_in_seconds()
-          << " (" << get_federate()->get_requested_time().get_base_time() << ")" << endl
+          << "     Current HLA Granted Time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds()
+          << " (" << federate->get_granted_time().get_base_time() << ")" << endl
+          << "   Current HLA Requested Time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds()
+          << " (" << federate->get_requested_time().get_base_time() << ")" << endl
           << "............................................................." << endl
           << "                  Object-Name: '" << get_name() << "'" << endl
           << "              root_frame_name: '" << root_frame_name << "'" << endl
@@ -287,7 +287,7 @@ void ExecutionConfiguration::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   if ( ( get_federate() != NULL ) && !get_federate()->verify_time_constraints() ) {
+   if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
              << " ERROR: Invalid time constraints!" << endl;
@@ -309,10 +309,10 @@ void ExecutionConfiguration::unpack()
           << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
           << "      Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
           << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl
-          << "     Current HLA Granted Time: " << setprecision( 18 ) << get_federate()->get_granted_time().get_time_in_seconds()
-          << " (" << get_federate()->get_granted_time().get_base_time() << ")" << endl
-          << "   Current HLA Requested Time: " << setprecision( 18 ) << get_federate()->get_requested_time().get_time_in_seconds()
-          << " (" << get_federate()->get_requested_time().get_base_time() << ")" << endl
+          << "     Current HLA Granted Time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds()
+          << " (" << federate->get_granted_time().get_base_time() << ")" << endl
+          << "   Current HLA Requested Time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds()
+          << " (" << federate->get_requested_time().get_base_time() << ")" << endl
           << "............................................................." << endl
           << "                  Object-Name: '" << get_name() << "'" << endl
           << "              root_frame_name: '" << root_frame_name << "'" << endl
@@ -640,7 +640,6 @@ void ExecutionConfiguration::print_execution_configuration() const
 
 bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 {
-   Federate *federate = get_federate();
 
    // We can only receive the exec-configuration if we are not the master.
    if ( execution_control->is_master() ) {

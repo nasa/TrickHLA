@@ -139,6 +139,7 @@ ExecutionControlBase::ExecutionControlBase()
      late_joiner( false ),
      late_joiner_determined( false ),
      manager( NULL ),
+     time_management_srvc( NULL ),
      save_restore_srvc( NULL )
 {
    return;
@@ -174,6 +175,7 @@ ExecutionControlBase::ExecutionControlBase(
      late_joiner( false ),
      late_joiner_determined( false ),
      manager( NULL ),
+     time_management_srvc( NULL ),
      save_restore_srvc( NULL )
 {
    return;
@@ -207,6 +209,9 @@ void ExecutionControlBase::setup(
 
    // Set the TrickHLA::SaveRestoreServices instance reference.
    this->save_restore_srvc = fed.get_save_restore_service();
+
+   // Set the TrickHLA::TimeManagementServices instance reference.
+   this->time_management_srvc = fed.get_time_management_services();
 
    // Set the TrickHLA::ExecutionConfigurationBase instance reference.
    this->execution_configuration = fed.get_execution_configuration();
@@ -273,7 +278,7 @@ void ExecutionControlBase::initialize()
    }
 
    // Verify the time constraints for the federate.
-   if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
+   if ( ( federate != NULL ) && !federate->time_management_srvc.verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::initialize():" << __LINE__
              << " ERROR: Time constraints verification failed!" << endl;
@@ -1134,6 +1139,8 @@ void ExecutionControlBase::setup_checkpoint()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
    try {
+      // FIXME: Should this be in the Federate and not TimeManagementServices?
+      // Or, should this be in the Save & Restore services.
       federate->get_RTI_ambassador()->federateSaveBegun();
    } catch ( SaveNotInitiated const &e ) {
       message_publish( MSG_WARNING, "ExecutionControlBase::setup_checkpoint():%d EXCEPTION: SaveNotInitiated\n",
@@ -1492,7 +1499,7 @@ void ExecutionControlBase::post_restore()
       try {
          HLAinteger64Time time;
          federate->get_RTI_ambassador()->queryLogicalTime( time );
-         federate->set_granted_time( time );
+         federate->time_management_srvc.set_granted_time( time );
       } catch ( FederateNotExecutionMember const &e ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::post_restore():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__ );
@@ -1515,7 +1522,7 @@ void ExecutionControlBase::post_restore()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      federate->set_requested_time_to_granted_time();
+      federate->time_management_srvc.set_requested_time_to_granted_time();
 
       save_restore_srvc->federation_restored();
 

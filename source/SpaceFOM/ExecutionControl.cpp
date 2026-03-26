@@ -201,9 +201,9 @@ void ExecutionControl::initialize()
    // If this is the Master or Pacing federate, then it must support Time
    // Management and be both Time Regulating and Time Constrained.
    if ( is_master() || is_pacing() ) {
-      federate->time_management  = true;
-      federate->time_regulating  = true;
-      federate->time_constrained = true;
+      time_management_srvc->time_management  = true;
+      time_management_srvc->time_regulating  = true;
+      time_management_srvc->time_constrained = true;
    }
 
    // For SpaceFOM, we must freeze on the Trick software frame boundary because
@@ -1233,7 +1233,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       // multiple of the least-common-time-step (LCTS), otherwise we
       // will not be in sync with the other federates on the HLA logical
       // timeline.
-      federate->time_advance_request_to_GALT_LCTS_multiple();
+      time_management_srvc->time_advance_request_to_GALT_LCTS_multiple();
 
       // Need to compute the late joiner simulation time offset for the
       // scenario time line.

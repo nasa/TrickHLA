@@ -103,8 +103,9 @@ namespace TrickHLA
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
-class Manager;
 class Federate;
+class Manager;
+class TimeManagementServices;
 class Conditional;
 class Packing;
 class OwnershipHandler;
@@ -762,8 +763,6 @@ class Object : public CheckpointConversionBase
 
    VectorOfStrings attribute_FOM_names; ///< @trick_io{**} String array containing the Attribute FOM names.
 
-   Manager *manager; ///< @trick_units{--} Reference to the TrickHLA Manager.
-
    RTI1516_NAMESPACE::AttributeHandleValueMap *attribute_values_map; ///< @trick_io{**} Map of attributes that will be sent as an update to other federates.
 
    ReflectedAttributesQueue reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
@@ -772,6 +771,14 @@ class Object : public CheckpointConversionBase
 
    RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
    RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
+
+
+   //
+   // References to the Federate and associated services.
+   //
+   Federate               *federate;             ///< @trick_units{--} Reference to the TrickHLA::Federate.
+   Manager                *manager;              ///< @trick_units{--} Reference to the TrickHLA::Manager.
+   TimeManagementServices *time_management_srvc; ///< @trick_units{--} Reference to the TrickHLA::TimeManagementServices.
 
   public:
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS

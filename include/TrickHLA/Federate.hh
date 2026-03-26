@@ -61,11 +61,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
-#include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
+#include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
@@ -104,7 +104,7 @@ namespace TrickHLA
 class Manager;
 class ExecutionControlBase;
 
-class Federate : public TimeManagementServices
+class Federate
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -116,10 +116,14 @@ class Federate : public TimeManagementServices
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__Federate();
 
-   // Allow the save and restore services access to the Federate protected
+   // Allow the Federate core classes to have access to protected
    // and private data.
-   friend class SaveRestoreServices;
    friend class FedAmb;
+   friend class TimeManagementServices;
+   friend class TrickThreadCoordinator;
+   friend class SaveRestoreServices;
+   friend class ExecutionControlBase;
+   friend class Interaction;
 
    //----------------------------- USER VARIABLES -----------------------------
    // The variables below are configured by the user in the input files.
@@ -272,6 +276,134 @@ class Federate : public TimeManagementServices
    {
       return joined_federate_handles;
    }
+
+   //
+   // Time Management interfaces.
+   //
+   // Delegate these to the TimeManagementServices instance.
+
+   /*! @brief Sets the HLA base time unit.
+    *  @param base_time_unit HLA base time unit. */
+   void set_HLA_base_time_unit( HLABaseTimeEnum const base_time_unit ){
+      time_management_srvc.set_HLA_base_time_unit( base_time_unit );
+      return;
+   }
+
+   /*! @brief Sets the HLA base time unit and scale Trick tics multiplier.
+    *  @param base_time_unit HLA base time unit. */
+   void set_HLA_base_time_unit_and_scale_trick_tics( HLABaseTimeEnum const base_time_unit ){
+      time_management_srvc.set_HLA_base_time_unit_and_scale_trick_tics( base_time_unit );
+      return;
+   }
+
+   /*! @brief Wait for a HLA time-advance grant. */
+   void wait_for_time_advance_grant()
+   {
+      time_management_srvc.wait_for_time_advance_grant();
+      return;
+   }
+
+   /*! @brief Increment the requested time by the lookahead time and make a
+    *  HLA time advance request. */
+   void time_advance_request()
+   {
+      time_management_srvc.time_advance_request();
+      return;
+   }
+
+   /*! @brief Initialize the thread memory associated with the Trick child threads. */
+   void initialize_thread_coordinator( double const main_thread_data_cycle_time )
+   {
+      time_management_srvc.initialize_thread_coordinator( main_thread_data_cycle_time );
+      return;
+   }
+
+   /*! @brief Verify the threads IDs associated to objects in the input file. */
+   void verify_trick_thread_associations()
+   {
+      time_management_srvc.verify_trick_thread_associations();
+      return;
+   }
+
+   /*! @brief Initialize the thread memory associated with the Trick child threads. */
+   void initialize_thread_state( double const main_thread_data_cycle_time )
+   {
+      time_management_srvc.initialize_thread_state( main_thread_data_cycle_time );
+      return;
+   }
+
+   /*! @brief Announce to all the child threads the main thread has data available. */
+   void announce_data_available()
+   {
+      time_management_srvc.announce_data_available();
+      return;
+   }
+
+   /*! @brief Wait to send data until all Trick child threads are ready. */
+   void wait_to_send_data()
+   {
+      time_management_srvc.wait_to_send_data();
+      return;
+   }
+
+   /*! @brief Announce to all the child threads the main thread sent the data. */
+   void announce_data_sent()
+   {
+      time_management_srvc.announce_data_sent();
+      return;
+   }
+
+   /*! @brief Get the current federate lookahead time.
+    *  @return Reference to current federate lookahead time. */
+   Int64Interval const &get_lookahead() const
+   {
+      return time_management_srvc.get_lookahead();
+   }
+
+   /*! @brief Get the current granted HLA federation execution time.
+    *  @return Reference to current granted HLA federation execution time. */
+   Int64Time const &get_granted_time() const
+   {
+      return time_management_srvc.get_granted_time();
+   }
+
+   /*! @brief Get the current granted HLA federation execution time.
+    *  @return Reference to current granted HLA federation execution time. */
+   Int64Time const &get_requested_time() const
+   {
+      return time_management_srvc.get_requested_time();
+   }
+
+   /*! @brief Sets the HLA lookahead time.
+    *  @param value HLA lookahead time in seconds. */
+   void set_lookahead( double const value )
+   {
+      time_management_srvc.set_lookahead( value );
+      return;
+   }
+
+   /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
+   bool verify_time_constraints()
+   {
+      return time_management_srvc.verify_time_constraints();
+   }
+
+   /*! @brief Setup this federate's time management. */
+   void setup_time_management()
+   {
+      time_management_srvc.setup_time_management();
+      return;
+   }
+
+   /*! @brief Moves the federates time to the Greatest Available Logical Time
+    * (GALT) that is an integer multiple of the Least-Common-Time-Step (LCTS)
+    * time if we are time constrained and Not time regulating. */
+   void time_advance_request_to_GALT()
+   {
+      time_management_srvc.time_advance_request_to_GALT();
+      return;
+   }
+
 
    //
    // Management Object Model (MOM) interfaces.
@@ -509,11 +641,25 @@ class Federate : public TimeManagementServices
    //
    // Routines to return federation state values.
    //
+   /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
+    *  @return Pointer to associated RTI Ambassador. */
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const // cppcheck-suppress [functionStatic, unmatchedSuppression]
+   {
+      return RTI_ambassador.get();
+   }
+
    /*! @brief Get the pointer to the associated TrickHLA Federate Ambassador instance.
     *  @return Pointer to associated TrickHLA::FedAmb. */
    FedAmb *get_fed_ambassador()
    {
       return this->federate_ambassador;
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::TimeManagementServices instance.
+    *  @return Pointer to associated TrickHLA::TimeManagementServices. */
+   TimeManagementServices *get_time_management_services()
+   {
+      return( &(this->time_management_srvc) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::Manager instance.
@@ -671,11 +817,25 @@ class Federate : public TimeManagementServices
 
    // Federation required associations.
    //
-   FedAmb                     *federate_ambassador; ///< @trick_units{--} Federate ambassador.
-   Manager                    *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
-   SaveRestoreServices        *save_restore_srvc;   ///< @trick_units{--} Associated TrickHLA Federate Save & Restore service.
-   ExecutionControlBase       *execution_control;   ///< @trick_units{--} Associated TrickHLA Federate ExecutionControlBase implementation.
-   ExecutionConfigurationBase *execution_config;    ///< @trick_units{--} Associated TrickHLA Federate ExecutionConfigurationBase implementation.
+   FedAmb                     *federate_ambassador;  ///< @trick_units{--} Federate ambassador.
+   TimeManagementServices      time_management_srvc; ///< @trick_units{--} Associated TrickHLA Federate Time Management service.
+   Manager                    *manager;              ///< @trick_units{--} Associated TrickHLA Federate Manager.
+   SaveRestoreServices        *save_restore_srvc;    ///< @trick_units{--} Associated TrickHLA Federate Save & Restore service.
+   ExecutionControlBase       *execution_control;    ///< @trick_units{--} Associated TrickHLA Federate ExecutionControlBase implementation.
+   ExecutionConfigurationBase *execution_config;     ///< @trick_units{--} Associated TrickHLA Federate ExecutionConfigurationBase implementation.
+
+   // Federation required associations.
+   //
+#if defined( IEEE_1516_2025 )
+#   if !defined( SWIG )
+   std::unique_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
+#   endif
+#else
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+   std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
+#   pragma GCC diagnostic pop
+#endif // IEEE_1516_2025
 
   private:
    /*! @brief Subscribe to the specified attributes for the given class handle.

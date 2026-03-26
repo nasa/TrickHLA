@@ -226,9 +226,10 @@ void ExecutionControl::initialize()
    // If this is the Master federate, then it must support Time
    // Management and be both Time Regulating and Time Constrained.
    if ( is_master() ) {
-      this->federate->time_management  = true;
-      this->federate->time_regulating  = true;
-      this->federate->time_constrained = true;
+      TimeManagementServices *time_management_srvc = federate->get_time_management_services();
+      time_management_srvc->time_management  = true;
+      time_management_srvc->time_regulating  = true;
+      time_management_srvc->time_constrained = true;
 
       // The software frame is set from the Least Common Time Step.
       // For the Master federate the Trick simulation software frame must
@@ -762,7 +763,7 @@ Simulation has started and is now running...\n",
          } else {
             //**** Late Joining Federate. ****
 
-            if ( !federate->is_time_management_enabled() ) {
+            if ( !federate->get_time_management_services()->is_time_management_enabled() ) {
                ostringstream errmsg;
                errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                       << " ERROR: Late joining federates that do not use HLA"
@@ -2387,7 +2388,7 @@ bool ExecutionControl::check_scenario_freeze_time()
                ostringstream infomsg;
                infomsg << "IMSim::ExecutionControl::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:" << endl;
-               if ( federate->is_time_management_enabled() ) {
+               if ( federate->get_time_management_services()->is_time_management_enabled() ) {
                   infomsg << "  Granted HLA-time:"
                           << federate->get_granted_time().get_time_in_seconds()
                           << endl;

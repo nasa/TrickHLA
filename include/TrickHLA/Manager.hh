@@ -558,9 +558,12 @@ class Manager : public CheckpointConversionBase
 
    TrickHLAObjInstanceNameIndexMap obj_name_index_map; ///< @trick_io{**} Map of object instance names to array index.
 
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
-
-   ExecutionControlBase *execution_control; /**< @trick_units{--}
+   //
+   // References to the Federate and associated services.
+   //
+   Federate               *federate;             ///< @trick_units{--} Associated TrickHLA::Federate.
+   TimeManagementServices *time_management_srvc; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
+   ExecutionControlBase   *execution_control;    /**< @trick_units{--}
     Execution control object. This has to point to an allocated execution
     control class that inherits from the ExecutionControlBase interface
     class. For instance SRFOM::ExecutionControl. */

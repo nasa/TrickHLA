@@ -87,6 +87,7 @@ typedef enum {
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
+class TimeManagementServices;
 class ExecutionControlBase;
 
 class SaveRestoreServices
@@ -536,8 +537,12 @@ class SaveRestoreServices
    void request_federation_save();
 
   protected:
-   Federate             *federate;          ///< @trick_units{--} Associated TrickHLA::Federate.
-   ExecutionControlBase *execution_control; ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
+   //
+   // References to the Federate and associated services.
+   //
+   Federate               *federate;             ///< @trick_units{--} Associated TrickHLA::Federate.
+   TimeManagementServices *time_management_srvc; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
+   ExecutionControlBase   *execution_control;    ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
 
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
    std::wstring restore_name; ///< @trick_io{**} Name for a restore file

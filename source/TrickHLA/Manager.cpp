@@ -121,6 +121,7 @@ Manager::Manager()
      object_map(),
      obj_name_index_map(),
      federate( NULL ),
+     time_management_srvc( NULL ),
      execution_control( NULL )
 {
    return;
@@ -152,6 +153,9 @@ void Manager::setup( Federate &fed )
 {
    // Set the TrickHLA::Federate instace reference.
    this->federate = &fed;
+
+   // Set the TrickHLA::TimeManagementServices instance reference.
+   this->time_management_srvc = fed.get_time_management_services();
 
    // Set the TrickHLA::ExecutionControlBase instance reference.
    this->execution_control = fed.get_execution_control();
@@ -293,7 +297,7 @@ void Manager::initialize_HLA_cycle_time()
    // attributes.
    // TODO: Use child thread cycle rate for core cycle time?
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].set_core_job_cycle_time( federate->get_HLA_cycle_time() );
+      objects[n].set_core_job_cycle_time( time_management_srvc->get_HLA_cycle_time() );
    }
 }
 
@@ -2331,7 +2335,7 @@ void Manager::send_cyclic_and_requested_data()
    // Current time values.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
    int64_t const granted_base_time     = federate->get_granted_time().get_base_time();
-   int64_t const lookahead_base_time   = federate->is_zero_lookahead_time()
+   int64_t const lookahead_base_time   = time_management_srvc->is_zero_lookahead_time()
                                             ? 0LL
                                             : federate->get_lookahead().get_base_time();
 
@@ -2356,7 +2360,7 @@ void Manager::send_cyclic_and_requested_data()
    // the case for a late joining federate. The data cycle time (dt) is how
    // often we send and receive data, which may or may not match the lookahead.
    // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
-   int64_t   dt      = federate->get_HLA_cycle_time_in_base_time();
+   int64_t   dt      = time_management_srvc->get_HLA_cycle_time_in_base_time();
    int64_t   prev_dt = dt;
    Int64Time update_time( granted_base_time + dt );
 
@@ -2378,10 +2382,10 @@ void Manager::send_cyclic_and_requested_data()
    for ( int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
 
       // Only send data if we are on the data cycle time boundary for this object.
-      if ( federate->on_receive_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
+      if ( time_management_srvc->on_receive_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
          // Get the cyclic data time for the object.
-         dt = federate->get_data_cycle_base_time_for_obj( obj_index, federate->get_HLA_cycle_time_in_base_time() );
+         dt = time_management_srvc->get_data_cycle_base_time_for_obj( obj_index, time_management_srvc->get_HLA_cycle_time_in_base_time() );
 
          // Reuse the update_time if the data cycle time (dt) is the same.
          if ( dt != prev_dt ) {
@@ -2426,7 +2430,7 @@ void Manager::receive_cyclic_data()
    for ( int n = 0; n < obj_count; ++n ) {
 
       // Only receive data if we are on the data cycle time boundary for this object.
-      if ( federate->on_receive_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
+      if ( time_management_srvc->on_receive_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
          objects[n].receive_cyclic_data();
       }
    }

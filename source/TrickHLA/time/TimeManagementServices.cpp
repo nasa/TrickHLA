@@ -123,11 +123,8 @@ TimeManagementServices::TimeManagementServices(
      time_regulating_state( false ),
      time_constrained_state( false ),
      tag_wait_sum( 0 ),
-     tag_wait_count( 0 )
-#if defined( IEEE_1516_2010 )
-     ,
-     RTI_ambassador( NULL )
-#endif
+     tag_wait_count( 0 ),
+     federate( fed )
 {
    return;
 }
@@ -472,7 +469,7 @@ void TimeManagementServices::time_advance_request_to_GALT()
 
    try {
       HLAinteger64Time time;
-      if ( RTI_ambassador->queryGALT( time ) ) {
+      if ( federate->RTI_ambassador->queryGALT( time ) ) {
          int64_t L = lookahead.get_base_time();
          if ( L > 0 ) {
             int64_t GALT = time.getTime();
@@ -535,7 +532,7 @@ void TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple()
 
    try {
       HLAinteger64Time time;
-      if ( RTI_ambassador->queryGALT( time ) ) {
+      if ( federate->RTI_ambassador->queryGALT( time ) ) {
          if ( LCTS > 0 ) {
             int64_t GALT = time.getTime();
 
@@ -671,7 +668,7 @@ void TimeManagementServices::setup_time_constrained()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Sanity check.
-   if ( RTI_ambassador.get() == NULL ) {
+   if ( federate->RTI_ambassador.get() == NULL ) {
       DebugHandler::terminate_with_message( "TimeManagementServices::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
       return;
    }
@@ -697,7 +694,7 @@ void TimeManagementServices::setup_time_constrained()
       // If we are constrained and sending federates specify the Class
       // attributes and Communication interaction with timestamp in the
       // simulation fed file we will receive TimeStamp Ordered messages.
-      RTI_ambassador->enableTimeConstrained();
+      federate->RTI_ambassador->enableTimeConstrained();
 
       SleepTimeout print_timer( federate->get_wait_status_time() );
       SleepTimeout sleep_timer;
@@ -865,7 +862,7 @@ void TimeManagementServices::setup_time_regulation()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Sanity check.
-   if ( RTI_ambassador.get() == NULL ) {
+   if ( federate->RTI_ambassador.get() == NULL ) {
       DebugHandler::terminate_with_message( "TimeManagementServices::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
       return;
    }
@@ -897,7 +894,7 @@ void TimeManagementServices::setup_time_regulation()
       // If we are regulating and our object attributes and interaction
       // parameters are specified with timestamp in the FOM we will send
       // TimeStamp Ordered messages.
-      RTI_ambassador->enableTimeRegulation( lookahead.get() );
+      federate->RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
       SleepTimeout print_timer( federate->get_wait_status_time() );
       SleepTimeout sleep_timer;
@@ -1124,10 +1121,10 @@ void TimeManagementServices::perform_time_advance_request()
          if ( is_zero_lookahead_time() ) {
             // Request that time be advanced to the new time, but still allow
             // TSO data for Treq = Tgrant
-            RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
+            federate->RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
          } else {
             // Request that time be advanced to the new time.
-            RTI_ambassador->timeAdvanceRequest( requested_time.get() );
+            federate->RTI_ambassador->timeAdvanceRequest( requested_time.get() );
          }
 
          // Indicate we issued a TAR since we successfully made the request
@@ -1212,7 +1209,7 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
          try {
             // Request that time be advanced to the new time, but still allow
             // TSO data for Treq = Tgrant
-            RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
+            federate->RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
 
             // Indicate we issued a TAR since we successfully made the request
             // without an exception.
@@ -1510,7 +1507,7 @@ void TimeManagementServices::shutdown_time_constrained()
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // Make sure we've been able to get the RTI ambassador.
-      if ( RTI_ambassador.get() == NULL ) {
+      if ( federate->RTI_ambassador.get() == NULL ) {
          return;
       }
 
@@ -1520,7 +1517,7 @@ void TimeManagementServices::shutdown_time_constrained()
       }
 
       try {
-         RTI_ambassador->disableTimeConstrained();
+         federate->RTI_ambassador->disableTimeConstrained();
          this->time_constrained_state = false;
       } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled const &e ) {
          this->time_constrained_state = false;
@@ -1572,7 +1569,7 @@ void TimeManagementServices::shutdown_time_regulating()
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // Make sure we've been able to get the RTI ambassador.
-      if ( RTI_ambassador.get() == NULL ) {
+      if ( federate->RTI_ambassador.get() == NULL ) {
          return;
       }
 
@@ -1582,7 +1579,7 @@ void TimeManagementServices::shutdown_time_regulating()
       }
 
       try {
-         RTI_ambassador->disableTimeRegulation();
+         federate->RTI_ambassador->disableTimeRegulation();
          this->time_regulating_state = false;
       } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled const &e ) {
          this->time_regulating_state = false;

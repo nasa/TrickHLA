@@ -163,7 +163,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    /// grant here because this is an end_of_frame job and if we don't have a
    /// granted time then we are at the end of the frame that made the TAR call.
    /// The wait for Time Advance Grant will be at the top of the next frame.
-   if ( !interaction->get_federate()->is_time_advance_granted() ) {
+   if ( !interaction->get_federate()->get_time_management_services()->is_time_advance_granted() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).\n",
                           __LINE__ );

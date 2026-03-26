@@ -75,11 +75,11 @@ class BallFederateConfig( TrickHLAFederateConfig ):
       thla.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
       
       # Set the federate lookahead time.
-      thla.federate.lookahead_time = 0.100
+      self.set_lookahead_time( 0.100 )
 
       # Configure the federate time management.
-      thla.federate.time_regulating  = True
-      thla.federate.time_constrained = True
+      self.set_time_regulating( True )
+      self.set_time_constrained( True )
       
       #---------------------------------------------
       # Set up for simulation configuration.

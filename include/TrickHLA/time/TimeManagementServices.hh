@@ -96,6 +96,11 @@ class TimeManagementServices : public TrickThreadCoordinator
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__TimeManagementServices();
 
+   // Allow the Federate core classes to have access to protected
+   // and private data.
+   friend class Federate;
+   friend class TimeManagementServices;
+
    //----------------------------- USER VARIABLES -----------------------------
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
@@ -194,12 +199,6 @@ class TimeManagementServices : public TrickThreadCoordinator
    //
    // Routines to return federation state values.
    //
-   /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
-    *  @return Pointer to associated RTI Ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const // cppcheck-suppress [functionStatic, unmatchedSuppression]
-   {
-      return RTI_ambassador.get();
-   }
 
    /*! @brief Get the current granted HLA federation execution time.
     *  @return Reference to current granted HLA federation execution time. */
@@ -353,18 +352,7 @@ class TimeManagementServices : public TrickThreadCoordinator
    uint64_t tag_wait_sum;   ///< @trick_units{--} Sum of all the TAG wait wallclock times.
    uint64_t tag_wait_count; ///< @trick_units{--} Number of times we waited for TAG.
 
-   // Federation required associations.
-   //
-#if defined( IEEE_1516_2025 )
-#   if !defined( SWIG )
-   std::unique_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
-#   endif
-#else
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wdeprecated"
-   std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
-#   pragma GCC diagnostic pop
-#endif // IEEE_1516_2025
+   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
   private:
    // Do not allow the copy constructor or assignment operator.
