@@ -194,12 +194,10 @@ class Federate
    /*! @brief Setup the required class instance associations.
     *  @param federate_amb               Associated federate ambassador class instance.
     *  @param federate_manager           Associated federate manager class instance.
-    *  @param federate_save_restore      Associated federate save & restore service class instance.
     *  @param federate_execution_control Associated federate execution control class instance.
     *  @param federate_execution_config  Associated federate execution configuration class instance. */
    void setup( FedAmb                     &federate_amb,
                Manager                    &federate_manager,
-               SaveRestoreServices        &federate_save_restore,
                ExecutionControlBase       &federate_execution_control,
                ExecutionConfigurationBase &federate_execution_config );
 
@@ -671,9 +669,9 @@ class Federate
 
    /*! @brief Get the pointer to the associated TrickHLA::SaveRestoreService instance.
     *  @return Pointer to the associated TrickHLA::SaveRestoreService instance. */
-   SaveRestoreServices *get_save_restore_service() const
+   SaveRestoreServices *get_save_restore_service()
    {
-      return this->save_restore_srvc;
+      return( &(this->save_restore_srvc) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::ExecutionControlBase instance.
@@ -820,7 +818,7 @@ class Federate
    FedAmb                     *federate_ambassador;  ///< @trick_units{--} Federate ambassador.
    TimeManagementServices      time_management_srvc; ///< @trick_units{--} Associated TrickHLA Federate Time Management service.
    Manager                    *manager;              ///< @trick_units{--} Associated TrickHLA Federate Manager.
-   SaveRestoreServices        *save_restore_srvc;    ///< @trick_units{--} Associated TrickHLA Federate Save & Restore service.
+   SaveRestoreServices         save_restore_srvc;    ///< @trick_units{--} Associated TrickHLA Federate Save & Restore service.
    ExecutionControlBase       *execution_control;    ///< @trick_units{--} Associated TrickHLA Federate ExecutionControlBase implementation.
    ExecutionConfigurationBase *execution_config;     ///< @trick_units{--} Associated TrickHLA Federate ExecutionConfigurationBase implementation.
 

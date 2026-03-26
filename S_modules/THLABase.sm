@@ -74,10 +74,9 @@ class THLABaseSimObject : public Trick::SimObject {
  public:
 
    //----- DATA STRUCTURE DECLARATIONS -----
-   TrickHLA::Federate            federate;
-   TrickHLA::FedAmb              federate_amb;
-   TrickHLA::Manager             manager;
-   TrickHLA::SaveRestoreServices save_restore;
+   TrickHLA::Federate federate;
+   TrickHLA::FedAmb   federate_amb;
+   TrickHLA::Manager  manager;
 
    double data_cycle_time;
 
