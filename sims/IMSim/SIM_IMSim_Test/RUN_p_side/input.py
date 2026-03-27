@@ -72,14 +72,13 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 # MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
-THLA.federate.lookahead_time = 0.250
 
 # Configure the federate.
 THLA.federate.name             = 'P-side-Federate'
 THLA.federate.FOM_modules      = 'FOMs/IMSim/IMSim_management.xml,FOMs/SineWave.xml'
 THLA.federate.federation_name  = 'IMSim_sine'
-THLA.federate.time_regulating  = True
-THLA.federate.time_constrained = True
+# Set the lookahead value, time constrained, and time regulating states.
+THLA.federate.setup_time_management( 0.250, True, True )
 
 # Configure ExecutionControl.
 # Set the multiphase initialization synchronization points.

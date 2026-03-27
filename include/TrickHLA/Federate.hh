@@ -443,13 +443,17 @@ class Federate
       return time_management_srvc.get_lookahead();
    }
 
-   /*! @brief Initialize the HLA lookahead time.
+   /*! @brief Setup the basic HLA time management parameters.
     *  @detail This is meant to be called from the input file.  Do not use the
     *  set_lookahead call.
-    *  @param value HLA lookahead time in seconds. */
-   void init_lookahead( double const value )
+    *  @param lookahead   HLA lookahead time in seconds.
+    *  @param constrained Flag to set Federate time constrained state.
+    *  @param regulating  Flag to set Federate time regulating state. */
+   void setup_time_management( double lookahead, bool constrained, bool regulating )
    {
-      time_management_srvc.lookahead_time = value;
+      time_management_srvc.lookahead_time   = lookahead;
+      time_management_srvc.time_constrained = constrained;
+      time_management_srvc.time_regulating  = regulating;
       return;
    }
 

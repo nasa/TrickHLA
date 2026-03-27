@@ -32,17 +32,13 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_3_TRACE
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 # MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
-THLA.federate.init_lookahead( 0.100 )
 
 # Configure the federate.
 THLA.federate.name             = 'Sender'
 THLA.federate.FOM_modules      = 'FOMs/TrickHLA/SimpleSimConfig.xml,FOMs/SpaceFOM/SISO_SpaceFOM_datatypes.xml,FOMs/Encoders_Test_FOM.xml'
 THLA.federate.federation_name  = 'Encoders_Test'
-#THLA.federate.time_regulating  = True
-#THLA.federate.time_constrained = True
-time_management_srvc = THLA.federate.get_time_management_services()
-time_management_srvc.time_constrained = True
-time_management_srvc.time_regulating  = True
+# Set the lookahead value, time constrained, and time regulating states.
+THLA.federate.setup_time_management( 0.100, True, True )
 
 # Configure ExecutionControl.
 # Set the multiphase initialization synchronization points.
