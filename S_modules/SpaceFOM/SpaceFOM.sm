@@ -70,9 +70,7 @@ class SpaceFOMSimObject : public THLABaseSimObject {
       //-----------------------
       //-- DEFAULT DATA JOBS --
       //-----------------------
-      ("default_data") federate.setup( federate_amb,
-                                       manager,
-                                       execution_control,
+      ("default_data") federate.setup( execution_control,
                                        ExCO );
    }
 

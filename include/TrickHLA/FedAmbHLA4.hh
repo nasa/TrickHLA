@@ -83,18 +83,15 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
    friend void init_attrTrickHLA__FedAmb();
 
   public:
-   /*! @brief Default constructor for the TrickHLA FedAmb class. */
-   FedAmb();
+   /*! @brief Default constructor for the TrickHLA FedAmb class.
+    *  @param fed Associated Federate instance. */
+   FedAmb( Federate &fed );
    /*! @brief Destructor for the TrickHLA FedAmb class. */
    virtual ~FedAmb();
 
    /*! @brief Initialize the TrickHLA Federate Ambassador instance for this
     *  Federation Execution. */
    virtual void initialize();
-
-   /*! @brief Setup the required class instance associations.
-    *  @param fed Associated TrickHLA::Federate class instance. */
-   virtual void setup( Federate &fed ) = 0;
 
    // *****************************************************************
    // The following methods fill out the required virtual methods of

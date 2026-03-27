@@ -302,7 +302,6 @@ de_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
    THLA.federate,
-   THLA.manager,
    THLA.execution_control,
    THLA.ExCO,
    federation_name,

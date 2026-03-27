@@ -42,14 +42,7 @@
 
 // TrickHLA include files.
 ##include "TrickHLA/HLAStandardSupport.hh"
-#if defined( IEEE_1516_2025 )
-##include "TrickHLA/FedAmbHLA4.hh"
-#else
-##include "TrickHLA/FedAmbHLA3.hh"
-#endif // IEEE_1516_2025
 ##include "TrickHLA/Federate.hh"
-##include "TrickHLA/Manager.hh"
-##include "TrickHLA/SaveRestoreServices.hh"
 
 // Include these TrickHLA header files here so that Trick can find and process
 // these forward declared classes because they are also not included by any
@@ -75,8 +68,11 @@ class THLABaseSimObject : public Trick::SimObject {
 
    //----- DATA STRUCTURE DECLARATIONS -----
    TrickHLA::Federate federate;
-   TrickHLA::FedAmb   federate_amb;
-   TrickHLA::Manager  manager;
+   
+   // FIXME: This is a kludge to get by with not updating a lot of S_define
+   // level code.  Ultimately, we need to NOT do this and fix the interfaces.
+   // Reference to the manager object in Federate for backward compatibility.
+   TrickHLA::Manager * manager;
 
    double data_cycle_time;
 
@@ -120,6 +116,12 @@ class THLABaseSimObject : public Trick::SimObject {
             exit( -1 );
          }
       }
+      
+      // FIXME: This is a kludge to get by with not updating a lot of S_define
+      // level code.  Ultimately, we need to NOT do this and fix the interfaces.
+      // Get the reference to the Manager instance in the Federate instance.
+      // This is purely to support backward compatibility with old input files.
+      manager = federate.get_manager();
 
       //-----------------------
       //-- DEFAULT DATA JOBS --
@@ -184,15 +186,15 @@ class THLABaseSimObject : public Trick::SimObject {
       P_1ST (data_cycle, "environment") federate.wait_for_time_advance_grant();
 
       // Process all interactions that were received.
-      P_1ST (interaction_cycle, "environment") manager.process_interactions();
+      P_1ST (interaction_cycle, "environment") federate.process_interactions();
 
       // Process any deleted objects.
-      P_1ST (data_cycle, "environment") manager.process_deleted_objects();
+      P_1ST (data_cycle, "environment") federate.process_deleted_objects();
 
       // Grab any new cyclic data from the other Federates that has arrived
       // and update the local state. (This is done down here to make sure we
       // do the copying AFTER the event loop has fired the reflect call-backs.)
-      P_1ST (data_cycle, "environment") manager.receive_cyclic_data();
+      P_1ST (data_cycle, "environment") federate.receive_cyclic_data();
 
       // Annouce to the Trick child threads the data is available.
       P_1ST (data_cycle, "environment") federate.announce_data_available();
@@ -202,10 +204,10 @@ class THLABaseSimObject : public Trick::SimObject {
 
       // Send any new cyclic and requeted data. Requested data would occur as
       // the result of another federate requesting an attribute value update.
-      P_LAST (data_cycle, "logging") manager.send_cyclic_and_requested_data();
+      P_LAST (data_cycle, "logging") federate.send_cyclic_and_requested_data();
 
       // Process the ownership requests.
-      P_LAST (data_cycle, "logging") manager.process_ownership();
+      P_LAST (data_cycle, "logging") federate.process_ownership();
 
       // Announce to the Trick child threads the data was sent.
       P_LAST (data_cycle, "logging") federate.announce_data_sent();

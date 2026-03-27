@@ -52,7 +52,6 @@ class BallFederateConfig( SpaceFOMFederateConfig2 ):
       # Call the base class constructor.
       SpaceFOMFederateConfig2.__init__( self,
                                         thla_federate        = thla.federate,
-                                        thla_manager         = thla.manager,
                                         thla_control         = thla.execution_control,
                                         thla_config          = thla.ExCO,
                                         thla_federation_name = federation_name,

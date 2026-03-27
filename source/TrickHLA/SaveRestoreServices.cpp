@@ -98,11 +98,11 @@ using namespace TrickHLA;
  *
  * @job_class{initialization}
  */
-SaveRestoreServices::SaveRestoreServices()
+SaveRestoreServices::SaveRestoreServices( Federate & fed )
    : restore_federation( false ),
      restore_file_name(),
      initiated_a_federation_save( false ),
-     federate( NULL ),
+     federate( &fed ),
      time_management_srvc( NULL ),
      execution_control( NULL ),
      save_name( L"" ),
@@ -138,6 +138,8 @@ SaveRestoreServices::SaveRestoreServices()
      restart_flag( false ),
      restart_cfg_flag( false )
 {
+   // Register the Time Management Services instance.
+   time_management_srvc = fed.get_time_management_services();
    return;
 }
 
@@ -150,17 +152,6 @@ SaveRestoreServices::~SaveRestoreServices()
 {
    // Free the memory used by the array of running Federates for the Federation.
    clear_running_feds();
-}
-
-/*!
- * @job_class{initialization}
- */
-void SaveRestoreServices::setup( Federate &fed )
-{
-   federate             = &fed;
-   time_management_srvc = fed.get_time_management_services();
-   execution_control    = fed.get_execution_control();
-   return;
 }
 
 /*!

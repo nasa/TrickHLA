@@ -171,38 +171,35 @@ class THLAInitSimObject : public Trick::SimObject {
 
    bool config_with_default_data;
 
-   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed,
+   THLAInitSimObject( TrickHLA::Federate & thla_fed,
                       unsigned int         _MPI_1   = 100,
                       unsigned int         _MPI_END = P_SF_INIT_POST_MPI   )
       : config_with_default_data( false ),
-        thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
-      // P60 THLA.manager->initialize() job.
+      // P60 THLA.federate->initialize() job.
       //--------------------------------------------------------------------
 
       // Alternative method: Send and receive all the initialization data.
 
       // Send all the initialization data.
-      P_MPI_1 ("initialization") thla_manager.send_init_data();
+      P_MPI_1 ("initialization") thla_federate.send_init_data();
 
       // Wait to receive all the initialization data.
-      P_MPI_1 ("initialization") thla_manager.receive_init_data();
+      P_MPI_1 ("initialization") thla_federate.receive_init_data();
 
       // Do some processing here if needed...
 
       // Clear remaining initialization sync-points.
-      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+      P_MPI_END ("initialization") thla_federate.clear_init_sync_points();
    }
 
  private:
    // Private internal references to external object instances.
    // These MUST be assigned in the constructor at instantiation.
-   TrickHLA::Manager  & thla_manager;
    TrickHLA::Federate & thla_federate;
 
    // Do not allow the implicit copy constructor or assignment operator.
@@ -327,7 +324,7 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
                         P_HLA_LATE );
 
 // SimObject used capture simulation specific initialization.
-THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+THLAInitSimObject THLA_INIT( THLA.federate );
 
 
 // FIXME: Need a FrameManager to simplify and coordinate frame propagation.
@@ -385,19 +382,19 @@ void create_connections() {
       // frame tree using default data instead of in the input file.
       //
       // Allocate the HLA objects for the Reference Frame tree.
-      THLA.manager.obj_count = 9;
-      THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
-                                                                       THLA.manager.obj_count );
+      THLA.manager->obj_count = 9;
+      THLA.manager->objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                        THLA.manager->obj_count );
       // Assign the HLA objects to the associated frame.
-      solar_system_barycenter.set_object( &(THLA.manager.objects[0]) );
-      sun_inertial.set_object( &(THLA.manager.objects[1]) );
-      earth_moon_barycenter.set_object( &(THLA.manager.objects[2]) );
-      earth_centered_inertial.set_object( &(THLA.manager.objects[3]) );
-      moon_centered_inertial.set_object( &(THLA.manager.objects[4]) );
-      mars_centered_inertial.set_object( &(THLA.manager.objects[5]) );
-      earth_centered_fixed.set_object( &(THLA.manager.objects[6]) );
-      moon_centered_fixed.set_object( &(THLA.manager.objects[7]) );
-      mars_centered_fixed.set_object( &(THLA.manager.objects[8]) );
+      solar_system_barycenter.set_object( &(THLA.manager->objects[0]) );
+      sun_inertial.set_object( &(THLA.manager->objects[1]) );
+      earth_moon_barycenter.set_object( &(THLA.manager->objects[2]) );
+      earth_centered_inertial.set_object( &(THLA.manager->objects[3]) );
+      moon_centered_inertial.set_object( &(THLA.manager->objects[4]) );
+      mars_centered_inertial.set_object( &(THLA.manager->objects[5]) );
+      earth_centered_fixed.set_object( &(THLA.manager->objects[6]) );
+      moon_centered_fixed.set_object( &(THLA.manager->objects[7]) );
+      mars_centered_fixed.set_object( &(THLA.manager->objects[8]) );
 
    }
 

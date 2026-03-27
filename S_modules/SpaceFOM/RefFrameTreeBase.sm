@@ -46,12 +46,12 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
 
    // SpaceFOM Reference Frame Tree Base constructor.
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
-   SpaceFOMRefFrameTreeBaseSimObject( TrickHLA::Manager          & thla_manager_in,
+   SpaceFOMRefFrameTreeBaseSimObject( TrickHLA::Federate         & thla_fed,
                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
                                       unsigned short               _INIT  = P_HLA_INIT,
                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
       : Trick::SimObject(),
-        thla_manager( thla_manager_in ),
+        thla_federate( thla_fed ),
         exec_cntrl( exec_cntrl_in )
    {
       //
@@ -88,7 +88,7 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
 
   protected:
    // Need for scheduled job persitence.
-   TrickHLA::Manager          & thla_manager;
+   TrickHLA::Federate         & thla_federate;
    SpaceFOM::ExecutionControl & exec_cntrl;
 
   private:

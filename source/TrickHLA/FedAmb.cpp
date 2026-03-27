@@ -114,10 +114,13 @@ using namespace TrickHLA;
  * input stream.
  * @job_class{initialization}
  */
-FedAmb::FedAmb()
+FedAmb::FedAmb( Federate & fed )
    : FederateAmbassador(),
-     FedAmbBase()
+     FedAmbBase( fed )
 {
+   // Set the associated TrickHLA Federate and Manager references.
+   this->manager           = fed.get_manager();
+   this->save_restore_srvc = fed.get_save_restore_service();
    return;
 }
 
@@ -165,16 +168,6 @@ void FedAmb::initialize()
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-}
-
-/*! @brief Setup the required class instance associations.
- *  @param fed Associated TrickHLA::Federate class instance. */
-void FedAmb::setup( Federate &fed )
-{
-   // Set the associated TrickHLA Federate and Manager references.
-   this->federate          = &fed;
-   this->manager           = fed.get_manager();
-   this->save_restore_srvc = fed.get_save_restore_service();
 }
 
 ////////////////////////////////////

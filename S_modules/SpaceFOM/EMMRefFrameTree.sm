@@ -59,11 +59,11 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
 
    // SpaceFOM Reference Frame Tree constructor.
    // _BUILD phase needs to be less than 60, when TrickHLA is initialized.
-   SpaceFOMEMMRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
+   SpaceFOMEMMRefFrameTreeSimObject( TrickHLA::Federate         & thla_fed,
                                      SpaceFOM::ExecutionControl & exec_cntrl_in,
                                      unsigned short               _INIT = P_HLA_INIT,
                                      unsigned short               _BUILD = (P_HLA_INIT+1) )
-      : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _INIT, _BUILD ),
+      : SpaceFOMRefFrameTreeBaseSimObject( thla_fed, exec_cntrl_in, _INIT, _BUILD ),
         ssbary_frame_ptr( NULL ),
         sun_frame_ptr( NULL ),
         embary_frame_ptr( NULL ),
@@ -112,8 +112,11 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
    // called in the SpaceFOMRefFrameTreeBaseSimObject base class.
    void initialize()
    {
+      // Get the object manager reference from the Federate.
+      TrickHLA::Manager * obj_manager = thla_federate.get_manager();
+      
       // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
+      if ( (obj_manager->obj_count == 0) || (obj_manager->objects == NULL) ) {
          std::ostringstream errmsg;
          errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
                 << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
@@ -143,7 +146,7 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
 #include "SpaceFOM/RefFrame.sm"
 
 // SimObject used for root reference frame discovery.
-SpaceFOMEMMRefFrameTreeSimObject ref_frame_tree( THLA.manager,
+SpaceFOMEMMRefFrameTreeSimObject ref_frame_tree( THLA.federate,
                                                  THLA.execution_control );
 
 #endif // SPACEFOM_EMM_REF_FRAME_TREE_SIM_OBJECT

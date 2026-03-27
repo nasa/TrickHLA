@@ -127,14 +127,11 @@ class Manager : public CheckpointConversionBase
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA Manager class. */
-   Manager();
+   /*! @brief Default constructor for the TrickHLA Manager class.
+    *  @param fed Associated Federate instance. */
+   Manager( Federate &fed );
    /*! @brief Destructor for the TrickHLA Manager class. */
    virtual ~Manager();
-
-   /*! @brief Setup the required class instance associations.
-    *  @param fed          Associated TrickHLA::Federate class instance. */
-   void setup( Federate &fed );
 
    /*! @brief Initializes the federate using the a multiphase initialization
     * scheme, which must occur after the Federate and FedAmb have been

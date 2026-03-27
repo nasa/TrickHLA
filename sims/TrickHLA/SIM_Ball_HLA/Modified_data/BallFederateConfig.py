@@ -52,7 +52,6 @@ class BallFederateConfig( TrickHLAFederateConfig ):
       # Call the base class constructor.
       TrickHLAFederateConfig.__init__( self,
                                        thla_federate        = thla.federate,
-                                       thla_manager         = thla.manager,
                                        thla_control         = thla.execution_control,
                                        thla_config          = thla.simple_sim_config,
                                        thla_federation_name = federation_name,

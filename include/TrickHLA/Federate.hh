@@ -62,6 +62,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/Manager.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
@@ -101,7 +102,6 @@ namespace TrickHLA
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
-class Manager;
 class ExecutionControlBase;
 
 class Federate
@@ -119,6 +119,7 @@ class Federate
    // Allow the Federate core classes to have access to protected
    // and private data.
    friend class FedAmb;
+   friend class Manager;
    friend class TimeManagementServices;
    friend class TrickThreadCoordinator;
    friend class SaveRestoreServices;
@@ -193,12 +194,9 @@ class Federate
 
    /*! @brief Setup the required class instance associations.
     *  @param federate_amb               Associated federate ambassador class instance.
-    *  @param federate_manager           Associated federate manager class instance.
     *  @param federate_execution_control Associated federate execution control class instance.
     *  @param federate_execution_config  Associated federate execution configuration class instance. */
-   void setup( FedAmb                     &federate_amb,
-               Manager                    &federate_manager,
-               ExecutionControlBase       &federate_execution_control,
+   void setup( ExecutionControlBase       &federate_execution_control,
                ExecutionConfigurationBase &federate_execution_config );
 
    /*! @brief Initialization the debug settings. */
@@ -273,6 +271,93 @@ class Federate
    RTI1516_NAMESPACE::FederateHandleSet const &get_joined_federate_handles()
    {
       return joined_federate_handles;
+   }
+
+   //
+   // Object Management interfaces.
+   //
+   // Delegate these to the Manager instance.
+   /*! @brief Process the received interactions. */
+   void process_interactions()
+   {
+      manager.process_interactions();
+      return;
+   }
+
+   /*! @brief Scheduled method used as a callback to identify if any objects
+    * were deleted from the RTI. */
+   void process_deleted_objects()
+   {
+      manager.process_deleted_objects();
+      return;
+   }
+
+   /*! @brief Handle the received cyclic data. */
+   void receive_cyclic_data()
+   {
+      manager.receive_cyclic_data();
+      return;
+   }
+
+   /*! @brief Send cyclic an requested atrributes data to the remote federates. */
+   void send_cyclic_and_requested_data()
+   {
+      manager.send_cyclic_and_requested_data();
+      return;
+   }
+
+   /*! @brief Process the ownership requests. */
+   void process_ownership()
+   {
+      manager.process_ownership();
+      return;
+   }
+
+   /*! @brief Sends all the initialization data. */
+   void send_init_data()
+   {
+      manager.send_init_data();
+      return;
+   }
+
+   /*! @brief Sends the initialization data for the specified object instance name.
+    *  @param instance_name Name of object instance name to send data for. */
+   void send_init_data( std::string const &instance_name )
+   {
+      manager.send_init_data( instance_name );
+      return;
+   }
+
+   /*! @brief Wait to receive all the initialization data that is marked as required. */
+   void receive_init_data()
+   {
+      manager.receive_init_data();
+      return;
+   }
+
+   /*! @brief Wait to receive the initialization data for the specified object
+    * instance name.
+    * @param instance_name Name of object instance name to receive data for. */
+   void receive_init_data( std::string const &instance_name )
+   {
+      manager.receive_init_data( instance_name );
+      return;
+   }
+
+   /*! @brief Achieve then wait for the federation to become synchronized for
+    * the specified sync-point label.
+    *  @param sync_point_label Name of the synchronization point label. */
+   void wait_for_init_sync_point( std::string const &sync_point_label )
+   {
+      manager.wait_for_init_sync_point( sync_point_label );
+      return;
+   }
+
+   /*! @brief Clear any remaining initialization sync-points. */
+   void clear_init_sync_points()
+   {
+      manager.clear_init_sync_points();
+      return;
    }
 
    //
@@ -358,6 +443,24 @@ class Federate
       return time_management_srvc.get_lookahead();
    }
 
+   /*! @brief Initialize the HLA lookahead time.
+    *  @detail This is meant to be called from the input file.  Do not use the
+    *  set_lookahead call.
+    *  @param value HLA lookahead time in seconds. */
+   void init_lookahead( double const value )
+   {
+      time_management_srvc.lookahead_time = value;
+      return;
+   }
+
+   /*! @brief Sets the HLA lookahead time.
+    *  @param value HLA lookahead time in seconds. */
+   void set_lookahead( double const value )
+   {
+      time_management_srvc.set_lookahead( value );
+      return;
+   }
+
    /*! @brief Get the current granted HLA federation execution time.
     *  @return Reference to current granted HLA federation execution time. */
    Int64Time const &get_granted_time() const
@@ -370,14 +473,6 @@ class Federate
    Int64Time const &get_requested_time() const
    {
       return time_management_srvc.get_requested_time();
-   }
-
-   /*! @brief Sets the HLA lookahead time.
-    *  @param value HLA lookahead time in seconds. */
-   void set_lookahead( double const value )
-   {
-      time_management_srvc.set_lookahead( value );
-      return;
    }
 
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
@@ -650,7 +745,7 @@ class Federate
     *  @return Pointer to associated TrickHLA::FedAmb. */
    FedAmb *get_fed_ambassador()
    {
-      return this->federate_ambassador;
+      return( &(this->federate_ambassador) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::TimeManagementServices instance.
@@ -664,7 +759,7 @@ class Federate
     *  @return Pointer to associated TrickHLA::Manager. */
    Manager *get_manager()
    {
-      return this->manager;
+      return( &(this->manager) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::SaveRestoreService instance.
@@ -813,14 +908,20 @@ class Federate
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
 
-   // Federation required associations.
    //
-   FedAmb                     *federate_ambassador;  ///< @trick_units{--} Federate ambassador.
-   TimeManagementServices      time_management_srvc; ///< @trick_units{--} Associated TrickHLA Federate Time Management service.
-   Manager                    *manager;              ///< @trick_units{--} Associated TrickHLA Federate Manager.
-   SaveRestoreServices         save_restore_srvc;    ///< @trick_units{--} Associated TrickHLA Federate Save & Restore service.
-   ExecutionControlBase       *execution_control;    ///< @trick_units{--} Associated TrickHLA Federate ExecutionControlBase implementation.
-   ExecutionConfigurationBase *execution_config;     ///< @trick_units{--} Associated TrickHLA Federate ExecutionConfigurationBase implementation.
+   // Federation services required and contained within the Federate class.
+   //
+   FedAmb                 federate_ambassador;  ///< @trick_units{--} Federate ambassador.
+   TimeManagementServices time_management_srvc; ///< @trick_units{--} Time Management services.
+   Manager                manager;              ///< @trick_units{--} Object Management services.
+   SaveRestoreServices    save_restore_srvc;    ///< @trick_units{--} Save & Restore services.
+
+   //
+   // Federation required associations.
+   // This are passed in and set during the 'setup' process.
+   //
+   ExecutionControlBase       *execution_control; ///< @trick_units{--} Associated TrickHLA Federate ExecutionControlBase implementation.
+   ExecutionConfigurationBase *execution_config;  ///< @trick_units{--} Associated TrickHLA Federate ExecutionConfigurationBase implementation.
 
    // Federation required associations.
    //

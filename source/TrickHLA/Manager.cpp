@@ -107,7 +107,7 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-Manager::Manager()
+Manager::Manager( Federate &fed )
    : obj_count( 0 ),
      objects( NULL ),
      inter_count( 0 ),
@@ -120,8 +120,8 @@ Manager::Manager()
      obj_discovery_mutex(),
      object_map(),
      obj_name_index_map(),
-     federate( NULL ),
-     time_management_srvc( NULL ),
+     federate( &fed ),
+     time_management_srvc( &(fed.time_management_srvc) ),
      execution_control( NULL )
 {
    return;
@@ -139,26 +139,6 @@ Manager::~Manager()
 
    // Make sure we destroy the mutex.
    obj_discovery_mutex.destroy();
-}
-
-/*!
- * \par<b>Assumptions and Limitations:</b>
- * - The TrickHLA::ExecutionControlBase class is actually an abstract class.
- * Therefore, the actual object instance being passed in is an instantiable
- * polymorphic child of the TrickHLA::ExecutionControlBase class.
- *
- * @job_class{default_data}
- */
-void Manager::setup( Federate &fed )
-{
-   // Set the TrickHLA::Federate instace reference.
-   this->federate = &fed;
-
-   // Set the TrickHLA::TimeManagementServices instance reference.
-   this->time_management_srvc = fed.get_time_management_services();
-
-   // Set the TrickHLA::ExecutionControlBase instance reference.
-   this->execution_control = fed.get_execution_control();
 }
 
 /*!

@@ -106,8 +106,8 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 TimeManagementServices::TimeManagementServices(
-   Federate *fed )
-   : TrickThreadCoordinator( fed ),
+   Federate &fed )
+   : TrickThreadCoordinator( &fed ),
      lookahead_time( 0.0 ),
      time_regulating( true ),
      time_constrained( true ),
@@ -123,8 +123,7 @@ TimeManagementServices::TimeManagementServices(
      time_regulating_state( false ),
      time_constrained_state( false ),
      tag_wait_sum( 0 ),
-     tag_wait_count( 0 ),
-     federate( fed )
+     tag_wait_count( 0 )
 {
    return;
 }

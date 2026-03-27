@@ -69,9 +69,10 @@ class FedAmbBase
    friend void init_attrTrickHLA__FedAmbBase();
 
   public:
-   /*! @brief Default constructor for the TrickHLA FedAmb class. */
-   FedAmbBase()
-      : federate( NULL ),
+   /*! @brief Default constructor for the TrickHLA FedAmb class.
+    *  @param fed Associated Federate instance. */
+   FedAmbBase( Federate &fed )
+      : federate( &fed ),
         manager( NULL ),
         save_restore_srvc( NULL ),
         federation_restore_status_response_context_switch( false ), // process, not echo.
@@ -89,10 +90,6 @@ class FedAmbBase
    /*! @brief Initialize the TrickHLA Federate Ambassador instance for this
     *  Federation Execution. */
    virtual void initialize() = 0;
-
-   /*! @brief Setup the required class instance associations.
-    *  @param fed Associated TrickHLA::Federate class instance. */
-   virtual void setup( Federate &fed ) = 0;
 
    Manager *get_manager()
    {

@@ -23,7 +23,6 @@ class SpaceFOMFederateConfig2( SpaceFOMFederateConfig ):
 
    def __init__( self,
                  thla_federate,
-                 thla_manager,
                  thla_control,
                  thla_config,
                  thla_federation_name,
@@ -35,7 +34,6 @@ class SpaceFOMFederateConfig2( SpaceFOMFederateConfig ):
       # Call the base class constructor.
       SpaceFOMFederateConfig.__init__( self,
                                        thla_federate,
-                                       thla_manager,
                                        thla_control,
                                        thla_config,
                                        thla_federation_name,

@@ -195,7 +195,6 @@ trick.sim_control_panel_set_enabled( False )
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
    thla_federate        = THLA.federate,
-   thla_manager         = THLA.manager,
    thla_control         = THLA.execution_control,
    thla_config          = THLA.ExCO,
    thla_federation_name = federation_name,

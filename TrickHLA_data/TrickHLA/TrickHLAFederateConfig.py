@@ -61,7 +61,6 @@ class TrickHLAFederateConfig( object ):
 
    def __init__( self,
                  thla_federate,
-                 thla_manager,
                  thla_control,
                  thla_config,
                  thla_federation_name,
@@ -70,10 +69,11 @@ class TrickHLAFederateConfig( object ):
                  thla_enabled = True ):
 
       self.federate = thla_federate
-      self.manager = thla_manager
       self.enabled = thla_enabled
       self.control = thla_control
       self.config = thla_config
+      
+      self.manager = thla_federate.get_manager()
 
       self.set_federation_name( thla_federation_name )
       self.set_federate_name( thla_federate_name )

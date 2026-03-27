@@ -167,9 +167,10 @@ Federate::Federate()
      joined_federate_name_map(),
      joined_federate_handles(),
      joined_federate_names(),
-     federate_ambassador( NULL ),
-     time_management_srvc( this ),
-     manager( NULL ),
+     federate_ambassador( *this ),
+     time_management_srvc( *this ),
+     manager( *this ),
+     save_restore_srvc( *this ),
      execution_control( NULL ),
      execution_config( NULL )
 #if defined( IEEE_1516_2010 )
@@ -208,9 +209,6 @@ Federate::~Federate()
 
    // Clear the list of discovered object federate names.
    MOM_HLAfederate_instance_name_map.clear();
-
-   // Set the references to the ambassadors.
-   federate_ambassador = NULL;
 
    // Make sure we destroy the mutex.
    time_management_srvc.time_adv_state_mutex.destroy();
@@ -275,34 +273,23 @@ void Federate::fix_FPU_control_word()
  * @job_class{default_data}
  */
 void Federate::setup(
-   FedAmb                     &federate_amb,
-   Manager                    &federate_manager,
    ExecutionControlBase       &federate_execution_control,
    ExecutionConfigurationBase &federate_execution_config )
 {
-   // Set the Federate ambassador.
-   this->federate_ambassador = &federate_amb;
-
-   // Set the Federate manager.
-   this->manager = &federate_manager;
-
    // Set the Federate execution control.
    this->execution_control = &federate_execution_control;
 
    // Set the Federate execution configuration.
    this->execution_config = &federate_execution_config;
 
-   // Setup the TrickHLA::FedAmb instance.
-   federate_ambassador->setup( *this );
+   // Register the ExecutionControl instance with the TrickHLA::Manager instance.
+   this->manager.execution_control = &federate_execution_control;
 
-   // Setup the TrickHLA::Manager instance.
-   manager->setup( *this );
+   // Register the ExecutionControl instance with the TrickHLA::SaveRestoreServices instance.
+   this->save_restore_srvc.execution_control = &federate_execution_control;
 
    // Set up the TrickHLA::ExecutionControl instance.
-   execution_control->setup( *this );
-
-   // Setup the TrickHLA::SaveRestoreServices instance.
-   save_restore_srvc.setup( *this );
+   this->execution_control->setup( *this );
 
    return;
 }
@@ -356,24 +343,6 @@ void Federate::initialize()
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   // Check to make sure we have a reference to the TrickHLA::FedAmb.
-   if ( federate_ambassador == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::FedAmb." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
-   // Check to make sure we have a reference to the TrickHLA::Manager.
-   if ( manager == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
    // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
    if ( execution_control == NULL ) {
       ostringstream errmsg;
@@ -402,9 +371,9 @@ void Federate::initialize()
                        __LINE__, name.c_str(), type.c_str() );
    }
 
-   federate_ambassador->initialize();
+   federate_ambassador.initialize();
 
-   manager->verify_object_and_interaction_arrays();
+   manager.verify_object_and_interaction_arrays();
 
    execution_control->initialize();
 
@@ -427,14 +396,6 @@ void Federate::restart_initialization()
    time_management_srvc.restart_initialization();
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   if ( federate_ambassador == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::restart_initialization():" << __LINE__
-             << " ERROR: NULL pointer to FederateAmbassador!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
 
    // Verify the federate name.
    if ( name.empty() ) {
@@ -537,17 +498,8 @@ void Federate::pre_multiphase_initialization()
                        __LINE__ );
    }
 
-   // Check to make sure we have a reference to the TrickHLA::Manager.
-   if ( manager == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
-
    // Initialize the TrickHLA::Manager object instance.
-   manager->initialize();
+   manager.initialize();
 }
 
 /*!
@@ -670,13 +622,13 @@ void Federate::create_RTI_ambassador_and_connect()
 
       if ( local_settings.empty() ) {
          // Use default vendor local settings.
-         RTI_ambassador->connect( *federate_ambassador,
+         RTI_ambassador->connect( federate_ambassador,
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE );
       } else {
          wstring local_settings_ws;
          StringUtilities::to_wstring( local_settings_ws, local_settings );
 
-         RTI_ambassador->connect( *federate_ambassador,
+         RTI_ambassador->connect( federate_ambassador,
                                   RTI1516_NAMESPACE::HLA_IMMEDIATE,
                                   local_settings_ws );
       }
@@ -2766,12 +2718,6 @@ void Federate::join_federation(
              << " ERROR: NULL pointer to RTIambassador!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   if ( federate_ambassador == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::join_federation():" << __LINE__
-             << " ERROR: NULL pointer to FederateAmbassador!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
    if ( this->federation_joined ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
@@ -3147,7 +3093,7 @@ bool Federate::check_for_shutdown_with_termination()
 void Federate::send_zero_lookahead_and_requested_data(
    string const &obj_instance_name )
 {
-   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   TrickHLA::Object *obj = manager.get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::send_zero_lookahead_and_requested_data():" << __LINE__
@@ -3179,7 +3125,7 @@ void Federate::send_zero_lookahead_and_requested_data(
 void Federate::wait_to_receive_zero_lookahead_data(
    string const &obj_instance_name )
 {
-   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   TrickHLA::Object *obj = manager.get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
@@ -3259,7 +3205,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
 void Federate::send_blocking_io_data(
    string const &obj_instance_name )
 {
-   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   TrickHLA::Object *obj = manager.get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::send_blocking_io_data():" << __LINE__
@@ -3291,7 +3237,7 @@ void Federate::send_blocking_io_data(
 void Federate::wait_to_receive_blocking_io_data(
    string const &obj_instance_name )
 {
-   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   TrickHLA::Object *obj = manager.get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_blocking_io_data():" << __LINE__
@@ -3425,22 +3371,22 @@ void Federate::shutdown()
 #endif // TRICKHLA_COLLECT_TAG_STATS
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
-   for ( int i = 0; i < manager->obj_count; ++i ) {
+   for ( int i = 0; i < manager.obj_count; ++i ) {
       ostringstream msg1;
       msg1 << "Federate::shutdown():" << __LINE__
-           << " Object[" << i << "]:'" << manager->objects[i].get_name() << "'"
-           << " send_count:" << manager->objects[i].send_count
-           << " receive_count:" << manager->objects[i].receive_count << endl;
+           << " Object[" << i << "]:'" << manager.objects[i].get_name() << "'"
+           << " send_count:" << manager.objects[i].send_count
+           << " receive_count:" << manager.objects[i].receive_count << endl;
       message_publish( MSG_INFO, msg1.str().c_str() );
    }
 #endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
 #ifdef TRICKHLA_CYCLIC_READ_TIME_STATS
-   for ( int i = 0; i < manager->obj_count; ++i ) {
+   for ( int i = 0; i < manager.obj_count; ++i ) {
       ostringstream msg2;
       msg2 << "Federate::shutdown():" << __LINE__
-           << " Object[" << i << "]:'" << manager->objects[i].get_name() << "' "
-           << manager->objects[i].elapsed_time_stats.to_string() << endl;
+           << " Object[" << i << "]:'" << manager.objects[i].get_name() << "' "
+           << manager.objects[i].elapsed_time_stats.to_string() << endl;
       message_publish( MSG_INFO, msg2.str().c_str() );
    }
 #endif // TRICKHLA_CYCLIC_READ_TIME_STATS
@@ -4422,7 +4368,7 @@ void Federate::restore_federate_handles_from_MOM()
    }
 
    // Make sure that we are in federate handle rebuild mode...
-   federate_ambassador->set_federation_restored_rebuild_federate_handle_set();
+   federate_ambassador.set_federation_restored_rebuild_federate_handle_set();
 
    // Concurrency critical code section because joined-federate state is changed
    // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
@@ -4511,7 +4457,7 @@ void Federate::restore_federate_handles_from_MOM()
    unsubscribe_attributes( MOM_HLAfederate_class_handle, fedMomAttributes );
 
    // Make sure that we are no longer in federate handle rebuild mode...
-   federate_ambassador->reset_federation_restored_rebuild_federate_handle_set();
+   federate_ambassador.reset_federation_restored_rebuild_federate_handle_set();
 
    fedMomAttributes.clear();
    requestedAttributes.clear();

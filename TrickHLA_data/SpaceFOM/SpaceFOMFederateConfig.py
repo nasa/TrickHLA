@@ -44,7 +44,6 @@ class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
 
    def __init__( self,
                  thla_federate,
-                 thla_manager,
                  thla_control,
                  thla_config,
                  thla_federation_name,
@@ -60,7 +59,6 @@ class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
       # Call the base class constructor.
       TrickHLAFederateConfig.__init__( self,
                                        thla_federate,
-                                       thla_manager,
                                        thla_control,
                                        thla_config,
                                        thla_federation_name,

@@ -122,8 +122,9 @@ class TimeManagementServices : public TrickThreadCoordinator
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA TimeManagementServices class. */
-   explicit TimeManagementServices( Federate *fed );
+   /*! @brief Default constructor for the TrickHLA TimeManagementServices class.
+    *  @param fed Associated Federate instance. */
+   explicit TimeManagementServices( Federate &fed );
    /*! @brief Destructor for the TrickHLA TimeManagementServices class. */
    virtual ~TimeManagementServices();
 
@@ -351,8 +352,6 @@ class TimeManagementServices : public TrickThreadCoordinator
 
    uint64_t tag_wait_sum;   ///< @trick_units{--} Sum of all the TAG wait wallclock times.
    uint64_t tag_wait_count; ///< @trick_units{--} Number of times we waited for TAG.
-
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
   private:
    // Do not allow the copy constructor or assignment operator.
