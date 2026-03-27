@@ -152,7 +152,7 @@ void Manager::setup(
    Federate             &fed,
    ExecutionControlBase &exec_control )
 {
-   // Set the TrickHLA::Federate instace reference.
+   // Set the TrickHLA::Federate instance reference.
    this->federate = &fed;
 
    // Set the TrickHLA::ExecutionControlBase instance reference.

@@ -134,10 +134,9 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
       MAK RTI: "(setqb RTI_tcpForwarderAddr \"192.168.1.1\") (setqb RTI_distributedForwarderPort 5000)" */
 
    std::string FOM_modules; /**< @trick_units{--}
-      FOM filename for the IEEE 1516-2000 and SISO-STD-004.1-2004 standards,
-      or a comma separated list of FOM-module filenames for IEEE 1516-2010. */
+      A comma separated list of FOM-module filenames for IEEE 1516. */
    std::string MIM_module;  /**< @trick_units{--}
-      Filename for the MOM and Initialization Module (MIM) for HLA IEEE 1516-2010. */
+      Filename for the MOM and Initialization Module (MIM) for HLA IEEE 1516. */
 
    FederateJoinConstraintsEnum join_constraint; ///< @trick_units{--} The Join constraints for this federate.
 
