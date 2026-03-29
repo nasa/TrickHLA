@@ -61,12 +61,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/SaveRestoreServices.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
-#include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
@@ -198,7 +198,7 @@ class Federate
    void setup( ExecutionControlBase       &federate_execution_control,
                ExecutionConfigurationBase &federate_execution_config );
 
-   /*! @brief Initialization the debug settings. */
+   /*! @brief Initialize the debug settings. */
    void initialize_debug();
 
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
@@ -366,14 +366,16 @@ class Federate
 
    /*! @brief Sets the HLA base time unit.
     *  @param base_time_unit HLA base time unit. */
-   void set_HLA_base_time_unit( HLABaseTimeEnum const base_time_unit ){
+   void set_HLA_base_time_unit( HLABaseTimeEnum const base_time_unit )
+   {
       time_management_srvc.set_HLA_base_time_unit( base_time_unit );
       return;
    }
 
    /*! @brief Sets the HLA base time unit and scale Trick tics multiplier.
     *  @param base_time_unit HLA base time unit. */
-   void set_HLA_base_time_unit_and_scale_trick_tics( HLABaseTimeEnum const base_time_unit ){
+   void set_HLA_base_time_unit_and_scale_trick_tics( HLABaseTimeEnum const base_time_unit )
+   {
       time_management_srvc.set_HLA_base_time_unit_and_scale_trick_tics( base_time_unit );
       return;
    }
@@ -500,7 +502,6 @@ class Federate
       return;
    }
 
-
    //
    // Management Object Model (MOM) interfaces.
    //
@@ -589,21 +590,6 @@ class Federate
     *  @return True if federate is running; False otherwise. */
    bool is_federate_executing() const;
 
-   /*! @brief Checks to see if shutdown has been commanded.
-    *  @return True if shutdown has been announced, else False. */
-   bool check_for_shutdown();
-
-   /*! @brief Checks to see if shutdown has been commanded and, if so, terminates the simulation.
-    *  @return False if shutdown has NOT been announced. */
-   bool check_for_shutdown_with_termination();
-
-   /*! @brief Check if federate is shutdown function was called.
-    *  @return True if the federate is shutting down the federate. */
-   bool is_shutdown_called() const
-   {
-      return this->shutdown_called;
-   }
-
    /*! @brief Ask for all federate handles from MOM after a checkpoint reload. */
    void restore_federate_handles_from_MOM();
 
@@ -643,6 +629,21 @@ class Federate
    //
    // Clean up / shutdown functions.
    //
+   /*! @brief Checks to see if shutdown has been commanded.
+    *  @return True if shutdown has been announced, else False. */
+   bool check_for_shutdown();
+
+   /*! @brief Checks to see if shutdown has been commanded and, if so, terminates the simulation.
+    *  @return False if shutdown has NOT been announced. */
+   bool check_for_shutdown_with_termination();
+
+   /*! @brief Check if federate is shutdown function was called.
+    *  @return True if the federate is shutting down the federate. */
+   bool is_shutdown_called() const
+   {
+      return this->shutdown_called;
+   }
+
    /*! @brief Shutdown the federate. */
    void shutdown();
 
@@ -735,7 +736,7 @@ class Federate
                                                    RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
 
    //
-   // Routines to return federation state values.
+   // Routines to return Federate state values.
    //
    /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
     *  @return Pointer to associated RTI Ambassador. */
@@ -748,28 +749,28 @@ class Federate
     *  @return Pointer to associated TrickHLA::FedAmb. */
    FedAmb *get_fed_ambassador()
    {
-      return( &(this->federate_ambassador) );
+      return ( &( this->federate_ambassador ) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::TimeManagementServices instance.
     *  @return Pointer to associated TrickHLA::TimeManagementServices. */
    TimeManagementServices *get_time_management_services()
    {
-      return( &(this->time_management_srvc) );
+      return ( &( this->time_management_srvc ) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::Manager instance.
     *  @return Pointer to associated TrickHLA::Manager. */
    Manager *get_manager()
    {
-      return( &(this->manager) );
+      return ( &( this->manager ) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::SaveRestoreService instance.
     *  @return Pointer to the associated TrickHLA::SaveRestoreService instance. */
    SaveRestoreServices *get_save_restore_service()
    {
-      return( &(this->save_restore_srvc) );
+      return ( &( this->save_restore_srvc ) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::ExecutionControlBase instance.

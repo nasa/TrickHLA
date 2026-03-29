@@ -121,7 +121,7 @@ Manager::Manager( Federate &fed )
      object_map(),
      obj_name_index_map(),
      federate( &fed ),
-     time_management_srvc( &(fed.time_management_srvc) ),
+     time_management_srvc( &( fed.time_management_srvc ) ),
      execution_control( NULL )
 {
    return;

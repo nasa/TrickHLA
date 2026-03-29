@@ -114,7 +114,7 @@ using namespace TrickHLA;
  * input stream.
  * @job_class{initialization}
  */
-FedAmb::FedAmb( Federate & fed )
+FedAmb::FedAmb( Federate &fed )
    : FederateAmbassador(),
      FedAmbBase( fed )
 {

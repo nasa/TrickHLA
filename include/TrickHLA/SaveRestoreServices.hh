@@ -124,7 +124,7 @@ class SaveRestoreServices
    //
    /*! @brief Default constructor for the TrickHLA Manager class.
     *  @param fed Associated Federate instance. */
-   SaveRestoreServices( Federate &fed );
+   explicit SaveRestoreServices( Federate &fed );
    /*! @brief Destructor for the TrickHLA SaveRestoreServices class. */
    virtual ~SaveRestoreServices();
 

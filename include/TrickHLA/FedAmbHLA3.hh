@@ -93,7 +93,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
   public:
    /*! @brief Default constructor for the TrickHLA FedAmb class.
     *  @param fed Associated Federate instance. */
-   FedAmb( Federate &fed );
+   explicit FedAmb( Federate &fed );
    /*! @brief Destructor for the TrickHLA FedAmb class. */
    virtual ~FedAmb();
 

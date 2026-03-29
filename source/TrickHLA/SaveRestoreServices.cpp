@@ -98,7 +98,7 @@ using namespace TrickHLA;
  *
  * @job_class{initialization}
  */
-SaveRestoreServices::SaveRestoreServices( Federate & fed )
+SaveRestoreServices::SaveRestoreServices( Federate &fed )
    : restore_federation( false ),
      restore_file_name(),
      initiated_a_federation_save( false ),

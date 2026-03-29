@@ -242,8 +242,8 @@ void Object::initialize(
              << " ERROR: Unexpected NULL TrickHLA-Manager!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   this->manager = trickhla_mgr;
-   this->federate = manager->get_federate();
+   this->manager              = trickhla_mgr;
+   this->federate             = manager->get_federate();
    this->time_management_srvc = federate->get_time_management_services();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {

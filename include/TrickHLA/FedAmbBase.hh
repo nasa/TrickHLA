@@ -71,7 +71,7 @@ class FedAmbBase
   public:
    /*! @brief Default constructor for the TrickHLA FedAmb class.
     *  @param fed Associated Federate instance. */
-   FedAmbBase( Federate &fed )
+   explicit FedAmbBase( Federate &fed )
       : federate( &fed ),
         manager( NULL ),
         save_restore_srvc( NULL ),

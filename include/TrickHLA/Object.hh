@@ -772,7 +772,6 @@ class Object : public CheckpointConversionBase
    RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
    RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
 
-
    //
    // References to the Federate and associated services.
    //

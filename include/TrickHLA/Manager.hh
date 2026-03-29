@@ -129,7 +129,7 @@ class Manager : public CheckpointConversionBase
    //
    /*! @brief Default constructor for the TrickHLA Manager class.
     *  @param fed Associated Federate instance. */
-   Manager( Federate &fed );
+   explicit Manager( Federate &fed );
    /*! @brief Destructor for the TrickHLA Manager class. */
    virtual ~Manager();
 

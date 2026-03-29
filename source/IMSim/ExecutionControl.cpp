@@ -227,9 +227,9 @@ void ExecutionControl::initialize()
    // Management and be both Time Regulating and Time Constrained.
    if ( is_master() ) {
       TimeManagementServices *time_management_srvc = federate->get_time_management_services();
-      time_management_srvc->time_management  = true;
-      time_management_srvc->time_regulating  = true;
-      time_management_srvc->time_constrained = true;
+      time_management_srvc->time_management        = true;
+      time_management_srvc->time_regulating        = true;
+      time_management_srvc->time_constrained       = true;
 
       // The software frame is set from the Least Common Time Step.
       // For the Master federate the Trick simulation software frame must
