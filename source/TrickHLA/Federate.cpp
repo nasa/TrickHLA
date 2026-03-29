@@ -605,7 +605,7 @@ void Federate::create_RTI_ambassador_and_connect()
       this->RTI_ambassador = rti_amb_factory->createRTIambassador();
 
       ConfigurationResult config_result;
-      config_result   = RTI_ambassador->connect( *federate_ambassador,
+      config_result   = RTI_ambassador->connect( federate_ambassador,
                                                  RTI1516_NAMESPACE::HLA_IMMEDIATE,
                                                  rti_config );
       this->connected = true;
