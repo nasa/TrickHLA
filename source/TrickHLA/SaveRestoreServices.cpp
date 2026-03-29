@@ -195,7 +195,7 @@ void SaveRestoreServices::start_federation_save_at_scenario_time(
 
 void SaveRestoreServices::load_and_print_running_federate_names()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d started.\n",
                        __LINE__ );
    }
@@ -255,7 +255,7 @@ void SaveRestoreServices::load_and_print_running_federate_names()
    // Only unsubscribe from the attributes we subscribed to in this function.
    federate->unsubscribe_attributes( federate->MOM_HLAfederation_class_handle, fedMomAttributes );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d \
 MOM just informed us that there are %d federates currently running in the federation.\n",
                        __LINE__, running_feds_count );
@@ -360,7 +360,7 @@ MOM just informed us that there are %d federates currently running in the federa
    update_running_feds();
 
    // Print out a list of the Running Federates.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       // Build the federate summary as an output string stream.
       ostringstream summary;
       unsigned int  cnt = 0;
@@ -393,7 +393,7 @@ MOM just informed us that there are %d federates currently running in the federa
    // Do not un-subscribe to this MOM data; we DO want updates as federates
    // join / resign the federation!
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d Done.\n",
                        __LINE__ );
    }
@@ -515,7 +515,7 @@ void SaveRestoreServices::add_a_single_entry_into_running_feds()
    }
 
 #if 0 // TODO: Update for IMSim.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::add_a_single_entry_into_running_feds():%d Exiting routine, here is what running_feds contains:\n",
                __LINE__, '\n');
       for ( int t = 0; t < running_feds_count; t++) {
@@ -574,7 +574,7 @@ void SaveRestoreServices::request_federation_save()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    try {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          string name_str;
          StringUtilities::to_string( name_str, this->save_name );
          message_publish( MSG_NORMAL, "SaveRestoreServices::request_federation_save():%d save_name:%s\n",
@@ -660,7 +660,7 @@ void SaveRestoreServices::inform_RTI_of_restore_completion()
 
    if ( this->prev_restore_process == RESTORE_COMPLETE ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::inform_RTI_of_restore_completion():%d Restore Complete.\n",
                           __LINE__ );
       }
@@ -690,7 +690,7 @@ void SaveRestoreServices::inform_RTI_of_restore_completion()
 
    } else if ( this->prev_restore_process == RESTORE_FAILED ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::inform_RTI_of_restore_completion():%d Restore Failed!\n",
                           __LINE__ );
       }
@@ -813,7 +813,7 @@ void SaveRestoreServices::copy_running_feds_into_known_feds()
  */
 void SaveRestoreServices::restart_checkpoint()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restart_checkpoint():%d\n",
                        __LINE__ );
    }
@@ -860,7 +860,7 @@ void SaveRestoreServices::restart_checkpoint()
  */
 void SaveRestoreServices::federation_saved()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::federation_saved():%d\n", __LINE__ );
    }
    this->announce_save         = false;
@@ -884,7 +884,7 @@ void SaveRestoreServices::federation_saved()
  */
 void SaveRestoreServices::federation_restored()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::federation_restored():%d\n",
                        __LINE__ );
    }
@@ -900,7 +900,7 @@ void SaveRestoreServices::federation_restored()
 
 void SaveRestoreServices::wait_for_federation_restore_begun()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_federation_restore_begun():%d Waiting...\n",
                        __LINE__ );
    }
@@ -941,7 +941,7 @@ void SaveRestoreServices::wait_for_federation_restore_begun()
          }
       }
    }
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_federation_restore_begun():%d Done.\n",
                        __LINE__ );
    }
@@ -949,7 +949,7 @@ void SaveRestoreServices::wait_for_federation_restore_begun()
 
 void SaveRestoreServices::wait_until_federation_is_ready_to_restore()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_until_federation_is_ready_to_restore():%d Waiting...\n",
                        __LINE__ );
    }
@@ -990,7 +990,7 @@ void SaveRestoreServices::wait_until_federation_is_ready_to_restore()
          }
       }
    }
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_until_federation_is_ready_to_restore():%d Done.\n",
                        __LINE__ );
    }
@@ -1000,7 +1000,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
 {
    string return_string;
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_federation_restore_to_complete():%d Waiting...\n",
                        __LINE__ );
    }
@@ -1087,7 +1087,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
       return return_string;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_federation_restore_to_complete():%d Done.\n",
                        __LINE__ );
    }
@@ -1096,7 +1096,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
 
 void SaveRestoreServices::wait_for_restore_request_callback()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_restore_request_callback():%d Waiting...\n",
                        __LINE__ );
    }
@@ -1137,7 +1137,7 @@ void SaveRestoreServices::wait_for_restore_request_callback()
          }
       }
    }
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_restore_request_callback():%d Done.\n",
                        __LINE__ );
    }
@@ -1145,7 +1145,7 @@ void SaveRestoreServices::wait_for_restore_request_callback()
 
 void SaveRestoreServices::wait_for_restore_status_to_complete()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_restore_status_to_complete():%d Waiting...\n",
                        __LINE__ );
    }
@@ -1186,7 +1186,7 @@ void SaveRestoreServices::wait_for_restore_status_to_complete()
          }
       }
    }
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_restore_status_to_complete():%d Done.\n",
                        __LINE__ );
    }
@@ -1194,7 +1194,7 @@ void SaveRestoreServices::wait_for_restore_status_to_complete()
 
 void SaveRestoreServices::wait_for_save_status_to_complete()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_save_status_to_complete():%d Waiting...\n",
                        __LINE__ );
    }
@@ -1235,7 +1235,7 @@ void SaveRestoreServices::wait_for_save_status_to_complete()
          }
       }
    }
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_save_status_to_complete():%d Done.\n",
                        __LINE__ );
    }
@@ -1243,7 +1243,7 @@ void SaveRestoreServices::wait_for_save_status_to_complete()
 
 void SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complete()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complete():%d Waiting...\n",
                        __LINE__ );
    }
@@ -1259,7 +1259,7 @@ void SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complet
       // if the federate has already been restored, do not wait for a signal
       // from the RTI that the federation restore failed, you'll never get it!
       if ( this->restore_completed ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
             message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complete():%d Restore Complete, Done.\n",
                              __LINE__ );
          }
@@ -1293,7 +1293,7 @@ void SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complet
          }
       }
    }
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complete():%d Done.\n",
                        __LINE__ );
    }
@@ -1301,7 +1301,7 @@ void SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complet
 
 void SaveRestoreServices::request_federation_save_status() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::request_federation_save_status():%d\n",
                        __LINE__ );
    }
@@ -1336,7 +1336,7 @@ void SaveRestoreServices::request_federation_save_status() // cppcheck-suppress 
 
 void SaveRestoreServices::request_federation_restore_status() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::request_federation_restore_status():%d\n",
                        __LINE__ );
    }
@@ -1379,7 +1379,7 @@ void SaveRestoreServices::requested_federation_restore_status(
    bool status )
 {
    if ( !status ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::requested_federation_restore_status():%d\n",
                           __LINE__ );
       }
@@ -1625,14 +1625,14 @@ void SaveRestoreServices::initiate_save_announce()
    }
 
    if ( this->save_label_generated ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::initiate_save_announce():%d save_label already generated for federate '%s'\n",
                           __LINE__, federate->get_federate_name().c_str() );
       }
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::initiate_save_announce():%d Checkpoint filename:'%s'\n",
                        __LINE__, checkpoint_file_name.c_str() );
    }
@@ -1669,7 +1669,7 @@ void SaveRestoreServices::initiate_restore_announce(
    wait_for_restore_status_to_complete();
 
    if ( this->restore_process == INITIATE_RESTORE ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          string name_str;
          StringUtilities::to_string( name_str, ws_restore_label );
          message_publish( MSG_NORMAL, "SaveRestoreServices::initiate_restore_announce():%d \
@@ -1708,7 +1708,7 @@ restore with label '%s'.\n",
          this->restore_process = NO_RESTORE;
       }
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::initiate_restore_announce():%d \
 After communicating with RTI, restore_process != INITIATE_RESTORE, \
 Something went WRONG!\n",
@@ -1723,13 +1723,13 @@ Something went WRONG!\n",
 
 void SaveRestoreServices::complete_restore()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::complete_restore():%d\n",
                        __LINE__ );
    }
 
    if ( this->restore_process != RESTORE_IN_PROGRESS ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::complete_restore():%d Restore Process != RESTORE_IN_PROGRESS.\n",
                           __LINE__ );
       }
@@ -1737,7 +1737,7 @@ void SaveRestoreServices::complete_restore()
    }
 
    if ( !this->start_to_restore ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::complete_restore():%d Start to restore flag is false so set restore_completed = true.\n",
                           __LINE__ );
       }
