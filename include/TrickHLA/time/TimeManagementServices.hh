@@ -99,7 +99,6 @@ class TimeManagementServices : public TrickThreadCoordinator
    // Allow the Federate core classes to have access to protected
    // and private data.
    friend class Federate;
-   friend class TimeManagementServices;
 
    //----------------------------- USER VARIABLES -----------------------------
    // The variables below are configured by the user in the input files.
