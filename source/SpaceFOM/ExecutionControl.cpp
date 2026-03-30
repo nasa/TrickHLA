@@ -1536,7 +1536,11 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time();      // Immediate
          ExCO->set_next_mode_scenario_time( get_scenario_time() ); // Immediate
-         ExCO->set_next_mode_cte_time( get_cte_time() );           // Immediate
+         if ( does_cte_timeline_exist() ) {
+            ExCO->set_next_mode_cte_time( get_cte_time() ); // Immediate
+         } else {
+            ExCO->set_next_mode_cte_time( std::numeric_limits< double >::lowest() );
+         }
          break;
       }
 
@@ -1550,7 +1554,11 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_scenario_time_epoch( get_scenario_time() );     // Now.
          this->next_mode_scenario_time = get_scenario_time();      // Immediate
          ExCO->set_next_mode_scenario_time( get_scenario_time() ); // Immediate
-         ExCO->set_next_mode_cte_time( get_cte_time() );           // Immediate
+         if ( does_cte_timeline_exist() ) {
+            ExCO->set_next_mode_cte_time( get_cte_time() ); // Immediate
+         } else {
+            ExCO->set_next_mode_cte_time( std::numeric_limits< double >::lowest() );
+         }
          break;
       }
 
@@ -1563,9 +1571,13 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time();                // Immediate
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // immediate
-         ExCO->set_next_mode_cte_time( get_cte_time() );
-         if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
+         if ( does_cte_timeline_exist() ) {
+            ExCO->set_next_mode_cte_time( get_cte_time() );
+            if ( ExCO->get_next_mode_cte_time() > std::numeric_limits< double >::lowest() ) {
+               ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
+            }
+         } else {
+            ExCO->set_next_mode_cte_time( std::numeric_limits< double >::lowest() );
          }
          break;
       }
@@ -1593,12 +1605,16 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next mode times.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
-         ExCO->set_next_mode_cte_time( get_cte_time() );
-         if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            // Use the same delta time used for the next mode scenario time
-            // that is an integer multiple of the LCTS.
-            double const delta_time = this->next_mode_scenario_time - get_scenario_time();
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + delta_time );
+         if ( does_cte_timeline_exist() ) {
+            ExCO->set_next_mode_cte_time( get_cte_time() );
+            if ( ExCO->get_next_mode_cte_time() > std::numeric_limits< double >::lowest() ) {
+               // Use the same delta time used for the next mode scenario time
+               // that is an integer multiple of the LCTS.
+               double const delta_time = this->next_mode_scenario_time - get_scenario_time();
+               ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + delta_time );
+            }
+         } else {
+            ExCO->set_next_mode_cte_time( std::numeric_limits< double >::lowest() );
          }
 
          // Set the ExecutionControl freeze times.
@@ -1639,7 +1655,11 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time();                // Immediate.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // Immediate.
-         ExCO->set_next_mode_cte_time( get_cte_time() );                     // Immediate
+         if ( does_cte_timeline_exist() ) {
+            ExCO->set_next_mode_cte_time( get_cte_time() ); // Immediate
+         } else {
+            ExCO->set_next_mode_cte_time( std::numeric_limits< double >::lowest() );
+         }
          break;
       }
 
@@ -1923,7 +1943,11 @@ bool ExecutionControl::process_execution_control_updates()
    }
 
    // Enforce CTE mode time update.
-   this->next_mode_cte_time = ExCO->next_mode_cte_time;
+   if ( does_cte_timeline_exist() ) {
+      this->next_mode_cte_time = ExCO->next_mode_cte_time;
+   } else {
+      this->next_mode_cte_time = std::numeric_limits< double >::lowest();
+   }
 
    // Check for mode changes.
    if ( !mode_change ) {

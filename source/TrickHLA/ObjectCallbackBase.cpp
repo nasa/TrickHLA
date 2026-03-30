@@ -196,7 +196,7 @@ Int64Time const &ObjectCallbackBase::get_granted_time() const
 double ObjectCallbackBase::get_scenario_time() const
 {
    return ( exec_control != NULL ) ? exec_control->get_scenario_time()
-                                   : -std::numeric_limits< double >::max();
+                                   : std::numeric_limits< double >::lowest();
 }
 
 /*!
@@ -206,7 +206,7 @@ double ObjectCallbackBase::get_scenario_time() const
 double ObjectCallbackBase::get_cte_time() const
 {
    return ( exec_control != NULL ) ? exec_control->get_cte_time()
-                                   : -std::numeric_limits< double >::max();
+                                   : std::numeric_limits< double >::lowest();
 }
 
 /*!

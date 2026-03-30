@@ -130,8 +130,8 @@ ExecutionControlBase::ExecutionControlBase()
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
      current_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
-     next_mode_scenario_time( -std::numeric_limits< double >::max() ),
-     next_mode_cte_time( -std::numeric_limits< double >::max() ),
+     next_mode_scenario_time( std::numeric_limits< double >::lowest() ),
+     next_mode_cte_time( std::numeric_limits< double >::lowest() ),
      simulation_freeze_time( 0.0 ),
      scenario_freeze_time( 0.0 ),
      announce_freeze( false ),
@@ -166,8 +166,8 @@ ExecutionControlBase::ExecutionControlBase(
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
      current_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
-     next_mode_scenario_time( -std::numeric_limits< double >::max() ),
-     next_mode_cte_time( -std::numeric_limits< double >::max() ),
+     next_mode_scenario_time( std::numeric_limits< double >::lowest() ),
+     next_mode_cte_time( std::numeric_limits< double >::lowest() ),
      simulation_freeze_time( 0.0 ),
      scenario_freeze_time( 0.0 ),
      announce_freeze( false ),
@@ -889,7 +889,7 @@ double ExecutionControlBase::get_scenario_time() const
 double ExecutionControlBase::get_cte_time() const
 {
    return does_cte_timeline_exist() ? cte_timeline->get_time()
-                                    : -std::numeric_limits< double >::max();
+                                    : std::numeric_limits< double >::lowest();
 }
 
 void ExecutionControlBase::clear_mode_values()

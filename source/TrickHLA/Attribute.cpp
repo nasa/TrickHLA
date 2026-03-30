@@ -92,7 +92,7 @@ Attribute::Attribute()
      publish( false ),
      subscribe( false ),
      locally_owned( false ),
-     cycle_time( -std::numeric_limits< double >::max() ),
+     cycle_time( std::numeric_limits< double >::lowest() ),
      value_changed( false ),
      update_requested( false ),
      cycle_ratio( 1 ),
@@ -216,7 +216,7 @@ void Attribute::initialize(
 
    // Do a bounds check on the 'cycle_time' value. Once we have a valid
    // job-cycle-time we will do another bounds check against that value.
-   if ( ( this->cycle_time <= 0.0 ) && ( this->cycle_time > -std::numeric_limits< double >::max() ) ) {
+   if ( ( this->cycle_time <= 0.0 ) && ( this->cycle_time > std::numeric_limits< double >::lowest() ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
@@ -318,7 +318,7 @@ bool Attribute::decode(
 void Attribute::determine_cycle_ratio(
    double const core_job_cycle_time )
 {
-   if ( this->cycle_time <= -std::numeric_limits< double >::max() ) {
+   if ( this->cycle_time <= std::numeric_limits< double >::lowest() ) {
       // User has not specified cycle-time for this attribute so assume the
       // cycle time for this attribute matches the core job cycle time.
       this->cycle_ratio = 1;

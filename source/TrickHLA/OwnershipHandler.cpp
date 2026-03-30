@@ -342,7 +342,7 @@ bool OwnershipHandler::is_subscribed(
 
 void OwnershipHandler::pull_ownership()
 {
-   pull_ownership( -std::numeric_limits< double >::max() );
+   pull_ownership( std::numeric_limits< double >::lowest() );
 }
 
 void OwnershipHandler::pull_ownership(
@@ -395,7 +395,7 @@ void OwnershipHandler::pull_ownership(
 void OwnershipHandler::pull_ownership( // RETURN: -- None.
    string const &attribute_FOM_name )  // IN: -- Attribute FOM name.
 {
-   pull_ownership( attribute_FOM_name, -std::numeric_limits< double >::max() );
+   pull_ownership( attribute_FOM_name, std::numeric_limits< double >::lowest() );
 }
 
 void OwnershipHandler::pull_ownership(
@@ -445,7 +445,7 @@ void OwnershipHandler::pull_ownership(
 
 void OwnershipHandler::push_ownership()
 {
-   push_ownership( -std::numeric_limits< double >::max() );
+   push_ownership( std::numeric_limits< double >::lowest() );
 }
 
 void OwnershipHandler::push_ownership(
@@ -498,7 +498,7 @@ void OwnershipHandler::push_ownership(
 void OwnershipHandler::push_ownership(
    string const &attribute_FOM_name )
 {
-   push_ownership( attribute_FOM_name, -std::numeric_limits< double >::max() );
+   push_ownership( attribute_FOM_name, std::numeric_limits< double >::lowest() );
 }
 
 void OwnershipHandler::push_ownership(
@@ -567,7 +567,7 @@ double OwnershipHandler::get_scenario_time() const
          }
       }
    }
-   return -std::numeric_limits< double >::max();
+   return std::numeric_limits< double >::lowest();
 }
 
 double OwnershipHandler::get_cte_time() const
@@ -581,5 +581,5 @@ double OwnershipHandler::get_cte_time() const
          }
       }
    }
-   return -std::numeric_limits< double >::max();
+   return std::numeric_limits< double >::lowest();
 }

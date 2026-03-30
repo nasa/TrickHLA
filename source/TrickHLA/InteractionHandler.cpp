@@ -173,7 +173,7 @@ double InteractionHandler::get_sim_time() const
          }
       }
    }
-   return -std::numeric_limits< double >::max();
+   return std::numeric_limits< double >::lowest();
 }
 
 double InteractionHandler::get_scenario_time() const
@@ -187,7 +187,7 @@ double InteractionHandler::get_scenario_time() const
          }
       }
    }
-   return -std::numeric_limits< double >::max();
+   return std::numeric_limits< double >::lowest();
 }
 
 double InteractionHandler::get_cte_time() const
@@ -201,7 +201,7 @@ double InteractionHandler::get_cte_time() const
          }
       }
    }
-   return -std::numeric_limits< double >::max();
+   return std::numeric_limits< double >::lowest();
 }
 
 /*!
