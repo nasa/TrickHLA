@@ -329,6 +329,17 @@ void ExecutionConfiguration::unpack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+   if ( execution_control->does_cte_timeline_exist() &&
+         ( next_mode_cte_time <= std::numeric_limits< double >::lowest() ) ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+             << " ERROR: Execution Configuration has an invalid next mode"
+             << " CTE time of " << next_mode_cte_time << "! Please make sure"
+             << " all your Central Timing Equipment is using the same"
+             << " synchronized time." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // Mark that we have an ExCO update with pending changes.
    this->pending_update = true;
 }
