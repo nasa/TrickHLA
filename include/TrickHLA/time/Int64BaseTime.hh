@@ -150,6 +150,9 @@ class Int64BaseTime
    static std::string     base_unit_string;     ///< @trick_units{--} Base time unit as a string.
    static int64_t         base_time_multiplier; ///< @trick_units{--} Multiplier for the base unit.
 
+   static int64_t time_min; ///< @trick_units{--} Minimum time in whole seconds supported by the base time.
+   static int64_t time_max; ///< @trick_units{--} Maximum time in whole seconds supported by the base time.
+
   private:
    /*! @brief Converts the given integer time to an integer time representing whole seconds.
     *  @return Time value in whole seconds.

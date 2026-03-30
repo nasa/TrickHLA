@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Improved performance by updating the functions that get the granted and lookahead times to return a const reference instead of a copy.
+- Improved bounds checking for time conversions.
 - Updated the auto-provide switch setting encoder to use the HLA encoder helpers.
 - Updated auto-provide switch setting status string and value checks.
 - Reduced the scope of local variables.

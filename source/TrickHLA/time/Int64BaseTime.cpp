@@ -47,6 +47,8 @@ using namespace TrickHLA;
 HLABaseTimeEnum Int64BaseTime::base_unit            = HLA_BASE_TIME_MICROSECONDS;
 std::string     Int64BaseTime::base_unit_string     = "microseconds";
 int64_t         Int64BaseTime::base_time_multiplier = 1000000LL;
+int64_t         Int64BaseTime::time_min             = std::numeric_limits< long long >::min() / base_time_multiplier;
+int64_t         Int64BaseTime::time_max             = std::numeric_limits< long long >::max() / base_time_multiplier;
 
 /*!
  * @brief Default constructor with microsecond base base_unit_string.
@@ -98,6 +100,9 @@ void Int64BaseTime::set(
    }
 
    base_time_multiplier = multiplier;
+
+   time_min = std::numeric_limits< long long >::min() / base_time_multiplier;
+   time_max = std::numeric_limits< long long >::max() / base_time_multiplier;
 
    update_unit_for_multiplier();
 }
@@ -219,6 +224,8 @@ void Int64BaseTime::set(
          break;
       }
    }
+   time_min = std::numeric_limits< long long >::min() / base_time_multiplier;
+   time_max = std::numeric_limits< long long >::max() / base_time_multiplier;
 }
 
 void Int64BaseTime::update_unit_for_multiplier()
@@ -454,10 +461,9 @@ bool Int64BaseTime::exceeds_base_time_resolution(
 int64_t Int64BaseTime::to_base_time(
    double const time )
 {
-   double const limit = std::numeric_limits< double >::max() / base_time_multiplier;
-   if ( time <= -limit ) {
+   if ( time <= time_min ) {
       return std::numeric_limits< long long >::min();
-   } else if ( time >= limit ) {
+   } else if ( time >= time_max ) {
       return std::numeric_limits< long long >::max();
    }
    return llround( time * base_time_multiplier );
