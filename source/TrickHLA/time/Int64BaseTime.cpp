@@ -461,9 +461,9 @@ bool Int64BaseTime::exceeds_base_time_resolution(
 int64_t Int64BaseTime::to_base_time(
    double const time )
 {
-   if ( time <= time_min ) {
+   if ( time <= (double)time_min ) {
       return std::numeric_limits< long long >::min();
-   } else if ( time >= time_max ) {
+   } else if ( time >= (double)time_max ) {
       return std::numeric_limits< long long >::max();
    }
    return llround( time * base_time_multiplier );
