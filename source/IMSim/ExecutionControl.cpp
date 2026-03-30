@@ -1464,7 +1464,7 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time(); // Immediate
          this->next_mode_cte_time      = get_cte_time();
-         if ( this->next_mode_cte_time > -std::numeric_limits< double >::max() ) {
+         if ( this->next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
             this->next_mode_cte_time = this->next_mode_cte_time + get_time_padding(); // Some time in the future.
          }
          break;
@@ -1478,7 +1478,7 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time() + this->time_padding; // Some time in the future.
          this->next_mode_cte_time      = get_cte_time();
-         if ( this->next_mode_cte_time > -std::numeric_limits< double >::max() ) {
+         if ( this->next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
             this->next_mode_cte_time = this->next_mode_cte_time + get_time_padding(); // Some time in the future.
          }
 

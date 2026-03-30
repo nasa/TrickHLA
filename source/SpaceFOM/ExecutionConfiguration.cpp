@@ -104,9 +104,9 @@ extern ATTRIBUTES attrSpaceFOM__ExecutionConfiguration[];
 ExecutionConfiguration::ExecutionConfiguration()
    : TrickHLA::ExecutionConfigurationBase(),
      root_frame_name(),
-     scenario_time_epoch( -std::numeric_limits< double >::max() ),
-     next_mode_scenario_time( -std::numeric_limits< double >::max() ),
-     next_mode_cte_time( -std::numeric_limits< double >::max() ),
+     scenario_time_epoch( std::numeric_limits< double >::lowest() ),
+     next_mode_scenario_time( std::numeric_limits< double >::lowest() ),
+     next_mode_cte_time( std::numeric_limits< double >::lowest() ),
      current_execution_mode( SpaceFOM::MTR_UNINITIALIZED ),
      next_execution_mode( SpaceFOM::MTR_UNINITIALIZED ),
      least_common_time_step( -1 )
@@ -121,9 +121,9 @@ ExecutionConfiguration::ExecutionConfiguration(
    string const &s_define_name )
    : TrickHLA::ExecutionConfigurationBase( s_define_name ),
      root_frame_name(),
-     scenario_time_epoch( -std::numeric_limits< double >::max() ),
-     next_mode_scenario_time( -std::numeric_limits< double >::max() ),
-     next_mode_cte_time( -std::numeric_limits< double >::max() ),
+     scenario_time_epoch( std::numeric_limits< double >::lowest() ),
+     next_mode_scenario_time( std::numeric_limits< double >::lowest() ),
+     next_mode_cte_time( std::numeric_limits< double >::lowest() ),
      current_execution_mode( SpaceFOM::MTR_UNINITIALIZED ),
      next_execution_mode( SpaceFOM::MTR_UNINITIALIZED ),
      least_common_time_step( -1 )
