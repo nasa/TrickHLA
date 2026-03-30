@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <limits>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -453,6 +454,12 @@ bool Int64BaseTime::exceeds_base_time_resolution(
 int64_t Int64BaseTime::to_base_time(
    double const time )
 {
+   double const limit = std::numeric_limits< double >::max() / base_time_multiplier;
+   if ( time <= -limit ) {
+      return std::numeric_limits< long long >::min();
+   } else if ( time >= limit ) {
+      return std::numeric_limits< long long >::max();
+   }
    return llround( time * base_time_multiplier );
 }
 
