@@ -2789,7 +2789,13 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
       // Wait on the ExCO update with the scenario timeline epoch.
       ExCO->wait_for_update();
 
-      // The recieved LCTS from the Master federate should be sane as compared
+      ostringstream msg; //TEMP
+      msg << "SpaceFOM::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__ << endl
+             << " Execution Configuration LCTS value (" << ExCO->least_common_time_step << ")" << endl
+             << " Execution Control LCTS value (" << this->least_common_time_step << ")" << endl; //TEMP
+      message_publish( MSG_ERROR, msg.str().c_str() ); //TEMP
+
+      // The received LCTS from the Master federate should be sane as compared
       // to what this federate is configured for in the input file. Or it should
       // be an integer multiple of the LCTS.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
