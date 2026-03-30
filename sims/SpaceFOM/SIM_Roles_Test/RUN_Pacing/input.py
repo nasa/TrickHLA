@@ -30,6 +30,7 @@ def print_usage_message():
    print( ' ' )
    print( 'TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:' )
    print( '  -h --help             : Print this help message.' )
+   print( '  -c --cte              : Use Central Timing Equipment (CTE).' )
    print( '  -f --fed_name [name]  : Name of the Federate, default is PhysicalEntity.' )
    print( '  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_Roles_Test.' )
    print( '  -m --master [name]    : Name of the Master federate, default is Master.' )
@@ -49,6 +50,7 @@ def print_usage_message():
 def parse_command_line():
 
    global print_usage
+   global use_cte
    global run_duration
    global verbose
    global federate_name
@@ -67,6 +69,9 @@ def parse_command_line():
 
       if ( ( str( argv[index] ) == '-h' ) | ( str( argv[index] ) == '--help' ) ):
          print_usage = True
+
+      elif ( ( str( argv[index] ) == '-c' ) | ( str( argv[index] ) == '--cte' ) ):
+         use_cte = True
 
       elif ( ( str( argv[index] ) == '-f' ) | ( str( argv[index] ) == '--fed_name' ) ):
          index = index + 1
@@ -139,6 +144,9 @@ def parse_command_line():
 
 # Default: Don't show usage.
 print_usage = False
+
+# Default: Don't use CTE.
+use_cte = False
 
 # Set the default run duration.
 run_duration = 10.0
@@ -251,7 +259,8 @@ federate.set_time_constrained( True )
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
-THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::TimeOfDayCTETimeline' )
+if ( use_cte ):
+   THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::TimeOfDayCTETimeline' )
 
 #------------------------------------------------------------------------------
 # Disable all reference frame related SimObjects.
