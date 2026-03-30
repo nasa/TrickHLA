@@ -330,7 +330,7 @@ void ExecutionConfiguration::unpack()
    }
 
    if ( execution_control->does_cte_timeline_exist()
-         && ( next_mode_cte_time <= std::numeric_limits< double >::lowest() ) ) {
+        && ( next_mode_cte_time <= std::numeric_limits< double >::lowest() ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
              << " ERROR: Execution Configuration has an invalid next mode"
