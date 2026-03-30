@@ -100,7 +100,7 @@ def parse_command_line():
             print( 'ERROR: Missing --rrfp [name] argument.' )
             print_usage = True
 
-      elif ( str( argv[index] ) == '-nostop' ):
+      elif ( str( argv[index] ) == '--nostop' ):
          run_duration = None
 
       elif ( ( str( argv[index] ) == '-s' ) | ( str( argv[index] ) == '--stop' ) ):

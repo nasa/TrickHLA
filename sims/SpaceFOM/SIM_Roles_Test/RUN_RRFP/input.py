@@ -99,7 +99,7 @@ def parse_command_line():
             print( 'ERROR: Missing --pacing [name] argument.' )
             print_usage = True
 
-      elif ( str( argv[index] ) == '-nostop' ):
+      elif ( str( argv[index] ) == '--nostop' ):
          run_duration = None
 
       elif ( ( str( argv[index] ) == '-r' ) | ( str( argv[index] ) == '--root_frame' ) ):
