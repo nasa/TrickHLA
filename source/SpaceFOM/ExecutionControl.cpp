@@ -2727,6 +2727,15 @@ void ExecutionControl::exit_freeze()
       // time because there was not enough padding time. Adjust the Trick
       // clock reference to account for this to keep it's clock reference
       // aligned with the other federates.
+      if ( ExCO->get_next_mode_cte_time() == std::numeric_limits< double >::lowest() ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::exit_freeze():" << __LINE__
+                << " ERROR: Execution Configuration has an invalid next mode"
+                << " CTE time of " << ExCO->get_next_mode_cte_time()
+                << "! Please make sure all your Central Timing Equipment is"
+                << " using the same synchronized time." << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
       ref = the_exec->get_time_tics()
             + (int64_t)( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
                          * the_exec->get_time_tic_value() );
