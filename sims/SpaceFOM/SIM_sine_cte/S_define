@@ -219,14 +219,12 @@ class THLAInitSimObject : public Trick::SimObject {
    TrickHLA::TimeOfDayCTETimeline   cte_timeline;
 #endif
 
-   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed,
+   THLAInitSimObject( TrickHLA::Federate & thla_fed,
                       unsigned int         _MPI_1   = 100,
                       unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
       : sim_timeline(),
         scenario_timeline( sim_timeline, 0.0, 0.0 ),
         cte_timeline(),
-        thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       //--------------------------------------------------------------------
@@ -236,45 +234,44 @@ class THLAInitSimObject : public Trick::SimObject {
       //--------------------------------------------------------------------
 
       // Data will only be sent if this federate owns it.
-      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
+      P_MPI_1 ("initialization") thla_federate.send_init_data( "A-side-Federate.Sine" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P_MPI_1 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
+      P_MPI_1 ("initialization") thla_federate.receive_init_data( "A-side-Federate.Sine" );
 
       // Do some processing here if needed...
 
       // Wait for all federates to reach this sync-point.
-      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase" );
+      P_MPI_1 ("initialization") thla_federate.wait_for_init_sync_point( "Analytic_init_phase" );
 
 
       // Data will only be sent if this federate owns it.
-      P_MPI_END ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
+      P_MPI_END ("initialization") thla_federate.send_init_data( "P-side-Federate.Sine" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine" );
+      P_MPI_END ("initialization") thla_federate.receive_init_data( "P-side-Federate.Sine" );
 
       // Do some processing here if needed...
 
       // Wait for all federates to reach this sync-point.
-      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
+      P_MPI_END ("initialization") thla_federate.wait_for_init_sync_point( "Propagated_init_phase" );
 
 
       // Alternative method: Send and receive all the initialization data.
 
       // Send all the initialization data.
-//      P_MPI_1 ("initialization") thla_manager.send_init_data();
+//      P_MPI_1 ("initialization") thla_federate.send_init_data();
 
       // Wait to receive all the initialization data.
-//      P_MPI_1 ("initialization") thla_manager.receive_init_data();
+//      P_MPI_1 ("initialization") thla_federate.receive_init_data();
 
       // Do some processing here if needed...
 
       // Clear remaining initialization sync-points.
-//      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+//      P_MPI_END ("initialization") thla_federate.clear_init_sync_points();
    }
 
  private:
-   TrickHLA::Manager  & thla_manager;
    TrickHLA::Federate & thla_federate;
 
    // Do not allow the implicit copy constructor or assignment operator.
@@ -297,7 +294,7 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
                         P_HLA_LATE );
 
 // Simulation specific multiphase initialization SimObject instance.
-THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+THLAInitSimObject THLA_INIT( THLA.federate );
 
 // Sine Instantiations
 AnalyticSineSimObj   A;
