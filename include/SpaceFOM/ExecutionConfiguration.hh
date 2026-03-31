@@ -131,6 +131,9 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    virtual void pack();
    virtual void unpack();
 
+   /*! @brief Verify the ExCO data is valid. */
+   virtual void verify_ExCO_data();
+
    // FOM data public accessor interface.
    /*! @brief Set the root reference frame name.
     *  @param name Root reference frame name. */
