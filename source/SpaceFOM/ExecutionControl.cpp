@@ -2832,19 +2832,18 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
          }
       }
 
-      // Process the just received ExCO update.
-      process_execution_control_updates();
-
-      //TEMP
+      // Verify the scenario time epoch.
       if ( ExCO->get_scenario_time_epoch() <= std::numeric_limits< double >::lowest() ) {
+         ExCO->print_execution_configuration();
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__
-                << " WARNING: Execution Configuration has an unexpected invalid"
-                << " scenario time epoch (" << ExCO->get_scenario_time_epoch()
-                << ")." << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
-         ExCO->print_execution_configuration();
-      } //TEMP
+                << " ERROR: Did not receive an Execution Configuration scenario"
+                << " time epoch from the Master SpaceFOM federate!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Process the just received ExCO update.
+      process_execution_control_updates();
 
       // Set scenario timeline epoch and time.
       scenario_timeline->set_epoch( ExCO->get_scenario_time_epoch() );
