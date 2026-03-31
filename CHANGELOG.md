@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Notable Additions
 
+- Fixed encoding of the SpaceFOM Execution Configuration Object (ExCO) Least Common Time Step (LCTS) encoding to be big Endian.
 - Added checkpoint (i.e. save/restore) virtual functions to the ExecutionControlBase class to allow for different checkpoint implementations (issue #184).
   - virtual void setup_checkpoint();
   - virtual void perform_checkpoint();
