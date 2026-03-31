@@ -103,20 +103,7 @@ class Timeline
    /*! @brief Convert value to a time on the timeline with the minimum time resolution.
     *  @return Returns the time in seconds on the timeline with the minimum resolution.
     *  @param value The time value to convert. */
-   virtual double convert( double const value )
-   {
-      double const min_res = get_min_resolution();
-      if ( value <= ( std::numeric_limits< long long >::min() * min_res ) ) {
-         return (double)std::numeric_limits< long long >::min();
-      } else if ( value >= ( std::numeric_limits< long long >::max() * min_res ) ) {
-         return (double)std::numeric_limits< long long >::max();
-      }
-      // Compute the time in tics, which truncates to a fixed-point number.
-      int64_t const time_tics = (int64_t)( value / min_res );
-
-      // Convert to a time in seconds with the minimum time resolution.
-      return (double)( time_tics * min_res );
-   }
+   virtual double convert( double const value );
 
   protected:
    double epoch; /**<  @trick_units{s}
