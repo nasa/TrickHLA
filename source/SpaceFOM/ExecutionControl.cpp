@@ -1004,17 +1004,20 @@ void ExecutionControl::late_joiner_hla_init_process()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
-          << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << endl
-          << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
-          << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-          << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
-          << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
-          << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
-          << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << endl
-          << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
+          << "     current_scenario_time: " << setprecision( 18 ) << scenario_timeline->get_time() << endl
+          << "       scenario_time_epoch: " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
+          << " scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
+          << "  scenario_time_sim_offset: " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
+          << "    Current HLA grant time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+          << "  Current HLA request time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
+          << "          current_sim_time: " << setprecision( 18 ) << sim_timeline->get_time() << endl
+          << "     simulation_time_epoch: " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
       if ( does_cte_timeline_exist() ) {
-         msg << "\t current-CTE-time:          " << setprecision( 18 ) << cte_timeline->get_time() << endl
-             << "\t CTE-time-epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+         msg << "          current-CTE-time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
+             << "            CTE-time-epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+      } else {
+         msg << "          current-CTE-time: Not enabled." << endl
+             << "            CTE-time-epoch: Not enabled." << endl;
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -1254,6 +1257,9 @@ void ExecutionControl::post_multi_phase_init_processes()
          if ( does_cte_timeline_exist() ) {
             msg << "          current_CTE_time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
                 << "            CTE_time_epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+         } else {
+            msg << "          current_CTE_time: Not enabled." << endl
+                << "            CTE_time_epoch: Not enabled." << endl;
          }
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -1731,22 +1737,25 @@ bool ExecutionControl::process_mode_transition_request()
       ostringstream msg;
       msg << "=============================================================\n"
           << "SpaceFOM::ExecutionControl::process_mode_transition_request()\n"
-          << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << endl
-          << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
-          << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-          << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
-          << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
-          << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
-          << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << endl
-          << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
+          << "     current_scenario_time: " << setprecision( 18 ) << scenario_timeline->get_time() << endl
+          << "       scenario_time_epoch: " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
+          << " scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
+          << "  scenario_time_sim_offset: " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
+          << "    Current HLA grant time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+          << "  Current HLA request time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
+          << "          current_sim_time: " << setprecision( 18 ) << sim_timeline->get_time() << endl
+          << "     simulation_time_epoch: " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
       if ( does_cte_timeline_exist() ) {
-         msg << "\t current_CTE_time:          " << setprecision( 18 ) << cte_timeline->get_time() << endl
-             << "\t CTE_time_epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+         msg << "          current_CTE_time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
+             << "            CTE_time_epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+      } else {
+         msg << "          current_CTE_time: Not enabled." << endl
+             << "            CTE_time_epoch: Not enabled." << endl;
       }
-      msg << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-          << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
-          << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << endl
-          << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << endl
+      msg << "   next_mode_scenario_time: " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
+          << "        next_mode_cte_time: " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
+          << "      scenario_freeze_time: " << setprecision( 18 ) << this->scenario_freeze_time << endl
+          << "    simulation_freeze_time: " << setprecision( 18 ) << this->simulation_freeze_time << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -1789,7 +1798,7 @@ bool ExecutionControl::process_mode_transition_request()
             freeze_mode_announce();
 
             // Tell Trick to go into freeze at the appointed time.
-            the_exec->freeze( this->simulation_freeze_time );
+            the_exec->freeze( get_simulation_freeze_time() );
 
             // The freeze transition logic will be done just before entering
             // Freeze. This is done in the TrickHLA::Federate::freeze_init()
@@ -2082,20 +2091,23 @@ bool ExecutionControl::process_execution_control_updates()
                if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream msg;
                   msg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__ << endl
-                      << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << endl
-                      << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
-                      << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-                      << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
-                      << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << endl
-                      << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
+                      << "     current_scenario_time: " << setprecision( 18 ) << scenario_timeline->get_time() << endl
+                      << "       scenario_time_epoch: " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
+                      << " scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
+                      << "  scenario_time_sim_offset: " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
+                      << "          current_sim_time: " << setprecision( 18 ) << sim_timeline->get_time() << endl
+                      << "     simulation_time_epoch: " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
                   if ( does_cte_timeline_exist() ) {
-                     msg << "\t current_CTE_time:          " << setprecision( 18 ) << cte_timeline->get_time() << endl
-                         << "\t CTE_time_epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+                     msg << "          current_CTE_time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
+                         << "            CTE_time_epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+                  } else {
+                     msg << "          current_CTE_time: Not enabled." << endl
+                         << "            CTE_time_epoch: Not enabled." << endl;
                   }
-                  msg << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-                      << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
-                      << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << endl
-                      << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << endl
+                  msg << "   next_mode_scenario_time: " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
+                      << "        next_mode_cte_time: " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
+                      << "      scenario_freeze_time: " << setprecision( 18 ) << this->scenario_freeze_time << endl
+                      << "    simulation_freeze_time: " << setprecision( 18 ) << this->simulation_freeze_time << endl
                       << "=============================================================" << endl;
                   message_publish( MSG_NORMAL, msg.str().c_str() );
                }
@@ -2104,7 +2116,7 @@ bool ExecutionControl::process_execution_control_updates()
                freeze_mode_announce();
 
                // Tell Trick to go into freeze at the appointed time.
-               the_exec->freeze( this->simulation_freeze_time );
+               the_exec->freeze( get_simulation_freeze_time() );
 
                // The freeze transition logic will be done just before entering
                // Freeze. This is done in the TrickHLA::Federate::freeze_init()
@@ -3219,6 +3231,9 @@ void ExecutionControl::print_clock_summary(
    if ( does_cte_timeline_exist() ) {
       msg << "         CTE-clock-name: '" << cte_timeline->get_name() << "'" << endl
           << "      CTE-clock-min-res: " << setprecision( 10 ) << cte_timeline->get_min_resolution() << " seconds" << endl;
+   } else {
+      msg << "         CTE-clock-name: Not enabled." << endl
+          << "      CTE-clock-min-res: Not enabled." << endl;
    }
    msg << "     exec_get_time_tics: " << exec_get_time_tics() << endl
        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << endl

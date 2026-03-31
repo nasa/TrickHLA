@@ -276,6 +276,8 @@ void ExecutionConfiguration::pack()
           << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
          msg << "             current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+      } else {
+         msg << "             current-cte-time: Not enabled." << endl;
       }
       msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
@@ -321,6 +323,8 @@ void ExecutionConfiguration::unpack()
           << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
          msg << "             current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+      } else {
+         msg << "             current-cte-time: Not enabled." << endl;
       }
       msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
@@ -639,17 +643,19 @@ void ExecutionConfiguration::print_execution_configuration() const
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
-          << "\t             Object-Name: '" << get_name() << "'" << endl
-          << "\t         root_frame_name: '" << root_frame_name << "'" << endl
-          << "\t     scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
-          << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-          << "\t      next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
+          << "             Object-Name: '" << get_name() << "'" << endl
+          << "         root_frame_name: '" << root_frame_name << "'" << endl
+          << "     scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
+          << " next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
+          << "      next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "\t        current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+         msg << "        current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+      } else {
+         msg << "        current-cte-time: Not enabled." << endl;
       }
-      msg << "\t  current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "\t     next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "\t  least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl
+      msg << "  current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
+          << "     next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
+          << "  least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
