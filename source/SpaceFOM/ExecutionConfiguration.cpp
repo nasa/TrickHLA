@@ -263,21 +263,33 @@ void ExecutionConfiguration::pack()
           << "        Current Scenario Time: " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
           << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
           << "      Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
-          << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl
-          << "     Current HLA Granted Time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds()
-          << " (" << federate->get_granted_time().get_base_time() << ")" << endl
-          << "   Current HLA Requested Time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds()
-          << " (" << federate->get_requested_time().get_base_time() << ")" << endl
-          << "............................................................." << endl
+          << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl;
+      if ( federate->get_granted_time() > std::numeric_limits< long long >::min() ) {
+         msg << "     Current HLA Granted Time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds()
+             << " (" << federate->get_granted_time().get_base_time() << ")" << endl;
+      } else {
+         msg << "     Current HLA Granted Time: None" << endl;
+      }
+      if ( federate->get_requested_time() > std::numeric_limits< long long >::min() ) {
+         msg << "   Current HLA Requested Time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds()
+             << " (" << federate->get_requested_time().get_base_time() << ")" << endl;
+      } else {
+         msg << "   Current HLA Requested Time: None" << endl;
+      }
+      msg << "............................................................." << endl
           << "                  Object-Name: '" << get_name() << "'" << endl
           << "              root_frame_name: '" << root_frame_name << "'" << endl
           << "          scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
-          << "      next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-          << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
+          << "      next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl;
+      if ( next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
+         msg << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
+      } else {
+         msg << "           next_mode_cte_time: None" << endl;
+      }
       if ( execution_control->does_cte_timeline_exist() ) {
          msg << "             current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
       } else {
-         msg << "             current-cte-time: Not enabled." << endl;
+         msg << "             current-cte-time: Not Enabled" << endl;
       }
       msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
@@ -310,21 +322,33 @@ void ExecutionConfiguration::unpack()
           << "        Current Scenario Time: " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
           << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
           << "      Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
-          << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl
-          << "     Current HLA Granted Time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds()
-          << " (" << federate->get_granted_time().get_base_time() << ")" << endl
-          << "   Current HLA Requested Time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds()
-          << " (" << federate->get_requested_time().get_base_time() << ")" << endl
-          << "............................................................." << endl
+          << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl;
+      if ( federate->get_granted_time() > std::numeric_limits< long long >::min() ) {
+         msg << "     Current HLA Granted Time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds()
+             << " (" << federate->get_granted_time().get_base_time() << ")" << endl;
+      } else {
+         msg << "     Current HLA Granted Time: None" << endl;
+      }
+      if ( federate->get_requested_time() > std::numeric_limits< long long >::min() ) {
+         msg << "   Current HLA Requested Time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds()
+             << " (" << federate->get_requested_time().get_base_time() << ")" << endl;
+      } else {
+         msg << "   Current HLA Requested Time: None" << endl;
+      }
+      msg << "............................................................." << endl
           << "                  Object-Name: '" << get_name() << "'" << endl
           << "              root_frame_name: '" << root_frame_name << "'" << endl
           << "          scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
-          << "      next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-          << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
+          << "      next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl;
+      if ( next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
+         msg << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
+      } else {
+         msg << "           next_mode_cte_time: None" << endl;
+      }
       if ( execution_control->does_cte_timeline_exist() ) {
          msg << "             current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
       } else {
-         msg << "             current-cte-time: Not enabled." << endl;
+         msg << "             current-cte-time: Not Enabled" << endl;
       }
       msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
@@ -646,12 +670,16 @@ void ExecutionConfiguration::print_execution_configuration() const
           << "             Object-Name: '" << get_name() << "'" << endl
           << "         root_frame_name: '" << root_frame_name << "'" << endl
           << "     scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
-          << " next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-          << "      next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
+          << " next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl;
+      if ( next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
+         msg << "      next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
+      } else {
+         msg << "      next_mode_cte_time: None" << endl;
+      }
       if ( execution_control->does_cte_timeline_exist() ) {
          msg << "        current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
       } else {
-         msg << "        current-cte-time: Not enabled." << endl;
+         msg << "        current-cte-time: Not Enabled" << endl;
       }
       msg << "  current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "     next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl

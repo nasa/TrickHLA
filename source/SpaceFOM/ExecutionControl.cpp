@@ -1016,8 +1016,8 @@ void ExecutionControl::late_joiner_hla_init_process()
          msg << "          current-CTE-time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
              << "            CTE-time-epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
       } else {
-         msg << "          current-CTE-time: Not enabled." << endl
-             << "            CTE-time-epoch: Not enabled." << endl;
+         msg << "          current-CTE-time: Not Enabled" << endl
+             << "            CTE-time-epoch: Not Enabled" << endl;
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -1258,8 +1258,8 @@ void ExecutionControl::post_multi_phase_init_processes()
             msg << "          current_CTE_time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
                 << "            CTE_time_epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
          } else {
-            msg << "          current_CTE_time: Not enabled." << endl
-                << "            CTE_time_epoch: Not enabled." << endl;
+            msg << "          current_CTE_time: Not Enabled" << endl
+                << "            CTE_time_epoch: Not Enabled" << endl;
          }
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -1749,12 +1749,16 @@ bool ExecutionControl::process_mode_transition_request()
          msg << "          current_CTE_time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
              << "            CTE_time_epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
       } else {
-         msg << "          current_CTE_time: Not enabled." << endl
-             << "            CTE_time_epoch: Not enabled." << endl;
+         msg << "          current_CTE_time: Not Enabled" << endl
+             << "            CTE_time_epoch: Not Enabled" << endl;
       }
-      msg << "   next_mode_scenario_time: " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-          << "        next_mode_cte_time: " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
-          << "      scenario_freeze_time: " << setprecision( 18 ) << this->scenario_freeze_time << endl
+      msg << "   next_mode_scenario_time: " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl;
+      if ( ExCO->next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
+         msg << "        next_mode_cte_time: " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl;
+      } else {
+         msg << "        next_mode_cte_time: None" << endl;
+      }
+      msg << "      scenario_freeze_time: " << setprecision( 18 ) << this->scenario_freeze_time << endl
           << "    simulation_freeze_time: " << setprecision( 18 ) << this->simulation_freeze_time << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
@@ -2101,12 +2105,16 @@ bool ExecutionControl::process_execution_control_updates()
                      msg << "          current_CTE_time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
                          << "            CTE_time_epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
                   } else {
-                     msg << "          current_CTE_time: Not enabled." << endl
-                         << "            CTE_time_epoch: Not enabled." << endl;
+                     msg << "          current_CTE_time: Not Enabled" << endl
+                         << "            CTE_time_epoch: Not Enabled" << endl;
                   }
-                  msg << "   next_mode_scenario_time: " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-                      << "        next_mode_cte_time: " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
-                      << "      scenario_freeze_time: " << setprecision( 18 ) << this->scenario_freeze_time << endl
+                  msg << "   next_mode_scenario_time: " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl;
+                  if ( ExCO->next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
+                     msg << "        next_mode_cte_time: " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl;
+                  } else {
+                     msg << "        next_mode_cte_time: None" << endl;
+                  }
+                  msg << "      scenario_freeze_time: " << setprecision( 18 ) << this->scenario_freeze_time << endl
                       << "    simulation_freeze_time: " << setprecision( 18 ) << this->simulation_freeze_time << endl
                       << "=============================================================" << endl;
                   message_publish( MSG_NORMAL, msg.str().c_str() );
@@ -2801,9 +2809,9 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
       // Wait on the ExCO update with the scenario timeline epoch.
       ExCO->wait_for_update();
 
-      // The received LCTS from the Master federate should be sane as compared
-      // to what this federate is configured for in the input file. Or it should
-      // be an integer multiple of the LCTS.
+      // The received LCTS from the Master federate should be sane value as
+      // compared to what this federate is configured for in the input file,
+      // or it should be an integer multiple of the LCTS.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( ExCO->least_common_time_step <= 0 ) {
             ostringstream errmsg;
@@ -3242,8 +3250,8 @@ void ExecutionControl::print_clock_summary(
       msg << "         CTE-clock-name: '" << cte_timeline->get_name() << "'" << endl
           << "      CTE-clock-min-res: " << setprecision( 10 ) << cte_timeline->get_min_resolution() << " seconds" << endl;
    } else {
-      msg << "         CTE-clock-name: Not enabled." << endl
-          << "      CTE-clock-min-res: Not enabled." << endl;
+      msg << "         CTE-clock-name: Not Enabled" << endl
+          << "      CTE-clock-min-res: Not Enabled" << endl;
    }
    msg << "     exec_get_time_tics: " << exec_get_time_tics() << endl
        << "the_exec->get_time_tics: " << the_exec->get_time_tics() << endl
