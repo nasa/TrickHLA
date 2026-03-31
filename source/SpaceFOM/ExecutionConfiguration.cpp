@@ -218,7 +218,7 @@ void ExecutionConfiguration::configure_attributes()
    trick_name_str                   = S_define_name + string( ".least_common_time_step" );
    this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
-   this->attributes[6].rti_encoding = ENCODING_LITTLE_ENDIAN;
+   this->attributes[6].rti_encoding = ENCODING_BIG_ENDIAN;
 }
 
 /*!
