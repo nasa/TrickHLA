@@ -114,16 +114,16 @@ TimeManagementServices::TimeManagementServices(
      time_management( true ),
      lookahead( 0LL ),
      HLA_cycle_time( 0.0 ),
-     HLA_cycle_time_in_base_time( 0LL ),
-     granted_time( 0LL ),
-     requested_time( 0LL ),
+     HLA_cycle_time_in_base_time( 0 ),
+     granted_time( (int64_t)0 ),
+     requested_time( (int64_t)0 ),
      HLA_time( 0.0 ),
      time_adv_state( TrickHLA::TIME_ADVANCE_RESET ),
      time_adv_state_mutex(),
      time_regulating_state( false ),
      time_constrained_state( false ),
-     tag_wait_sum( 0ULL ),
-     tag_wait_count( 0ULL )
+     tag_wait_sum( 0 ),
+     tag_wait_count( 0 )
 {
    return;
 }
