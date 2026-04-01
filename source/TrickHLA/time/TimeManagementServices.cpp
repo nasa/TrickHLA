@@ -112,7 +112,7 @@ TimeManagementServices::TimeManagementServices(
      time_regulating( true ),
      time_constrained( true ),
      time_management( true ),
-     lookahead( 0LL ),
+     lookahead( (int64_t)0 ),
      HLA_cycle_time( 0.0 ),
      HLA_cycle_time_in_base_time( 0 ),
      granted_time( (int64_t)0 ),
