@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 #include <cstddef>
 #include <cstring>
 #include <iomanip>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
