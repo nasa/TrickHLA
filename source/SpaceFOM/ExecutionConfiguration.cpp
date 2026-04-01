@@ -108,7 +108,7 @@ ExecutionConfiguration::ExecutionConfiguration()
      next_mode_cte_time( std::numeric_limits< double >::lowest() ),
      current_execution_mode( SpaceFOM::MTR_UNINITIALIZED ),
      next_execution_mode( SpaceFOM::MTR_UNINITIALIZED ),
-     least_common_time_step( -1 )
+     least_common_time_step( std::numeric_limits< long long >::lowest() )
 {
    return;
 }
@@ -125,7 +125,7 @@ ExecutionConfiguration::ExecutionConfiguration(
      next_mode_cte_time( std::numeric_limits< double >::lowest() ),
      current_execution_mode( SpaceFOM::MTR_UNINITIALIZED ),
      next_execution_mode( SpaceFOM::MTR_UNINITIALIZED ),
-     least_common_time_step( -1 )
+     least_common_time_step( std::numeric_limits< long long >::lowest() )
 {
    return;
 }

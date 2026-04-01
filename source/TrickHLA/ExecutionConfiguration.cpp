@@ -88,7 +88,7 @@ extern ATTRIBUTES attrTrickHLA__ExecutionConfiguration[];
 ExecutionConfiguration::ExecutionConfiguration()
    : TrickHLA::ExecutionConfigurationBase(),
      run_duration( 0.0 ),
-     run_duration_base_time( 0L ),
+     run_duration_base_time( 0LL ),
      num_federates( 0 ),
      required_federates(),
      owner()
@@ -103,7 +103,7 @@ ExecutionConfiguration::ExecutionConfiguration(
    string const &s_define_name )
    : TrickHLA::ExecutionConfigurationBase( s_define_name ),
      run_duration( 0.0 ),
-     run_duration_base_time( 0L ),
+     run_duration_base_time( 0LL ),
      num_federates( 0 ),
      required_federates(),
      owner()
