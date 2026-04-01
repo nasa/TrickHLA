@@ -181,14 +181,13 @@ class StringUtilities
     *  @return Formatted string of the time double value or "None" if <= lowest double. */
    static std::string format_time( double const time )
    {
-      std::ostringstream msg;
-      if ( time > std::numeric_limits< double >::lowest() ) {
-         msg << std::setprecision( 18 ) << time << " seconds ("
-             << Int64BaseTime::to_base_time( time ) << " "
-             << Int64BaseTime::get_base_unit() << ")";
-      } else {
-         msg << "None";
+      if ( time <= std::numeric_limits< double >::lowest() ) {
+         return "None";
       }
+      std::ostringstream msg;
+      msg << std::setprecision( 18 ) << time << " seconds ("
+          << Int64BaseTime::to_base_time( time ) << " "
+          << Int64BaseTime::get_base_unit() << ")";
       return msg.str();
    }
 
@@ -197,13 +196,13 @@ class StringUtilities
     *  @return Formatted string of the time value or "None" if <= lowest double. */
    static std::string format_time( Int64Time const &time )
    {
-      std::ostringstream msg;
-      if ( time.get_base_time() > std::numeric_limits< long long >::lowest() ) {
-         msg << std::setprecision( 18 ) << time.get_time_in_seconds() << " seconds ("
-             << time.get_base_time() << " " << Int64BaseTime::get_base_unit() << ")";
-      } else {
-         msg << "None";
+      if ( time.get_base_time() <= std::numeric_limits< long long >::lowest() ) {
+         return "None";
       }
+      std::ostringstream msg;
+      msg << std::setprecision( 18 ) << time.get_time_in_seconds() << " seconds ("
+          << time.get_base_time() << " "
+          << Int64BaseTime::get_base_unit() << ")";
       return msg.str();
    }
 
