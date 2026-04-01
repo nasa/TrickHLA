@@ -47,7 +47,6 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
-#include <iomanip>
 #include <limits>
 #include <ostream>
 #include <sstream>
@@ -77,9 +76,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
-#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -260,42 +259,26 @@ void ExecutionConfiguration::pack()
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__ << endl
-          << "        Current Scenario Time: " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
-          << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
-          << "      Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
-          << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl;
-      if ( federate->get_granted_time() > std::numeric_limits< long long >::min() ) {
-         msg << "     Current HLA Granted Time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds()
-             << " (" << federate->get_granted_time().get_base_time() << ")" << endl;
-      } else {
-         msg << "     Current HLA Granted Time: None" << endl;
-      }
-      if ( federate->get_requested_time() > std::numeric_limits< long long >::min() ) {
-         msg << "   Current HLA Requested Time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds()
-             << " (" << federate->get_requested_time().get_base_time() << ")" << endl;
-      } else {
-         msg << "   Current HLA Requested Time: None" << endl;
-      }
-      msg << "............................................................." << endl
-          << "                  Object-Name: '" << get_name() << "'" << endl
-          << "              root_frame_name: '" << root_frame_name << "'" << endl
-          << "          scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
-          << "      next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl;
-      if ( next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
-         msg << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
-      } else {
-         msg << "           next_mode_cte_time: None" << endl;
-      }
+          << "      Current Scenario Time: " << StringUtilities::format_time( execution_control->scenario_timeline->get_time() ) << endl
+          << "    Current Simulation Time: " << StringUtilities::format_time( the_exec->get_sim_time() ) << endl
+          << "   Current HLA Granted Time: " << StringUtilities::format_time( federate->get_granted_time() ) << endl
+          << " Current HLA Requested Time: " << StringUtilities::format_time( federate->get_requested_time() ) << endl
+          << "............................................................." << endl
+          << "                Object-Name: '" << get_name() << "'" << endl
+          << "            root_frame_name: '" << root_frame_name << "'" << endl
+          << "        scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << endl
+          << "    next_mode_scenario_time: " << StringUtilities::format_time( next_mode_scenario_time ) << endl
+          << "         next_mode_cte_time: " << StringUtilities::format_time( next_mode_cte_time ) << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "             current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+         msg << "           current-cte-time: " << StringUtilities::format_time( execution_control->cte_timeline->get_time() ) << endl;
       } else {
-         msg << "             current-cte-time: Not Enabled" << endl;
+         msg << "           current-cte-time: Not Enabled" << endl;
       }
-      msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "       least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl;
+      msg << "     current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
+          << "        next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
+          << "     least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << endl;
       if ( this->next_execution_mode == EXECUTION_MODE_FREEZE ) {
-         msg << "       simulation_freeze_time: " << execution_control->get_simulation_freeze_time() << " seconds" << endl;
+         msg << "     simulation_freeze_time: " << execution_control->get_simulation_freeze_time() << " seconds" << endl;
       }
       msg << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
@@ -319,40 +302,24 @@ void ExecutionConfiguration::unpack()
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__ << endl
-          << "        Current Scenario Time: " << setprecision( 18 ) << execution_control->scenario_timeline->get_time()
-          << " (" << Int64BaseTime::to_base_time( execution_control->scenario_timeline->get_time() ) << ")" << endl
-          << "      Current Simulation Time: " << setprecision( 18 ) << the_exec->get_sim_time()
-          << " (" << Int64BaseTime::to_base_time( the_exec->get_sim_time() ) << ")" << endl;
-      if ( federate->get_granted_time() > std::numeric_limits< long long >::min() ) {
-         msg << "     Current HLA Granted Time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds()
-             << " (" << federate->get_granted_time().get_base_time() << ")" << endl;
-      } else {
-         msg << "     Current HLA Granted Time: None" << endl;
-      }
-      if ( federate->get_requested_time() > std::numeric_limits< long long >::min() ) {
-         msg << "   Current HLA Requested Time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds()
-             << " (" << federate->get_requested_time().get_base_time() << ")" << endl;
-      } else {
-         msg << "   Current HLA Requested Time: None" << endl;
-      }
-      msg << "............................................................." << endl
-          << "                  Object-Name: '" << get_name() << "'" << endl
-          << "              root_frame_name: '" << root_frame_name << "'" << endl
-          << "          scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
-          << "      next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl;
-      if ( next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
-         msg << "           next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
-      } else {
-         msg << "           next_mode_cte_time: None" << endl;
-      }
+          << "      Current Scenario Time: " << StringUtilities::format_time( execution_control->scenario_timeline->get_time() ) << endl
+          << "    Current Simulation Time: " << StringUtilities::format_time( the_exec->get_sim_time() ) << endl
+          << "   Current HLA Granted Time: " << StringUtilities::format_time( federate->get_granted_time() ) << endl
+          << " Current HLA Requested Time: " << StringUtilities::format_time( federate->get_requested_time() ) << endl
+          << "............................................................." << endl
+          << "                Object-Name: '" << get_name() << "'" << endl
+          << "            root_frame_name: '" << root_frame_name << "'" << endl
+          << "        scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << endl
+          << "    next_mode_scenario_time: " << StringUtilities::format_time( next_mode_scenario_time ) << endl
+          << "         next_mode_cte_time: " << StringUtilities::format_time( next_mode_cte_time ) << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "             current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+         msg << "           current-cte-time: " << StringUtilities::format_time( execution_control->cte_timeline->get_time() ) << endl;
       } else {
-         msg << "             current-cte-time: Not Enabled" << endl;
+         msg << "           current-cte-time: Not Enabled" << endl;
       }
-      msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "       least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl
+      msg << "     current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
+          << "        next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
+          << "     least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -669,21 +636,17 @@ void ExecutionConfiguration::print_execution_configuration() const
           << "SpaceFOM::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
           << "             Object-Name: '" << get_name() << "'" << endl
           << "         root_frame_name: '" << root_frame_name << "'" << endl
-          << "     scenario_time_epoch: " << setprecision( 18 ) << scenario_time_epoch << endl
-          << " next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl;
-      if ( next_mode_cte_time > std::numeric_limits< double >::lowest() ) {
-         msg << "      next_mode_cte_time: " << setprecision( 18 ) << next_mode_cte_time << endl;
-      } else {
-         msg << "      next_mode_cte_time: None" << endl;
-      }
+          << "     scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << endl
+          << " next_mode_scenario_time: " << StringUtilities::format_time( next_mode_scenario_time ) << endl
+          << "      next_mode_cte_time: " << StringUtilities::format_time( next_mode_cte_time ) << endl;
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "        current-cte-time: " << setprecision( 18 ) << execution_control->cte_timeline->get_time() << endl;
+         msg << "        current-cte-time: " << StringUtilities::format_time( execution_control->cte_timeline->get_time() ) << endl;
       } else {
          msg << "        current-cte-time: Not Enabled" << endl;
       }
       msg << "  current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "     next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "  least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl
+          << "  least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

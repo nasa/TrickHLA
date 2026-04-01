@@ -20,6 +20,8 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Manager.cpp}
 
 @revs_title
@@ -38,6 +40,7 @@ NASA, Johnson Space Center\n
 #include <climits>
 #include <cstddef>
 #include <cstring>
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -49,6 +52,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -168,6 +173,37 @@ class StringUtilities
       std::string s;
       s.assign( input.begin(), input.end() );
       return trick_MM->mm_strdup( const_cast< char * >( s.c_str() ) );
+   }
+
+   /*! @brief Formatted time double string.
+    *  @param time The time in seconds.
+    *  @return Formatted string of the time double value or "None" if <= lowest double. */
+   static std::string format_time( double const time )
+   {
+      std::ostringstream msg;
+      if ( time > std::numeric_limits< double >::lowest() ) {
+         msg << std::setprecision( 18 ) << time << " seconds ("
+             << Int64BaseTime::to_base_time( time ) << " "
+             << Int64BaseTime::get_base_unit() << ")";
+      } else {
+         msg << "None";
+      }
+      return msg.str();
+   }
+
+   /*! @brief Formatted integer time string.
+    *  @param time The integer time.
+    *  @return Formatted string of the time value or "None" if <= lowest double. */
+   static std::string format_time( Int64Time const &time )
+   {
+      std::ostringstream msg;
+      if ( time > std::numeric_limits< long long >::lowest() ) {
+         msg << std::setprecision( 18 ) << time.get_time_in_seconds() << " seconds ("
+             << time.get_base_time() << " " << Int64BaseTime::get_base_unit() << ")";
+      } else {
+         msg << "None";
+      }
+      return msg.str();
    }
 
    /*! @brief HLA RTI User Data to printable C++ string conversion routine.
