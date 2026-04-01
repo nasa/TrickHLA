@@ -339,6 +339,14 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       restore_federate = state;
    }
 
+   /*!
+    * @details If they have, true is returned if the 'create HLA instance' object
+    * was discovered. If no discoveries took place or if the required
+    * 'create HLA instance' object was not discovered, false is returned.
+    * @job_class{initialization}
+    */
+   bool is_this_a_rejoining_federate();
+
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.
 
@@ -348,6 +356,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    TrickHLA::Interaction *freeze_interaction; ///< @trick_io{**} Interaction to FREEZE the sim at a specified time.
 
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode
+
+   bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
 
    /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
     *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */

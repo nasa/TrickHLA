@@ -146,7 +146,8 @@ ExecutionControl::ExecutionControl(
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
      next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
      restore_determined( false ),
-     restore_federate( false )
+     restore_federate( false ),
+     rejoining_federate( false )
 {
    // The next_mode_scenario_time time for the next federation execution mode
    // change expressed as a federation scenario time reference. Note: this is
@@ -794,7 +795,7 @@ Simulation has started and is now running...\n",
             manager->wait_for_discovery_of_objects();
 
             // If this is a rejoining federate, re-aquire ownership of its attributes.
-            if ( manager->is_this_a_rejoining_federate() ) {
+            if ( is_this_a_rejoining_federate() ) {
 
                // Force ownership restore from other federate(s) and wait for
                // the ownership to complete before proceeding.
@@ -2471,4 +2472,29 @@ bool ExecutionControl::perform_save()
    }
 
    return ( false );
+}
+
+/*!
+ * @details If they have, true is returned if the 'create HLA instance' object
+ * was discovered. If no discoveries took place or if the required
+ * 'create HLA instance' object was not discovered, false is returned.
+ * @job_class{initialization}
+ */
+bool ExecutionControl::is_this_a_rejoining_federate()
+{
+   for ( int n = 0; n < manager->obj_count; ++n ) {
+      // Was the required 'create_HLA_instance' object found?
+      if ( manager->objects[n].is_required()
+           && manager->objects[n].is_create_HLA_instance()
+           && manager->objects[n].is_instance_handle_valid() ) {
+
+         // Set a flag to indicate that this federate is rejoining the federation
+         this->rejoining_federate = true;
+         return true;
+      }
+   }
+
+   // Set a flag to indicate that this federate is not rejoining the federation
+   this->rejoining_federate = false;
+   return false;
 }

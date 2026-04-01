@@ -115,7 +115,6 @@ Manager::Manager( Federate &fed )
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
-     rejoining_federate( false ),
      mgr_initialized( false ),
      obj_discovery_mutex(),
      object_map(),
@@ -3319,31 +3318,6 @@ void Manager::wait_for_discovery_of_objects()
                           __LINE__ );
       }
    }
-}
-
-/*!
- * @details If they have, true is returned if the 'create HLA instance' object
- * was discovered. If no discoveries took place or if the required
- * 'create HLA instance' object was not discovered, false is returned.
- * @job_class{initialization}
- */
-bool Manager::is_this_a_rejoining_federate()
-{
-   for ( int n = 0; n < obj_count; ++n ) {
-      // Was the required 'create_HLA_instance' object found?
-      if ( objects[n].is_required()
-           && objects[n].is_create_HLA_instance()
-           && objects[n].is_instance_handle_valid() ) {
-
-         // Set a flag to indicate that this federate is rejoining the federation
-         rejoining_federate = true;
-         return true;
-      }
-   }
-
-   // Set a flag to indicate that this federate is not rejoining the federation
-   rejoining_federate = false;
-   return false;
 }
 
 RTIambassador *Manager::get_RTI_ambassador() const

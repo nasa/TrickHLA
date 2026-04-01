@@ -312,10 +312,6 @@ class Manager : public CheckpointConversionBase
    /*! @brief Waits for the discovery of object instances. */
    void wait_for_discovery_of_objects();
 
-   /*! @brief Checks if any object discoveries have occurred.
-    *  @return True if this is a rejoining federate. */
-   bool is_this_a_rejoining_federate();
-
    /*! @brief Creates an RTI object instance and registers it with the RTI,
     * but only for the objects that are locally owned. */
    void register_objects_with_RTI();
@@ -544,8 +540,6 @@ class Manager : public CheckpointConversionBase
 
    std::size_t      check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
-
-   bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
 
    bool mgr_initialized; ///< @trick_units{--} Internal flag to indicate Manager is initialized.
 
