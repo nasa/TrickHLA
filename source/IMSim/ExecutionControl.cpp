@@ -144,7 +144,9 @@ ExecutionControl::ExecutionControl(
      freeze_scenario_times(),
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
-     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED )
+     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
+     restore_determined( false ),
+     restore_federate( false )
 {
    // The next_mode_scenario_time time for the next federation execution mode
    // change expressed as a federation scenario time reference. Note: this is
@@ -347,9 +349,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Save restore_file_name before it gets wiped out with the loading of the checkpoint file...
    char *tRestoreName = NULL;
-   if ( !manager->restore_file_name.empty() ) {
+   if ( !federate->restore_file_name.empty() ) {
       // we don't want this to get wiped out when trick clears memory for load checkpoint, so don't allocate with TMM
-      tRestoreName = strdup( manager->restore_file_name.c_str() ); // NOLINT
+      tRestoreName = strdup( federate->restore_file_name.c_str() ); // NOLINT
    }
 
    // Initialize the MOM interface handles.
@@ -361,7 +363,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
       // if you want to restore from a check point, force the loading of the
       // checkpoint file here...
-      if ( manager->restore_federation ) {
+      if ( federate->restore_federation ) {
          if ( ( tRestoreName != NULL ) && ( *tRestoreName != '\0' ) ) {
 
             // make sure that we have a valid absolute path to the files.
@@ -838,14 +840,14 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
    SleepTimeout sleep_timer;
 
    // Block until we have determined if we are a late joining federate.
-   while ( !late_joiner_determined && !manager->is_restore_determined() ) {
+   while ( !late_joiner_determined && !is_restore_determined() ) {
 
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
 
       // We are not a late joiner if the Sim-Config sync-point exists are we
       // are a member for it.
-      if ( !manager->is_restore_determined() && contains_sync_point( IMSim::SIM_CONFIG_SYNC_POINT ) ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( !is_restore_determined() && contains_sync_point( IMSim::SIM_CONFIG_SYNC_POINT ) ) { // cppcheck-suppress [knownConditionTrueFalse]
          this->late_joiner            = false;
          this->late_joiner_determined = true;
       }
@@ -853,7 +855,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
       // Determine if the Initialization Complete sync-point exists, which
       // means at this point we are a late joining federate.
       if ( !late_joiner_determined
-           && !manager->is_restore_determined()
+           && !is_restore_determined()
            && is_sync_point_announced( IMSim::INIT_COMPLETE_SYNC_POINT ) ) {
          this->late_joiner            = true;
          this->late_joiner_determined = true;
@@ -863,19 +865,19 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
       if ( !late_joiner_determined
            && federate->has_restore_been_announced()
            && federate->is_start_to_restore() ) {
-         manager->set_restore_determined( true );
-         manager->set_restore_federate( true );
+         set_restore_determined( true );
+         set_restore_federate( true );
       }
 
       // Wait for a little while to give the sync-points time to come in.
-      if ( !late_joiner_determined && !manager->is_restore_determined() ) {
+      if ( !late_joiner_determined && !is_restore_determined() ) {
 
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
-         if ( !late_joiner_determined && !manager->is_restore_determined() ) { // cppcheck-suppress [knownConditionTrueFalse]
+         if ( !late_joiner_determined && !is_restore_determined() ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
             int64_t wallclock_time = sleep_timer.time();
@@ -911,7 +913,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
       }
       return TrickHLA::FEDERATE_JOIN_LATE;
 
-   } else if ( manager->is_restore_determined() ) {
+   } else if ( is_restore_determined() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Restoring the Federate!\n",
@@ -2172,7 +2174,6 @@ void ExecutionControl::enter_freeze()
          trigger_freeze_interaction( freeze_scenario_time );
 
          set_freeze_pending( true ); // TEMP
-
          // TEMP   federate->un_freeze(); // will freeze again for real when we hit the freeze interaction time
       }
    }
@@ -2271,7 +2272,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
 
       trigger_freeze_interaction( new_scenario_time );
 
-      manager->initiate_federation_save( file_name );
+      federate->initiate_federation_save( file_name );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
@@ -2286,7 +2287,7 @@ void ExecutionControl::add_freeze_scenario_time(
 {
    if ( manager->is_late_joining_federate() ) {
 
-      if ( federate->get_announce_save() ) {
+      if ( federate->is_announce_save() ) {
          freeze_scenario_times.insert( t );
       } else {
          // If we received the interaction, save on the current frame.
@@ -2325,7 +2326,7 @@ bool ExecutionControl::check_freeze_time()
       exec_freeze(); // go to freeze at top of next frame (other federates MUST have their software frame set in input.py file!)
       // If we are to initiate the federation save, register a sync point
       // which must be acknowledged only in freeze mode!!!
-      if ( federate->get_announce_save() ) {
+      if ( federate->is_announce_save() ) {
          register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
          set_freeze_announced( true );
       }
@@ -2414,19 +2415,19 @@ bool ExecutionControl::is_save_initiated()
    // set in federation_synchronized when feds sync to FEDSAVE_v2 sync point
    // if it's not set, we are here because Dump Chkpnt was clicked, so we
    // need to register sync point
-   if ( federate->get_announce_save()
-        && !federate->get_initiate_save_flag()
-        && !federate->get_save_completed() ) {
+   if ( federate->is_announce_save()
+        && !federate->is_initiate_save_flag()
+        && !federate->is_save_completed() ) {
       register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
-      while ( !federate->get_initiate_save_flag() ) { // wait for federation to be synced
+      while ( !federate->is_initiate_save_flag() ) { // wait for federation to be synced
 
          sleep_timer.sleep();
 
-         if ( !federate->get_initiate_save_flag() ) {
+         if ( !federate->is_initiate_save_flag() ) {
 
             // To be more efficient, we get the time once and share it.
             int64_t wallclock_time = sleep_timer.time();
@@ -2459,9 +2460,9 @@ bool ExecutionControl::is_save_initiated()
 
 bool ExecutionControl::perform_save()
 {
-   if ( federate->get_announce_save()
-        && federate->get_initiate_save_flag()
-        && !federate->get_start_to_save() ) {
+   if ( federate->is_announce_save()
+        && federate->is_initiate_save_flag()
+        && !federate->is_start_to_save() ) {
       // We are here because user called start_federation_save, so
       // must force the perform_checkpoint code to execute.
       federate->set_announce_save( false );

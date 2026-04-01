@@ -34,6 +34,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_PARAMETER_ITEM_HH
 #define TRICKHLA_PARAMETER_ITEM_HH
 
+// System includes.
+#include <cstddef>
+
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
@@ -70,35 +73,35 @@ class ParameterItem : public Item
    friend void init_attrTrickHLA__ParameterItem();
 
   public:
+   std::size_t index; ///< @trick_units{--} Index to the applicable parameter.
+
+   std::size_t    size; ///< @trick_units{--} Number of bytes in the parameter data.
+   unsigned char *data; ///< @trick_units{--} Parameter data.
+
    //-----------------------------------------------------------------
    // Constructors / destructors
    //-----------------------------------------------------------------
-   /*! @brief Default constructor for the TrickHLA ParameterItem class. */
-   ParameterItem();
    /*! @brief Initialization constructor for the TrickHLA ParameterItem class.
     *  @param parameter_index Parameter index.
     *  @param param_value HLA RTI Parameter value. */
-   ParameterItem( int const                                    parameter_index,
+   ParameterItem( std::size_t const                            parameter_index,
                   RTI1516_NAMESPACE::VariableLengthData const *param_value );
+
+   /*! @brief Copy constructor for ParameterItem class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   ParameterItem( ParameterItem const &rhs );
 
    /*! @brief Destructor for the TrickHLA ParameterItem class. */
    virtual ~ParameterItem();
 
-  public:
    /*! @brief Frees allocated memory. */
    void clear();
 
-  public:
-   int index; ///< @trick_units{--} Index to the applicable parameter.
-
-   int            size; ///< @trick_units{--} Number of bytes in the parameter data.
-   unsigned char *data; ///< @trick_units{--} Parameter data.
-
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for ParameterItem class.
-    *  @details This constructor is private to prevent inadvertent copies. */
-   ParameterItem( ParameterItem const &rhs );
+   /*! @brief Default constructor for the TrickHLA ParameterItem class. */
+   ParameterItem();
+
    /*! @brief Assignment operator for ParameterItem class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    ParameterItem &operator=( ParameterItem const &rhs );

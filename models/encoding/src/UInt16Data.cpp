@@ -65,7 +65,7 @@ UInt16Data::UInt16Data(
       }
    }
 
-   int const ptr_ui16_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int const ptr_ui16_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_ui16 = static_cast< unsigned short * >( TMM_declare_var_1d( "unsigned short", ptr_ui16_size ) );
    for ( int i = 0; i < ptr_ui16_size; ++i ) {

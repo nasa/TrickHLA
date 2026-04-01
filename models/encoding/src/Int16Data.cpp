@@ -65,7 +65,7 @@ Int16Data::Int16Data(
       }
    }
 
-   int const ptr_i16_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int const ptr_i16_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_i16 = static_cast< short * >( TMM_declare_var_1d( "short", ptr_i16_size ) );
    for ( int i = 0; i < ptr_i16_size; ++i ) {

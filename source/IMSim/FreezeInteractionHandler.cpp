@@ -171,8 +171,8 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
       interaction->get_federate()->wait_for_time_advance_grant();
    }
 
-   Int64Interval lookahead              = interaction->get_lookahead();
-   Int64Time     granted                = interaction->get_granted_time();
+   Int64Interval lookahead              = interaction->get_federate()->get_lookahead();
+   Int64Time     granted                = interaction->get_federate()->get_granted_time();
    Int64Time     granted_plus_lookahead = granted + lookahead;
 
    double curr_scenario_time   = interaction->get_manager()->get_execution_control()->get_scenario_time();

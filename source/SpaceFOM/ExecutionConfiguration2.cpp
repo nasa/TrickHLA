@@ -201,7 +201,7 @@ void ExecutionConfiguration2::configure_attributes()
    trick_name_str                   = S_define_name + string( ".least_common_time_step" );
    this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
-   this->attributes[6].rti_encoding = ENCODING_LITTLE_ENDIAN;
+   this->attributes[6].rti_encoding = ENCODING_BIG_ENDIAN;
 
    this->attributes[7].FOM_name     = trick_MM->mm_strdup( "hla_base_time_multiplier" );
    trick_name_str                   = S_define_name + string( ".hla_base_time_multiplier" );
@@ -285,7 +285,7 @@ void ExecutionConfiguration2::print_execution_configuration() const
       }
       msg << "\t  current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "\t     next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "\t  least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_base_unit() << ")" << endl
+          << "\t  least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl
           << "-- Extended ExCO Attributes --" << endl
           << "\thla_base_time_multiplier: " << hla_base_time_multiplier << " (" << Int64BaseTime::get_base_unit() << ")" << endl
           << "=============================================================" << endl;

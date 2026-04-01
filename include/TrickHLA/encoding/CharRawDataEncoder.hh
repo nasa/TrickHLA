@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_CHAR_RAW_DATA_ENCODER_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -97,13 +98,13 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
    virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException );
 #endif // IEEE_1516_2025
 
-   virtual size_t decodeFrom(
+   virtual std::size_t decodeFrom(
 #if defined( IEEE_1516_2025 )
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
-      size_t                                         index );
+      std::size_t                                    index );
 #else
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
-      size_t                                         index ) throw( RTI1516_NAMESPACE::EncoderException );
+      std::size_t                                    index ) throw( RTI1516_NAMESPACE::EncoderException );
 #endif // IEEE_1516_2025
 
    virtual std::string to_string()

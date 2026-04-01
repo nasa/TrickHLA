@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/time/TimeManagement.hh
+@file TrickHLA/time/TimeManagementServices.hh
 @ingroup TrickHLA
 @brief This class provides basic services for HLA time management.
 
@@ -19,13 +19,11 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/time/TimeManagement.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/TimeManagementServices.cpp}
+@trick_link_dependency{../../../source/TrickHLA/time/Int64Interval.cpp}
 @trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{../../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
 @trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../../source/TrickHLA/FedAmb.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
 @trick_link_dependency{../../../source/TrickHLA/utils/MutexProtection.cpp}
@@ -37,8 +35,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_TIME_MANAGEMENT_HH
-#define TRICKHLA_TIME_MANAGEMENT_HH
+#ifndef TRICKHLA_TIME_MANAGEMENT_SERVICES_HH
+#define TRICKHLA_TIME_MANAGEMENT_SERVICES_HH
 
 // System includes.
 #include <map>
@@ -57,12 +55,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
-
-#if defined( IEEE_1516_2025 )
-#   include "TrickHLA/FedAmbHLA4.hh"
-#else
-#   include "TrickHLA/FedAmbHLA3.hh"
-#endif // IEEE_1516_2025
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -86,7 +79,12 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class TimeManagement : public TrickThreadCoordinator
+// Forward Declared Classes: Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
+class Federate;
+
+class TimeManagementServices : public TrickThreadCoordinator
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -96,7 +94,7 @@ class TimeManagement : public TrickThreadCoordinator
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__TimeManagement();
+   friend void init_attrTrickHLA__TimeManagementServices();
 
    //----------------------------- USER VARIABLES -----------------------------
    // The variables below are configured by the user in the input files.
@@ -119,10 +117,10 @@ class TimeManagement : public TrickThreadCoordinator
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA TimeManagement class. */
-   explicit TimeManagement( Federate *fed );
-   /*! @brief Destructor for the TrickHLA TimeManagement class. */
-   virtual ~TimeManagement();
+   /*! @brief Default constructor for the TrickHLA TimeManagementServices class. */
+   explicit TimeManagementServices( Federate *fed );
+   /*! @brief Destructor for the TrickHLA TimeManagementServices class. */
+   virtual ~TimeManagementServices();
 
    /*! @brief Get the HLA time advance cycle time.
     *  @return HLA cycle time in seconds. */
@@ -198,7 +196,7 @@ class TimeManagement : public TrickThreadCoordinator
    //
    /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
     *  @return Pointer to associated RTI Ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() // cppcheck-suppress [functionStatic, unmatchedSuppression]
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const // cppcheck-suppress [functionStatic, unmatchedSuppression]
    {
       return RTI_ambassador.get();
    }
@@ -208,13 +206,6 @@ class TimeManagement : public TrickThreadCoordinator
    Int64Time const &get_granted_time() const
    {
       return this->granted_time;
-   }
-
-   /*! @brief Get the current granted HLA federation execution time in the base HLA Logical Time representation.
-    *  @return Reference to current granted HLA federation execution time. */
-   double get_granted_base_time() const
-   {
-      return granted_time.get_base_time();
    }
 
    /*! @brief Get the requested HLA federation execution time.
@@ -229,13 +220,6 @@ class TimeManagement : public TrickThreadCoordinator
    Int64Interval const &get_lookahead() const
    {
       return this->lookahead;
-   }
-
-   /*! @brief Get the current federate lookahead time in seconds.
-    *  @return Current federate lookahead time in the base time. */
-   int64_t get_lookahead_in_base_time() const
-   {
-      return lookahead.get_base_time();
    }
 
    /*! @brief Query of federate has a zero lookahead time.
@@ -295,6 +279,9 @@ class TimeManagement : public TrickThreadCoordinator
    /*! @brief Sets the requested time from the specified LogicalTime.
     *  @param time Requested time in HLA logical time. */
    void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
+
+   /*! @brief Sets the requested time to the granted time. */
+   void set_requested_time_to_granted_time();
 
    /*! @brief Sets the HLA base time unit. */
    static HLABaseTimeEnum get_HLA_base_time_unit();
@@ -371,7 +358,7 @@ class TimeManagement : public TrickThreadCoordinator
 #if defined( IEEE_1516_2025 )
 #   if !defined( SWIG )
    std::unique_ptr< RTI1516_NAMESPACE::RTIambassador > RTI_ambassador; ///< @trick_units{--} RTI ambassador.
-#   endif                                                              // SWIG
+#   endif
 #else
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated"
@@ -381,16 +368,16 @@ class TimeManagement : public TrickThreadCoordinator
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   TimeManagement();
-   /*! @brief Copy constructor for TimeManagement class.
+   TimeManagementServices();
+   /*! @brief Copy constructor for TimeManagementServices class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   TimeManagement( TimeManagement const &rhs );
+   TimeManagementServices( TimeManagementServices const &rhs );
 
-   /*! @brief Assignment operator for TimeManagement class.
+   /*! @brief Assignment operator for TimeManagementServices class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   TimeManagement &operator=( TimeManagement const &rhs );
+   TimeManagementServices &operator=( TimeManagementServices const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_TIME_MANAGEMENT_HH
+#endif // TRICKHLA_TIME_MANAGEMENT_SERVICES_HH

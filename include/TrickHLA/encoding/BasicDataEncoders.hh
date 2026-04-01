@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_BASIC_DATA_ENCODERS_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // Trick include files.
@@ -95,7 +96,7 @@ namespace TrickHLA
          return;                                                                    \
       }                                                                             \
                                                                                     \
-      virtual int get_data_size();                                                  \
+      virtual std::size_t get_data_size();                                          \
                                                                                     \
       virtual std::string to_string()                                               \
       {                                                                             \

@@ -198,7 +198,7 @@ void SyncPointList::clear()
    if ( list != NULL ) {
       for ( int i = 0; i < list_count; ++i ) {
          if ( list[i] != NULL ) {
-            list[i]->free_checkpoint();
+            list[i]->free_converted_data_for_checkpoint();
             TMM_delete_var_a( list[i] );
             list[i] = NULL;
          }
@@ -1209,9 +1209,9 @@ std::string SyncPointList::to_string(
 }
 
 /*! @brief Encode the variables to a form Trick can checkpoint. */
-void SyncPointList::encode_checkpoint()
+void SyncPointList::convert_data_before_checkpoint()
 {
-   free_checkpoint();
+   free_converted_data_for_checkpoint();
 
    // Checkpointable copy of the list name.
    this->list_name_chkpt = StringUtilities::mm_strdup_string( this->list_name );
@@ -1221,12 +1221,12 @@ void SyncPointList::encode_checkpoint()
 #else
    for ( int i = 0; i < list.size(); ++i ) {
 #endif
-      list[i]->encode_checkpoint();
+      list[i]->convert_data_before_checkpoint();
    }
 }
 
 /*! @brief Decode the state of this class from the Trick checkpoint. */
-void SyncPointList::decode_checkpoint()
+void SyncPointList::restore_data_after_checkpoint()
 {
    // Update the list_name from the checkpointable c-string.
    this->list_name = this->list_name_chkpt;
@@ -1236,16 +1236,16 @@ void SyncPointList::decode_checkpoint()
 #else
    for ( int i = 0; i < list.size(); ++i ) {
 #endif
-      list[i]->decode_checkpoint();
+      list[i]->restore_data_after_checkpoint();
    }
 }
 
 /*! @brief Free/release the memory used for the checkpoint data structures. */
-void SyncPointList::free_checkpoint()
+void SyncPointList::free_converted_data_for_checkpoint()
 {
    if ( this->list_name_chkpt != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->list_name_chkpt ) ) ) {
-         message_publish( MSG_WARNING, "SyncPointList::free_checkpoint():%d WARNING failed to delete Trick Memory for 'list_name_chkpt'\n", __LINE__ );
+         message_publish( MSG_WARNING, "SyncPointList::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'list_name_chkpt'\n", __LINE__ );
       }
       this->list_name_chkpt = NULL;
    }
@@ -1255,6 +1255,6 @@ void SyncPointList::free_checkpoint()
 #else
    for ( int i = 0; i < list.size(); ++i ) {
 #endif
-      list[i]->free_checkpoint();
+      list[i]->free_converted_data_for_checkpoint();
    }
 }

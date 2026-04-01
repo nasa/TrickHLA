@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>Ball Module</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2025-04-15</modificationDate>
+        <securityClassification>unclassified</securityClassification>
+        <purpose></purpose>
+        <applicationDomain>Test and Evaluation</applicationDomain>
+        <description>A simple FOM to support a distributed version of the Trick Ball simulation.</description>
+        <useLimitation></useLimitation>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Edwin Z. Crues</pocName>
+            <pocOrg>NASA JSC ER7</pocOrg>
+            <pocTelephone>832.341.9023</pocTelephone>
+            <pocEmail>edwin.z.crues@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Dan Dexter</pocName>
+            <pocOrg>NASA JSC ER</pocOrg>
+            <pocTelephone>‭(281) 483-1142‬</pocTelephone>
+            <pocEmail>dan.e.dexter@nasa.gov</pocEmail>
+        </poc>
+        <other></other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>Ball</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics></semantics>
+                <attribute>
+                    <name>name</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>When changed</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>The name of the Ball.</semantics>
+                </attribute>
+                <attribute>
+                    <name>time</name>
+                    <dataType>Time</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Time stamp for the Ball state.</semantics>
+                </attribute>
+                <attribute>
+                    <name>position</name>
+                    <dataType>2DPosition</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Ball position.</semantics>
+                </attribute>
+                <attribute>
+                    <name>velocity</name>
+                    <dataType>2DVelocity</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Ball velocity.</semantics>
+                </attribute>
+                <attribute>
+                    <name>acceleration</name>
+                    <dataType>2DAcceleration</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Ball acceleration.</semantics>
+                </attribute>
+                <attribute>
+                    <name>force</name>
+                    <dataType>2DForce</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>External force exerted on the Ball.</semantics>
+                </attribute>
+            </objectClass>
+            <objectClass>
+                <name>Walls</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics></semantics>
+                <attribute>
+                    <name>ceiling</name>
+                    <dataType>Length</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Cieling wall position.</semantics>
+                </attribute>
+                <attribute>
+                    <name>right</name>
+                    <dataType>Length</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Right wall position.</semantics>
+                </attribute>
+                <attribute>
+                    <name>left</name>
+                    <dataType>Length</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Left wall position.</semantics>
+                </attribute>
+                <attribute>
+                    <name>floor</name>
+                    <dataType>Length</dataType>
+                    <updateType>NA</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Floor wall position.</semantics>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <interactions>
+        <interactionClass>
+            <name>HLAinteractionRoot</name>
+        </interactionClass>
+    </interactions>
+    <switches>
+        <autoProvide isEnabled="true"/>
+        <conveyRegionDesignatorSets isEnabled="false"/>
+        <conveyProducingFederate isEnabled="false"/>
+        <attributeScopeAdvisory isEnabled="false"/>
+        <attributeRelevanceAdvisory isEnabled="false"/>
+        <objectClassRelevanceAdvisory isEnabled="false"/>
+        <interactionRelevanceAdvisory isEnabled="false"/>
+        <serviceReporting isEnabled="false"/>
+        <exceptionReporting isEnabled="false"/>
+        <delaySubscriptionEvaluation isEnabled="false"/>
+        <automaticResignAction resignAction="CancelThenDeleteThenDivest"/>
+    </switches>
+    <dataTypes>
+        <simpleDataTypes>
+            <simpleData>
+                <name>Length</name>
+                <representation>HLAfloat64LE</representation>
+                <units>Meter (m)</units>
+                <resolution></resolution>
+                <accuracy></accuracy>
+                <semantics>A scalar length in meters.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Velocity</name>
+                <representation>HLAfloat64LE</representation>
+                <units>Meters/Second (m/s)</units>
+                <resolution></resolution>
+                <accuracy></accuracy>
+                <semantics>A scalar velocity in metters per second.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Acceleration</name>
+                <representation>HLAfloat64LE</representation>
+                <units>Meters/Second/Second (m/s^2)</units>
+                <resolution></resolution>
+                <accuracy></accuracy>
+                <semantics>A scalar acceleration in meters per second squared.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Force</name>
+                <representation>HLAfloat64LE</representation>
+                <units>Newtons (N)</units>
+                <resolution></resolution>
+                <accuracy></accuracy>
+                <semantics>A scalar force in newtons.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Time</name>
+                <representation>HLAfloat64LE</representation>
+                <units>Seconds (s)</units>
+                <resolution></resolution>
+                <accuracy></accuracy>
+                <semantics>Time in seconds.</semantics>
+            </simpleData>
+        </simpleDataTypes>
+        <enumeratedDataTypes/>
+        <arrayDataTypes>
+            <arrayData>
+                <name>2DPosition</name>
+                <dataType>Length</dataType>
+                <cardinality>2</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>A 2D position vector (X and Y).</semantics>
+            </arrayData>
+            <arrayData>
+                <name>2DVelocity</name>
+                <dataType>Velocity</dataType>
+                <cardinality>2</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>A 2D velocity vector (X and Y).</semantics>
+            </arrayData>
+            <arrayData>
+                <name>2DAcceleration</name>
+                <dataType>Acceleration</dataType>
+                <cardinality>2</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>A 2D acceleration vector (X and Y).</semantics>
+            </arrayData>
+            <arrayData>
+                <name>2DForce</name>
+                <dataType>Force</dataType>
+                <cardinality>2</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>A 2D force vector (X and Y).</semantics>
+            </arrayData>
+        </arrayDataTypes>
+        <fixedRecordDataTypes/>
+        <variantRecordDataTypes/>
+    </dataTypes>
+    <notes/>
+</objectModel>

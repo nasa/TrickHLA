@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_RECORD_ELEMENT_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // Trick includes.
@@ -104,7 +105,7 @@ class RecordElement
       return trick_name;
    }
 
-   int get_data_size()
+   std::size_t get_data_size()
    {
       return ( ( encoder != NULL ) ? encoder->get_data_size() : 0 );
    }

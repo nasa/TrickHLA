@@ -18,6 +18,7 @@
 import socket
 import subprocess
 import sys
+
 sys.path.append( '../../../' )
 
 # Load the SpaceFOM specific federate configuration object.
@@ -37,10 +38,12 @@ def print_usage_message():
    print( '  -h --help              : Print this help message.' )
    print( '  -f --fed_name [name]   : Name of the Federate, default is A-side-Federate.' )
    print( '  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine.' )
+   print( '  --freeze [on|off]      : on: Start in freeze (Default), off: Run and no sim-control.' )
    print( '  --nostop               : Set no stop time on simulation.' )
+   print( '  --realtime [on|off]    : on: Enable realtime (Default), off: disable realtime.' )
    print( '  -r --root_frame [name] : Name of the root reference frame, default is RootFrame.' )
    print( '  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --verbose [on|off]     : on: Show verbose messages (Default), off: disable messages.' )
+   print( '  --verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -58,6 +61,8 @@ def parse_command_line():
    global federate_name
    global federation_name
    global root_frame_name
+   global realtime_enabled
+   global freeze_enabled
 
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -87,12 +92,40 @@ def parse_command_line():
             print( 'ERROR: Missing --fex_name [name] argument.' )
             print_usage = True
 
+      elif ( str( argv[index] ) == '--freeze' ):
+         index = index + 1
+         if ( index < argc ):
+            if ( str( argv[index] ) == 'on' ):
+               freeze_enabled = True
+            elif ( str( argv[index] ) == 'off' ):
+               freeze_enabled = False
+            else:
+               print( 'ERROR: Unknown --freeze argument: ' + str( argv[index] ) )
+               print_usage = True
+         else:
+            print( 'ERROR: Missing --freeze [on|off] argument.' )
+            print_usage = True
+
       elif ( ( str( argv[index] ) == '-r' ) | ( str( argv[index] ) == '--root_frame' ) ):
          index = index + 1
          if ( index < argc ):
             root_frame_name = str( argv[index] )
          else:
             print( 'ERROR: Missing --root_frame [name] argument.' )
+            print_usage = True
+
+      elif ( str( argv[index] ) == '--realtime' ):
+         index = index + 1
+         if ( index < argc ):
+            if ( str( argv[index] ) == 'on' ):
+               realtime_enabled = True
+            elif ( str( argv[index] ) == 'off' ):
+               realtime_enabled = False
+            else:
+               print( 'ERROR: Unknown --realtime argument: ' + str( argv[index] ) )
+               print_usage = True
+         else:
+            print( 'ERROR: Missing --realtime [on|off] argument.' )
             print_usage = True
 
       elif ( str( argv[index] ) == '--nostop' ):
@@ -138,6 +171,12 @@ print_usage = False
 # Set the default run duration.
 run_duration = 10.0
 
+# Set the default to enable realtime.
+realtime_enabled = True
+
+# Start in freeze mode and a simulation control panel.
+freeze_enabled = True
+
 # Default is to NOT show verbose messages.
 verbose = False
 
@@ -167,13 +206,15 @@ trick.exec_set_trap_sigfpe( True )
 
 # Setup for Trick real time execution. This is the "Pacing" function.
 exec( open( "Modified_data/trick/realtime.py" ).read() )
+if ( realtime_enabled != True ):
+   trick.real_time_disable()
 
-trick.exec_set_enable_freeze( True )
-trick.exec_set_freeze_command( True )
+trick.exec_set_enable_freeze( freeze_enabled )
+trick.exec_set_freeze_command( freeze_enabled )
 trick.exec_set_stack_trace( False )
 
 trick.var_server_set_port( 7000 )
-trick.sim_control_panel_set_enabled( True )
+trick.sim_control_panel_set_enabled( freeze_enabled )
 
 #---------------------------------------------
 # Set up data to record.

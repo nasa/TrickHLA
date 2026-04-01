@@ -190,14 +190,17 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 
+   //
+   // Checkpoint
+   //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
-   virtual void encode_checkpoint();
+   virtual void convert_data_before_checkpoint();
 
    /*! @brief Decode the state of this class from the Trick checkpoint. */
-   virtual void decode_checkpoint();
+   virtual void restore_data_after_checkpoint();
 
    /*! @brief Free/release the memory used for the checkpoint data structures. */
-   virtual void free_checkpoint();
+   virtual void free_converted_data_for_checkpoint();
 
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.

@@ -88,7 +88,7 @@ bool ItemQueue::empty()
  * @brief Get the size of the item queue.
  * @return Number of elements in the queue.
  */
-unsigned int ItemQueue::size()
+size_t ItemQueue::size()
 {
    MutexProtection auto_unlock_mutex( &mutex );
    return count;

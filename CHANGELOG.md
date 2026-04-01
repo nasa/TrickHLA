@@ -4,17 +4,43 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [Unreleased] - 2026-04-01
 
 ### Notable Additions
 
+
 ### Breaking Changes
+
 
 ### Added
 
+
 ### Changed
 
-- Reduced the scope of variables.
+
+## [v3.2.2] - 2026-04-01
+
+### Notable Additions
+
+- Added checkpoint (i.e. save/restore) virtual functions to the ExecutionControlBase class to allow for different checkpoint implementations (issue #184).
+  - virtual void setup_checkpoint();
+  - virtual void perform_checkpoint();
+  - virtual void post_checkpoint();
+  - virtual void setup_restore();
+  - virtual void perform_restore();
+  - virtual void post_restore();
+- Refactored the HLA save and restore services into a SaveRestoreServices class.
+
+### Changed
+
+- Fixed encoding of the SpaceFOM Execution Configuration Object (ExCO) Least Common Time Step (LCTS) attribute encoding to be big-endian.
+- Improved performance by updating the functions that get the granted and lookahead times to return a const reference instead of a copy.
+- Updated the auto-provide switch setting encoder to use the HLA encoder helpers.
+- Updated auto-provide switch setting status string and value checks.
+- Fixed missing forward declared class statements.
+- Reduced the scope of local variables.
+- Fixed shadowed variables.
+- Fixed implicit integer conversions.
 
 
 ## [v3.2.1] - 2026-03-02
@@ -353,7 +379,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [d3.0.0] - 2024-11-22
 
 
-[Unreleased]: https://github.com/nasa/TrickHLA/compare/v3.2.1...HEAD
+[Unreleased]: https://github.com/nasa/TrickHLA/compare/v3.2.2...HEAD
+[v3.2.2]: https://github.com/nasa/TrickHLA/compare/v3.2.1...v3.2.2
 [v3.2.1]: https://github.com/nasa/TrickHLA/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/nasa/TrickHLA/compare/v3.1.18...v3.2.0
 [v3.1.18]: https://github.com/nasa/TrickHLA/compare/v3.1.17...v3.1.18

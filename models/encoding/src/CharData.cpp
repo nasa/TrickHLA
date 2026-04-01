@@ -75,7 +75,7 @@ CharData::CharData(
 #if 1
    ptr_char = StringUtilities::mm_strdup_string( str );
 #else
-   int const ptr_char_size = str.size() + 1;
+   int const ptr_char_size = (int)( str.size() + 1 );
 
    ptr_char = static_cast< char * >( TMM_declare_var_1d( "char", ptr_char_size ) );
    for ( int i = 0; i < str.size(); ++i ) {
@@ -133,11 +133,11 @@ bool CharData::compare(
       }
    }
 
-   int data1_ptr_char_size = strlen( this->ptr_char ); // flawfinder: ignore
-   int data2_ptr_char_size = strlen( data.ptr_char );  // flawfinder: ignore
-   int min_ptr_char_size   = ( data1_ptr_char_size <= data2_ptr_char_size )
-                                ? data1_ptr_char_size
-                                : data2_ptr_char_size;
+   size_t data1_ptr_char_size = strlen( this->ptr_char ); // flawfinder: ignore
+   size_t data2_ptr_char_size = strlen( data.ptr_char );  // flawfinder: ignore
+   size_t min_ptr_char_size   = ( data1_ptr_char_size <= data2_ptr_char_size )
+                                   ? data1_ptr_char_size
+                                   : data2_ptr_char_size;
    if ( data1_ptr_char_size != data2_ptr_char_size ) {
       msg << "this->ptr_char size (" << data1_ptr_char_size
           << ") != (" << data2_ptr_char_size << ") data.ptr_char size" << endl;
@@ -146,7 +146,7 @@ bool CharData::compare(
       msg << "this->ptr_char size (" << data1_ptr_char_size
           << ") == (" << data2_ptr_char_size << ") data.ptr_char size" << endl;
    }
-   for ( int i = 0; i < min_ptr_char_size; ++i ) {
+   for ( size_t i = 0; i < min_ptr_char_size; ++i ) {
       if ( this->ptr_char[i] == data.ptr_char[i] ) {
          msg << "this->ptr_char[" << i << "] ("
              << ( std::isprint( this->ptr_char[i] ) ? this->ptr_char[i] : ' ' )

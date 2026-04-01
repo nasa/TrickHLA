@@ -130,13 +130,13 @@ class InteractionHandler
     *  @param the_user_supplied_tag Users tag. */
    bool send_interaction( double send_HLA_time, RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
 
-   /*! @brief Return a copy of the interactions lookahead time.
-    *  @return A copy of the federation lookahead time. */
-   Int64Interval get_lookahead() const;
+   /*! @brief Return a reference to the interactions lookahead time.
+    *  @return A reference to the federation lookahead time. */
+   Int64Interval const &get_lookahead() const;
 
-   /*! @brief Return a copy of the granted HLA logical time.
-    *  @return A copy of the federation granted time. */
-   Int64Time get_granted_time() const;
+   /*! @brief Return a reference to the granted HLA logical time.
+    *  @return A reference to the federation granted time. */
+   Int64Time const &get_granted_time() const;
 
    /*! @brief Returns the current simulation time.
     *  @return Current simulation time. */

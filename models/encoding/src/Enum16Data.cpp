@@ -69,7 +69,7 @@ Enum16Data::Enum16Data(
       }
    }
 
-   int ptr_enum16_size = 5 + ( ( offset < 10 ) ? offset : 10 );
+   int ptr_enum16_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_enum16 = static_cast< TrickHLAModel::Int16Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int16Enum", ptr_enum16_size ) );

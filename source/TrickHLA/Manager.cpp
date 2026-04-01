@@ -45,9 +45,9 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <climits>
 #include <cstdint>
 #include <cstring>
-#include <float.h>
 #include <map>
 #include <ostream>
 #include <sstream>
@@ -112,20 +112,14 @@ Manager::Manager()
      objects( NULL ),
      inter_count( 0 ),
      interactions( NULL ),
-     restore_federation( 0 ),
-     restore_file_name(),
-     initiated_a_federation_save( false ),
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
      rejoining_federate( false ),
-     restore_determined( false ),
-     restore_federate( false ),
      mgr_initialized( false ),
      obj_discovery_mutex(),
      object_map(),
      obj_name_index_map(),
-     federate_has_been_restored( false ),
      federate( NULL ),
      execution_control( NULL )
 {
@@ -140,7 +134,7 @@ Manager::~Manager()
 {
    object_map.clear();
    obj_name_index_map.clear();
-   free_checkpoint_interactions();
+   free_converted_interactions_checkpoint();
 
    // Make sure we destroy the mutex.
    obj_discovery_mutex.destroy();
@@ -155,14 +149,14 @@ Manager::~Manager()
  * @job_class{default_data}
  */
 void Manager::setup(
-   Federate             &federate,
-   ExecutionControlBase &execution_control )
+   Federate             &fed,
+   ExecutionControlBase &exec_control )
 {
-   // Set the TrickHLA::Federate instace reference.
-   this->federate = &federate;
+   // Set the TrickHLA::Federate instance reference.
+   this->federate = &fed;
 
    // Set the TrickHLA::ExecutionControlBase instance reference.
-   this->execution_control = &execution_control;
+   this->execution_control = &exec_control;
 }
 
 /*!
@@ -284,11 +278,11 @@ void Manager::restart_initialization()
 
    // Restore ownership_transfer data for all objects.
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].decode_checkpoint();
+      objects[n].restore_data_after_checkpoint();
    }
 
    // Restore checkpointed interactions.
-   decode_checkpoint_interactions();
+   restore_interactions_after_checkpoint();
 
    // The manager is now initialized.
    this->mgr_initialized = true;
@@ -332,6 +326,15 @@ void Manager::verify_object_and_interaction_arrays()
              << " the 'Manager::objects' array is correctly configured." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
+   }
+
+   if ( obj_count >= INT_MAX ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected obj_count:" << obj_count << " >= " << INT_MAX
+             << ". Please check your input or modified-data files to make sure"
+             << " the 'Manager::objects' array is correctly configured." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Reset the TrickHLA Object count if negative.
@@ -384,9 +387,20 @@ void Manager::verify_object_and_interaction_arrays()
              << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
              << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
              << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured." << endl;
+             << " sure the 'Manager::interactions' array is correctly configured."
+             << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
+   }
+
+   if ( inter_count >= INT_MAX ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected inter_count:" << inter_count << " >= " << INT_MAX
+             << ". Please check your input or modified-data files to make sure"
+             << " the 'Manager::interactions' array is correctly configured."
+             << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Reset the TrickHLA Interaction count if negative.
@@ -1049,8 +1063,8 @@ void Manager::setup_all_ref_attributes()
 
    // Create the map of object instance names to object array indexes.
    obj_name_index_map.clear();
-   for ( int n = 0; n < obj_count; ++n ) {
-      obj_name_index_map[objects[n].get_name()] = n;
+   for ( size_t index = 0; index < (size_t)obj_count; ++index ) {
+      obj_name_index_map[objects[index].get_name()] = index;
    }
 
    // Make sure the object-map is empty/clear before we continue.
@@ -2318,10 +2332,10 @@ void Manager::send_cyclic_and_requested_data()
 {
    // Current time values.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
-   int64_t const granted_base_time     = get_granted_base_time();
+   int64_t const granted_base_time     = federate->get_granted_time().get_base_time();
    int64_t const lookahead_base_time   = federate->is_zero_lookahead_time()
                                             ? 0LL
-                                            : federate->get_lookahead_in_base_time();
+                                            : federate->get_lookahead().get_base_time();
 
    // The update_time should be the current granted time plus the data cycle
    // delta time for this job if HLA Time Management is enabled otherwise it
@@ -2447,8 +2461,7 @@ void Manager::process_interactions()
          case INTERACTION_TYPE_USER_DEFINED: {
             // Process the interaction if we subscribed to it and the interaction
             // index is valid.
-            if ( ( item->index >= 0 )
-                 && ( item->index < inter_count )
+            if ( ( item->index < (size_t)inter_count )
                  && interactions[item->index].is_subscribe() ) {
 
                interactions[item->index].decode( item );
@@ -2475,7 +2488,7 @@ void Manager::process_interactions()
       interactions_queue.pop();
    }
 
-   free_checkpoint_interactions();
+   free_converted_interactions_checkpoint();
 }
 
 /*!
@@ -2989,32 +3002,6 @@ void Manager::release_ownership()
    }
 }
 
-/*!
- * @details If the federate does not exist, -1.0 seconds is assigned to the
- * returned object.
- */
-Int64Interval Manager::get_lookahead() const
-{
-   return federate->get_lookahead();
-}
-
-/*!
- * @details If the federate does not exist, Int64BaseTime::get_max_logical_time_in_seconds()
- * is assigned to the returned object.
- */
-Int64Time Manager::get_granted_time() const
-{
-   return federate->get_granted_time();
-}
-
-/*!
- * @details Returns the granted time in base time.
- */
-int64_t Manager::get_granted_base_time() const
-{
-   return federate->get_granted_base_time();
-}
-
 bool Manager::is_RTI_ready(
    string const &method_name )
 {
@@ -3042,50 +3029,12 @@ bool Manager::is_RTI_ready(
 }
 
 /*!
- * @details Trigger federation save, at current time or user-specified time.\n
- * NOTE: These routines do not coordinate a federation save via interactions
- * so make these internal routines so that the user does not accidentally call
- * them and mess things up.
- */
-void Manager::initiate_federation_save(
-   string const &file_name )
-{
-   federate->set_checkpoint_file_name( file_name );
-   federate->initiate_save_announce();
-
-   this->initiated_a_federation_save = true;
-}
-
-void Manager::start_federation_save(
-   string const &file_name )
-{
-   start_federation_save_at_scenario_time( -DBL_MAX, file_name );
-}
-
-void Manager::start_federation_save_at_sim_time(
-   double        freeze_sim_time,
-   string const &file_name )
-{
-   start_federation_save_at_scenario_time(
-      execution_control->convert_sim_time_to_scenario_time( freeze_sim_time ),
-      file_name );
-}
-
-void Manager::start_federation_save_at_scenario_time(
-   double        freeze_scenario_time,
-   string const &file_name )
-{
-   // Call the ExecutionControl method.
-   execution_control->start_federation_save_at_scenario_time( freeze_scenario_time, file_name );
-}
-
-/*!
  * @job_class{initialization}
  */
-void Manager::encode_checkpoint()
+void Manager::convert_data_before_checkpoint()
 {
    // Call the ExecutionControl method.
-   execution_control->encode_checkpoint();
+   execution_control->convert_data_before_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
       // Any object with a valid instance handle must be marked as required
@@ -3094,45 +3043,45 @@ void Manager::encode_checkpoint()
       if ( objects[n].is_instance_handle_valid() ) {
          objects[n].set_required( true );
       }
-      // Setup the ownership handler checkpoint data structures.
-      objects[n].encode_checkpoint();
+      // Convert the ownership handler checkpoint data structures.
+      objects[n].convert_data_before_checkpoint();
    }
 
-   encode_checkpoint_interactions();
+   convert_interactions_before_checkpoint();
 }
 
-void Manager::decode_checkpoint()
+void Manager::restore_data_after_checkpoint()
 {
-   // Restore the state of this class from the Trick checkpoint.
+   // Restore the data structures of this class from the Trick checkpoint.
 
    // Call the ExecutionControl method.
-   execution_control->decode_checkpoint();
+   execution_control->restore_data_after_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].decode_checkpoint();
+      objects[n].restore_data_after_checkpoint();
    }
 
-   decode_checkpoint_interactions();
+   restore_interactions_after_checkpoint();
 }
 
-void Manager::free_checkpoint()
+void Manager::free_converted_data_for_checkpoint()
 {
    // Clear/release the memory used for the checkpoint data structures.
 
    // Call the ExecutionControl method.
-   execution_control->free_checkpoint();
+   execution_control->free_converted_data_for_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].free_checkpoint();
+      objects[n].free_converted_data_for_checkpoint();
    }
 
-   free_checkpoint_interactions();
+   free_converted_interactions_checkpoint();
 }
 
-void Manager::encode_checkpoint_interactions()
+void Manager::convert_interactions_before_checkpoint()
 {
    // Clear the checkpoint for the interactions so that we don't leak memory.
-   free_checkpoint_interactions();
+   free_converted_interactions_checkpoint();
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3140,7 +3089,7 @@ void Manager::encode_checkpoint_interactions()
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::encode_checkpoint_interactions():%d interactions_queue.size():%d\n",
+         message_publish( MSG_NORMAL, "Manager::convert_interactions_before_checkpoint():%d interactions_queue.size():%d\n",
                           __LINE__, interactions_queue.size() );
       }
 
@@ -3149,10 +3098,10 @@ void Manager::encode_checkpoint_interactions()
 
       // Allocate the interaction items base don the count.
       check_interactions = reinterpret_cast< InteractionItem * >(
-         alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
+         alloc_type( (int)check_interactions_count, "TrickHLA::InteractionItem" ) );
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
-         errmsg << "Manager::encode_checkpoint_interactions():" << __LINE__
+         errmsg << "Manager::convert_interactions_before_checkpoint():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
                 << " linear array of " << check_interactions_count << " elements." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -3160,10 +3109,10 @@ void Manager::encode_checkpoint_interactions()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         interactions_queue.dump_linked_list( "Manager::encode_checkpoint_interactions()" );
+         interactions_queue.dump_linked_list( "Manager::convert_interactions_before_checkpoint()" );
       }
 
-      int              i;
+      size_t           i;
       InteractionItem *item;
 
       // Iterate through the interactions-queue.
@@ -3172,7 +3121,7 @@ void Manager::encode_checkpoint_interactions()
             ++i, item = static_cast< InteractionItem * >( item->next ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            message_publish( MSG_NORMAL, "Manager::encode_checkpoint_interactions():%d \
+            message_publish( MSG_NORMAL, "Manager::convert_interactions_before_checkpoint():%d \
 Checkpointing into check_interactions[%d] from interaction index %d.\n",
                              __LINE__, i, item->index );
          }
@@ -3185,17 +3134,17 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
          check_interactions[i].parm_items       = item->parm_items;
 
          check_interactions[i].user_supplied_tag_size = item->user_supplied_tag_size;
-         if ( item->user_supplied_tag_size == 0 ) {
-            check_interactions[i].user_supplied_tag = NULL;
-         } else {
+         if ( item->user_supplied_tag_size > 0 ) {
             check_interactions[i].user_supplied_tag =
                static_cast< unsigned char * >(
                   trick_MM->declare_var( "unsigned char",
-                                         item->user_supplied_tag_size ) );
+                                         (int)item->user_supplied_tag_size ) );
 
             memcpy( check_interactions[i].user_supplied_tag, // flawfinder: ignore
                     item->user_supplied_tag,
                     item->user_supplied_tag_size );
+         } else {
+            check_interactions[i].user_supplied_tag = NULL;
          }
 
          check_interactions[i].order_is_TSO = item->order_is_TSO;
@@ -3204,11 +3153,11 @@ Checkpointing into check_interactions[%d] from interaction index %d.\n",
    }
 }
 
-void Manager::decode_checkpoint_interactions()
+void Manager::restore_interactions_after_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::decode_checkpoint_interactions():%d check_interactions_count=%d\n",
+         message_publish( MSG_NORMAL, "Manager::restore_interactions_after_checkpoint():%d check_interactions_count=%d\n",
                           __LINE__, check_interactions_count );
       }
 
@@ -3216,46 +3165,30 @@ void Manager::decode_checkpoint_interactions()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
 
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      if ( check_interactions != NULL ) {
+         for ( size_t i = 0; i < check_interactions_count; ++i ) {
 
-         InteractionItem *item = new InteractionItem();
-
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            message_publish( MSG_NORMAL, "Manager::decode_checkpoint_interactions():%d \
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+               message_publish( MSG_NORMAL, "Manager::restore_interactions_after_checkpoint():%d \
 restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
-                             __LINE__, i, check_interactions[i].index,
-                             check_interactions[i].parm_items_count );
+                                __LINE__, i, check_interactions[i].index,
+                                check_interactions[i].parm_items_count );
+            }
+
+            interactions_queue.push( new InteractionItem( check_interactions[i] ) );
          }
-         item->index            = check_interactions[i].index;
-         item->interaction_type = check_interactions[i].interaction_type;
-         item->parm_items_count = check_interactions[i].parm_items_count;
-         item->parm_items       = check_interactions[i].parm_items;
-
-         item->restore_queue();
-
-         item->user_supplied_tag_size = check_interactions[i].user_supplied_tag_size;
-         if ( check_interactions[i].user_supplied_tag_size == 0 ) {
-            item->user_supplied_tag = NULL;
-         } else {
-            item->user_supplied_tag = reinterpret_cast< unsigned char * >(
-               trick_MM->mm_strdup( reinterpret_cast< char const * >( check_interactions[i].user_supplied_tag ) ) );
-         }
-         item->order_is_TSO = check_interactions[i].order_is_TSO;
-         item->time         = check_interactions[i].time;
-
-         interactions_queue.push( item );
       }
    }
 }
 
-void Manager::free_checkpoint_interactions()
+void Manager::free_converted_interactions_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      for ( size_t i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
       if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
-         message_publish( MSG_WARNING, "Manager::free_checkpoint_interactions():%d WARNING failed to delete Trick Memory for 'check_interactions'\n",
+         message_publish( MSG_WARNING, "Manager::free_converted_interactions_checkpoint():%d WARNING failed to delete Trick Memory for 'check_interactions'\n",
                           __LINE__ );
       }
       check_interactions       = NULL;
@@ -3263,21 +3196,21 @@ void Manager::free_checkpoint_interactions()
    }
 }
 
-void Manager::print_checkpoint_interactions()
+void Manager::print_converted_interactions_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
       ostringstream msg;
-      msg << "Manager::print_checkpoint_interactions():" << __LINE__
+      msg << "Manager::print_converted_interactions_checkpoint():" << __LINE__
           << "check_interactions contains these "
           << check_interactions_count << " elements:" << endl;
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      for ( size_t i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
              << check_interactions[i].index << endl
              << "check_interactions[" << i << "].interaction_type       = '"
              << check_interactions[i].interaction_type << "'\n"
              << "check_interactions[" << i << "].parm_items_count       = "
              << check_interactions[i].parm_items_count << endl;
-         for ( int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
+         for ( size_t k = 0; k < check_interactions[i].parm_items_count; ++k ) {
             msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
                 << check_interactions[i].parm_items[k].index << endl
                 << "check_interactions[" << i << "].parm_items[" << k << "].size     = "
@@ -3431,7 +3364,7 @@ bool Manager::is_this_a_rejoining_federate()
    return false;
 }
 
-RTIambassador *Manager::get_RTI_ambassador()
+RTIambassador *Manager::get_RTI_ambassador() const
 {
    return ( ( federate != NULL ) ? federate->get_RTI_ambassador() : NULL );
 }

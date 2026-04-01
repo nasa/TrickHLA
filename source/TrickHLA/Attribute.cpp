@@ -353,7 +353,7 @@ void Attribute::determine_cycle_ratio(
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      this->cycle_ratio = lround( this->cycle_time / core_job_cycle_time );
+      this->cycle_ratio = (int)lround( this->cycle_time / core_job_cycle_time );
 
       // Make sure we are ready to send the data on the first check.
       this->cycle_cnt = this->cycle_ratio;

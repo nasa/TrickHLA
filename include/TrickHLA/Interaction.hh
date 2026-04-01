@@ -280,26 +280,18 @@ class Interaction
    // needed so that my InteractionHandler can signal the Manager to do something...
    /*! @brief Get the associated TrickHLA::Manager instance.
     *  @return Pointer to the associated TrickHLA::Manager instance. */
-   Manager *get_manager()
+   Manager *get_manager() const
    {
       return manager;
    }
 
    /*! @brief Returns a pointer to our federate, or NULL if one does not exist yet.
     *  @return A pointer to this federate's TrickHLA::Federate instance. */
-   Federate *get_federate();
+   Federate *get_federate() const;
 
    /*! @brief Returns a pointer to the RTI ambassador, or NULL if one does not exist yet.
     *  @return Pointer to this federate's associated RTIambassador instance. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador();
-
-   /*! @brief Return a copy of the federate's lookahead time.
-    *  @return A copy of the federate's lookahead time. */
-   Int64Interval get_lookahead() const;
-
-   /*! @brief Return a copy of the granted HLA logical time.
-    *  @return A copy of the federation granted time. */
-   Int64Time get_granted_time() const;
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const;
 
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */
@@ -316,7 +308,7 @@ class Interaction
    /*! @brief Set the received user supplied tag.
     *  @param tag The user supplied tag.
     *  @param tag_size Size of the user supplied tag. */
-   void set_user_supplied_tag( unsigned char const *tag, int tag_size );
+   void set_user_supplied_tag( unsigned char const *tag, std::size_t tag_size );
 
    /*! @brief Mark this interaction as published. */
    void set_publish()
@@ -364,8 +356,8 @@ class Interaction
 
    RTI1516_NAMESPACE::InteractionClassHandle class_handle; ///< @trick_io{**} RTI Interaction Class handle.
 
-   int            user_supplied_tag_size;     ///< @trick_units{--} Number of bytes in the user supplied tag.
-   int            user_supplied_tag_capacity; ///< @trick_units{--} Capacity of the user supplied tag.
+   std::size_t    user_supplied_tag_size;     ///< @trick_units{--} Number of bytes in the user supplied tag.
+   std::size_t    user_supplied_tag_capacity; ///< @trick_units{--} Capacity of the user supplied tag.
    unsigned char *user_supplied_tag;          ///< @trick_units{--} User supplied tag data.
 
   private:

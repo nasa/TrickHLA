@@ -92,7 +92,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    virtual void update_after_decode() = 0;
 
    /*! @brief Number of data bytes */
-   virtual int get_data_size() = 0;
+   virtual std::size_t get_data_size() = 0;
 
    virtual std::string to_string()
    {
@@ -152,9 +152,9 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    }
 #   endif // IEEE_1516_2025
 
-   virtual size_t decodeFrom(
+   virtual std::size_t decodeFrom(
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
-      size_t                                         index )
+      std::size_t                                    index )
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
 #   endif // IEEE_1516_2010
@@ -162,7 +162,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
       return ( data_encoder != NULL ) ? data_encoder->decodeFrom( buffer, index ) : index;
    }
 
-   virtual size_t getEncodedLength() const
+   virtual std::size_t getEncodedLength() const
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
 #   endif // IEEE_1516_2010

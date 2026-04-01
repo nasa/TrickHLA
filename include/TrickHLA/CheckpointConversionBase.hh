@@ -45,29 +45,20 @@ class CheckpointConversionBase
    friend void init_attrTrickHLA__CheckpointConversionBase();
 
   public:
-   //
-   // Public constructors and destructor.
-   //
-   /*! @brief Don't allowdDefault constructor. */
-   CheckpointConversionBase()
-   {
-      return;
-   }
-
    /*! @brief Destructor for the TrickHLA CheckpointConversionBase class. */
    virtual ~CheckpointConversionBase()
    {
       return;
    }
 
-   /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void encode_checkpoint() = 0;
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint() = 0;
 
-   /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void decode_checkpoint() = 0;
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint() = 0;
 
-   /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_checkpoint() = 0;
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint() = 0;
 };
 
 } // namespace TrickHLA

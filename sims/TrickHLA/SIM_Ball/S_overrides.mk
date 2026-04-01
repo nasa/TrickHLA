@@ -28,6 +28,8 @@ endif
 
 .PHONY: clean_runs $(RUN_DIRS)
 
+spotless: clean_runs
+
 clean_runs: $(RUN_DIRS)
 
 $(RUN_DIRS):

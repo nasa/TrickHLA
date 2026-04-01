@@ -162,14 +162,17 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
     *  @return A string with the synchronization point label and current state. */
    virtual std::string to_string();
 
+   //
+   // Checkpoint
+   //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
-   virtual void encode_checkpoint();
+   virtual void convert_data_before_checkpoint();
 
    /*! @brief Decode the state of this class from the Trick checkpoint. */
-   virtual void decode_checkpoint();
+   virtual void restore_data_after_checkpoint();
 
    /*! @brief Free/release the memory used for the checkpoint data structures. */
-   virtual void free_checkpoint();
+   virtual void free_converted_data_for_checkpoint();
 
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.

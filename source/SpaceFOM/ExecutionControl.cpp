@@ -706,7 +706,7 @@ void ExecutionControl::role_determination_process()
             this->late_joiner_determined = true;
          }
 
-         // Determine if the Initialization Complete sync-point is announded,
+         // Determine if the Initialization Complete sync-point is announced,
          // which means at this point we are a late joining federate.
          if ( ( !late_joiner_determined ) && is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
             this->late_joiner            = true;
@@ -1230,7 +1230,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       //
 
       // Jump to the a logical time that is a GALT time that is an integer
-      // multiple of the least-common-lookahead (CL) time, otherwise we
+      // multiple of the least-common-time-step (LCTS), otherwise we
       // will not be in sync with the other federates on the HLA logical
       // timeline.
       federate->time_advance_request_to_GALT_LCTS_multiple();
@@ -1242,18 +1242,18 @@ void ExecutionControl::post_multi_phase_init_processes()
       // Print diagnostic message if appropriate.
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          ostringstream msg;
-         msg << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()\n"
-             << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << endl
-             << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
-             << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-             << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
-             << "\t Current HLA grant time:    " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
-             << "\t Current HLA request time:  " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
-             << "\t current_sim_time:          " << setprecision( 18 ) << sim_timeline->get_time() << endl
-             << "\t simulation_time_epoch:     " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
+         msg << "SpaceFOM::ExecutionControl::post_multi_phase_init_processes()\n"
+             << "     current_scenario_time: " << setprecision( 18 ) << scenario_timeline->get_time() << endl
+             << "       scenario_time_epoch: " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
+             << " scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
+             << "  scenario_time_sim_offset: " << setprecision( 18 ) << scenario_timeline->get_sim_offset() << endl
+             << "    Current HLA grant time: " << setprecision( 18 ) << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  Current HLA request time: " << setprecision( 18 ) << federate->get_requested_time().get_time_in_seconds() << endl
+             << "          current_sim_time: " << setprecision( 18 ) << sim_timeline->get_time() << endl
+             << "     simulation_time_epoch: " << setprecision( 18 ) << sim_timeline->get_epoch() << endl;
          if ( does_cte_timeline_exist() ) {
-            msg << "\t current_CTE_time:          " << setprecision( 18 ) << cte_timeline->get_time() << endl
-                << "\t CTE_time_epoch:            " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
+            msg << "          current_CTE_time: " << setprecision( 18 ) << cte_timeline->get_time() << endl
+                << "            CTE_time_epoch: " << setprecision( 18 ) << cte_timeline->get_epoch() << endl;
          }
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -2673,8 +2673,8 @@ void ExecutionControl::exit_freeze()
    run_mode_transition();
 
 #if 0 // TEST ONLY
-   // TEMP Test adding a delay to non-master federates to make them late to
-   // go to run. This will allow us to verify we calculate the correct clock
+   // TEST ONLY Test adding a delay to non-master federates to make them late
+   // to go to run. This will allow us to verify we calculate the correct clock
    // reset value with the expected behavior being the federates only overrun
    // for a few frames until they catch back up to realtime.
    if ( !is_master() ) {

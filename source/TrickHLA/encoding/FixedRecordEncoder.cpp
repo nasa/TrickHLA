@@ -127,7 +127,7 @@ void FixedRecordEncoder::update_after_decode(
    }
 }
 
-int FixedRecordEncoder::get_data_size()
+size_t FixedRecordEncoder::get_data_size()
 {
    // TODO: Implement this function.
 

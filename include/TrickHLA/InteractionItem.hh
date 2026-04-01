@@ -40,6 +40,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_ITEM_HH
 #define TRICKHLA_INTERACTION_ITEM_HH
 
+// System includes.
+#include <cstddef>
+
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
@@ -89,16 +92,16 @@ class InteractionItem : public Item
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   int index; ///< @trick_units{--} Index to the applicable Interaction.
+   std::size_t index; ///< @trick_units{--} Index to the applicable Interaction.
 
    ItemQueue parameter_queue; ///< @trick_io{**} Linked list queue of parameter items.
 
    InteractionTypeEnum interaction_type; ///< @trick_units{--} type of the containing interaction
 
-   int            parm_items_count; ///< @trick_units{--} Number of array elements
+   std::size_t    parm_items_count; ///< @trick_units{--} Number of array elements
    ParameterItem *parm_items;       ///< @trick_units{--} checkpoint-able parameter items array
 
-   int            user_supplied_tag_size; ///< @trick_units{--} Number of bytes in the user supplied tag.
+   std::size_t    user_supplied_tag_size; ///< @trick_units{--} Number of bytes in the user supplied tag.
    unsigned char *user_supplied_tag;      ///< @trick_units{--} User supplied tag data.
 
    bool      order_is_TSO; ///< @trick_units{--} True if Timestamp Order, false for Receive Order.
@@ -111,9 +114,6 @@ class InteractionItem : public Item
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA InteractionItem class. */
-   InteractionItem();
-
    /*! @brief Initialization constructor for the TrickHLA InteractionItem class.
     *  @param inter_index        Interaction index.
     *  @param inter_type         Type of the containing interaction.
@@ -121,9 +121,9 @@ class InteractionItem : public Item
     *  @param parameters         Interaction Parameters.
     *  @param theParameterValues Parameter values.
     *  @param theUserSuppliedTag User supplied tag. */
-   InteractionItem( int const                                         inter_index,
+   InteractionItem( std::size_t const                                 inter_index,
                     InteractionTypeEnum const                         inter_type,
-                    int const                                         param_count,
+                    std::size_t const                                 param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag );
@@ -136,26 +136,26 @@ class InteractionItem : public Item
     *  @param theParameterValues Parameter values.
     *  @param theUserSuppliedTag User supplied tag.
     *  @param theTime            Time for TSO interaction. */
-   InteractionItem( int const                                         inter_index,
+   InteractionItem( std::size_t const                                 inter_index,
                     InteractionTypeEnum const                         inter_type,
-                    int const                                         param_count,
+                    std::size_t const                                 param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                     RTI1516_NAMESPACE::LogicalTime const             &theTime );
 
+   /*! @brief Copy constructor for InteractionItem class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   InteractionItem( InteractionItem const &rhs );
+
    /*! @brief Destructor for the TrickHLA InteractionItem class. */
    virtual ~InteractionItem();
 
-  public:
    /*! @brief Decode all the parameter_queue values into parm_items linear array. */
    void checkpoint_queue();
 
    /*! @brief removes all the parm_items values. */
    void clear_parm_items();
-
-   /*! @brief Encode all the parm_items values into this InteractionItem. */
-   void restore_queue();
 
    /*! @brief Query if this InteractionItem is sent TimeStamp Order (TSO).
     *  @return True if sent TimeStamp Order; False otherwise. */
@@ -179,16 +179,15 @@ class InteractionItem : public Item
     *  @param theParameterValues Parameter values.
     *  @param theUserSuppliedTag User supplied tag. */
    void initialize( InteractionTypeEnum const                         inter_type,
-                    int const                                         param_count,
+                    std::size_t const                                 param_count,
                     Parameter                                        *parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
                     RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag );
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for InteractionItem class.
-    *  @details This constructor is private to prevent inadvertent copies. */
-   InteractionItem( InteractionItem const &rhs );
+   /*! @brief Default constructor for the TrickHLA InteractionItem class. */
+   InteractionItem();
    /*! @brief Assignment operator for InteractionItem class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    InteractionItem &operator=( InteractionItem const &rhs );

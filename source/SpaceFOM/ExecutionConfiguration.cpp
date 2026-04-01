@@ -218,7 +218,7 @@ void ExecutionConfiguration::configure_attributes()
    trick_name_str                   = S_define_name + string( ".least_common_time_step" );
    this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
-   this->attributes[6].rti_encoding = ENCODING_LITTLE_ENDIAN;
+   this->attributes[6].rti_encoding = ENCODING_BIG_ENDIAN;
 }
 
 /*!
@@ -279,7 +279,7 @@ void ExecutionConfiguration::pack()
       }
       msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "       least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_base_unit() << ")" << endl;
+          << "       least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl;
       if ( this->next_execution_mode == EXECUTION_MODE_FREEZE ) {
          msg << "       simulation_freeze_time: " << execution_control->get_simulation_freeze_time() << " seconds" << endl;
       }
@@ -324,7 +324,7 @@ void ExecutionConfiguration::unpack()
       }
       msg << "       current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "          next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "       least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_base_unit() << ")" << endl
+          << "       least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -632,7 +632,7 @@ void ExecutionConfiguration::print_execution_configuration() const
       }
       msg << "\t  current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "\t     next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "\t  least_common_time_step: " << least_common_time_step << " (units:" << Int64BaseTime::get_base_unit() << ")" << endl
+          << "\t  least_common_time_step: " << least_common_time_step << " (unit:" << Int64BaseTime::get_base_unit() << ")" << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

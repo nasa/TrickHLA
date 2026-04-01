@@ -75,11 +75,11 @@ bool FixedRecData::compare(
    //         - element_2_name:  HLAunicodeString
 
    // - field_1_string:  HLAunicodeString
-   int data1_field_1_string_size = strlen( this->field_1_string ); // flawfinder: ignore
-   int data2_field_1_string_size = strlen( data.field_1_string );  // flawfinder: ignore
-   int min_field_1_string_size   = ( data1_field_1_string_size <= data2_field_1_string_size )
-                                      ? data1_field_1_string_size
-                                      : data2_field_1_string_size;
+   size_t data1_field_1_string_size = strlen( this->field_1_string ); // flawfinder: ignore
+   size_t data2_field_1_string_size = strlen( data.field_1_string );  // flawfinder: ignore
+   size_t min_field_1_string_size   = ( data1_field_1_string_size <= data2_field_1_string_size )
+                                         ? data1_field_1_string_size
+                                         : data2_field_1_string_size;
    if ( data1_field_1_string_size != data2_field_1_string_size ) {
       msg << "this->field_1_string size (" << data1_field_1_string_size
           << ") != (" << data2_field_1_string_size << ") data.field_1_string size" << endl;
@@ -88,7 +88,7 @@ bool FixedRecData::compare(
       msg << "this->field_1_string size (" << data1_field_1_string_size
           << ") == (" << data2_field_1_string_size << ") data.field_1_string size" << endl;
    }
-   for ( int i = 0; i < min_field_1_string_size; ++i ) {
+   for ( size_t i = 0; i < min_field_1_string_size; ++i ) {
       if ( this->field_1_string[i] == data.field_1_string[i] ) {
          msg << "this->field_1_string[" << i << "] ("
              << ( std::isprint( this->field_1_string[i] ) ? this->field_1_string[i] : ' ' )
@@ -118,11 +118,11 @@ bool FixedRecData::compare(
    // - field_3_rec:     MainFixedRecord
    //   + MainFixedRecord:  HLAfixedRecord
    //     - elem_1_string:  HLAunicodeString
-   int data1_elem_1_string_size = strlen( this->elem_1_string ); // flawfinder: ignore
-   int data2_elem_1_string_size = strlen( data.elem_1_string );  // flawfinder: ignore
-   int min_elem_1_string_size   = ( data1_elem_1_string_size <= data2_elem_1_string_size )
-                                     ? data1_elem_1_string_size
-                                     : data2_elem_1_string_size;
+   size_t data1_elem_1_string_size = strlen( this->elem_1_string ); // flawfinder: ignore
+   size_t data2_elem_1_string_size = strlen( data.elem_1_string );  // flawfinder: ignore
+   size_t min_elem_1_string_size   = ( data1_elem_1_string_size <= data2_elem_1_string_size )
+                                        ? data1_elem_1_string_size
+                                        : data2_elem_1_string_size;
    if ( data1_elem_1_string_size != data2_elem_1_string_size ) {
       msg << "this->elem_1_string size (" << data1_elem_1_string_size
           << ") != (" << data2_elem_1_string_size << ") data.elem_1_string size" << endl;
@@ -131,7 +131,7 @@ bool FixedRecData::compare(
       msg << "this->elem_1_string size (" << data1_elem_1_string_size
           << ") == (" << data2_elem_1_string_size << ") data.elem_1_string size" << endl;
    }
-   for ( int i = 0; i < min_elem_1_string_size; ++i ) {
+   for ( size_t i = 0; i < min_elem_1_string_size; ++i ) {
       if ( this->elem_1_string[i] == data.elem_1_string[i] ) {
          msg << "this->elem_1_string[" << i << "] ("
              << ( std::isprint( this->elem_1_string[i] ) ? this->elem_1_string[i] : ' ' )
@@ -175,11 +175,11 @@ bool FixedRecData::compare(
    //     - elem_3_record:  SecondaryFixedRecord
    //       + SecondaryFixedRecord: HLAfixedRecord
    //         - element_2_name:  HLAunicodeString
-   int data1_element_2_name_size = strlen( this->element_2_name ); // flawfinder: ignore
-   int data2_element_2_name_size = strlen( data.element_2_name );  // flawfinder: ignore
-   int min_element_2_name_size   = ( data1_element_2_name_size <= data2_element_2_name_size )
-                                      ? data1_element_2_name_size
-                                      : data2_element_2_name_size;
+   size_t data1_element_2_name_size = strlen( this->element_2_name ); // flawfinder: ignore
+   size_t data2_element_2_name_size = strlen( data.element_2_name );  // flawfinder: ignore
+   size_t min_element_2_name_size   = ( data1_element_2_name_size <= data2_element_2_name_size )
+                                         ? data1_element_2_name_size
+                                         : data2_element_2_name_size;
    if ( data1_element_2_name_size != data2_element_2_name_size ) {
       msg << "this->element_2_name size (" << data1_element_2_name_size
           << ") != (" << data2_element_2_name_size << ") data.element_2_name size" << endl;
@@ -188,7 +188,7 @@ bool FixedRecData::compare(
       msg << "this->element_2_name size (" << data1_element_2_name_size
           << ") == (" << data2_element_2_name_size << ") data.element_2_name size" << endl;
    }
-   for ( int i = 0; i < min_element_2_name_size; ++i ) {
+   for ( size_t i = 0; i < min_element_2_name_size; ++i ) {
       if ( this->element_2_name[i] == data.element_2_name[i] ) {
          msg << "this->element_2_name[" << i << "] ("
              << ( std::isprint( this->element_2_name[i] ) ? this->element_2_name[i] : ' ' )

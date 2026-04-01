@@ -40,7 +40,7 @@ def print_usage_message():
    print( '  -r --root_frame [name] : Name of the DynamicalEntity, default is Voyager.' )
    print( '  -rf --req_fed [name]   : Name of the Required Federate to add to the list, default is Other.' )
    print( '  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --verbose [on|off]     : on: Show verbose messages (Default), off: disable messages.' )
+   print( '  --verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,

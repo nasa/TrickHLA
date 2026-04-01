@@ -51,7 +51,6 @@ class Item
   public:
    Item *next; ///< @trick_units{--} Next item in linked-list.
 
-  public:
    //-----------------------------------------------------------------
    // Constructors / destructors
    //-----------------------------------------------------------------

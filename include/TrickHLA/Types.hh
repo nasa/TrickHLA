@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_TYPES_HH
 
 // System include files.
+#include <cstddef>
 #include <map>
 #include <queue>
 #include <string>
@@ -116,11 +117,11 @@ typedef enum {
    CONFIG_BLOCKING_IO                   = 0x0020, ///< Blocking I/O with Receiver Order (RO) data updates.
    CONFIG_INITIALIZE_AND_BLOCKING_IO    = CONFIG_INITIALIZE + CONFIG_BLOCKING_IO,
    CONFIG_MAX_VALUE                     = ( CONFIG_NONE
-                        + CONFIG_INITIALIZE
-                        + CONFIG_INTERMITTENT
-                        + CONFIG_CYCLIC
-                        + CONFIG_ZERO_LOOKAHEAD
-                        + CONFIG_BLOCKING_IO ) ///< Maximum configuration bit field value.
+                                            + CONFIG_INITIALIZE
+                                            + CONFIG_INTERMITTENT
+                                            + CONFIG_CYCLIC
+                                            + CONFIG_ZERO_LOOKAHEAD
+                                            + CONFIG_BLOCKING_IO ) ///< Maximum configuration bit field value.
 
 } DataUpdateEnum;
 
@@ -354,7 +355,7 @@ typedef std::queue< RTI1516_NAMESPACE::AttributeHandleValueMap > HLAAttributeMap
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, std::wstring > TrickHLAObjInstanceNameMap;
 
-typedef std::map< std::string, unsigned int > TrickHLAObjInstanceNameIndexMap;
+typedef std::map< std::string, std::size_t > TrickHLAObjInstanceNameIndexMap;
 
 typedef std::vector< std::string > VectorOfStrings;
 

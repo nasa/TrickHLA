@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_ITEM_QUEUE_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // TrickHLA includes.
@@ -67,14 +68,13 @@ class ItemQueue
    /*! @brief Destructor for the TrickHLA ItemQueue class. */
    virtual ~ItemQueue();
 
-  public:
    /*! @brief Query if the item queue is empty.
     *  @return True if empty; False otherwise. */
    bool empty();
 
    /*! @brief Get the size of the item queue.
     *  @return Number of elements in the queue. */
-   unsigned int size();
+   std::size_t size();
 
    /*! @brief Gets the front item on the item queue.
     *  @return The front or head item on the item queue. */
@@ -97,8 +97,8 @@ class ItemQueue
 
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
-  private:
-   unsigned int count; ///< @trick_units{count} Number of elements in the queue.
+  protected:
+   std::size_t count; ///< @trick_units{count} Number of elements in the queue.
 
    Item *head; ///< @trick_units{--} First item in linked-list queue.
    Item *tail; ///< @trick_units{--} Last item in linked-list queue.

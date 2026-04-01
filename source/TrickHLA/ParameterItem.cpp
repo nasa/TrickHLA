@@ -63,33 +63,34 @@ using namespace TrickHLA;
 /*!
 @job_class{initialization}
 */
-ParameterItem::ParameterItem()
-   : index( -1 ),
-     size( 0 ),
-     data( NULL )
-{
-   return;
-}
-
-/*!
-@job_class{initialization}
-*/
 ParameterItem::ParameterItem(
-   int const                 parameter_index,
+   size_t const              parameter_index,
    VariableLengthData const *param_value )
    : index( parameter_index ),
      size( 0 ),
      data( NULL )
 {
    if ( param_value != NULL ) {
-      // Put the user supplied tag into a buffer.
       size = param_value->size();
-      if ( size == 0 ) {
-         data = NULL;
-      } else {
-         data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", size ) );
+      if ( size > 0 ) {
+         data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", (int)size ) );
          memcpy( data, param_value->data(), size ); // flawfinder: ignore
       }
+   }
+}
+
+/*!
+@job_class{initialization}
+*/
+ParameterItem::ParameterItem(
+   ParameterItem const &rhs )
+   : index( rhs.index ),
+     size( ( rhs.data != NULL ) ? rhs.size : 0 ),
+     data( NULL )
+{
+   if ( ( size > 0 ) && ( rhs.data != NULL ) ) {
+      data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", (int)size ) );
+      memcpy( data, rhs.data, size ); // flawfinder: ignore
    }
 }
 
@@ -104,11 +105,12 @@ ParameterItem::~ParameterItem()
 void ParameterItem::clear()
 {
    if ( data != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( data ) ) ) {
+      if ( trick_MM->is_alloced( static_cast< void * >( data ) )
+           && trick_MM->delete_var( static_cast< void * >( data ) ) ) {
          message_publish( MSG_WARNING, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
       }
       data  = NULL;
       size  = 0;
-      index = -1;
+      index = 0;
    }
 }

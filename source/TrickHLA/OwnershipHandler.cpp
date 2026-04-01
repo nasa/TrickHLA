@@ -40,7 +40,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
-#include <cstdint>
 #include <limits>
 #include <ostream>
 #include <sstream>
@@ -91,7 +90,7 @@ OwnershipHandler::~OwnershipHandler()
    return;
 }
 
-void OwnershipHandler::encode_checkpoint()
+void OwnershipHandler::convert_data_before_checkpoint()
 {
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -100,7 +99,7 @@ void OwnershipHandler::encode_checkpoint()
 
    // To keep from leaking memory make sure we clear all checkpointing
    // structures before we create new ones.
-   free_checkpoint();
+   free_converted_data_for_checkpoint();
 
    AttributeOwnershipMap::const_iterator owner_map_iter;
    THLAAttributeMap::const_iterator      attrib_iter;
@@ -108,31 +107,31 @@ void OwnershipHandler::encode_checkpoint()
    pull_items_cnt = 0;
    push_items_cnt = 0;
 
-   // count the # of pull_request elements that need to be checkpointed
+   // Count the # of pull_request elements that need to be checkpointed
    if ( !pull_requests.empty() ) {
 
-      // count the number of elements to allocate
+      // Count the number of elements to allocate
       for ( owner_map_iter = pull_requests.begin(); owner_map_iter != pull_requests.end(); ++owner_map_iter ) {
          pull_items_cnt += owner_map_iter->second->size();
       }
    }
 
-   // if there are any pull_request entries, encode them to get checkpointed.
+   // If there are any pull_request entries, encode them to get checkpointed.
    if ( pull_items_cnt > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-         message_publish( MSG_NORMAL, "OwnershipHandler::encode_checkpoint():%d Checkpointing %d pull_request elements.\n",
+         message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d pull_request elements.\n",
                           __LINE__, pull_items_cnt );
       }
       pull_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)pull_items_cnt, "TrickHLA::OwnershipItem" ) );
       if ( pull_items == NULL ) {
          ostringstream errmsg;
-         errmsg << "OwnershipHandler::encode_checkpoint():" << __LINE__
+         errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
                 << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
                 << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      // now, encode them to get checkpointed.
+      // Now, encode them to get checkpointed.
       int count = 0;
       for ( owner_map_iter = pull_requests.begin(); owner_map_iter != pull_requests.end(); ++owner_map_iter ) {
          double            curr_time = owner_map_iter->first;
@@ -154,22 +153,22 @@ void OwnershipHandler::encode_checkpoint()
       }
    }
 
-   // if there are any push_request entries, encode them to get checkpointed.
+   // If there are any push_request entries, encode them to get checkpointed.
    if ( push_items_cnt > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-         message_publish( MSG_NORMAL, "OwnershipHandler::encode_checkpoint():%d Checkpointing %d push_request elements.\n",
+         message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d push_request elements.\n",
                           __LINE__, push_items_cnt );
       }
       push_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)push_items_cnt, "TrickHLA::OwnershipItem" ) );
       if ( push_items == NULL ) {
          ostringstream errmsg;
-         errmsg << "OwnershipHandler::encode_checkpoint():" << __LINE__
+         errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
                 << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
                 << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      // now, encode them to get checkpointed.
+      // Now, encode them to get checkpointed.
       int count = 0;
       for ( owner_map_iter = push_requests.begin(); owner_map_iter != push_requests.end(); ++owner_map_iter ) {
          double            curr_time = owner_map_iter->first;
@@ -183,7 +182,7 @@ void OwnershipHandler::encode_checkpoint()
    }
 }
 
-void OwnershipHandler::decode_checkpoint()
+void OwnershipHandler::restore_data_after_checkpoint()
 {
    THLAAttributeMap                     *attr_map;
    AttributeOwnershipMap::const_iterator ownership_iter;
@@ -209,14 +208,14 @@ void OwnershipHandler::decode_checkpoint()
             attr_map = ownership_iter->second;
          }
 
-         // get the attribute from the Object
+         // Get the attribute from the Object
          Attribute *attribute = get_attribute( pull_items[count].FOM_name );
 
          // Add the attribute to the map, using the FOM_name as the key.
          attr_map->insert( make_pair( pull_items[count].FOM_name, attribute ) );
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-            message_publish( MSG_NORMAL, "OwnershipHandler::decode_checkpoint():%d Restoring ownership pull item attribute \"%s\"\n",
+            message_publish( MSG_NORMAL, "OwnershipHandler::restore_data_after_checkpoint():%d Restoring ownership pull item attribute \"%s\"\n",
                              __LINE__, pull_items[count].FOM_name.c_str() );
          }
       }
@@ -238,21 +237,21 @@ void OwnershipHandler::decode_checkpoint()
             attr_map = ownership_iter->second;
          }
 
-         // get the attribute from the Object
+         // Get the attribute from the Object
          Attribute *attribute = get_attribute( push_items[count].FOM_name );
 
          // Add the attribute to the map, using the FOM_name as the key.
          attr_map->insert( make_pair( push_items[count].FOM_name, attribute ) );
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-            message_publish( MSG_NORMAL, "OwnershipHandler::decode_checkpoint():%d Restoring ownership push item attribute \"%s\"\n",
+            message_publish( MSG_NORMAL, "OwnershipHandler::restore_data_after_checkpoint():%d Restoring ownership push item attribute \"%s\"\n",
                              __LINE__, push_items[count].FOM_name.c_str() );
          }
       }
    }
 }
 
-void OwnershipHandler::free_checkpoint()
+void OwnershipHandler::free_converted_data_for_checkpoint()
 {
    // If there are any pull_request entries, delete them
    if ( pull_items_cnt > 0 ) {
@@ -260,20 +259,20 @@ void OwnershipHandler::free_checkpoint()
          pull_items[i].clear();
       }
       if ( trick_MM->delete_var( static_cast< void * >( pull_items ) ) ) {
-         message_publish( MSG_WARNING, "OwnershipHandler::free_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'\n",
+         message_publish( MSG_WARNING, "OwnershipHandler::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'\n",
                           __LINE__ );
       }
       pull_items     = NULL;
       pull_items_cnt = 0;
    }
 
-   // if there are any push_request entries, delete them
+   // If there are any push_request entries, delete them
    if ( push_items_cnt > 0 ) {
       for ( int i = 0; i < push_items_cnt; ++i ) {
          push_items[i].clear();
       }
       if ( trick_MM->delete_var( static_cast< void * >( push_items ) ) ) {
-         message_publish( MSG_WARNING, "OwnershipHandler::free_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'\n",
+         message_publish( MSG_WARNING, "OwnershipHandler::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'\n",
                           __LINE__ );
       }
       push_items     = NULL;
@@ -547,21 +546,14 @@ void OwnershipHandler::push_ownership(
    attr_map->insert( make_pair( key, attribute ) );
 }
 
-/*!
- *  @details If the manager does not exist, -1.0 seconds is assigned to the returned object.
- */
-Int64Interval OwnershipHandler::get_lookahead() const
+Int64Interval const &OwnershipHandler::get_lookahead() const
 {
-   return ( object != NULL ) ? object->get_lookahead() : Int64Interval( -1.0 );
+   return object->get_federate()->get_lookahead();
 }
 
-/*!
- *  @details If the object does not exist, Int64BaseTime::get_max_logical_time_in_seconds()
- *  is assigned to the returned object. */
-Int64Time OwnershipHandler::get_granted_time() const
+Int64Time const &OwnershipHandler::get_granted_time() const
 {
-   return ( object != NULL ) ? object->get_granted_time()
-                             : Int64Time( INT64_MAX );
+   return object->get_federate()->get_granted_time();
 }
 
 double OwnershipHandler::get_scenario_time() const
