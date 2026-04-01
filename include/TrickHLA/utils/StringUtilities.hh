@@ -197,7 +197,7 @@ class StringUtilities
    static std::string format_time( Int64Time const &time )
    {
       std::ostringstream msg;
-      if ( time > std::numeric_limits< long long >::lowest() ) {
+      if ( time.get_base_time() > std::numeric_limits< long long >::lowest() ) {
          msg << std::setprecision( 18 ) << time.get_time_in_seconds() << " seconds ("
              << time.get_base_time() << " " << Int64BaseTime::get_base_unit() << ")";
       } else {
