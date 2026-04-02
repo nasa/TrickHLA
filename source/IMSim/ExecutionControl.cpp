@@ -142,12 +142,12 @@ ExecutionControl::ExecutionControl(
      freeze_inter_count( 0 ),
      freeze_interaction( NULL ),
      freeze_scenario_times(),
+     rejoining_federate( false ),
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
      next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
      restore_determined( false ),
-     restore_federate( false ),
-     rejoining_federate( false )
+     restore_federate( false )
 {
    // The next_mode_scenario_time time for the next federation execution mode
    // change expressed as a federation scenario time reference. Note: this is
@@ -200,6 +200,18 @@ ExecutionControl::~ExecutionControl()
       freeze_interaction = NULL;
       freeze_inter_count = 0;
    }
+}
+
+ExecutionConfiguration *ExecutionControl::get_execution_configuration()
+{
+   ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( ExecutionControlBase::get_execution_configuration() );
+   if ( ExCO == NULL ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionControl::get_execution_configuration():" << __LINE__
+             << " ERROR: Execution Configuration base is not an IMSim::ExecutionConfiguration instance." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   return ( ExCO );
 }
 
 /*!
@@ -2245,18 +2257,6 @@ void ExecutionControl::check_pause_at_init(
 {
    // Dispatch to the ExecutionControl method.
    manager->get_execution_control()->check_pause_at_init( check_pause_delta );
-}
-
-ExecutionConfiguration *ExecutionControl::get_execution_configuration()
-{
-   ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( ExecutionControlBase::get_execution_configuration() );
-   if ( ExCO == NULL ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::get_execution_configuration():" << __LINE__
-             << " ERROR: Execution Configuration base is not an IMSim::ExecutionConfiguration instance." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   return ( ExCO );
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(
