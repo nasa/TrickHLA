@@ -142,10 +142,10 @@ ExecutionControl::ExecutionControl(
      freeze_inter_count( 0 ),
      freeze_interaction( NULL ),
      freeze_scenario_times(),
-     rejoining_federate( false ),
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
      next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
+     rejoining_federate( false ),
      restore_determined( false ),
      restore_federate( false )
 {

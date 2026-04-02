@@ -361,8 +361,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode
 
-   bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
-
    double scenario_time_epoch; /**<  @trick_units{s}
       Federation execution scenario time epoch. This is the beginning epoch
       expressed in Terrestrial Time (TT) that corresponds to HLA logical time 0.
@@ -380,6 +378,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       used in conjunction with the cte_mode_time, sim_mode_time and
       associated sync point mechanisms to coordinate federation execution
       mode transitions.*/
+
+   bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
 
    bool restore_determined; ///< @trick_io{**} Internal flag to indicate that the restore status has been determined.
    bool restore_federate;   ///< @trick_io{**} Internal flag to indicate if the federate is to be restored
