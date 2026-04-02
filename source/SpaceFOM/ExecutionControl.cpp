@@ -816,7 +816,8 @@ void ExecutionControl::early_joiner_hla_init_process()
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
-   manager->setup_all_RTI_handles();
+   manager->setup_object_RTI_handles();
+   manager->setup_interaction_RTI_handles();
 
    // Call publish_and_subscribe AFTER we've initialized the manager,
    // federate, and FedAmb.
@@ -834,7 +835,7 @@ void ExecutionControl::early_joiner_hla_init_process()
    } else {
       // NOTE:
       // Should publish the MTR interaction here. However, this
-      // is currently handled in the manager->setup_all_RTI_handles()
+      // is currently handled in the manager->setup_interaction_RTI_handles()
       // and manager->publish_and_subscribe()!
    }
 
@@ -977,14 +978,15 @@ void ExecutionControl::late_joiner_hla_init_process()
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
-   manager->setup_all_RTI_handles();
+   manager->setup_object_RTI_handles();
+   manager->setup_interaction_RTI_handles();
 
    // Subscribe to the ExCO attributes.
    ExCO->subscribe_to_object_attributes();
 
    // NOTE:
    // Should publish the MTR interaction here. However, this
-   // is currently handled in the manager->setup_all_RTI_handles()
+   // is currently handled in the manager->setup_interaction_RTI_handles()
    // and manager->publish_and_subscribe()!
 
    // Wait for the registration of the ExCO. Calling this function will
@@ -1163,7 +1165,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
-   manager->setup_all_ref_attributes();
+   manager->setup_object_ref_attributes();
+   manager->setup_interaction_ref_attributes();
 
    // Add the SpaceFOM ExecutionControl and user defined multiphase
    // initialization synchronization points to the list before we join the

@@ -303,11 +303,12 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
-   manager->setup_all_ref_attributes();
+   manager->setup_object_ref_attributes();
+   manager->setup_interaction_ref_attributes();
 
    // Add the IMSim initialization and user multiphase initialization
    // sync-points now that the ExecutionConfiguration has been initialized
-   // in the call to the setup_all_ref_attributes() function. We do this
+   // in the call to the setup_object_ref_attributes() function. We do this
    // here so that we can handle the RTI callbacks that use them.
    add_initialization_sync_points();
 
@@ -547,7 +548,8 @@ Simulation has started and is now running...\n",
 
          // Setup all the RTI handles for the objects, attributes and interaction
          // parameters.
-         manager->setup_all_RTI_handles(); // NOLINT
+         manager->setup_object_RTI_handles();      // NOLINT
+         manager->setup_interaction_RTI_handles(); // NOLINT
 
          // Make sure all required federates have joined the federation.
          federate->wait_for_required_federates_to_join();
@@ -722,7 +724,8 @@ Simulation has started and is now running...\n",
 
          // Setup all the RTI handles for the objects, attributes and interaction
          // parameters.
-         manager->setup_all_RTI_handles();
+         manager->setup_object_RTI_handles();
+         manager->setup_interaction_RTI_handles();
 
          if ( !manager->is_late_joining_federate() ) {
             //**** Non-Master federate that is Not late in joining the ****

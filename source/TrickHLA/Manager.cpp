@@ -214,7 +214,8 @@ void Manager::restart_initialization()
    this->mgr_initialized = false;
 
    // Verify the user specified object and interaction arrays and counts.
-   verify_object_and_interaction_arrays();
+   verify_object_arrays();
+   verify_interaction_arrays();
 
    // Setup the Execution Control and Execution Configuration objects now that
    // we know if we are the "Master" federate or not.
@@ -233,11 +234,13 @@ void Manager::restart_initialization()
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
-   setup_all_ref_attributes();
+   setup_object_ref_attributes();
+   setup_interaction_ref_attributes();
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
-   setup_all_RTI_handles();
+   setup_object_RTI_handles();
+   setup_interaction_RTI_handles();
 
    // Set the object instance handles based on its name.
    set_all_object_instance_handles_by_name();
@@ -281,13 +284,13 @@ void Manager::initialize_HLA_cycle_time()
 }
 
 /*! @brief Verify the user specified object and interaction arrays and counts. */
-void Manager::verify_object_and_interaction_arrays()
+void Manager::verify_object_arrays()
 {
    // Check for the error condition of a valid object count but a null
    // objects array.
    if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
       ostringstream errmsg;
-      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+      errmsg << "Manager::verify_object_arrays():" << __LINE__
              << " ERROR: Unexpected NULL 'objects' array for a non zero"
              << " obj_count:" << obj_count << ". Please check your input or"
              << " modified-data files to make sure the 'Manager::objects'"
@@ -300,7 +303,7 @@ void Manager::verify_object_and_interaction_arrays()
    // then let the user know.
    if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
       ostringstream errmsg;
-      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+      errmsg << "Manager::verify_object_arrays():" << __LINE__
              << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
              << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
              << " Please check your input or modified-data files to make sure"
@@ -311,7 +314,7 @@ void Manager::verify_object_and_interaction_arrays()
 
    if ( obj_count >= INT_MAX ) {
       ostringstream errmsg;
-      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+      errmsg << "Manager::verify_object_arrays():" << __LINE__
              << " ERROR: Unexpected obj_count:" << obj_count << " >= " << INT_MAX
              << ". Please check your input or modified-data files to make sure"
              << " the 'Manager::objects' array is correctly configured." << endl;
@@ -332,7 +335,7 @@ void Manager::verify_object_and_interaction_arrays()
 
                if ( objects[n].get_name() == objects[k].get_name() ) {
                   ostringstream errmsg;
-                  errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                  errmsg << "Manager::verify_object_arrays():" << __LINE__
                          << " ERROR: Object instance '" << objects[n].get_name()
                          << "' at array index " << n << " has the same name as"
                          << " object instance '" << objects[k].get_name()
@@ -346,12 +349,16 @@ void Manager::verify_object_and_interaction_arrays()
          }
       }
    }
+}
 
+/*! @brief Verify the user specified object and interaction arrays and counts. */
+void Manager::verify_interaction_arrays()
+{
    // Check for the error condition of a valid interaction count but a null
    // interactions array.
    if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
       ostringstream errmsg;
-      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+      errmsg << "Manager::verify_interaction_arrays():" << __LINE__
              << " ERROR: Unexpected NULL 'interactions' array for a non zero"
              << " inter_count:" << inter_count << ". Please check your input or"
              << " modified-data files to make sure the 'Manager::interactions'"
@@ -364,7 +371,7 @@ void Manager::verify_object_and_interaction_arrays()
    // invalid then let the user know.
    if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
       ostringstream errmsg;
-      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+      errmsg << "Manager::verify_interaction_arrays():" << __LINE__
              << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
              << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
              << " array. Please check your input or modified-data files to make"
@@ -376,7 +383,7 @@ void Manager::verify_object_and_interaction_arrays()
 
    if ( inter_count >= INT_MAX ) {
       ostringstream errmsg;
-      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+      errmsg << "Manager::verify_interaction_arrays():" << __LINE__
              << " ERROR: Unexpected inter_count:" << inter_count << " >= " << INT_MAX
              << ". Please check your input or modified-data files to make sure"
              << " the 'Manager::interactions' array is correctly configured."
@@ -399,7 +406,7 @@ void Manager::verify_object_and_interaction_arrays()
 
                if ( interactions[i].get_FOM_name() == interactions[k].get_FOM_name() ) {
                   ostringstream errmsg;
-                  errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                  errmsg << "Manager::verify_interaction_arrays():" << __LINE__
                          << " ERROR: Interaction '" << interactions[i].get_FOM_name()
                          << "' at array index " << i << " has the same FOM name"
                          << " as interaction '" << interactions[k].get_FOM_name()
@@ -424,11 +431,11 @@ void Manager::verify_object_and_interaction_arrays()
    // the same interaction FOM name as the execution control interaction.
    for ( size_t i = 0; i < exec_fom_names_vector.size(); ++i ) {
 
-      // Make sure Execution Control interactins names are not duplicates.
+      // Make sure Execution Control interactions names are not duplicates.
       for ( size_t n = i + 1; n < exec_fom_names_vector.size(); ++n ) {
          if ( exec_fom_names_vector[n] == exec_fom_names_vector[i] ) {
             ostringstream errmsg;
-            errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+            errmsg << "Manager::verify_interaction_arrays():" << __LINE__
                    << " ERROR: Execution Control has duplicate Interactions for '"
                    << exec_fom_names_vector[i]
                    << "'. Please check your Execution Control implementation to"
@@ -444,7 +451,7 @@ void Manager::verify_object_and_interaction_arrays()
          if ( !interactions[k].get_FOM_name().empty()
               && ( exec_fom_names_vector[i] == interactions[k].FOM_name ) ) {
             ostringstream errmsg;
-            errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+            errmsg << "Manager::verify_interaction_arrays():" << __LINE__
                    << " ERROR: Execution Control Interaction '"
                    << exec_fom_names_vector[i]
                    << "' has the same FOM name as user specified interaction '"
@@ -1035,10 +1042,10 @@ void Manager::add_object_to_map(
 /*!
  * @job_class{initialization}
  */
-void Manager::setup_all_ref_attributes()
+void Manager::setup_object_ref_attributes()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d\n",
+      message_publish( MSG_NORMAL, "Manager::setup_object_ref_attributes():%d\n",
                        __LINE__ );
    }
 
@@ -1053,23 +1060,17 @@ void Manager::setup_all_ref_attributes()
 
    if ( is_execution_configuration_used() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Execution-Configuration\n",
+         message_publish( MSG_NORMAL, "Manager::setup_object_ref_attributes():%d Execution-Configuration\n",
                           __LINE__ );
       }
       setup_object_ref_attributes( 1, get_execution_configuration() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Objects: %d\n",
+      message_publish( MSG_NORMAL, "Manager::setup_object_ref_attributes():%d Objects: %d\n",
                        __LINE__, obj_count );
    }
    setup_object_ref_attributes( obj_count, objects );
-
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_all_ref_attributes():%d Interactions\n",
-                       __LINE__ );
-   }
-   setup_interaction_ref_attributes();
 }
 
 /*!
@@ -1188,13 +1189,10 @@ void Manager::setup_interaction_ref_attributes()
    execution_control->setup_interaction_ref_attributes();
 }
 
-/*!
- * @job_class{initialization}
- */
-void Manager::setup_all_RTI_handles()
+void Manager::setup_object_RTI_handles()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      message_publish( MSG_NORMAL, "Manager::setup_all_RTI_handles():%d\n",
+      message_publish( MSG_NORMAL, "Manager::setup_object_RTI_handles():%d\n",
                        __LINE__ );
    }
 
@@ -1203,6 +1201,17 @@ void Manager::setup_all_RTI_handles()
 
    // Set up the object RTI handles for the simulation data objects.
    setup_object_RTI_handles( obj_count, objects );
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void Manager::setup_interaction_RTI_handles()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      message_publish( MSG_NORMAL, "Manager::setup_interaction_RTI_handles():%d\n",
+                       __LINE__ );
+   }
 
    // Set up the object RTI handles for the ExecutionControl mechanisms.
    execution_control->setup_interaction_RTI_handles();

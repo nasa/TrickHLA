@@ -144,8 +144,11 @@ class Manager : public CheckpointConversionBase
    /*! @brief Initialize the HLA delta time step which is the data cycle time. */
    void initialize_HLA_cycle_time();
 
-   /*! @brief Verify the user specified object and interaction arrays and counts. */
-   void verify_object_and_interaction_arrays();
+   /*! @brief Verify the user specified object arrays and counts. */
+   void verify_object_arrays();
+
+   /*! @brief Verify the user specified interaction arrays and counts. */
+   void verify_interaction_arrays();
 
    /*! @brief Checks to make sure the RTI is ready by making sure the
     * TrickHLA::Federate and TrickHLA:FedAmb exist and the RTI handles are
@@ -320,9 +323,11 @@ class Manager : public CheckpointConversionBase
     * instances with the RTI. */
    void wait_for_registration_of_required_objects();
 
-   /*! @brief Sets the RTI run-time type IDs/handles for the object, attributes,
-    * interactions, and parameters. */
-   void setup_all_RTI_handles();
+   /*! @brief Sets the RTI run-time type IDs/handles for the object and attributes. */
+   void setup_object_RTI_handles();
+
+   /*! @brief Sets the RTI run-time type IDs/handles for the interaction and parameters. */
+   void setup_interaction_RTI_handles();
 
    /*! @brief Sets the RTI run-time type IDs/handles for the object and attributes.
     *  @param data_obj_count Number of objects.
@@ -336,10 +341,6 @@ class Manager : public CheckpointConversionBase
     *  @param in_interactions      Simulation TrickHLA Interaction objects. */
    void setup_interaction_RTI_handles( int const    interactions_counter,
                                        Interaction *in_interactions );
-
-   /*! @brief Set up the Trick ref-attributes for the user specified objects,
-    * attributes, interactions, and parameters. */
-   void setup_all_ref_attributes();
 
    /*! @brief Setup the preferred order (TSO or RO) for all the object
     * attributes and interactions. */
@@ -410,6 +411,10 @@ class Manager : public CheckpointConversionBase
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */
    bool is_shutdown_called() const;
+
+   /*! @brief Set up the Trick ref-attributes for the user specified objects,
+    * and attributes. */
+   void setup_object_ref_attributes();
 
    /*! @brief Set up the Trick ref-attributes for the user specified objects
     * and attributes.

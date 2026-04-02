@@ -165,7 +165,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
-   manager->setup_all_ref_attributes();
+   manager->setup_object_ref_attributes();
+   manager->setup_interaction_ref_attributes();
 
    // Create the RTI Ambassador and connect.
    federate->create_RTI_ambassador_and_connect();
@@ -224,7 +225,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
-   manager->setup_all_RTI_handles();
+   manager->setup_object_RTI_handles();
+   manager->setup_interaction_RTI_handles();
 
    // Call publish_and_subscribe AFTER we've initialized the manager,
    // federate, and FedAmb.

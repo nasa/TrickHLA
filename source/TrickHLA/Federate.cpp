@@ -373,7 +373,8 @@ void Federate::initialize()
 
    federate_ambassador.initialize();
 
-   manager.verify_object_and_interaction_arrays();
+   manager.verify_object_arrays();
+   manager.verify_interaction_arrays();
 
    execution_control->initialize();
 

@@ -1474,8 +1474,10 @@ void ExecutionControlBase::post_restore()
       // get us restarted again...
       // reset RTI data to the state it was in when checkpointed
       manager->reset_mgr_initialized();
-      manager->setup_all_ref_attributes();
-      manager->setup_all_RTI_handles();
+      manager->setup_object_ref_attributes();
+      manager->setup_interaction_ref_attributes();
+      manager->setup_object_RTI_handles();
+      manager->setup_interaction_RTI_handles();
       manager->set_all_object_instance_handles_by_name();
 
       if ( save_restore_srvc->is_announce_restore() ) {
