@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Fixed compile time warnings about variable initialization for the IMSim ExecutionControl class.
+
 
 ## [v3.2.2] - 2026-04-01
 
