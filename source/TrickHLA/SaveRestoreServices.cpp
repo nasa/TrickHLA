@@ -102,6 +102,7 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
    : restore_federation( false ),
      restore_file_name(),
      initiated_a_federation_save( false ),
+     unfreeze_after_save( false ),
      federate( &fed ),
      time_management_srvc( NULL ),
      execution_control( NULL ),
@@ -214,7 +215,7 @@ void SaveRestoreServices::load_and_print_running_federate_names()
    federate->request_attribute_update( federate->MOM_HLAfederation_class_handle, requestedAttributes );
 
    int64_t      wallclock_time;
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( this->running_feds_count == 0 ) {
@@ -870,7 +871,7 @@ void SaveRestoreServices::federation_saved()
    this->save_name             = L"";
    this->checkpoint_file_name  = "";
 
-   if ( federate->unfreeze_after_save ) {
+   if ( this->unfreeze_after_save ) {
       // This keeps from generating the RUNFED_v2 sync point since it's not needed
       federate->get_execution_control()->set_freeze_announced( false );
 
@@ -905,7 +906,7 @@ void SaveRestoreServices::wait_for_federation_restore_begun()
                        __LINE__ );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( !this->restore_begun ) {
@@ -954,7 +955,7 @@ void SaveRestoreServices::wait_until_federation_is_ready_to_restore()
                        __LINE__ );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( !this->start_to_restore ) {
@@ -1028,7 +1029,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
       return return_string;
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    // nobody reported any problems, wait until the restore is completed.
@@ -1076,7 +1077,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
       }
    }
 
-   if ( this->restore_process == RESTORE_FAILED ) {
+   if ( this->restore_process == RESTORE_FAILED ) { // cppcheck-suppress [knownConditionTrueFalse]
       // after this federate restore blocking loop has finished, check if the RTI
       // accepted the failure of the federate restore. build and return a message.
       return_string = "SaveRestoreServices::wait_for_federation_restore_to_complete() "
@@ -1101,7 +1102,7 @@ void SaveRestoreServices::wait_for_restore_request_callback()
                        __LINE__ );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) {
@@ -1150,7 +1151,7 @@ void SaveRestoreServices::wait_for_restore_status_to_complete()
                        __LINE__ );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( !this->restore_request_complete ) {
@@ -1199,7 +1200,7 @@ void SaveRestoreServices::wait_for_save_status_to_complete()
                        __LINE__ );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( !this->save_request_complete ) {
@@ -1248,7 +1249,7 @@ void SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complet
                        __LINE__ );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( !this->federation_restore_failed_callback_complete ) {

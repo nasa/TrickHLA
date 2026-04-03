@@ -627,7 +627,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
    if ( execution_configuration->any_remotely_owned_subscribed_init_attribute() ) {
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
@@ -1091,7 +1091,7 @@ void ExecutionControlBase::setup_checkpoint()
 
          save_restore_srvc->request_federation_save();
 
-         SleepTimeout print_timer( federate->wait_status_time );
+         SleepTimeout print_timer;
          SleepTimeout sleep_timer;
 
          // need to wait for federation to initiate save
@@ -1333,7 +1333,7 @@ void ExecutionControlBase::setup_restore()
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
       save_restore_srvc->initiate_restore_announce( restore_name_str );
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
       // need to wait for federation to initiate restore

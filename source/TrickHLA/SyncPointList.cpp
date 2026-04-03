@@ -737,7 +737,7 @@ bool SyncPointList::wait_for_announced(
    }
 
    bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    // Wait for the sync-point to be announced.
@@ -1105,7 +1105,7 @@ bool SyncPointList::wait_for_synchronized(
 
    bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
    bool         synchronized;
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    // Wait for the federation to synchronize on the sync-point.

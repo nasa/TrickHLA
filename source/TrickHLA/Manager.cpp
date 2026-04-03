@@ -624,7 +624,7 @@ federate so this call will be ignored.\n",
                                 ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
             }
 
-            SleepTimeout print_timer( federate->wait_status_time );
+            SleepTimeout print_timer;
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
@@ -743,7 +743,7 @@ void Manager::receive_init_data(
                              ( obj->is_required() ? "REQUIRED" : "not required" ) );
          }
 
-         SleepTimeout print_timer( federate->wait_status_time );
+         SleepTimeout print_timer;
          SleepTimeout sleep_timer;
 
          // Wait for the data to arrive.
@@ -1921,7 +1921,7 @@ void Manager::wait_for_registration_of_required_objects()
       }
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    do {
@@ -3239,7 +3239,7 @@ void Manager::wait_for_discovery_of_objects()
          }
 
          int64_t      wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
-         SleepTimeout print_timer( federate->wait_status_time );
+         SleepTimeout print_timer;
          SleepTimeout sleep_timer;
 
          // Block until some or all objects arrive.

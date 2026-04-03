@@ -1371,7 +1371,7 @@ Waiting on reservation of Object Instance Name '%s'.\n",
                        __LINE__, get_name().c_str() );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( !name_registered ) {
@@ -1630,7 +1630,7 @@ void Object::wait_for_object_registration()
                        __LINE__, get_FOM_name().c_str(), get_name().c_str() );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( !is_instance_handle_valid() ) {
@@ -4202,7 +4202,7 @@ object '%s' because of error: '%s'\n",
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer;
       bool         acquired;
 
@@ -4274,7 +4274,7 @@ void Object::handle_pulled_ownership_at_init()
       return;
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
    bool         requested;
 
@@ -5026,7 +5026,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
       bool divest_req_flag;
@@ -5101,7 +5101,7 @@ void Object::handle_pushed_ownership_at_init()
                        __LINE__, get_name().c_str() );
    }
 
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
    bool         acquired;
 
@@ -5568,7 +5568,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
       }
 
       int          i;
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
       // Perform a blocking loop until ownership of all locally owned published

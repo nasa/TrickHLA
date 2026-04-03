@@ -695,7 +695,7 @@ void TimeManagementServices::setup_time_constrained()
       // simulation fed file we will receive TimeStamp Ordered messages.
       federate->RTI_ambassador->enableTimeConstrained();
 
-      SleepTimeout print_timer( federate->get_wait_status_time() );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time constrained flag to be set from the RTI.
@@ -895,7 +895,7 @@ void TimeManagementServices::setup_time_regulation()
       // TimeStamp Ordered messages.
       federate->RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
-      SleepTimeout print_timer( federate->get_wait_status_time() );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time regulation flag to be set from the RTI.
@@ -1282,7 +1282,7 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
    // Wait for Time Advance Grant (TAG)
    if ( state != TIME_ADVANCE_GRANTED ) {
 
-      SleepTimeout print_timer( federate->get_wait_status_time() );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // This spin lock waits for the time advance grant from the RTI.
@@ -1423,7 +1423,7 @@ void TimeManagementServices::wait_for_time_advance_grant()
                           __LINE__, requested_time.get_time_in_seconds() );
       }
 
-      SleepTimeout print_timer( federate->get_wait_status_time() );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // This spin lock waits for the time advance grant from the RTI.

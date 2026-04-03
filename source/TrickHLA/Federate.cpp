@@ -139,10 +139,7 @@ Federate::Federate()
      known_feds( NULL ),
      debug_level( TrickHLA::DEBUG_LEVEL_NO_TRACE ),
      code_section( TrickHLA::DEBUG_SOURCE_ALL_MODULES ),
-     wait_status_time( 30.0 ),
      can_rejoin_federation( false ),
-     freeze_delay_frames( 2 ),
-     unfreeze_after_save( false ),
      federation_created_by_federate( false ),
      federation_exists( false ),
      federation_joined( false ),
@@ -1401,7 +1398,7 @@ string Federate::wait_for_required_federates_to_join()
 
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    this->all_federates_joined = false;
@@ -3174,7 +3171,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
       time_management_srvc.wait_for_zero_lookahead_TARA_TAG();
 
       int64_t      wallclock_time; // cppcheck-suppress [variableScope]
-      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Block waiting for the named object instance data by repeatedly doing a
@@ -3282,7 +3279,7 @@ void Federate::wait_to_receive_blocking_io_data(
    if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_blocking_io_attribute() ) {
 
       int64_t      wallclock_time; // cppcheck-suppress [variableScope]
-      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Block waiting for the named object instance data.
@@ -3995,7 +3992,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    requestedAttributes.insert( MOM_HLAautoProvide_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    while ( this->auto_provide_setting < 0 ) {
@@ -4422,7 +4419,7 @@ void Federate::restore_federate_handles_from_MOM()
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
    bool         all_found = false;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    // Wait for all the federate handles to be retrieved.

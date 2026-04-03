@@ -131,8 +131,8 @@ class Federate
    // The variables below are configured by the user in the input files.
    //--------------------------------------------------------------------------
   public:
-   std::string name;            ///< @trick_units{--} The federate name.
-   std::string type;            ///< @trick_units{--} The federate type.
+   std::string name;            ///< @trick_units{--} The federate name string.
+   std::string type;            ///< @trick_units{--} The federate type string.
    std::string federation_name; ///< @trick_units{--} Federation execution name.
 
    std::string rti_address; ///< @trick_units{--} RTI address of the form host:port.
@@ -158,18 +158,9 @@ class Federate
    DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
    DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
 
-   double wait_status_time; ///< @trick_units{s} How long to wait in a spin-lock in seconds before we print a status message.
-
    bool can_rejoin_federation; /**< @trick_units{--}
       Enables this federate to resign in a way to allow re-joining of the
-      federation at a later time. */
-
-   double freeze_delay_frames; /**< @trick_units{--}
-      For DIS: Number of lookahead_time frames to delay when freeze issued so
-      all feds freeze together. */
-
-   bool unfreeze_after_save; /**< @trick_units{--}
-      Flag to indicate that we should go to run immediately after a save. */
+      federation at a later time. TODO: Is this needed anymore? */
 
    //--------------------------------------------------------------------------
 
@@ -213,11 +204,6 @@ class Federate
    void set_join_constraint( FederateJoinConstraintsEnum const fed_join_constraint )
    {
       this->join_constraint = fed_join_constraint;
-   }
-
-   double get_wait_status_time()
-   {
-      return this->wait_status_time;
    }
 
    /*! @brief Begin the pre-multiphase initialization process of standing up
@@ -401,6 +387,24 @@ class Federate
    {
       manager.receive_init_data( instance_name );
    }
+
+   /*! @brief Send zero lookahead or requested data for the specified object instance.
+    *  @param obj_instance_name Object instance name to send data for. */
+   void send_zero_lookahead_and_requested_data( std::string const &obj_instance_name );
+
+   /*! @brief Blocking function call to wait to receive the zero lookahead
+    *  data for the specified object instance.
+    *  @param obj_instance_name Object instance name to wait for data. */
+   void wait_to_receive_zero_lookahead_data( std::string const &obj_instance_name );
+
+   /*! @brief Send blocking I/O or requested data for the specified object instance.
+    *  @param obj_instance_name Object instance name to send data for. */
+   void send_blocking_io_data( std::string const &obj_instance_name );
+
+   /*! @brief Blocking function call to wait to receive the blocking I/O data
+    *  for the specified object instance.
+    *  @param obj_instance_name Object instance name to wait for data. */
+   void wait_to_receive_blocking_io_data( std::string const &obj_instance_name );
 
    /*! @brief Achieve then wait for the federation to become synchronized for
     * the specified sync-point label.
@@ -655,24 +659,6 @@ class Federate
     *  @param values        Attribute values. */
    void rebuild_federate_handles( RTI1516_NAMESPACE::ObjectInstanceHandle const    &instance_hndl,
                                   RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
-
-   /*! @brief Send zero lookahead or requested data for the specified object instance.
-    *  @param obj_instance_name Object instance name to send data for. */
-   void send_zero_lookahead_and_requested_data( std::string const &obj_instance_name );
-
-   /*! @brief Blocking function call to wait to receive the zero lookahead
-    *  data for the specified object instance.
-    *  @param obj_instance_name Object instance name to wait for data. */
-   void wait_to_receive_zero_lookahead_data( std::string const &obj_instance_name );
-
-   /*! @brief Send blocking I/O or requested data for the specified object instance.
-    *  @param obj_instance_name Object instance name to send data for. */
-   void send_blocking_io_data( std::string const &obj_instance_name );
-
-   /*! @brief Blocking function call to wait to receive the blocking I/O data
-    *  for the specified object instance.
-    *  @param obj_instance_name Object instance name to wait for data. */
-   void wait_to_receive_blocking_io_data( std::string const &obj_instance_name );
 
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */

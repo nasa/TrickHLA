@@ -115,6 +115,8 @@ class SaveRestoreServices
    std::string restore_file_name;           ///< @trick_io{*i} @trick_units{--} Filename, which will be the label name.
    bool        initiated_a_federation_save; ///< @trick_io{**} Did this federate initiate the federation save?
 
+   bool unfreeze_after_save; /**< @trick_units{--} Flag to indicate that we should go to run immediately after a save. */
+
    //--------------------------------------------------------------------------
    // Public member functions.
    //--------------------------------------------------------------------------

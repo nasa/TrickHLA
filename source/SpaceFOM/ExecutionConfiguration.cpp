@@ -668,7 +668,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    // Make sure we have at least one piece of exec-config data we can receive.
    if ( any_remotely_owned_subscribed_init_attribute() ) {
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.

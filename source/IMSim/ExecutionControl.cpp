@@ -853,7 +853,7 @@ Simulation has started and is now running...\n",
  */
 FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
 {
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
    // Block until we have determined if we are a late joining federate.
@@ -2425,7 +2425,7 @@ bool ExecutionControl::is_save_initiated()
         && !save_restore_srvc->is_save_completed() ) {
       register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
       while ( !save_restore_srvc->is_initiate_save_flag() ) { // wait for federation to be synced

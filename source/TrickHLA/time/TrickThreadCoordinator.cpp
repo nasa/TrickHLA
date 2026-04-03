@@ -943,7 +943,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
    // sleeps, which adds more wait latency.
    if ( !all_ready_to_send ) {
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for all Trick child threads associated to TrickHLA to be
@@ -1066,7 +1066,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
    // sleep. This will have more wait latency.
    if ( !sent_data ) {
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the main thread to have sent the data.
@@ -1161,7 +1161,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
    // See if the main thread has announced it has received data.
    if ( !ready_to_receive ) {
 
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer;
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the main thread to receive data.
