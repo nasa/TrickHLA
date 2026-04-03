@@ -69,7 +69,7 @@ class THLAInitSimObject : public Trick::SimObject {
    THLAInitSimObject( TrickHLA::Federate & thla_fed,
                       unsigned int         _MPI_1   = 100,
                       unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
-      : thla_federate( thla_fed )
+      : federate( thla_fed )
    {
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60
@@ -80,19 +80,19 @@ class THLAInitSimObject : public Trick::SimObject {
       // Alternative method: Send and receive all the initialization data.
 
       // Send all the initialization data.
-      P_MPI_1 ("initialization") thla_federate.send_init_data();
+      P_MPI_1 ("initialization") federate.send_init_data();
 
       // Wait to receive all the initialization data.
-      P_MPI_1 ("initialization") thla_federate.receive_init_data();
+      P_MPI_1 ("initialization") federate.receive_init_data();
 
       // Do some processing here if needed...
 
       // Clear remaining initialization sync-points.
-      P_MPI_END ("initialization") thla_federate.clear_init_sync_points();
+      P_MPI_END ("initialization") federate.clear_init_sync_points();
    }
 
  private:
-   TrickHLA::Federate & thla_federate;
+   TrickHLA::Federate & federate;
 
    // Do not allow the implicit copy constructor or assignment operator.
    THLAInitSimObject( THLAInitSimObject const & rhs );

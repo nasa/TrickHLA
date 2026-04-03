@@ -282,9 +282,6 @@ void Federate::setup(
    // Set the Federate execution configuration.
    this->execution_config = &federate_execution_config;
 
-   // Register the ExecutionControl instance with the TrickHLA::Manager instance.
-   this->manager.execution_control = &federate_execution_control;
-
    // Register the ExecutionControl instance with the TrickHLA::SaveRestoreServices instance.
    this->save_restore_srvc.execution_control = &federate_execution_control;
 
@@ -753,6 +750,26 @@ void Federate::create_RTI_ambassador_and_connect()
    if ( trick_sigfpe_is_set ) {
       exec_set_trap_sigfpe( true );
    }
+}
+
+bool Federate::is_RTI_ready(
+   string const &method_name )
+{
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   bool rti_valid = true;
+   if ( get_RTI_ambassador() == NULL ) {
+      message_publish( MSG_WARNING, "Federate::%s:%d Unexpected NULL RTIambassador!\n",
+                       method_name.c_str(), __LINE__ );
+      rti_valid = false;
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   return rti_valid;
 }
 
 void Federate::add_federate_instance_id(

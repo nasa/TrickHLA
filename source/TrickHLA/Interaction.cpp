@@ -107,7 +107,7 @@ Interaction::Interaction()
      changed( false ),
      received_as_TSO( false ),
      time( 0.0 ),
-     manager( NULL ),
+     federate( NULL ),
      class_handle(),
      user_supplied_tag_size( 0 ),
      user_supplied_tag_capacity( 0 ),
@@ -146,17 +146,17 @@ Interaction::~Interaction()
  * @job_class{initialization}
  */
 void Interaction::initialize(
-   Manager *trickhla_mgr )
+   Federate *fed )
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   if ( trickhla_mgr == NULL ) {
+   this->federate = fed;
+   if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA-Manager!" << endl;
+             << " ERROR: Unexpected NULL TrickHLA-Federate!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   this->manager = trickhla_mgr;
 
    // Make sure we have a valid object FOM name.
    if ( FOM_name.empty() ) {
@@ -294,11 +294,11 @@ void Interaction::set_user_supplied_tag(
  */
 void Interaction::remove() // RETURN: -- None.
 {
-   // Only remove the Interaction if the manager has not been shutdown.
-   if ( !is_shutdown_called() ) {
+   // Only remove the Interaction if the federate has not been shutdown.
+   if ( !federate->is_shutdown_called() ) {
 
       // Get the RTI-Ambassador and check for NULL.
-      RTIambassador *rti_amb = get_RTI_ambassador();
+      RTIambassador *rti_amb = federate->get_RTI_ambassador();
       if ( rti_amb != NULL ) {
          if ( is_publish() ) {
 
@@ -340,7 +340,7 @@ void Interaction::setup_preferred_order_with_RTI()
       return;
    }
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       message_publish( MSG_WARNING, "Interaction::setup_preferred_order_with_RTI():%d Unexpected NULL RTIambassador.\n",
                        __LINE__ );
@@ -441,7 +441,6 @@ Published Interaction '%s' Preferred-Order:%s\n",
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
-      Federate *federate = get_federate();
       if ( federate != NULL ) {
          federate->set_connection_lost();
       }
@@ -471,7 +470,7 @@ void Interaction::publish_interaction()
       return;
    }
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       message_publish( MSG_WARNING, "Interaction::publish_interaction():%d Unexpected NULL RTIambassador.\n",
                        __LINE__ );
@@ -548,7 +547,6 @@ void Interaction::publish_interaction()
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
-      Federate *federate = get_federate();
       if ( federate != NULL ) {
          federate->set_connection_lost();
       }
@@ -573,7 +571,7 @@ void Interaction::publish_interaction()
 
 void Interaction::unpublish_interaction()
 {
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       message_publish( MSG_WARNING, "Interaction::unpublish_interaction():%d Unexpected NULL RTIambassador.\n",
                        __LINE__ );
@@ -642,7 +640,6 @@ void Interaction::unpublish_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
-         Federate *federate = get_federate();
          if ( federate != NULL ) {
             federate->set_connection_lost();
          }
@@ -679,7 +676,7 @@ void Interaction::unpublish_interaction()
 void Interaction::subscribe_to_interaction()
 {
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       message_publish( MSG_WARNING, "Interaction::subscribe_to_interaction():%d Unexpected NULL RTIambassador.\n",
                        __LINE__ );
@@ -768,7 +765,6 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
-         Federate *federate = get_federate();
          if ( federate != NULL ) {
             federate->set_connection_lost();
          }
@@ -795,7 +791,7 @@ void Interaction::subscribe_to_interaction()
 void Interaction::unsubscribe_from_interaction()
 {
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    if ( rti_amb == NULL ) {
       message_publish( MSG_WARNING, "Interaction::unsubscribe_from_interaction():%d Unexpected NULL RTIambassador.\n",
@@ -865,7 +861,6 @@ void Interaction::unsubscribe_from_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
-         Federate *federate = get_federate();
          if ( federate != NULL ) {
             federate->set_connection_lost();
          }
@@ -910,11 +905,8 @@ bool Interaction::send(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   // Get the Trick-Federate.
-   Federate const *federate = get_federate();
-
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       message_publish( MSG_WARNING, "Interaction::send():%d As Receive-Order: Unexpected NULL RTIambassador.\n",
                        __LINE__ );
@@ -986,7 +978,7 @@ bool Interaction::send(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       message_publish( MSG_WARNING, "Interaction::send():%d Unexpected NULL RTIambassador.\n",
                        __LINE__ );
@@ -1016,9 +1008,6 @@ bool Interaction::send(
 
    // Update the timestamp.
    time.set( send_HLA_time );
-
-   // Get the Trick-Federate.
-   Federate const *federate = get_federate();
 
    // Determine if the interaction should be sent with a timestamp.
    // See IEEE 1516.1-2010 Section 6.12.
@@ -1242,19 +1231,4 @@ void Interaction::mark_unchanged()
    for ( int i = 0; i < param_count; ++i ) {
       parameters[i].mark_not_received();
    }
-}
-
-Federate *Interaction::get_federate() const
-{
-   return ( ( this->manager != NULL ) ? manager->get_federate() : NULL );
-}
-
-RTIambassador *Interaction::get_RTI_ambassador() const
-{
-   return ( ( this->manager != NULL ) ? manager->get_RTI_ambassador() : NULL );
-}
-
-bool Interaction::is_shutdown_called() const
-{
-   return ( ( this->manager != NULL ) ? manager->is_shutdown_called() : false );
 }

@@ -85,8 +85,6 @@ namespace TrickHLA
 // are here to go with the #ifdef SWIG include. Normally, it would go with the
 // other forward declarations below.
 class Federate;
-class Interaction;
-class Object;
 } // namespace TrickHLA
 #endif // SWIG
 
@@ -96,8 +94,10 @@ namespace TrickHLA
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
-class InteractionItem;
 class ExecutionConfigurationBase;
+class Interaction;
+class InteractionItem;
+class Object;
 
 class Manager : public CheckpointConversionBase
 {
@@ -110,7 +110,8 @@ class Manager : public CheckpointConversionBase
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__Manager();
-   // Federate needs to call some of manager's private methods during restore.
+
+   // Needs to call some of Manager's protexted and private data.
    friend class Federate;
 
    //----------------------------- USER VARIABLES -----------------------------
@@ -149,20 +150,6 @@ class Manager : public CheckpointConversionBase
 
    /*! @brief Verify the user specified interaction arrays and counts. */
    void verify_interaction_arrays();
-
-   /*! @brief Checks to make sure the RTI is ready by making sure the
-    * TrickHLA::Federate and TrickHLA:FedAmb exist and the RTI handles are
-    * initialized.
-    *  @return True if the RTI is ready, false otherwise.
-    *  @param method_name The method/function name. */
-   bool is_RTI_ready( std::string const &method_name );
-
-   /*! @brief Check if this is a late joining federate.
-    *  @return True if the is a late joining federate. */
-   bool is_late_joining_federate() const
-   {
-      return execution_control->is_late_joiner();
-   }
 
    /*! @brief Sends all the initialization data. */
    void send_init_data();
@@ -238,25 +225,6 @@ class Manager : public CheckpointConversionBase
    /*! @brief Add a TrickHLA::Object to the manager object map.
     *  @param object TrickHLA::Object to add to the manager object map. */
    void add_object_to_map( Object *object );
-
-   /*! @brief Get the pointer to the associated TrickHLA::Federate instance.
-    *  @return Pointer to the associated TrickHLA::Federate instance. */
-   Federate *get_federate() const
-   {
-      return federate;
-   }
-
-   /*! @brief Get the pointer to the associated TrickHLA::ExecutionControlBase instance.
-    *  @return Pointer to associated TrickHLA::ExecutionControlBase instance. */
-   ExecutionControlBase *get_execution_control()
-   {
-      return this->execution_control;
-   }
-
-   /*! @brief Returns a pointer to the RTI ambassador, or NULL if one does not
-    * exist yet.
-    * @return Pointer to the RTI ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const;
 
    // Interactions
    /*! @brief Process the received interactions. */
@@ -387,31 +355,6 @@ class Manager : public CheckpointConversionBase
       mgr_initialized = false;
    }
 
-   /*! @brief Set the execution configuration object.
-    *  @param exec_config Pointer to the associated execution configuration object. */
-   void set_execution_configuration( ExecutionConfigurationBase *exec_config )
-   {
-      execution_control->set_execution_configuration( exec_config );
-   }
-
-   /*! @brief Get the execution configuration object.
-    *  @return Pointer to the associated execution configuration object. */
-   ExecutionConfigurationBase *get_execution_configuration()
-   {
-      return execution_control->get_execution_configuration();
-   }
-
-   /*! @brief Test is an execution configuration object is used.
-    *  @return True if an execution configuration object is used. */
-   bool is_execution_configuration_used()
-   {
-      return execution_control->is_execution_configuration_used();
-   }
-
-   /*! @brief Check if federate is shutdown function was called.
-    *  @return True if the manager is shutting down the federate. */
-   bool is_shutdown_called() const;
-
    /*! @brief Set up the Trick ref-attributes for the user specified objects,
     * and attributes. */
    void setup_object_ref_attributes();
@@ -453,7 +396,9 @@ class Manager : public CheckpointConversionBase
    Object *get_unregistered_remote_object(
       RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass );
 
+   //
    // Ownership
+   //
    /*! @brief Pull ownership from the other federates if the pull ownership
     *  flag has been enabled. */
    void pull_ownership();
@@ -538,9 +483,31 @@ class Manager : public CheckpointConversionBase
    void print_converted_interactions_checkpoint();
 
    //
+   // ExCO
+   //
+   /*! @brief Test is an execution configuration object is used.
+    *  @return True if an execution configuration object is used. */
+   bool is_execution_configuration_used();
+
+   /*! @brief Get the execution configuration object.
+    *  @return Pointer to the associated execution configuration object. */
+   ExecutionConfigurationBase *get_execution_configuration();
+
+   /*! @brief Check if this is a late joining federate.
+    *  @return True if the is a late joining federate. */
+   bool is_late_joining_federate() const;
+
+   /*! @brief Get the pointer to the associated TrickHLA::Federate instance.
+    *  @return Pointer to the associated TrickHLA::Federate instance. */
+   Federate *get_federate() const
+   {
+      return federate;
+   }
+
+   //
    // Private data.
    //
-  private:
+  protected:
    ItemQueue interactions_queue; ///< @trick_io{**} Interactions queue.
 
    std::size_t      check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
@@ -557,12 +524,7 @@ class Manager : public CheckpointConversionBase
    //
    // References to the Federate and associated services.
    //
-   Federate               *federate;             ///< @trick_units{--} Associated TrickHLA::Federate.
-   TimeManagementServices *time_management_srvc; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
-   ExecutionControlBase   *execution_control;    /**< @trick_units{--}
-    Execution control object. This has to point to an allocated execution
-    control class that inherits from the ExecutionControlBase interface
-    class. For instance SRFOM::ExecutionControl. */
+   Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
 
   private:
    // Do not allow the copy constructor or assignment operator.

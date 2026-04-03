@@ -169,12 +169,10 @@ log_sine_states( 'PC', 0.250 )
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
    thla_federate        = THLA.federate,
-   thla_manager         = THLA.manager,
    thla_control         = THLA.execution_control,
    thla_config          = THLA.ExCO,
    thla_federation_name = federation_name,
-   thla_federate_name   = federate_name,
-   thla_enabled         = True )
+   thla_federate_name   = federate_name )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job

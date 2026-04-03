@@ -114,7 +114,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    }
 
    // This should only be called by the Master federate.
-   if ( !interaction->get_manager()->get_execution_control()->is_master() ) {
+   if ( !interaction->get_federate()->get_execution_control()->is_master() ) {
       ostringstream errmsg;
       errmsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__
              << " WARNING: This should only be called by the Master federate!" << endl;
@@ -163,7 +163,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    /// grant here because this is an end_of_frame job and if we don't have a
    /// granted time then we are at the end of the frame that made the TAR call.
    /// The wait for Time Advance Grant will be at the top of the next frame.
-   if ( !interaction->get_federate()->get_time_management_services()->is_time_advance_granted() ) {
+   if ( !interaction->get_federate()->get_time_management_service()->is_time_advance_granted() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).\n",
                           __LINE__ );
@@ -175,7 +175,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    Int64Time     granted                = interaction->get_federate()->get_granted_time();
    Int64Time     granted_plus_lookahead = granted + lookahead;
 
-   double curr_scenario_time   = interaction->get_manager()->get_execution_control()->get_scenario_time();
+   double curr_scenario_time   = interaction->get_federate()->get_execution_control()->get_scenario_time();
    double freeze_scenario_time = freeze_time;
    double freeze_hla_time      = granted.get_time_in_seconds() + ( freeze_scenario_time - curr_scenario_time );
 

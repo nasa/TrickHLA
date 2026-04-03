@@ -258,10 +258,10 @@ void ExecutionConfiguration::configure_attributes()
 void ExecutionConfiguration::configure()
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
-   if ( manager == NULL ) {
+   if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
+             << " ERROR: Unexpected NULL TrickHLA::Federate." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

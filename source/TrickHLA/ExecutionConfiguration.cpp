@@ -196,10 +196,10 @@ void ExecutionConfiguration::configure_attributes()
 void ExecutionConfiguration::configure()
 {
    // Check the manager.
-   if ( this->manager == NULL ) {
+   if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Null TrickHLA::Manager passed in!" << endl;
+             << " ERROR: Null TrickHLA::Federate passed in!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -211,15 +211,6 @@ void ExecutionConfiguration::configure()
 
    ostringstream federate_list;
    int           required_federate_count = 0;
-
-   Federate *federate = manager->get_federate();
-   if ( federate == NULL ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Null TrickHLA-Federate pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
 
    // Build a comma separated list of required federate names.
    for ( int i = 0; i < federate->known_feds_count; ++i ) {

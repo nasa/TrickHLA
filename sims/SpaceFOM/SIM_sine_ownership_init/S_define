@@ -211,48 +211,45 @@ class THLAInitAnalyticSimObject : public Trick::SimObject {
    TrickHLA::SimTimeline      sim_timeline;
    TrickHLA::ScenarioTimeline scenario_timeline;
 
-   THLAInitAnalyticSimObject( TrickHLA::Manager  & thla_mngr,
-                              TrickHLA::Federate & thla_fed,
+   THLAInitAnalyticSimObject( TrickHLA::Federate & thla_fed,
                               unsigned int         _MPI_1   = 100,
                               unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
       : sim_timeline(),
         scenario_timeline( sim_timeline, 0.0, 0.0 ),
-        thla_manager( thla_mngr ),
-        thla_federate( thla_fed )
+        federate( thla_fed )
    {
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
-      // P60 THLA.manager->initialize() job.
+      // P60 THLA.federate->initialize() job.
       //--------------------------------------------------------------------
 
       // Ownership transfer at initialization.
 #if PULL_OWNERSHIP
-      P_MPI_1 ("initialization") thla_manager.handle_pulled_ownership_at_init( "A-side-Federate.Sine" );
+      P_MPI_1 ("initialization") federate.handle_pulled_ownership_at_init( "A-side-Federate.Sine" );
 #else
-      P_MPI_1 ("initialization") thla_manager.push_ownership_at_init( "A-side-Federate.Sine", "Name" );
+      P_MPI_1 ("initialization") federate.push_ownership_at_init( "A-side-Federate.Sine", "Name" );
 #endif
       // Wait for all federates to reach this sync-point.
-      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
+      P_MPI_1 ("initialization") federate.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
 
 
       // Send the Analytic sine data.
-      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
+      P_MPI_1 ("initialization") federate.send_init_data( "A-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
-      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase" );
+      P_MPI_1 ("initialization") federate.wait_for_init_sync_point( "Analytic_init_phase" );
 
 
       // Receive the Propagated sine data.
-      P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine" );
+      P_MPI_END ("initialization") federate.receive_init_data( "P-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
-      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
+      P_MPI_END ("initialization") federate.wait_for_init_sync_point( "Propagated_init_phase" );
    }
 
  private:
-   TrickHLA::Manager  & thla_manager;
-   TrickHLA::Federate & thla_federate;
+   TrickHLA::Federate & federate;
 
    // Do not allow the implicit copy constructor or assignment operator.
    THLAInitAnalyticSimObject( THLAInitAnalyticSimObject const & rhs );
@@ -273,47 +270,44 @@ class THLAInitPropagatedSimObject : public Trick::SimObject {
    TrickHLA::SimTimeline      sim_timeline;
    TrickHLA::ScenarioTimeline scenario_timeline;
 
-   THLAInitPropagatedSimObject( TrickHLA::Manager  & thla_mngr,
-                                TrickHLA::Federate & thla_fed,
+   THLAInitPropagatedSimObject( TrickHLA::Federate & thla_fed,
                                 unsigned int         _MPI_1   = 100,
                                 unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
       : scenario_timeline( sim_timeline, 0.0, 0.0 ),
-        thla_manager( thla_mngr ),
-        thla_federate( thla_fed )
+        federate( thla_fed )
    {
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
-      // P60 THLA.manager->initialize() job.
+      // P60 THLA.federate->initialize() job.
       //--------------------------------------------------------------------
 
       // Ownership transfer at initialization.
 #if PULL_OWNERSHIP
-      P_MPI_1 ("initialization") thla_manager.pull_ownership_at_init( "A-side-Federate.Sine", "Name" );
+      P_MPI_1 ("initialization") federate.pull_ownership_at_init( "A-side-Federate.Sine", "Name" );
 #else
-      P_MPI_1 ("initialization") thla_manager.handle_pushed_ownership_at_init( "A-side-Federate.Sine" );
+      P_MPI_1 ("initialization") federate.handle_pushed_ownership_at_init( "A-side-Federate.Sine" );
 #endif
       // Wait for all federates to reach this sync-point.
-      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
+      P_MPI_1 ("initialization") federate.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
 
 
       // Receive the Analytic sine data.
-      P_MPI_1 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
+      P_MPI_1 ("initialization") federate.receive_init_data( "A-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
-      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase" );
+      P_MPI_1 ("initialization") federate.wait_for_init_sync_point( "Analytic_init_phase" );
 
 
       // Send the Propagated sine data.
-      P_MPI_END ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
+      P_MPI_END ("initialization") federate.send_init_data( "P-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
-      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
+      P_MPI_END ("initialization") federate.wait_for_init_sync_point( "Propagated_init_phase" );
    }
 
  private:
-   TrickHLA::Manager  & thla_manager;
-   TrickHLA::Federate & thla_federate;
+   TrickHLA::Federate & federate;
 
    // Do not allow the implicit copy constructor or assignment operator.
    THLAInitPropagatedSimObject( THLAInitPropagatedSimObject const & rhs );
@@ -335,8 +329,8 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
                         P_HLA_LATE );
 
 // Simulation specific multiphase initialization SimObject instances.
-THLAInitAnalyticSimObject   THLA_INIT_A( THLA.manager, THLA.federate );
-THLAInitPropagatedSimObject THLA_INIT_P( THLA.manager, THLA.federate );
+THLAInitAnalyticSimObject   THLA_INIT_A( THLA.federate );
+THLAInitPropagatedSimObject THLA_INIT_P( THLA.federate );
 
 // Sine Instantiations
 AnalyticSineSimObj   A;

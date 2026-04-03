@@ -1278,11 +1278,9 @@ bool TrickThreadCoordinator::verify_time_constraints(
       return false;
    }
 
-   Manager *manager = federate->get_manager();
-
    // Lookahead and LCTS times in the integer base time.
    int64_t const lookahead_base_time = federate->time_management_srvc.get_lookahead().get_base_time();
-   int64_t const lcts_base_time      = manager->get_execution_control()->get_least_common_time_step();
+   int64_t const lcts_base_time      = federate->get_execution_control()->get_least_common_time_step();
 
    // Verify the lookahead time.
    if ( lookahead_base_time < 0 ) {
@@ -1482,8 +1480,8 @@ bool TrickThreadCoordinator::verify_time_constraints(
       // Determine if the LCTS is enabled for the Master federate. SpaceFOM
       // requires the use of the LCTS while the TrickHLA simple-init and IMSim
       // schemes do not.
-      if ( manager->get_execution_control()->is_master()
-           && manager->get_execution_control()->is_enabled_least_common_time_step() ) {
+      if ( federate->get_execution_control()->is_master()
+           && federate->get_execution_control()->is_enabled_least_common_time_step() ) {
 
          // Time Constraints: (LCTS > 0)
          if ( lcts_base_time <= 0 ) {
@@ -1499,7 +1497,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
 
          // Convert the padding time in seconds to the base-time as an integer.
          int64_t const pad_base_time = Int64BaseTime::to_base_time(
-            manager->get_execution_control()->get_time_padding() );
+            federate->get_execution_control()->get_time_padding() );
 
          // Verify the Padding time if one was set.
          if ( pad_base_time > 0 ) {
@@ -1555,10 +1553,10 @@ bool TrickThreadCoordinator::verify_time_constraints(
       // For a Master federate using CTE, we need to make sure the padding
       // time is at least two times the freeze frame time. Otherwise we can
       // not coordinate a go to run in time.
-      if ( manager->get_execution_control()->is_master()
-           && manager->get_execution_control()->does_cte_timeline_exist() ) {
+      if ( federate->get_execution_control()->is_master()
+           && federate->get_execution_control()->does_cte_timeline_exist() ) {
 
-         double const time_padding = manager->get_execution_control()->get_time_padding();
+         double const time_padding = federate->get_execution_control()->get_time_padding();
 
          if ( time_padding <= ( 2.0 * exec_get_freeze_frame() ) ) {
             ostringstream errmsg;

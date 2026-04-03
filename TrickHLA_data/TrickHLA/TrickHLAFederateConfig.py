@@ -359,7 +359,7 @@ class TrickHLAFederateConfig( object ):
       if self.initialized:
          print( 'TrickHLAFederateConfig.set_time_constrained(): Warning, already initialized, function ignored!' )
       else:
-         time_management_srvc = self.federate.get_time_management_services()
+         time_management_srvc = self.federate.get_time_management_service()
          time_management_srvc.time_constrained = time_constrained
 
       return
@@ -371,7 +371,7 @@ class TrickHLAFederateConfig( object ):
       if self.initialized:
          print( 'TrickHLAFederateConfig.set_time_regulating(): Warning, already initialized, function ignored!' )
       else:
-         time_management_srvc = self.federate.get_time_management_services()
+         time_management_srvc = self.federate.get_time_management_service()
          time_management_srvc.time_regulating = time_regulating
 
       return
@@ -383,7 +383,7 @@ class TrickHLAFederateConfig( object ):
       if self.initialized:
          print( 'TrickHLAFederateConfig.set_time_management(): Warning, already initialized, function ignored!' )
       else:
-         time_management_srvc = self.federate.get_time_management_services()
+         time_management_srvc = self.federate.get_time_management_service()
          time_management_srvc.time_management = time_management
 
       return

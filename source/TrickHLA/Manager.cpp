@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{time/Int64BaseTime.cpp}
 @trick_link_dependency{time/Int64Interval.cpp}
 @trick_link_dependency{time/Int64Time.cpp}
+@trick_link_dependency{time/TimeManagementServices.cpp}
 @trick_link_dependency{utils/MutexLock.cpp}
 @trick_link_dependency{utils/MutexProtection.cpp}
 @trick_link_dependency{utils/SleepTimeout.cpp}
@@ -76,6 +77,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
@@ -119,9 +121,7 @@ Manager::Manager( Federate &fed )
      obj_discovery_mutex(),
      object_map(),
      obj_name_index_map(),
-     federate( &fed ),
-     time_management_srvc( &( fed.time_management_srvc ) ),
-     execution_control( NULL )
+     federate( &fed )
 {
    return;
 }
@@ -170,7 +170,7 @@ void Manager::initialize()
    }
 
    // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
-   if ( this->execution_control == NULL ) {
+   if ( federate->execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
              << " ERROR: Unexpected NULL 'execution_control' pointer!" << endl;
@@ -219,7 +219,7 @@ void Manager::restart_initialization()
 
    // Setup the Execution Control and Execution Configuration objects now that
    // we know if we are the "Master" federate or not.
-   if ( execution_control == NULL ) {
+   if ( federate->execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'execution_control' pointer!" << endl;
@@ -229,8 +229,8 @@ void Manager::restart_initialization()
 
    // The set_master() function set's additional parameter so call it again to
    // force the a complete master state.
-   bool master_flag = execution_control->is_master();
-   execution_control->set_master( master_flag );
+   bool master_flag = federate->execution_control->is_master();
+   federate->execution_control->set_master( master_flag );
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
@@ -249,7 +249,7 @@ void Manager::restart_initialization()
    federate->initialize_MOM_handles();
 
    // Perform the next few steps if we are the Master federate.
-   if ( execution_control->is_master() ) {
+   if ( federate->execution_control->is_master() ) {
 
       // Make sure all the federate instance handles are reset based on
       // the federate name so that the wait for required federates will work
@@ -279,7 +279,7 @@ void Manager::initialize_HLA_cycle_time()
    // attributes.
    // TODO: Use child thread cycle rate for core cycle time?
    for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].set_core_job_cycle_time( time_management_srvc->get_HLA_cycle_time() );
+      objects[n].set_core_job_cycle_time( federate->time_management_srvc.get_HLA_cycle_time() );
    }
 }
 
@@ -423,7 +423,7 @@ void Manager::verify_interaction_arrays()
 
    // Get a comma separated list of the execution control interaction FOM names.
    VectorOfStrings exec_fom_names_vector;
-   StringUtilities::tokenize( execution_control->get_interaction_FOM_names(),
+   StringUtilities::tokenize( federate->execution_control->get_interaction_FOM_names(),
                               exec_fom_names_vector,
                               "," );
 
@@ -487,7 +487,7 @@ federate so this call will be ignored.\n",
       // Make sure we have at least one piece of object init data we can send.
       if ( objects[n].any_locally_owned_published_init_attribute() ) {
 
-         if ( execution_control->wait_for_init_data() ) {
+         if ( federate->execution_control->wait_for_init_data() ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                message_publish( MSG_NORMAL, "Manager::send_init_data():%d '%s'\n",
@@ -504,7 +504,7 @@ federate so this call will be ignored.\n",
                    << " '" << objects[n].name << "'"
                    << " WARNING: This call will be ignored because the"
                    << " Simulation Initialization Scheme (Type:'"
-                   << execution_control->get_type()
+                   << federate->execution_control->get_type()
                    << "') does not support it." << endl;
                message_publish( MSG_WARNING, msg.str().c_str() );
             }
@@ -562,7 +562,7 @@ federate so the data will not be sent for '%s'.\n",
    // Make sure we have at least one piece of object init data we can send.
    if ( obj->any_locally_owned_published_init_attribute() ) {
 
-      if ( execution_control->wait_for_init_data() ) {
+      if ( federate->execution_control->wait_for_init_data() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             message_publish( MSG_NORMAL, "Manager::send_init_data():%d '%s'\n",
                              __LINE__, instance_name.c_str() );
@@ -578,7 +578,7 @@ federate so the data will not be sent for '%s'.\n",
                 << " '" << instance_name << "'"
                 << " WARNING: This call will be ignored because the"
                 << " Simulation Initialization Scheme (Type:'"
-                << execution_control->get_type()
+                << federate->execution_control->get_type()
                 << "') does not support it." << endl;
             message_publish( MSG_WARNING, msg.str().c_str() );
          }
@@ -615,7 +615,7 @@ federate so this call will be ignored.\n",
 
          // Only wait for REQUIRED received init data and do not block waiting
          // to receive init data if we are using the simple init scheme.
-         bool obj_required = objects[n].is_required() && ( execution_control->wait_for_init_data() );
+         bool obj_required = objects[n].is_required() && ( federate->execution_control->wait_for_init_data() );
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -734,7 +734,7 @@ void Manager::receive_init_data(
 
       // Only wait for REQUIRED received init data and do not block waiting
       // to receive init data if we are using the simple init scheme.
-      bool obj_required = obj->is_required() && execution_control->wait_for_init_data();
+      bool obj_required = obj->is_required() && federate->execution_control->wait_for_init_data();
 
       if ( obj_required ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -816,7 +816,7 @@ void Manager::clear_init_sync_points()
 {
    // Clear the multiphase initialization synchronization points associated
    // with ExecutionControl initialization.
-   execution_control->clear_multiphase_init_sync_points();
+   federate->execution_control->clear_multiphase_init_sync_points();
 }
 
 /*!
@@ -825,13 +825,13 @@ void Manager::clear_init_sync_points()
 void Manager::wait_for_init_sync_point(
    string const &sync_point_label )
 {
-   if ( !execution_control->is_wait_for_init_sync_point_supported() ) {
+   if ( !federate->execution_control->is_wait_for_init_sync_point_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          ostringstream errmsg;
          errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
                 << " WARNING: This call will be ignored because the"
                 << " Simulation Initialization Scheme (Type:'"
-                << execution_control->get_type()
+                << federate->execution_control->get_type()
                 << "') does not support it." << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -862,11 +862,11 @@ void Manager::wait_for_init_sync_point(
    StringUtilities::to_wstring( ws_sync_point_label, sync_point_label );
 
    // Determine if the multiphase init sync-point label is valid.
-   if ( execution_control->contains_multiphase_init_sync_point( ws_sync_point_label ) ) {
+   if ( federate->execution_control->contains_multiphase_init_sync_point( ws_sync_point_label ) ) {
 
       // Achieve the specified multiphase init sync-point and wait for
       // the federation to be synchronized on it.
-      if ( !execution_control->achieve_sync_point_and_wait_for_synchronization( ws_sync_point_label ) ) {
+      if ( !federate->execution_control->achieve_sync_point_and_wait_for_synchronization( ws_sync_point_label ) ) {
          ostringstream errmsg;
          errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
                 << " ERROR: Unexpected error waiting for sync-point '"
@@ -945,7 +945,7 @@ void Manager::object_instance_name_reservation_succeeded(
 
    // If the object instance isn't recognized by ExecutionControl, then
    // handle it here.
-   if ( !execution_control->object_instance_name_reservation_succeeded( obj_instance_name ) ) {
+   if ( !federate->execution_control->object_instance_name_reservation_succeeded( obj_instance_name ) ) {
 
       Object *trickhla_obj = get_trickhla_object( obj_instance_name );
       if ( trickhla_obj != NULL ) {
@@ -972,7 +972,7 @@ void Manager::object_instance_name_reservation_failed(
    // any specialized failure handling. If the method returns 'true' then
    // it's not a fatal error; otherwise, continue with error handling and
    // exit.
-   if ( execution_control->object_instance_name_reservation_failed( obj_instance_name ) ) {
+   if ( federate->execution_control->object_instance_name_reservation_failed( obj_instance_name ) ) {
       return;
    }
 
@@ -1097,7 +1097,7 @@ void Manager::setup_object_ref_attributes(
    for ( int n = 0; n < data_obj_count; ++n ) {
 
       // Initialize the TrickHLA-Object before we use it.
-      data_objects[n].initialize( this );
+      data_objects[n].initialize( this->federate );
 
       ostringstream msg;
 
@@ -1161,7 +1161,7 @@ void Manager::setup_interaction_ref_attributes()
       }
 
       // Initialize the TrickHLA Interaction before we use it.
-      interactions[n].initialize( this );
+      interactions[n].initialize( this->federate );
 
       int const  param_count = interactions[n].get_parameter_count();
       Parameter *params      = interactions[n].get_parameters();
@@ -1186,7 +1186,7 @@ void Manager::setup_interaction_ref_attributes()
 
    // Tell the ExecutionControl object to setup the appropriate Trick Ref
    // ATTRIBUTES associated with the execution control mechanism.
-   execution_control->setup_interaction_ref_attributes();
+   federate->execution_control->setup_interaction_ref_attributes();
 }
 
 void Manager::setup_object_RTI_handles()
@@ -1197,7 +1197,7 @@ void Manager::setup_object_RTI_handles()
    }
 
    // Set up the object RTI handles for the ExecutionControl mechanisms.
-   execution_control->setup_object_RTI_handles();
+   federate->execution_control->setup_object_RTI_handles();
 
    // Set up the object RTI handles for the simulation data objects.
    setup_object_RTI_handles( obj_count, objects );
@@ -1214,7 +1214,7 @@ void Manager::setup_interaction_RTI_handles()
    }
 
    // Set up the object RTI handles for the ExecutionControl mechanisms.
-   execution_control->setup_interaction_RTI_handles();
+   federate->execution_control->setup_interaction_RTI_handles();
 
    // Simulation Interactions.
    setup_interaction_RTI_handles( inter_count, interactions );
@@ -1245,7 +1245,7 @@ void Manager::setup_object_RTI_handles(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
@@ -1443,7 +1443,7 @@ void Manager::setup_interaction_RTI_handles(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
@@ -1615,7 +1615,7 @@ void Manager::setup_interaction_RTI_handles(
  */
 void Manager::publish()
 {
-   if ( !is_RTI_ready( "publish" ) ) {
+   if ( !federate->is_RTI_ready( "publish" ) ) {
       return;
    }
 
@@ -1630,7 +1630,7 @@ void Manager::publish()
    }
 
    // Publish Execution Control objects and interactions.
-   execution_control->publish();
+   federate->execution_control->publish();
 }
 
 /*!
@@ -1641,7 +1641,7 @@ void Manager::unpublish()
    int  i, k;
    bool do_unpublish;
 
-   if ( !is_RTI_ready( "unpublish" ) ) {
+   if ( !federate->is_RTI_ready( "unpublish" ) ) {
       return;
    }
 
@@ -1685,7 +1685,7 @@ void Manager::unpublish()
    }
 
    // Unpublish Execution Control objects and interactions.
-   execution_control->unpublish();
+   federate->execution_control->unpublish();
 }
 
 /*!
@@ -1693,7 +1693,7 @@ void Manager::unpublish()
  */
 void Manager::subscribe()
 {
-   if ( !is_RTI_ready( "subscribe" ) ) {
+   if ( !federate->is_RTI_ready( "subscribe" ) ) {
       return;
    }
 
@@ -1708,7 +1708,7 @@ void Manager::subscribe()
    }
 
    // Subscribe to anything needed for the execution control mechanisms.
-   execution_control->subscribe();
+   federate->execution_control->subscribe();
 }
 
 /*!
@@ -1719,7 +1719,7 @@ void Manager::unsubscribe()
    int  i, k;
    bool do_unsubscribe;
 
-   if ( !is_RTI_ready( "unsubscribe" ) ) {
+   if ( !federate->is_RTI_ready( "unsubscribe" ) ) {
       return;
    }
 
@@ -1765,7 +1765,7 @@ void Manager::unsubscribe()
    }
 
    // Unsubscribe to anything needed for the execution control mechanisms.
-   execution_control->unsubscribe();
+   federate->execution_control->unsubscribe();
 }
 
 /*!
@@ -1841,7 +1841,7 @@ void Manager::register_objects_with_RTI()
    }
 
    // Have the ExecutionControl register objects it needs with the RTI.
-   execution_control->register_objects_with_RTI();
+   federate->execution_control->register_objects_with_RTI();
 
    // For the locally owned objects register it with the RTI to get its
    // RTI object instance ID.
@@ -2179,7 +2179,7 @@ void Manager::set_object_instance_handles_by_name(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
@@ -2311,7 +2311,7 @@ void Manager::provide_attribute_update(
    if ( trickhla_obj != NULL ) {
       trickhla_obj->provide_attribute_update( theAttributes );
    } else {
-      execution_control->provide_attribute_update( theObject, theAttributes );
+      federate->execution_control->provide_attribute_update( theObject, theAttributes );
    }
 }
 
@@ -2323,7 +2323,7 @@ void Manager::send_cyclic_and_requested_data()
    // Current time values.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
    int64_t const granted_base_time     = federate->get_granted_time().get_base_time();
-   int64_t const lookahead_base_time   = time_management_srvc->is_zero_lookahead_time()
+   int64_t const lookahead_base_time   = federate->time_management_srvc.is_zero_lookahead_time()
                                             ? 0LL
                                             : federate->get_lookahead().get_base_time();
 
@@ -2348,7 +2348,7 @@ void Manager::send_cyclic_and_requested_data()
    // the case for a late joining federate. The data cycle time (dt) is how
    // often we send and receive data, which may or may not match the lookahead.
    // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
-   int64_t   dt      = time_management_srvc->get_HLA_cycle_time_in_base_time();
+   int64_t   dt      = federate->time_management_srvc.get_HLA_cycle_time_in_base_time();
    int64_t   prev_dt = dt;
    Int64Time update_time( granted_base_time + dt );
 
@@ -2364,16 +2364,16 @@ void Manager::send_cyclic_and_requested_data()
    }
 
    // Send any ExecutionControl data requested.
-   execution_control->send_requested_data( update_time );
+   federate->execution_control->send_requested_data( update_time );
 
    // Send data to remote RTI federates for each of the objects.
    for ( int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
 
       // Only send data if we are on the data cycle time boundary for this object.
-      if ( time_management_srvc->on_receive_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
+      if ( federate->time_management_srvc.on_receive_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
          // Get the cyclic data time for the object.
-         dt = time_management_srvc->get_data_cycle_base_time_for_obj( obj_index, time_management_srvc->get_HLA_cycle_time_in_base_time() );
+         dt = federate->time_management_srvc.get_data_cycle_base_time_for_obj( obj_index, federate->time_management_srvc.get_HLA_cycle_time_in_base_time() );
 
          // Reuse the update_time if the data cycle time (dt) is the same.
          if ( dt != prev_dt ) {
@@ -2412,13 +2412,13 @@ void Manager::receive_cyclic_data()
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
 
    // Receive and process any updates for ExecutionControl.
-   execution_control->receive_cyclic_data();
+   federate->execution_control->receive_cyclic_data();
 
    // Receive data from remote RTI federates for each of the objects.
    for ( int n = 0; n < obj_count; ++n ) {
 
       // Only receive data if we are on the data cycle time boundary for this object.
-      if ( time_management_srvc->on_receive_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
+      if ( federate->time_management_srvc.on_receive_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
          objects[n].receive_cyclic_data();
       }
    }
@@ -2430,7 +2430,7 @@ void Manager::receive_cyclic_data()
 void Manager::process_interactions()
 {
    // Process any ExecutionControl mode transitions.
-   execution_control->process_mode_interaction();
+   federate->execution_control->process_mode_interaction();
 
    // Just return if the interaction queue is empty.
    if ( interactions_queue.empty() ) {
@@ -2493,11 +2493,11 @@ void Manager::receive_interaction(
 {
    // Let the ExectionControl receive and process the interaction
    // immediately if it uses it. Otherwise handle as a user interaction.
-   if ( !execution_control->receive_interaction( theInteraction,
-                                                 theParameterValues,
-                                                 theUserSuppliedTag,
-                                                 theTime,
-                                                 received_as_TSO ) ) {
+   if ( !federate->execution_control->receive_interaction( theInteraction,
+                                                           theParameterValues,
+                                                           theUserSuppliedTag,
+                                                           theTime,
+                                                           received_as_TSO ) ) {
 
       // Find the user Interaction we received data for.
       for ( int i = 0; i < inter_count; ++i ) {
@@ -2579,7 +2579,7 @@ Object *Manager::get_trickhla_object(
 
    // Check for a match with the ExecutionConfiguration object associated with
    // ExecutionControl. Returns NULL if match not found.
-   return ( execution_control->get_trickhla_object( obj_instance_name ) );
+   return ( federate->execution_control->get_trickhla_object( obj_instance_name ) );
 }
 
 /*!
@@ -2702,7 +2702,7 @@ Object *Manager::get_unregistered_object(
 
    // Check for a match with the ExecutionConfiguration object associated with
    // ExecutionControl. Returns NULL if match not found.
-   return ( execution_control->get_unregistered_object( theObjectClass, theObjectInstanceName ) );
+   return ( federate->execution_control->get_unregistered_object( theObjectClass, theObjectInstanceName ) );
 }
 
 /*!
@@ -2729,7 +2729,7 @@ Object *Manager::get_unregistered_remote_object(
 
    // Check for a match with the ExecutionConfiguration object associated with
    // ExecutionControl. Returns NULL if match not found.
-   return ( execution_control->get_unregistered_remote_object( theObjectClass ) );
+   return ( federate->execution_control->get_unregistered_remote_object( theObjectClass ) );
 }
 
 /*!
@@ -2759,7 +2759,7 @@ void Manager::mark_object_as_deleted_from_federation(
    // First check if this is associated with ExecutionControl.
    // If so, then perform any ExecutionControl specific actions.
    // If not, then just remove the object instance.
-   if ( !execution_control->mark_object_as_deleted_from_federation( instance_id ) ) {
+   if ( !federate->execution_control->mark_object_as_deleted_from_federation( instance_id ) ) {
 
       Object *obj = get_trickhla_object( instance_id );
       if ( obj != NULL ) {
@@ -2781,7 +2781,7 @@ void Manager::mark_object_as_deleted_from_federation(
 void Manager::process_deleted_objects()
 {
    // Process ExecutionControl deletions.
-   execution_control->process_deleted_objects();
+   federate->execution_control->process_deleted_objects();
 
    // Search the simulation data objects, looking for deleted objects.
    for ( int n = 0; n < obj_count; ++n ) {
@@ -2809,7 +2809,6 @@ void Manager::pull_ownership()
  */
 void Manager::pull_ownership_at_init(
    string const &obj_instance_name )
-
 {
    pull_ownership_at_init( obj_instance_name, "" );
 }
@@ -2992,39 +2991,13 @@ void Manager::release_ownership()
    }
 }
 
-bool Manager::is_RTI_ready(
-   string const &method_name )
-{
-   if ( this->federate == NULL ) {
-      message_publish( MSG_WARNING, "Manager::%s:%d Unexpected NULL 'federate' pointer!\n",
-                       method_name.c_str(), __LINE__ );
-      return false;
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   bool rti_valid = true;
-   if ( get_RTI_ambassador() == NULL ) {
-      message_publish( MSG_WARNING, "Manager::%s:%d Unexpected NULL RTIambassador!\n",
-                       method_name.c_str(), __LINE__ );
-      rti_valid = false;
-   }
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   return rti_valid;
-}
-
 /*!
  * @job_class{initialization}
  */
 void Manager::convert_data_before_checkpoint()
 {
    // Call the ExecutionControl method.
-   execution_control->convert_data_before_checkpoint();
+   federate->execution_control->convert_data_before_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
       // Any object with a valid instance handle must be marked as required
@@ -3045,7 +3018,7 @@ void Manager::restore_data_after_checkpoint()
    // Restore the data structures of this class from the Trick checkpoint.
 
    // Call the ExecutionControl method.
-   execution_control->restore_data_after_checkpoint();
+   federate->execution_control->restore_data_after_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
       objects[n].restore_data_after_checkpoint();
@@ -3059,7 +3032,7 @@ void Manager::free_converted_data_for_checkpoint()
    // Clear/release the memory used for the checkpoint data structures.
 
    // Call the ExecutionControl method.
-   execution_control->free_converted_data_for_checkpoint();
+   federate->execution_control->free_converted_data_for_checkpoint();
 
    for ( int n = 0; n < obj_count; ++n ) {
       objects[n].free_converted_data_for_checkpoint();
@@ -3329,12 +3302,23 @@ void Manager::wait_for_discovery_of_objects()
    }
 }
 
-RTIambassador *Manager::get_RTI_ambassador() const
+/*! @brief Test is an execution configuration object is used.
+ *  @return True if an execution configuration object is used. */
+bool Manager::is_execution_configuration_used()
 {
-   return ( ( federate != NULL ) ? federate->get_RTI_ambassador() : NULL );
+   return federate->execution_control->is_execution_configuration_used();
 }
 
-bool Manager::is_shutdown_called() const
+/*! @brief Get the execution configuration object.
+ *  @return Pointer to the associated execution configuration object. */
+ExecutionConfigurationBase *Manager::get_execution_configuration()
 {
-   return ( ( this->federate != NULL ) ? federate->is_shutdown_called() : false );
+   return federate->execution_control->get_execution_configuration();
+}
+
+/*! @brief Check if this is a late joining federate.
+ *  @return True if the is a late joining federate. */
+bool Manager::is_late_joining_federate() const
+{
+   return federate->execution_control->is_late_joiner();
 }

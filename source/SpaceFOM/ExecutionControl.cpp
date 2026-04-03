@@ -367,7 +367,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    }
 
    // Initialize the TrickHLA Interaction before we use it.
-   mtr_interaction->initialize( this->manager );
+   mtr_interaction->initialize( this->federate );
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg2;
@@ -2447,7 +2447,7 @@ bool ExecutionControl::check_for_shutdown()
    // Check to see if the mtr_shutdown sync-point has been announced or if the
    // ExCO object has been deleted as indicators to shutdown.
    return ( is_sync_point_announced( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT )
-            || execution_configuration->object_deleted_from_RTI );
+            || execution_configuration->is_object_deleted_from_RTI() );
 }
 
 /*!
@@ -2472,7 +2472,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
       if ( is_sync_point_announced( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) ) {
          errmsg << " Shutdown sync-point 'mtr_shutdown',";
       }
-      if ( execution_configuration->object_deleted_from_RTI ) {
+      if ( execution_configuration->is_object_deleted_from_RTI() ) {
          errmsg << " Execution Configuration Object (ExCO) deleted from the RTI";
       }
       errmsg << " for the '" << federate->get_federation_name()

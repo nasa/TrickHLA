@@ -46,7 +46,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
 
    // SpaceFOM Reference Frame Tree constructor.
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
-   JEODRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
+   JEODRefFrameTreeSimObject( TrickHLA::Federate         & thla_federate_in,
                               SpaceFOM::ExecutionControl & exec_cntrl_in,
                               jeod::TimeTT               & time_tt_in,
                               jeod::DynManager           & dyn_manager_in,
@@ -56,7 +56,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
                               jeod::Planet               & mars_in,
                               unsigned short               _CONFIG = 35,
                               unsigned short               _BUILD  = (P_HLA_INIT+1) )
-      : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, P_HLA_INIT, _BUILD ),
+      : SpaceFOMRefFrameTreeBaseSimObject( thla_federate_in, exec_cntrl_in, P_HLA_INIT, _BUILD ),
         time_tt( time_tt_in ),
         dyn_manager( dyn_manager_in ),
         sun( sun_in ),
@@ -160,7 +160,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
       std::ostringstream errmsg;
 
       // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
+      if ( (thla_federate.get_manager()->obj_count == 0) || (thla_federate.get_manager()->objects == NULL) ) {
          errmsg << "JEODRefFrameTreeSimObject::initialize():" << __LINE__
                 << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
          // Print message and terminate.
@@ -211,7 +211,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
 //==========================================================================
 
 // Build the SpaceFOM Reference Frame Tree using JEOD reference frames.
-JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,
+JEODRefFrameTreeSimObject ref_frame_tree( THLA.federate,
                                           THLA.execution_control,
                                           jeod_time.time_tt,
                                           dynamics.dyn_manager,

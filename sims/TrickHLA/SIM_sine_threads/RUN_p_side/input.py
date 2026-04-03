@@ -80,8 +80,6 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 # MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
-THLA.federate.lookahead_time = 0.250
-
 # Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
 # and scale the Trick time tics value.
 THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
@@ -90,13 +88,13 @@ THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_M
 # as a comma separated list.
 #THLA.federate.disable_trick_child_thread_associations( '1, 2' )
 
-
 # Configure the federate.
 THLA.federate.name             = 'P-side-Federate'
 THLA.federate.FOM_modules      = 'FOMs/S_FOMfile.xml,FOMs/TrickHLAFreezeInteraction.xml'
 THLA.federate.federation_name  = 'SineWaveSim'
-THLA.federate.time_regulating  = True
-THLA.federate.time_constrained = True
+
+# Time management: lookahead, constrained, regulating
+THLA.federate.setup_time_management( 0.250, True, True )
 
 # Configure ExecutionControl.
 # Set the multiphase initialization synchronization points.

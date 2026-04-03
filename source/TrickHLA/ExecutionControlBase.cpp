@@ -211,7 +211,7 @@ void ExecutionControlBase::setup(
    this->save_restore_srvc = fed.get_save_restore_service();
 
    // Set the TrickHLA::TimeManagementServices instance reference.
-   this->time_management_srvc = fed.get_time_management_services();
+   this->time_management_srvc = fed.get_time_management_service();
 
    // Set the TrickHLA::ExecutionConfigurationBase instance reference.
    this->execution_configuration = fed.get_execution_configuration();
@@ -307,7 +307,7 @@ Trick simulation time as the default scenario-timeline.\n",
 
    // Initialize then Configure the ExecutionConfiguration object if present.
    if ( execution_configuration != NULL ) {
-      execution_configuration->Object::initialize( this->manager );
+      execution_configuration->Object::initialize( this->federate );
       execution_configuration->configure();
    }
 }

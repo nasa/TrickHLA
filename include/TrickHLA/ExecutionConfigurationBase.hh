@@ -30,7 +30,6 @@ execution.
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 
@@ -57,7 +56,6 @@ namespace TrickHLA
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
-class Manager;
 class ExecutionControlBase;
 
 class ExecutionConfigurationBase : public Object, public Packing

@@ -239,10 +239,8 @@ void ExecutionConfiguration2::pack()
 */
 void ExecutionConfiguration2::unpack()
 {
-   if ( time_management_srvc != NULL ) {
-      // TODO: Check if we are in freeze or init to do this!
-      time_management_srvc->set_HLA_base_time_multiplier_and_scale_trick_tics( get_exco_base_time_multiplier() );
-   }
+   // TODO: Check if we are in freeze or init to do this!
+   federate->get_time_management_service()->set_HLA_base_time_multiplier_and_scale_trick_tics( get_exco_base_time_multiplier() );
 
    // Call the parent implementation.
    ExecutionConfiguration::unpack();

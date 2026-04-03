@@ -23,7 +23,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
@@ -51,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
@@ -92,8 +92,6 @@ namespace TrickHLA
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
-class Federate;
-class Manager;
 class InteractionItem;
 class InteractionHandler;
 
@@ -144,8 +142,8 @@ class Interaction
    // Post-constructor initialization stuff
    //
    /*! @brief Initializes the TrickHLA Interaction class.
-    *  @param trickhla_mgr Pointer to the associated TrickHLA::Manager class. */
-   void initialize( Manager *trickhla_mgr );
+    *  @param fed Pointer to the associated TrickHLA::Federate class. */
+   void initialize( Federate *fed );
 
    //
    // RTI
@@ -277,26 +275,6 @@ class Interaction
       this->handler = ptr;
    }
 
-   // needed so that my InteractionHandler can signal the Manager to do something...
-   /*! @brief Get the associated TrickHLA::Manager instance.
-    *  @return Pointer to the associated TrickHLA::Manager instance. */
-   Manager *get_manager() const
-   {
-      return manager;
-   }
-
-   /*! @brief Returns a pointer to our federate, or NULL if one does not exist yet.
-    *  @return A pointer to this federate's TrickHLA::Federate instance. */
-   Federate *get_federate() const;
-
-   /*! @brief Returns a pointer to the RTI ambassador, or NULL if one does not exist yet.
-    *  @return Pointer to this federate's associated RTIambassador instance. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const;
-
-   /*! @brief Check if federate is shutdown function was called.
-    *  @return True if the manager is shutting down the federate. */
-   bool is_shutdown_called() const;
-
    /*! @brief Set the FOM name for this interaction.
     *  @param in_name The FOM name for this interaction. */
    void set_FOM_name( std::string const &in_name )
@@ -343,16 +321,21 @@ class Interaction
       return preferred_order;
    }
 
-   MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   Federate *get_federate() const
+   {
+      return federate;
+   }
 
   private:
+   MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
+
    bool changed; ///< @trick_units{--} Flag indicating the data has changed.
 
    bool received_as_TSO; ///< @trick_units{--} True if received interaction as Timestamp order.
 
    Int64Time time; ///< @trick_units{--} Time used for Timestamp Order interaction.
 
-   Manager *manager; ///< @trick_units{--} TrickHLA Manager.
+   Federate *federate; ///< @trick_units{--} TrickHLA Federate.
 
    RTI1516_NAMESPACE::InteractionClassHandle class_handle; ///< @trick_io{**} RTI Interaction Class handle.
 

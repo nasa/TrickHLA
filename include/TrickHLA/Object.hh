@@ -103,14 +103,14 @@ namespace TrickHLA
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
+class Conditional;
 class Federate;
+class LagCompensation;
 class Manager;
 class TimeManagementServices;
-class Conditional;
-class Packing;
-class OwnershipHandler;
 class ObjectDeletedHandler;
-class LagCompensation;
+class OwnershipHandler;
+class Packing;
 
 class Object : public CheckpointConversionBase
 {
@@ -123,6 +123,13 @@ class Object : public CheckpointConversionBase
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__Object();
+
+   // Other classes need to call some of Objects private methods.
+   friend class ExecutionControlBase;
+   friend class FedAmb;
+   friend class Manager;
+   friend class OwnershipHandler;
+   friend class TrickThreadCoordinator;
 
    //----------------------------- USER VARIABLES -----------------------------
    // Public data in this section are for either use within a users simulation
@@ -174,12 +181,8 @@ class Object : public CheckpointConversionBase
    // Post-constructor initialization stuff
    //-----------------------------------------------------------------
    /*! @brief Initializes the TrickHLA Object.
-    *  @param trickhla_mgr The TrickHLA::Manager instance. */
-   virtual void initialize( Manager *manager );
-
-   /*! @brief Gets the a pointer to our federate.
-    *  @return Pointer to TrickHLA::Federate instance. */
-   Federate *get_federate() const;
+    *  @param fed The TrickHLA::Federate instance. */
+   virtual void initialize( Federate *fed );
 
    //-----------------------------------------------------------------
    // HLA
@@ -704,10 +707,6 @@ class Object : public CheckpointConversionBase
       return attribute_FOM_names;
    }
 
-   /*! @brief Check if federate is shutdown function was called.
-    *  @return True if the manager is shutting down the federate. */
-   bool is_shutdown_called() const;
-
    /*! @brief Create a name value pair set, aka attribute handle value pair,
     * for the attributes that were requested for this object. */
    void create_requested_attribute_set();
@@ -726,6 +725,32 @@ class Object : public CheckpointConversionBase
     * @param thread_id Trick thread ID. */
    bool is_thread_associated( unsigned int const thread_id );
 
+   bool is_object_deleted_from_RTI()
+   {
+      return object_deleted_from_RTI;
+   }
+
+   /*! @brief Gets the a pointer to our federate.
+    *  @return Pointer to TrickHLA::Federate instance. */
+   Federate *get_federate() const
+   {
+      return federate;
+   }
+
+  private:
+   /*! @brief Sets the new value of the name attribute.
+    *  @param new_name New name for the object instance. */
+   void set_name( std::string const &new_name );
+
+   /*! @brief Set the name of the object and mark it as changed.
+    *  @param new_name The new name of the object. */
+   void set_name_and_mark_changed( std::string const &new_name )
+   {
+      set_name( new_name );
+      mark_changed();
+   }
+
+  protected:
    unsigned int thread_ids_array_count; ///< @trick_units{--} Size of the thread IDs array.
    bool        *thread_ids_array;       ///< @trick_units{--} Array index is the thread ID and the value is true if the thread is associated to this object.
 
@@ -737,7 +762,6 @@ class Object : public CheckpointConversionBase
    MutexLock send_mutex;      ///< @trick_io{**} Mutex to lock thread over send data sections.
    MutexLock receive_mutex;   ///< @trick_io{**} Mutex to lock thread over receive data sections.
 
-  protected:
    /*! @brief Gets the RTI Ambassador.
     *  @return Pointer to associated HLA RTIambassador instance. */
    RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const;
@@ -775,9 +799,7 @@ class Object : public CheckpointConversionBase
    //
    // References to the Federate and associated services.
    //
-   Federate               *federate;             ///< @trick_units{--} Reference to the TrickHLA::Federate.
-   Manager                *manager;              ///< @trick_units{--} Reference to the TrickHLA::Manager.
-   TimeManagementServices *time_management_srvc; ///< @trick_units{--} Reference to the TrickHLA::TimeManagementServices.
+   Federate *federate; ///< @trick_units{--} Reference to the TrickHLA::Federate.
 
   public:
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
@@ -786,19 +808,6 @@ class Object : public CheckpointConversionBase
 #endif
 
    ElapsedTimeStats elapsed_time_stats; ///< @trick_units{--} Statistics of elapsed times between cyclic data reads.
-
-  private:
-   /*! @brief Sets the new value of the name attribute.
-    *  @param new_name New name for the object instance. */
-   void set_name( std::string const &new_name );
-
-   /*! @brief Set the name of the object and mark it as changed.
-    *  @param new_name The new name of the object. */
-   void set_name_and_mark_changed( std::string const &new_name )
-   {
-      set_name( new_name );
-      mark_changed();
-   }
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -69,7 +69,7 @@ class THLAInitSimObject : public Trick::SimObject {
       : sim_timeline(),
         scenario_timeline( sim_timeline, 0.0, 0.0 ),
         cte_timeline(),
-        thla_federate( thla_fed )
+        federate( thla_fed )
    {
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60
@@ -78,11 +78,11 @@ class THLAInitSimObject : public Trick::SimObject {
       //--------------------------------------------------------------------
 
       // Clear remaining initialization sync-points.
-      P_MPI_1 ("initialization") thla_federate.clear_init_sync_points();
+      P_MPI_1 ("initialization") federate.clear_init_sync_points();
    }
 
  private:
-   TrickHLA::Federate & thla_federate;
+   TrickHLA::Federate & federate;
 
    // Do not allow the implicit copy constructor or assignment operator.
    THLAInitSimObject( THLAInitSimObject const & rhs );

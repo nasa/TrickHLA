@@ -37,6 +37,7 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 THLA.federate.name             = 'Sender'
 THLA.federate.FOM_modules      = 'FOMs/TrickHLA/SimpleSimConfig.xml,FOMs/SpaceFOM/SISO_SpaceFOM_datatypes.xml,FOMs/Encoders_Test_FOM.xml'
 THLA.federate.federation_name  = 'Encoders_Test'
+
 # Set the lookahead value, time constrained, and time regulating states.
 THLA.federate.setup_time_management( 0.100, True, True )
 

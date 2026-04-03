@@ -20,7 +20,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{LagCompensation.cpp}
-@trick_link_dependency{Manager.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{ObjectDeletedHandler.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
@@ -29,6 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{time/Int64BaseTime.cpp}
 @trick_link_dependency{time/Int64Interval.cpp}
 @trick_link_dependency{time/Int64Time.cpp}
+@trick_link_dependency{time/TimeManagementServices.cpp}
 @trick_link_dependency{utils/MutexLock.cpp}
 @trick_link_dependency{utils/MutexProtection.cpp}
 @trick_link_dependency{utils/SleepTimeout.cpp}
@@ -77,6 +77,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
@@ -165,8 +166,6 @@ Object::Object()
      class_handle(),
      instance_handle(),
      federate( NULL ),
-     manager( NULL ),
-     time_management_srvc( NULL ),
      elapsed_time_stats()
 {
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
@@ -230,21 +229,20 @@ Object::~Object()
  * @job_class{initialization}
  */
 void Object::initialize(
-   Manager *trickhla_mgr )
+   Federate *fed )
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+   this->federate = fed;
+
    // FIXME: This needs to me switched to use the Federate and then access the
    // services from the Federate instance.
-   if ( trickhla_mgr == NULL ) {
+   if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA-Manager!" << endl;
+             << " ERROR: Unexpected NULL TrickHLA::Federate!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   this->manager              = trickhla_mgr;
-   this->federate             = manager->get_federate();
-   this->time_management_srvc = federate->get_time_management_services();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       ostringstream msg;
@@ -456,7 +454,7 @@ void Object::initialize(
 
    // If any attribute is configured for zero-lookahead then the federate must
    // also be configured for a lookahead time of zero.
-   if ( any_zero_lookahead_attr && !time_management_srvc->is_zero_lookahead_time() ) {
+   if ( any_zero_lookahead_attr && !federate->get_time_management_service()->is_zero_lookahead_time() ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', detected Attributes"
@@ -567,16 +565,6 @@ void Object::initialize(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
-Federate *Object::get_federate() const
-{
-   return ( federate );
-}
-
-RTIambassador *Object::get_RTI_ambassador() const
-{
-   return federate->get_RTI_ambassador();
-}
-
 /*!
  * @details Called from the virtual destructor.
  * @job_class{shutdown}
@@ -584,13 +572,13 @@ RTIambassador *Object::get_RTI_ambassador() const
 void Object::remove()
 {
    // Only delete it if we locally own it.
-   if ( !removed_instance && is_create_HLA_instance() && is_shutdown_called() ) {
+   if ( !removed_instance && is_create_HLA_instance() && federate->is_shutdown_called() ) {
 
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // Get the RTI-Ambassador.
-      RTIambassador *rti_amb = get_RTI_ambassador();
+      RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
       if ( rti_amb == NULL ) {
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -604,23 +592,21 @@ void Object::remove()
       // This call returns an event retraction handle but we don't
       // support event retraction so no need to store it.
       try {
+         // Only delete an object instance that has a valid instance handle.
+         if ( is_instance_handle_valid() && federate->is_execution_member() ) {
+            TimeManagementServices const *time_service = federate->get_time_management_service();
 
-         if ( federate != NULL && time_management_srvc != NULL ) {
-            // Only delete an object instance that has a valid instance handle.
-            if ( is_instance_handle_valid() && federate->is_execution_member() ) {
-
-               // Delete the object instance at a specific time if we are
-               // time-regulating.
-               if ( time_management_srvc->in_time_regulating_state() ) {
-                  Int64Time update_time( time_management_srvc->get_granted_time()
-                                         + time_management_srvc->get_lookahead() );
-                  rti_amb->deleteObjectInstance( instance_handle,
-                                                 TrickHLA::EMPTY_USER_SUPPLIED_TAG,
-                                                 update_time.get() );
-               } else {
-                  rti_amb->deleteObjectInstance( instance_handle,
-                                                 TrickHLA::EMPTY_USER_SUPPLIED_TAG );
-               }
+            // Delete the object instance at a specific time if we are
+            // time-regulating.
+            if ( time_service->in_time_regulating_state() ) {
+               Int64Time update_time( time_service->get_granted_time()
+                                      + time_service->get_lookahead() );
+               rti_amb->deleteObjectInstance( instance_handle,
+                                              TrickHLA::EMPTY_USER_SUPPLIED_TAG,
+                                              update_time.get() );
+            } else {
+               rti_amb->deleteObjectInstance( instance_handle,
+                                              TrickHLA::EMPTY_USER_SUPPLIED_TAG );
             }
          }
       } catch ( DeletePrivilegeNotHeld const &e ) {
@@ -808,7 +794,7 @@ void Object::publish_object_attributes()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Publish our associated CLASS & attributes
    if ( rti_amb == NULL ) {
@@ -920,7 +906,7 @@ void Object::unpublish_all_object_attributes()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Subscribe to CLASS & attributes
    if ( rti_amb == NULL ) {
@@ -1023,7 +1009,7 @@ void Object::subscribe_to_object_attributes()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Subscribe to CLASS & attributes
    if ( rti_amb == NULL ) {
@@ -1148,7 +1134,7 @@ void Object::unsubscribe_all_object_attributes()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Subscribe to CLASS & attributes
    if ( rti_amb == NULL ) {
@@ -1255,7 +1241,7 @@ void Object::reserve_object_name_with_RTI()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    if ( rti_amb == NULL ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1445,7 +1431,7 @@ void Object::register_object_with_RTI()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    if ( rti_amb == NULL ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1712,7 +1698,7 @@ void Object::setup_preferred_order_with_RTI()
 
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    AttributeHandleSet TSO_attr_handle_set = AttributeHandleSet();
    AttributeHandleSet RO_attr_handle_set  = AttributeHandleSet();
@@ -1867,7 +1853,7 @@ void Object::request_attribute_value_update()
 
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Create the set of Attribute handles we need to request an update for.
    AttributeHandleSet attr_handle_set = AttributeHandleSet();
@@ -1998,8 +1984,9 @@ void Object::provide_attribute_update(
 void Object::send_requested_data()
 {
    if ( attr_update_requested ) {
-      Int64Time granted_plus_lookahead( time_management_srvc->get_granted_time()
-                                        + time_management_srvc->get_lookahead() );
+      TimeManagementServices const *time_service = federate->get_time_management_service();
+      Int64Time                     granted_plus_lookahead( time_service->get_granted_time()
+                                                            + time_service->get_lookahead() );
       send_requested_data( granted_plus_lookahead );
    }
 }
@@ -2068,11 +2055,13 @@ void Object::send_requested_data(
    // Create the map of "requested" attribute values we will be updating.
    create_requested_attribute_set();
 
+   TimeManagementServices const *time_service = federate->get_time_management_service();
+
    // The message will only be sent as TSO if our Federate is in the HLA Time
    // Regulating state and we have at least one attribute with a preferred
    // timestamp order. Assumes the FOM specified order is TSO.
    // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
-   bool const send_with_timestamp = time_management_srvc->in_time_regulating_state()
+   bool const send_with_timestamp = time_service->in_time_regulating_state()
                                     && ( this->any_attribute_timestamp_order
                                          || this->any_attribute_FOM_specified_order );
 
@@ -2086,7 +2075,7 @@ void Object::send_requested_data(
       // IEEE-1516.1-2010 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
 
-         RTIambassador *rti_amb = get_RTI_ambassador();
+         RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
          if ( send_with_timestamp ) {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2126,11 +2115,11 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: InvalidLogicalTime\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << " ("
-             << time_management_srvc->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+             << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n"
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << " ("
-             << time_management_srvc->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+             << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n"
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
              << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
@@ -2146,8 +2135,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
@@ -2160,8 +2149,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
@@ -2173,8 +2162,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
@@ -2186,8 +2175,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception:FederateNotExecutionMember\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
@@ -2199,8 +2188,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: SaveInProgress\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
@@ -2212,8 +2201,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RestoreInProgress\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
@@ -2225,8 +2214,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: NotConnected\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       federate->set_connection_lost();
@@ -2239,8 +2228,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RTIinternalError\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -2254,8 +2243,8 @@ exception for '%s' with error message '%s'.\n",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception\n"
              << "  instance_id=" << id_str << endl
-             << "      granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
@@ -2322,11 +2311,13 @@ void Object::send_cyclic_and_requested_data(
    // Make sure we don't send an empty attribute map to the other federates.
    if ( !attribute_values_map->empty() ) {
 
+      TimeManagementServices const *time_service = federate->get_time_management_service();
+
       // The message will only be sent as TSO if our Federate is in the HLA Time
       // Regulating state and we have at least one attribute with a preferred
       // timestamp order. Assumes the FOM specified order is TSO.
       // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
-      bool const send_with_timestamp = time_management_srvc->in_time_regulating_state()
+      bool const send_with_timestamp = time_service->in_time_regulating_state()
                                        && ( this->any_attribute_timestamp_order
                                             || this->any_attribute_FOM_specified_order );
 
@@ -2335,7 +2326,7 @@ void Object::send_cyclic_and_requested_data(
          // IEEE-1516.1-2010 sections 4.12, 4.20)
          if ( federate->should_publish_data() ) {
 
-            RTIambassador *rti_amb = get_RTI_ambassador();
+            RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
             if ( send_with_timestamp ) {
 
@@ -2378,11 +2369,11 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: InvalidLogicalTime\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << " ("
-                << time_management_srvc->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+                << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << " ("
-                << time_management_srvc->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+                << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
                 << "  update_time=" << update_time.get_time_in_seconds() << " ("
                 << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
@@ -2397,8 +2388,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: AttributeNotOwned\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( ObjectInstanceNotKnown const &e ) {
@@ -2410,8 +2401,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: ObjectInstanceNotKnown\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotDefined const &e ) {
@@ -2423,8 +2414,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: AttributeNotDefined\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( FederateNotExecutionMember const &e ) {
@@ -2436,8 +2427,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: FederateNotExecutionMember\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( SaveInProgress const &e ) {
@@ -2449,8 +2440,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: SaveInProgress\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RestoreInProgress const &e ) {
@@ -2462,8 +2453,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: RestoreInProgress\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
@@ -2475,8 +2466,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: NotConnected\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          federate->set_connection_lost();
@@ -2489,8 +2480,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: RTIinternalError\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -2504,8 +2495,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -2590,11 +2581,13 @@ void Object::send_zero_lookahead_and_requested_data(
       }
    } else {
 
+      TimeManagementServices const *time_service = federate->get_time_management_service();
+
       // The message will only be sent as TSO if our Federate is in the HLA Time
       // Regulating state and we have at least one attribute with a preferred
       // timestamp order. Assumes the FOM specified order is TSO.
       // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
-      bool const send_with_timestamp = time_management_srvc->in_time_regulating_state()
+      bool const send_with_timestamp = time_service->in_time_regulating_state()
                                        && ( this->any_attribute_timestamp_order
                                             || this->any_attribute_FOM_specified_order );
 
@@ -2603,7 +2596,7 @@ void Object::send_zero_lookahead_and_requested_data(
          // IEEE-1516.1-2010 sections 4.12, 4.20)
          if ( federate->should_publish_data() ) {
 
-            RTIambassador *rti_amb = get_RTI_ambassador();
+            RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
             if ( send_with_timestamp ) {
 
@@ -2648,11 +2641,11 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                 << " Exception: InvalidLogicalTime\n"
                 << "  instance_id=" << id_str << endl
                 << "  send-with-timestamp=" << ( send_with_timestamp ? "True" : "False" ) << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << " ("
-                << time_management_srvc->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+                << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << " ("
-                << time_management_srvc->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+                << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
                 << "  update_time=" << update_time.get_time_in_seconds() << " ("
                 << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
@@ -2667,8 +2660,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: AttributeNotOwned\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( ObjectInstanceNotKnown const &e ) {
@@ -2680,8 +2673,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: ObjectInstanceNotKnown\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotDefined const &e ) {
@@ -2693,8 +2686,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: AttributeNotDefined\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( FederateNotExecutionMember const &e ) {
@@ -2706,8 +2699,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: FederateNotExecutionMember\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( SaveInProgress const &e ) {
@@ -2719,8 +2712,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: SaveInProgress\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RestoreInProgress const &e ) {
@@ -2732,8 +2725,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: RestoreInProgress\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
@@ -2745,8 +2738,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: NotConnected\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          federate->set_connection_lost();
@@ -2759,8 +2752,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: RTIinternalError\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -2774,8 +2767,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
                 << "  update_time=" << update_time.get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -2858,12 +2851,14 @@ void Object::send_blocking_io_data()
       }
    } else {
 
+      TimeManagementServices const *time_service = federate->get_time_management_service();
+
       try {
          // Do not send any data if federate save or restore has begun (see
          // IEEE-1516.1-2010 sections 4.12, 4.20)
          if ( federate->should_publish_data() ) {
 
-            RTIambassador *rti_amb = get_RTI_ambassador();
+            RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                message_publish( MSG_NORMAL, "Object::send_blocking_io_data():%d \
@@ -2893,11 +2888,11 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: InvalidLogicalTime\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << " ("
-                << time_management_srvc->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+                << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << " ("
-                << time_management_srvc->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+                << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")" << endl;
          ;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -2910,8 +2905,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: AttributeNotOwned\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( ObjectInstanceNotKnown const &e ) {
          string id_str;
@@ -2922,8 +2917,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: ObjectInstanceNotKnown\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotDefined const &e ) {
          string id_str;
@@ -2934,8 +2929,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: AttributeNotDefined\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string id_str;
@@ -2946,8 +2941,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: FederateNotExecutionMember\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( SaveInProgress const &e ) {
          string id_str;
@@ -2958,8 +2953,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: SaveInProgress\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RestoreInProgress const &e ) {
          string id_str;
@@ -2970,8 +2965,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: RestoreInProgress\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
          string id_str;
@@ -2982,8 +2977,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: NotConnected\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
@@ -2995,8 +2990,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: RTIinternalError\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string id_str;
@@ -3009,8 +3004,8 @@ exception for '%s' with error message '%s'.\n",
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception\n"
                 << "  instance_id=" << id_str << endl
-                << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -3104,7 +3099,7 @@ void Object::receive_cyclic_data()
       do {
 #if THLA_OBJ_DEBUG_RECEIVE
          message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d for '%s' at HLA-logical-time=%G\n",
-                          __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                          __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
 #endif
 
          // Unpack the data for the object if we have a packing object.
@@ -3145,13 +3140,13 @@ void Object::receive_cyclic_data()
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 }
@@ -3179,7 +3174,7 @@ void Object::receive_zero_lookahead_data()
 
 #if THLA_OBJ_DEBUG_RECEIVE
       message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
 #endif
 
       // Unpack the data for the object if we have a packing object.
@@ -3220,13 +3215,13 @@ void Object::receive_zero_lookahead_data()
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 }
@@ -3254,7 +3249,7 @@ void Object::receive_blocking_io_data()
 
 #if THLA_OBJ_DEBUG_RECEIVE
       message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
 #endif
 
       // Unpack the data for the object if we have a packing object.
@@ -3295,13 +3290,13 @@ void Object::receive_blocking_io_data()
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), time_management_srvc->get_granted_time().get_time_in_seconds() );
+                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
    }
 #endif
 }
@@ -3320,7 +3315,7 @@ void Object::send_init_data()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3340,6 +3335,8 @@ void Object::send_init_data()
    // Create the map of "initialize" attribute values we will be updating,
    // but do not include any requested attributes.
    create_attribute_set( CONFIG_INITIALIZE, false );
+
+   TimeManagementServices const *time_service = federate->get_time_management_service();
 
    try {
       // Do not send any data if federate save / restore has begun (see
@@ -3373,11 +3370,11 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: InvalidLogicalTime\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << " ("
-             << time_management_srvc->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+             << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n"
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << " ("
-             << time_management_srvc->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+             << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
@@ -3389,8 +3386,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotOwned\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
@@ -3401,8 +3398,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
@@ -3413,8 +3410,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotDefined\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
@@ -3425,8 +3422,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: FederateNotExecutionMember\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
@@ -3437,8 +3434,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: SaveInProgress\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
@@ -3449,8 +3446,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RestoreInProgress\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
@@ -3461,8 +3458,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: NotConnected\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
@@ -3474,8 +3471,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RTIinternalError\n"
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string id_str;
@@ -3488,8 +3485,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception:" << endl
              << "  instance_id=" << id_str << endl
-             << "  granted=" << time_management_srvc->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_management_srvc->get_lookahead().get_time_in_seconds() << endl;
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -3771,7 +3768,7 @@ void Object::release_ownership()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    if ( rti_amb == NULL ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -3959,7 +3956,7 @@ void Object::pull_ownership()
    }
 
    // We need an RTI ambassador to be able to continue.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       message_publish( MSG_NORMAL, "Object::pull_ownership():%d Unexpected Null RTIambassador!\n",
                        __LINE__ );
@@ -4175,7 +4172,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-      RTIambassador *rti_amb = get_RTI_ambassador();
+      RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
       // We need an RTI ambassador to be able to continue.
       if ( rti_amb == NULL ) {
@@ -4351,7 +4348,7 @@ void Object::grant_pull_request()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    if ( rti_amb == NULL ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4510,7 +4507,7 @@ void Object::grant_push_request()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the RTI-Ambassador.
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    if ( rti_amb == NULL ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4633,7 +4630,7 @@ void Object::negotiated_attribute_ownership_divestiture(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    if ( rti_amb == NULL ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4772,7 +4769,7 @@ void Object::push_ownership()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador const *rti_amb = get_RTI_ambassador();
+   RTIambassador const *rti_amb = federate->get_RTI_ambassador();
 
    // We need an RTI ambassador to be able to continue.
    if ( rti_amb == NULL ) {
@@ -5462,7 +5459,7 @@ void Object::pull_ownership_upon_rejoin()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   RTIambassador *rti_amb = get_RTI_ambassador();
+   RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // We need an RTI ambassador to be able to continue.
    if ( rti_amb == NULL ) {
@@ -5678,11 +5675,6 @@ for Attributes of object '%s', waiting...\n",
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-}
-
-bool Object::is_shutdown_called() const
-{
-   return ( ( this->manager != NULL ) ? manager->is_shutdown_called() : false );
 }
 
 void Object::initialize_thread_ID_array()

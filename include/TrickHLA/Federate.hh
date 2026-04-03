@@ -118,13 +118,14 @@ class Federate
 
    // Allow the Federate core classes to have access to protected
    // and private data.
+   friend class ExecutionControlBase;
    friend class FedAmb;
+   friend class Interaction;
    friend class Manager;
+   friend class Object;
+   friend class SaveRestoreServices;
    friend class TimeManagementServices;
    friend class TrickThreadCoordinator;
-   friend class SaveRestoreServices;
-   friend class ExecutionControlBase;
-   friend class Interaction;
 
    //----------------------------- USER VARIABLES -----------------------------
    // The variables below are configured by the user in the input files.
@@ -230,6 +231,13 @@ class Federate
    //! @brief Create the RTI ambassador and connect to the RTI.
    void create_RTI_ambassador_and_connect();
 
+   /*! @brief Checks to make sure the RTI is ready by making sure the
+    * TrickHLA::Federate and TrickHLA:FedAmb exist and the RTI handles are
+    * initialized.
+    *  @return True if the RTI is ready, false otherwise.
+    *  @param method_name The method/function name. */
+   bool is_RTI_ready( std::string const &method_name );
+
    //! @brief Create and then join the Federation.
    void create_and_join_federation();
 
@@ -280,7 +288,6 @@ class Federate
    void process_interactions()
    {
       manager.process_interactions();
-      return;
    }
 
    /*! @brief Scheduled method used as a callback to identify if any objects
@@ -288,35 +295,90 @@ class Federate
    void process_deleted_objects()
    {
       manager.process_deleted_objects();
-      return;
    }
 
    /*! @brief Handle the received cyclic data. */
    void receive_cyclic_data()
    {
       manager.receive_cyclic_data();
-      return;
    }
 
    /*! @brief Send cyclic an requested atrributes data to the remote federates. */
    void send_cyclic_and_requested_data()
    {
       manager.send_cyclic_and_requested_data();
-      return;
    }
 
    /*! @brief Process the ownership requests. */
    void process_ownership()
    {
       manager.process_ownership();
-      return;
+   }
+
+   /*! @brief Blocking function call to pull ownership of the named object
+    * instance at initialization.
+    * @param obj_instance_name Object instance name to pull ownership
+    * of for all attributes. */
+   void pull_ownership_at_init( std::string const &obj_instance_name )
+   {
+      manager.pull_ownership_at_init( obj_instance_name, "" );
+   }
+
+   /*! @brief Blocking function call to pull ownership of the named object
+    * instance at initialization.
+    * @param obj_instance_name Object instance name to pull ownership
+    * of for all attributes
+    * @param attribute_list Comma separated list of attributes. */
+   void pull_ownership_at_init(
+      std::string const &obj_instance_name,
+      std::string const &attribute_list )
+   {
+      manager.pull_ownership_at_init( obj_instance_name, attribute_list );
+   }
+
+   /*! @brief Blocking function call to wait to handle the remote request to Pull
+    * ownership object attributes to this federate.
+    * @param obj_instance_name Object instance name to handle the remote
+    *  pulled ownership attributes from. */
+   void handle_pulled_ownership_at_init( std::string const &obj_instance_name )
+   {
+      manager.handle_pulled_ownership_at_init( obj_instance_name );
+   }
+
+   /*! @brief Blocking function call to push ownership of all the locally owned
+    * object attributes.
+    * @param obj_instance_name Object instance name to push ownership
+    * of for all attributes. */
+   void push_ownership_at_init( std::string const &obj_instance_name )
+   {
+      manager.push_ownership_at_init( obj_instance_name, "" );
+   }
+
+   /*! @brief Blocking function call to push ownership of the named object
+    * instance at initialization.
+    * @param obj_instance_name Object instance name to push ownership
+    * of for all attributes.
+    * @param attribute_list Comma separated list of attribute FOM names. */
+   void push_ownership_at_init(
+      std::string const &obj_instance_name,
+      std::string const &attribute_list )
+   {
+      manager.push_ownership_at_init( obj_instance_name, attribute_list );
+   }
+
+   /*!@brief Blocking function call to wait to handle the remote request to
+    * Push ownership object attributes to this federate.
+    * @param obj_instance_name Object instance name to handle the remote
+    * pushed ownership attributes from. */
+   void handle_pushed_ownership_at_init( std::string const &obj_instance_name )
+   {
+      manager.handle_pushed_ownership_at_init( obj_instance_name );
    }
 
    /*! @brief Sends all the initialization data. */
    void send_init_data()
    {
       manager.send_init_data();
-      return;
    }
 
    /*! @brief Sends the initialization data for the specified object instance name.
@@ -324,14 +386,12 @@ class Federate
    void send_init_data( std::string const &instance_name )
    {
       manager.send_init_data( instance_name );
-      return;
    }
 
    /*! @brief Wait to receive all the initialization data that is marked as required. */
    void receive_init_data()
    {
       manager.receive_init_data();
-      return;
    }
 
    /*! @brief Wait to receive the initialization data for the specified object
@@ -340,7 +400,6 @@ class Federate
    void receive_init_data( std::string const &instance_name )
    {
       manager.receive_init_data( instance_name );
-      return;
    }
 
    /*! @brief Achieve then wait for the federation to become synchronized for
@@ -349,14 +408,12 @@ class Federate
    void wait_for_init_sync_point( std::string const &sync_point_label )
    {
       manager.wait_for_init_sync_point( sync_point_label );
-      return;
    }
 
    /*! @brief Clear any remaining initialization sync-points. */
    void clear_init_sync_points()
    {
       manager.clear_init_sync_points();
-      return;
    }
 
    //
@@ -369,7 +426,6 @@ class Federate
    void set_HLA_base_time_unit( HLABaseTimeEnum const base_time_unit )
    {
       time_management_srvc.set_HLA_base_time_unit( base_time_unit );
-      return;
    }
 
    /*! @brief Sets the HLA base time unit and scale Trick tics multiplier.
@@ -377,14 +433,12 @@ class Federate
    void set_HLA_base_time_unit_and_scale_trick_tics( HLABaseTimeEnum const base_time_unit )
    {
       time_management_srvc.set_HLA_base_time_unit_and_scale_trick_tics( base_time_unit );
-      return;
    }
 
    /*! @brief Wait for a HLA time-advance grant. */
    void wait_for_time_advance_grant()
    {
       time_management_srvc.wait_for_time_advance_grant();
-      return;
    }
 
    /*! @brief Increment the requested time by the lookahead time and make a
@@ -392,49 +446,56 @@ class Federate
    void time_advance_request()
    {
       time_management_srvc.time_advance_request();
-      return;
    }
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
    void initialize_thread_coordinator( double const main_thread_data_cycle_time )
    {
       time_management_srvc.initialize_thread_coordinator( main_thread_data_cycle_time );
-      return;
+   }
+
+   /*! @brief Associate to a trick child thread. */
+   void associate_to_trick_child_thread(
+      unsigned int const thread_id,
+      double const       data_cycle )
+   {
+      time_management_srvc.associate_to_trick_child_thread( thread_id, data_cycle );
    }
 
    /*! @brief Verify the threads IDs associated to objects in the input file. */
    void verify_trick_thread_associations()
    {
       time_management_srvc.verify_trick_thread_associations();
-      return;
    }
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
    void initialize_thread_state( double const main_thread_data_cycle_time )
    {
       time_management_srvc.initialize_thread_state( main_thread_data_cycle_time );
-      return;
    }
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available()
    {
       time_management_srvc.announce_data_available();
-      return;
+   }
+
+   /*! @brief Wait to receive data until all Trick child threads are ready. */
+   void wait_to_receive_data()
+   {
+      time_management_srvc.wait_to_receive_data();
    }
 
    /*! @brief Wait to send data until all Trick child threads are ready. */
    void wait_to_send_data()
    {
       time_management_srvc.wait_to_send_data();
-      return;
    }
 
    /*! @brief Announce to all the child threads the main thread sent the data. */
    void announce_data_sent()
    {
       time_management_srvc.announce_data_sent();
-      return;
    }
 
    /*! @brief Get the current federate lookahead time.
@@ -445,7 +506,7 @@ class Federate
    }
 
    /*! @brief Setup the basic HLA time management parameters.
-    *  @detail This is meant to be called from the input file.  Do not use the
+    *  @detail This is meant to be called from the input file. Do not use the
     *  set_lookahead call.
     *  @param lookahead   HLA lookahead time in seconds.
     *  @param constrained Flag to set Federate time constrained state.
@@ -455,7 +516,6 @@ class Federate
       time_management_srvc.lookahead_time   = lookahead;
       time_management_srvc.time_constrained = constrained;
       time_management_srvc.time_regulating  = regulating;
-      return;
    }
 
    /*! @brief Sets the HLA lookahead time.
@@ -463,7 +523,6 @@ class Federate
    void set_lookahead( double const value )
    {
       time_management_srvc.set_lookahead( value );
-      return;
    }
 
    /*! @brief Get the current granted HLA federation execution time.
@@ -490,7 +549,6 @@ class Federate
    void setup_time_management()
    {
       time_management_srvc.setup_time_management();
-      return;
    }
 
    /*! @brief Moves the federates time to the Greatest Available Logical Time
@@ -499,7 +557,6 @@ class Federate
    void time_advance_request_to_GALT()
    {
       time_management_srvc.time_advance_request_to_GALT();
-      return;
    }
 
    //
@@ -752,18 +809,18 @@ class Federate
       return ( &( this->federate_ambassador ) );
    }
 
-   /*! @brief Get the pointer to the associated TrickHLA::TimeManagementServices instance.
-    *  @return Pointer to associated TrickHLA::TimeManagementServices. */
-   TimeManagementServices *get_time_management_services()
-   {
-      return ( &( this->time_management_srvc ) );
-   }
-
    /*! @brief Get the pointer to the associated TrickHLA::Manager instance.
     *  @return Pointer to associated TrickHLA::Manager. */
    Manager *get_manager()
    {
       return ( &( this->manager ) );
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::TimeManagementServices instance.
+    *  @return Pointer to associated TrickHLA::TimeManagementServices. */
+   TimeManagementServices *get_time_management_service()
+   {
+      return ( &( this->time_management_srvc ) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::SaveRestoreService instance.
@@ -873,14 +930,16 @@ class Federate
    }
 
   private:
+   //
    // Federation state variables.
    //
-   RTI1516_NAMESPACE::FederateHandle federate_id;                    ///< @trick_io{**} Federate ID.
-   bool                              federation_created_by_federate; ///< @trick_io{**} Federate successfully created the federation if True.
-   bool                              federation_exists;              ///< @trick_io{**} Federation exists.
-   bool                              federation_joined;              ///< @trick_io{**} Federate joined federation flag.
-   bool                              all_federates_joined;           ///< @trick_units{--} Master check for all federates joined.
-   bool                              connected;                      ///< @trick_units{--} True if connected to RTI, False otherwise.
+   RTI1516_NAMESPACE::FederateHandle federate_id; ///< @trick_io{**} Federate ID.
+
+   bool federation_created_by_federate; ///< @trick_io{**} Federate successfully created the federation if True.
+   bool federation_exists;              ///< @trick_io{**} Federation exists.
+   bool federation_joined;              ///< @trick_io{**} Federate joined federation flag.
+   bool all_federates_joined;           ///< @trick_units{--} Master check for all federates joined.
+   bool connected;                      ///< @trick_units{--} True if connected to RTI, False otherwise.
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
@@ -894,8 +953,9 @@ class Federate
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederatesInFederation_handle; ///< @trick_io{**} MOM attribute handle to Federate-count.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAautoProvide_handle;           ///< @trick_io{**} MOM AutoProvide attribute handle.
    TrickHLAObjInstanceNameMap           MOM_HLAfederation_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederation instances.
-   int                                  auto_provide_setting;                ///< @trick_units{--} MOM Federation wide HLAautoProvide setting.
-   int                                  orig_auto_provide_setting;           ///< @trick_units{--} Original MOM Federation wide HLAautoProvide setting when we joined the federation.
+
+   int auto_provide_setting;      ///< @trick_units{--} MOM Federation wide HLAautoProvide setting.
+   int orig_auto_provide_setting; ///< @trick_units{--} Original MOM Federation wide HLAautoProvide setting when we joined the federation.
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederate_class_handle; ///< @trick_io{**} MOM Federate class handle.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateType_handle;   ///< @trick_io{**} MOM attribute handle to Federate type (a.k.a name in IEEE 1516-2000).

@@ -194,12 +194,10 @@ log_sine_states( 'P', 0.250 )
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
    thla_federate        = THLA.federate,
-   thla_manager         = THLA.manager,
    thla_control         = THLA.execution_control,
    thla_config          = THLA.ExCO,
    thla_federation_name = federation_name,
-   thla_federate_name   = federate_name,
-   thla_enabled         = True )
+   thla_federate_name   = federate_name )
 
 federate.fix_var_server_source_address()
 

@@ -139,7 +139,7 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      restart_cfg_flag( false )
 {
    // Register the Time Management Services instance.
-   time_management_srvc = fed.get_time_management_services();
+   time_management_srvc = fed.get_time_management_service();
    return;
 }
 
