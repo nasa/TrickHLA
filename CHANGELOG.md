@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     ...
 ```
 
-- You can no longer set the lookahead time, time regulating and time constrained settings directly in the Federate class. If you are not using the SpaceFOM modules for input file configuration, you must now set the lookahead, time-constrained, and time-regulating settings using the setup Federate setup_time_management( double lookahead, bool constrained, bool regulating ) function. For example, for the sim/TrickHLA/SIM_sine input file:
+- You can no longer set the lookahead time, time regulating or time constrained settings directly in the Federate instance from the input file. If you are not using the SpaceFOM modules for input file configuration, you must now set the lookahead, time-constrained, and time-regulating settings using the Federate setup_time_management( double lookahead, bool constrained, bool regulating ) function. For example, for the sim/TrickHLA/SIM_sine simulation input file:
 
 ```
   - FROM:
