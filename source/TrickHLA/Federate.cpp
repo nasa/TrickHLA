@@ -1999,7 +1999,7 @@ void Federate::unsubscribe()
  * member data. */
 void Federate::publish_and_subscribe()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::publish_and_subscribe():%d\n",
                        __LINE__ );
    }
@@ -2532,7 +2532,7 @@ void Federate::wait_for_init_sync_point(
    string const &sync_point_label )
 {
    if ( !execution_control->is_wait_for_init_sync_point_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
          errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
                 << " WARNING: This call will be ignored because the"
@@ -2547,7 +2547,7 @@ void Federate::wait_for_init_sync_point(
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
          errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
                 << " Late joining federate so this call will be ignored." << endl;

@@ -217,7 +217,7 @@ void ObjectServices::send_init_data()
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d Late joining \
 federate so this call will be ignored.\n",
                           __LINE__ );
@@ -232,7 +232,7 @@ federate so this call will be ignored.\n",
 
          if ( federate->execution_control->wait_for_init_data() ) {
 
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d '%s'\n",
                                 __LINE__, objects[n].get_name().c_str() );
             }
@@ -241,7 +241,7 @@ federate so this call will be ignored.\n",
             objects[n].send_init_data();
 
          } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                ostringstream msg;
                msg << "ObjectServices::send_init_data():" << __LINE__
                    << " '" << objects[n].name << "'"
@@ -253,7 +253,7 @@ federate so this call will be ignored.\n",
             }
          }
       } else {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d Nothing to send for '%s'\n",
                              __LINE__, objects[n].get_name().c_str() );
          }
@@ -270,7 +270,7 @@ void ObjectServices::send_init_data(
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d Late joining \
 federate so the data will not be sent for '%s'.\n",
                           __LINE__, instance_name.c_str() );
@@ -306,7 +306,7 @@ federate so the data will not be sent for '%s'.\n",
    if ( obj->any_locally_owned_published_init_attribute() ) {
 
       if ( federate->execution_control->wait_for_init_data() ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d '%s'\n",
                              __LINE__, instance_name.c_str() );
          }
@@ -315,7 +315,7 @@ federate so the data will not be sent for '%s'.\n",
          obj->send_init_data();
 
       } else {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             ostringstream msg;
             msg << "ObjectServices::send_init_data():" << __LINE__
                 << " '" << instance_name << "'"
@@ -327,7 +327,7 @@ federate so the data will not be sent for '%s'.\n",
          }
       }
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d Nothing to send for '%s'\n",
                           __LINE__, instance_name.c_str() );
       }
@@ -342,7 +342,7 @@ void ObjectServices::receive_init_data()
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Late joining \
 federate so this call will be ignored.\n",
                           __LINE__ );
@@ -361,7 +361,7 @@ federate so this call will be ignored.\n",
          bool obj_required = objects[n].is_required() && ( federate->execution_control->wait_for_init_data() );
 
          if ( obj_required ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
                                 __LINE__, objects[n].get_name().c_str(),
                                 ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
@@ -410,7 +410,7 @@ federate so this call will be ignored.\n",
 
          // Check for changed data which means we received something.
          if ( objects[n].is_changed() ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Received '%s'\n",
                                 __LINE__, objects[n].get_name().c_str() );
             }
@@ -418,14 +418,14 @@ federate so this call will be ignored.\n",
             // Receive the data from the publishing federate.
             objects[n].receive_init_data();
          } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
                                 __LINE__, objects[n].get_name().c_str(),
                                 ( obj_required ? "REQUIRED" : "not required" ) );
             }
          }
       } else {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Nothing to receive for '%s'\n",
                              __LINE__, objects[n].get_name().c_str() );
          }
@@ -442,7 +442,7 @@ void ObjectServices::receive_init_data(
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Late joining federate so skipping data for '%s'\n",
                           __LINE__, instance_name.c_str() );
       }
@@ -480,7 +480,7 @@ void ObjectServices::receive_init_data(
       bool obj_required = obj->is_required() && federate->execution_control->wait_for_init_data();
 
       if ( obj_required ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
                              __LINE__, instance_name.c_str(),
                              ( obj->is_required() ? "REQUIRED" : "not required" ) );
@@ -529,7 +529,7 @@ void ObjectServices::receive_init_data(
 
       // Check for changed data which means we received something.
       if ( obj->is_changed() ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL,
                              "ObjectServices::receive_init_data():%d Received '%s'\n",
                              __LINE__, instance_name.c_str() );
@@ -538,14 +538,14 @@ void ObjectServices::receive_init_data(
          // Receive the data from the publishing federate.
          obj->receive_init_data();
       } else {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
                              __LINE__, instance_name.c_str(),
                              ( obj_required ? "REQUIRED" : "not required" ) );
          }
       }
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Nothing to receive for '%s'\n",
                           __LINE__, instance_name.c_str() );
       }
@@ -558,7 +558,7 @@ void ObjectServices::receive_init_data(
 void ObjectServices::request_data_update(
    wstring const &instance_name )
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       string name_str;
       StringUtilities::to_string( name_str, instance_name );
       message_publish( MSG_NORMAL, "ObjectServices::request_data_update():%d Object:'%s'\n",
@@ -614,7 +614,7 @@ void ObjectServices::object_instance_name_reservation_succeeded(
       if ( trickhla_obj != NULL ) {
          trickhla_obj->set_name_registered();
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL, "ObjectServices::object_instance_name_reservation_succeeded():%d \
 RESERVED Object Instance Name '%s'\n",
                              __LINE__, trickhla_obj->get_name().c_str() );
@@ -707,7 +707,7 @@ void ObjectServices::add_object_to_map(
  */
 void ObjectServices::setup_object_ref_attributes()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::setup_object_ref_attributes():%d\n",
                        __LINE__ );
    }
@@ -722,14 +722,14 @@ void ObjectServices::setup_object_ref_attributes()
    object_map.clear();
 
    if ( federate->is_execution_configuration_used() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::setup_object_ref_attributes():%d Execution-Configuration\n",
                           __LINE__ );
       }
       setup_object_ref_attributes( 1, federate->get_execution_configuration() );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::setup_object_ref_attributes():%d Objects: %d\n",
                        __LINE__, obj_count );
    }
@@ -743,7 +743,7 @@ void ObjectServices::setup_object_ref_attributes(
    int const data_obj_count,
    Object   *data_objects )
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::setup_object_ref_attributes():%d\n",
                        __LINE__ );
    }
@@ -760,7 +760,7 @@ void ObjectServices::setup_object_ref_attributes(
       int const  attr_count = data_objects[n].get_attribute_count();
       Attribute *attrs      = data_objects[n].get_attributes();
 
-      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          msg << "ObjectServices::setup_object_ref_attributes()" << __LINE__ << endl
              << "--------------- Trick REF-Attributes ---------------\n"
              << " Object:'" << data_objects[n].get_name() << "'"
@@ -776,14 +776,14 @@ void ObjectServices::setup_object_ref_attributes(
          // Initialize the TrickHLA-Attribute before we use it.
          attrs[i].initialize( data_objects[n].get_FOM_name().c_str(), n, i );
 
-         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attrs[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attrs[i].get_trick_name() << "'" << endl;
          }
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
@@ -791,7 +791,7 @@ void ObjectServices::setup_object_ref_attributes(
 
 void ObjectServices::setup_object_RTI_handles()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::setup_object_RTI_handles():%d\n",
                        __LINE__ );
    }
@@ -830,7 +830,7 @@ void ObjectServices::setup_object_RTI_handles(
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::setup_object_RTI_handles():%d\n",
                        __LINE__ );
    }
@@ -847,7 +847,7 @@ void ObjectServices::setup_object_RTI_handles(
       for ( int n = 0; n < data_obj_count; ++n ) {
          ostringstream msg;
 
-         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             msg << "ObjectServices::setup_object_RTI_handles()" << __LINE__ << endl
                 << "----------------- RTI Handles (Objects & Attributes) ---------------"
                 << endl
@@ -864,7 +864,7 @@ void ObjectServices::setup_object_RTI_handles(
          // Get the class handle for the given object FOM name.
          data_objects[n].set_class_handle( rti_amb->getObjectClassHandle( ws_FOM_name ) );
 
-         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             string handle_str;
             StringUtilities::to_string( handle_str, data_objects[n].get_class_handle() );
             msg << "  Result for"
@@ -879,7 +879,7 @@ void ObjectServices::setup_object_RTI_handles(
          // Resolve the handles/ID's for the attributes.
          for ( int i = 0; i < attr_count; ++i ) {
 
-            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                msg << "\tGetting RTI Attribute-Handle for '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'" << endl;
@@ -894,7 +894,7 @@ void ObjectServices::setup_object_RTI_handles(
             attrs[i].set_attribute_handle(
                rti_amb->getAttributeHandle( data_objects[n].get_class_handle(), ws_FOM_name ) );
 
-            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                string id_str;
                StringUtilities::to_string( id_str, attrs[i].get_attribute_handle() );
                msg << "\t  Result for Attribute '"
@@ -908,7 +908,7 @@ void ObjectServices::setup_object_RTI_handles(
          // have been set.
          data_objects[n].build_attribute_map();
 
-         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL, msg.str().c_str() );
          }
       }
@@ -1090,7 +1090,7 @@ void ObjectServices::unsubscribe()
  */
 void ObjectServices::reserve_object_names_with_RTI()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::reserve_object_names_with_RTI():%d\n",
                        __LINE__ );
    }
@@ -1109,7 +1109,7 @@ void ObjectServices::reserve_object_names_with_RTI()
  */
 void ObjectServices::wait_for_reservation_of_object_names()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::wait_for_reservation_of_object_names():%d\n",
                        __LINE__ );
    }
@@ -1122,12 +1122,12 @@ void ObjectServices::wait_for_reservation_of_object_names()
          objects[n].wait_for_object_name_reservation();
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::wait_for_reservation_of_object_names():%d All Object instance names reserved.\n",
                           __LINE__ );
       }
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::wait_for_reservation_of_object_names():%d No Object instance names to reserve.\n",
                           __LINE__ );
       }
@@ -1139,7 +1139,7 @@ void ObjectServices::wait_for_reservation_of_object_names()
  */
 void ObjectServices::register_objects_with_RTI()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::register_objects_with_RTI():%d\n",
                        __LINE__ );
    }
@@ -1166,7 +1166,7 @@ void ObjectServices::register_objects_with_RTI()
  */
 void ObjectServices::setup_preferred_order_with_RTI()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::setup_preferred_order_with_RTI():%d\n",
                        __LINE__ );
    }
@@ -1189,7 +1189,7 @@ void ObjectServices::setup_preferred_order_with_RTI()
  */
 void ObjectServices::wait_for_registration_of_required_objects()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::wait_for_registration_of_required_objects():%d\n",
                        __LINE__ );
    }
@@ -1198,7 +1198,7 @@ void ObjectServices::wait_for_registration_of_required_objects()
    int  total_obj_cnt               = obj_count;
    int  current_required_obj_cnt    = 0;
    int  total_required_obj_cnt      = 0;
-   bool print_summary               = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+   bool print_summary               = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES );
    bool print_only_unregistered_obj = false;
    bool any_unregistered_required_obj;
 
@@ -1268,7 +1268,7 @@ void ObjectServices::wait_for_registration_of_required_objects()
          if ( registered_obj_cnt > current_registered_obj_cnt ) {
             current_registered_obj_cnt = registered_obj_cnt;
             if ( !print_summary ) {
-               print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+               print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES );
             }
          }
 
@@ -1474,7 +1474,7 @@ void ObjectServices::set_object_instance_handles_by_name(
    }
 
    ostringstream summary;
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       summary << "ObjectServices::set_object_instance_handles_by_name():"
               << __LINE__;
    }
@@ -1502,7 +1502,7 @@ void ObjectServices::set_object_instance_handles_by_name(
                object_map[data_objects[n].get_instance_handle()] = &data_objects[n];
             }
 
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                string id_str;
                StringUtilities::to_string( id_str, data_objects[n].get_instance_handle() );
                summary << "\n    Object:'" << data_objects[n].get_name()
@@ -1525,7 +1525,7 @@ void ObjectServices::set_object_instance_handles_by_name(
                DebugHandler::terminate_with_message( errmsg.str() );
                return;
             } else {
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                   summary << "\n    Object:'" << data_objects[n].get_name()
                           << "'  ID:Inatance-Not-Known  ID-Valid:No  Obj-Required:No";
                }
@@ -1578,7 +1578,7 @@ void ObjectServices::set_object_instance_handles_by_name(
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       summary << endl;
       message_publish( MSG_NORMAL, summary.str().c_str() );
    }
@@ -1643,7 +1643,7 @@ void ObjectServices::send_cyclic_and_requested_data()
       update_time.set( granted_base_time + lookahead_base_time );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::send_cyclic_and_requested_data():%d HLA-time:%.12G seconds.\n",
                        __LINE__, update_time.get_time_in_seconds() );
    }
@@ -1690,7 +1690,7 @@ void ObjectServices::send_cyclic_and_requested_data()
  */
 void ObjectServices::receive_cyclic_data()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::receive_cyclic_data():%d\n", __LINE__ );
    }
 
@@ -1791,7 +1791,7 @@ bool ObjectServices::discover_object_instance(
 
       return_value = true;
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          string id_str;
          StringUtilities::to_string( id_str, theObject );
          message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d Data-Object '%s' Instance-ID:%s\n",
@@ -1805,7 +1805,7 @@ bool ObjectServices::discover_object_instance(
       // Save into my federate's discovered federate storage area
       federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, theObject );
          StringUtilities::to_string( name_str, theObjectInstanceName );
@@ -1817,7 +1817,7 @@ bool ObjectServices::discover_object_instance(
       federate->add_MOM_HLAfederation_instance_id( theObject );
       return_value = true;
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, theObject );
          StringUtilities::to_string( name_str, theObjectInstanceName );
@@ -1919,7 +1919,7 @@ void ObjectServices::mark_object_as_deleted_from_federation(
 
       Object *obj = get_trickhla_object( instance_id );
       if ( obj != NULL ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             string id_str;
             StringUtilities::to_string( id_str, instance_id );
             message_publish( MSG_NORMAL, "ObjectServices::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
@@ -2198,7 +2198,7 @@ void ObjectServices::free_converted_data_for_checkpoint()
  */
 void ObjectServices::wait_for_discovery_of_objects()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       message_publish( MSG_NORMAL, "ObjectServices::wait_for_discovery_of_object_instance():%d\n",
                        __LINE__ );
    }
@@ -2234,7 +2234,7 @@ void ObjectServices::wait_for_discovery_of_objects()
            ( create_HLA_instance_object_found &&        // missing some other object(s) but
              ( discovery_count < required_count ) ) ) { // found the rejoining federate
 
-         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             message_publish( MSG_NORMAL, "ObjectServices::wait_for_discovery_of_object_instance():%d Waiting for object discovery callbacks to arrive.\n",
                              __LINE__ );
          }
@@ -2296,7 +2296,7 @@ void ObjectServices::wait_for_discovery_of_objects()
                      ( discovery_count < required_count ) ) ); // found the rejoining federate
       }
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          message_publish( MSG_NORMAL, "ObjectServices::wait_for_discovery_of_object_instance():%d - No Objects to discover.\n",
                           __LINE__ );
       }
