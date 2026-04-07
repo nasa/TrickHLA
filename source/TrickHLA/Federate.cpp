@@ -2690,6 +2690,45 @@ void Federate::un_freeze()
    exec_run();
 }
 
+/*! @brief Convert data to a form Trick can checkpoint. */
+void Federate::convert_data_before_checkpoint()
+{
+   // TODO: Convert Federate data into data types Trick can checkpoint.
+
+   // Process federate instance data.
+   object_service.convert_data_before_checkpoint();
+   interaction_service.convert_data_before_checkpoint();
+   if ( execution_control != NULL ) {
+      execution_control->convert_data_before_checkpoint();
+   }
+}
+
+/*! @brief Restore data structures after loading a Trick checkpoint. */
+void Federate::restore_data_after_checkpoint()
+{
+   // TODO: Restore checkpoint data into Federate data.
+
+   // Process federate instance data.
+   object_service.restore_data_after_checkpoint();
+   interaction_service.restore_data_after_checkpoint();
+   if ( execution_control != NULL ) {
+      execution_control->restore_data_after_checkpoint();
+   }
+}
+
+/*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+void Federate::free_converted_data_for_checkpoint()
+{
+   // TODO: Free Federate checkpoint data.
+
+   // Process federate instance data.
+   object_service.free_converted_data_for_checkpoint();
+   interaction_service.free_converted_data_for_checkpoint();
+   if ( execution_control != NULL ) {
+      execution_control->free_converted_data_for_checkpoint();
+   }
+}
+
 /*!
  *  \par<b>Assumptions and Limitations:</b>
  *  - Currently only used with IMSim initialization scheme.

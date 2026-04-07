@@ -57,6 +57,7 @@ NASA, Johnson Space Center\n
 #include "trick/Flag.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
@@ -106,7 +107,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class ExecutionControlBase;
 
-class Federate
+class Federate : public TrickHLA::CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -649,6 +650,21 @@ class Federate
     *  @param instance_hndl Object instance handle. */
    void remove_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint();
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint();
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint();
+
+   //
+   // Checkpoint
+   //
    /*! @brief Perform setup for federate save.
     * Delegates to Execution Control interface. */
    void setup_checkpoint();
