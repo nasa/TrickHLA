@@ -29,48 +29,48 @@ From file RUN_a_side/input.py:
 
 # Configure the object this federate will create an HLA instance and
 # publish data for.
-THLA.manager.objects[2].FOM_name            = 'MainFixedRecObject'
-THLA.manager.objects[2].name                = 'A-side-Federate.FixedRecord'
-THLA.manager.objects[2].create_HLA_instance = True
-THLA.manager.objects[2].packing             = R.packing
-THLA.manager.objects[2].attr_count          = 3
-THLA.manager.objects[2].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[2].attr_count, 'TrickHLA::Attribute' )
+obj_service.objects[2].FOM_name            = 'MainFixedRecObject'
+obj_service.objects[2].name                = 'A-side-Federate.FixedRecord'
+obj_service.objects[2].create_HLA_instance = True
+obj_service.objects[2].packing             = R.packing
+obj_service.objects[2].attr_count          = 3
+obj_service.objects[2].attributes          = trick.sim_services.alloc_type( obj_service.objects[2].attr_count, 'TrickHLA::Attribute' )
 
-THLA.manager.objects[2].attributes[0].FOM_name        = 'field_1_string'
-THLA.manager.objects[2].attributes[0].trick_name      = 'R.packing.field_1_string'
-THLA.manager.objects[2].attributes[0].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[2].attributes[0].publish         = True
-THLA.manager.objects[2].attributes[0].subscribe       = True
-THLA.manager.objects[2].attributes[0].locally_owned   = True
-THLA.manager.objects[2].attributes[0].rti_encoding    = trick.ENCODING_UNICODE_STRING
+obj_service.objects[2].attributes[0].FOM_name      = 'field_1_string'
+obj_service.objects[2].attributes[0].trick_name    = 'R.packing.field_1_string'
+obj_service.objects[2].attributes[0].config        = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[0].publish       = True
+obj_service.objects[2].attributes[0].subscribe     = True
+obj_service.objects[2].attributes[0].locally_owned = True
+obj_service.objects[2].attributes[0].rti_encoding  = trick.ENCODING_UNICODE_STRING
 
-THLA.manager.objects[2].attributes[1].FOM_name        = 'field_2_float64'
-THLA.manager.objects[2].attributes[1].trick_name      = 'R.packing.field_2_float64'
-THLA.manager.objects[2].attributes[1].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[2].attributes[1].publish         = True
-THLA.manager.objects[2].attributes[1].subscribe       = True
-THLA.manager.objects[2].attributes[1].locally_owned   = True
-THLA.manager.objects[2].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[1].FOM_name      = 'field_2_float64'
+obj_service.objects[2].attributes[1].trick_name    = 'R.packing.field_2_float64'
+obj_service.objects[2].attributes[1].config        = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[1].publish       = True
+obj_service.objects[2].attributes[1].subscribe     = True
+obj_service.objects[2].attributes[1].locally_owned = True
+obj_service.objects[2].attributes[1].rti_encoding  = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[2].attributes[2].FOM_name        = 'field_3_rec'
-THLA.manager.objects[2].attributes[2].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[2].attributes[2].publish         = True
-THLA.manager.objects[2].attributes[2].subscribe       = True
-THLA.manager.objects[2].attributes[2].locally_owned   = True
-THLA.manager.objects[2].attributes[2].rti_encoding    = trick.ENCODING_FIXED_RECORD
-THLA.manager.objects[2].attributes[2].element_count   = 3
-THLA.manager.objects[2].attributes[2].elements        = trick.sim_services.alloc_type( THLA.manager.objects[2].attributes[2].element_count, 'TrickHLA::RecordElement' )
-THLA.manager.objects[2].attributes[2].elements[0].trick_name    = 'R.packing.elem_1_string'
-THLA.manager.objects[2].attributes[2].elements[0].rti_encoding  = trick.ENCODING_UNICODE_STRING
-THLA.manager.objects[2].attributes[2].elements[1].trick_name    = 'R.packing.elem_2_float64'
-THLA.manager.objects[2].attributes[2].elements[1].rti_encoding  = trick.ENCODING_LITTLE_ENDIAN
-THLA.manager.objects[2].attributes[2].elements[2].rti_encoding  = trick.ENCODING_FIXED_RECORD
-THLA.manager.objects[2].attributes[2].elements[2].element_count = 2
-THLA.manager.objects[2].attributes[2].elements[2].elements      = trick.sim_services.alloc_type( THLA.manager.objects[2].attributes[2].elements[2].element_count, 'TrickHLA::RecordElement' )
-THLA.manager.objects[2].attributes[2].elements[2].elements[0].trick_name   = 'R.packing.element_1_count'
-THLA.manager.objects[2].attributes[2].elements[2].elements[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
-THLA.manager.objects[2].attributes[2].elements[2].elements[1].trick_name   = 'R.packing.element_2_name'
-THLA.manager.objects[2].attributes[2].elements[2].elements[1].rti_encoding = trick.ENCODING_UNICODE_STRING
+obj_service.objects[2].attributes[2].FOM_name      = 'field_3_rec'
+obj_service.objects[2].attributes[2].config        = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[2].publish       = True
+obj_service.objects[2].attributes[2].subscribe     = True
+obj_service.objects[2].attributes[2].locally_owned = True
+obj_service.objects[2].attributes[2].rti_encoding  = trick.ENCODING_FIXED_RECORD
+obj_service.objects[2].attributes[2].element_count = 3
+obj_service.objects[2].attributes[2].elements      = trick.sim_services.alloc_type( obj_service.objects[2].attributes[2].element_count, 'TrickHLA::RecordElement' )
+obj_service.objects[2].attributes[2].elements[0].trick_name    = 'R.packing.elem_1_string'
+obj_service.objects[2].attributes[2].elements[0].rti_encoding  = trick.ENCODING_UNICODE_STRING
+obj_service.objects[2].attributes[2].elements[1].trick_name    = 'R.packing.elem_2_float64'
+obj_service.objects[2].attributes[2].elements[1].rti_encoding  = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[2].elements[2].rti_encoding  = trick.ENCODING_FIXED_RECORD
+obj_service.objects[2].attributes[2].elements[2].element_count = 2
+obj_service.objects[2].attributes[2].elements[2].elements      = trick.sim_services.alloc_type( obj_service.objects[2].attributes[2].elements[2].element_count, 'TrickHLA::RecordElement' )
+obj_service.objects[2].attributes[2].elements[2].elements[0].trick_name   = 'R.packing.element_1_count'
+obj_service.objects[2].attributes[2].elements[2].elements[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[2].elements[2].elements[1].trick_name   = 'R.packing.element_2_name'
+obj_service.objects[2].attributes[2].elements[2].elements[1].rti_encoding = trick.ENCODING_UNICODE_STRING
 ```
 
 #### P-side federate fixed record configuration
@@ -93,48 +93,48 @@ From file RUN_p_side/input.py:
 
 # Configure the object this federate subscribes to but will not create an
 # HLA instance for.
-THLA.manager.objects[2].FOM_name            = 'MainFixedRecObject'
-THLA.manager.objects[2].name                = 'A-side-Federate.FixedRecord'
-THLA.manager.objects[2].create_HLA_instance = False
-THLA.manager.objects[2].packing             = R.packing
-THLA.manager.objects[2].attr_count          = 3
-THLA.manager.objects[2].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[2].attr_count, 'TrickHLA::Attribute' )
+obj_service.objects[2].FOM_name            = 'MainFixedRecObject'
+obj_service.objects[2].name                = 'A-side-Federate.FixedRecord'
+obj_service.objects[2].create_HLA_instance = False
+obj_service.objects[2].packing             = R.packing
+obj_service.objects[2].attr_count          = 3
+obj_service.objects[2].attributes          = trick.sim_services.alloc_type( obj_service.objects[2].attr_count, 'TrickHLA::Attribute' )
 
-THLA.manager.objects[2].attributes[0].FOM_name        = 'field_1_string'
-THLA.manager.objects[2].attributes[0].trick_name      = 'R.packing.field_1_string'
-THLA.manager.objects[2].attributes[0].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[2].attributes[0].publish         = True
-THLA.manager.objects[2].attributes[0].subscribe       = True
-THLA.manager.objects[2].attributes[0].locally_owned   = False
-THLA.manager.objects[2].attributes[0].rti_encoding    = trick.ENCODING_UNICODE_STRING
+obj_service.objects[2].attributes[0].FOM_name      = 'field_1_string'
+obj_service.objects[2].attributes[0].trick_name    = 'R.packing.field_1_string'
+obj_service.objects[2].attributes[0].config        = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[0].publish       = True
+obj_service.objects[2].attributes[0].subscribe     = True
+obj_service.objects[2].attributes[0].locally_owned = False
+obj_service.objects[2].attributes[0].rti_encoding  = trick.ENCODING_UNICODE_STRING
 
-THLA.manager.objects[2].attributes[1].FOM_name        = 'field_2_float64'
-THLA.manager.objects[2].attributes[1].trick_name      = 'R.packing.field_2_float64'
-THLA.manager.objects[2].attributes[1].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[2].attributes[1].publish         = True
-THLA.manager.objects[2].attributes[1].subscribe       = True
-THLA.manager.objects[2].attributes[1].locally_owned   = False
-THLA.manager.objects[2].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[1].FOM_name      = 'field_2_float64'
+obj_service.objects[2].attributes[1].trick_name    = 'R.packing.field_2_float64'
+obj_service.objects[2].attributes[1].config        = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[1].publish       = True
+obj_service.objects[2].attributes[1].subscribe     = True
+obj_service.objects[2].attributes[1].locally_owned = False
+obj_service.objects[2].attributes[1].rti_encoding  = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[2].attributes[2].FOM_name        = 'field_3_rec'
-THLA.manager.objects[2].attributes[2].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[2].attributes[2].publish         = True
-THLA.manager.objects[2].attributes[2].subscribe       = True
-THLA.manager.objects[2].attributes[2].locally_owned   = False
-THLA.manager.objects[2].attributes[2].rti_encoding    = trick.ENCODING_FIXED_RECORD
-THLA.manager.objects[2].attributes[2].element_count   = 3
-THLA.manager.objects[2].attributes[2].elements        = trick.sim_services.alloc_type( THLA.manager.objects[2].attributes[2].element_count, 'TrickHLA::RecordElement' )
-THLA.manager.objects[2].attributes[2].elements[0].trick_name    = 'R.packing.elem_1_string'
-THLA.manager.objects[2].attributes[2].elements[0].rti_encoding  = trick.ENCODING_UNICODE_STRING
-THLA.manager.objects[2].attributes[2].elements[1].trick_name    = 'R.packing.elem_2_float64'
-THLA.manager.objects[2].attributes[2].elements[1].rti_encoding  = trick.ENCODING_LITTLE_ENDIAN
-THLA.manager.objects[2].attributes[2].elements[2].rti_encoding  = trick.ENCODING_FIXED_RECORD
-THLA.manager.objects[2].attributes[2].elements[2].element_count = 2
-THLA.manager.objects[2].attributes[2].elements[2].elements      = trick.sim_services.alloc_type( THLA.manager.objects[2].attributes[2].elements[2].element_count, 'TrickHLA::RecordElement' )
-THLA.manager.objects[2].attributes[2].elements[2].elements[0].trick_name   = 'R.packing.element_1_count'
-THLA.manager.objects[2].attributes[2].elements[2].elements[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
-THLA.manager.objects[2].attributes[2].elements[2].elements[1].trick_name   = 'R.packing.element_2_name'
-THLA.manager.objects[2].attributes[2].elements[2].elements[1].rti_encoding = trick.ENCODING_UNICODE_STRING
+obj_service.objects[2].attributes[2].FOM_name      = 'field_3_rec'
+obj_service.objects[2].attributes[2].config        = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[2].publish       = True
+obj_service.objects[2].attributes[2].subscribe     = True
+obj_service.objects[2].attributes[2].locally_owned = False
+obj_service.objects[2].attributes[2].rti_encoding  = trick.ENCODING_FIXED_RECORD
+obj_service.objects[2].attributes[2].element_count = 3
+obj_service.objects[2].attributes[2].elements      = trick.sim_services.alloc_type( obj_service.objects[2].attributes[2].element_count, 'TrickHLA::RecordElement' )
+obj_service.objects[2].attributes[2].elements[0].trick_name    = 'R.packing.elem_1_string'
+obj_service.objects[2].attributes[2].elements[0].rti_encoding  = trick.ENCODING_UNICODE_STRING
+obj_service.objects[2].attributes[2].elements[1].trick_name    = 'R.packing.elem_2_float64'
+obj_service.objects[2].attributes[2].elements[1].rti_encoding  = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[2].elements[2].rti_encoding  = trick.ENCODING_FIXED_RECORD
+obj_service.objects[2].attributes[2].elements[2].element_count = 2
+obj_service.objects[2].attributes[2].elements[2].elements      = trick.sim_services.alloc_type( obj_service.objects[2].attributes[2].elements[2].element_count, 'TrickHLA::RecordElement' )
+obj_service.objects[2].attributes[2].elements[2].elements[0].trick_name   = 'R.packing.element_1_count'
+obj_service.objects[2].attributes[2].elements[2].elements[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[2].elements[2].elements[1].trick_name   = 'R.packing.element_2_name'
+obj_service.objects[2].attributes[2].elements[2].elements[1].rti_encoding = trick.ENCODING_UNICODE_STRING
 ```
 
 

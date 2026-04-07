@@ -267,7 +267,6 @@ dynamics.dyn_manager.deriv_ephem_update = True
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
    THLA.federate,
-   THLA.manager,
    THLA.execution_control,
    THLA.ExCO,
    'SpaceFOM_JEOD_Test',

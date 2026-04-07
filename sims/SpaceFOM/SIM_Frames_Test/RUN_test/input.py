@@ -365,11 +365,11 @@ vehicle_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
 
 # Check for object allocation.
 # Probably did not trigger the default_data allocation.
-if THLA.federate.get_manager().obj_count <= 0:
+if THLA.federate.get_object_service().obj_count <= 0:
    trick.exec_terminate_with_return( -1,
                                      sys._getframe( 0 ).f_code.co_filename,
                                      sys._getframe( 0 ).f_lineno,
-                                     'input.py ERROR: TrickHLA::Manager objects have not been allocated! Try running with --default_data_config command line argument.' )
+                                     'input.py ERROR: TrickHLA::ObjectServices objects have not been allocated! Try running with --default_data_config command line argument.' )
    
 
 # Set the debug flag for the reference frames.

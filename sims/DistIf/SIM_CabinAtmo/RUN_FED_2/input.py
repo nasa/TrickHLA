@@ -216,7 +216,6 @@ sys.path.append( '../../../' )
 from TrickHLA_data.TrickHLA.TrickHLAFederateConfig import *
 federate = TrickHLAFederateConfig(
    thla_federate        = THLA.federate,
-   thla_manager         = THLA.manager,
    thla_control         = THLA.execution_control,
    thla_config          = THLA.simple_sim_config,
    thla_federation_name = Federation_name,

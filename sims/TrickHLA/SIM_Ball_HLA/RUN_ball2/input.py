@@ -165,20 +165,21 @@ ball_fed_config.add_known_federate( True, 'Ball1-Federate' )
 ball_fed_config.add_known_federate( True, 'Ball3-Federate' )
 
 # Allocate the federate HLA objects: Walls + number of Balls.
-THLA.manager.obj_count = ensemble.num_balls + 1
-THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 'TrickHLA::Object' )
+obj_service = THLA.federate.get_object_service()
+obj_service.obj_count = ensemble.num_balls + 1
+obj_service.objects   = trick.sim_services.alloc_type( obj_service.obj_count, 'TrickHLA::Object' )
 
 #
 # Configure the Wall HLA data.
 #
-HLA_walls_config( THLA.manager.objects[0], 'walls_hla', 'walls', walls_hla.packing, False )
+HLA_walls_config( obj_service.objects[0], 'walls_hla', 'walls', walls_hla.packing, False )
 
 #
 # Configure the HLA data for each Ball.
 #
-HLA_ball_config( THLA.manager.objects[1], 'ball1_hla', ball1.state.name, ball1_hla.packing, False )
-HLA_ball_config( THLA.manager.objects[2], 'ball2_hla', ball2.state.name, ball2_hla.packing, True )
-HLA_ball_config( THLA.manager.objects[3], 'ball3_hla', ball3.state.name, ball3_hla.packing, False )
+HLA_ball_config( obj_service.objects[1], 'ball1_hla', ball1.state.name, ball1_hla.packing, False )
+HLA_ball_config( obj_service.objects[2], 'ball2_hla', ball2.state.name, ball2_hla.packing, True )
+HLA_ball_config( obj_service.objects[3], 'ball3_hla', ball3.state.name, ball3_hla.packing, False )
 
 # 
 # Show or hide the TrickHLA debug messages.

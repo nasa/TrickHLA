@@ -192,7 +192,6 @@ log_sine_states( 'P', 0.250 )
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
    thla_federate        = THLA.federate,
-   thla_manager         = THLA.manager,
    thla_control         = THLA.execution_control,
    thla_config          = THLA.ExCO,
    thla_federation_name = federation_name,
@@ -504,174 +503,176 @@ IMSim_THLA.imsim_config.run_duration = run_duration
 
 
 # TrickHLA Interactions and Parameters.
-IMSim_THLA.manager.inter_count  = 1
-IMSim_THLA.manager.interactions = trick.sim_services.alloc_type( IMSim_THLA.manager.inter_count, 'TrickHLA::Interaction' )
+IMSim_interaction_service = IMSim_THLA.federate.get_interaction_service()
+IMSim_interaction_service.inter_count  = 1
+IMSim_interaction_service.interactions = trick.sim_services.alloc_type( IMSim_interaction_service.inter_count, 'TrickHLA::Interaction' )
 
-IMSim_THLA.manager.interactions[0].FOM_name    = 'Communication'
-IMSim_THLA.manager.interactions[0].publish     = True
-IMSim_THLA.manager.interactions[0].subscribe   = False
-IMSim_THLA.manager.interactions[0].handler     = IMSim_A.interaction_handler
-IMSim_THLA.manager.interactions[0].param_count = 3
-IMSim_THLA.manager.interactions[0].parameters  = trick.sim_services.alloc_type( IMSim_THLA.manager.interactions[0].param_count, 'TrickHLA::Parameter' )
+IMSim_interaction_service.interactions[0].FOM_name    = 'Communication'
+IMSim_interaction_service.interactions[0].publish     = True
+IMSim_interaction_service.interactions[0].subscribe   = False
+IMSim_interaction_service.interactions[0].handler     = IMSim_A.interaction_handler
+IMSim_interaction_service.interactions[0].param_count = 3
+IMSim_interaction_service.interactions[0].parameters  = trick.sim_services.alloc_type( IMSim_interaction_service.interactions[0].param_count, 'TrickHLA::Parameter' )
 
-IMSim_THLA.manager.interactions[0].parameters[0].FOM_name     = 'Message'
-IMSim_THLA.manager.interactions[0].parameters[0].trick_name   = 'IMSim_A.interaction_handler.message'
-IMSim_THLA.manager.interactions[0].parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
+IMSim_interaction_service.interactions[0].parameters[0].FOM_name     = 'Message'
+IMSim_interaction_service.interactions[0].parameters[0].trick_name   = 'IMSim_A.interaction_handler.message'
+IMSim_interaction_service.interactions[0].parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
 
-IMSim_THLA.manager.interactions[0].parameters[1].FOM_name     = 'time'
-IMSim_THLA.manager.interactions[0].parameters[1].trick_name   = 'IMSim_A.interaction_handler.time'
-IMSim_THLA.manager.interactions[0].parameters[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+IMSim_interaction_service.interactions[0].parameters[1].FOM_name     = 'time'
+IMSim_interaction_service.interactions[0].parameters[1].trick_name   = 'IMSim_A.interaction_handler.time'
+IMSim_interaction_service.interactions[0].parameters[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.interactions[0].parameters[2].FOM_name     = 'year'
-IMSim_THLA.manager.interactions[0].parameters[2].trick_name   = 'IMSim_A.interaction_handler.year'
-IMSim_THLA.manager.interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+IMSim_interaction_service.interactions[0].parameters[2].FOM_name     = 'year'
+IMSim_interaction_service.interactions[0].parameters[2].trick_name   = 'IMSim_A.interaction_handler.year'
+IMSim_interaction_service.interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 
 # The Federate has two objects, it publishes one and subscribes to another.
-IMSim_THLA.manager.obj_count = 2
-IMSim_THLA.manager.objects   = trick.sim_services.alloc_type( IMSim_THLA.manager.obj_count, 'TrickHLA::Object' )
+IMSim_obj_service = THLA.federate.get_object_service()
+IMSim_obj_service.obj_count = 2
+IMSim_obj_service.objects   = trick.sim_services.alloc_type( IMSim_obj_service.obj_count, 'TrickHLA::Object' )
 
 # Configure the object this federate will create an HLA instance and
 # publish data for.
-IMSim_THLA.manager.objects[0].FOM_name            = 'SineParameters'
-IMSim_THLA.manager.objects[0].name                = 'IMSim-A-side-Federate.Sine'
-IMSim_THLA.manager.objects[0].create_HLA_instance = True
-IMSim_THLA.manager.objects[0].packing             = IMSim_A.packing
-IMSim_THLA.manager.objects[0].lag_comp            = IMSim_A.lag_compensation
-IMSim_THLA.manager.objects[0].lag_comp_type       = trick.LAG_COMPENSATION_NONE
-IMSim_THLA.manager.objects[0].ownership           = IMSim_A.ownership_handler
-IMSim_THLA.manager.objects[0].conditional         = IMSim_A.conditional
-IMSim_THLA.manager.objects[0].deleted             = IMSim_A.obj_deleted
-IMSim_THLA.manager.objects[0].attr_count          = 8
-IMSim_THLA.manager.objects[0].attributes          = trick.sim_services.alloc_type( IMSim_THLA.manager.objects[0].attr_count, 'TrickHLA::Attribute' )
+IMSim_obj_service.objects[0].FOM_name            = 'SineParameters'
+IMSim_obj_service.objects[0].name                = 'IMSim-A-side-Federate.Sine'
+IMSim_obj_service.objects[0].create_HLA_instance = True
+IMSim_obj_service.objects[0].packing             = IMSim_A.packing
+IMSim_obj_service.objects[0].lag_comp            = IMSim_A.lag_compensation
+IMSim_obj_service.objects[0].lag_comp_type       = trick.LAG_COMPENSATION_NONE
+IMSim_obj_service.objects[0].ownership           = IMSim_A.ownership_handler
+IMSim_obj_service.objects[0].conditional         = IMSim_A.conditional
+IMSim_obj_service.objects[0].deleted             = IMSim_A.obj_deleted
+IMSim_obj_service.objects[0].attr_count          = 8
+IMSim_obj_service.objects[0].attributes          = trick.sim_services.alloc_type( IMSim_obj_service.objects[0].attr_count, 'TrickHLA::Attribute' )
 
-IMSim_THLA.manager.objects[0].attributes[0].FOM_name        = 'Time'
-IMSim_THLA.manager.objects[0].attributes[0].trick_name      = 'IMSim_A.packing.time'
-IMSim_THLA.manager.objects[0].attributes[0].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[0].attributes[0].publish         = True
-IMSim_THLA.manager.objects[0].attributes[0].locally_owned   = True
-IMSim_THLA.manager.objects[0].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[0].attributes[0].FOM_name        = 'Time'
+IMSim_obj_service.objects[0].attributes[0].trick_name      = 'IMSim_A.packing.time'
+IMSim_obj_service.objects[0].attributes[0].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[0].attributes[0].publish         = True
+IMSim_obj_service.objects[0].attributes[0].locally_owned   = True
+IMSim_obj_service.objects[0].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[0].attributes[1].FOM_name        = 'Value'
-IMSim_THLA.manager.objects[0].attributes[1].trick_name      = 'IMSim_A.packing.value'
-IMSim_THLA.manager.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[0].attributes[1].publish         = True
-IMSim_THLA.manager.objects[0].attributes[1].subscribe       = True
-IMSim_THLA.manager.objects[0].attributes[1].locally_owned   = True
-IMSim_THLA.manager.objects[0].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[0].attributes[1].FOM_name        = 'Value'
+IMSim_obj_service.objects[0].attributes[1].trick_name      = 'IMSim_A.packing.value'
+IMSim_obj_service.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[0].attributes[1].publish         = True
+IMSim_obj_service.objects[0].attributes[1].subscribe       = True
+IMSim_obj_service.objects[0].attributes[1].locally_owned   = True
+IMSim_obj_service.objects[0].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[0].attributes[2].FOM_name        = 'dvdt'
-IMSim_THLA.manager.objects[0].attributes[2].trick_name      = 'IMSim_A.packing.dvdt'
-IMSim_THLA.manager.objects[0].attributes[2].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[0].attributes[2].publish         = True
-IMSim_THLA.manager.objects[0].attributes[2].locally_owned   = True
-IMSim_THLA.manager.objects[0].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[0].attributes[2].FOM_name        = 'dvdt'
+IMSim_obj_service.objects[0].attributes[2].trick_name      = 'IMSim_A.packing.dvdt'
+IMSim_obj_service.objects[0].attributes[2].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[0].attributes[2].publish         = True
+IMSim_obj_service.objects[0].attributes[2].locally_owned   = True
+IMSim_obj_service.objects[0].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[0].attributes[3].FOM_name        = 'Phase'
-IMSim_THLA.manager.objects[0].attributes[3].trick_name      = 'IMSim_A.packing.phase_deg' # using packed data instead of 'A.sim_data.phase'
-IMSim_THLA.manager.objects[0].attributes[3].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[0].attributes[3].publish         = True
-IMSim_THLA.manager.objects[0].attributes[3].locally_owned   = True
-IMSim_THLA.manager.objects[0].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[0].attributes[3].FOM_name        = 'Phase'
+IMSim_obj_service.objects[0].attributes[3].trick_name      = 'IMSim_A.packing.phase_deg' # using packed data instead of 'A.sim_data.phase'
+IMSim_obj_service.objects[0].attributes[3].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[0].attributes[3].publish         = True
+IMSim_obj_service.objects[0].attributes[3].locally_owned   = True
+IMSim_obj_service.objects[0].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[0].attributes[4].FOM_name        = 'Frequency'
-IMSim_THLA.manager.objects[0].attributes[4].trick_name      = 'IMSim_A.packing.freq'
-IMSim_THLA.manager.objects[0].attributes[4].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[0].attributes[4].publish         = True
-IMSim_THLA.manager.objects[0].attributes[4].locally_owned   = True
-IMSim_THLA.manager.objects[0].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[0].attributes[4].FOM_name        = 'Frequency'
+IMSim_obj_service.objects[0].attributes[4].trick_name      = 'IMSim_A.packing.freq'
+IMSim_obj_service.objects[0].attributes[4].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[0].attributes[4].publish         = True
+IMSim_obj_service.objects[0].attributes[4].locally_owned   = True
+IMSim_obj_service.objects[0].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[0].attributes[5].FOM_name        = 'Amplitude'
-IMSim_THLA.manager.objects[0].attributes[5].trick_name      = 'A.packing.amp'
-IMSim_THLA.manager.objects[0].attributes[5].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[0].attributes[5].publish         = True
-IMSim_THLA.manager.objects[0].attributes[5].locally_owned   = True
-IMSim_THLA.manager.objects[0].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[0].attributes[5].FOM_name        = 'Amplitude'
+IMSim_obj_service.objects[0].attributes[5].trick_name      = 'A.packing.amp'
+IMSim_obj_service.objects[0].attributes[5].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[0].attributes[5].publish         = True
+IMSim_obj_service.objects[0].attributes[5].locally_owned   = True
+IMSim_obj_service.objects[0].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[0].attributes[6].FOM_name        = 'Tolerance'
-IMSim_THLA.manager.objects[0].attributes[6].trick_name      = 'IMSim_A.packing.tol'
-IMSim_THLA.manager.objects[0].attributes[6].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[0].attributes[6].publish         = True
-IMSim_THLA.manager.objects[0].attributes[6].locally_owned   = True
-IMSim_THLA.manager.objects[0].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[0].attributes[6].FOM_name        = 'Tolerance'
+IMSim_obj_service.objects[0].attributes[6].trick_name      = 'IMSim_A.packing.tol'
+IMSim_obj_service.objects[0].attributes[6].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[0].attributes[6].publish         = True
+IMSim_obj_service.objects[0].attributes[6].locally_owned   = True
+IMSim_obj_service.objects[0].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[0].attributes[7].FOM_name        = 'Name'
-IMSim_THLA.manager.objects[0].attributes[7].trick_name      = 'IMSim_A.packing.name'
-IMSim_THLA.manager.objects[0].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[0].attributes[7].publish         = True
-IMSim_THLA.manager.objects[0].attributes[7].locally_owned   = True
-IMSim_THLA.manager.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+IMSim_obj_service.objects[0].attributes[7].FOM_name        = 'Name'
+IMSim_obj_service.objects[0].attributes[7].trick_name      = 'IMSim_A.packing.name'
+IMSim_obj_service.objects[0].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[0].attributes[7].publish         = True
+IMSim_obj_service.objects[0].attributes[7].locally_owned   = True
+IMSim_obj_service.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
 
 # Configure the object this federate subscribes to but will not create an
 # HLA instance for.
-IMSim_THLA.manager.objects[1].FOM_name            = 'SineParameters'
-IMSim_THLA.manager.objects[1].name                = 'IMSim-P-side-Federate.Sine'
-IMSim_THLA.manager.objects[1].create_HLA_instance = False
-IMSim_THLA.manager.objects[1].packing             = IMSim_P.packing
-IMSim_THLA.manager.objects[1].lag_comp            = IMSim_P.lag_compensation
-IMSim_THLA.manager.objects[1].lag_comp_type       = trick.LAG_COMPENSATION_NONE
-IMSim_THLA.manager.objects[1].conditional         = IMSim_P.conditional
-IMSim_THLA.manager.objects[1].deleted             = IMSim_P.obj_deleted
-IMSim_THLA.manager.objects[1].attr_count          = 8
-IMSim_THLA.manager.objects[1].attributes          = trick.sim_services.alloc_type( IMSim_THLA.manager.objects[1].attr_count, 'TrickHLA::Attribute' )
+IMSim_obj_service.objects[1].FOM_name            = 'SineParameters'
+IMSim_obj_service.objects[1].name                = 'IMSim-P-side-Federate.Sine'
+IMSim_obj_service.objects[1].create_HLA_instance = False
+IMSim_obj_service.objects[1].packing             = IMSim_P.packing
+IMSim_obj_service.objects[1].lag_comp            = IMSim_P.lag_compensation
+IMSim_obj_service.objects[1].lag_comp_type       = trick.LAG_COMPENSATION_NONE
+IMSim_obj_service.objects[1].conditional         = IMSim_P.conditional
+IMSim_obj_service.objects[1].deleted             = IMSim_P.obj_deleted
+IMSim_obj_service.objects[1].attr_count          = 8
+IMSim_obj_service.objects[1].attributes          = trick.sim_services.alloc_type( IMSim_obj_service.objects[1].attr_count, 'TrickHLA::Attribute' )
 
-IMSim_THLA.manager.objects[1].attributes[0].FOM_name        = 'Time'
-IMSim_THLA.manager.objects[1].attributes[0].trick_name      = 'IMSim_P.packing.time'
-IMSim_THLA.manager.objects[1].attributes[0].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[1].attributes[0].subscribe       = True
-IMSim_THLA.manager.objects[1].attributes[0].locally_owned   = False
-IMSim_THLA.manager.objects[1].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[1].attributes[0].FOM_name        = 'Time'
+IMSim_obj_service.objects[1].attributes[0].trick_name      = 'IMSim_P.packing.time'
+IMSim_obj_service.objects[1].attributes[0].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[1].attributes[0].subscribe       = True
+IMSim_obj_service.objects[1].attributes[0].locally_owned   = False
+IMSim_obj_service.objects[1].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[1].attributes[1].FOM_name        = 'Value'
-IMSim_THLA.manager.objects[1].attributes[1].trick_name      = 'IMSim_P.packing.value'
-IMSim_THLA.manager.objects[1].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[1].attributes[1].publish         = True
-IMSim_THLA.manager.objects[1].attributes[1].subscribe       = True
-IMSim_THLA.manager.objects[1].attributes[1].locally_owned   = False
-IMSim_THLA.manager.objects[1].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[1].attributes[1].FOM_name        = 'Value'
+IMSim_obj_service.objects[1].attributes[1].trick_name      = 'IMSim_P.packing.value'
+IMSim_obj_service.objects[1].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[1].attributes[1].publish         = True
+IMSim_obj_service.objects[1].attributes[1].subscribe       = True
+IMSim_obj_service.objects[1].attributes[1].locally_owned   = False
+IMSim_obj_service.objects[1].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[1].attributes[2].FOM_name        = 'dvdt'
-IMSim_THLA.manager.objects[1].attributes[2].trick_name      = 'IMSim_P.packing.dvdt'
-IMSim_THLA.manager.objects[1].attributes[2].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[1].attributes[2].publish         = True
-IMSim_THLA.manager.objects[1].attributes[2].subscribe       = True
-IMSim_THLA.manager.objects[1].attributes[2].locally_owned   = False
-IMSim_THLA.manager.objects[1].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[1].attributes[2].FOM_name        = 'dvdt'
+IMSim_obj_service.objects[1].attributes[2].trick_name      = 'IMSim_P.packing.dvdt'
+IMSim_obj_service.objects[1].attributes[2].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[1].attributes[2].publish         = True
+IMSim_obj_service.objects[1].attributes[2].subscribe       = True
+IMSim_obj_service.objects[1].attributes[2].locally_owned   = False
+IMSim_obj_service.objects[1].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[1].attributes[3].FOM_name        = 'Phase'
-IMSim_THLA.manager.objects[1].attributes[3].trick_name      = 'IMSim_P.packing.phase_deg' # using packed data instead of 'IMSim_P.sim_data.phase'
-IMSim_THLA.manager.objects[1].attributes[3].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[1].attributes[3].subscribe       = True
-IMSim_THLA.manager.objects[1].attributes[3].locally_owned   = False
-IMSim_THLA.manager.objects[1].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[1].attributes[3].FOM_name        = 'Phase'
+IMSim_obj_service.objects[1].attributes[3].trick_name      = 'IMSim_P.packing.phase_deg' # using packed data instead of 'IMSim_P.sim_data.phase'
+IMSim_obj_service.objects[1].attributes[3].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[1].attributes[3].subscribe       = True
+IMSim_obj_service.objects[1].attributes[3].locally_owned   = False
+IMSim_obj_service.objects[1].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[1].attributes[4].FOM_name        = 'Frequency'
-IMSim_THLA.manager.objects[1].attributes[4].trick_name      = 'IMSim_P.packing.freq'
-IMSim_THLA.manager.objects[1].attributes[4].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[1].attributes[4].subscribe       = True
-IMSim_THLA.manager.objects[1].attributes[4].locally_owned   = False
-IMSim_THLA.manager.objects[1].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[1].attributes[4].FOM_name        = 'Frequency'
+IMSim_obj_service.objects[1].attributes[4].trick_name      = 'IMSim_P.packing.freq'
+IMSim_obj_service.objects[1].attributes[4].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[1].attributes[4].subscribe       = True
+IMSim_obj_service.objects[1].attributes[4].locally_owned   = False
+IMSim_obj_service.objects[1].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[1].attributes[5].FOM_name        = 'Amplitude'
-IMSim_THLA.manager.objects[1].attributes[5].trick_name      = 'IMSim_P.packing.amp'
-IMSim_THLA.manager.objects[1].attributes[5].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[1].attributes[5].subscribe       = True
-IMSim_THLA.manager.objects[1].attributes[5].locally_owned   = False
-IMSim_THLA.manager.objects[1].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[1].attributes[5].FOM_name        = 'Amplitude'
+IMSim_obj_service.objects[1].attributes[5].trick_name      = 'IMSim_P.packing.amp'
+IMSim_obj_service.objects[1].attributes[5].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[1].attributes[5].subscribe       = True
+IMSim_obj_service.objects[1].attributes[5].locally_owned   = False
+IMSim_obj_service.objects[1].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[1].attributes[6].FOM_name        = 'Tolerance'
-IMSim_THLA.manager.objects[1].attributes[6].trick_name      = 'IMSim_P.packing.tol'
-IMSim_THLA.manager.objects[1].attributes[6].config          = trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[1].attributes[6].subscribe       = True
-IMSim_THLA.manager.objects[1].attributes[6].locally_owned   = False
-IMSim_THLA.manager.objects[1].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+IMSim_obj_service.objects[1].attributes[6].FOM_name        = 'Tolerance'
+IMSim_obj_service.objects[1].attributes[6].trick_name      = 'IMSim_P.packing.tol'
+IMSim_obj_service.objects[1].attributes[6].config          = trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[1].attributes[6].subscribe       = True
+IMSim_obj_service.objects[1].attributes[6].locally_owned   = False
+IMSim_obj_service.objects[1].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-IMSim_THLA.manager.objects[1].attributes[7].FOM_name        = 'Name'
-IMSim_THLA.manager.objects[1].attributes[7].trick_name      = 'IMSim_P.packing.name'
-IMSim_THLA.manager.objects[1].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-IMSim_THLA.manager.objects[1].attributes[7].subscribe       = True
-IMSim_THLA.manager.objects[1].attributes[7].locally_owned   = False
-IMSim_THLA.manager.objects[1].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+IMSim_obj_service.objects[1].attributes[7].FOM_name        = 'Name'
+IMSim_obj_service.objects[1].attributes[7].trick_name      = 'IMSim_P.packing.name'
+IMSim_obj_service.objects[1].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+IMSim_obj_service.objects[1].attributes[7].subscribe       = True
+IMSim_obj_service.objects[1].attributes[7].locally_owned   = False
+IMSim_obj_service.objects[1].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
 
 
 #---------------------------------------------------------------------------

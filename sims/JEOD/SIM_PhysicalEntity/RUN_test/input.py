@@ -458,7 +458,6 @@ dynamics.dyn_manager.add_body_action( passive_vehicle.lvlh_init )
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
    thla_federate        = THLA.federate,
-   thla_manager         = THLA.manager,
    thla_control         = THLA.execution_control,
    thla_config          = THLA.ExCO,
    thla_federation_name = federation_name,

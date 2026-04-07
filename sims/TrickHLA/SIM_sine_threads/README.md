@@ -115,15 +115,15 @@ the thread_ids are a comma separated list if Trick child threads
 associated with the use of the data from the HLA object instance.
 
 ```
-THLA.manager.objects[0].FOM_name            = 'Test'
-THLA.manager.objects[0].name                = 'A-side-Federate.Sine'
-THLA.manager.objects[0].create_HLA_instance = True
-THLA.manager.objects[0].thread_ids          = "1"
+obj_service.objects[0].FOM_name            = 'Test'
+obj_service.objects[0].name                = 'A-side-Federate.Sine'
+obj_service.objects[0].create_HLA_instance = True
+obj_service.objects[0].thread_ids          = "1"
 
-THLA.manager.objects[1].FOM_name            = 'Test'
-THLA.manager.objects[1].name                = 'P-side-Federate.Sine'
-THLA.manager.objects[1].create_HLA_instance = False
-THLA.manager.objects[1].thread_ids          = "2"
+obj_service.objects[1].FOM_name            = 'Test'
+obj_service.objects[1].name                = 'P-side-Federate.Sine'
+obj_service.objects[1].create_HLA_instance = False
+obj_service.objects[1].thread_ids          = "2"
 ```
 
 #### P-side federate threads input file configuration
@@ -144,15 +144,15 @@ the thread_ids are a comma separated list if Trick child threads
 associated with the use of the data from the HLA object instance.
 
 ```
-THLA.manager.objects[0].FOM_name            = 'Test'
-THLA.manager.objects[0].name                = 'A-side-Federate.Sine'
-THLA.manager.objects[0].create_HLA_instance = False
-THLA.manager.objects[0].thread_ids          = "1"
+obj_service.objects[0].FOM_name            = 'Test'
+obj_service.objects[0].name                = 'A-side-Federate.Sine'
+obj_service.objects[0].create_HLA_instance = False
+obj_service.objects[0].thread_ids          = "1"
 
-THLA.manager.objects[1].FOM_name            = 'Test'
-THLA.manager.objects[1].name                = 'P-side-Federate.Sine'
-THLA.manager.objects[1].create_HLA_instance = True
-THLA.manager.objects[1].thread_ids          = "2"
+obj_service.objects[1].FOM_name            = 'Test'
+obj_service.objects[1].name                = 'P-side-Federate.Sine'
+obj_service.objects[1].create_HLA_instance = True
+obj_service.objects[1].thread_ids          = "2"
 ```
 
 ---

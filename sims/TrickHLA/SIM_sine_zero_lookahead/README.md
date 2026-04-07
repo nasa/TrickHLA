@@ -71,38 +71,38 @@ Configure all attributes of an object used for zero-lookahead data
 transfers as trick.CONFIG_ZERO_LOOKAHEAD.
 
 ```
-THLA.manager.objects[0].FOM_name            = 'Test'
-THLA.manager.objects[0].name                = 'A-side-Federate.Sine.zero'
-THLA.manager.objects[1].create_HLA_instance = True
+obj_service.objects[0].FOM_name            = 'Test'
+obj_service.objects[0].name                = 'A-side-Federate.Sine.zero'
+obj_service.objects[1].create_HLA_instance = True
 ...
-THLA.manager.objects[0].attributes[0].FOM_name        = 'Time'
-THLA.manager.objects[0].attributes[0].trick_name      = 'AZ.packing.time'
-THLA.manager.objects[0].attributes[0].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[0].FOM_name        = 'Time'
+obj_service.objects[0].attributes[0].trick_name      = 'AZ.packing.time'
+obj_service.objects[0].attributes[0].config          = trick.CONFIG_ZERO_LOOKAHEAD
 ...
-THLA.manager.objects[0].attributes[1].FOM_name        = 'Value'
-THLA.manager.objects[0].attributes[1].trick_name      = 'AZ.packing.value'
-THLA.manager.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[1].FOM_name        = 'Value'
+obj_service.objects[0].attributes[1].trick_name      = 'AZ.packing.value'
+obj_service.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
 ...
-THLA.manager.objects[0].attributes[2].FOM_name        = 'dvdt'
-THLA.manager.objects[0].attributes[2].trick_name      = 'AZ.packing.dvdt'
-THLA.manager.objects[0].attributes[2].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[2].FOM_name        = 'dvdt'
+obj_service.objects[0].attributes[2].trick_name      = 'AZ.packing.dvdt'
+obj_service.objects[0].attributes[2].config          = trick.CONFIG_ZERO_LOOKAHEAD
 ...
 
-THLA.manager.objects[1].FOM_name            = 'Test'
-THLA.manager.objects[1].name                = 'P-side-Federate.Sine.zero'
-THLA.manager.objects[1].create_HLA_instance = False
+obj_service.objects[1].FOM_name            = 'Test'
+obj_service.objects[1].name                = 'P-side-Federate.Sine.zero'
+obj_service.objects[1].create_HLA_instance = False
 ...
-THLA.manager.objects[1].attributes[0].FOM_name        = 'Time'
-THLA.manager.objects[1].attributes[0].trick_name      = 'PZ.packing.time'
-THLA.manager.objects[1].attributes[0].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[0].FOM_name        = 'Time'
+obj_service.objects[1].attributes[0].trick_name      = 'PZ.packing.time'
+obj_service.objects[1].attributes[0].config          = trick.CONFIG_ZERO_LOOKAHEAD
 ...
-THLA.manager.objects[1].attributes[1].FOM_name        = 'Value'
-THLA.manager.objects[1].attributes[1].trick_name      = 'PZ.packing.value'
-THLA.manager.objects[1].attributes[1].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[1].FOM_name        = 'Value'
+obj_service.objects[1].attributes[1].trick_name      = 'PZ.packing.value'
+obj_service.objects[1].attributes[1].config          = trick.CONFIG_ZERO_LOOKAHEAD
 ...
-THLA.manager.objects[1].attributes[2].FOM_name        = 'dvdt'
-THLA.manager.objects[1].attributes[2].trick_name      = 'PZ.packing.dvdt'
-THLA.manager.objects[1].attributes[2].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[2].FOM_name        = 'dvdt'
+obj_service.objects[1].attributes[2].trick_name      = 'PZ.packing.dvdt'
+obj_service.objects[1].attributes[2].config          = trick.CONFIG_ZERO_LOOKAHEAD
 ...
 ```
 
@@ -113,39 +113,39 @@ Configure all attributes of an object used for zero-lookahead data
 transfers as trick.CONFIG_ZERO_LOOKAHEAD.
 
 ```
-THLA.manager.objects[0].FOM_name            = 'Test'
-THLA.manager.objects[0].name                = 'A-side-Federate.Sine.zero'
-THLA.manager.objects[0].create_HLA_instance = False
+obj_service.objects[0].FOM_name            = 'Test'
+obj_service.objects[0].name                = 'A-side-Federate.Sine.zero'
+obj_service.objects[0].create_HLA_instance = False
 ...
-THLA.manager.objects[0].attributes[0].FOM_name        = 'Time'
-THLA.manager.objects[0].attributes[0].trick_name      = 'AZ.packing.time'
-THLA.manager.objects[0].attributes[0].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[0].FOM_name   = 'Time'
+obj_service.objects[0].attributes[0].trick_name = 'AZ.packing.time'
+obj_service.objects[0].attributes[0].config     = trick.CONFIG_ZERO_LOOKAHEAD
 ...
-THLA.manager.objects[0].attributes[1].FOM_name        = 'Value'
-THLA.manager.objects[0].attributes[1].trick_name      = 'AZ.packing.value'
-THLA.manager.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[1].FOM_name   = 'Value'
+obj_service.objects[0].attributes[1].trick_name = 'AZ.packing.value'
+obj_service.objects[0].attributes[1].config     = trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
 ...
-THLA.manager.objects[0].attributes[2].FOM_name        = 'dvdt'
-THLA.manager.objects[0].attributes[2].trick_name      = 'AZ.packing.dvdt'
-THLA.manager.objects[0].attributes[2].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[2].FOM_name   = 'dvdt'
+obj_service.objects[0].attributes[2].trick_name = 'AZ.packing.dvdt'
+obj_service.objects[0].attributes[2].config     = trick.CONFIG_ZERO_LOOKAHEAD
 
 ...
 
-THLA.manager.objects[1].FOM_name            = 'Test'
-THLA.manager.objects[1].name                = 'P-side-Federate.Sine.zero'
-THLA.manager.objects[1].create_HLA_instance = True
+obj_service.objects[1].FOM_name            = 'Test'
+obj_service.objects[1].name                = 'P-side-Federate.Sine.zero'
+obj_service.objects[1].create_HLA_instance = True
 ...
-THLA.manager.objects[1].attributes[0].FOM_name        = 'Time'
-THLA.manager.objects[1].attributes[0].trick_name      = 'PZ.packing.time'
-THLA.manager.objects[1].attributes[0].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[0].FOM_name   = 'Time'
+obj_service.objects[1].attributes[0].trick_name = 'PZ.packing.time'
+obj_service.objects[1].attributes[0].config     = trick.CONFIG_ZERO_LOOKAHEAD
 ...
-THLA.manager.objects[1].attributes[1].FOM_name        = 'Value'
-THLA.manager.objects[1].attributes[1].trick_name      = 'PZ.packing.value'
-THLA.manager.objects[1].attributes[1].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[1].FOM_name   = 'Value'
+obj_service.objects[1].attributes[1].trick_name = 'PZ.packing.value'
+obj_service.objects[1].attributes[1].config     = trick.CONFIG_ZERO_LOOKAHEAD
 ...
-THLA.manager.objects[1].attributes[2].FOM_name        = 'dvdt'
-THLA.manager.objects[1].attributes[2].trick_name      = 'PZ.packing.dvdt'
-THLA.manager.objects[1].attributes[2].config          = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[2].FOM_name   = 'dvdt'
+obj_service.objects[1].attributes[2].trick_name = 'PZ.packing.dvdt'
+obj_service.objects[1].attributes[2].config     = trick.CONFIG_ZERO_LOOKAHEAD
 ...
 ```
 
