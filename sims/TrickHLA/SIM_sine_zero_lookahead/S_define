@@ -28,7 +28,6 @@
 ##include "trick/integrator_c_intf.h"
 
 ##include "TrickHLA/Federate.hh"
-##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/time/ScenarioTimeline.hh"
 ##include "TrickHLA/time/SimTimeline.hh"
 

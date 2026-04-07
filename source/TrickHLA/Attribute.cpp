@@ -139,7 +139,7 @@ void Attribute::initialize(
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: Object with FOM Name '" << obj_FOM_name << "' has a missing"
-             << " FOM name for the attribute. Make sure THLA.manager.objects["
+             << " FOM name for the attribute. Make sure THLA.federate.object_service.objects["
              << object_index << "].attributes[" << attribute_index
              << "].FOM_name' in either your input.py file or modified-data files"
              << " is correctly specified." << endl;
@@ -153,7 +153,7 @@ void Attribute::initialize(
          errmsg << "Attribute::initialize():" << __LINE__
                 << " ERROR: FOM Object Attribute '"
                 << obj_FOM_name << "'->'" << get_FOM_name() << "' has a missing Trick name"
-                << " for the attribute. Make sure THLA.manager.objects["
+                << " for the attribute. Make sure THLA.federate.object_service.objects["
                 << object_index << "].attributes[" << attribute_index
                 << "].trick_name' in either your input.py file or modified-data files"
                 << " is correctly specified." << endl;

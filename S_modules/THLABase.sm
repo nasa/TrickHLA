@@ -69,11 +69,6 @@ class THLABaseSimObject : public Trick::SimObject {
    //----- DATA STRUCTURE DECLARATIONS -----
    TrickHLA::Federate federate;
    
-   // FIXME: This is a kludge to get by with not updating a lot of S_define
-   // level code.  Ultimately, we need to NOT do this and fix the interfaces.
-   // Reference to the manager object in Federate for backward compatibility.
-   TrickHLA::Manager * manager;
-
    double data_cycle_time;
 
    THLABaseSimObject( double data_cycle,
@@ -116,12 +111,6 @@ class THLABaseSimObject : public Trick::SimObject {
             exit( -1 );
          }
       }
-      
-      // FIXME: This is a kludge to get by with not updating a lot of S_define
-      // level code.  Ultimately, we need to NOT do this and fix the interfaces.
-      // Get the reference to the Manager instance in the Federate instance.
-      // This is purely to support backward compatibility with old input files.
-      manager = federate.get_manager();
 
       //-----------------------
       //-- DEFAULT DATA JOBS --

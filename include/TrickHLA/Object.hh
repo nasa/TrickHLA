@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
@@ -106,7 +106,7 @@ namespace TrickHLA
 class Conditional;
 class Federate;
 class LagCompensation;
-class Manager;
+class ObjectServices;
 class TimeManagementServices;
 class ObjectDeletedHandler;
 class OwnershipHandler;
@@ -127,7 +127,7 @@ class Object : public CheckpointConversionBase
    // Other classes need to call some of Objects private methods.
    friend class ExecutionControlBase;
    friend class FedAmb;
-   friend class Manager;
+   friend class ObjectServices;
    friend class OwnershipHandler;
    friend class TrickThreadCoordinator;
 

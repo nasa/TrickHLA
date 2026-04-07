@@ -22,7 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../ExecutionControlBase.cpp}
 @trick_link_dependency{../FedAmb.cpp}
 @trick_link_dependency{../Federate.cpp}
-@trick_link_dependency{../Manager.cpp}
+@trick_link_dependency{../ObjectServices.cpp}
 @trick_link_dependency{../Types.cpp}
 @trick_link_dependency{../utils/MutexLock.cpp}
 @trick_link_dependency{../utils/MutexProtection.cpp}
@@ -62,8 +62,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
@@ -162,9 +162,9 @@ void TimeManagementServices::initialize_thread_state(
    // Set the core job cycle time now that we know what it is so that the
    // attribute cyclic ratios can now be calculated for any multi-rate
    // attributes.
-   Manager *manager = federate->get_manager();
-   for ( int n = 0; n < manager->obj_count; ++n ) {
-      manager->objects[n].set_core_job_cycle_time(
+   ObjectServices *object_service = federate->get_object_service();
+   for ( int n = 0; n < object_service->obj_count; ++n ) {
+      object_service->objects[n].set_core_job_cycle_time(
          Int64BaseTime::to_seconds(
             get_data_cycle_base_time_for_obj( n, get_HLA_cycle_time_in_base_time() ) ) );
    }

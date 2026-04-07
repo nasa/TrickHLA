@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Manager.cpp}
+@trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{SaveRestoreServices.cpp}
 @trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
@@ -63,8 +63,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
@@ -138,9 +138,10 @@ ExecutionControlBase::ExecutionControlBase()
      freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     manager( NULL ),
-     time_management_srvc( NULL ),
-     save_restore_srvc( NULL )
+     object_service( NULL ),
+     time_management_service( NULL ),
+     save_restore_service( NULL ),
+     interaction_service( NULL )
 {
    return;
 }
@@ -174,9 +175,10 @@ ExecutionControlBase::ExecutionControlBase(
      freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     manager( NULL ),
-     time_management_srvc( NULL ),
-     save_restore_srvc( NULL )
+     object_service( NULL ),
+     time_management_service( NULL ),
+     save_restore_service( NULL ),
+     interaction_service( NULL )
 {
    return;
 }
@@ -205,13 +207,16 @@ void ExecutionControlBase::setup(
    SyncPointManagerBase::setup( &fed );
 
    // Set the TrickHLA::Manager instance reference.
-   this->manager = fed.get_manager();
+   this->object_service = fed.get_object_service();
 
    // Set the TrickHLA::SaveRestoreServices instance reference.
-   this->save_restore_srvc = fed.get_save_restore_service();
+   this->save_restore_service = fed.get_save_restore_service();
 
    // Set the TrickHLA::TimeManagementServices instance reference.
-   this->time_management_srvc = fed.get_time_management_service();
+   this->time_management_service = fed.get_time_management_service();
+
+   // Set the TrickHLA::InteractionServices instance reference.
+   this->interaction_service = fed.get_interaction_service();
 
    // Set the TrickHLA::ExecutionConfigurationBase instance reference.
    this->execution_configuration = fed.get_execution_configuration();
@@ -278,7 +283,7 @@ void ExecutionControlBase::initialize()
    }
 
    // Verify the time constraints for the federate.
-   if ( ( federate != NULL ) && !federate->time_management_srvc.verify_time_constraints() ) {
+   if ( ( federate != NULL ) && !federate->time_management_service.verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::initialize():" << __LINE__
              << " ERROR: Time constraints verification failed!" << endl;
@@ -450,7 +455,7 @@ void ExecutionControlBase::register_objects_with_RTI()
       // Register the execution configuration object.
       execution_configuration->register_object_with_RTI();
 
-      // Place the ExecutionConfiguration object into the Manager's object map.
+      // Place the ExecutionConfiguration object into the ObjectServices's object map.
       add_object_to_map( execution_configuration );
    }
 }
@@ -462,7 +467,7 @@ void ExecutionControlBase::add_object_to_map(
    Object *object )
 {
    // Add the registered ExecutionConfiguration object instance to the map.
-   manager->add_object_to_map( object );
+   object_service->add_object_to_map( object );
 }
 
 /*!
@@ -513,7 +518,7 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
 {
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
-   if ( manager->is_late_joining_federate() ) {
+   if ( federate->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
 joining federate so this call will be ignored.\n",
@@ -1017,12 +1022,12 @@ void ExecutionControlBase::setup_checkpoint()
       return;
    }
 
-   string str_save_label( save_restore_srvc->get_save_label() );
+   string str_save_label( save_restore_service->get_save_label() );
 
    // Determine if I am the federate that clicked Dump Chkpnt on sim control panel
    // or I am the federate that called start_federation_save
 
-   save_restore_srvc->set_announce_save( !save_restore_srvc->is_start_to_save() );
+   save_restore_service->set_announce_save( !save_restore_service->is_start_to_save() );
 
    // Check to see if the save has been initiated in the ExecutionControl process?
    // If not then just return.
@@ -1036,8 +1041,8 @@ void ExecutionControlBase::setup_checkpoint()
    }
 
    // If I announced the save, must initiate federation save
-   if ( save_restore_srvc->is_announce_save() ) {
-      if ( save_restore_srvc->get_save_name().length() ) {
+   if ( save_restore_service->is_announce_save() ) {
+      if ( save_restore_service->get_save_name().length() ) {
          // When user calls start_federation_save, save_name is already set
       } else {
          // When user clicks Dump Chkpnt, we need to set the save_name here
@@ -1080,29 +1085,29 @@ void ExecutionControlBase::setup_checkpoint()
          wstring save_name_ws;
          StringUtilities::to_wstring( save_name_ws, save_name_str );
 
-         save_restore_srvc->set_save_name( save_name_ws );
+         save_restore_service->set_save_name( save_name_ws );
       } // end set save_name
 
       // Don't request a save if another federate has already requested one
-      if ( save_restore_srvc->is_initiate_save_flag() ) {
+      if ( save_restore_service->is_initiate_save_flag() ) {
          // initiate_save_flag becomes false if another save is occurring
-         save_restore_srvc->request_federation_save_status();
-         save_restore_srvc->wait_for_save_status_to_complete();
+         save_restore_service->request_federation_save_status();
+         save_restore_service->wait_for_save_status_to_complete();
 
-         save_restore_srvc->request_federation_save();
+         save_restore_service->request_federation_save();
 
          SleepTimeout print_timer;
          SleepTimeout sleep_timer;
 
          // need to wait for federation to initiate save
-         while ( !save_restore_srvc->is_start_to_save() ) {
+         while ( !save_restore_service->is_start_to_save() ) {
 
             // Check for shutdown.
             check_for_shutdown_with_termination();
 
             sleep_timer.sleep();
 
-            if ( !save_restore_srvc->is_start_to_save() ) {
+            if ( !save_restore_service->is_start_to_save() ) {
 
                // To be more efficient, we get the time once and share it.
                int64_t wallclock_time = sleep_timer.time();
@@ -1128,7 +1133,7 @@ void ExecutionControlBase::setup_checkpoint()
                }
             }
          }
-         save_restore_srvc->set_initiate_save_flag( false );
+         save_restore_service->set_initiate_save_flag( false );
       } else {
          message_publish( MSG_NORMAL, "ExecutionControlBase::setup_checkpoint():%d Federation Save is already in progress!\n",
                           __LINE__ );
@@ -1167,13 +1172,13 @@ void ExecutionControlBase::setup_checkpoint()
 
    // This is a shortcut so that we can enforce that only these federates exist
    // when we restore
-   save_restore_srvc->write_running_feds_file( str_save_label );
+   save_restore_service->write_running_feds_file( str_save_label );
 
-   // Tell the manager to setup the checkpoint data structures.
-   manager->convert_data_before_checkpoint();
+   // Tell the object_service to setup the checkpoint data structures.
+   object_service->convert_data_before_checkpoint();
 
    // Save any synchronization points.
-   save_restore_srvc->convert_sync_pts();
+   save_restore_service->convert_sync_pts();
 }
 
 /*! @brief Federates that did not announce the save, perform a checkpoint. */
@@ -1188,9 +1193,9 @@ void ExecutionControlBase::perform_checkpoint()
    // Dispatch to the ExecutionControl method.
    bool force_checkpoint = perform_save();
 
-   if ( save_restore_srvc->is_start_to_save() || force_checkpoint ) {
+   if ( save_restore_service->is_start_to_save() || force_checkpoint ) {
       // If I announced the save, sim control panel was clicked and invokes the checkpoint
-      if ( !save_restore_srvc->is_announce_save() ) {
+      if ( !save_restore_service->is_announce_save() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_NORMAL, "ExecutionControlBase::perform_checkpoint():%d Federate Save Started\n",
                              __LINE__ );
@@ -1198,7 +1203,7 @@ void ExecutionControlBase::perform_checkpoint()
          // Create the filename from the Federation name and the "save-name".
          // Replace all directory characters with an underscore.
          string save_name_str;
-         StringUtilities::to_string( save_name_str, save_restore_srvc->get_save_name() );
+         StringUtilities::to_string( save_name_str, save_restore_service->get_save_name() );
          string str_save_label = federate->get_federation_name() + "_" + save_name_str;
          for ( size_t i = 0; i < str_save_label.length(); ++i ) {
             if ( str_save_label[i] == '/' ) {
@@ -1231,7 +1236,7 @@ void ExecutionControlBase::post_checkpoint()
       return;
    }
 
-   if ( save_restore_srvc->is_start_to_save() ) {
+   if ( save_restore_service->is_start_to_save() ) {
 
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -1241,7 +1246,7 @@ void ExecutionControlBase::post_checkpoint()
             message_publish( MSG_NORMAL, "ExecutionControlBase::post_checkpoint():%d Federate Save Completed.\n",
                              __LINE__ );
          }
-         save_restore_srvc->set_start_to_save( false );
+         save_restore_service->set_start_to_save( false );
       } catch ( FederateHasNotBegunSave const &e ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::post_checkpoint():%d EXCEPTION: FederateHasNotBegunSave\n",
                           __LINE__ );
@@ -1291,11 +1296,11 @@ void ExecutionControlBase::setup_restore()
                        __LINE__ );
    }
    // Determine if I am the federate that clicked Load Chkpnt on sim control panel
-   save_restore_srvc->set_announce_restore( !save_restore_srvc->is_start_to_restore() );
-   set_freeze_announced( save_restore_srvc->is_announce_restore() );
+   save_restore_service->set_announce_restore( !save_restore_service->is_start_to_restore() );
+   set_freeze_announced( save_restore_service->is_announce_restore() );
 
    // if I announced the restore, must initiate federation restore
-   if ( save_restore_srvc->is_announce_restore() ) {
+   if ( save_restore_service->is_announce_restore() ) {
       string trick_filename;
       string slash_fedname( "/" + federate->get_federation_name() + "_" );
       size_t found;
@@ -1303,7 +1308,7 @@ void ExecutionControlBase::setup_restore()
       // Otherwise set restore_name_str using trick's file name
       trick_filename = checkpoint_get_load_file();
 
-      // Trick memory manager load_checkpoint_file_name already contains correct dir/federation_filename
+      // Trick memory object_service load_checkpoint_file_name already contains correct dir/federation_filename
       // (chosen in sim control panel popup) we need just the filename minus the federation name to initiate restore
       found = trick_filename.rfind( slash_fedname );
       string restore_name_str;
@@ -1316,10 +1321,10 @@ void ExecutionControlBase::setup_restore()
       string str_restore_label = federate->get_federation_name() + "_" + restore_name_str;
 
       // make sure we have a save directory specified
-      save_restore_srvc->check_HLA_save_directory();
+      save_restore_service->check_HLA_save_directory();
 
       // make sure only the required federates are in the federation before we do the restore
-      save_restore_srvc->read_running_feds_file( str_restore_label );
+      save_restore_service->read_running_feds_file( str_restore_label );
 
       string return_string;
       return_string = federate->wait_for_required_federates_to_join(); // sets running_feds_count
@@ -1331,20 +1336,20 @@ void ExecutionControlBase::setup_restore()
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
-      save_restore_srvc->initiate_restore_announce( restore_name_str );
+      save_restore_service->initiate_restore_announce( restore_name_str );
 
       SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
       // need to wait for federation to initiate restore
-      while ( !save_restore_srvc->is_start_to_restore() ) {
+      while ( !save_restore_service->is_start_to_restore() ) {
 
          // Check for shutdown.
          check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
-         if ( !save_restore_srvc->is_start_to_restore() ) {
+         if ( !save_restore_service->is_start_to_restore() ) {
 
             // To be more efficient, we get the time once and share it.
             int64_t wallclock_time = sleep_timer.time();
@@ -1372,7 +1377,7 @@ void ExecutionControlBase::setup_restore()
       }
    }
 
-   save_restore_srvc->set_restore_process( RESTORE_IN_PROGRESS );
+   save_restore_service->set_restore_process( RESTORE_IN_PROGRESS );
 }
 
 /*! @brief Federates that did not announce the restore, perform a restore. */
@@ -1384,9 +1389,9 @@ void ExecutionControlBase::perform_restore()
       return;
    }
 
-   if ( save_restore_srvc->is_start_to_restore() ) {
+   if ( save_restore_service->is_start_to_restore() ) {
       // if I announced the restore, sim control panel was clicked and invokes the load
-      if ( !save_restore_srvc->is_announce_restore() ) {
+      if ( !save_restore_service->is_announce_restore() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_NORMAL, "ExecutionControlBase::perform_restore():%d Federate Restore Started.\n",
                              __LINE__ );
@@ -1395,7 +1400,7 @@ void ExecutionControlBase::perform_restore()
          // Create the filename from the Federation name and the "restore-name".
          // Replace all directory characters with an underscore.
          string restore_name_str;
-         StringUtilities::to_string( restore_name_str, save_restore_srvc->get_restore_name() );
+         StringUtilities::to_string( restore_name_str, save_restore_service->get_restore_name() );
          string str_restore_label = federate->get_federation_name() + "_" + restore_name_str;
          for ( size_t i = 0; i < str_restore_label.length(); ++i ) {
             if ( str_restore_label[i] == '/' ) {
@@ -1406,10 +1411,10 @@ void ExecutionControlBase::perform_restore()
                           __LINE__, str_restore_label.c_str() );
 
          // make sure we have a save directory specified
-         save_restore_srvc->check_HLA_save_directory();
+         save_restore_service->check_HLA_save_directory();
 
          // This will run pre-load-checkpoint jobs, clear memory, read checkpoint file, and run restart jobs
-         load_checkpoint( ( save_restore_srvc->get_HLA_save_directory() + "/" + str_restore_label ).c_str() );
+         load_checkpoint( ( save_restore_service->get_HLA_save_directory() + "/" + str_restore_label ).c_str() );
 
          load_checkpoint_job();
 
@@ -1437,27 +1442,27 @@ void ExecutionControlBase::post_restore()
       return;
    }
 
-   if ( save_restore_srvc->is_start_to_restore() ) {
-      save_restore_srvc->set_restore_process( RESTORE_COMPLETE );
+   if ( save_restore_service->is_start_to_restore() ) {
+      save_restore_service->set_restore_process( RESTORE_COMPLETE );
 
       // Make a copy of restore_process because it is used in the
       // inform_RTI_of_restore_completion() function.
       // (backward compatibility with previous restore process)
-      save_restore_srvc->preserve_restore_process();
+      save_restore_service->preserve_restore_process();
 
-      save_restore_srvc->copy_running_feds_into_known_feds();
+      save_restore_service->copy_running_feds_into_known_feds();
 
       // wait for RTI to inform us that the federation restore has
       // begun before informing the RTI that we are done.
-      save_restore_srvc->wait_for_federation_restore_begun();
+      save_restore_service->wait_for_federation_restore_begun();
 
       // signal RTI that this federate has already been loaded
-      save_restore_srvc->inform_RTI_of_restore_completion();
+      save_restore_service->inform_RTI_of_restore_completion();
 
       // wait until we get a callback to inform us that the federation restore is complete
-      string tStr = save_restore_srvc->wait_for_federation_restore_to_complete();
+      string tStr = save_restore_service->wait_for_federation_restore_to_complete();
       if ( tStr.length() ) {
-         save_restore_srvc->wait_for_federation_restore_failed_callback_to_complete();
+         save_restore_service->wait_for_federation_restore_failed_callback_to_complete();
          ostringstream errmsg;
          errmsg << "TrickExecutionControlBase::post_restore():" << __LINE__
                 << " ERROR: " << tStr << endl;
@@ -1473,25 +1478,24 @@ void ExecutionControlBase::post_restore()
 
       // get us restarted again...
       // reset RTI data to the state it was in when checkpointed
-      manager->reset_mgr_initialized();
-      manager->setup_object_ref_attributes();
-      manager->setup_interaction_ref_attributes();
-      manager->setup_object_RTI_handles();
-      manager->setup_interaction_RTI_handles();
-      manager->set_all_object_instance_handles_by_name();
+      object_service->setup_object_ref_attributes();
+      interaction_service->setup_interaction_ref_attributes();
+      object_service->setup_object_RTI_handles();
+      interaction_service->setup_interaction_RTI_handles();
+      object_service->set_all_object_instance_handles_by_name();
 
-      if ( save_restore_srvc->is_announce_restore() ) {
+      if ( save_restore_service->is_announce_restore() ) {
          federate->set_all_federate_MOM_instance_handles_by_name();
          federate->restore_federate_handles_from_MOM();
       }
 
       // Restore interactions and sync points
-      manager->restore_interactions_after_checkpoint();
+      interaction_service->restore_data_after_checkpoint();
       reinstate_logged_sync_pts();
 
       // Restore ownership transfer data for all objects
-      Object *objects   = manager->get_objects();
-      int     obj_count = manager->get_object_count();
+      Object *objects   = object_service->get_objects();
+      int     obj_count = object_service->get_object_count();
       for ( int i = 0; i < obj_count; ++i ) {
          objects[i].restore_data_after_checkpoint();
       }
@@ -1501,7 +1505,7 @@ void ExecutionControlBase::post_restore()
       try {
          HLAinteger64Time time;
          federate->get_RTI_ambassador()->queryLogicalTime( time );
-         federate->time_management_srvc.set_granted_time( time );
+         federate->time_management_service.set_granted_time( time );
       } catch ( FederateNotExecutionMember const &e ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::post_restore():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__ );
@@ -1520,13 +1524,13 @@ void ExecutionControlBase::post_restore()
                           __LINE__ );
       }
 
+      federate->time_management_service.set_requested_time_to_granted_time();
+
+      save_restore_service->federation_restored();
+
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      federate->time_management_srvc.set_requested_time_to_granted_time();
-
-      save_restore_srvc->federation_restored();
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::post_restore():%d Federate Restart Completed.\n",

@@ -32,7 +32,7 @@
 
 // TrickHLA include files.
 ##include "TrickHLA/DebugHandler.hh"
-##include "TrickHLA/Manager.hh"
+##include "TrickHLA/Federate.hh"
 
 // SpaceFOM include files.
 ##include "SpaceFOM/ExecutionControl.hh"

@@ -29,7 +29,8 @@
 ##include "utils/ref_frames/include/ref_frame_state.hh"
 
 // TrickHLA include files.
-##include "TrickHLA/Manager.hh"
+##include "TrickHLA/Federate.hh"
+##include "TrickHLA/ObjectServices.hh"
 
 // SpaceFOM include files.
 ##include "SpaceFOM/ExecutionControl.hh"
@@ -160,9 +161,9 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
       std::ostringstream errmsg;
 
       // Check for objects allocation.
-      if ( (thla_federate.get_manager()->obj_count == 0) || (thla_federate.get_manager()->objects == NULL) ) {
+      if ( (thla_federate.get_object_service()->obj_count == 0) || (thla_federate.get_object_service()->objects == NULL) ) {
          errmsg << "JEODRefFrameTreeSimObject::initialize():" << __LINE__
-                << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
+                << " ERROR: The TrickHLA::ObjectServices Object array has not been allocated!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }

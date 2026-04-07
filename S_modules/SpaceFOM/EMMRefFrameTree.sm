@@ -30,7 +30,7 @@
 
 // TrickHLA include files.
 ##include "TrickHLA/DebugHandler.hh"
-##include "TrickHLA/Manager.hh"
+##include "TrickHLA/ObjectServices.hh"
 
 // SpaceFOM include files.
 ##include "SpaceFOM/ExecutionControl.hh"
@@ -112,14 +112,14 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
    // called in the SpaceFOMRefFrameTreeBaseSimObject base class.
    void initialize()
    {
-      // Get the object manager reference from the Federate.
-      TrickHLA::Manager * obj_manager = thla_federate.get_manager();
+      // Get the object reference from the Federate.
+      TrickHLA::ObjectServices * obj_service = thla_federate.get_object_service();
       
       // Check for objects allocation.
-      if ( (obj_manager->obj_count == 0) || (obj_manager->objects == NULL) ) {
+      if ( (obj_service->obj_count == 0) || (obj_service->objects == NULL) ) {
          std::ostringstream errmsg;
          errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
-                << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
+                << " ERROR: The TrickHLA::ObjectServices Object array has not been allocated!\n";
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }

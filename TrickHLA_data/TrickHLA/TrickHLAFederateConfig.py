@@ -24,13 +24,14 @@ import trick
 class TrickHLAFederateConfig( object ):
 
    # Ties to TrickHLA from simulation.
-   federate    = None
-   manager     = None
-   control     = None
-   config      = None
-   enabled     = True
-   sim_config  = None
-   initialized = False
+   federate         = None
+   object_srvc      = None
+   interaction_srvc = None
+   control          = None
+   config           = None
+   enabled          = True
+   sim_config       = None
+   initialized      = False
 
    # Least Common Time Step, in seconds.
    lcts = 1.0
@@ -73,7 +74,8 @@ class TrickHLAFederateConfig( object ):
       self.control = thla_control
       self.config = thla_config
       
-      self.manager = thla_federate.get_manager()
+      self.object_srvc = thla_federate.get_object_service()
+      self.interaction_srvc = thla_federate.get_interaction_service()
 
       self.set_federation_name( thla_federation_name )
       self.set_federate_name( thla_federate_name )
@@ -106,7 +108,7 @@ class TrickHLAFederateConfig( object ):
       # or if they are being allocated and configured in the input file.
       # This is an all-or-nothing choice.  All objects are either configured
       # in default data or here in the input file.
-      if self.manager.obj_count == 0:
+      if self.object_srvc.obj_count == 0:
 
          # Note: The federate objects are added to a list in a simulation
          # specific routine. This code assumes that everything has been set
@@ -117,20 +119,20 @@ class TrickHLAFederateConfig( object ):
          # without having to manage array size.
 
          # Allocate the federate's federation object list.
-         self.manager.obj_count = len( self.fed_objects )
-         if self.manager.obj_count:
-            self.manager.objects = trick.alloc_type( self.manager.obj_count,
-                                                     'TrickHLA::Object' )
+         self.object_srvc.obj_count = len( self.fed_objects )
+         if self.object_srvc.obj_count:
+            self.object_srvc.objects = trick.alloc_type( self.object_srvc.obj_count,
+                                                         'TrickHLA::Object' )
 
          # Loop through the federation objects and initialize them.
-         for indx in range( 0, self.manager.obj_count ):
-            self.fed_objects[indx].initialize( self.manager.objects[indx] )
+         for indx in range( 0, self.object_srvc.obj_count ):
+            self.fed_objects[indx].initialize( self.object_srvc.objects[indx] )
 
       # Check to see if the interactions are pre-configured in default data jobs
       # or if they are being allocated and configured in the input file.
       # This is an all-or-nothing choice.  All interaction are either configured
       # in default data or here in the input file.
-      if self.manager.inter_count == 0:
+      if self.interaction_srvc.inter_count == 0:
 
          # Note: The federate interactions are added to a list in a simulation
          # specific routine. This code assumes that everything has been set
@@ -142,14 +144,14 @@ class TrickHLAFederateConfig( object ):
          # array size.
 
          # Allocate the federate's federation interactions list.
-         self.manager.inter_count = len( self.fed_interactions )
-         if self.manager.inter_count:
-            self.manager.interactions = trick.alloc_type( self.manager.inter_count,
-                                                          'TrickHLA::Interaction' )
+         self.interaction_srvc.inter_count = len( self.fed_interactions )
+         if self.interaction_srvc.inter_count:
+            self.interaction_srvc.interactions = trick.alloc_type( self.interaction_srvc.inter_count,
+                                                                   'TrickHLA::Interaction' )
 
          # Loop through the federation interactions and initialize them.
-         for indx in range( 0, self.manager.inter_count ):
-            self.fed_interactions[indx].initialize( self.manager.interactions[indx] )
+         for indx in range( 0, self.interaction_srvc.inter_count ):
+            self.fed_interactions[indx].initialize( self.interaction_srvc.interactions[indx] )
 
       # Loop through the known federates and add them.
       if len( self.known_federates ):

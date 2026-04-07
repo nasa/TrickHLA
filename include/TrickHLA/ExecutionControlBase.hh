@@ -23,7 +23,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/InteractionServices.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
@@ -77,12 +78,13 @@ namespace TrickHLA
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
-class Federate;
-class Manager;
-class TimeManagementServices;
-class Object;
 class ExecutionConfigurationBase;
+class Federate;
+class InteractionServices;
+class ObjectServices;
+class Object;
 class SaveRestoreServices;
+class TimeManagementServices;
 
 class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 {
@@ -136,7 +138,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    //
    /*! @brief Setup the federate wide references in the ExecutionControl class
     * instance.
-    * @param fed Associated federate manager class instance. */
+    * @param fed Associated federate object_service class instance. */
    virtual void setup( TrickHLA::Federate &fed );
    /*! @brief Initialize the TrickHLA::ExecutionControlBase object instance. */
    virtual void initialize();
@@ -172,8 +174,8 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    virtual bool object_instance_name_reservation_failed( std::wstring const &obj_instance_name );
    /*! Setup the ExecutionControl objects HLA RTI handles. */
    virtual void register_objects_with_RTI();
-   /*! @brief Add a TrickHLA::Object to the manager object map.
-    *  @param object TrickHLA::Object to add to the manager object map. */
+   /*! @brief Add a TrickHLA::Object to the object_service object map.
+    *  @param object TrickHLA::Object to add to the object_service object map. */
    virtual void add_object_to_map( Object *object );
    /*! Setup the ExecutionControl interactions HLA RTI handles. */
    virtual void register_interactions_with_RTI()
@@ -614,11 +616,11 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    {
       return federate;
    }
-   /*! @brief Get the reference to the associated TrickHLA::Manager.
-    *  @return Pointer to the associated TrickHLA::Manager. */
-   virtual TrickHLA::Manager *get_manager()
+   /*! @brief Get the reference to the associated TrickHLA::ObjectServices.
+    *  @return Pointer to the associated TrickHLA::ObjectServices. */
+   virtual TrickHLA::ObjectServices *get_object_services()
    {
-      return manager;
+      return object_service;
    }
    /*! @brief Get the reference to the associated TrickHLA::ExecutionConfigurationBase object.
     *  @param exec_config Pointer to the associated TrickHLA::ExecutionConfigurationBase object. */
@@ -777,9 +779,10 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.
 
    // Shortcuts to associated TrickHLA management and control objects.
-   TrickHLA::Manager                *manager;              ///< @trick_io{**} Associated manager.
-   TrickHLA::TimeManagementServices *time_management_srvc; ///< @trick_io{**} Associated manager.
-   TrickHLA::SaveRestoreServices    *save_restore_srvc;    ///< @trick_io{**} Associated Save & Restore service.
+   TrickHLA::ObjectServices         *object_service;          ///< @trick_io{**} Associated ObjectServices.
+   TrickHLA::TimeManagementServices *time_management_service; ///< @trick_io{**} Associated time management services.
+   TrickHLA::SaveRestoreServices    *save_restore_service;    ///< @trick_io{**} Associated Save & Restore service.
+   TrickHLA::InteractionServices    *interaction_service;     ///< @trick_io{**} Associated Interaction service.
 
   private:
    // Do not allow the copy constructor.

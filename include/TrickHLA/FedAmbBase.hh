@@ -19,18 +19,15 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/FedAmb.cpp}
+@trick_link_dependency{../../source/TrickHLA/FedAmbBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/InteractionServices.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectServices.cpp}
+@trick_link_dependency{../../source/TrickHLA/SaveRestoreServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
-@rev_entry{DMSO Programmer, DMSO, HLA, Mar 1998, --, HelloWorld Federate Ambassador.}
-@rev_entry{Edwin Z. Crues, Titan Systems Corp., DIS, Feb 2002, --, HLA Ball Sim.}
-@rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2025, --, Add HLA 4 support}
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2025, --, Refactored into base class.}
 @revs_end
 
@@ -53,7 +50,8 @@ namespace TrickHLA
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
-class Manager;
+class InteractionServices;
+class ObjectServices;
 class SaveRestoreServices;
 
 class FedAmbBase
@@ -71,15 +69,7 @@ class FedAmbBase
   public:
    /*! @brief Default constructor for the TrickHLA FedAmb class.
     *  @param fed Associated Federate instance. */
-   explicit FedAmbBase( Federate &fed )
-      : federate( &fed ),
-        manager( NULL ),
-        save_restore_srvc( NULL ),
-        federation_restore_status_response_context_switch( false ), // process, not echo.
-        federation_restored_rebuild_federate_handle_set( false )
-   {
-      return;
-   }
+   explicit FedAmbBase( Federate &fed );
 
    /*! @brief Destructor for the TrickHLA FedAmb class. */
    virtual ~FedAmbBase()
@@ -87,47 +77,41 @@ class FedAmbBase
       return;
    }
 
-   /*! @brief Initialize the TrickHLA Federate Ambassador instance for this
-    *  Federation Execution. */
-   virtual void initialize() = 0;
-
-   Manager *get_manager()
-   {
-      return this->manager;
-   }
-
    /*! @brief Switch to echo (versus process) in a federationRestoreStatusResponse() callback... */
    void set_federation_restore_status_response_to_echo()
    {
-      federation_restore_status_response_context_switch = true;
+      this->federation_restore_status_response_context_switch = true;
    }
    /*! @brief Switch to process (versus echo) in a federationRestoreStatusResponse() callback... */
    void set_federation_restore_status_response_to_process()
    {
-      federation_restore_status_response_context_switch = false;
+      this->federation_restore_status_response_context_switch = false;
    }
 
    /*! @brief Enable the option to rebuild the federate handle set after a federation restore. */
    void set_federation_restored_rebuild_federate_handle_set()
    {
-      federation_restored_rebuild_federate_handle_set = true;
+      this->federation_restored_rebuild_federate_handle_set = true;
    }
    /*! @brief Disable the option to rebuild the federate handle set after a federation restore. */
    void reset_federation_restored_rebuild_federate_handle_set()
    {
-      federation_restored_rebuild_federate_handle_set = false;
+      this->federation_restored_rebuild_federate_handle_set = false;
    }
 
   protected:
-   Federate            *federate;          ///< @trick_units{--} Associated TrickHLA::Federate.
-   Manager             *manager;           ///< @trick_units{--} Associated TrickHLA::Manager.
-   SaveRestoreServices *save_restore_srvc; ///< @trick_units{--} Associated TrickHLA::SaveRestoreServices.
+   Federate            *federate;             ///< @trick_units{--} Associated TrickHLA::Federate.
+   ObjectServices      *object_service;       ///< @trick_units{--} Associated TrickHLA::ObjectServices.
+   InteractionServices *interaction_service;  ///< @trick_units{--} Associated TrickHLA::InteractionServices.
+   SaveRestoreServices *save_restore_service; ///< @trick_units{--} Associated TrickHLA::SaveRestoreServices.
 
    bool federation_restore_status_response_context_switch;
    bool federation_restored_rebuild_federate_handle_set;
 
   private:
    // Do not allow the copy constructor or assignment operator.
+   /*! @brief Don't allow default constructor. */
+   FedAmbBase();
    /*! @brief Copy constructor for FedAmb class.
     *  @details This constructor is private to prevent inadvertent copies. */
    FedAmbBase( FedAmbBase const &rhs );

@@ -110,181 +110,181 @@ THLA.simple_sim_config.run_duration = run_duration
 
 
 # TrickHLA Interactions and Parameters.
-THLA.manager.inter_count  = 1
-THLA.manager.interactions = trick.sim_services.alloc_type( THLA.manager.inter_count, 'TrickHLA::Interaction' )
+THLA.federate.get_interaction_service().inter_count  = 1
+THLA.federate.get_interaction_service().interactions = trick.sim_services.alloc_type( THLA.federate.get_interaction_service().inter_count, 'TrickHLA::Interaction' )
 
-THLA.manager.interactions[0].FOM_name    = 'Communication'
-THLA.manager.interactions[0].publish     = False
-THLA.manager.interactions[0].subscribe   = True
-THLA.manager.interactions[0].handler     = P.interaction_handler
-THLA.manager.interactions[0].param_count = 3
-THLA.manager.interactions[0].parameters  = trick.sim_services.alloc_type( THLA.manager.interactions[0].param_count, 'TrickHLA::Parameter' )
+THLA.federate.get_interaction_service().interactions[0].FOM_name    = 'Communication'
+THLA.federate.get_interaction_service().interactions[0].publish     = False
+THLA.federate.get_interaction_service().interactions[0].subscribe   = True
+THLA.federate.get_interaction_service().interactions[0].handler     = P.interaction_handler
+THLA.federate.get_interaction_service().interactions[0].param_count = 3
+THLA.federate.get_interaction_service().interactions[0].parameters  = trick.sim_services.alloc_type( THLA.federate.get_interaction_service().interactions[0].param_count, 'TrickHLA::Parameter' )
 
-THLA.manager.interactions[0].parameters[0].FOM_name     = 'Message'
-THLA.manager.interactions[0].parameters[0].trick_name   = 'P.interaction_handler.message'
-THLA.manager.interactions[0].parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
+THLA.federate.get_interaction_service().interactions[0].parameters[0].FOM_name     = 'Message'
+THLA.federate.get_interaction_service().interactions[0].parameters[0].trick_name   = 'P.interaction_handler.message'
+THLA.federate.get_interaction_service().interactions[0].parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
 
-THLA.manager.interactions[0].parameters[1].FOM_name     = 'time'
-THLA.manager.interactions[0].parameters[1].trick_name   = 'P.interaction_handler.time'
-THLA.manager.interactions[0].parameters[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_interaction_service().interactions[0].parameters[1].FOM_name     = 'time'
+THLA.federate.get_interaction_service().interactions[0].parameters[1].trick_name   = 'P.interaction_handler.time'
+THLA.federate.get_interaction_service().interactions[0].parameters[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.interactions[0].parameters[2].FOM_name     = 'year'
-THLA.manager.interactions[0].parameters[2].trick_name   = 'P.interaction_handler.year'
-THLA.manager.interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_interaction_service().interactions[0].parameters[2].FOM_name     = 'year'
+THLA.federate.get_interaction_service().interactions[0].parameters[2].trick_name   = 'P.interaction_handler.year'
+THLA.federate.get_interaction_service().interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 
 # The Federate has two objects, it publishes one and subscribes to another.
-THLA.manager.obj_count = 2
-THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 'TrickHLA::Object' )
+THLA.federate.get_object_service().obj_count = 2
+THLA.federate.get_object_service().objects   = trick.sim_services.alloc_type( THLA.federate.get_object_service().obj_count, 'TrickHLA::Object' )
 
 
 # Configure the object this federate subscribes to but will not create an
 # HLA instance for.
-THLA.manager.objects[0].FOM_name            = 'Test'
-THLA.manager.objects[0].name                = 'A-side-Federate.Sine'
-THLA.manager.objects[0].create_HLA_instance = False
-THLA.manager.objects[0].packing             = A.packing
-THLA.manager.objects[0].lag_comp            = A.lag_compensation
-THLA.manager.objects[0].lag_comp_type       = trick.LAG_COMPENSATION_NONE
-THLA.manager.objects[0].conditional         = A.conditional
-THLA.manager.objects[0].deleted             = A.obj_deleted
-THLA.manager.objects[0].attr_count          = 8
-THLA.manager.objects[0].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[0].attr_count, 'TrickHLA::Attribute' )
+THLA.federate.get_object_service().objects[0].FOM_name            = 'Test'
+THLA.federate.get_object_service().objects[0].name                = 'A-side-Federate.Sine'
+THLA.federate.get_object_service().objects[0].create_HLA_instance = False
+THLA.federate.get_object_service().objects[0].packing             = A.packing
+THLA.federate.get_object_service().objects[0].lag_comp            = A.lag_compensation
+THLA.federate.get_object_service().objects[0].lag_comp_type       = trick.LAG_COMPENSATION_NONE
+THLA.federate.get_object_service().objects[0].conditional         = A.conditional
+THLA.federate.get_object_service().objects[0].deleted             = A.obj_deleted
+THLA.federate.get_object_service().objects[0].attr_count          = 8
+THLA.federate.get_object_service().objects[0].attributes          = trick.sim_services.alloc_type( THLA.federate.get_object_service().objects[0].attr_count, 'TrickHLA::Attribute' )
 
-THLA.manager.objects[0].attributes[0].FOM_name        = 'Time'
-THLA.manager.objects[0].attributes[0].trick_name      = 'A.packing.time'
-THLA.manager.objects[0].attributes[0].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[0].attributes[0].publish         = True
-THLA.manager.objects[0].attributes[0].subscribe       = True
-THLA.manager.objects[0].attributes[0].locally_owned   = False
-THLA.manager.objects[0].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[0].attributes[0].FOM_name        = 'Time'
+THLA.federate.get_object_service().objects[0].attributes[0].trick_name      = 'A.packing.time'
+THLA.federate.get_object_service().objects[0].attributes[0].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[0].attributes[0].publish         = True
+THLA.federate.get_object_service().objects[0].attributes[0].subscribe       = True
+THLA.federate.get_object_service().objects[0].attributes[0].locally_owned   = False
+THLA.federate.get_object_service().objects[0].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[0].attributes[1].FOM_name        = 'Value'
-THLA.manager.objects[0].attributes[1].trick_name      = 'A.packing.value'
-THLA.manager.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-THLA.manager.objects[0].attributes[1].publish         = True
-THLA.manager.objects[0].attributes[1].subscribe       = True
-THLA.manager.objects[0].attributes[1].locally_owned   = False
-THLA.manager.objects[0].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[0].attributes[1].FOM_name        = 'Value'
+THLA.federate.get_object_service().objects[0].attributes[1].trick_name      = 'A.packing.value'
+THLA.federate.get_object_service().objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[0].attributes[1].publish         = True
+THLA.federate.get_object_service().objects[0].attributes[1].subscribe       = True
+THLA.federate.get_object_service().objects[0].attributes[1].locally_owned   = False
+THLA.federate.get_object_service().objects[0].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[0].attributes[2].FOM_name        = 'dvdt'
-THLA.manager.objects[0].attributes[2].trick_name      = 'A.packing.dvdt'
-THLA.manager.objects[0].attributes[2].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[0].attributes[2].publish         = True
-THLA.manager.objects[0].attributes[2].subscribe       = True
-THLA.manager.objects[0].attributes[2].locally_owned   = False
-THLA.manager.objects[0].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[0].attributes[2].FOM_name        = 'dvdt'
+THLA.federate.get_object_service().objects[0].attributes[2].trick_name      = 'A.packing.dvdt'
+THLA.federate.get_object_service().objects[0].attributes[2].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[0].attributes[2].publish         = True
+THLA.federate.get_object_service().objects[0].attributes[2].subscribe       = True
+THLA.federate.get_object_service().objects[0].attributes[2].locally_owned   = False
+THLA.federate.get_object_service().objects[0].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[0].attributes[3].FOM_name        = 'Phase'
-THLA.manager.objects[0].attributes[3].trick_name      = 'A.packing.phase_deg' # using packed data instead of 'A.sim_data.phase'
-THLA.manager.objects[0].attributes[3].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[0].attributes[3].publish         = True
-THLA.manager.objects[0].attributes[3].subscribe       = True
-THLA.manager.objects[0].attributes[3].locally_owned   = False
-THLA.manager.objects[0].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[0].attributes[3].FOM_name        = 'Phase'
+THLA.federate.get_object_service().objects[0].attributes[3].trick_name      = 'A.packing.phase_deg' # using packed data instead of 'A.sim_data.phase'
+THLA.federate.get_object_service().objects[0].attributes[3].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[0].attributes[3].publish         = True
+THLA.federate.get_object_service().objects[0].attributes[3].subscribe       = True
+THLA.federate.get_object_service().objects[0].attributes[3].locally_owned   = False
+THLA.federate.get_object_service().objects[0].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[0].attributes[4].FOM_name        = 'Frequency'
-THLA.manager.objects[0].attributes[4].trick_name      = 'A.packing.freq'
-THLA.manager.objects[0].attributes[4].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[0].attributes[4].publish         = True
-THLA.manager.objects[0].attributes[4].subscribe       = True
-THLA.manager.objects[0].attributes[4].locally_owned   = False
-THLA.manager.objects[0].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[0].attributes[4].FOM_name        = 'Frequency'
+THLA.federate.get_object_service().objects[0].attributes[4].trick_name      = 'A.packing.freq'
+THLA.federate.get_object_service().objects[0].attributes[4].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[0].attributes[4].publish         = True
+THLA.federate.get_object_service().objects[0].attributes[4].subscribe       = True
+THLA.federate.get_object_service().objects[0].attributes[4].locally_owned   = False
+THLA.federate.get_object_service().objects[0].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[0].attributes[5].FOM_name        = 'Amplitude'
-THLA.manager.objects[0].attributes[5].trick_name      = 'A.packing.amp'
-THLA.manager.objects[0].attributes[5].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[0].attributes[5].publish         = True
-THLA.manager.objects[0].attributes[5].subscribe       = True
-THLA.manager.objects[0].attributes[5].locally_owned   = False
-THLA.manager.objects[0].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[0].attributes[5].FOM_name        = 'Amplitude'
+THLA.federate.get_object_service().objects[0].attributes[5].trick_name      = 'A.packing.amp'
+THLA.federate.get_object_service().objects[0].attributes[5].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[0].attributes[5].publish         = True
+THLA.federate.get_object_service().objects[0].attributes[5].subscribe       = True
+THLA.federate.get_object_service().objects[0].attributes[5].locally_owned   = False
+THLA.federate.get_object_service().objects[0].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[0].attributes[6].FOM_name        = 'Tolerance'
-THLA.manager.objects[0].attributes[6].trick_name      = 'A.packing.tol'
-THLA.manager.objects[0].attributes[6].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[0].attributes[6].publish         = True
-THLA.manager.objects[0].attributes[6].subscribe       = True
-THLA.manager.objects[0].attributes[6].locally_owned   = False
-THLA.manager.objects[0].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[0].attributes[6].FOM_name        = 'Tolerance'
+THLA.federate.get_object_service().objects[0].attributes[6].trick_name      = 'A.packing.tol'
+THLA.federate.get_object_service().objects[0].attributes[6].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[0].attributes[6].publish         = True
+THLA.federate.get_object_service().objects[0].attributes[6].subscribe       = True
+THLA.federate.get_object_service().objects[0].attributes[6].locally_owned   = False
+THLA.federate.get_object_service().objects[0].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[0].attributes[7].FOM_name        = 'Name'
-THLA.manager.objects[0].attributes[7].trick_name      = 'A.packing.name'
-THLA.manager.objects[0].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-THLA.manager.objects[0].attributes[7].publish         = True
-THLA.manager.objects[0].attributes[7].subscribe       = True
-THLA.manager.objects[0].attributes[7].locally_owned   = False
-THLA.manager.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+THLA.federate.get_object_service().objects[0].attributes[7].FOM_name        = 'Name'
+THLA.federate.get_object_service().objects[0].attributes[7].trick_name      = 'A.packing.name'
+THLA.federate.get_object_service().objects[0].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[0].attributes[7].publish         = True
+THLA.federate.get_object_service().objects[0].attributes[7].subscribe       = True
+THLA.federate.get_object_service().objects[0].attributes[7].locally_owned   = False
+THLA.federate.get_object_service().objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
 
 
 # Configure the object this federate will create an HLA instance and
 # publish data for.
-THLA.manager.objects[1].FOM_name            = 'Test'
-THLA.manager.objects[1].name                = 'P-side-Federate.Sine'
-THLA.manager.objects[1].create_HLA_instance = True
-THLA.manager.objects[1].packing             = P.packing
-THLA.manager.objects[1].lag_comp            = P.lag_compensation
-THLA.manager.objects[1].lag_comp_type       = trick.LAG_COMPENSATION_NONE
-THLA.manager.objects[1].conditional         = P.conditional
-THLA.manager.objects[1].deleted             = P.obj_deleted
-THLA.manager.objects[1].attr_count          = 8
-THLA.manager.objects[1].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[1].attr_count, 'TrickHLA::Attribute' )
+THLA.federate.get_object_service().objects[1].FOM_name            = 'Test'
+THLA.federate.get_object_service().objects[1].name                = 'P-side-Federate.Sine'
+THLA.federate.get_object_service().objects[1].create_HLA_instance = True
+THLA.federate.get_object_service().objects[1].packing             = P.packing
+THLA.federate.get_object_service().objects[1].lag_comp            = P.lag_compensation
+THLA.federate.get_object_service().objects[1].lag_comp_type       = trick.LAG_COMPENSATION_NONE
+THLA.federate.get_object_service().objects[1].conditional         = P.conditional
+THLA.federate.get_object_service().objects[1].deleted             = P.obj_deleted
+THLA.federate.get_object_service().objects[1].attr_count          = 8
+THLA.federate.get_object_service().objects[1].attributes          = trick.sim_services.alloc_type( THLA.federate.get_object_service().objects[1].attr_count, 'TrickHLA::Attribute' )
 
-THLA.manager.objects[1].attributes[0].FOM_name        = 'Time'
-THLA.manager.objects[1].attributes[0].trick_name      = 'P.packing.time'
-THLA.manager.objects[1].attributes[0].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[1].attributes[0].publish         = True
-THLA.manager.objects[1].attributes[0].locally_owned   = True
-THLA.manager.objects[1].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[1].attributes[0].FOM_name        = 'Time'
+THLA.federate.get_object_service().objects[1].attributes[0].trick_name      = 'P.packing.time'
+THLA.federate.get_object_service().objects[1].attributes[0].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[1].attributes[0].publish         = True
+THLA.federate.get_object_service().objects[1].attributes[0].locally_owned   = True
+THLA.federate.get_object_service().objects[1].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[1].attributes[1].FOM_name        = 'Value'
-THLA.manager.objects[1].attributes[1].trick_name      = 'P.packing.value'
-THLA.manager.objects[1].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-THLA.manager.objects[1].attributes[1].publish         = True
-THLA.manager.objects[1].attributes[1].subscribe       = True
-THLA.manager.objects[1].attributes[1].locally_owned   = True
-THLA.manager.objects[1].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[1].attributes[1].FOM_name        = 'Value'
+THLA.federate.get_object_service().objects[1].attributes[1].trick_name      = 'P.packing.value'
+THLA.federate.get_object_service().objects[1].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[1].attributes[1].publish         = True
+THLA.federate.get_object_service().objects[1].attributes[1].subscribe       = True
+THLA.federate.get_object_service().objects[1].attributes[1].locally_owned   = True
+THLA.federate.get_object_service().objects[1].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[1].attributes[2].FOM_name        = 'dvdt'
-THLA.manager.objects[1].attributes[2].trick_name      = 'P.packing.dvdt'
-THLA.manager.objects[1].attributes[2].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[1].attributes[2].publish         = True
-THLA.manager.objects[1].attributes[2].locally_owned   = True
-THLA.manager.objects[1].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[1].attributes[2].FOM_name        = 'dvdt'
+THLA.federate.get_object_service().objects[1].attributes[2].trick_name      = 'P.packing.dvdt'
+THLA.federate.get_object_service().objects[1].attributes[2].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[1].attributes[2].publish         = True
+THLA.federate.get_object_service().objects[1].attributes[2].locally_owned   = True
+THLA.federate.get_object_service().objects[1].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[1].attributes[3].FOM_name        = 'Phase'
-THLA.manager.objects[1].attributes[3].trick_name      = 'P.packing.phase_deg' # using packed data instead of 'P.sim_data.phase'
-THLA.manager.objects[1].attributes[3].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[1].attributes[3].publish         = True
-THLA.manager.objects[1].attributes[3].locally_owned   = True
-THLA.manager.objects[1].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[1].attributes[3].FOM_name        = 'Phase'
+THLA.federate.get_object_service().objects[1].attributes[3].trick_name      = 'P.packing.phase_deg' # using packed data instead of 'P.sim_data.phase'
+THLA.federate.get_object_service().objects[1].attributes[3].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[1].attributes[3].publish         = True
+THLA.federate.get_object_service().objects[1].attributes[3].locally_owned   = True
+THLA.federate.get_object_service().objects[1].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[1].attributes[4].FOM_name        = 'Frequency'
-THLA.manager.objects[1].attributes[4].trick_name      = 'P.packing.freq'
-THLA.manager.objects[1].attributes[4].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[1].attributes[4].publish         = True
-THLA.manager.objects[1].attributes[4].locally_owned   = True
-THLA.manager.objects[1].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[1].attributes[4].FOM_name        = 'Frequency'
+THLA.federate.get_object_service().objects[1].attributes[4].trick_name      = 'P.packing.freq'
+THLA.federate.get_object_service().objects[1].attributes[4].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[1].attributes[4].publish         = True
+THLA.federate.get_object_service().objects[1].attributes[4].locally_owned   = True
+THLA.federate.get_object_service().objects[1].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[1].attributes[5].FOM_name        = 'Amplitude'
-THLA.manager.objects[1].attributes[5].trick_name      = 'P.packing.amp'
-THLA.manager.objects[1].attributes[5].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[1].attributes[5].publish         = True
-THLA.manager.objects[1].attributes[5].locally_owned   = True
-THLA.manager.objects[1].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[1].attributes[5].FOM_name        = 'Amplitude'
+THLA.federate.get_object_service().objects[1].attributes[5].trick_name      = 'P.packing.amp'
+THLA.federate.get_object_service().objects[1].attributes[5].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[1].attributes[5].publish         = True
+THLA.federate.get_object_service().objects[1].attributes[5].locally_owned   = True
+THLA.federate.get_object_service().objects[1].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[1].attributes[6].FOM_name        = 'Tolerance'
-THLA.manager.objects[1].attributes[6].trick_name      = 'P.packing.tol'
-THLA.manager.objects[1].attributes[6].config          = trick.CONFIG_CYCLIC
-THLA.manager.objects[1].attributes[6].publish         = True
-THLA.manager.objects[1].attributes[6].locally_owned   = True
-THLA.manager.objects[1].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+THLA.federate.get_object_service().objects[1].attributes[6].FOM_name        = 'Tolerance'
+THLA.federate.get_object_service().objects[1].attributes[6].trick_name      = 'P.packing.tol'
+THLA.federate.get_object_service().objects[1].attributes[6].config          = trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[1].attributes[6].publish         = True
+THLA.federate.get_object_service().objects[1].attributes[6].locally_owned   = True
+THLA.federate.get_object_service().objects[1].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.manager.objects[1].attributes[7].FOM_name        = 'Name'
-THLA.manager.objects[1].attributes[7].trick_name      = 'P.packing.name'
-THLA.manager.objects[1].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-THLA.manager.objects[1].attributes[7].publish         = True
-THLA.manager.objects[1].attributes[7].locally_owned   = True
-THLA.manager.objects[1].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+THLA.federate.get_object_service().objects[1].attributes[7].FOM_name        = 'Name'
+THLA.federate.get_object_service().objects[1].attributes[7].trick_name      = 'P.packing.name'
+THLA.federate.get_object_service().objects[1].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+THLA.federate.get_object_service().objects[1].attributes[7].publish         = True
+THLA.federate.get_object_service().objects[1].attributes[7].locally_owned   = True
+THLA.federate.get_object_service().objects[1].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
 
 #---------------------------------------------
 # Set up simulation termination time.

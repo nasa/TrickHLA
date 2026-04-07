@@ -36,7 +36,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -88,10 +88,6 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
    explicit FedAmb( Federate &fed );
    /*! @brief Destructor for the TrickHLA FedAmb class. */
    virtual ~FedAmb();
-
-   /*! @brief Initialize the TrickHLA Federate Ambassador instance for this
-    *  Federation Execution. */
-   virtual void initialize();
 
    // *****************************************************************
    // The following methods fill out the required virtual methods of
@@ -461,6 +457,8 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
 
   private:
    // Do not allow the copy constructor or assignment operator.
+   /*! @brief Do not allow the default constructor. */
+   FedAmb();
    /*! @brief Copy constructor for FedAmb class.
     *  @details This constructor is private to prevent inadvertent copies. */
    FedAmb( FedAmb const &rhs );

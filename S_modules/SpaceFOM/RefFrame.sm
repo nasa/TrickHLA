@@ -138,7 +138,7 @@ class SpaceFOMRefFrameSimObject : public TrickHLAObjectBaseSimObject {
 
   protected:
    
-   // Reference to the frame tree manager.
+   // Reference to the frame tree.
    SpaceFOM::RefFrameTree & frame_tree;
 
   private:

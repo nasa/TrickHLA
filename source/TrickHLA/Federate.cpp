@@ -19,7 +19,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{FedAmb.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Manager.cpp}
+@trick_link_dependency{InteractionServices.cpp}
+@trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{SaveRestoreServices.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/TimeManagementServices.cpp}
@@ -67,9 +68,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/KnownFederate.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
@@ -165,9 +167,10 @@ Federate::Federate()
      joined_federate_handles(),
      joined_federate_names(),
      federate_ambassador( *this ),
-     time_management_srvc( *this ),
-     manager( *this ),
-     save_restore_srvc( *this ),
+     time_management_service( *this ),
+     object_service( *this ),
+     save_restore_service( *this ),
+     interaction_service( *this ),
      execution_control( NULL ),
      execution_config( NULL )
 #if defined( IEEE_1516_2010 )
@@ -208,7 +211,7 @@ Federate::~Federate()
    MOM_HLAfederate_instance_name_map.clear();
 
    // Make sure we destroy the mutex.
-   time_management_srvc.time_adv_state_mutex.destroy();
+   time_management_service.time_adv_state_mutex.destroy();
    joined_federate_mutex.destroy();
 }
 
@@ -280,12 +283,10 @@ void Federate::setup(
    this->execution_config = &federate_execution_config;
 
    // Register the ExecutionControl instance with the TrickHLA::SaveRestoreServices instance.
-   this->save_restore_srvc.execution_control = &federate_execution_control;
+   this->save_restore_service.execution_control = &federate_execution_control;
 
    // Set up the TrickHLA::ExecutionControl instance.
    this->execution_control->setup( *this );
-
-   return;
 }
 
 /*! @brief Initialization the debug settings, show the version and apply
@@ -323,7 +324,7 @@ the documented ENUM values.\n",
 
    // Refresh the HLA time constants since the base time units may have changed
    // from a setting in the input file.
-   time_management_srvc.refresh_HLA_time_constants();
+   time_management_service.refresh_HLA_time_constants();
 }
 
 /*!
@@ -365,10 +366,8 @@ void Federate::initialize()
                        __LINE__, name.c_str(), type.c_str() );
    }
 
-   federate_ambassador.initialize();
-
-   manager.verify_object_arrays();
-   manager.verify_interaction_arrays();
+   object_service.verify_object_arrays();
+   interaction_service.verify_interaction_arrays();
 
    execution_control->initialize();
 
@@ -388,7 +387,7 @@ void Federate::restart_initialization()
                        __LINE__ );
    }
 
-   time_management_srvc.restart_initialization();
+   time_management_service.restart_initialization();
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
@@ -460,6 +459,65 @@ void Federate::restart_initialization()
       }
    }
 
+   // Setup the Execution Control and Execution Configuration objects now that
+   // we know if we are the "Master" federate or not.
+   if ( this->execution_control == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::restart_initialization():" << __LINE__
+             << " ERROR: Unexpected NULL 'execution_control' pointer!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // Verify the user specified object and interaction arrays and counts.
+   object_service.verify_object_arrays();
+   interaction_service.verify_interaction_arrays();
+
+   // The set_master() function set's additional parameter so call it again to
+   // force the a complete master state.
+   bool const master_flag = execution_control->is_master();
+   execution_control->set_master( master_flag );
+
+   // Setup all the Trick Ref-Attributes for the user specified objects,
+   // attributes, interactions and parameters.
+   object_service.setup_object_ref_attributes();
+   interaction_service.setup_interaction_ref_attributes();
+
+   // Only continue the restart initialization if the Federate is an
+   // execution member and connected.
+   if ( is_execution_member() ) {
+
+      // Setup all the RTI handles for the objects, attributes and interaction
+      // parameters.
+      object_service.setup_object_RTI_handles();
+      interaction_service.setup_interaction_RTI_handles();
+
+      // Set the object instance handles based on its name.
+      object_service.set_all_object_instance_handles_by_name();
+
+      // Make sure we reinitialize the MOM interface handles.
+      initialize_MOM_handles();
+
+      // Perform the next few steps if we are the Master federate.
+      if ( execution_control->is_master() ) {
+
+         // Make sure all the federate instance handles are reset based on
+         // the federate name so that the wait for required federates will work
+         // after a checkpoint reload.
+         set_all_federate_MOM_instance_handles_by_name();
+
+         // Make sure all required federates have joined the federation.
+         wait_for_required_federates_to_join();
+      }
+
+      // TODO: Should this even be called here because the checkpoint restore
+      // should have already been called before we got here.
+      // Restore ownership_transfer data for all objects.
+      for ( int n = 0; n < object_service.obj_count; ++n ) {
+         object_service.objects[n].restore_data_after_checkpoint();
+      }
+   }
+
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
@@ -477,7 +535,7 @@ void Federate::pre_multiphase_initialization()
    // job should be called before this one, but verify the HLA cycle time
    // again to catch the case where a user did not pick up the changes to
    // the THLABase.sm file.
-   if ( !time_management_srvc.verify_time_constraints() ) {
+   if ( !time_management_service.verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
              << " ERROR: Time Constraints verification failed!" << endl;
@@ -492,9 +550,6 @@ void Federate::pre_multiphase_initialization()
       message_publish( MSG_NORMAL, "Federate::pre_multiphase_initialization():%d\n     Completed pre-multiphase initialization...\n",
                        __LINE__ );
    }
-
-   // Initialize the TrickHLA::Manager object instance.
-   manager.initialize();
 }
 
 /*!
@@ -515,7 +570,7 @@ void Federate::post_multiphase_initialization()
    }
 
    // Mark the federate as having begun execution.
-   save_restore_srvc.set_federate_has_begun_execution();
+   save_restore_service.set_federate_has_begun_execution();
 }
 
 /*!
@@ -1011,11 +1066,11 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // If this federate is running, add the new entry into running_feds.
       if ( this->is_federate_executing() ) {
          bool found = false;
-         for ( size_t loop = 0; loop < save_restore_srvc.running_feds_count; ++loop ) {
+         for ( size_t loop = 0; loop < save_restore_service.running_feds_count; ++loop ) {
             string tName;
             StringUtilities::to_string( tName, federate_name_ws );
 
-            if ( save_restore_srvc.running_feds[loop].name == tName ) {
+            if ( save_restore_service.running_feds[loop].name == tName ) {
                found = true;
                break;
             }
@@ -1023,7 +1078,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          // Update the running_feds if the federate name was not found.
          if ( !found ) {
             if ( joined_federate_name_map.size() == 1 ) {
-               save_restore_srvc.add_a_single_entry_into_running_feds();
+               save_restore_service.add_a_single_entry_into_running_feds();
 
                // Clear the entry after it is absorbed into running_feds.
                joined_federate_name_map.clear();
@@ -1045,15 +1100,15 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                // After the purge, if there is only one value, process the
                // single element.
                if ( joined_federate_name_map.size() == 1 ) {
-                  save_restore_srvc.add_a_single_entry_into_running_feds();
+                  save_restore_service.add_a_single_entry_into_running_feds();
 
                   // Clear the entry after it is absorbed into running_feds.
                   joined_federate_name_map.clear();
                } else {
                   // Process multiple joined_federate_name_map entries.
-                  save_restore_srvc.clear_running_feds();
-                  ++save_restore_srvc.running_feds_count;
-                  save_restore_srvc.update_running_feds();
+                  save_restore_service.clear_running_feds();
+                  ++save_restore_service.running_feds_count;
+                  save_restore_service.update_running_feds();
 
                   // Clear the entries after they are absorbed into running_feds.
                   joined_federate_name_map.clear();
@@ -1434,7 +1489,7 @@ string Federate::wait_for_required_federates_to_join()
                   found_an_unrequired_federate = true;
                   string fedname;
                   StringUtilities::to_string( fedname, joined_federate_names[i] );
-                  if ( save_restore_srvc.restore_is_imminent ) {
+                  if ( save_restore_service.restore_is_imminent ) {
                      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                         message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!\n",
                                          __LINE__, fedname.c_str() );
@@ -1539,7 +1594,7 @@ string Federate::wait_for_required_federates_to_join()
    // terminate the execution instead of the federation failing to restore
    // and the user is left to scratch their heads why the federation failed
    // to restore!
-   if ( save_restore_srvc.restore_is_imminent && found_an_unrequired_federate ) {
+   if ( save_restore_service.restore_is_imminent && found_an_unrequired_federate ) {
       ostringstream errmsg;
       errmsg << "FATAL ERROR: You indicated a restore of a checkpoint set but "
              << "at least one federate which was NOT executing at the time of "
@@ -1882,6 +1937,74 @@ RTIinternalError for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle
    if ( error_flag ) {
       DebugHandler::terminate_with_message( "Federate::initialize_MOM_handles() ERROR Detected!" );
    }
+}
+
+/*! @brief Publishes Object & Interaction classes and their member data. */
+void Federate::publish()
+{
+   if ( !is_RTI_ready( "publish" ) ) {
+      return;
+   }
+
+   object_service.publish();
+   interaction_service.publish();
+
+   // Publish Execution Control objects and interactions.
+   execution_control->publish();
+}
+
+/*! @brief Unpublish the Object & Interaction classes. */
+void Federate::unpublish()
+{
+   if ( !is_RTI_ready( "unpublish" ) ) {
+      return;
+   }
+
+   object_service.unpublish();
+   interaction_service.unpublish();
+
+   // Unpublish Execution Control objects and interactions.
+   execution_control->unpublish();
+}
+
+/*! @brief Subscribe to Object and Interaction classes and their member data. */
+void Federate::subscribe()
+{
+   if ( !is_RTI_ready( "subscribe" ) ) {
+      return;
+   }
+
+   object_service.subscribe();
+   interaction_service.subscribe();
+
+   // Subscribe to anything needed for the execution control mechanisms.
+   execution_control->subscribe();
+}
+
+/*! @brief Unubscribe from the Object and Interaction classes. */
+void Federate::unsubscribe()
+{
+   if ( !is_RTI_ready( "unsubscribe" ) ) {
+      return;
+   }
+
+   object_service.unsubscribe();
+   interaction_service.unsubscribe();
+
+   // Unsubscribe to anything needed for the execution control mechanisms.
+   execution_control->unsubscribe();
+}
+
+/*! @brief Publish and Subscribe to Object and Interaction classes and their
+ * member data. */
+void Federate::publish_and_subscribe()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      message_publish( MSG_NORMAL, "Federate::publish_and_subscribe():%d\n",
+                       __LINE__ );
+   }
+   subscribe();
+   publish();
 }
 
 void Federate::subscribe_attributes(
@@ -2400,6 +2523,76 @@ void Federate::federation_synchronized(
 {
    // Delegate to the Execution Control to handle the FedAmb callback.
    execution_control->sync_point_federation_synchronized( label );
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void Federate::wait_for_init_sync_point(
+   string const &sync_point_label )
+{
+   if ( !execution_control->is_wait_for_init_sync_point_supported() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         ostringstream errmsg;
+         errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
+                << " WARNING: This call will be ignored because the"
+                << " Simulation Initialization Scheme (Type:'"
+                << execution_control->get_type()
+                << "') does not support it." << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+      return;
+   }
+
+   // Late joining federates do not get to participate in the multiphase
+   // initialization process so just return.
+   if ( is_late_joining_federate() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         ostringstream errmsg;
+         errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
+                << " Late joining federate so this call will be ignored." << endl;
+         message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      }
+      return;
+   }
+
+   if ( sync_point_label.empty() ) {
+      ostringstream errmsg;
+      errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
+             << " ERROR: Empty Sync-Point Label specified!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   wstring ws_sync_point_label;
+   StringUtilities::to_wstring( ws_sync_point_label, sync_point_label );
+
+   // Determine if the multiphase init sync-point label is valid.
+   if ( execution_control->contains_multiphase_init_sync_point( ws_sync_point_label ) ) {
+
+      // Achieve the specified multiphase init sync-point and wait for
+      // the federation to be synchronized on it.
+      if ( !execution_control->achieve_sync_point_and_wait_for_synchronization( ws_sync_point_label ) ) {
+         ostringstream errmsg;
+         errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
+                << " ERROR: Unexpected error waiting for sync-point '"
+                << sync_point_label << "'!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         return;
+      }
+   } else {
+      ostringstream errmsg;
+      errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
+             << " ERROR: This federate has not been configured to use the"
+             << " synchronization-point label '" << sync_point_label
+             << "' as a multiphase initialization sync-point. Please check"
+             << " your input.py file to ensure your federate adds the"
+             << " multiphase initialization sync-point:\n"
+             << "federate.add_multiphase_init_sync_point( '"
+             << sync_point_label << "' )" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
 }
 
 /*!
@@ -3108,7 +3301,7 @@ bool Federate::check_for_shutdown_with_termination()
 void Federate::send_zero_lookahead_and_requested_data(
    string const &obj_instance_name )
 {
-   TrickHLA::Object *obj = manager.get_trickhla_object( obj_instance_name );
+   TrickHLA::Object *obj = object_service.get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::send_zero_lookahead_and_requested_data():" << __LINE__
@@ -3129,7 +3322,7 @@ void Federate::send_zero_lookahead_and_requested_data(
                        __LINE__, obj_instance_name.c_str() );
    }
 
-   obj->send_zero_lookahead_and_requested_data( time_management_srvc.granted_time );
+   obj->send_zero_lookahead_and_requested_data( time_management_service.granted_time );
 }
 
 /*!
@@ -3140,7 +3333,7 @@ void Federate::send_zero_lookahead_and_requested_data(
 void Federate::wait_to_receive_zero_lookahead_data(
    string const &obj_instance_name )
 {
-   TrickHLA::Object *obj = manager.get_trickhla_object( obj_instance_name );
+   TrickHLA::Object *obj = object_service.get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
@@ -3168,7 +3361,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
    if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
 
       // The TARA will cause zero-lookahead data to be reflected before the TAG.
-      time_management_srvc.wait_for_zero_lookahead_TARA_TAG();
+      time_management_service.wait_for_zero_lookahead_TARA_TAG();
 
       int64_t      wallclock_time; // cppcheck-suppress [variableScope]
       SleepTimeout print_timer;
@@ -3207,7 +3400,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
          }
 
          // The TARA will cause zero-lookahead data to be reflected before the TAG.
-         time_management_srvc.wait_for_zero_lookahead_TARA_TAG();
+         time_management_service.wait_for_zero_lookahead_TARA_TAG();
       }
    }
 
@@ -3220,7 +3413,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
 void Federate::send_blocking_io_data(
    string const &obj_instance_name )
 {
-   TrickHLA::Object *obj = manager.get_trickhla_object( obj_instance_name );
+   TrickHLA::Object *obj = object_service.get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::send_blocking_io_data():" << __LINE__
@@ -3252,7 +3445,7 @@ void Federate::send_blocking_io_data(
 void Federate::wait_to_receive_blocking_io_data(
    string const &obj_instance_name )
 {
-   TrickHLA::Object *obj = manager.get_trickhla_object( obj_instance_name );
+   TrickHLA::Object *obj = object_service.get_trickhla_object( obj_instance_name );
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_blocking_io_data():" << __LINE__
@@ -3386,22 +3579,22 @@ void Federate::shutdown()
 #endif // TRICKHLA_COLLECT_TAG_STATS
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
-   for ( int i = 0; i < manager.obj_count; ++i ) {
+   for ( int i = 0; i < object_service.obj_count; ++i ) {
       ostringstream msg1;
       msg1 << "Federate::shutdown():" << __LINE__
-           << " Object[" << i << "]:'" << manager.objects[i].get_name() << "'"
-           << " send_count:" << manager.objects[i].send_count
-           << " receive_count:" << manager.objects[i].receive_count << endl;
+           << " Object[" << i << "]:'" << object_service.objects[i].get_name() << "'"
+           << " send_count:" << object_service.objects[i].send_count
+           << " receive_count:" << object_service.objects[i].receive_count << endl;
       message_publish( MSG_INFO, msg1.str().c_str() );
    }
 #endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
 #ifdef TRICKHLA_CYCLIC_READ_TIME_STATS
-   for ( int i = 0; i < manager.obj_count; ++i ) {
+   for ( int i = 0; i < object_service.obj_count; ++i ) {
       ostringstream msg2;
       msg2 << "Federate::shutdown():" << __LINE__
-           << " Object[" << i << "]:'" << manager.objects[i].get_name() << "' "
-           << manager.objects[i].elapsed_time_stats.to_string() << endl;
+           << " Object[" << i << "]:'" << object_service.objects[i].get_name() << "' "
+           << object_service.objects[i].elapsed_time_stats.to_string() << endl;
       message_publish( MSG_INFO, msg2.str().c_str() );
    }
 #endif // TRICKHLA_CYCLIC_READ_TIME_STATS
@@ -3417,7 +3610,7 @@ void Federate::shutdown()
    }
 
    // Disable Time Constrained and Time Regulation for this federate.
-   time_management_srvc.shutdown_time_management();
+   time_management_service.shutdown_time_management();
 
    // Resign from the federation.
    // If the federate can rejoin, resign in a way so we can rejoin later...
@@ -4184,10 +4377,10 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // Search for the federate information from running_feds...
    foundName = false;
-   for ( size_t i = 0; i < save_restore_srvc.running_feds_count; ++i ) {
-      if ( save_restore_srvc.running_feds[i].MOM_instance_name != tMOMName ) {
+   for ( size_t i = 0; i < save_restore_service.running_feds_count; ++i ) {
+      if ( save_restore_service.running_feds[i].MOM_instance_name != tMOMName ) {
          foundName = true;
-         tFedName  = save_restore_srvc.running_feds[i].name;
+         tFedName  = save_restore_service.running_feds[i].name;
       }
    }
 
@@ -4203,7 +4396,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // allocate temporary list...
    tmp_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( (int)( save_restore_srvc.running_feds_count - 1 ), "TrickHLA::KnownFederate" ) );
+      alloc_type( (int)( save_restore_service.running_feds_count - 1 ), "TrickHLA::KnownFederate" ) );
    if ( tmp_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
@@ -4212,26 +4405,26 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    }
    // now, copy everything minus the requested name from the original list...
    int tmp_feds_cnt = 0;
-   for ( size_t i = 0; i < save_restore_srvc.running_feds_count; ++i ) {
+   for ( size_t i = 0; i < save_restore_service.running_feds_count; ++i ) {
       // if the name is not the one we are looking for...
-      if ( save_restore_srvc.running_feds[i].name != tFedName ) {
-         if ( save_restore_srvc.running_feds[i].MOM_instance_name.empty() ) {
-            tmp_feds[tmp_feds_cnt].MOM_instance_name = save_restore_srvc.running_feds[i].MOM_instance_name;
+      if ( save_restore_service.running_feds[i].name != tFedName ) {
+         if ( save_restore_service.running_feds[i].MOM_instance_name.empty() ) {
+            tmp_feds[tmp_feds_cnt].MOM_instance_name = save_restore_service.running_feds[i].MOM_instance_name;
          }
-         tmp_feds[tmp_feds_cnt].name     = save_restore_srvc.running_feds[i].name;
-         tmp_feds[tmp_feds_cnt].required = save_restore_srvc.running_feds[i].required;
+         tmp_feds[tmp_feds_cnt].name     = save_restore_service.running_feds[i].name;
+         tmp_feds[tmp_feds_cnt].required = save_restore_service.running_feds[i].required;
          ++tmp_feds_cnt;
       }
    }
 
    // now, clear out the original memory...
-   save_restore_srvc.clear_running_feds();
+   save_restore_service.clear_running_feds();
 
    // assign the new element count into running_feds_count.
-   save_restore_srvc.running_feds_count = tmp_feds_cnt;
+   save_restore_service.running_feds_count = tmp_feds_cnt;
 
    // assign pointer from the temporary list to the permanent list...
-   save_restore_srvc.running_feds = tmp_feds;
+   save_restore_service.running_feds = tmp_feds;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string id_str;
@@ -4283,7 +4476,7 @@ void Federate::remove_MOM_HLAfederation_instance_id(
 
 bool Federate::is_federate_executing() const
 {
-   // Check if the manager has set a flag that the federate initialization has
+   // Check if the object_service has set a flag that the federate initialization has
    // completed and the federate is now executing.
    return execution_control->execution_has_begun;
 }
@@ -4354,7 +4547,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             // method already queries the names from the RTI for all required
             // federates. We will eventually utilize the same MOM interface to
             // rebuild this list.
-            save_restore_srvc.running_feds_count = feds_list.size();
+            save_restore_service.running_feds_count = feds_list.size();
 
          } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
             string rti_err_msg;
@@ -4369,7 +4562,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d Found a FederationID list with %d elements.\n",
-                             __LINE__, save_restore_srvc.running_feds_count );
+                             __LINE__, save_restore_service.running_feds_count );
          }
       }
    }
@@ -4433,7 +4626,7 @@ void Federate::restore_federate_handles_from_MOM()
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
          // Determine if all the federate handles have been found.
-         all_found = ( joined_federate_handles.size() >= save_restore_srvc.running_feds_count );
+         all_found = ( joined_federate_handles.size() >= save_restore_service.running_feds_count );
       }
 
       if ( !all_found ) {

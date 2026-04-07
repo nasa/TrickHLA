@@ -104,7 +104,7 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      initiated_a_federation_save( false ),
      unfreeze_after_save( false ),
      federate( &fed ),
-     time_management_srvc( NULL ),
+     time_management_service( NULL ),
      execution_control( NULL ),
      save_name( L"" ),
      restore_name( L"" ),
@@ -140,7 +140,7 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      restart_cfg_flag( false )
 {
    // Register the Time Management Services instance.
-   time_management_srvc = fed.get_time_management_service();
+   time_management_service = fed.get_time_management_service();
    return;
 }
 
@@ -634,7 +634,7 @@ void SaveRestoreServices::restore_checkpoint(
    // so that all the HLA time representations use the correct base time.
    //
    // Refresh the HLA time constants given the HLA base time from the checkpoint.
-   time_management_srvc->refresh_HLA_time_constants();
+   time_management_service->refresh_HLA_time_constants();
 
    // If exec_set_freeze_command(true) is in master fed's input.py file when
    // check-pointed, then restore starts up in freeze.
@@ -825,7 +825,7 @@ void SaveRestoreServices::restart_checkpoint()
    try {
       HLAinteger64Time fedTime;
       federate->get_RTI_ambassador()->queryLogicalTime( fedTime );
-      time_management_srvc->set_granted_time( fedTime );
+      time_management_service->set_granted_time( fedTime );
    } catch ( FederateNotExecutionMember const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
@@ -848,7 +848,7 @@ void SaveRestoreServices::restart_checkpoint()
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   time_management_srvc->set_requested_time_to_granted_time();
+   time_management_service->set_requested_time_to_granted_time();
    this->restore_process = NO_RESTORE;
 
    reinstate_logged_sync_pts();

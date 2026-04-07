@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../Federate.cpp}
-@trick_link_dependency{../Manager.cpp}
+@trick_link_dependency{../ObjectServices.cpp}
 @trick_link_dependency{../Object.cpp}
 @trick_link_dependency{../Types.cpp}
 @trick_link_dependency{../utils/MutexLock.cpp}
@@ -59,8 +59,8 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
@@ -311,31 +311,31 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
       data_cycle_base_time_per_thread[thread_id] = 0LL;
    }
 
-   Manager const *manager = federate->get_manager();
+   ObjectServices const *object_service = federate->get_object_service();
 
    // Allocate memory for the data cycle times per each object instance.
-   if ( manager->obj_count > 0 ) {
-      data_cycle_time_per_obj = static_cast< double * >( TMM_declare_var_1d( "double", manager->obj_count ) );
+   if ( object_service->obj_count > 0 ) {
+      data_cycle_time_per_obj = static_cast< double * >( TMM_declare_var_1d( "double", object_service->obj_count ) );
       if ( data_cycle_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
                 << " ERROR: Could not allocate memory for 'data_cycle_time_per_obj'"
-                << " for requested size " << manager->obj_count
+                << " for requested size " << object_service->obj_count
                 << "'!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
-      data_cycle_base_time_per_obj = static_cast< int64_t * >( TMM_declare_var_1d( "long long", manager->obj_count ) );
+      data_cycle_base_time_per_obj = static_cast< int64_t * >( TMM_declare_var_1d( "long long", object_service->obj_count ) );
       if ( data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
                 << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_obj'"
-                << " for requested size " << manager->obj_count
+                << " for requested size " << object_service->obj_count
                 << "'!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
          return;
       }
-      for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
+      for ( int obj_index = 0; obj_index < object_service->obj_count; ++obj_index ) {
          data_cycle_time_per_obj[obj_index]      = 0.0;
          data_cycle_base_time_per_obj[obj_index] = 0LL;
       }
@@ -496,21 +496,21 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    summary << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
            << " Summary:" << endl;
 
-   Manager *manager = federate->get_manager();
+   ObjectServices *object_service = federate->get_object_service();
 
    // Search all the objects for a thread ID match and configure data arrays.
    bool any_valid_thread_id_found = false;
-   for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
+   for ( int obj_index = 0; obj_index < object_service->obj_count; ++obj_index ) {
 
       // Is this thread associated to this object.
-      if ( manager->objects[obj_index].is_thread_associated( thread_id ) ) {
+      if ( object_service->objects[obj_index].is_thread_associated( thread_id ) ) {
 
          if ( ( data_cycle_base_time_per_thread[thread_id] > 0LL )
               && ( data_cycle_base_time_per_thread[thread_id] != data_cycle_base_time ) ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
                    << " ERROR: For the object instance name '"
-                   << manager->objects[obj_index].get_name() << "', the Trick "
+                   << object_service->objects[obj_index].get_name() << "', the Trick "
                    << ( ( thread_id == 0 ) ? "main" : "child" )
                    << " thread (thread-id:" << thread_id << ", data_cycle:"
                    << setprecision( 18 )
@@ -528,7 +528,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
                    << " ERROR: For the object instance name '"
-                   << manager->objects[obj_index].get_name()
+                   << object_service->objects[obj_index].get_name()
                    << "', an existing entry for this"
                    << " object (thread-id:" << thread_id << ", data_cycle:"
                    << setprecision( 18 )
@@ -543,7 +543,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
          } else {
             summary << "  thread-id:" << thread_id
                     << "  data_cycle:" << setprecision( 18 ) << data_cycle
-                    << "  obj-instance:'" << manager->objects[obj_index].get_name()
+                    << "  obj-instance:'" << object_service->objects[obj_index].get_name()
                     << "'" << endl;
 
             any_valid_thread_id_found = true;
@@ -677,7 +677,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
  * */
 void TrickThreadCoordinator::verify_trick_thread_associations()
 {
-   Manager *manager = federate->get_manager();
+   ObjectServices *object_service = federate->get_object_service();
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -718,9 +718,9 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
                   summary << setprecision( 18 )
                           << Int64BaseTime::to_seconds( data_cycle_base_time_per_thread[thread_id] )
                           << "\t ";
-                  for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
-                     if ( manager->objects[obj_index].is_thread_associated( thread_id ) ) {
-                        summary << "'" << manager->objects[obj_index].get_name() << "' ";
+                  for ( int obj_index = 0; obj_index < object_service->obj_count; ++obj_index ) {
+                     if ( object_service->objects[obj_index].is_thread_associated( thread_id ) ) {
+                        summary << "'" << object_service->objects[obj_index].get_name() << "' ";
                      }
                   }
                   break;
@@ -731,11 +731,11 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
          // Summary of the thread-ID's per object instance.
          summary << "Object-Instance   ThreadIDs" << endl;
-         for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
-            summary << "'" << manager->objects[obj_index].get_name() << "'\t  ";
+         for ( int obj_index = 0; obj_index < object_service->obj_count; ++obj_index ) {
+            summary << "'" << object_service->objects[obj_index].get_name() << "'\t  ";
             bool printed_thread_id = false;
-            for ( unsigned int thread_id = 0; thread_id < manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
-               if ( manager->objects[obj_index].thread_ids_array[thread_id] ) {
+            for ( unsigned int thread_id = 0; thread_id < object_service->objects[obj_index].thread_ids_array_count; ++thread_id ) {
+               if ( object_service->objects[obj_index].thread_ids_array[thread_id] ) {
                   if ( printed_thread_id ) {
                      summary << ", ";
                   }
@@ -751,16 +751,16 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
    // Verify every thread ID specified in the input file for each object has a
    // Trick child thread association made in the S_define file.
-   for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
-      for ( unsigned int thread_id = 0; thread_id < manager->objects[obj_index].thread_ids_array_count; ++thread_id ) {
+   for ( int obj_index = 0; obj_index < object_service->obj_count; ++obj_index ) {
+      for ( unsigned int thread_id = 0; thread_id < object_service->objects[obj_index].thread_ids_array_count; ++thread_id ) {
 
          if ( ( thread_state[thread_id] != TrickHLA::THREAD_STATE_DISABLED )
-              && manager->objects[obj_index].thread_ids_array[thread_id]
+              && object_service->objects[obj_index].thread_ids_array[thread_id]
               && ( data_cycle_base_time_per_thread[thread_id] == 0LL ) ) {
             ostringstream errmsg;
             errmsg << "TrickThreadCoordinator::verify_trick_thread_associations():"
                    << __LINE__ << " ERROR: Object instance '"
-                   << manager->objects[obj_index].get_name()
+                   << object_service->objects[obj_index].get_name()
                    << "' specified a Trick thread-ID:" << thread_id << ", but no thread"
                    << " with this ID was associated in the S_define file!" << endl;
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -777,11 +777,11 @@ void TrickThreadCoordinator::refresh_thread_base_times()
 
    main_thread_data_cycle_base_time = Int64BaseTime::to_base_time( main_thread_data_cycle_time );
 
-   Manager const *manager = federate->get_manager();
+   ObjectServices const *object_service = federate->get_object_service();
 
    if ( ( data_cycle_base_time_per_obj != NULL )
         && ( data_cycle_time_per_obj != NULL ) ) {
-      for ( int obj_index = 0; obj_index < manager->obj_count; ++obj_index ) {
+      for ( int obj_index = 0; obj_index < object_service->obj_count; ++obj_index ) {
          data_cycle_base_time_per_obj[obj_index] =
             Int64BaseTime::to_base_time( data_cycle_time_per_obj[obj_index] );
       }
@@ -1222,7 +1222,7 @@ bool TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
 {
    // On boundary if sim-time is an integer multiple of a valid cycle-time.
    return ( ( any_child_thread_associated
-              && ( obj_index < federate->get_manager()->obj_count )
+              && ( obj_index < federate->get_object_service()->obj_count )
               && ( data_cycle_base_time_per_obj[obj_index] > 0LL ) )
                ? ( ( sim_time_in_base_time % data_cycle_base_time_per_obj[obj_index] ) == 0LL )
                : true );
@@ -1235,7 +1235,7 @@ int64_t TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
    int64_t const default_data_cycle_base_time ) const
 {
    return ( any_child_thread_associated
-            && ( obj_index < federate->get_manager()->obj_count )
+            && ( obj_index < federate->get_object_service()->obj_count )
             && ( data_cycle_base_time_per_obj[obj_index] > default_data_cycle_base_time ) )
              ? data_cycle_base_time_per_obj[obj_index]
              : default_data_cycle_base_time;
@@ -1279,7 +1279,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
    }
 
    // Lookahead and LCTS times in the integer base time.
-   int64_t const lookahead_base_time = federate->time_management_srvc.get_lookahead().get_base_time();
+   int64_t const lookahead_base_time = federate->time_management_service.get_lookahead().get_base_time();
    int64_t const lcts_base_time      = federate->get_execution_control()->get_least_common_time_step();
 
    // Verify the lookahead time.

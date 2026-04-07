@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Manager.cpp}
+@trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/Int64BaseTime.cpp}
 
@@ -50,7 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControl.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Manager.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 
@@ -165,8 +165,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
-   manager->setup_object_ref_attributes();
-   manager->setup_interaction_ref_attributes();
+   object_service->setup_object_ref_attributes();
+   interaction_service->setup_interaction_ref_attributes();
 
    // Create the RTI Ambassador and connect.
    federate->create_RTI_ambassador_and_connect();
@@ -225,12 +225,12 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
-   manager->setup_object_RTI_handles();
-   manager->setup_interaction_RTI_handles();
+   object_service->setup_object_RTI_handles();
+   interaction_service->setup_interaction_RTI_handles();
 
-   // Call publish_and_subscribe AFTER we've initialized the manager,
+   // Call publish_and_subscribe AFTER we've initialized the object_service,
    // federate, and FedAmb.
-   manager->publish_and_subscribe();
+   federate->publish_and_subscribe();
 
    // If this is the Master federate, then setup the ExCO.
    if ( is_master() ) {
@@ -244,20 +244,20 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Reserve the RTI object instance names with the RTI, but only for
    // the objects that are locally owned.
-   manager->reserve_object_names_with_RTI();
+   object_service->reserve_object_names_with_RTI();
 
    // Waits on the reservation of the RTI object instance names for the
    // locally owned objects. Calling this function will block until all
    // the object instances names for the locally owned objects have been
    // reserved.
-   manager->wait_for_reservation_of_object_names();
+   object_service->wait_for_reservation_of_object_names();
 
    // Creates an RTI object instance and registers it with the RTI, but
    // only for the objects that are locally owned.
-   manager->register_objects_with_RTI();
+   object_service->register_objects_with_RTI();
 
    // Setup the preferred order for all object attributes and interactions.
-   manager->setup_preferred_order_with_RTI();
+   object_service->setup_preferred_order_with_RTI();
 }
 
 /*!
@@ -315,7 +315,7 @@ void ExecutionControl::setup_object_RTI_handles()
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-   manager->setup_object_RTI_handles( 1, ExCO );
+   object_service->setup_object_RTI_handles( 1, ExCO );
 }
 
 /*!

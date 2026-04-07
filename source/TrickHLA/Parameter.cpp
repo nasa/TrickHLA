@@ -117,7 +117,7 @@ void Parameter::initialize(
       errmsg << "Parameter::initialize():" << __LINE__
              << " ERROR: Interaction with FOM Name '"
              << interaction_fom_name << "' has a missing FOM name for the"
-             << " parameter. Make sure 'THLA.manager.interactions["
+             << " parameter. Make sure 'THLA.federate.interaction_service.interactions["
              << interaction_index << "].parameters[" << parameter_index
              << "].FOM_name' in either your input.py file or modified-data files"
              << " is correctly specified." << endl;
@@ -131,7 +131,7 @@ void Parameter::initialize(
          errmsg << "Parameter::initialize():" << __LINE__
                 << " ERROR: FOM Interaction Parameter '"
                 << interaction_fom_name << "'->'" << get_FOM_name() << "' has a missing"
-                << " Trick name for the parameter. Make sure 'THLA.manager.interactions["
+                << " Trick name for the parameter. Make sure 'THLA.federate.interaction_service.interactions["
                 << interaction_index << "].parameters[" << parameter_index
                 << "].trick_name' in either your input.py file or modified-data files"
                 << " is correctly specified." << endl;

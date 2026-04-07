@@ -10,6 +10,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 
 ### Breaking Changes
+- The TrickHLA Manager class has been refactored into InteractionServices and ObjectServices classes and incorporated into the Federate class. Only the Federate is used for scheduled job calls in the provided simulation modules (THLA.sm, SpaceFOM.sm, etc.) If you are not using the SpaceFOM python modules for configuring TrickHLA in the input file, you will need to update your input files to use the service instances.
+
+```
+  - FROM: (sims/TrickHLA/SIM_sine/RUN_a_side/input.py)
+    THLA.manager.inter_count = 1
+    THLA.manager.interactions = trick.sim_services.alloc_type( THLA.manager.inter_count, 'TrickHLA::Interaction' )
+    THLA.manager.interactions[0].FOM_name = 'Communication'
+    ...
+    
+    THLA.manager.obj_count = 3
+    THLA.manager.objects = trick.sim_services.alloc_type( THLA.manager.obj_count, 'TrickHLA::Object' )
+    THLA.manager.objects[0].FOM_name = 'Test'
+    ...
+    
+  - TO:
+    interaction_service = THLA.federate.get_interaction_service()
+    interaction_service.inter_count = 1
+    interaction_service.interactions = trick.sim_services.alloc_type( interaction_service.inter_count, 'TrickHLA::Interaction' )
+    interaction_service.interactions[0].FOM_name = 'Communication'
+    ...
+    
+    obj_service = THLA.federate.get_object_service()
+    obj_service.obj_count = 2
+    obj_service.objects = trick.sim_services.alloc_type( obj_service.obj_count, 'TrickHLA::Object' )
+    obj_service.objects[0].FOM_name = 'Test'
+    ...
+```
+
 - You must set the lookahead, time-constrained, and time-regulating settings using the setup Federate setup_time_management( double lookahead, bool constrained, bool regulating ) function. For example, for the TrickHLA/SIM_sine input file:
   - FROM:
     THLA.federate.lookahead_time   = 0.250

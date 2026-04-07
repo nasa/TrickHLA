@@ -27,7 +27,7 @@
 #define SPACEFOM_REF_FRAME_TREE_BASE_SIM_OBJECT
 
 // TrickHLA include files.
-##include "TrickHLA/Manager.hh"
+##include "TrickHLA/Federate.hh"
 
 // SpaceFOM include files.
 ##include "SpaceFOM/ExecutionControl.hh"

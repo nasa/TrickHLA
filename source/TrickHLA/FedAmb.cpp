@@ -1,20 +1,13 @@
 /*!
 @file TrickHLA/FedAmb.cpp
 @ingroup TrickHLA
-@brief Provides methods called by the RTI Ambassador for simulation object,
-interaction and time management.
-
-@details Methods of objects of this class are not intended to be called from
-the Trick S_define level. However, this class is essentially a polymorphic
-callback class provided to the RTI Ambassador.
+@brief Provides methods called by the Federate Ambassador.
 
 \par<b>Assumptions and Limitations:</b>
 - Derived class of abstract FederateAmbassador class to implement methods so
 that RTI can call functions in the federate.
-- Based on HelloWorld example code.
 - None of the methods in this class are intended to be called from the Trick
-S_define level. However, an instance of this class can be declared in the
-S_define.
+S_define level.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -30,8 +23,9 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{FedAmb.cpp}
+@trick_link_dependency{FedAmbBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Manager.cpp}
+@trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{utils/MutexLock.cpp}
 @trick_link_dependency{utils/MutexProtection.cpp}
@@ -67,13 +61,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/FedAmbBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
-#include "TrickHLA/utils/Utilities.hh"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -115,12 +108,8 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 FedAmb::FedAmb( Federate &fed )
-   : FederateAmbassador(),
-     FedAmbBase( fed )
+   : FedAmbBase( fed )
 {
-   // Set the associated TrickHLA Federate and Manager references.
-   this->manager           = fed.get_manager();
-   this->save_restore_srvc = fed.get_save_restore_service();
    return;
 }
 
@@ -130,44 +119,6 @@ FedAmb::FedAmb( Federate &fed )
 FedAmb::~FedAmb()
 {
    return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void FedAmb::initialize()
-{
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   // Check to make sure we have a reference to the TrickHLA::FedAmb.
-   if ( federate == NULL ) {
-      ostringstream errmsg;
-      errmsg << "FedAmb::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Federate." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Check to make sure we have a reference to the TrickHLA::Manager.
-   if ( manager == NULL ) {
-      ostringstream errmsg;
-      errmsg << "FedAmb::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::initialize():%d Federate:\"%s\"\n",
-                       __LINE__, federate->get_federate_name().c_str() );
-   }
-
-   if ( federate->get_federate_name().empty() ) {
-      ostringstream errmsg;
-      errmsg << "FedAmb::initialize():" << __LINE__
-             << " ERROR: Unexpected empty federate name." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
 ////////////////////////////////////
@@ -333,8 +284,8 @@ void FedAmb::initiateFederateSave(
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d\n",
                        __LINE__ );
    }
-   save_restore_srvc->set_save_name( label );
-   save_restore_srvc->set_start_to_save( true );
+   save_restore_service->set_save_name( label );
+   save_restore_service->set_start_to_save( true );
 }
 
 void FedAmb::initiateFederateSave(
@@ -350,8 +301,8 @@ void FedAmb::initiateFederateSave(
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d HLA-time:%.12G seconds.\n",
                        __LINE__, i64time.get_time_in_seconds() );
    }
-   save_restore_srvc->set_save_name( label );
-   save_restore_srvc->set_start_to_save( true );
+   save_restore_service->set_save_name( label );
+   save_restore_service->set_start_to_save( true );
 }
 
 void FedAmb::federationSaved()
@@ -363,9 +314,9 @@ void FedAmb::federationSaved()
       message_publish( MSG_NORMAL, "FedAmb::federationSaved():%d\n",
                        __LINE__ );
    }
-   save_restore_srvc->set_start_to_save( false );
-   save_restore_srvc->set_save_completed();
-   save_restore_srvc->federation_saved();
+   save_restore_service->set_start_to_save( false );
+   save_restore_service->set_save_completed();
+   save_restore_service->federation_saved();
 }
 
 void FedAmb::federationNotSaved(
@@ -379,12 +330,12 @@ void FedAmb::federationNotSaved(
                        __LINE__ );
    }
 
-   save_restore_srvc->print_save_failure_reason( reason );
+   save_restore_service->print_save_failure_reason( reason );
 
    // TODO: Do we need to the steps below to exit freeze mode?
-   save_restore_srvc->set_start_to_save( false );
-   save_restore_srvc->set_save_completed();
-   save_restore_srvc->federation_saved();
+   save_restore_service->set_start_to_save( false );
+   save_restore_service->set_save_completed();
+   save_restore_service->federation_saved();
 }
 
 void FedAmb::federationSaveStatusResponse(
@@ -397,7 +348,7 @@ void FedAmb::federationSaveStatusResponse(
       message_publish( MSG_NORMAL, "FedAmb::federationSaveStatusResponse():%d\n",
                        __LINE__ );
    }
-   save_restore_srvc->process_requested_federation_save_status( response );
+   save_restore_service->process_requested_federation_save_status( response );
 }
 
 void FedAmb::requestFederationRestoreSucceeded(
@@ -410,8 +361,8 @@ void FedAmb::requestFederationRestoreSucceeded(
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreSucceeded():%d\n",
                        __LINE__ );
    }
-   save_restore_srvc->set_restore_request_succeeded();
-   save_restore_srvc->requested_federation_restore_status( true );
+   save_restore_service->set_restore_request_succeeded();
+   save_restore_service->requested_federation_restore_status( true );
 }
 
 void FedAmb::requestFederationRestoreFailed(
@@ -424,8 +375,8 @@ void FedAmb::requestFederationRestoreFailed(
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreFailed():%d\n",
                        __LINE__ );
    }
-   save_restore_srvc->set_restore_request_failed();
-   save_restore_srvc->requested_federation_restore_status( false );
+   save_restore_service->set_restore_request_failed();
+   save_restore_service->requested_federation_restore_status( false );
 }
 
 void FedAmb::federationRestoreBegun()
@@ -437,7 +388,7 @@ void FedAmb::federationRestoreBegun()
       message_publish( MSG_NORMAL, "FedAmb::federationRestoreBegun():%d\n",
                        __LINE__ );
    }
-   save_restore_srvc->set_restore_begun();
+   save_restore_service->set_restore_begun();
 }
 
 void FedAmb::initiateFederateRestore(
@@ -457,8 +408,8 @@ void FedAmb::initiateFederateRestore(
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateRestore():%d for federate '%s'\n",
                        __LINE__, name.c_str() );
    }
-   save_restore_srvc->set_start_to_restore( true );
-   save_restore_srvc->set_restore_name( label );
+   save_restore_service->set_start_to_restore( true );
+   save_restore_service->set_restore_name( label );
 }
 
 void FedAmb::federationRestored()
@@ -470,7 +421,7 @@ void FedAmb::federationRestored()
       message_publish( MSG_NORMAL, "FedAmb::federationRestored():%d\n",
                        __LINE__ );
    }
-   save_restore_srvc->set_restore_completed();
+   save_restore_service->set_restore_completed();
 }
 
 void FedAmb::federationNotRestored(
@@ -483,8 +434,8 @@ void FedAmb::federationNotRestored(
       message_publish( MSG_NORMAL, "FedAmb::federationNotRestored():%d\n",
                        __LINE__ );
    }
-   save_restore_srvc->set_restore_failed();
-   save_restore_srvc->print_restore_failure_reason( reason );
+   save_restore_service->set_restore_failed();
+   save_restore_service->print_restore_failure_reason( reason );
 }
 
 void FedAmb::federationRestoreStatusResponse(
@@ -499,10 +450,10 @@ void FedAmb::federationRestoreStatusResponse(
    }
    if ( !this->federation_restore_status_response_context_switch ) {
       // process
-      save_restore_srvc->process_requested_federation_restore_status( response );
+      save_restore_service->process_requested_federation_restore_status( response );
    } else {
       // echo
-      save_restore_srvc->print_requested_federation_restore_status( response );
+      save_restore_service->print_requested_federation_restore_status( response );
    }
 }
 
@@ -569,7 +520,7 @@ void FedAmb::objectInstanceNameReservationSucceeded(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( manager != NULL ) {
+   if ( object_service != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
          StringUtilities::to_string( instance_name, objectInstanceName );
@@ -577,7 +528,7 @@ void FedAmb::objectInstanceNameReservationSucceeded(
                           __LINE__, instance_name.c_str() );
       }
 
-      manager->object_instance_name_reservation_succeeded( objectInstanceName );
+      object_service->object_instance_name_reservation_succeeded( objectInstanceName );
    }
 }
 
@@ -588,7 +539,7 @@ void FedAmb::objectInstanceNameReservationFailed(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( manager != NULL ) {
+   if ( object_service != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
          StringUtilities::to_string( instance_name, objectInstanceName );
@@ -596,7 +547,7 @@ void FedAmb::objectInstanceNameReservationFailed(
                           __LINE__, instance_name.c_str() );
       }
 
-      manager->object_instance_name_reservation_failed( objectInstanceName );
+      object_service->object_instance_name_reservation_failed( objectInstanceName );
    }
 }
 
@@ -607,7 +558,7 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( manager != NULL ) {
+   if ( object_service != NULL ) {
 
       set< wstring >::const_iterator iter;
       for ( iter = objectInstanceNames.begin();
@@ -619,7 +570,7 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
                              __LINE__, instance_name.c_str() );
          }
 
-         manager->object_instance_name_reservation_succeeded( *iter );
+         object_service->object_instance_name_reservation_succeeded( *iter );
       }
    }
 }
@@ -630,7 +581,7 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( manager != NULL ) {
+   if ( object_service != NULL ) {
 
       set< wstring >::const_iterator iter;
       for ( iter = objectInstanceNames.begin();
@@ -642,7 +593,7 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
                              __LINE__, instance_name.c_str() );
          }
 
-         manager->object_instance_name_reservation_failed( *iter );
+         object_service->object_instance_name_reservation_failed( *iter );
       }
    }
 }
@@ -661,16 +612,16 @@ void FedAmb::discoverObjectInstance(
                        __LINE__, name_str.c_str(), id_str.c_str() );
    }
 
-   if ( manager == NULL ) {
+   if ( object_service == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, objectInstance );
          StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
-NULL Manager! Can't do anything with discovered object '%s' Instance-ID:%s\n",
+NULL ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
       }
-   } else if ( !manager->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
+   } else if ( !object_service->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, objectInstance );
@@ -703,16 +654,16 @@ federate '%s'):%d calling 'discoverObjectInstance' to finish the discovery.\n",
                        fed_id.c_str(), __LINE__ );
    }
 
-   if ( manager == NULL ) {
+   if ( object_service == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, objectInstance );
          StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
-NULL Manager! Can't do anything with discovered object '%s' Instance-ID:%s\n",
+NULL ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
       }
-   } else if ( !manager->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
+   } else if ( !object_service->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, objectInstance );
@@ -741,7 +692,7 @@ void FedAmb::reflectAttributeValues(
 #endif // IEEE_1516_2025
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -817,7 +768,7 @@ void FedAmb::reflectAttributeValues(
    SupplementalReflectInfo        reflectInfo ) throw( FederateInternalError )
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
@@ -869,7 +820,7 @@ void FedAmb::reflectAttributeValues(
 #endif // IEEE_1516_2025
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
@@ -912,8 +863,8 @@ void FedAmb::receiveInteraction(
    SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   if ( manager == NULL ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
+   if ( object_service == NULL ) {
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL ObjectServices!\n",
                        __LINE__ );
    } else {
       Int64Time dummyTime;
@@ -924,11 +875,11 @@ void FedAmb::receiveInteraction(
       }
 
       // Process the interaction.
-      manager->receive_interaction( interactionClass,
-                                    const_cast< ParameterHandleValueMap & >( parameterValues ),
-                                    userSuppliedTag,
-                                    dummyTime.get(),
-                                    false );
+      interaction_service->receive_interaction( interactionClass,
+                                                const_cast< ParameterHandleValueMap & >( parameterValues ),
+                                                userSuppliedTag,
+                                                dummyTime.get(),
+                                                false );
    }
 }
 
@@ -943,8 +894,8 @@ void FedAmb::receiveInteraction(
    OrderType                      receivedOrderType,
    SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
 {
-   if ( manager == NULL ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
+   if ( object_service == NULL ) {
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL ObjectServices!\n",
                        __LINE__ );
    } else {
       // Process the interaction.
@@ -955,11 +906,11 @@ void FedAmb::receiveInteraction(
                           __LINE__, i64time.get_time_in_seconds() );
       }
 
-      manager->receive_interaction( interactionClass,
-                                    const_cast< ParameterHandleValueMap & >( parameterValues ),
-                                    userSuppliedTag,
-                                    time,
-                                    ( receivedOrderType == RTI1516_NAMESPACE::TIMESTAMP ) );
+      interaction_service->receive_interaction( interactionClass,
+                                                const_cast< ParameterHandleValueMap & >( parameterValues ),
+                                                userSuppliedTag,
+                                                time,
+                                                ( receivedOrderType == RTI1516_NAMESPACE::TIMESTAMP ) );
    }
 }
 #endif // IEEE_1516_2010
@@ -988,8 +939,8 @@ void FedAmb::receiveInteraction(
    SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   if ( manager == NULL ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL Manager!\n",
+   if ( object_service == NULL ) {
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL ObjectServices!\n",
                        __LINE__ );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -1000,11 +951,11 @@ void FedAmb::receiveInteraction(
       }
 
       // Process the interaction.
-      manager->receive_interaction( interactionClass,
-                                    const_cast< ParameterHandleValueMap & >( parameterValues ),
-                                    userSuppliedTag,
-                                    time,
-                                    ( receivedOrderType == RTI1516_NAMESPACE::TIMESTAMP ) );
+      interaction_service->receive_interaction( interactionClass,
+                                                const_cast< ParameterHandleValueMap & >( parameterValues ),
+                                                userSuppliedTag,
+                                                time,
+                                                ( receivedOrderType == RTI1516_NAMESPACE::TIMESTAMP ) );
    }
 }
 
@@ -1072,7 +1023,7 @@ void FedAmb::removeObjectInstance(
    federate->remove_MOM_HLAfederate_instance_id( objectInstance );
 
    // Mark this object as deleted from the RTI.
-   manager->mark_object_as_deleted_from_federation( objectInstance );
+   object_service->mark_object_as_deleted_from_federation( objectInstance );
 }
 
 #if defined( IEEE_1516_2010 )
@@ -1104,7 +1055,7 @@ void FedAmb::removeObjectInstance(
    }
 
    // Mark this object as deleted from the RTI.
-   manager->mark_object_as_deleted_from_federation( objectInstance );
+   object_service->mark_object_as_deleted_from_federation( objectInstance );
 }
 #endif // IEEE_1516_2010
 
@@ -1148,7 +1099,7 @@ void FedAmb::removeObjectInstance(
    }
 
    // Mark this object as deleted from the RTI.
-   manager->mark_object_as_deleted_from_federation( objectInstance );
+   object_service->mark_object_as_deleted_from_federation( objectInstance );
 }
 
 void FedAmb::attributesInScope(
@@ -1192,9 +1143,9 @@ void FedAmb::provideAttributeValueUpdate(
    VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   if ( manager != NULL ) {
-      manager->provide_attribute_update( objectInstance,
-                                         const_cast< AttributeHandleSet & >( attributes ) );
+   if ( object_service != NULL ) {
+      object_service->provide_attribute_update( objectInstance,
+                                                const_cast< AttributeHandleSet & >( attributes ) );
    }
 }
 
@@ -1325,7 +1276,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
                        __LINE__, tag );
    }
 
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
@@ -1443,7 +1394,7 @@ void FedAmb::requestDivestitureConfirmation(
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj == NULL ) {
       string id_str;
@@ -1545,7 +1496,7 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
                        __LINE__ );
    }
 
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
@@ -1676,7 +1627,7 @@ void FedAmb::requestAttributeOwnershipRelease(
       message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipRelease():%d pull request received, tag='%s'\n",
                        __LINE__, tag );
    }
-   Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
 
    if ( trickhla_obj != NULL ) {
 
@@ -1831,7 +1782,7 @@ void FedAmb::timeRegulationEnabled(
       message_publish( MSG_NORMAL, "FedAmb::timeRegulationEnabled():%d Federate \"%s\"\n",
                        __LINE__, federate->get_federate_name().c_str() );
    }
-   federate->time_management_srvc.set_time_regulation_enabled( time );
+   federate->time_management_service.set_time_regulation_enabled( time );
 }
 
 void FedAmb::timeConstrainedEnabled(
@@ -1843,9 +1794,9 @@ void FedAmb::timeConstrainedEnabled(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::timeConstrainedEnabled():%d Federate \"%s\" Time granted to: %.12G\n",
                        __LINE__, federate->get_federate_name().c_str(),
-                       federate->time_management_srvc.get_granted_time().get_time_in_seconds() );
+                       federate->time_management_service.get_granted_time().get_time_in_seconds() );
    }
-   federate->time_management_srvc.set_time_constrained_enabled( time );
+   federate->time_management_service.set_time_constrained_enabled( time );
 }
 
 #if defined( IEEE_1516_2025 )
@@ -1865,7 +1816,7 @@ void FedAmb::timeAdvanceGrant(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   federate->time_management_srvc.set_time_advance_granted( time );
+   federate->time_management_service.set_time_advance_granted( time );
 }
 
 void FedAmb::requestRetraction(

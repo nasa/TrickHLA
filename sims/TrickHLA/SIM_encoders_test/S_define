@@ -4,7 +4,7 @@
 ##include <climits>
 
 ##include "TrickHLA/CompileConfig.hh" // for TRICK_WSTRING_MM_SUPPORT
-##include "TrickHLA/Manager.hh"
+##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
 

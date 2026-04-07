@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{LagCompensation.cpp}
+@trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{ObjectDeletedHandler.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
@@ -68,9 +69,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/LagCompensation.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"

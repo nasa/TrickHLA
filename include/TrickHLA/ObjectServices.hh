@@ -1,7 +1,7 @@
 /*!
-@file TrickHLA/Manager.hh
+@file TrickHLA/ObjectServices.hh
 @ingroup TrickHLA
-@brief This class manages the interface between a Trick simulation and HLA.
+@brief This class manages the HLA Object Services.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
@@ -38,12 +38,13 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, SRFOM support and testing.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, April 2026, --, Refactored from old Manager class.}
 @revs_end
 
 */
 
-#ifndef TRICKHLA_MANAGER_HH
-#define TRICKHLA_MANAGER_HH
+#ifndef TRICKHLA_OBJECT_SERVICES_HH
+#define TRICKHLA_OBJECT_SERVICES_HH
 
 // System includes.
 #include <string>
@@ -99,7 +100,7 @@ class Interaction;
 class InteractionItem;
 class Object;
 
-class Manager : public CheckpointConversionBase
+class ObjectServices : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -109,9 +110,9 @@ class Manager : public CheckpointConversionBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__Manager();
+   friend void init_attrTrickHLA__ObjectServices();
 
-   // Needs to call some of Manager's protexted and private data.
+   // Needs to call some of ObjectServices's protexted and private data.
    friend class Federate;
 
    //----------------------------- USER VARIABLES -----------------------------
@@ -121,35 +122,21 @@ class Manager : public CheckpointConversionBase
    int     obj_count; ///< @trick_units{--} Number of TrickHLA Objects.
    Object *objects;   ///< @trick_units{--} Array of TrickHLA object.
 
-   int          inter_count;  ///< @trick_units{--} Number of TrickHLA Interactions.
-   Interaction *interactions; ///< @trick_units{--} Array of TrickHLA Interactions.
-
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA Manager class.
+   /*! @brief Default constructor for the TrickHLA ObjectServices class.
     *  @param fed Associated Federate instance. */
-   explicit Manager( Federate &fed );
-   /*! @brief Destructor for the TrickHLA Manager class. */
-   virtual ~Manager();
-
-   /*! @brief Initializes the federate using the a multiphase initialization
-    * scheme, which must occur after the Federate and FedAmb have been
-    * initialized. */
-   void initialize();
-
-   /*! @brief Perform initialization after a checkpoint restart. */
-   void restart_initialization();
+   explicit ObjectServices( Federate &fed );
+   /*! @brief Destructor for the TrickHLA ObjectServices class. */
+   virtual ~ObjectServices();
 
    /*! @brief Initialize the HLA delta time step which is the data cycle time. */
    void initialize_HLA_cycle_time();
 
    /*! @brief Verify the user specified object arrays and counts. */
    void verify_object_arrays();
-
-   /*! @brief Verify the user specified interaction arrays and counts. */
-   void verify_interaction_arrays();
 
    /*! @brief Sends all the initialization data. */
    void send_init_data();
@@ -165,14 +152,6 @@ class Manager : public CheckpointConversionBase
     * instance name.
     * @param instance_name Name of object instance name to receive data for. */
    void receive_init_data( std::string const &instance_name );
-
-   /*! @brief Clear any remaining initialization sync-points. */
-   void clear_init_sync_points();
-
-   /*! @brief Achieve then wait for the federation to become synchronized for
-    * the specified sync-point label.
-    *  @param sync_point_label Name of the synchronization point label. */
-   void wait_for_init_sync_point( std::string const &sync_point_label );
 
    /*! @brief Request an update to the object attributes for the given object
     * instance name.
@@ -222,27 +201,9 @@ class Manager : public CheckpointConversionBase
     *  @param obj_instance_name Object instance name. */
    void object_instance_name_reservation_failed( std::wstring const &obj_instance_name );
 
-   /*! @brief Add a TrickHLA::Object to the manager object map.
-    *  @param object TrickHLA::Object to add to the manager object map. */
+   /*! @brief Add a TrickHLA::Object to the object services object map.
+    *  @param object TrickHLA::Object to add to the object services object map. */
    void add_object_to_map( Object *object );
-
-   // Interactions
-   /*! @brief Process the received interactions. */
-   void process_interactions();
-
-   /*! @brief Process all received interactions by calling in turn each
-    * interaction handler that is subscribed to the interaction.
-    * @param theInteraction     Interaction handle.
-    * @param theParameterValues Parameter values.
-    * @param theUserSuppliedTag Users tag.
-    * @param theTime            HLA time for the interaction.
-    * @param received_as_TSO    True if interaction was received by RTI as TSO. */
-   void receive_interaction(
-      RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
-      RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
-      RTI1516_NAMESPACE::LogicalTime const             &theTime,
-      bool const                                        received_as_TSO );
 
    /*! @brief Process the ownership requests. */
    void process_ownership();
@@ -268,10 +229,6 @@ class Manager : public CheckpointConversionBase
    /*! @brief Unubscribe from the Object and Interaction classes. */
    void unsubscribe();
 
-   /*! @brief Publish and Subscribe to Object and Interaction classes and their
-    * member data. */
-   void publish_and_subscribe();
-
    /*! @brief Reserve the RTI object instance names with the RTI, but only for
     * the objects that are locally owned. */
    void reserve_object_names_with_RTI();
@@ -294,24 +251,13 @@ class Manager : public CheckpointConversionBase
    /*! @brief Sets the RTI run-time type IDs/handles for the object and attributes. */
    void setup_object_RTI_handles();
 
-   /*! @brief Sets the RTI run-time type IDs/handles for the interaction and parameters. */
-   void setup_interaction_RTI_handles();
-
    /*! @brief Sets the RTI run-time type IDs/handles for the object and attributes.
     *  @param data_obj_count Number of objects.
     *  @param data_objects   Simulation TrickHLA Objects. */
    void setup_object_RTI_handles( int const data_obj_count,
                                   Object   *data_objects );
 
-   /*! @brief Sets the RTI run-time type IDs/handles for the specified
-    * interactions and parameters.
-    *  @param interactions_counter Number of interactions.
-    *  @param in_interactions      Simulation TrickHLA Interaction objects. */
-   void setup_interaction_RTI_handles( int const    interactions_counter,
-                                       Interaction *in_interactions );
-
-   /*! @brief Setup the preferred order (TSO or RO) for all the object
-    * attributes and interactions. */
+   /*! @brief Setup the preferred order (TSO or RO) for all the object attributes. */
    void setup_preferred_order_with_RTI();
 
    /*! @brief Requesting an attribute value update for the given object
@@ -335,26 +281,6 @@ class Manager : public CheckpointConversionBase
       return objects;
    }
 
-   /*! @brief Get the number of TrickHLA::Interactions.
-    *  @return The number of TrickHLA::Interaction instances. */
-   int get_interaction_count() const
-   {
-      return inter_count;
-   }
-
-   /*! @brief Get the array containing the TrickHLA::Interaction instances.
-    *  @return Array of TrickHLA::Interaction instances. */
-   Interaction *get_interactions()
-   {
-      return interactions;
-   }
-
-   /*! @brief Reset the manager as initialized. */
-   void reset_mgr_initialized()
-   {
-      mgr_initialized = false;
-   }
-
    /*! @brief Set up the Trick ref-attributes for the user specified objects,
     * and attributes. */
    void setup_object_ref_attributes();
@@ -365,10 +291,6 @@ class Manager : public CheckpointConversionBase
     * @param data_objects   Simulation TrickHLA::Objects. */
    void setup_object_ref_attributes( int const data_obj_count,
                                      Object   *data_objects );
-
-   /*! @brief Set up the Trick ref-attributes for the user specified
-    * interactions and parameters. */
-   void setup_interaction_ref_attributes();
 
    /*! @brief Set all the object instance handles by using the object instance names. */
    void set_all_object_instance_handles_by_name();
@@ -469,41 +391,6 @@ class Manager : public CheckpointConversionBase
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
    virtual void free_converted_data_for_checkpoint();
 
-   /*! @brief Convert interaction queue items into an InteractionItem linear array. */
-   void convert_interactions_before_checkpoint();
-
-   /*! @brief Restore checkpoint InteractionItem linear arrays back into the
-    * main interaction queue. */
-   void restore_interactions_after_checkpoint();
-
-   /*! @brief Free/clear InteractionItem checkpoint linear array. */
-   void free_converted_interactions_checkpoint();
-
-   /*! @brief Echoes the contents of checkpoint InteractionItem linear array. */
-   void print_converted_interactions_checkpoint();
-
-   //
-   // ExCO
-   //
-   /*! @brief Test is an execution configuration object is used.
-    *  @return True if an execution configuration object is used. */
-   bool is_execution_configuration_used();
-
-   /*! @brief Get the execution configuration object.
-    *  @return Pointer to the associated execution configuration object. */
-   ExecutionConfigurationBase *get_execution_configuration();
-
-   /*! @brief Check if this is a late joining federate.
-    *  @return True if the is a late joining federate. */
-   bool is_late_joining_federate() const;
-
-   /*! @brief Get the pointer to the associated TrickHLA::Federate instance.
-    *  @return Pointer to the associated TrickHLA::Federate instance. */
-   Federate *get_federate() const
-   {
-      return federate;
-   }
-
    //
    // Private data.
    //
@@ -512,8 +399,6 @@ class Manager : public CheckpointConversionBase
 
    std::size_t      check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
-
-   bool mgr_initialized; ///< @trick_units{--} Internal flag to indicate Manager is initialized.
 
    MutexLock obj_discovery_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
@@ -528,14 +413,14 @@ class Manager : public CheckpointConversionBase
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for Manager class.
+   /*! @brief Copy constructor for ObjectServices class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Manager( Manager const &rhs );
-   /*! @brief Assignment operator for Manager class.
+   ObjectServices( ObjectServices const &rhs );
+   /*! @brief Assignment operator for ObjectServices class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Manager &operator=( Manager const &rhs );
+   ObjectServices &operator=( ObjectServices const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_MANAGER_HH
+#endif // TRICKHLA_OBJECT_SERVICES_HH

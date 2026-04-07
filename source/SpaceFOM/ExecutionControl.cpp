@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
 @trick_link_dependency{../TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../TrickHLA/Manager.cpp}
+@trick_link_dependency{../TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../TrickHLA/Parameter.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{../TrickHLA/time/CTETimelineBase.cpp}
@@ -73,8 +73,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionItem.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
@@ -201,9 +201,9 @@ void ExecutionControl::initialize()
    // If this is the Master or Pacing federate, then it must support Time
    // Management and be both Time Regulating and Time Constrained.
    if ( is_master() || is_pacing() ) {
-      time_management_srvc->time_management  = true;
-      time_management_srvc->time_regulating  = true;
-      time_management_srvc->time_constrained = true;
+      time_management_service->time_management  = true;
+      time_management_service->time_regulating  = true;
+      time_management_service->time_constrained = true;
    }
 
    // For SpaceFOM, we must freeze on the Trick software frame boundary because
@@ -400,7 +400,7 @@ void ExecutionControl::setup_object_RTI_handles()
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-   manager->setup_object_RTI_handles( 1, ExCO );
+   object_service->setup_object_RTI_handles( 1, ExCO );
 }
 
 /*!
@@ -411,7 +411,7 @@ void ExecutionControl::setup_interaction_RTI_handles()
    // Setup the RTI handles for the SpaceFOM MTR Interaction.
    if ( mtr_interaction != NULL ) {
       // SpaceFOM Mode Transition Request (MTR) Interaction.
-      manager->setup_interaction_RTI_handles( 1, mtr_interaction );
+      interaction_service->setup_interaction_RTI_handles( 1, mtr_interaction );
    }
 }
 
@@ -816,12 +816,12 @@ void ExecutionControl::early_joiner_hla_init_process()
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
-   manager->setup_object_RTI_handles();
-   manager->setup_interaction_RTI_handles();
+   object_service->setup_object_RTI_handles();
+   interaction_service->setup_interaction_RTI_handles();
 
-   // Call publish_and_subscribe AFTER we've initialized the manager,
+   // Call publish_and_subscribe AFTER we've initialized the object_service,
    // federate, and FedAmb.
-   manager->publish_and_subscribe();
+   federate->publish_and_subscribe();
 
    // If this is the Master federate, then setup the ExCO.
    if ( is_master() ) {
@@ -835,32 +835,32 @@ void ExecutionControl::early_joiner_hla_init_process()
    } else {
       // NOTE:
       // Should publish the MTR interaction here. However, this
-      // is currently handled in the manager->setup_interaction_RTI_handles()
-      // and manager->publish_and_subscribe()!
+      // is currently handled in the object_service->setup_interaction_RTI_handles()
+      // and federate->publish_and_subscribe()!
    }
 
    // Reserve the RTI object instance names with the RTI, but only for
    // the objects that are locally owned.
-   manager->reserve_object_names_with_RTI();
+   object_service->reserve_object_names_with_RTI();
 
    // Waits on the reservation of the RTI object instance names for the
    // locally owned objects. Calling this function will block until all
    // the object instances names for the locally owned objects have been
    // reserved.
-   manager->wait_for_reservation_of_object_names();
+   object_service->wait_for_reservation_of_object_names();
 
    // Creates an RTI object instance and registers it with the RTI, but
    // only for the objects that we create.
-   manager->register_objects_with_RTI();
+   object_service->register_objects_with_RTI();
 
    // Waits on the registration of all the required RTI object instances
    // with the RTI. Calling this function will block until all the
    // required object instances in the Federation have been registered.
-   manager->wait_for_registration_of_required_objects();
+   object_service->wait_for_registration_of_required_objects();
 
    // Setup the preferred order for all object attributes and interactions
    // if the user want's to override the FOM specified default.
-   manager->setup_preferred_order_with_RTI();
+   object_service->setup_preferred_order_with_RTI();
 
    // Achieve the "objects_discovered" sync-point and wait for the
    // federation to be synchronized on it. There is a race condition
@@ -978,23 +978,23 @@ void ExecutionControl::late_joiner_hla_init_process()
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
-   manager->setup_object_RTI_handles();
-   manager->setup_interaction_RTI_handles();
+   object_service->setup_object_RTI_handles();
+   interaction_service->setup_interaction_RTI_handles();
 
    // Subscribe to the ExCO attributes.
    ExCO->subscribe_to_object_attributes();
 
    // NOTE:
    // Should publish the MTR interaction here. However, this
-   // is currently handled in the manager->setup_interaction_RTI_handles()
-   // and manager->publish_and_subscribe()!
+   // is currently handled in the object_service->setup_interaction_RTI_handles()
+   // and federate->publish_and_subscribe()!
 
    // Wait for the registration of the ExCO. Calling this function will
    // block until the ExCO object instances has been registered.
    ExCO->wait_for_registration();
 
    // Request a ExCO object update.
-   manager->request_data_update( ExCO->get_name() );
+   object_service->request_data_update( ExCO->get_name() );
 
    // Wait for the ExCO attribute reflection.
    ExCO->wait_for_update();
@@ -1030,31 +1030,31 @@ void ExecutionControl::late_joiner_hla_init_process()
    // Process the just received ExCO update.
    process_execution_control_updates();
 
-   // Call publish_and_subscribe AFTER we've initialized the manager,
+   // Call publish_and_subscribe AFTER we've initialized the object_service,
    // federate, and FedAmb.
-   manager->publish_and_subscribe();
+   federate->publish_and_subscribe();
 
    // Reserve the RTI object instance names with the RTI, but only for
    // the objects that are locally owned.
-   manager->reserve_object_names_with_RTI();
+   object_service->reserve_object_names_with_RTI();
 
    // Waits on the reservation of the RTI object instance names for the
    // locally owned objects. Calling this function will block until all
    // the object instances names for the locally owned objects have been
    // reserved.
-   manager->wait_for_reservation_of_object_names();
+   object_service->wait_for_reservation_of_object_names();
 
    // Creates an RTI object instance and registers it with the RTI, but
    // only for the objects that we create.
-   manager->register_objects_with_RTI();
+   object_service->register_objects_with_RTI();
 
    // Waits on the registration of all the required RTI object instances
    // with the RTI. Calling this function will block until all the
    // required object instances in the Federation have been registered.
-   manager->wait_for_registration_of_required_objects();
+   object_service->wait_for_registration_of_required_objects();
 
    // NOTE: The remainder of this SpaceFOM process is handled in the
-   // TrickHLA::Manager::initialization_complete() step after any
+   // TrickHLA::Federate::initialization_complete() step after any
    // potential Late Joiner specific multi-phase initialization with
    // other late joining federates.
 }
@@ -1073,7 +1073,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Unexpected NULL THLA.manager.exec_config object." << endl;
+             << " ERROR: Unexpected NULL THLA.federate.exec_config object." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -1082,7 +1082,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( ExCO->get_FOM_name().empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object." << endl;
+             << " ERROR: Unexpected NULL FOM-name for the THLA.federate.exec_config object." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -1094,7 +1094,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       if ( is_master() || is_root_frame_publisher() ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Unexpected NULL THLA.manager.root_ref_frame object."
+                << " ERROR: Unexpected NULL THLA.federate.root_ref_frame object."
                 << " The Master federate or the Root Reference Frame Publisher"
                 << " federate must have the root_ref_frame reference set." << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -1165,8 +1165,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
-   manager->setup_object_ref_attributes();
-   manager->setup_interaction_ref_attributes();
+   object_service->setup_object_ref_attributes();
+   interaction_service->setup_interaction_ref_attributes();
 
    // Add the SpaceFOM ExecutionControl and user defined multiphase
    // initialization synchronization points to the list before we join the
@@ -1239,7 +1239,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       // multiple of the least-common-time-step (LCTS), otherwise we
       // will not be in sync with the other federates on the HLA logical
       // timeline.
-      time_management_srvc->time_advance_request_to_GALT_LCTS_multiple();
+      time_management_service->time_advance_request_to_GALT_LCTS_multiple();
 
       // Need to compute the late joiner simulation time offset for the
       // scenario time line.
@@ -2318,7 +2318,7 @@ bool ExecutionControl::run_mode_transition()
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
 
-      // Always show a warning message if the manager does not have a big
+      // Always show a warning message if the object_service does not have a big
       // enough time padding specified by the user when using CTE.
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( cte_time_diff >= 0.1 ) {
@@ -2886,7 +2886,7 @@ void ExecutionControl::send_init_root_ref_frame()
 {
 
    // Late joining federates cannot be root frame publishers so just return.
-   if ( manager->is_late_joining_federate() ) {
+   if ( federate->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::send_init_root_ref_frame():%d Late joining \
 federate so the data will not be sent for '%s'.\n",
@@ -2957,7 +2957,7 @@ void ExecutionControl::send_root_ref_frame()
 void ExecutionControl::receive_init_root_ref_frame()
 {
    // Late joining federates will get root reference frame from ExCO update.
-   if ( manager->is_late_joining_federate() ) {
+   if ( federate->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::receive_init_root_ref_frame():%d Late joining federate so skipping data for '%s'\n",
                           __LINE__, root_ref_frame->get_name().c_str() );

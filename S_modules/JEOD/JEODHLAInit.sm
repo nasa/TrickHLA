@@ -27,7 +27,6 @@
 
 // TrickHLA include files.
 ##include "TrickHLA/Federate.hh"
-##include "TrickHLA/Manager.hh"
 
 // SpaceFOM include files.
 ##include "SpaceFOM/ExecutionControl.hh"

@@ -109,7 +109,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
       }
       
-      // Set the references to the TrickHLA manager object.
+      // Set the references to the TrickHLA object.
       thla_object = object;
       packing_base_ptr->set_object( object );
    }
@@ -125,7 +125,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          return( -1 );
       }
 
-      // Get the associated TrickHLA manager object.
+      // Get the associated TrickHLA object.
       TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
       
       // Check if the TrickHLA Object associated with the packing function
@@ -209,7 +209,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          packing_base_ptr->initialize();
       }
 
-      // Get the associated TrickHLA manager object.
+      // Get the associated TrickHLA object.
       TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
 
       // Check if the TrickHLA Object associated with the packing function

@@ -18,7 +18,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Manager.cpp}
+@trick_link_dependency{../TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../TrickHLA/SyncPointTimed.cpp}
 @trick_link_dependency{../TrickHLA/SyncPointManagerBase.cpp}
@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, IMSim support and testing.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, June 2019, --, Version 3 rewrite.}
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2024, --, Refactor to use sync-point manager.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2024, --, Refactor to use sync-point object_service.}
 @revs_end
 
 */
@@ -69,8 +69,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionItem.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
@@ -239,10 +239,10 @@ void ExecutionControl::initialize()
    // If this is the Master federate, then it must support Time
    // Management and be both Time Regulating and Time Constrained.
    if ( is_master() ) {
-      TimeManagementServices *time_management_srvc = federate->get_time_management_service();
-      time_management_srvc->time_management        = true;
-      time_management_srvc->time_regulating        = true;
-      time_management_srvc->time_constrained       = true;
+      TimeManagementServices *time_management_service = federate->get_time_management_service();
+      time_management_service->time_management        = true;
+      time_management_service->time_regulating        = true;
+      time_management_service->time_constrained       = true;
 
       // The software frame is set from the Least Common Time Step.
       // For the Master federate the Trick simulation software frame must
@@ -303,8 +303,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
-   manager->setup_object_ref_attributes();
-   manager->setup_interaction_ref_attributes();
+   object_service->setup_object_ref_attributes();
+   interaction_service->setup_interaction_ref_attributes();
 
    // Add the IMSim initialization and user multiphase initialization
    // sync-points now that the ExecutionConfiguration has been initialized
@@ -364,9 +364,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Save restore_file_name before it gets wiped out with the loading of the checkpoint file...
    char *tRestoreName = NULL;
-   if ( !save_restore_srvc->restore_file_name.empty() ) {
+   if ( !save_restore_service->restore_file_name.empty() ) {
       // we don't want this to get wiped out when trick clears memory for load checkpoint, so don't allocate with TMM
-      tRestoreName = strdup( save_restore_srvc->restore_file_name.c_str() ); // NOLINT
+      tRestoreName = strdup( save_restore_service->restore_file_name.c_str() ); // NOLINT
    }
 
    // Initialize the MOM interface handles.
@@ -378,19 +378,19 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
       // if you want to restore from a check point, force the loading of the
       // checkpoint file here...
-      if ( save_restore_srvc->restore_federation ) {
+      if ( save_restore_service->restore_federation ) {
          if ( ( tRestoreName != NULL ) && ( *tRestoreName != '\0' ) ) {
 
             // make sure that we have a valid absolute path to the files.
-            save_restore_srvc->check_HLA_save_directory();
+            save_restore_service->check_HLA_save_directory();
 
             // signal the MASTER federate to track all federates who join,
             // looking for anyone who is not required.
-            save_restore_srvc->set_restore_is_imminent();
+            save_restore_service->set_restore_is_imminent();
 
             // read the required federates data from external file, replacing
             // the contents of 'known_feds'.
-            save_restore_srvc->read_running_feds_file( tRestoreName );
+            save_restore_service->read_running_feds_file( tRestoreName );
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
@@ -410,7 +410,7 @@ Waiting for the required federates to join.\n",
             }
 
             // Load the MASTER federate from the checkpoint file...
-            save_restore_srvc->restore_checkpoint( tRestoreName );
+            save_restore_service->restore_checkpoint( tRestoreName );
 
             //
             // Even though the multiphase initialization document does not tell
@@ -430,7 +430,7 @@ Waiting for the required federates to join.\n",
             // re-registering all objects and this may lead to strange and
             // unexpected results in the restored federation...
             //
-            save_restore_srvc->copy_running_feds_into_known_feds();
+            save_restore_service->copy_running_feds_into_known_feds();
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
@@ -439,12 +439,12 @@ initiating restore request for '%s' with the RTI.\n",
                                 __LINE__, tRestoreName );
             }
             // request federation restore from RTI
-            save_restore_srvc->initiate_restore_announce( tRestoreName );
+            save_restore_service->initiate_restore_announce( tRestoreName );
 
             // wait for the success / failure response from the RTI
-            save_restore_srvc->wait_for_restore_request_callback();
+            save_restore_service->wait_for_restore_request_callback();
 
-            if ( save_restore_srvc->has_restore_request_failed() ) {
+            if ( save_restore_service->has_restore_request_failed() ) {
                ostringstream errmsg;
                errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
                       << __LINE__
@@ -462,22 +462,22 @@ initiating restore request for '%s' with the RTI.\n",
 
             // Wait for RTI to inform us that the federation restore has
             // begun before informing the RTI that we are done.
-            save_restore_srvc->wait_for_federation_restore_begun();
+            save_restore_service->wait_for_federation_restore_begun();
 
             // Wait for RTI to inform us that the federation restore has
             // begun before informing the RTI that we are done.
-            save_restore_srvc->wait_until_federation_is_ready_to_restore();
+            save_restore_service->wait_until_federation_is_ready_to_restore();
 
             // Signal RTI that the MASTER federate has already been loaded
             // (above).
-            save_restore_srvc->inform_RTI_of_restore_completion();
+            save_restore_service->inform_RTI_of_restore_completion();
 
             // Wait until we get a callback to inform us that the federation
             // restore is complete. if a non-NULL string is returned, there was
             // an error so take appropriate action.
-            string tStr = save_restore_srvc->wait_for_federation_restore_to_complete();
+            string tStr = save_restore_service->wait_for_federation_restore_to_complete();
             if ( tStr.length() ) {
-               save_restore_srvc->wait_for_federation_restore_failed_callback_to_complete();
+               save_restore_service->wait_for_federation_restore_failed_callback_to_complete();
 
                ostringstream errmsg;
                errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
@@ -511,10 +511,10 @@ initiating restore request for '%s' with the RTI.\n",
             wait_for_sync_point_announced( IMSim::STARTUP_SYNC_POINT );
 
             // Restart myself...
-            manager->restart_initialization();
+            federate->restart_initialization();
 
             // Restart the checkpoint...
-            save_restore_srvc->restart_checkpoint();
+            save_restore_service->restart_checkpoint();
 
             // Achieve the "STARTUP" sync-point and wait for the
             // federation synchronize on it.
@@ -534,7 +534,7 @@ Simulation has started and is now running...\n",
                }
             }
 
-            save_restore_srvc->set_federate_has_begun_execution();
+            save_restore_service->set_federate_has_begun_execution();
          } else {
             ostringstream errmsg;
             errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
@@ -548,8 +548,8 @@ Simulation has started and is now running...\n",
 
          // Setup all the RTI handles for the objects, attributes and interaction
          // parameters.
-         manager->setup_object_RTI_handles();      // NOLINT
-         manager->setup_interaction_RTI_handles(); // NOLINT
+         object_service->setup_object_RTI_handles();           // NOLINT
+         interaction_service->setup_interaction_RTI_handles(); // NOLINT
 
          // Make sure all required federates have joined the federation.
          federate->wait_for_required_federates_to_join();
@@ -568,16 +568,16 @@ Simulation has started and is now running...\n",
          register_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST,
                                    federate->get_joined_federate_handles() );
 
-         // Call publish_and_subscribe AFTER we've initialized the manager,
+         // Call publish_and_subscribe AFTER we've initialized the
          // federate, and FedAmb.
-         manager->publish_and_subscribe();
+         federate->publish_and_subscribe();
 
          // Reserve "SimConfig" object instance name.
          execution_configuration->reserve_object_name_with_RTI();
 
          // Reserve the RTI object instance names with the RTI, but only for
          // the objects that are locally owned.
-         manager->reserve_object_names_with_RTI();
+         object_service->reserve_object_names_with_RTI();
 
          // Wait for success or failure for the "SimConfig" name reservation.
          execution_configuration->wait_for_object_name_reservation();
@@ -586,19 +586,19 @@ Simulation has started and is now running...\n",
          // locally owned objects. Calling this function will block until all
          // the object instances names for the locally owned objects have been
          // reserved.
-         manager->wait_for_reservation_of_object_names();
+         object_service->wait_for_reservation_of_object_names();
 
          // Creates an RTI object instance and registers it with the RTI, but
          // only for the objects that we create.
-         manager->register_objects_with_RTI();
+         object_service->register_objects_with_RTI();
 
          // Setup the preferred order for all object attributes and interactions.
-         manager->setup_preferred_order_with_RTI();
+         object_service->setup_preferred_order_with_RTI();
 
          // Waits on the registration of all the required RTI object instances
          // with the RTI. Calling this function will block until all the
          // required object instances in the Federation have been registered.
-         manager->wait_for_registration_of_required_objects();
+         object_service->wait_for_registration_of_required_objects();
 
          // Wait for the "sim_config", "initialize", and "startup" sync-points
          // to be announced.
@@ -631,7 +631,7 @@ Simulation has started and is now running...\n",
       if ( determine_if_late_joining_or_restoring_federate() == TrickHLA::FEDERATE_JOIN_RESTORING ) {
 
          // make sure that we have a valid absolute path to the files.
-         save_restore_srvc->check_HLA_save_directory();
+         save_restore_service->check_HLA_save_directory();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
@@ -640,7 +640,7 @@ loading of the federate from the checkpoint file '%s'.\n",
                              __LINE__, tRestoreName );
          }
          string restore_name = ( tRestoreName != NULL ) ? tRestoreName : "";
-         save_restore_srvc->restore_checkpoint( restore_name );
+         save_restore_service->restore_checkpoint( restore_name );
 
          //
          // Even though the multiphase initialization document does not tell
@@ -660,24 +660,24 @@ loading of the federate from the checkpoint file '%s'.\n",
          // re-registering all objects and this may lead to strange and
          // unexpected results in the restored federation...
          //
-         save_restore_srvc->copy_running_feds_into_known_feds();
+         save_restore_service->copy_running_feds_into_known_feds();
 
          // wait for RTI to inform us that the federation restore has
          // begun before informing the RTI that we are done.
-         save_restore_srvc->wait_for_federation_restore_begun();
+         save_restore_service->wait_for_federation_restore_begun();
 
          // wait for RTI to inform us that the federation restore has
          // begun before informing the RTI that we are done.
-         save_restore_srvc->wait_until_federation_is_ready_to_restore();
+         save_restore_service->wait_until_federation_is_ready_to_restore();
 
          // signal RTI that we are done loading.
-         save_restore_srvc->inform_RTI_of_restore_completion();
+         save_restore_service->inform_RTI_of_restore_completion();
 
          // wait until we get a callback to inform us that the federation
          // restore is complete...
-         string tStr = save_restore_srvc->wait_for_federation_restore_to_complete();
+         string tStr = save_restore_service->wait_for_federation_restore_to_complete();
          if ( tStr.length() ) {
-            save_restore_srvc->wait_for_federation_restore_failed_callback_to_complete();
+            save_restore_service->wait_for_federation_restore_failed_callback_to_complete();
 
             ostringstream errmsg;
             errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
@@ -696,10 +696,10 @@ loading of the federate from the checkpoint file '%s'.\n",
          wait_for_sync_point_announced( IMSim::STARTUP_SYNC_POINT );
 
          // restart myself...
-         manager->restart_initialization();
+         federate->restart_initialization();
 
          // restart the federate...
-         save_restore_srvc->restart_checkpoint();
+         save_restore_service->restart_checkpoint();
 
          // Achieve the "STARTUP" sync-point and wait for the federation
          // to be synchronized on it.
@@ -719,45 +719,45 @@ Simulation has started and is now running...\n",
             }
          }
 
-         save_restore_srvc->set_federate_has_begun_execution();
+         save_restore_service->set_federate_has_begun_execution();
       } else { // non-MASTER federate; not restoring a checkpoint
 
          // Setup all the RTI handles for the objects, attributes and interaction
          // parameters.
-         manager->setup_object_RTI_handles();
-         manager->setup_interaction_RTI_handles();
+         object_service->setup_object_RTI_handles();
+         interaction_service->setup_interaction_RTI_handles();
 
-         if ( !manager->is_late_joining_federate() ) {
+         if ( !federate->is_late_joining_federate() ) {
             //**** Non-Master federate that is Not late in joining the ****
             //**** federation, so it can participate in the multiphase ****
             //**** initialization process                              ****
 
-            // Call publish_and_subscribe AFTER we've initialized the manager,
+            // Call publish_and_subscribe AFTER we've initialized the
             // federate, and FedAmb.
-            manager->publish_and_subscribe();
+            federate->publish_and_subscribe();
 
             // Reserve the RTI object instance names with the RTI, but only for
             // the objects that are locally owned.
-            manager->reserve_object_names_with_RTI();
+            object_service->reserve_object_names_with_RTI();
 
             // Waits on the reservation of the RTI object instance names for the
             // locally owned objects. Calling this function will block until all
             // the object instances names for the locally owned objects have been
             // reserved.
-            manager->wait_for_reservation_of_object_names();
+            object_service->wait_for_reservation_of_object_names();
 
             // Creates an RTI object instance and registers it with the RTI, but
             // only for the objects that are locally owned.
-            manager->register_objects_with_RTI();
+            object_service->register_objects_with_RTI();
 
             // Setup the preferred order for all object attributes and interactions.
-            manager->setup_preferred_order_with_RTI();
+            object_service->setup_preferred_order_with_RTI();
 
             // Waits on the registration of all the required RTI object
             // instances with the RTI. Calling this function will block until
             // all the required object instances in the Federation have been
             // registered.
-            manager->wait_for_registration_of_required_objects();
+            object_service->wait_for_registration_of_required_objects();
 
             // Wait for the "sim_config", "initialize", and "startup" sync-points
             // to be announced.
@@ -797,24 +797,24 @@ Simulation has started and is now running...\n",
             execution_configuration->wait_for_registration();
 
             // Request a simulation configuration object update.
-            manager->request_data_update( execution_configuration->get_name() );
+            object_service->request_data_update( execution_configuration->get_name() );
 
             // Wait for the "Simulation Configuration" object attribute reflection.
             execution_configuration->wait_for_update();
 
-            // Call publish_and_subscribe AFTER we've initialized the manager,
+            // Call publish_and_subscribe AFTER we've initialized the
             // federate, and FedAmb.
-            manager->publish_and_subscribe();
+            federate->publish_and_subscribe();
 
             // Wait for all objects to be discovered, if necessary.
-            manager->wait_for_discovery_of_objects();
+            object_service->wait_for_discovery_of_objects();
 
             // If this is a rejoining federate, re-aquire ownership of its attributes.
             if ( is_this_a_rejoining_federate() ) {
 
                // Force ownership restore from other federate(s) and wait for
                // the ownership to complete before proceeding.
-               manager->pull_ownership_upon_rejoin();
+               object_service->pull_ownership_upon_rejoin();
             } else {
 
                // Federate is not rejoining the federation. proceed with reserving
@@ -822,27 +822,27 @@ Simulation has started and is now running...\n",
 
                // Reserve the RTI object instance names with the RTI, but only for
                // the objects that are locally owned.
-               manager->reserve_object_names_with_RTI();
+               object_service->reserve_object_names_with_RTI();
 
                // Waits on the reservation of the RTI object instance names for the
                // locally owned objects. Calling this function will block until all
                // the object instances names for the locally owned objects have been
                // reserved.
-               manager->wait_for_reservation_of_object_names();
+               object_service->wait_for_reservation_of_object_names();
 
                // Creates an RTI object instance and registers it with the RTI, but
                // only for the objects that are locally owned.
-               manager->register_objects_with_RTI();
+               object_service->register_objects_with_RTI();
             }
 
             // Setup the preferred order for all object attributes and interactions.
-            manager->setup_preferred_order_with_RTI();
+            object_service->setup_preferred_order_with_RTI();
 
             // Waits on the registration of all the required RTI object
             // instances with the RTI. Calling this function will block until
             // all the required object instances in the Federation have been
             // registered.
-            manager->wait_for_registration_of_required_objects();
+            object_service->wait_for_registration_of_required_objects();
          }
       }
    }
@@ -880,8 +880,8 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
 
       // when we receive the signal to restore, set the flag.
       if ( !late_joiner_determined
-           && save_restore_srvc->has_restore_been_announced()
-           && save_restore_srvc->is_start_to_restore() ) {
+           && save_restore_service->has_restore_been_announced()
+           && save_restore_service->is_start_to_restore() ) {
          set_restore_determined( true );
          set_restore_federate( true );
       }
@@ -964,12 +964,12 @@ void ExecutionControl::post_multi_phase_init_processes()
    // When we join the federation, setup the list of current federates.
    // When a federate joins / resigns, this list will be automatically
    // updated by each federate.
-   save_restore_srvc->load_and_print_running_federate_names();
+   save_restore_service->load_and_print_running_federate_names();
 
    // Setup HLA time management.
    federate->setup_time_management();
 
-   if ( manager->is_late_joining_federate() ) {
+   if ( federate->is_late_joining_federate() ) {
       // Jump to the GALT time, otherwise we will not be in sync with the
       // other federates on the HLA logical timeline.
       federate->time_advance_request_to_GALT();
@@ -1145,7 +1145,7 @@ void ExecutionControl::setup_object_RTI_handles()
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
-   manager->setup_object_RTI_handles( 1, ExCO );
+   object_service->setup_object_RTI_handles( 1, ExCO );
 }
 
 /*!
@@ -1153,17 +1153,15 @@ void ExecutionControl::setup_object_RTI_handles()
  */
 void ExecutionControl::setup_interaction_RTI_handles()
 {
-   // Ask the manager to setup the Freeze interaction RTI handles.
-   manager->setup_interaction_RTI_handles( 1, freeze_interaction );
-
-   return;
+   // Ask the object_service to setup the Freeze interaction RTI handles.
+   interaction_service->setup_interaction_RTI_handles( 1, freeze_interaction );
 }
 
 /*! Add initialization synchronization points to regulate startup. */
 void ExecutionControl::add_initialization_sync_points()
 {
    // Add the IMSim initialization synchronization points used for startup
-   // regulation to the sync-point manager.
+   // regulation to the sync-point object_service.
    add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
    add_sync_point( IMSim::INITIALIZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
    add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
@@ -2271,13 +2269,13 @@ void ExecutionControl::start_federation_save_at_scenario_time(
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d\n",
                           freeze_scenario_time, file_name.c_str(), __LINE__ );
       }
-      save_restore_srvc->set_announce_save();
+      save_restore_service->set_announce_save();
 
       double new_scenario_time = freeze_scenario_time;
 
       trigger_freeze_interaction( new_scenario_time );
 
-      save_restore_srvc->initiate_federation_save( file_name );
+      save_restore_service->initiate_federation_save( file_name );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
@@ -2290,9 +2288,9 @@ freeze_interaction's HANLDER is NULL! Request was ignored!\n",
 void ExecutionControl::add_freeze_scenario_time(
    double t )
 {
-   if ( manager->is_late_joining_federate() ) {
+   if ( federate->is_late_joining_federate() ) {
 
-      if ( save_restore_srvc->is_announce_save() ) {
+      if ( save_restore_service->is_announce_save() ) {
          freeze_scenario_times.insert( t );
       } else {
          // If we received the interaction, save on the current frame.
@@ -2331,7 +2329,7 @@ bool ExecutionControl::check_freeze_time()
       exec_freeze(); // go to freeze at top of next frame (other federates MUST have their software frame set in input.py file!)
       // If we are to initiate the federation save, register a sync point
       // which must be acknowledged only in freeze mode!!!
-      if ( save_restore_srvc->is_announce_save() ) {
+      if ( save_restore_service->is_announce_save() ) {
          register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
          set_freeze_announced( true );
       }
@@ -2420,19 +2418,19 @@ bool ExecutionControl::is_save_initiated()
    // set in federation_synchronized when feds sync to FEDSAVE_v2 sync point
    // if it's not set, we are here because Dump Chkpnt was clicked, so we
    // need to register sync point
-   if ( save_restore_srvc->is_announce_save()
-        && !save_restore_srvc->is_initiate_save_flag()
-        && !save_restore_srvc->is_save_completed() ) {
+   if ( save_restore_service->is_announce_save()
+        && !save_restore_service->is_initiate_save_flag()
+        && !save_restore_service->is_save_completed() ) {
       register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
       SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
-      while ( !save_restore_srvc->is_initiate_save_flag() ) { // wait for federation to be synced
+      while ( !save_restore_service->is_initiate_save_flag() ) { // wait for federation to be synced
 
          sleep_timer.sleep();
 
-         if ( !save_restore_srvc->is_initiate_save_flag() ) {
+         if ( !save_restore_service->is_initiate_save_flag() ) {
 
             // To be more efficient, we get the time once and share it.
             int64_t wallclock_time = sleep_timer.time();
@@ -2441,7 +2439,7 @@ bool ExecutionControl::is_save_initiated()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "IMSim::ExecutionControl::setup_checkpoint():" << __LINE__
+                  errmsg << "IMSim::ExecutionControl::is_save_initiated():" << __LINE__
                          << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
@@ -2454,7 +2452,7 @@ bool ExecutionControl::is_save_initiated()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::setup_checkpoint():%d Waiting '%s'\n",
+               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::is_save_initiated():%d Waiting '%s'\n",
                                 __LINE__ );
             }
          }
@@ -2465,12 +2463,12 @@ bool ExecutionControl::is_save_initiated()
 
 bool ExecutionControl::perform_save()
 {
-   if ( save_restore_srvc->is_announce_save()
-        && save_restore_srvc->is_initiate_save_flag()
-        && !save_restore_srvc->is_start_to_save() ) {
+   if ( save_restore_service->is_announce_save()
+        && save_restore_service->is_initiate_save_flag()
+        && !save_restore_service->is_start_to_save() ) {
       // We are here because user called start_federation_save, so
       // must force the perform_checkpoint code to execute.
-      save_restore_srvc->set_announce_save( false );
+      save_restore_service->set_announce_save( false );
       return ( true );
    }
 
@@ -2485,11 +2483,11 @@ bool ExecutionControl::perform_save()
  */
 bool ExecutionControl::is_this_a_rejoining_federate()
 {
-   for ( int n = 0; n < manager->obj_count; ++n ) {
+   for ( int n = 0; n < object_service->obj_count; ++n ) {
       // Was the required 'create_HLA_instance' object found?
-      if ( manager->objects[n].is_required()
-           && manager->objects[n].is_create_HLA_instance()
-           && manager->objects[n].is_instance_handle_valid() ) {
+      if ( object_service->objects[n].is_required()
+           && object_service->objects[n].is_create_HLA_instance()
+           && object_service->objects[n].is_instance_handle_valid() ) {
 
          // Set a flag to indicate that this federate is rejoining the federation
          this->rejoining_federate = true;

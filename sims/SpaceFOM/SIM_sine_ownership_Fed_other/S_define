@@ -45,7 +45,6 @@
 
 // TrickHLA includes.
 ##include "TrickHLA/Federate.hh"
-##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/time/SimTimeline.hh"
 ##include "TrickHLA/time/ScenarioTimeline.hh"
 

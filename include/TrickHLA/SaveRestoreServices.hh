@@ -124,7 +124,7 @@ class SaveRestoreServices
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA Manager class.
+   /*! @brief Default constructor for the TrickHLA Federate class.
     *  @param fed Associated Federate instance. */
    explicit SaveRestoreServices( Federate &fed );
    /*! @brief Destructor for the TrickHLA SaveRestoreServices class. */
@@ -539,9 +539,9 @@ class SaveRestoreServices
    //
    // References to the Federate and associated services.
    //
-   Federate               *federate;             ///< @trick_units{--} Associated TrickHLA::Federate.
-   TimeManagementServices *time_management_srvc; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
-   ExecutionControlBase   *execution_control;    ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
+   Federate               *federate;                ///< @trick_units{--} Associated TrickHLA::Federate.
+   TimeManagementServices *time_management_service; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
+   ExecutionControlBase   *execution_control;       ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
 
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
    std::wstring restore_name; ///< @trick_io{**} Name for a restore file
@@ -554,7 +554,7 @@ class SaveRestoreServices
    bool                   initiate_restore_flag; ///< @trick_io{**} Restore announce flag
    bool                   restore_in_progress;   ///< @trick_io{**} Restore in progress flag
    bool                   restore_failed;        ///< @trick_io{**} Restore of the federate failed
-   bool                   restore_is_imminent;   ///< @trick_io{**} Restore has been signalled by the Manager
+   bool                   restore_is_imminent;   ///< @trick_io{**} Restore has been signaled by the Federate
 
    std::string save_label;            ///< @trick_io{**} Save label
    bool        announce_save;         ///< @trick_io{**} flag to indicate whether we have announced the federation save

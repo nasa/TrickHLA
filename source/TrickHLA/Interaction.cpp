@@ -20,7 +20,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionHandler.cpp}
 @trick_link_dependency{InteractionItem.cpp}
-@trick_link_dependency{Manager.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{Types.cpp}
@@ -60,7 +59,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/ItemQueue.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
@@ -1011,7 +1009,7 @@ bool Interaction::send(
 
    // Determine if the interaction should be sent with a timestamp.
    // See IEEE 1516.1-2010 Section 6.12.
-   bool const send_with_timestamp = federate->time_management_srvc.in_time_regulating_state()
+   bool const send_with_timestamp = federate->time_management_service.in_time_regulating_state()
                                     && ( preferred_order != TRANSPORT_RECEIVE_ORDER );
 
    bool successfuly_sent = false;
@@ -1044,7 +1042,7 @@ bool Interaction::send(
                message_publish( MSG_NORMAL, "Interaction::send():%d As Receive-Order: \
 Interaction '%s' is time-regulating:%s, preferred-order:%s.\n",
                                 __LINE__, get_FOM_name().c_str(),
-                                ( federate->time_management_srvc.in_time_regulating_state() ? "Yes" : "No" ),
+                                ( federate->time_management_service.in_time_regulating_state() ? "Yes" : "No" ),
                                 ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ) );
             }
 

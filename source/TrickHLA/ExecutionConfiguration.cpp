@@ -25,7 +25,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Manager.cpp}
+@trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{Packing.cpp}
 @trick_link_dependency{Types.cpp}
@@ -61,8 +61,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
@@ -191,11 +191,10 @@ void ExecutionConfiguration::configure_attributes()
 
 /*!
  * @job_class{initialization}
- * NOTE: The initialize( manager ) function must be called before this function.
+ * NOTE: The initialize( federate ) function must be called before this function.
  */
 void ExecutionConfiguration::configure()
 {
-   // Check the manager.
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
