@@ -37,7 +37,7 @@ class ConserveParamsObjectConfig( TrickHLAObjectConfig ):
                                        thla_deleted_instance     = None,
                                        thla_conditional_instance = None,
                                        thla_packing_instance     = None,
-                                       thla_object               = None,   #thla_manager_object
+                                       thla_object               = None,
                                        thla_thread_IDs           = threadId )
       
         # Build the object attribute list.

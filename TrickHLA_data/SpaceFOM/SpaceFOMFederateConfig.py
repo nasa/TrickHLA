@@ -163,7 +163,7 @@ class SpaceFOMFederateConfig( TrickHLAFederateConfig ):
          return
 
       #
-      # Assign the reference in the manager to the root reference frame object.
+      # Assign the reference to the root reference frame object.
       #
       self.control.root_ref_frame = root_frame.get_packing_instance()
 
