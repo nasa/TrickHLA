@@ -38,13 +38,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     ...
 ```
 
-- You must set the lookahead, time-constrained, and time-regulating settings using the setup Federate setup_time_management( double lookahead, bool constrained, bool regulating ) function. For example, for the TrickHLA/SIM_sine input file:
+- You can no longer set the lookahead time, time regulating and time constrained settings directly in the Federate class. If you are not using the SpaceFOM modules for input file configuration, you must now set the lookahead, time-constrained, and time-regulating settings using the setup Federate setup_time_management( double lookahead, bool constrained, bool regulating ) function. For example, for the sim/TrickHLA/SIM_sine input file:
+
+```
   - FROM:
     THLA.federate.lookahead_time   = 0.250
     THLA.federate.time_regulating  = True
     THLA.federate.time_constrained = True
   - TO:
     THLA.federate.setup_time_management( 0.250, True, True )
+```
+
 
 ### Added
 
