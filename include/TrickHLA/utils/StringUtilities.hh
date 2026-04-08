@@ -22,7 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
-@trick_link_dependency{../../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../../source/TrickHLA/ObjectServices.cpp}
 
 @revs_title
 @revs_begin
