@@ -119,17 +119,6 @@ class StringUtilities
       return ( wcscpy( addr, s ) );
    }
 
-   /*! @brief C (char *) string to C++ wide string conversion routine.
-    *  @param output The output wide string.
-    *  @param input  The input C string. */
-   static void to_wstring(
-      std::wstring &output,
-      char const   *input )
-   {
-      std::string s = ( input != NULL ) ? input : "";
-      output.assign( s.begin(), s.end() );
-   }
-
    /*! @brief C++ string to C++ wide string conversion routine.
     *  @param output The output wide string.
     *  @param input  The input C++ string. */
