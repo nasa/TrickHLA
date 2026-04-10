@@ -21,8 +21,8 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
-@trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
@@ -52,6 +52,8 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/InteractionHandler.hh"
+#include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
@@ -81,8 +83,6 @@ namespace TrickHLA
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
-class InteractionItem;
-class InteractionHandler;
 
 class Interaction : public CheckpointConversionBase
 {

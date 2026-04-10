@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Interaction.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"

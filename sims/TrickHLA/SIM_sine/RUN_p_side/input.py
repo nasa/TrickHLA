@@ -110,27 +110,28 @@ THLA.simple_sim_config.run_duration = run_duration
 
 
 # TrickHLA Interactions and Parameters.
-THLA.federate.get_interaction_service().inter_count  = 1
-THLA.federate.get_interaction_service().interactions = trick.sim_services.alloc_type( THLA.federate.get_interaction_service().inter_count, 'TrickHLA::Interaction' )
+interaction_service = THLA.federate.get_interaction_service()
+interaction_service.inter_count  = 1
+interaction_service.interactions = trick.sim_services.alloc_type( interaction_service.inter_count, 'TrickHLA::Interaction' )
 
-THLA.federate.get_interaction_service().interactions[0].FOM_name    = 'Communication'
-THLA.federate.get_interaction_service().interactions[0].publish     = False
-THLA.federate.get_interaction_service().interactions[0].subscribe   = True
-THLA.federate.get_interaction_service().interactions[0].handler     = P.interaction_handler
-THLA.federate.get_interaction_service().interactions[0].param_count = 3
-THLA.federate.get_interaction_service().interactions[0].parameters  = trick.sim_services.alloc_type( THLA.federate.get_interaction_service().interactions[0].param_count, 'TrickHLA::Parameter' )
+interaction_service.interactions[0].FOM_name    = 'Communication'
+interaction_service.interactions[0].publish     = False
+interaction_service.interactions[0].subscribe   = True
+interaction_service.interactions[0].handler     = P.interaction_handler
+interaction_service.interactions[0].param_count = 3
+interaction_service.interactions[0].parameters  = trick.sim_services.alloc_type( interaction_service.interactions[0].param_count, 'TrickHLA::Parameter' )
 
-THLA.federate.get_interaction_service().interactions[0].parameters[0].FOM_name     = 'Message'
-THLA.federate.get_interaction_service().interactions[0].parameters[0].trick_name   = 'P.interaction_handler.message'
-THLA.federate.get_interaction_service().interactions[0].parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
+interaction_service.interactions[0].parameters[0].FOM_name     = 'Message'
+interaction_service.interactions[0].parameters[0].trick_name   = 'P.interaction_handler.message'
+interaction_service.interactions[0].parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
 
-THLA.federate.get_interaction_service().interactions[0].parameters[1].FOM_name     = 'time'
-THLA.federate.get_interaction_service().interactions[0].parameters[1].trick_name   = 'P.interaction_handler.time'
-THLA.federate.get_interaction_service().interactions[0].parameters[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+interaction_service.interactions[0].parameters[1].FOM_name     = 'time'
+interaction_service.interactions[0].parameters[1].trick_name   = 'P.interaction_handler.time'
+interaction_service.interactions[0].parameters[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-THLA.federate.get_interaction_service().interactions[0].parameters[2].FOM_name     = 'year'
-THLA.federate.get_interaction_service().interactions[0].parameters[2].trick_name   = 'P.interaction_handler.year'
-THLA.federate.get_interaction_service().interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
+interaction_service.interactions[0].parameters[2].FOM_name     = 'year'
+interaction_service.interactions[0].parameters[2].trick_name   = 'P.interaction_handler.year'
+interaction_service.interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 
 # The Federate has two objects, it publishes one and subscribes to another.

@@ -47,6 +47,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
+#include "TrickHLA/Parameter.hh"
+#include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
 
@@ -69,12 +71,6 @@ NASA, Johnson Space Center\n
 
 namespace TrickHLA
 {
-
-// Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations. This
-// helps to limit issues with recursive includes.
-class Parameter;
-class ParameterItem;
 
 class InteractionItem : public Item
 {
