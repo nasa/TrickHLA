@@ -86,7 +86,7 @@ class Object;
 class SaveRestoreServices;
 class TimeManagementServices;
 
-class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
+class ExecutionControlBase : public SyncPointManagerBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -575,13 +575,13 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
                                                         std::string const &file_name ) = 0;
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint();
+   virtual void convert_data_before_checkpoint(); // cppcheck-suppress [uselessOverride]
 
    /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint();
+   virtual void restore_data_after_checkpoint(); // cppcheck-suppress [uselessOverride]
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint(); // cppcheck-suppress [uselessOverride]
 
    /*! @brief Perform setup for federate save. */
    virtual void setup_checkpoint();

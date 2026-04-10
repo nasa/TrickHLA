@@ -107,7 +107,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class ExecutionControlBase;
 
-class Federate : public TrickHLA::CheckpointConversionBase
+class Federate : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

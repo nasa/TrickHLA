@@ -36,6 +36,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OBJECT_DELETED_HANDLER_HH
 #define TRICKHLA_OBJECT_DELETED_HANDLER_HH
 
+// TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
+
 namespace TrickHLA
 {
 // Forward Declared Classes:  Since these classes are only used as references
@@ -43,7 +46,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Object;
 
-class ObjectDeletedHandler
+class ObjectDeletedHandler : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -76,6 +79,27 @@ class ObjectDeletedHandler
 
    /*! @brief Callback informing that the object instance was deleted. */
    virtual void deleted() = 0;
+
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint()
+   {
+      return;
+   }
 
   protected:
    Object *object; ///< @trick_io{**} Object associated with this class.

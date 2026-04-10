@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 #include "trick/Flag.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
@@ -84,7 +85,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Federate;
 
-class TimeManagementServices : public TrickThreadCoordinator
+class TimeManagementServices : public TrickThreadCoordinator, public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -127,6 +128,30 @@ class TimeManagementServices : public TrickThreadCoordinator
    /*! @brief Destructor for the TrickHLA TimeManagementServices class. */
    virtual ~TimeManagementServices();
 
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint()
+   {
+      return;
+   }
+
+   //
+   // Time management functions.
+   //
    /*! @brief Get the HLA time advance cycle time.
     *  @return HLA cycle time in seconds. */
    double get_HLA_cycle_time()
@@ -141,9 +166,6 @@ class TimeManagementServices : public TrickThreadCoordinator
       return this->HLA_cycle_time_in_base_time;
    }
 
-   //
-   // Time management initialization functions.
-   //
    /*! @brief Enable time constrained.
     *  @param time the granted HLA Logical time */
    void set_time_constrained_enabled( RTI1516_NAMESPACE::LogicalTime const &time );

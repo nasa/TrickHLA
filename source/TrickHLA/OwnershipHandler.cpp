@@ -97,10 +97,6 @@ void OwnershipHandler::convert_data_before_checkpoint()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &object->ownership_mutex );
 
-   // To keep from leaking memory make sure we clear all checkpointing
-   // structures before we create new ones.
-   free_converted_data_for_checkpoint();
-
    AttributeOwnershipMap::const_iterator owner_map_iter;
    THLAAttributeMap::const_iterator      attrib_iter;
 

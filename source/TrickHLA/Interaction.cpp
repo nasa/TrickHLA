@@ -262,6 +262,30 @@ void Interaction::initialize(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
+/*! @brief Encode/setup the checkpoint data structures. */
+void Interaction::convert_data_before_checkpoint()
+{
+   if ( handler != NULL ) {
+      handler->convert_data_before_checkpoint();
+   }
+}
+
+/*! @brief Restore the state of this class from the Trick checkpoint. */
+void Interaction::restore_data_after_checkpoint()
+{
+   if ( handler != NULL ) {
+      handler->restore_data_after_checkpoint();
+   }
+}
+
+/*! @brief Clear/release the memory used for the checkpoint data structures. */
+void Interaction::free_converted_data_for_checkpoint()
+{
+   if ( handler != NULL ) {
+      handler->free_converted_data_for_checkpoint();
+   }
+}
+
 void Interaction::set_user_supplied_tag(
    unsigned char const *tag,
    size_t               tag_size )

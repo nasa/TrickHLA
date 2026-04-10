@@ -41,12 +41,13 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"
 
 namespace TrickHLA
 {
 
-class LagCompensation : public ObjectCallbackBase
+class LagCompensation : public ObjectCallbackBase, public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -90,6 +91,27 @@ class LagCompensation : public ObjectCallbackBase
     * make sure to check the lag-comp data was received before copying to
     * the sim-data otherwise you will be copying stale data. */
    virtual void bypass_receive_lag_compensation() = 0;
+
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint()
+   {
+      return;
+   }
 
   private:
    // Do not allow the copy constructor or assignment operator.

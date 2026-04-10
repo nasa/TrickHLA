@@ -63,7 +63,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class SyncPointTimed : public TrickHLA::SyncPoint
+class SyncPointTimed : public SyncPoint
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

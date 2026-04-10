@@ -50,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
@@ -95,7 +96,7 @@ namespace TrickHLA
 class InteractionItem;
 class InteractionHandler;
 
-class Interaction
+class Interaction : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -144,6 +145,18 @@ class Interaction
    /*! @brief Initializes the TrickHLA Interaction class.
     *  @param fed Pointer to the associated TrickHLA::Federate class. */
    void initialize( Federate *fed );
+
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Encode/setup the checkpoint data structures. */
+   virtual void convert_data_before_checkpoint();
+
+   /*! @brief Restore the state of this class from the Trick checkpoint. */
+   virtual void restore_data_after_checkpoint();
+
+   /*! @brief Clear/release the memory used for the checkpoint data structures. */
+   virtual void free_converted_data_for_checkpoint();
 
    //
    // RTI

@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"
 
 namespace TrickHLA
@@ -51,7 +52,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Attribute;
 
-class Conditional : public ObjectCallbackBase
+class Conditional : public ObjectCallbackBase, public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -78,6 +79,27 @@ class Conditional : public ObjectCallbackBase
     *  @return True if the attribute data should be sent, false otherwise.
     *  @param attr Pointer to TrickHLA Attribute. */
    virtual bool should_send( Attribute *attr );
+
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint()
+   {
+      return;
+   }
 
   private:
    // Do not allow the copy constructor or assignment operator.

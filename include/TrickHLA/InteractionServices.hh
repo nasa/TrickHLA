@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/ItemQueue.hh"
@@ -189,7 +190,7 @@ class InteractionServices : public CheckpointConversionBase
    void setup_interaction_ref_attributes();
 
    //
-   // Checkpoint
+   // CheckpointConversionBase Interface.
    //
    /*! @brief Encode/setup the checkpoint data structures. */
    virtual void convert_data_before_checkpoint();

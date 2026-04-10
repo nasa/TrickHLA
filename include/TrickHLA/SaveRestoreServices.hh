@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "trick/Flag.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
@@ -90,7 +91,7 @@ class Federate;
 class TimeManagementServices;
 class ExecutionControlBase;
 
-class SaveRestoreServices
+class SaveRestoreServices : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -130,6 +131,30 @@ class SaveRestoreServices
    /*! @brief Destructor for the TrickHLA SaveRestoreServices class. */
    virtual ~SaveRestoreServices();
 
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint()
+   {
+      return;
+   }
+
+   //
+   // Accessor functions.
+   //
    /*! @brief Tell the federate to initiate a save announce with the
     * user-supplied checkpoint name set for the current frame.
     *  @param file_name Checkpoint file name. */

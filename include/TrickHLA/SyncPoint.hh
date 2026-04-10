@@ -62,7 +62,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class SyncPoint : public TrickHLA::CheckpointConversionBase
+class SyncPoint : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -163,7 +163,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    virtual std::string to_string();
 
    //
-   // Checkpoint
+   // CheckpointConversionBase Interface.
    //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint();

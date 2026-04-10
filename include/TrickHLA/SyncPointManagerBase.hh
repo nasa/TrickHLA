@@ -82,7 +82,7 @@ static std::string const UNKNOWN_SYNC_POINT_LIST = "Unknown";
 // helps to limit issues with recursive includes.
 class Federate;
 
-class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
+class SyncPointManagerBase : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -195,7 +195,7 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 
    //
-   // Checkpoint
+   // CheckpointConversionBase Interface.
    //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint();

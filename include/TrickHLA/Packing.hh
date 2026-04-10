@@ -42,12 +42,13 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"
 
 namespace TrickHLA
 {
 
-class Packing : public ObjectCallbackBase
+class Packing : public ObjectCallbackBase, public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -79,6 +80,27 @@ class Packing : public ObjectCallbackBase
 
    /*! @brief Unpack the received data. */
    virtual void unpack() = 0;
+
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint()
+   {
+      return;
+   }
 
   private:
    // Do not allow the copy constructor or assignment operator.

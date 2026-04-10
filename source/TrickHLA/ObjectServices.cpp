@@ -2152,17 +2152,7 @@ void ObjectServices::release_ownership()
  */
 void ObjectServices::convert_data_before_checkpoint()
 {
-   // Call the ExecutionControl method.
-   federate->execution_control->convert_data_before_checkpoint();
-
    for ( int n = 0; n < obj_count; ++n ) {
-      // Any object with a valid instance handle must be marked as required
-      // to ensure the restore process will wait for this object instance
-      // to exist.
-      if ( objects[n].is_instance_handle_valid() ) {
-         objects[n].set_required( true );
-      }
-      // Convert the ownership handler checkpoint data structures.
       objects[n].convert_data_before_checkpoint();
    }
 }
@@ -2170,10 +2160,6 @@ void ObjectServices::convert_data_before_checkpoint()
 void ObjectServices::restore_data_after_checkpoint()
 {
    // Restore the data structures of this class from the Trick checkpoint.
-
-   // Call the ExecutionControl method.
-   federate->execution_control->restore_data_after_checkpoint();
-
    for ( int n = 0; n < obj_count; ++n ) {
       objects[n].restore_data_after_checkpoint();
    }
@@ -2182,10 +2168,6 @@ void ObjectServices::restore_data_after_checkpoint()
 void ObjectServices::free_converted_data_for_checkpoint()
 {
    // Clear/release the memory used for the checkpoint data structures.
-
-   // Call the ExecutionControl method.
-   federate->execution_control->free_converted_data_for_checkpoint();
-
    for ( int n = 0; n < obj_count; ++n ) {
       objects[n].free_converted_data_for_checkpoint();
    }

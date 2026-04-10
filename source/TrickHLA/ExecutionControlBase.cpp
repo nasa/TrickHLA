@@ -979,38 +979,23 @@ void ExecutionControlBase::set_master( bool master_flag )
 
 void ExecutionControlBase::convert_data_before_checkpoint()
 {
-   SyncPointManagerBase::convert_data_before_checkpoint();
+   // TODO: Do the Timelines need to be converted.
 
-   // Setup checkpoint for ExecutionConfiguration if we have one.
-   if ( execution_configuration != NULL ) {
-      // Any object with a valid instance handle must be marked as required
-      // to ensure the restore process will wait for this object instance
-      // to exist.
-      if ( execution_configuration->is_instance_handle_valid() ) {
-         execution_configuration->set_required( true );
-      }
-      execution_configuration->convert_data_before_checkpoint();
-   }
+   SyncPointManagerBase::convert_data_before_checkpoint();
 }
 
 void ExecutionControlBase::restore_data_after_checkpoint()
 {
-   SyncPointManagerBase::restore_data_after_checkpoint();
+   // TODO: Do the Timelines need to be restored.
 
-   // Decode checkpoint for ExecutionConfiguration if we have one.
-   if ( execution_configuration != NULL ) {
-      execution_configuration->restore_data_after_checkpoint();
-   }
+   SyncPointManagerBase::restore_data_after_checkpoint();
 }
 
 void ExecutionControlBase::free_converted_data_for_checkpoint()
 {
-   SyncPointManagerBase::free_converted_data_for_checkpoint();
+   // TODO: Do the Timelines converted data need to be free.
 
-   // Clear/release the memory used for the checkpoint data structures.
-   if ( execution_configuration != NULL ) {
-      execution_configuration->free_converted_data_for_checkpoint();
-   }
+   SyncPointManagerBase::free_converted_data_for_checkpoint();
 }
 
 /*! @brief Perform setup for federate save. */

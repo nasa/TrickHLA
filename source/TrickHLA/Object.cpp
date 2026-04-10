@@ -5159,43 +5159,89 @@ void Object::handle_pushed_ownership_at_init()
 
 void Object::convert_data_before_checkpoint()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      message_publish( MSG_NORMAL, "Object::convert_data_before_checkpoint():%d Object: %s.\n",
+                       __LINE__, get_name().c_str() );
+   }
+
+   // Any object with a valid instance handle must be marked as required
+   // to ensure the restore process will wait for this object instance
+   // to exist.
+   if ( is_instance_handle_valid() ) {
+      set_required( true );
+   }
+
    // TODO: Convert other data structures to checkpoint form such as
    // the ReflectedAttributesQueue.
 
+   if ( lag_comp != NULL ) {
+      lag_comp->convert_data_before_checkpoint();
+   }
+   if ( packing != NULL ) {
+      packing->convert_data_before_checkpoint();
+   }
    if ( ownership != NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::convert_data_before_checkpoint():%d Object: %s.\n",
-                          __LINE__, get_name().c_str() );
-      }
       ownership->convert_data_before_checkpoint();
+   }
+   if ( deleted != NULL ) {
+      deleted->convert_data_before_checkpoint();
+   }
+   if ( conditional != NULL ) {
+      conditional->convert_data_before_checkpoint();
    }
 }
 
 void Object::restore_data_after_checkpoint()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      message_publish( MSG_NORMAL, "Object::restore_data_after_checkpoint():%d Object: %s.\n",
+                       __LINE__, get_name().c_str() );
+   }
+
    // TODO: Restore other data structures from checkpoint form such as
    // the ReflectedAttributesQueue.
 
+   if ( lag_comp != NULL ) {
+      lag_comp->restore_data_after_checkpoint();
+   }
+   if ( packing != NULL ) {
+      packing->restore_data_after_checkpoint();
+   }
    if ( ownership != NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::restore_data_after_checkpoint():%d Object: %s.\n",
-                          __LINE__, get_name().c_str() );
-      }
       ownership->restore_data_after_checkpoint();
+   }
+   if ( deleted != NULL ) {
+      deleted->restore_data_after_checkpoint();
+   }
+   if ( conditional != NULL ) {
+      conditional->restore_data_after_checkpoint();
    }
 }
 
 void Object::free_converted_data_for_checkpoint()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      message_publish( MSG_NORMAL, "Object::free_converted_data_for_checkpoint():%d Object: %s.\n",
+                       __LINE__, get_name().c_str() );
+   }
+
    // TODO: Free other data structures in checkpoint form such as
    // the ReflectedAttributesQueue.
 
+   if ( lag_comp != NULL ) {
+      lag_comp->free_converted_data_for_checkpoint();
+   }
+   if ( packing != NULL ) {
+      packing->free_converted_data_for_checkpoint();
+   }
    if ( ownership != NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::free_converted_data_for_checkpoint():%d Object: %s.\n",
-                          __LINE__, get_name().c_str() );
-      }
       ownership->free_converted_data_for_checkpoint();
+   }
+   if ( deleted != NULL ) {
+      deleted->free_converted_data_for_checkpoint();
+   }
+   if ( conditional != NULL ) {
+      conditional->free_converted_data_for_checkpoint();
    }
 }
 

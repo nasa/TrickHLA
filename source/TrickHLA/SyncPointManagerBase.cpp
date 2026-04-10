@@ -961,8 +961,6 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointManagerBase::convert_data_before_checkpoint()
 {
-   free_converted_data_for_checkpoint();
-
 #if SYNC_POINT_LIST_TMM_ARRAY
    for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
 #else

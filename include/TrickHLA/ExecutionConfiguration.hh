@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
+class ExecutionConfiguration : public ExecutionConfigurationBase
 {
 
    // Let the Trick input processor access protected and private data.

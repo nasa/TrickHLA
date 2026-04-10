@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/Parameter.hh"
@@ -72,7 +73,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Interaction;
 
-class InteractionHandler
+class InteractionHandler : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -166,6 +167,27 @@ class InteractionHandler
    /*! @brief Called when the interaction is received from the RTI.
     *  @param the_user_supplied_tag Users tag. */
    virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
+
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint()
+   {
+      return;
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint()
+   {
+      return;
+   }
 
   protected:
    bool         initialized; ///< @trick_units{--} Initialization status flag.

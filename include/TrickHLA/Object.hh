@@ -348,7 +348,7 @@ class Object : public CheckpointConversionBase
    void negotiated_attribute_ownership_divestiture( RTI1516_NAMESPACE::AttributeHandleSet *attr_hdl_set );
 
    //
-   // Checkpoint
+   // CheckpointConversionBase Interface.
    //
    /*! @brief Setup the checkpoint data structures. */
    virtual void convert_data_before_checkpoint();

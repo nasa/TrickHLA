@@ -671,8 +671,6 @@ void InteractionServices::process_interactions()
       // which will result in the item being deleted and no longer valid.
       interactions_queue.pop();
    }
-
-   free_converted_data_for_checkpoint();
 }
 
 /*!
@@ -752,8 +750,9 @@ void InteractionServices::receive_interaction(
  */
 void InteractionServices::convert_data_before_checkpoint()
 {
-   // Clear the checkpoint for the interactions so that we don't leak memory.
-   free_converted_data_for_checkpoint();
+   for ( int i = 0; i < inter_count; ++i ) {
+      interactions[i].convert_data_before_checkpoint();
+   }
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -833,6 +832,10 @@ void InteractionServices::restore_data_after_checkpoint()
                           __LINE__, check_interactions_count );
       }
 
+      for ( int i = 0; i < inter_count; ++i ) {
+         interactions[i].restore_data_after_checkpoint();
+      }
+
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
@@ -855,6 +858,10 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
 
 void InteractionServices::free_converted_data_for_checkpoint()
 {
+   for ( int i = 0; i < inter_count; ++i ) {
+      interactions[i].free_converted_data_for_checkpoint();
+   }
+
    if ( check_interactions_count > 0 ) {
       for ( size_t i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();

@@ -1211,8 +1211,6 @@ std::string SyncPointList::to_string(
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointList::convert_data_before_checkpoint()
 {
-   free_converted_data_for_checkpoint();
-
    // Checkpointable copy of the list name.
    this->list_name_chkpt = StringUtilities::mm_strdup_string( this->list_name );
 

@@ -47,6 +47,7 @@ execution.
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 
@@ -166,6 +167,27 @@ class ExecutionConfigurationBase : public Object, public Packing
    virtual ExecutionControlBase *get_execution_control()
    {
       return execution_control;
+   }
+
+   //
+   // CheckpointConversionBase Interface.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint()
+   {
+      Object::convert_data_before_checkpoint();
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint()
+   {
+      Object::restore_data_after_checkpoint();
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint()
+   {
+      Object::free_converted_data_for_checkpoint();
    }
 
   protected:

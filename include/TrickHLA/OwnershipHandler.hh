@@ -93,17 +93,15 @@ class OwnershipHandler : public CheckpointConversionBase
 
   public:
    //
-   // Checkpoint
+   // CheckpointConversionBase Interface.
    //
-   /*! @brief Encodes the push and pull attribute ownership maps into
-    * checkpoint-able queues.*/
+   /*! @brief Convert data to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint();
 
-   /*! @brief Decodes the push / pull checkpoint-able queues back into
-    * attribute ownership maps. */
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
    virtual void restore_data_after_checkpoint();
 
-   /*! @brief Clears out the push / pull checkpoint-able queues. */
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
    virtual void free_converted_data_for_checkpoint();
 
    //

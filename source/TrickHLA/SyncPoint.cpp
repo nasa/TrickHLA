@@ -176,8 +176,6 @@ std::string SyncPoint::to_string()
 
 void SyncPoint::convert_data_before_checkpoint()
 {
-   free_converted_data_for_checkpoint();
-
    // Checkpointable copy of the label.
    this->label_chkpt = StringUtilities::mm_strdup_wstring( this->label );
 }

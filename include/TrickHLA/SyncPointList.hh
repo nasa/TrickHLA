@@ -81,7 +81,7 @@ typedef std::vector< SyncPoint * > SyncPointVector;
 // helps to limit issues with recursive includes.
 class Federate;
 
-class SyncPointList : public TrickHLA::CheckpointConversionBase
+class SyncPointList : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -200,7 +200,7 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
    std::string to_string( std::wstring const &label );
 
    //
-   // Checkpoint
+   // CheckpointConversionBase Interface.
    //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint();
