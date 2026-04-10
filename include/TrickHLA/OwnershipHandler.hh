@@ -58,7 +58,6 @@ namespace TrickHLA
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Object;
-class Attribute;
 
 // FIXME: We need to rename this. Unfortunately, AttributeMap is already
 // being used by Attribute.hh.

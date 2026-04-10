@@ -48,16 +48,12 @@ execution.
 
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 
 namespace TrickHLA
 {
-
-// Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations. This
-// helps to limit issues with recursive includes.
-class ExecutionControlBase;
 
 class ExecutionConfigurationBase : public Object, public Packing
 {
@@ -88,7 +84,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    /*! @brief Sets up the attributes for this Execution Configuration object
     *  using default values. These can be overridden in the input file.
     *  @param exec_control Reference to the associated TrickHLA::ExecutionControlBase object. */
-   virtual void setup( TrickHLA::ExecutionControlBase &exec_control );
+   virtual void setup( ExecutionControlBase &exec_control );
 
    /*! @brief Configure this Execution Configuration object. */
    virtual void configure() = 0;
@@ -157,17 +153,11 @@ class ExecutionConfigurationBase : public Object, public Packing
 
    /*! @brief Get the reference to the associated TrickHLA::ExecutionControlBase object.
     *  @param exec_control Pointer to the associated TrickHLA::ExecutionControlBase object. */
-   virtual void set_execution_control( ExecutionControlBase *exec_control )
-   {
-      execution_control = exec_control;
-   }
+   virtual void set_execution_control( ExecutionControlBase *exec_control );
 
    /*! @brief Get the reference to the associated TrickHLA::ExecutionControlBase object.
     *  @return Pointer to the associated TrickHLA::ExecutionControlBase object. */
-   virtual ExecutionControlBase *get_execution_control()
-   {
-      return execution_control;
-   }
+   virtual ExecutionControlBase *get_execution_control();
 
    //
    // CheckpointConversionBase Interface.

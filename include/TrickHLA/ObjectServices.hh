@@ -20,12 +20,8 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ObjectServices.cpp}
-@trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../source/TrickHLA/ItemQueue.cpp}
-@trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
-@trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
@@ -53,7 +49,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
@@ -77,29 +72,13 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic pop
 #endif
 
-// Special handling of SWIG limitations for forward declarations.
-#ifdef SWIG
-#   include "TrickHLA/Interaction.hh"
-#else
-namespace TrickHLA
-{
-// NOTE: This forward declaration of TrickHLA::Interaction and TrickHLA::Object
-// are here to go with the #ifdef SWIG include. Normally, it would go with the
-// other forward declarations below.
-class Federate;
-} // namespace TrickHLA
-#endif // SWIG
-
 namespace TrickHLA
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
-class ExecutionConfigurationBase;
-class Interaction;
-class InteractionItem;
-class Object;
+class Federate;
 
 class ObjectServices : public CheckpointConversionBase
 {
@@ -396,11 +375,6 @@ class ObjectServices : public CheckpointConversionBase
    // Private data.
    //
   protected:
-   ItemQueue interactions_queue; ///< @trick_io{**} Interactions queue.
-
-   std::size_t      check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
-   InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
-
    MutexLock obj_discovery_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
    ObjectInstanceMap object_map; ///< @trick_io{**} Map of all the Objects this federate uses, the Key is the object instance-handle.

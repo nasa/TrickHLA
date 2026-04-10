@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{Types.cpp}
@@ -48,6 +49,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControl.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/ObjectServices.hh"

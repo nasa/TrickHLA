@@ -50,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/PhysicalEntityBase.hh"
 
 // TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"

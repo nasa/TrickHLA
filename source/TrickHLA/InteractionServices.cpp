@@ -16,8 +16,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{ExecutionConfigurationBase.cpp}
-@trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionItem.cpp}
@@ -26,7 +24,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/Int64Time.cpp}
-@trick_link_dependency{time/TimeManagementServices.cpp}
 @trick_link_dependency{utils/MutexLock.cpp}
 @trick_link_dependency{utils/MutexProtection.cpp}
 
@@ -52,7 +49,6 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
@@ -62,7 +58,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
-#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"

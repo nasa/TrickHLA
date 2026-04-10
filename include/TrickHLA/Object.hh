@@ -84,19 +84,6 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic pop
 #endif
 
-// Special handling of SWIG limitations for forward declarations.
-#ifdef SWIG
-#   include "TrickHLA/Attribute.hh"
-#else
-namespace TrickHLA
-{
-// NOTE: This forward declaration of TrickHLA::Attribute is here to go with
-// the #ifdef SWIG include. Normally, it would go with the other forward
-// declarations below.
-class Attribute;
-} // namespace TrickHLA
-#endif // SWIG
-
 namespace TrickHLA
 {
 

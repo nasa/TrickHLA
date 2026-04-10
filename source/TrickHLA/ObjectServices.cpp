@@ -106,9 +106,6 @@ using namespace TrickHLA;
 ObjectServices::ObjectServices( Federate &fed )
    : obj_count( 0 ),
      objects( NULL ),
-     interactions_queue(),
-     check_interactions_count( 0 ),
-     check_interactions( NULL ),
      obj_discovery_mutex(),
      object_map(),
      obj_name_index_map(),

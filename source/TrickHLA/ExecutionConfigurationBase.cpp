@@ -401,3 +401,18 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
 
    return true;
 }
+
+/*! @brief Get the reference to the associated TrickHLA::ExecutionControlBase object.
+ *  @param exec_control Pointer to the associated TrickHLA::ExecutionControlBase object. */
+void ExecutionConfigurationBase::set_execution_control(
+   ExecutionControlBase *exec_control )
+{
+   this->execution_control = exec_control;
+}
+
+/*! @brief Get the reference to the associated TrickHLA::ExecutionControlBase object.
+ *  @return Pointer to the associated TrickHLA::ExecutionControlBase object. */
+ExecutionControlBase *ExecutionConfigurationBase::get_execution_control()
+{
+   return this->execution_control;
+}

@@ -575,13 +575,13 @@ class ExecutionControlBase : public SyncPointManagerBase
                                                         std::string const &file_name ) = 0;
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint(); // cppcheck-suppress [uselessOverride]
+   virtual void convert_data_before_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
    /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint(); // cppcheck-suppress [uselessOverride]
+   virtual void restore_data_after_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint(); // cppcheck-suppress [uselessOverride]
+   virtual void free_converted_data_for_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
    /*! @brief Perform setup for federate save. */
    virtual void setup_checkpoint();

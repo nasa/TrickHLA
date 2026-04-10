@@ -38,6 +38,10 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
 
+// TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/Object.hh"
+
 // SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityData.hh"
 #include "SpaceFOM/PhysicalEntityBase.hh"

@@ -51,8 +51,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Parameter.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/MutexLock.hh"
@@ -74,25 +74,13 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic pop
 #endif
 
-// Special handling of SWIG limitations for forward declarations.
-#ifdef SWIG
-#   include "TrickHLA/Parameter.hh"
-#else
-namespace TrickHLA
-{
-// NOTE: This forward declaration of TrickHLA::Parameter is here to go with
-// the #ifdef SWIG include. Normally, it would go with the other forward
-// declarations below.
-class Parameter;
-} // namespace TrickHLA
-#endif // SWIG
-
 namespace TrickHLA
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
+class Federate;
 class InteractionItem;
 class InteractionHandler;
 
@@ -334,10 +322,7 @@ class Interaction : public CheckpointConversionBase
       return preferred_order;
    }
 
-   Federate *get_federate() const
-   {
-      return federate;
-   }
+   Federate *get_federate() const;
 
   private:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.

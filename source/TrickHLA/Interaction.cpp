@@ -1254,3 +1254,8 @@ void Interaction::mark_unchanged()
       parameters[i].mark_not_received();
    }
 }
+
+Federate *Interaction::get_federate() const
+{
+   return federate;
+}

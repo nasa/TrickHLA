@@ -22,7 +22,6 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../../../source/TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
 
 @revs_title

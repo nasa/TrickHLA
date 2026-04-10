@@ -25,7 +25,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
 
@@ -46,8 +45,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/ItemQueue.hh"
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 
@@ -68,27 +68,13 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic pop
 #endif
 
-// Special handling of SWIG limitations for forward declarations.
-#ifdef SWIG
-#   include "TrickHLA/Interaction.hh"
-#else
-namespace TrickHLA
-{
-// NOTE: This forward declaration of TrickHLA::Interaction and TrickHLA::Object
-// are here to go with the #ifdef SWIG include. Normally, it would go with the
-// other forward declarations below.
-class Federate;
-} // namespace TrickHLA
-#endif // SWIG
-
 namespace TrickHLA
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
-class Interaction;
-class InteractionItem;
+class Federate;
 
 class InteractionServices : public CheckpointConversionBase
 {
@@ -102,7 +88,7 @@ class InteractionServices : public CheckpointConversionBase
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__InteractionServices();
 
-   // Needs to call some of InteractionServices's protected and private data.
+   // Needs to call some of InteractionServices's protexted and private data.
    friend class Federate;
 
    //----------------------------- USER VARIABLES -----------------------------
