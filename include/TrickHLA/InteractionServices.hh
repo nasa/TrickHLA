@@ -102,7 +102,7 @@ class InteractionServices : public CheckpointConversionBase
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__InteractionServices();
 
-   // Needs to call some of InteractionServices's protexted and private data.
+   // Needs to call some of InteractionServices's protected and private data.
    friend class Federate;
 
    //----------------------------- USER VARIABLES -----------------------------
