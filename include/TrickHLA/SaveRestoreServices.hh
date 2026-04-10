@@ -22,8 +22,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/SaveRestoreServices.cpp}
-@trick_link_dependency{../../source/TrickHLA/TimeManagementServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/TimeManagementServices.cpp}
 
 @revs_title
 @revs_begin
