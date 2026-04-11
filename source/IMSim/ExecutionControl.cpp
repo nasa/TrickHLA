@@ -1044,8 +1044,8 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // Configure the Freeze interaction handler.
    freeze_interaction->set_handler( freeze_handler );
    freeze_interaction->set_FOM_name( "Freeze" );
-   freeze_interaction->set_publish();
-   freeze_interaction->set_subscribe();
+   freeze_interaction->set_publish( true );
+   freeze_interaction->set_subscribe( true );
 
    // Configure the Parameters.
    freeze_interaction->set_parameter_count( 1 );

@@ -289,16 +289,18 @@ class Interaction : public CheckpointConversionBase
     *  @param tag_size Size of the user supplied tag. */
    void set_user_supplied_tag( unsigned char const *tag, std::size_t tag_size );
 
-   /*! @brief Mark this interaction as published. */
-   void set_publish()
+   /*! @brief Set the interaction publish flag.
+    *  @param enable Flag to set the publish state. */
+   void set_publish( bool const enable )
    {
-      publish = true;
+      this->publish = enable;
    }
 
-   /*! @brief Mark this interaction as subscribed. */
-   void set_subscribe()
+   /*! @brief Set this interaction subscribe flkag.
+    *  @param enable Flag to set the publish state. */
+   void set_subscribe( bool const enable )
    {
-      subscribe = true;
+      this->subscribe = enable;
    }
 
    /*! @brief Set the interaction parameter count.
