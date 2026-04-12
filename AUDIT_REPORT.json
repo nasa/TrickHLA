@@ -1,0 +1,50 @@
+{
+  "project": "/home/curly/projects/TrickHLA",
+  "timestamp": "2026-04-12",
+  "languages_detected": [
+    "cpp",
+    "python",
+    "shell",
+    "c",
+    "java"
+  ],
+  "files_scanned": 500,
+  "candidates_found": 107,
+  "confirmed_findings": 2,
+  "false_positives": 97,
+  "findings": [
+    {
+      "pattern_id": "py-013-bare-except",
+      "pattern_title": "Bare except: catches SystemExit and KeyboardInterrupt",
+      "severity": "medium",
+      "file": "/home/curly/projects/TrickHLA/sims/JEOD/SIM_Master/RUN_test/input.py",
+      "line": 120,
+      "matched_text": "except:",
+      "context": "118:                       + '\\', setting the variable server source address to 127.0.0.1!' )\n119:                trick.var_server_set_source_address( '127.0.0.1' )\n120:          except:\n121:             return  # Use host source address as is.\n122:    except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):\n123:       print( 'WARNING: Problem resolving \\'' + trick.var_server_get_hostname()",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "Line 120 contains a bare `except:` clause which catches all exceptions, including `KeyboardInterrupt` and `SystemExit`, potentially preventing the program from being terminated.",
+        "execution_path": "A `KeyboardInterrupt` (Ctrl+C) or `SystemExit` occurring during the execution of the inner try block (lines 114-119) will be caught by the bare except at line 120.",
+        "suggested_fix": "Change `except:` to `except Exception:` on line 120."
+      },
+      "cwe": "CWE-396"
+    },
+    {
+      "pattern_id": "py-013-bare-except",
+      "pattern_title": "Bare except: catches SystemExit and KeyboardInterrupt",
+      "severity": "medium",
+      "file": "/home/curly/projects/TrickHLA/sims/IMSim/SIM_IMSim_Test/RUN_a_side/input.py",
+      "line": 19,
+      "matched_text": "except:",
+      "context": "17:                       + '\\', setting the variable server source address to 127.0.0.1!' )\n18:                trick.var_server_set_source_address( '127.0.0.1' )\n19:          except:\n20:             return  # Use host source address as is.\n21:    except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):\n22:       print( 'WARNING: Problem resolving \\'' + trick.var_server_get_hostname()",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "Line 19 contains a bare `except:` clause with no specified exception type, which catches all exceptions including `KeyboardInterrupt` and `SystemExit`.",
+        "execution_path": "A `KeyboardInterrupt` (Ctrl+C) or `SystemExit` occurring during the execution of `subprocess.check_output` or the subsequent logic (lines 13-18) will be caught by the bare `except:` on line 19.",
+        "suggested_fix": "Change `except:` to `except Exception:` or a more specific exception like `except (subprocess.CalledProcessError, OSError):`."
+      },
+      "cwe": "CWE-396"
+    }
+  ],
+  "elapsed_ms": 1786137
+}
