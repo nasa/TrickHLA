@@ -50,7 +50,7 @@ matched.
 Master/Pacing Federate:
 
 ```
-./S_main*.exe RUN_mpr/input.py --realtime off --hla-time-mgt on --regulating on --constrained on --stop 30000 --verbose off
+./S_main*.exe RUN_mpr/input.py --realtime off --hla-time-mgt on --regulating on --constrained on --stop 30000
 ```
 
 Master Federate Console Output:
@@ -87,7 +87,7 @@ management, time constrained and time regulating enabled.
 "Other" Federate:
 
 ```
-./S_main*.exe RUN_other/input.py --hla-time-mgt on --regulating on --constrained on --stop 30000 --verbose off
+./S_main*.exe RUN_other/input.py --hla-time-mgt on --regulating on --constrained on --stop 30000
 ```
 
 "Other" Federate Console Output:
@@ -174,7 +174,7 @@ have to wait the 30,000 seconds for this simulation to complete.
 Master/Pacing Federate:
 
 ```
-./S_main*.exe RUN_mpr/input.py --realtime off --hla-time-mgt on --regulating on --constrained on --stop 30000 --verbose off
+./S_main*.exe RUN_mpr/input.py --realtime off --hla-time-mgt on --regulating on --constrained on --stop 30000
 ```
 
 Master Federate Console Output:
@@ -212,7 +212,7 @@ constrained disabled.
 "Other" Federate:
 
 ```
-./S_main*.exe RUN_other/input.py --blocking-reads on --hla-time-mgt on --regulating on --constrained off --stop 30000 --verbose off
+./S_main*.exe RUN_other/input.py --blocking-reads on --hla-time-mgt on --regulating on --constrained off --stop 30000
  ```
  
 "Other" Federate Console Output:
@@ -270,7 +270,7 @@ This results in one less receive of data than what was sent, but only at the end
 Master/Pacing Federate:
 
 ```
-./S_main*.exe RUN_mpr/input.py --realtime on --hla-time-mgt on --regulating on --constrained on --stop 30 --verbose off
+./S_main*.exe RUN_mpr/input.py --realtime on --hla-time-mgt on --regulating on --constrained on --stop 30
 ```
 
 Master Federate Console Output:
@@ -309,7 +309,7 @@ time regulating and time constrained disabled.
 "Other" Federate:
 
 ```
-./S_main*.exe RUN_other/input.py --realtime on --blocking-reads off --hla-time-mgt on --regulating off --constrained off --stop 30 --verbose off
+./S_main*.exe RUN_other/input.py --realtime on --blocking-reads off --hla-time-mgt on --regulating off --constrained off --stop 30
  ```
  
 "Other" Federate Console Output:

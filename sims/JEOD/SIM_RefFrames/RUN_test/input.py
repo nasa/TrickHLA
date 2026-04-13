@@ -30,7 +30,7 @@ def print_usage_message():
    print( '  -h --help          : Print this help message.' )
    print( '  --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
    print( '  --nostop           : Set no stop time on simulation.' )
-   print( '  --verbose [on|off] : on: Show verbose messages, off: disable messages (Default).' )
+   print( '  --verbose          : Show verbose messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -70,18 +70,7 @@ def parse_command_line():
          print_usage = True
 
       elif ( str( argv[index] ) == '--verbose' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               verbose = True
-            elif ( str( argv[index] ) == 'off' ):
-               verbose = False
-            else:
-               print( 'ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'ERROR: Missing --verbose [on|off] argument.' )
-            print_usage = True
+         verbose = True
 
       elif ( str( argv[index] ) == '-d' ):
          # Catch the Trick debug command line option an do NOT terminate.

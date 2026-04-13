@@ -34,19 +34,19 @@ All the commands are run from the SIM_Roles_Test_designated_late_joiner director
 Master Role federate:
 
 ```
-./S_main_*.exe RUN_Master/input.py --verbose on
+./S_main_*.exe RUN_Master/input.py --verbose
 ```
 
 Root Reference Frame Role federate:
 
 ```
-./S_main_*.exe RUN_RRFP/input.py --verbose on
+./S_main_*.exe RUN_RRFP/input.py --verbose
 ```
 
 Pacing Role federate:
 
 ```
-./S_main_*.exe RUN_Pacing/input.py --verbose on
+./S_main_*.exe RUN_Pacing/input.py --verbose
 ```
 
 ---
@@ -57,7 +57,7 @@ Run the commands for the one role per federate case above and click
 run this command for the designated late joining "Other" federate:
 
 ```
-./S_main_*.exe RUN_other_designated_late_joiner/input.py --verbose on
+./S_main_*.exe RUN_other_designated_late_joiner/input.py --verbose
 ```
 
 ---
@@ -66,11 +66,11 @@ run this command for the designated late joining "Other" federate:
 Master, Pacing, and Root Reference Frame (MPR) role federate:
 
 ```
-./S_main_*.exe RUN_mpr/input.py --verbose on
+./S_main_*.exe RUN_mpr/input.py --verbose
 ```
 
 Designated late joining Other federate:
 
 ```
-./S_main_*.exe RUN_other_designated_late_joiner/input.py --verbose on
+./S_main_*.exe RUN_other_designated_late_joiner/input.py --verbose
 ```
