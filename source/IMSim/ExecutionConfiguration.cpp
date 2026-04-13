@@ -204,51 +204,61 @@ void ExecutionConfiguration::configure_attributes()
    this->attributes[0].FOM_name     = trick_MM->mm_strdup( "owner" );
    trick_name_str                   = simconfig_name_str + string( ".owner" );
    this->attributes[0].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[1].FOM_name     = trick_MM->mm_strdup( "scenario" );
    trick_name_str                   = simconfig_name_str + string( ".scenario" );
    this->attributes[1].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[2].FOM_name     = trick_MM->mm_strdup( "mode" );
    trick_name_str                   = simconfig_name_str + string( ".mode" );
    this->attributes[2].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[3].FOM_name     = trick_MM->mm_strdup( "run_duration" );
    trick_name_str                   = simconfig_name_str + string( ".run_duration" );
    this->attributes[3].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[3].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[4].FOM_name     = trick_MM->mm_strdup( "number_of_federates" );
    trick_name_str                   = simconfig_name_str + string( ".number_of_federates" );
    this->attributes[4].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[4].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[4].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[5].FOM_name     = trick_MM->mm_strdup( "required_federates" );
    trick_name_str                   = simconfig_name_str + string( ".required_federates" );
    this->attributes[5].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[5].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[5].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[6].FOM_name     = trick_MM->mm_strdup( "start_year" );
    trick_name_str                   = simconfig_name_str + string( ".start_year" );
    this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[6].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[7].FOM_name     = trick_MM->mm_strdup( "start_seconds" );
    trick_name_str                   = simconfig_name_str + string( ".start_seconds" );
    this->attributes[7].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[7].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[7].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[8].FOM_name     = trick_MM->mm_strdup( "DUT1" );
    trick_name_str                   = simconfig_name_str + string( ".DUT1" );
    this->attributes[8].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[8].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[8].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[9].FOM_name     = trick_MM->mm_strdup( "deltaAT" );
    trick_name_str                   = simconfig_name_str + string( ".deltaAT" );
    this->attributes[9].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[9].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[9].rti_encoding = ENCODING_LITTLE_ENDIAN;
 }
 
