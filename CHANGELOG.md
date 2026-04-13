@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Fixed compile time warnings about variable initialization for the IMSim ExecutionControl class.
 - Fixed Python exception handling based on pull request #185.
+- Simulations using the --verbose command-line setting no longer need 'on' to be specified to enable verbose messages.
 
 
 ## [v3.2.2] - 2026-04-01

@@ -39,7 +39,7 @@ def print_usage_message():
    print( '  --stop [time]        : Time to stop simulation, default is 0.5 seconds.' )
    print( '  -t --tree            : Print the frame tree data.' )
    print( '  -v --vehicle [file]  : Set the name for the vehicle definition file.' )
-   print( '  --verbose [on|off]   : on: Show verbose messages, off: disable messages (Default).' )
+   print( '  --verbose            : Show verbose messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -158,18 +158,7 @@ def parse_command_line():
             print_usage = True
 
       elif ( str( argv[index] ) == '--verbose' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               verbose = True
-            elif ( str( argv[index] ) == 'off' ):
-               verbose = False
-            else:
-               print( 'input.py ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'input.py ERROR: Missing --verbose [on|off] argument.' )
-            print_usage = True
+         verbose = True
 
       else:
          print( 'input.py ERROR: Unknown command line argument ' + str( argv[index] ) )

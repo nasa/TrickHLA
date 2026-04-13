@@ -41,8 +41,8 @@ Trick Build Process Complete
 Run the following simulations to run the Ownership Transfers at Initialization
 with split ownership multiphase initialization data updates.
 1. ``cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine_ownership_Fed_A``
-2. ``./S_main*.exe RUN_a_side_mpr/input.py --verbose on``
+2. ``./S_main*.exe RUN_a_side_mpr/input.py --verbose``
 3. ``cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine_ownership_Fed_P``
-4. ``./S_main*.exe RUN_p_side/input.py --verbose on``
+4. ``./S_main*.exe RUN_p_side/input.py --verbose``
 5. ``cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine_ownership_Fed_other``
-6. ``./S_main*.exe RUN_other/input.py --verbose on``
+6. ``./S_main*.exe RUN_other/input.py --verbose``
