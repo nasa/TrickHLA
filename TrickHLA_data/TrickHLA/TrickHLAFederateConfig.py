@@ -204,7 +204,7 @@ class TrickHLAFederateConfig( object ):
                          + ' resolved for host \'' + trick.var_server_get_hostname()
                          + '\', setting the variable server source address to 127.0.0.1!' )
                   trick.var_server_set_source_address( '127.0.0.1' )
-            except:
+            except Exception:
                return  # Use host source address as is.
       except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
          print( 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
