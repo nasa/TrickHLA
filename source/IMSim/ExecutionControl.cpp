@@ -201,6 +201,18 @@ ExecutionControl::~ExecutionControl()
    }
 }
 
+ExecutionConfiguration *ExecutionControl::get_execution_configuration()
+{
+   ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( ExecutionControlBase::get_execution_configuration() );
+   if ( ExCO == NULL ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionControl::get_execution_configuration():" << __LINE__
+             << " ERROR: Execution Configuration base is not an IMSim::ExecutionConfiguration instance." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   return ( ExCO );
+}
+
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
 is required for this execution control scheme. This should greatly simplify
@@ -2243,18 +2255,6 @@ void ExecutionControl::check_pause_at_init(
 {
    // Dispatch to the ExecutionControl method.
    manager->get_execution_control()->check_pause_at_init( check_pause_delta );
-}
-
-ExecutionConfiguration *ExecutionControl::get_execution_configuration()
-{
-   ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( ExecutionControlBase::get_execution_configuration() );
-   if ( ExCO == NULL ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::get_execution_configuration():" << __LINE__
-             << " ERROR: Execution Configuration base is not an IMSim::ExecutionConfiguration instance." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   return ( ExCO );
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(
