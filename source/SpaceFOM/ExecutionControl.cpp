@@ -298,9 +298,9 @@ void ExecutionControl::setup_interaction_ref_attributes()
    mtr_interaction->set_handler( &mtr_interaction_handler );                         // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
    mtr_interaction_handler.set_name( "ModeTransitionRequest" );
    if ( is_master() ) {
-      mtr_interaction->set_subscribe();
+      mtr_interaction->set_subscribe( true );
    } else {
-      mtr_interaction->set_publish();
+      mtr_interaction->set_publish( true );
    }
 
    // Set up parameters.

@@ -121,6 +121,8 @@ interaction0 = trick.castAsTrickHLA__Interaction(interaction_service.interaction
 #interaction_service.interactions[0].handler     = A.interaction_handler
 #interaction_service.interactions[0].param_count = 3
 #interaction_service.interactions[0].parameters  = trick.sim_services.alloc_type( interaction_service.interactions[0].param_count, 'TrickHLA::Parameter' )
+
+# FIXME: Kludged!
 interaction0.FOM_name    = 'Communication'
 interaction0.publish     = True
 interaction0.subscribe   = False
@@ -140,7 +142,7 @@ interaction0.parameters  = trick.sim_services.alloc_type( interaction0.param_cou
 #interaction_service.interactions[0].parameters[2].trick_name   = 'A.interaction_handler.year'
 #interaction_service.interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-
+# FIXME: Kludged!
 interaction0.parameters[0].FOM_name     = 'Message'
 interaction0.parameters[0].trick_name   = 'A.interaction_handler.message'
 interaction0.parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
