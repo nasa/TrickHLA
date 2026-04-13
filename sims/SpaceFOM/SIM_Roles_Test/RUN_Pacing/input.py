@@ -37,7 +37,7 @@ def print_usage_message():
    print( '  --nostop              : Set no stop time on simulation.' )
    print( '  -r --rrfp [name]      : Name of the Root Reference Frame Publishing federate, default is RRFP.' )
    print( '  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --verbose [on|off]    : on: Show verbose messages, off: disable messages (Default).' )
+   print( '  --verbose             : Show verbose messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -117,18 +117,7 @@ def parse_command_line():
             print_usage = True
 
       elif ( str( argv[index] ) == '--verbose' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               verbose = True
-            elif ( str( argv[index] ) == 'off' ):
-               verbose = False
-            else:
-               print( 'ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'ERROR: Missing --verbose [on|off] argument.' )
-            print_usage = True
+         verbose = True
 
       elif ( ( str( argv[index] ) == '-d' ) ):
          # Pass this on to Trick.
