@@ -1206,6 +1206,39 @@ void ExecutionControl::sync_point_announced(
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
+
+   // Check for the case when the SyncPoint is FEDSAVE_SYNC_POINT.
+   if( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         ostringstream msg2;
+         string save_sp_label;
+         StringUtilities::to_string( save_sp_label, IMSim::FEDSAVE_SYNC_POINT );
+         msg2 << "IMSim::ExecutionControl::sync_point_announced():" << __LINE__
+              << ": " << save_sp_label << endl;
+         message_publish( MSG_NORMAL, msg2.str().c_str() );
+      }
+      // Acieve the Save synchronization point.
+      achieve_sync_point( IMSim::FEDSAVE_SYNC_POINT );
+   }
+
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void ExecutionControl::sync_point_federation_synchronized(
+   wstring const &label )
+{
+   // Call the SyncPointManagerBase method.
+   SyncPointManagerBase::sync_point_federation_synchronized( label );
+
+   // Check for the case when the SYncPoint is FEDSAVE_SYNC_POINT.
+   if( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
+      save_restore_service->set_initiate_save_flag( true );
+   }
+
+   return;
 }
 
 void ExecutionControl::publish()
@@ -2339,6 +2372,7 @@ bool ExecutionControl::check_freeze_time()
    return do_immediate_freeze;
 }
 
+
 bool ExecutionControl::check_scenario_freeze_time()
 {
    bool do_immediate_freeze = false;
@@ -2475,6 +2509,17 @@ bool ExecutionControl::perform_save()
    }
 
    return ( false );
+}
+
+void ExecutionControlBase::post_checkpoint()
+{
+
+   // Call the ExecutionControlBase::post_checkpoint function first.
+   ExecutionControlBase::post_checkpoint();
+
+   // Now let the federation know that the Save is complete.
+
+   return;
 }
 
 /*!

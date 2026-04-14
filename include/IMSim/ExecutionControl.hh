@@ -153,6 +153,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       std::wstring const                          &label,
       RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
+   /*! @brief Specialized handling of IMSim synchronization points.
+    *  @param label The synchronization point label. */
+   virtual void sync_point_federation_synchronized( std::wstring const &label );
+
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
    /*! Unpublish the ExecutionControl objects and interactions. */
