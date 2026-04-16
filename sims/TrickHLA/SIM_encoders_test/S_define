@@ -3,6 +3,9 @@
 
 ##include <climits>
 
+// Change to TRICK_WSTRING_MM_SUPPORT to test support for std::wtring.
+#define NO_TRICK_WSTRING_MM_SUPPORT
+
 ##include "TrickHLA/CompileConfig.hh" // for TRICK_WSTRING_MM_SUPPORT
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/encoding/EncoderFactory.hh"
