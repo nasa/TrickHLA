@@ -24,7 +24,7 @@ endif
 # RTI vendor and version specified.
 IS_PITCH_RTI = 0
 ifeq ($(RTI_VENDOR),Pitch_HLA_4)
-   IS_PITCH_RTI   = 1
+   IS_PITCH_RTI   =  1
    HLA_STANDARD   =  IEEE_1516_2025
    RTI_INCLUDE    =  ${RTI_HOME}/api/cpp/HLA_1516-2025
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
@@ -97,14 +97,20 @@ ifneq (,$(findstring trick-gte, $(shell which trick-gte)))
       endif
    endif
 else
-   CPPC_CMD = $(shell gte TRICK_CXX)
-   ifeq (,$(CPPC_CMD))
-      CPPC_CMD = $(shell gte TRICK_CPPC)
-      ifeq (,$(CPPC_CMD))
-         $(error ${RED_TXT}S_hla.mk:ERROR: Could not determine compiler from TRICK_CXX or TRICK_CPPC using Trick gte command!${RESET_TXT})
-      endif
-   endif
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the trick-gte command!${RESET_TXT})
 endif
+
+# Determine the Trick patch version number.
+#ifneq (,$(findstring trick-version, $(shell which trick-version)))
+#   TRICK_PATCH_VER = $(shell trick-version -v | cut -d . -f 3 | cut -d - -f 1)
+#   ifeq (,$(TRICK_PATCH_VER))
+#      $(error ${RED_TXT}S_hla.mk:ERROR: Could not determine Trick patch version using trick-version command!${RESET_TXT})
+#   endif
+#else
+#   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the trick-version command!${RESET_TXT})
+#endif
+#TRICK_CFLAGS   += -DTRICK_PATCH=${TRICK_PATCH_VER}
+#TRICK_CXXFLAGS += -DTRICK_PATCH=${TRICK_PATCH_VER}
 
 ifeq ($(TRICK_HOST_TYPE),Darwin)
    # macOS
