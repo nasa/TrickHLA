@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 @revs_end
 
 */
+#if defined( TSYNC_CTE ) // Needed for Trickified TrickHLA
 
 #ifndef TRICKHLA_TSYNC_CTE_TIMELINE_HH
 #define TRICKHLA_TSYNC_CTE_TIMELINE_HH
@@ -126,3 +127,5 @@ class TSyncCTETimeline : public CTETimelineBase
 } // namespace TrickHLA
 
 #endif // TRICKHLA_TSYNC_CTE_TIMELINE_HH: Do NOT put anything after this line!
+#endif // TSYNC_CTE
+

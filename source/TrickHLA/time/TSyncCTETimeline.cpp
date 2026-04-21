@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 @revs_end
 
 */
+#if defined( TSYNC_CTE ) // Needed for Trickified TrickHLA
 
 // System include files.
 #include <ostream>
@@ -191,3 +192,5 @@ int TSyncCTETimeline::clock_stop()
    }
    return 0;
 }
+
+#endif // TSYNC_CTE
