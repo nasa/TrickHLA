@@ -231,6 +231,9 @@ trick.exec_set_software_frame( 0.250 )
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 
+# Example showing how to disable Trick thread associations to TrickHLA.
+#federate.disable_trick_thread_associations( '1, 2' )
+
 #---------------------------------------------
 # Set up the initial Sine states
 #---------------------------------------------

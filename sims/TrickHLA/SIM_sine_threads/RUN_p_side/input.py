@@ -88,7 +88,7 @@ THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_M
 
 # Disable Trick child thread IDs associated to TrickHLA in the S_define file
 # as a comma separated list.
-#THLA.federate.disable_trick_child_thread_associations( '1, 2' )
+#THLA.federate.disable_trick_thread_associations( '1, 2' )
 
 
 # Configure the federate.
