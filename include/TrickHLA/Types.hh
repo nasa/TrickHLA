@@ -220,10 +220,11 @@ typedef enum {
    DEBUG_SOURCE_OWNERSHIP          = 0x00000100, ///< Adds TrickHLA::OwnershipHandler debug messages
    DEBUG_SOURCE_PACKING            = 0x00000200, ///< Adds TrickHLA::Packing (and subclass) debug messages
    DEBUG_SOURCE_LAG_COMPENSATION   = 0x00000400, ///< Adds TrickHLA::LagCompensation (and subclass) debug messages
-   DEBUG_SOURCE_EXECUTION_CONTROL  = 0x00000800, ///< Adds TrickHLA::ExecutionControl (and subclass) debug messages
-   DEBUG_SOURCE_EXECUTION_CONFIG   = 0x00001000, ///< Adds TrickHLA::ExecutionConfiguration (and subclass) debug messages
-   DEBUG_SOURCE_THREAD_COORDINATOR = 0x00002000, ///< Adds TrickHLA::TrickThreadCoordinator (and subclass) debug messages
-   DEBUG_SOURCE_HLA_ENCODERS       = 0x00004000, ///< Adds TrickHLA Encoders (and subclass) debug messages
+   DEBUG_SOURCE_CONDITIONAL        = 0x00000800, ///< Adds TrickHLA::Conditional (and subclass) debug messages
+   DEBUG_SOURCE_EXECUTION_CONTROL  = 0x00001000, ///< Adds TrickHLA::ExecutionControl (and subclass) debug messages
+   DEBUG_SOURCE_EXECUTION_CONFIG   = 0x00002000, ///< Adds TrickHLA::ExecutionConfiguration (and subclass) debug messages
+   DEBUG_SOURCE_THREAD_COORDINATOR = 0x00004000, ///< Adds TrickHLA::TrickThreadCoordinator (and subclass) debug messages
+   DEBUG_SOURCE_HLA_ENCODERS       = 0x00008000, ///< Adds TrickHLA Encoders (and subclass) debug messages
    DEBUG_SOURCE_ALL_MODULES        = 0x7FFFFFFF  ///< Default: Add debug messages from all code modules
 
 } DebugSourceEnum;
