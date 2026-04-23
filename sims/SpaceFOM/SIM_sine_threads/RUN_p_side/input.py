@@ -265,17 +265,18 @@ P.interaction_handler.message = 'P-side: P.interaction_hdlr.message'
 # Even though we don't create the object instance, set the attributes to
 # publish so that we can take ownership of this object.
 sine_A = SineObject(
-   sine_create_object      = False,
-   sine_obj_instance_name  = 'A-side-Federate.Sine',
-   sine_trick_sim_obj_name = 'A',
-   sine_packing            = A.packing,
-   sine_conditional        = A.conditional,
-   sine_lag_comp           = A.lag_compensation,
-   sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_ownership          = A.ownership_handler,
-   sine_deleted            = A.obj_deleted,
-   sine_thread_IDs         = '1',  # Trick child thread 1.
-   sine_attribute_publish  = True )
+   sine_create_object       = False,
+   sine_obj_instance_name   = 'A-side-Federate.Sine',
+   sine_trick_sim_obj_name  = 'A',
+   sine_packing             = A.packing,
+   sine_conditional         = A.conditional,
+   sine_lag_comp            = A.lag_compensation,
+   sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_ownership           = A.ownership_handler,
+   sine_deleted             = A.obj_deleted,
+   sine_thread_IDs          = '1', # Trick child thread 1.
+   sine_attribute_publish   = True,
+   sine_attribute_subscribe = True )
 
 trick.exec_set_thread_process_type( 1 , trick.PROCESS_TYPE_AMF_CHILD )
 trick.exec_set_thread_amf_cycle_time( 1 , 0.250 )
@@ -284,15 +285,17 @@ trick.exec_set_thread_amf_cycle_time( 1 , 0.250 )
 federate.add_fed_object( sine_A )
 
 sine_P = SineObject(
-   sine_create_object      = True,
-   sine_obj_instance_name  = 'P-side-Federate.Sine',
-   sine_trick_sim_obj_name = 'P',
-   sine_packing            = P.packing,
-   sine_conditional        = P.conditional,
-   sine_lag_comp           = P.lag_compensation,
-   sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_deleted            = P.obj_deleted,
-   sine_thread_IDs         = '2' )  # Trick child thread 2.
+   sine_create_object       = True,
+   sine_obj_instance_name   = 'P-side-Federate.Sine',
+   sine_trick_sim_obj_name  = 'P',
+   sine_packing             = P.packing,
+   sine_conditional         = P.conditional,
+   sine_lag_comp            = P.lag_compensation,
+   sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_deleted             = P.obj_deleted,
+   sine_thread_IDs          = '2', # Trick child thread 2.
+   sine_attribute_publish   = True,
+   sine_attribute_subscribe = True )
 
 trick.exec_set_thread_process_type( 2 , trick.PROCESS_TYPE_AMF_CHILD )
 trick.exec_set_thread_amf_cycle_time( 2 , 0.250 )

@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added more detailed status messages indicating if an Attribute is sent or received for the TrickHLA::Conditional and TrickHLA::Packing interfaces used by the sine wave example simulations.
+
 
 ### Changed
 
