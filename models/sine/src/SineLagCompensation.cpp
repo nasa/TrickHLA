@@ -237,28 +237,28 @@ void SineLagCompensation::receive_lag_compensation()
       msg << " adjusted-time:" << setprecision( 18 ) << time << endl
           << " BEFORE Lag Compensation:" << endl
           << "\t Name  lag-comp: '" << get_name()
-          << "', received update:" << ( name_attr->is_received() ? "Yes" : "No" ) << endl
+          << "', Received-Update:" << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Time  lag-comp: " << setprecision( 18 ) << get_time()
-          << ", received update:" << ( time_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Value lag-comp: " << get_value()
-          << ", received update:" << ( value_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t dvdt  lag-comp: " << get_derivative()
-          << ", received update:" << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Phase lag-comp: " << get_phase()
-          << ", received update:" << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Amp   lag-comp: " << get_amplitude()
-          << ", received update:" << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Freq  lag-comp: " << get_frequency()
-          << ", received update:" << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Tol   lag-comp: " << get_tolerance()
-          << ", received update:" << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
+          << ", Received-Update:" << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -351,28 +351,28 @@ void SineLagCompensation::bypass_receive_lag_compensation()
       }
       msg << " BEFORE Bypassing Lag Compensation:" << endl
           << "\t Name  lag-comp: '" << get_name()
-          << "', received update:" << ( name_attr->is_received() ? "Yes" : "No" ) << endl
+          << "', Received-Update:" << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Time  lag-comp: " << setprecision( 18 ) << get_time()
-          << ", received update:" << ( time_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Value lag-comp: " << get_value()
-          << ", received update:" << ( value_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t dvdt  lag-comp: " << get_derivative()
-          << ", received update:" << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Phase lag-comp: " << get_phase()
-          << ", received update:" << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Amp   lag-comp: " << get_amplitude()
-          << ", received update:" << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Freq  lag-comp: " << get_frequency()
-          << ", received update:" << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
+          << ", Received-Update:" << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
           << "\t Tol   lag-comp: " << get_tolerance()
-          << ", received update:" << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
+          << ", Received-Update:" << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
