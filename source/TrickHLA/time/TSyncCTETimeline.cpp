@@ -31,33 +31,33 @@ NASA, Johnson Space Center\n
 @revs_end
 
 */
-#if defined( TSYNC_CTE ) // Needed for Trickified TrickHLA
+#if defined( TSYNC_CTE ) // Needed for Trickified TrickHLA without the error below.
 
 // System include files.
-#include <ostream>
-#include <sstream>
-#include <string>
-#include <time.h>
+#   include <ostream>
+#   include <sstream>
+#   include <string>
+#   include <time.h>
 
 // Trick includes.
-#include "trick/exec_proto.h"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
+#   include "trick/exec_proto.h"
+#   include "trick/message_proto.h"
+#   include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/time/CTETimelineBase.hh"
-#include "TrickHLA/time/TSyncCTETimeline.hh"
+#   include "TrickHLA/time/CTETimelineBase.hh"
+#   include "TrickHLA/time/TSyncCTETimeline.hh"
 
-#if !defined( SWIG )
-#   if !defined( __linux__ )
-#      error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
-#   endif
+#   if !defined( SWIG )
+#      if !defined( __linux__ )
+#         error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
+#      endif
 
 extern "C" {
-#   include "tsync.h" // cppcheck-suppress [missingInclude]
-#   include "tsync_error_codes.h"
+#      include "tsync.h" // cppcheck-suppress [missingInclude]
+#      include "tsync_error_codes.h"
 }
-#endif
+#   endif // SWIG
 
 using namespace std;
 using namespace Trick;
