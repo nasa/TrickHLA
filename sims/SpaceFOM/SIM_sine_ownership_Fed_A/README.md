@@ -13,7 +13,7 @@ transfer at initialization and how to coordinate initialization data exchanges.
 
 ---
 
-###Multiphase Initialization Steps
+### Multiphase Initialization Steps
 
 |Federate "A"                 |Federate "P"                 |Federate "Other"             |
 |:---------------------------:|:---------------------------:|:---------------------------:|
