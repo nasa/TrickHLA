@@ -184,7 +184,7 @@ HLA_ball_config( obj_service.objects[3], 'ball3_hla', ball3.state.name, ball3_hl
 # 
 # Show or hide the TrickHLA debug messages.
 #
-THLA.federate.debug_level = trick.DEBUG_LEVEL_3_TRACE
+THLA.federate.debug_level = trick.DEBUG_LEVEL_4_TRACE
 
 
 #---------------------------------------------------------------------------

@@ -2597,7 +2597,7 @@ void ExecutionControl::enter_freeze()
          // NOTE: This will prevent the SimControl panel freeze button
          // from working.
          // Uncomment the following line if you really want this behavior.
-         // federate->un_freeze();
+         // federate->goto_run();
 
          return;
       }
@@ -2616,7 +2616,7 @@ void ExecutionControl::enter_freeze()
       freeze_mode_announce();
 
       // Tell Trick to go into freeze at the appointed time.
-      federate->un_freeze();
+      federate->goto_run();
       the_exec->freeze( get_simulation_freeze_time() );
 
       // NOTE: The actual freeze transition will be done in the
@@ -3075,8 +3075,8 @@ bool ExecutionControl::is_designated_late_joiner()
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-void ExecutionControl::start_federation_save_at_scenario_time(
-   double        freeze_scenario_time,
+void ExecutionControl::start_federation_save_at_SST(
+   double        freeze_sst,
    string const &file_name )
 {
    ostringstream errmsg;

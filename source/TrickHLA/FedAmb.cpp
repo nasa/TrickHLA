@@ -280,12 +280,23 @@ void FedAmb::initiateFederateSave(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
+   Int64Time i64time;
+
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d\n",
                        __LINE__ );
    }
+   save_restore_service->set_save_label( label );
+   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_REQUESTED );
+
+   // Get the current granted time.
+   i64time = federate->get_granted_time();
+   save_restore_service->set_save_time( i64time );
+
+   // FIXME: Possibly deprecated code.
    save_restore_service->set_save_name( label );
-   save_restore_service->set_start_to_save( true );
+
+   return;
 }
 
 void FedAmb::initiateFederateSave(
@@ -295,14 +306,21 @@ void FedAmb::initiateFederateSave(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
+   Int64Time i64time;
+   i64time.set( time );
+
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      Int64Time i64time;
-      i64time.set( time );
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d HLA-time:%.12G seconds.\n",
                        __LINE__, i64time.get_time_in_seconds() );
    }
+   save_restore_service->set_save_label( label );
+   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_REQUESTED );
+   save_restore_service->set_save_time( i64time );
+
+   // FIXME: Possibly deprecated code.
    save_restore_service->set_save_name( label );
-   save_restore_service->set_start_to_save( true );
+
+   return;
 }
 
 void FedAmb::federationSaved()
@@ -314,9 +332,14 @@ void FedAmb::federationSaved()
       message_publish( MSG_NORMAL, "FedAmb::federationSaved():%d\n",
                        __LINE__ );
    }
-   save_restore_service->set_start_to_save( false );
-   save_restore_service->set_save_completed();
-   save_restore_service->federation_saved();
+
+   // Mark the Save process as completed.
+   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_COMPLETE );
+
+   // FIXME: Possibly deprecated code.
+   //save_restore_service->save_succeded();
+
+   return;
 }
 
 void FedAmb::federationNotSaved(
@@ -332,10 +355,14 @@ void FedAmb::federationNotSaved(
 
    save_restore_service->print_save_failure_reason( reason );
 
-   // TODO: Do we need to the steps below to exit freeze mode?
-   save_restore_service->set_start_to_save( false );
-   save_restore_service->set_save_completed();
-   save_restore_service->federation_saved();
+   // Mark the Save process as failed.
+   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_FAILED );
+
+
+   // FIXME: Possibly deprecated code.
+   //save_restore_service->save_failed();
+
+   return;
 }
 
 void FedAmb::federationSaveStatusResponse(

@@ -589,8 +589,8 @@ void ExecutionControl::set_time_padding( double t )
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-void ExecutionControl::start_federation_save_at_scenario_time(
-   double        freeze_scenario_time,
+void ExecutionControl::start_federation_save_at_SST(
+   double        freeze_sst,
    string const &file_name )
 {
    ostringstream errmsg;

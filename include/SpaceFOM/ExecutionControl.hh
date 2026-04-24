@@ -295,10 +295,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    //
    // Federation save and checkpoint
    /*! @brief Start the Federation save at the specified scenario time.
-    *  @param freeze_scenario_time Scenario time to freeze.
-    *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double             freeze_scenario_time,
-                                                        std::string const &file_name );
+    *  @param freeze_sst Simulation scenario time to freeze.
+    *  @param save_label Save label for HLA Federation Save. */
+   virtual void start_federation_save_at_SST( double             freeze_sst,
+                                              std::wstring const &save_label );
 
    //
    // Freeze time management functions.

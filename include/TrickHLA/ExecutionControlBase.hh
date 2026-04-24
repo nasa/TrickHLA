@@ -130,10 +130,9 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Destructor for the ExecutionControlBase class. */
    virtual ~ExecutionControlBase() = 0;
 
-   // Use implicit assignment operator.
 
   public:
-   //
+   //-------------------------------------------------------------------------
    // Execution Control initialization methods.
    //
    /*! @brief Setup the federate wide references in the ExecutionControl class
@@ -151,7 +150,8 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Execution control specific shutdown process. */
    virtual void shutdown() = 0;
 
-   //
+
+   //-------------------------------------------------------------------------
    // Execution Control support methods.
    //
    // Get the ExecutionControl type identification string.
@@ -215,7 +215,8 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! Unsubscribe the ExecutionControl objects and interactions. */
    virtual void unsubscribe() = 0;
 
-   //
+
+   //-------------------------------------------------------------------------
    // ExecutionControl runtime methods.
    //
    /*! @brief Send the ExecutionConfiguration data if we are the master federate. */
@@ -282,7 +283,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       return ( true );
    }
 
-   //
+
+   //-------------------------------------------------------------------------
    // ExecutionControl interaction methods.
    //
    /*! @brief Process all received interactions by calling in turn each
@@ -314,7 +316,8 @@ class ExecutionControlBase : public SyncPointManagerBase
     *  @return True if mode transition occurred. */
    virtual bool process_execution_control_updates() = 0;
 
-   //
+
+   //-------------------------------------------------------------------------
    // Timeline access and management methods.
    //
    /*! @brief Set the Scenario Timeline.
@@ -373,7 +376,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       return ( get_scenario_time() + ( sim_time - get_sim_time() ) );
    }
 
-   //
+
+   //-------------------------------------------------------------------------
    // Mode management support methods.
    //
    /*! @brief Clear the Mode Transition Request flag, the requested execution
@@ -435,17 +439,21 @@ class ExecutionControlBase : public SyncPointManagerBase
       return ( current_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN );
    }
 
-   //
+
+   //-------------------------------------------------------------------------
    // Federation freeze/pause management functions.
    //
    /*! @brief Routine to handle going from run to freeze. */
    virtual void freeze_init();
+
    /*! @brief Check if a Trick freeze was commanded; if we announced freeze,
     *  tell other federates to freeze. */
    virtual void enter_freeze();
+
    /*! @brief Check for exit from freeze.
     *  @return True if should exit from freeze. */
    virtual bool check_freeze_exit();
+
    /*! @brief Routine to handle going from freeze to run; if we announced the
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
@@ -478,12 +486,14 @@ class ExecutionControlBase : public SyncPointManagerBase
       return this->freeze_the_federation;
    }
 
-   //
+
+   //-------------------------------------------------------------------------
    // Functions for the freeze ExecutionControl methodology.
    //
    /*! @brief Check if we hit a pause sync point and need to go to freeze.
     *  @param check_pause_delta Check pause job delta time in seconds. */
    virtual void check_pause( double const check_pause_delta );
+
    /*! @brief Checking if we started in freeze.
     *  @param check_pause_delta Check pause job delta time in seconds. */
    virtual void check_pause_at_init( double const check_pause_delta );
@@ -493,11 +503,13 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       this->mode_transition_requested = true;
    }
+
    /*! @brief Clear the mode transition requested flag. */
    virtual void clear_mode_transition_requested()
    {
       this->mode_transition_requested = false;
    }
+
    /*! @brief Determine if a mode transition has been requested.
     *  @return mode_change_requested True if a mode transition has been requested. */
    virtual bool is_mode_transition_requested()
@@ -505,6 +517,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       return this->mode_transition_requested;
    }
 
+
+   //-------------------------------------------------------------------------
    // Role determination methods.
    /*! @brief Query if there is a preset Master.
     *  @return True if there is a preset Master; False otherwise. */
@@ -512,21 +526,25 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return this->use_preset_master;
    }
+
    /*! @brief Set this as the Master federate.
     *  @param master_flag True for a Master federate; False otherwise. */
    virtual void set_master( bool master_flag );
+
    /*! @brief Query if this is the Master federate.
     *  @return True if there is the Master; False otherwise. */
    virtual bool is_master() const
    {
       return this->master;
    }
+
    /*! @brief Determine if this federate is a late joining federate.
     *  @return True if this is a late joining federate. */
    virtual bool is_late_joiner()
    {
       return this->late_joiner;
    }
+
    /*! @brief Check if we have determine if this federate is a late joining federate.
     *  @return True if late joining status is determined. */
    virtual bool is_late_joiner_determined()
@@ -534,6 +552,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       return this->late_joiner_determined;
    }
 
+
+   //-------------------------------------------------------------------------
    // Execution mode access methods.
    /*! @brief Get the currently requested execution mode.
     *  @return The currently requested execution mode. */
@@ -541,24 +561,28 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return ( this->requested_execution_control_mode );
    }
+
    /*! @brief Set the currently requested execution mode.
     *  @param mode The requested execution mode. */
    virtual void set_requested_execution_control_mode( ExecutionControlEnum mode )
    {
       this->requested_execution_control_mode = mode;
    }
+
    /*! @brief Set the currently requested execution mode.
     *  @param mode The requested execution mode. */
    virtual void set_requested_execution_control_mode( int16_t mode )
    {
       this->requested_execution_control_mode = execution_control_int16_to_enum( mode );
    }
+
    /*! @brief Get the current execution mode.
     *  @return The current execution mode. */
    virtual ExecutionControlEnum get_current_execution_control_mode()
    {
       return ( this->current_execution_control_mode );
    }
+
    /*! @brief Set the current execution control mode.
     *  @param mode The current execution control mode. */
    virtual void set_current_execution_control_mode( ExecutionControlEnum mode )
@@ -566,42 +590,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       this->current_execution_control_mode = mode;
    }
 
-   //
-   // Federation save and checkpoint
-   /*! @brief Start the Federation save at the specified scenario time.
-    *  @param freeze_scenario_time Scenario time to freeze.
-    *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double             freeze_scenario_time,
-                                                        std::string const &file_name ) = 0;
 
-   /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
-
-   /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
-
-   /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
-
-   /*! @brief Perform setup for federate save. */
-   virtual void setup_checkpoint();
-
-   /*! @brief Federates that did not announce the save, perform a checkpoint. */
-   virtual void perform_checkpoint();
-
-   /*! @brief Complete federate save. */
-   virtual void post_checkpoint();
-
-   /*! @brief Perform setup for federate restore. */
-   virtual void setup_restore();
-
-   /*! @brief Federates that did not announce the restore, perform a restore. */
-   virtual void perform_restore();
-
-   /*! @brief Complete federate restore and prepare to restart execution. */
-   virtual void post_restore();
-
-   //
+   //-------------------------------------------------------------------------
    // Execution Control association methods.
    /*! @brief Set the reference to the associated TrickHLA::Federate.
     *  @param fed Associated TrickHLA::Federate. */
@@ -610,30 +600,35 @@ class ExecutionControlBase : public SyncPointManagerBase
       this->federate = fed;
       // TODO: this->SyncPointManager.federate = fed;
    }
+
    /*! @brief Get the reference to the associated TrickHLA::Federate.
     *  @return Pointer to the associated TrickHLA::Federate. */
    virtual TrickHLA::Federate *get_federate()
    {
       return federate;
    }
+
    /*! @brief Get the reference to the associated TrickHLA::ObjectServices.
     *  @return Pointer to the associated TrickHLA::ObjectServices. */
    virtual TrickHLA::ObjectServices *get_object_services()
    {
       return object_service;
    }
+
    /*! @brief Get the reference to the associated TrickHLA::ExecutionConfigurationBase object.
     *  @param exec_config Pointer to the associated TrickHLA::ExecutionConfigurationBase object. */
    virtual void set_execution_configuration( ExecutionConfigurationBase *exec_config )
    {
       execution_configuration = exec_config;
    }
+
    /*! @brief Get the reference to the associated TrickHLA::ExecutionConfigurationBase object.
     *  @return Pointer to the associated TrickHLA::ExecutionConfigurationBase object. */
    virtual ExecutionConfigurationBase *get_execution_configuration()
    {
       return execution_configuration;
    }
+
    /*! @brief Remove the ExecutionConfiguration instance from the federation execution. */
    virtual void remove_execution_configuration();
    /*! @brief Test is an execution configuration object is used.
@@ -643,6 +638,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       return ( execution_configuration != NULL );
    }
 
+
+   //-------------------------------------------------------------------------
    // Freeze time management functions.
    /*! @brief Set the least common time step in seconds for the federation.
     *  @param lcts Least Common Time Step time in seconds. */
@@ -662,8 +659,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       return this->least_common_time_step;
    }
 
-   /*! @brief Get the value of the least common time step.
-    *  @return The value of the least common time step. */
+   /*! @brief Check if the least common time step is enabled.
+    *  @return Least common time step enabled status. */
    virtual bool is_enabled_least_common_time_step()
    {
       return this->enable_least_common_time_step;
@@ -679,24 +676,28 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return this->time_padding;
    }
+
    /*! @brief Get the Federation Execution simulation time for freeze.
     *  @return Simulation time in seconds for the Federation Execution to go to freeze. */
    virtual double get_simulation_freeze_time()
    {
       return this->simulation_freeze_time;
    }
+
    /*! @brief Set the Federation Execution simulation time for freeze.
     *  @param freeze_time Simulation time in seconds for the Federation Execution to go to freeze. */
    virtual void set_simulation_freeze_time( double freeze_time )
    {
       this->simulation_freeze_time = freeze_time;
    }
+
    /*! @brief Get the Federation Execution scenario time for freeze.
     *  @return Scenario time in seconds for the Federation Execution to go to freeze. */
    virtual double get_scenario_freeze_time()
    {
       return this->scenario_freeze_time;
    }
+
    /*! @brief Set the Federation Execution scenario time for freeze.
     *  @param freeze_time Scenario time in seconds for the Federation Execution to go to freeze. */
    virtual void set_scenario_freeze_time( double freeze_time )
@@ -704,7 +705,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       this->scenario_freeze_time = freeze_time;
    }
 
-   //
+
+   //-------------------------------------------------------------------------
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
     * @return True if Save and Restore is supported by this ExecutionControl method. */
@@ -712,6 +714,55 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return ( false );
    }
+
+   /*! @brief Generate an HLA Save label. */
+   virtual const std::wstring & generate_save_label();
+
+   /*! @brief Map a Save label into a running federates file name. */
+   virtual const std::string map_save_label_to_running_feds_file_name( std::wstring const &save_label );
+
+   /*! @brief Federate HLA Save process executive. */
+   virtual void save_process();
+
+   /*! @brief Federate commmand to initiate a Federation wide save.
+    *  @return The success or failure of initiating the Federation Save.
+    *  @param label The Save label for the HLA save process. */
+   virtual bool save( std::wstring const &label );
+
+   /*! @brief Initiate a Federation wide save at a specified simulation
+    *  elapsed time (SET).
+    *  @param label    The Save label for the HLA save process.
+    *  @param sim_time The SET to initiate the save. */
+   virtual void save_at_SET( std::wstring const &label,
+                             double              sim_time );
+
+   /*! @brief Initiate a Federation wide save at a specified simulation
+    *  scenario time (SST).
+    *  @param label         The Save label for the HLA save process.
+    *  @param scenario_time The SST to initiate the save. */
+   virtual void save_at_SST( std::wstring const &label,
+                             double              scenario_time );
+
+   /*! @brief Initiate a Federation wide save at a specified HLA logical
+    *  time (HLT).
+    *  @param label The Save label for the HLA save process.
+    *  @param time  The HLT to initiate the save. */
+   virtual void save_at_HLT( std::wstring                   const &label,
+                             RTI1516_NAMESPACE::LogicalTime const &time );
+
+   /*! @brief Perform setup for Federate save. */
+   virtual void save_setup();
+
+   /*! @brief Start the Federation save at the specified scenario time.
+    *  @param freeze_sst Simulation scenario time to freeze.
+    *  @param save_label Save label for HLA Federation Save. */
+   virtual void start_federation_save_at_SST( double             freeze_sst,
+                                              std::wstring const &save_label ) = 0;
+
+   /*! @brief Check if this Federate can initiate a Federation save.
+    *  @return True if federate can initiate a Save, false otherwise. */
+   virtual bool can_initiate_save();
+
    /*! @brief Checks if Save has been initiated by this ExecutionControl method.
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */
@@ -719,29 +770,70 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return ( false );
    }
-   /*! @brief Federates that did not announce the save, perform a save.
-    * @return True if Save can proceed, False if not. */
-   virtual bool perform_save()
-   {
-      return ( false );
-   }
+
+   /*! @brief Federate HLA Restore process executive. */
+   virtual void restore_process();
+
+   /*! @brief Perform setup for Federate restore. */
+   virtual void restore_setup();
+
+   /*! @brief Federates that did not announce the restore, perform a restore. */
+   virtual void restore();
+
+   /*! @brief Complete Federate restore and prepare to restart execution. */
+   virtual void restore_after();
+
+
+   //-------------------------------------------------------------------------
+   // Execution Control functions that support checkpointing.
+   //
+   /*! @brief Map a Save label into a checkpoint file name. */
+   virtual const std::string map_save_label_to_checkpoint_file_name( std::wstring const &save_label );
+
+   /*! @brief Convert the variables to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
+
+   /*! @brief Restore the state of this class from the Trick checkpoint. */
+   virtual void restore_data_after_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
+
+   /*! @brief Clear/release the memory used for the checkpoint data structures. */
+   virtual void free_converted_data_for_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
+
    /*! @brief Converts HLA sync points into something Trick can save in a checkpoint. */
    virtual void convert_loggable_sync_pts()
    {
       return;
    }
+
    /*! @brief Converts checkpointed sync points into HLA sync points. */
    virtual void reinstate_logged_sync_pts()
    {
       return;
    }
 
+   /*! @brief Execution Control functions to perform in conjunction with
+    *  (just before writing) a Trick simulation checkpoint. */
+   virtual void checkpoint_before();
+
+   /*! @brief Execution Control functions to perform before loading a Trick
+    * simulation checkpoint file. */
+   virtual void checkpoint_preload();
+
+   /*! @brief Execution Control functions to perform after a Trick simulation
+    * checkpoint. */
+   virtual void checkpoint_after();
+
+   /*! @brief Execution Control functions to perform after loading a Trick
+    *  simulation checkpoint file to prepare for simulation restart. */
+   virtual void checkpoint_restart();
+
+
   protected:
    double time_padding; ///< @trick_units{s} Time in seconds to add to the go-to-run time.
 
    bool enable_least_common_time_step; /**< @trick_units{--} Enable the use of LCTS. */
 
-   double least_common_time_step_seconds; /**< @trick_units{--} The LCTS in seconds. */
+   double least_common_time_step_seconds; /**< @trick_units{s} The LCTS in seconds. */
 
    int64_t least_common_time_step; /**< @trick_units{--}
       A 64 bit integer time that represents the base HLA Logical Time representation
@@ -760,7 +852,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    ExecutionConfigurationBase *execution_configuration; /**< @trick_units{--}
       Associates TrickHLA::ExecutionConfigurationBase class object instance.
       Since this is an abstract class, the actual instance will be a concrete
-      derived class instance (e.g. SRFOM:ExecutionControl). */
+      derived class instance (e.g. SpaceFOM:ExecutionControl). */
 
    bool                 mode_transition_requested;        ///< @trick_units{--} Flag to indicate a mode transition has been requested.
    ExecutionControlEnum requested_execution_control_mode; ///< @trick_units{--} The latest mode transition requested.

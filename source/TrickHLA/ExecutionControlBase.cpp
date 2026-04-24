@@ -310,6 +310,14 @@ Trick simulation time as the default scenario-timeline.\n",
       }
    }
 
+   // Depending on if Save and Restore is supported, set the intial state.
+   if ( this->is_save_and_restore_supported() ){
+      this->save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_NONE );
+   }
+   else {
+      this->save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_UNSUPPORTED );
+   }
+
    // Initialize then Configure the ExecutionConfiguration object if present.
    if ( execution_configuration != NULL ) {
       execution_configuration->Object::initialize( this->federate );
@@ -998,8 +1006,282 @@ void ExecutionControlBase::free_converted_data_for_checkpoint()
    SyncPointManagerBase::free_converted_data_for_checkpoint();
 }
 
+/*! @brief Federates that did not announce the save, perform a checkpoint. */
+bool ExecutionControlBase::can_initiate_save()
+{
+   return false;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+const std::wstring & ExecutionControlBase::generate_save_label()
+{
+   // FIXME: Check for time management to insure that there is a granted time.
+
+   // Get the current Federation Execution name.
+   std::string federation_name = federate->get_federation_name();
+
+   // Get the current HLA Logical Time.
+   int64_t granted_time = time_management_service->get_granted_time().get_base_time();
+
+   // Formulate the save label based on the Federation Execution name and the
+   // current HLA logical time.
+   std::string save_label_str = federation_name + "_" + std::to_string( granted_time );
+
+   // Convert the label to a wide string.
+   wstring save_name_wstr;
+   StringUtilities::to_wstring( save_name_wstr, save_label_str );
+
+   // Set the Save label.
+   save_restore_service->set_save_name( save_name_wstr );
+
+   // Return the Save label.
+   return( save_restore_service->save_label );
+}
+
+/*
+ * @job_class{checkpoint}
+ */
+const std::string ExecutionControlBase::map_save_label_to_running_feds_file_name(
+   std::wstring const &save_label )
+{
+   std::string save_label_str;
+   std::string running_fed_file;
+
+   // Convert the Save label wstring to a string.
+   StringUtilities::to_string( save_label_str, save_label );
+
+   // Build up the checkpoint file name.
+   // First get the federation name.
+   running_fed_file = federate->get_federation_name();
+   running_fed_file += "_";
+   // Next get the federate name.
+   running_fed_file += federate->get_federate_name();
+   running_fed_file += "_";
+   // Add the specified HLA Save label.
+   running_fed_file += save_label_str;
+   // Add the running_feds suffix.
+   running_fed_file += ".running_feds";
+
+   return( running_fed_file );
+}
+
+
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::save_process()
+{
+   std::string save_label_str;
+
+   // Convert the save label for use in messages.
+   StringUtilities::to_string( save_label_str, save_restore_service->get_save_label() );
+
+   // NOTE: The Save label is assumed to be set outside this function in the
+   // SaveRestroreService.
+
+   // Manage the Federate HLA Save process state.
+   switch ( save_restore_service->save_state ) {
+
+   case THLASaveProcessEnum::SAVE_NONE:
+      // Save has not been initiated.  So, just proceed without action.
+      break;
+
+   case THLASaveProcessEnum::SAVE_INITIATED:
+      // This federate initiated the Federation Save.
+      // Make the call to the RTI ambassador to request a Federation save.
+      save_restore_service->save_request();
+      break;
+
+   case THLASaveProcessEnum::SAVE_REQUESTED:
+      // This federate is responding to a Save Request from the Federation.
+      // Call the SaveRestoreServices Save method.
+      save_restore_service->save();
+      break;
+
+   case THLASaveProcessEnum::SAVE_IN_PROGRESS:
+      // A Save is in progress.  This routine checks status while waiting for
+      // the
+      save_restore_service->save_in_progress_check();
+      break;
+
+   case THLASaveProcessEnum::SAVE_COMPLETE:
+      std::cout << "ExecutionControlBase::save_process(): SAVE_COMPLETE" << std::endl;
+      // The Save was successfully completed.
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         message_publish( MSG_NORMAL, "ExecutionControlBase::save_process():%d Save: \'%s\' completed!\n",
+                          __LINE__, save_label_str.c_str() );
+      }
+      // Save actions when Save completed successfully.
+      save_restore_service->save_succeded();
+
+      // Reset the Save state to SAVE_NONE.
+      save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
+      break;
+
+   case THLASaveProcessEnum::SAVE_FAILED:
+      // The Save failed.
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         message_publish( MSG_NORMAL, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
+                          __LINE__, save_label_str.c_str() );
+      }
+      // Save actions when Save completed successfully.
+      save_restore_service->save_failed();
+      break;
+
+   case THLASaveProcessEnum::SAVE_UNSUPPORTED:
+      // Save is not supported.  So, just proceed without action.
+      break;
+
+   default:
+      // Unknown Save state.  This is bad, so exit with error.
+      ostringstream errmsg;
+      errmsg << "Federate::freeze_save():" << __LINE__
+             << " ERROR: Unknown Save state = "
+             << static_cast<int>(save_restore_service->save_state) << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      break;
+
+   }
+
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+bool ExecutionControlBase::save( std::wstring const &label )
+{
+   THLASaveProcessEnum current_save_state;
+   std::string         current_save_state_str;
+
+   // Get the current Save state.
+   current_save_state = save_restore_service->get_save_state();
+
+   // Convert the save label for use in messages.
+   current_save_state_str = TrickHLA::to_string( current_save_state );
+
+   // If Federation SaveRestore is not supported then return without action.
+   if ( current_save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ){
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         message_publish( MSG_WARNING, "ExecutionControlBase::save():%d HLA SaveRetore NOT supported!\n",
+                          __LINE__ );
+      }
+
+      return( false );
+
+   }
+
+   // Check the Federation Save state to ensure that a Save is applicable .
+   if (    (current_save_state != THLASaveProcessEnum::SAVE_NONE)
+        && (current_save_state != THLASaveProcessEnum::SAVE_REQUESTED)
+        && (current_save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED) ){
+
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         message_publish( MSG_WARNING, "ExecutionControlBase::save():%d : Save already in progress: \'%s\'!\n",
+                          __LINE__, current_save_state_str.c_str() );
+      }
+      return( false );
+
+   }
+
+   // Check to see if we are initiating the Save.
+   if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ){
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         message_publish( MSG_NORMAL, "ExecutionControlBase::save():%d : Initiating Save: \'%s\'!\n",
+                          __LINE__, current_save_state_str.c_str() );
+      }
+
+      // We are initiating the Save.
+      save_restore_service->save_request( label );
+
+   }
+   else if ( current_save_state == THLASaveProcessEnum::SAVE_REQUESTED ) {
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         message_publish( MSG_NORMAL, "ExecutionControlBase::save():%d : Save Requested: \'%s\'!\n",
+                          __LINE__, current_save_state_str.c_str() );
+      }
+
+      // We have been requested to Save.
+      save_restore_service->save( label );
+
+   }
+
+   return( true );
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::save_at_SET(
+   std::wstring const &label,
+   double              sim_time )
+{
+
+   // If Federation SaveRestore is not supported then return without action.
+   if ( !is_save_and_restore_supported() ){
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         message_publish( MSG_WARNING, "ExecutionControlBase::save_at_SET():%d HLA SaveRetore NOT supported!\n",
+               __LINE__ );
+      }
+      return;
+   }
+
+   // FIXME: Start the Save process here.
+
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::save_at_SST(
+   std::wstring const &label,
+   double              scenario_time )
+{
+
+   // If Federation SaveRestore is not supported then return without action.
+   if ( !is_save_and_restore_supported() ){
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         message_publish( MSG_WARNING, "ExecutionControlBase::save_at_SST():%d HLA SaveRetore NOT supported!\n",
+               __LINE__ );
+      }
+      return;
+   }
+
+   // FIXME: Start the Save process here.
+
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::save_at_HLT(
+   std::wstring                   const &label,
+   RTI1516_NAMESPACE::LogicalTime const &time )
+{
+
+   // If Federation SaveRestore is not supported then return without action.
+   if ( !is_save_and_restore_supported() ){
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         message_publish( MSG_WARNING, "ExecutionControlBase::save_at_HLT():%d HLA SaveRetore NOT supported!\n",
+               __LINE__ );
+      }
+      return;
+   }
+
+   // FIXME: Start the Save process here.
+
+   return;
+}
+
 /*! @brief Perform setup for federate save. */
-void ExecutionControlBase::setup_checkpoint()
+void ExecutionControlBase::save_setup()
 {
    // Do not do federate save during Init or Exit (this allows "regular" init
    // and shutdown checkpoints)
@@ -1007,7 +1289,8 @@ void ExecutionControlBase::setup_checkpoint()
       return;
    }
 
-   string str_save_label( save_restore_service->get_save_label() );
+   string str_save_label;
+   StringUtilities::to_string( str_save_label, save_restore_service->get_save_label() );
 
    // Determine if I am the federate that clicked Dump Chkpnt on sim control panel
    // or I am the federate that called start_federation_save
@@ -1027,9 +1310,15 @@ void ExecutionControlBase::setup_checkpoint()
 
    // If I announced the save, must initiate federation save
    if ( save_restore_service->is_announce_save() ) {
+
       if ( save_restore_service->get_save_name().length() ) {
          // When user calls start_federation_save, save_name is already set
       } else {
+
+         // FIXME: DO NOT rely on Trick checkpoint from the SimControl panel
+         // to drive the save and restore process.
+
+
          // When user clicks Dump Chkpnt, we need to set the save_name here
          string trick_filename;
          string slash( "/" );
@@ -1079,7 +1368,8 @@ void ExecutionControlBase::setup_checkpoint()
          save_restore_service->request_federation_save_status();
          save_restore_service->wait_for_save_status_to_complete();
 
-         save_restore_service->request_federation_save();
+         //save_restore_service->request_federation_save();
+         save_restore_service->save_request( save_restore_service->get_save_label() );
 
          SleepTimeout print_timer;
          SleepTimeout sleep_timer;
@@ -1166,104 +1456,8 @@ void ExecutionControlBase::setup_checkpoint()
    save_restore_service->convert_sync_pts();
 }
 
-/*! @brief Federates that did not announce the save, perform a checkpoint. */
-void ExecutionControlBase::perform_checkpoint()
-{
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_save_and_restore_supported() ) {
-      return;
-   }
-
-   // Dispatch to the ExecutionControl method.
-   bool force_checkpoint = perform_save();
-
-   if ( save_restore_service->is_start_to_save() || force_checkpoint ) {
-      // If I announced the save, sim control panel was clicked and invokes the checkpoint
-      if ( !save_restore_service->is_announce_save() ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "ExecutionControlBase::perform_checkpoint():%d Federate Save Started\n",
-                             __LINE__ );
-         }
-         // Create the filename from the Federation name and the "save-name".
-         // Replace all directory characters with an underscore.
-         string save_name_str;
-         StringUtilities::to_string( save_name_str, save_restore_service->get_save_name() );
-         string str_save_label = federate->get_federation_name() + "_" + save_name_str;
-         for ( size_t i = 0; i < str_save_label.length(); ++i ) {
-            if ( str_save_label[i] == '/' ) {
-               str_save_label[i] = '_';
-            }
-         }
-
-         // calls setup_checkpoint first
-         checkpoint( str_save_label.c_str() );
-      }
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::perform_checkpoint():%d Checkpoint Dump Completed.\n",
-                          __LINE__ );
-      }
-
-      post_checkpoint();
-   }
-}
-
-/*!
- *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSim initialization schemes.
- *  @job_class{post_checkpoint}
- */
-void ExecutionControlBase::post_checkpoint()
-{
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_save_and_restore_supported() ) {
-      return;
-   }
-
-   if ( save_restore_service->is_start_to_save() ) {
-
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-      try {
-         federate->get_RTI_ambassador()->federateSaveComplete();
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "ExecutionControlBase::post_checkpoint():%d Federate Save Completed.\n",
-                             __LINE__ );
-         }
-         save_restore_service->set_start_to_save( false );
-      } catch ( FederateHasNotBegunSave const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_checkpoint():%d EXCEPTION: FederateHasNotBegunSave\n",
-                          __LINE__ );
-      } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_checkpoint():%d EXCEPTION: FederateNotExecutionMember\n",
-                          __LINE__ );
-      } catch ( RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_checkpoint():%d EXCEPTION: RestoreInProgress\n",
-                          __LINE__ );
-      } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_checkpoint():%d EXCEPTION: NotConnected\n",
-                          __LINE__ );
-         federate->set_connection_lost();
-      } catch ( RTIinternalError const &e ) {
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_checkpoint():%d EXCEPTION: RTIinternalError: '%s'\n",
-                          __LINE__, rti_err_msg.c_str() );
-      }
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::post_checkpoint():%d Federate Save Already Completed.\n",
-                          __LINE__ );
-      }
-   }
-}
-
 /*! @brief Perform setup for federate restore. */
-void ExecutionControlBase::setup_restore()
+void ExecutionControlBase::restore_setup()
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
@@ -1321,7 +1515,9 @@ void ExecutionControlBase::setup_restore()
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
-      save_restore_service->initiate_restore_announce( restore_name_str );
+      std::wstring restore_name_wstr;
+      StringUtilities::to_wstring( restore_name_wstr, restore_name_str );
+      save_restore_service->initiate_restore_announce( restore_name_wstr );
 
       SleepTimeout print_timer;
       SleepTimeout sleep_timer;
@@ -1362,11 +1558,67 @@ void ExecutionControlBase::setup_restore()
       }
    }
 
-   save_restore_service->set_restore_process( RESTORE_IN_PROGRESS );
+   save_restore_service->set_restore_process( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
 }
 
-/*! @brief Federates that did not announce the restore, perform a restore. */
-void ExecutionControlBase::perform_restore()
+
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::restore_process()
+{
+
+   switch ( save_restore_service->restore_state ) {
+
+   case THLARestoreProcessEnum::RESTORE_NONE:
+      // Save has not been initiated.  So, just proceed without action.
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_REQUESTED:
+      // Call the ExecutionControl restore method.
+      restore();
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_INITIATE:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_COMPLETE:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_FAILED:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_UNSUPPORTED:
+      // Restore is not supported.  So, just proceed without action.
+      break;
+
+   default:
+      // Unknown Restore state.  This is bad, so exit with error.
+      ostringstream errmsg;
+      errmsg << "Federate::freeze_restore():" << __LINE__
+             << " ERROR: Unknown Restore state = "
+             << static_cast<int>(save_restore_service->restore_state) << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      break;
+
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void ExecutionControlBase::restore()
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
@@ -1375,6 +1627,7 @@ void ExecutionControlBase::perform_restore()
    }
 
    if ( save_restore_service->is_start_to_restore() ) {
+
       // if I announced the restore, sim control panel was clicked and invokes the load
       if ( !save_restore_service->is_announce_restore() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -1411,15 +1664,14 @@ void ExecutionControlBase::perform_restore()
                           __LINE__ );
       }
 
-      post_restore();
+      restore_after();
    }
 }
 
 /*!
- *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSim initialization schemes.
+ * @job_class{scheduled}
  */
-void ExecutionControlBase::post_restore()
+void ExecutionControlBase::restore_after()
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
@@ -1428,7 +1680,7 @@ void ExecutionControlBase::post_restore()
    }
 
    if ( save_restore_service->is_start_to_restore() ) {
-      save_restore_service->set_restore_process( RESTORE_COMPLETE );
+      save_restore_service->set_restore_process( THLARestoreProcessEnum::RESTORE_COMPLETE );
 
       // Make a copy of restore_process because it is used in the
       // inform_RTI_of_restore_completion() function.
@@ -1527,6 +1779,136 @@ void ExecutionControlBase::post_restore()
                           __LINE__ );
       }
    }
+}
+
+/*
+ * @job_class{checkpoint}
+ */
+const std::string ExecutionControlBase::map_save_label_to_checkpoint_file_name(
+   std::wstring const &save_label )
+{
+   std::string save_label_str;
+   std::string checkpoint_file_name;
+
+   // Convert the Save label wstring to a string.
+   StringUtilities::to_string( save_label_str, save_label );
+
+   // Build up the checkpoint file name.
+   // First get the federation name.
+   checkpoint_file_name = federate->get_federation_name();
+   checkpoint_file_name += "_";
+   // Next get the federate name.
+   checkpoint_file_name += federate->get_federate_name();
+   checkpoint_file_name += "_";
+   // Add the specified HLA Save label.
+   checkpoint_file_name += save_label_str;
+   // Add the checkpoint suffix.
+   checkpoint_file_name += ".chkpt";
+
+   return( checkpoint_file_name );
+}
+
+/*
+ * @job_class{checkpoint}
+ */
+void ExecutionControlBase::checkpoint_before()
+{
+
+   // Just return if HLA save and restore is not supported by the simulation
+   // initialization scheme selected by the user.
+   if ( !is_save_and_restore_supported() ) {
+      return;
+   }
+
+   // We don't initiate a Save in either initialization or shutdown.
+   // This allows "regular" initialization and shutdown checkpoints.
+   if ( ( exec_get_mode() == Initialization ) || ( exec_get_mode() == ExitMode ) ) {
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "SaveRestoreServices::checkpoint_before():"
+          << __LINE__ << " : Checkpoint initiated." << std::endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
+   // Check to see if we are set up to support a Trick Control Panel checkpoint.
+   if ( save_restore_service->is_tcp_save_supported() ) {
+
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         ostringstream msg;
+         msg << "SaveRestoreServices::checkpoint_before():"
+             << __LINE__ << " : Save initiated from Trick Control Panel checkpoint." << std::endl;
+         message_publish( MSG_NORMAL, msg.str().c_str() );
+      }
+
+      // Get the current Save state.
+      THLASaveProcessEnum current_save_state;
+      current_save_state = save_restore_service->get_save_state();
+
+      // Only initiate a Save if one is NOT already in progress.
+      if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ){
+
+         // Get the Save label from the Trick Control Panel checkpoint interface.
+         string  trick_filename;
+         string  slash( "/" );
+         size_t  found;
+         string  save_label_str;
+         wstring save_label_wstr;
+
+         // get checkpoint file name specified in control panel
+         trick_filename = checkpoint_get_output_file();
+
+         // Unfortunately, the Trick checkpoint output filename contains
+         // dir/filename.  We only need the filename specified in the Trick
+         // Control Panel input dialog.  So, only keep the text after the
+         // last slash.
+         found = trick_filename.rfind( slash );
+         if ( found != string::npos ) {
+            save_label_str = trick_filename.substr( found + 1 );
+         } else {
+            save_label_str = trick_filename;
+         }
+
+         // Convert the Save label string to a wstring.
+         StringUtilities::to_wstring( save_label_wstr, save_label_str );
+
+         // Call the ExecutionControlBase save function to initiate the Save.
+         // The rest will be handled like all other federates in the cyclic
+         // save_process freeze job.
+         save( save_label_wstr );
+
+      }
+
+   }
+
+   return;
+}
+
+/*!
+ *  @job_class{post_checkpoint}
+ */
+void ExecutionControlBase::checkpoint_after()
+{
+   // In base implementation, there's nothing to do after a checkpoint.
+   return;
+}
+
+/*!
+ *  @job_class{preload_checkpoint}
+ */
+void ExecutionControlBase::checkpoint_preload()
+{
+   return;
+}
+
+/*!
+ *  @job_class{restart}
+ */
+void ExecutionControlBase::checkpoint_restart()
+{
+   return;
 }
 
 /*!

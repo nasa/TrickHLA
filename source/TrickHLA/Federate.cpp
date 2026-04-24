@@ -369,6 +369,15 @@ void Federate::initialize()
    object_service.verify_object_arrays();
    interaction_service.verify_interaction_arrays();
 
+   /*
+    * Set the HLA Save directory for HLA Save and Restore.
+    * This may like an odd way to set that directory.  However, if the
+    * directory is set in the input file, it will only test for the
+    * existence of the directory.  If it is not set in the input file, it
+    * will pull the defaults from the Trick simulation execution.
+    */
+   save_restore_service.set_HLA_save_directory( save_restore_service.get_HLA_save_directory() );
+
    execution_control->initialize();
 
    // Finish doing the initialization.
@@ -2596,17 +2605,6 @@ void Federate::wait_for_init_sync_point(
 }
 
 /*!
- * \par<b>Assumptions and Limitations:</b>
- * - Currently only used with SRFOM initialization schemes.
- *  @job_class{freeze_init}
- */
-void Federate::freeze_init()
-{
-   // Dispatch to the ExecutionControl method.
-   execution_control->freeze_init();
-}
-
-/*!
  *  @job_class{end_of_frame}
  */
 void Federate::enter_freeze()
@@ -2632,28 +2630,18 @@ void Federate::enter_freeze()
 }
 
 /*!
- * \par<b>Assumptions and Limitations:</b>
- * - Currently only used with DIS and IMSim initialization schemes.
- *  @job_class{unfreeze}
+ *  @job_class{freeze_init}
  */
-void Federate::exit_freeze()
+void Federate::freeze_init()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::exit_freeze():%d announce_freeze:%s, freeze_federation:%s\n",
-                       __LINE__, ( execution_control->is_freeze_announced() ? "Yes" : "No" ),
-                       ( execution_control->is_freeze_pending() ? "Yes" : "No" ) );
-   }
-
    // Dispatch to the ExecutionControl method.
-   execution_control->exit_freeze();
-
-   execution_control->set_freeze_pending( false );
+   execution_control->freeze_init();
 }
 
 /*!
  *  @job_class{freeze}
  */
-void Federate::check_freeze()
+void Federate::freeze_check_mode()
 {
    // Check to see if we should shutdown.
    check_for_shutdown_with_termination();
@@ -2680,14 +2668,121 @@ void Federate::check_freeze()
       }
       return;
    }
+
+   return;
 }
 
 /*!
- *  Unfreeze the simulation.
+ *  @job_class{freeze}
  */
-void Federate::un_freeze()
+void Federate::freeze_save()
+{
+
+   // Call the ExecutionControl restore process executive.
+   // This function tracks the progression of the Federate HLA Save process
+   // through the HLA Save sequences.
+   execution_control->save_process();
+
+   return;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void Federate::freeze_restore()
+{
+
+   // Call the ExecutionControl restore process executive.
+   // This function tracks the progression of the Federate HLA Restore process
+   // through the HLA Restore sequence.
+   execution_control->restore_process();
+
+   return;
+}
+
+/*!
+ *  @job_class{unfreeze}
+ */
+void Federate::freeze_exit()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      message_publish( MSG_NORMAL, "Federate::exit_freeze():%d announce_freeze:%s, freeze_federation:%s\n",
+                       __LINE__, ( execution_control->is_freeze_announced() ? "Yes" : "No" ),
+                       ( execution_control->is_freeze_pending() ? "Yes" : "No" ) );
+   }
+
+   // Dispatch to the ExecutionControl method.
+   execution_control->exit_freeze();
+
+   execution_control->set_freeze_pending( false );
+
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void Federate::goto_run()
 {
    exec_run();
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void Federate::save( std::wstring const &label )
+{
+   // FIXME: Need implementation!
+   ostringstream errmsg;
+   errmsg << "Federate::save():" << __LINE__
+          << " ERROR: Not yet implemented!" << endl;
+   DebugHandler::terminate_with_message( errmsg.str() );
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void Federate::save_at_SET(
+   std::wstring const &label,
+   double              sim_time )
+{
+   // FIXME: Need implementation!
+   ostringstream errmsg;
+   errmsg << "Federate::save_at_SET():" << __LINE__
+          << " ERROR: Not yet implemented!" << endl;
+   DebugHandler::terminate_with_message( errmsg.str() );
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void Federate::save_at_SST(
+   std::wstring const &label,
+   double              scenario_time )
+{
+   // FIXME: Need implementation!
+   ostringstream errmsg;
+   errmsg << "Federate::save_at_SST():" << __LINE__
+          << " ERROR: Not yet implemented!" << endl;
+   DebugHandler::terminate_with_message( errmsg.str() );
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void Federate::save_at_HLT(
+   std::wstring                   const &label,
+   RTI1516_NAMESPACE::LogicalTime const &time )
+{
+   // FIXME: Need implementation!
+   ostringstream errmsg;
+   errmsg << "Federate::save_at_HLT():" << __LINE__
+          << " ERROR: Not yet implemented!" << endl;
+   DebugHandler::terminate_with_message( errmsg.str() );
+   return;
 }
 
 /*! @brief Convert data to a form Trick can checkpoint. */
@@ -2749,25 +2844,12 @@ void Federate::free_converted_data_for_checkpoint()
 }
 
 /*!
- *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with IMSim initialization scheme.
  *  @job_class{checkpoint}
  */
-void Federate::setup_checkpoint()
+void Federate::checkpoint_before()
 {
    // Delegate to the Execution Control specific implementation.
-   execution_control->setup_checkpoint();
-}
-
-/*!
- *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSim initialization schemes.
- *  @job_class{freeze}
- */
-void Federate::perform_checkpoint()
-{
-   // Delegate to the Execution Control specific implementation.
-   execution_control->perform_checkpoint();
+   execution_control->checkpoint_before();
 }
 
 /*!
@@ -2775,22 +2857,32 @@ void Federate::perform_checkpoint()
  *  - Currently only used with DIS and IMSim initialization schemes.
  *  @job_class{preload_checkpoint}
  */
-void Federate::setup_restore()
+void Federate::checkpoint_preload()
 {
    // Delegate to the Execution Control specific implementation.
-   execution_control->setup_restore();
+   execution_control->checkpoint_preload();
+}
+
+/*!
+ *  @job_class{checkpoint}
+ */
+void Federate::checkpoint_after()
+{
+   // Delegate to the Execution Control specific implementation.
+   execution_control->checkpoint_after();
 }
 
 /*!
  *  \par<b>Assumptions and Limitations:</b>
  *  - Currently only used with DIS and IMSim initialization schemes.
- *  @job_class{freeze}
+ *  @job_class{preload_checkpoint}
  */
-void Federate::perform_restore()
+void Federate::checkpoint_restart()
 {
    // Delegate to the Execution Control specific implementation.
-   execution_control->perform_restore();
+   execution_control->checkpoint_restart();
 }
+
 
 /*!
  * @job_class{initialization}

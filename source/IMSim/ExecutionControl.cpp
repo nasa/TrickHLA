@@ -177,6 +177,7 @@ ExecutionControl::ExecutionControl(
    // Inherited from ExecutionControlBase, and for IMSim the default is 0;
    this->least_common_time_step         = 0;
    this->least_common_time_step_seconds = 0.0;
+
 }
 
 /*!
@@ -214,6 +215,22 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    return ( ExCO );
+}
+
+/*!
+ * @job_class{default_data}
+ */
+void ExecutionControl::setup(
+   TrickHLA::Federate &fed )
+{
+   // Call the ExecutionControlBase method first.
+   ExecutionControlBase::setup( fed );
+
+   // Mark the IMSim ExecutionControl class as supporting HLA Save using the
+   // Trick Control Panel (TCP) checkpoint interface.
+   save_restore_service->set_tcp_save_supported( true );
+
+   return;
 }
 
 /*!
@@ -441,7 +458,9 @@ initiating restore request for '%s' with the RTI.\n",
                                 __LINE__, tRestoreName );
             }
             // request federation restore from RTI
-            save_restore_service->initiate_restore_announce( tRestoreName );
+            std::wstring tRestoreName_wstr;
+            StringUtilities::to_wstring( tRestoreName_wstr, tRestoreName );
+            save_restore_service->initiate_restore_announce( tRestoreName_wstr );
 
             // wait for the success / failure response from the RTI
             save_restore_service->wait_for_restore_request_callback();
@@ -2224,7 +2243,7 @@ void ExecutionControl::enter_freeze()
          trigger_freeze_interaction( freeze_scenario_time );
 
          set_freeze_pending( true ); // TEMP
-         // TEMP   federate->un_freeze(); // will freeze again for real when we hit the freeze interaction time
+         // TEMP   federate->goto_run(); // will freeze again for real when we hit the freeze interaction time
       }
    }
 }
@@ -2295,27 +2314,32 @@ void ExecutionControl::check_pause_at_init(
    federate->get_execution_control()->check_pause_at_init( check_pause_delta );
 }
 
-void ExecutionControl::start_federation_save_at_scenario_time(
-   double        freeze_scenario_time,
-   string const &file_name )
+void ExecutionControl::start_federation_save_at_SST(
+   double         freeze_sst,
+   wstring const &save_label )
 {
+   string checkpoint_file_name;
+
+   // Map the save label to the needed file names.
+   checkpoint_file_name = map_save_label_to_checkpoint_file_name( save_label );
+
    if ( freeze_interaction->get_handler() != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d\n",
-                          freeze_scenario_time, file_name.c_str(), __LINE__ );
+                          freeze_sst, save_label.c_str(), __LINE__ );
       }
       save_restore_service->set_announce_save();
 
-      double new_scenario_time = freeze_scenario_time;
+      double new_scenario_time = freeze_sst;
 
       trigger_freeze_interaction( new_scenario_time );
 
-      save_restore_service->initiate_federation_save( file_name );
+      save_restore_service->save_request( save_label );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
 freeze_interaction's HANLDER is NULL! Request was ignored!\n",
-                          freeze_scenario_time, file_name.c_str(), __LINE__ );
+                          freeze_sst, save_label.c_str(), __LINE__ );
       }
    }
 }
@@ -2495,31 +2519,6 @@ bool ExecutionControl::is_save_initiated()
       }
    }
    return true;
-}
-
-bool ExecutionControl::perform_save()
-{
-   if ( save_restore_service->is_announce_save()
-        && save_restore_service->is_initiate_save_flag()
-        && !save_restore_service->is_start_to_save() ) {
-      // We are here because user called start_federation_save, so
-      // must force the perform_checkpoint code to execute.
-      save_restore_service->set_announce_save( false );
-      return ( true );
-   }
-
-   return ( false );
-}
-
-void ExecutionControlBase::post_checkpoint()
-{
-
-   // Call the ExecutionControlBase::post_checkpoint function first.
-   ExecutionControlBase::post_checkpoint();
-
-   // Now let the federation know that the Save is complete.
-
-   return;
 }
 
 /*!

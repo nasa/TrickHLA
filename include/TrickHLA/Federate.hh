@@ -279,7 +279,8 @@ class Federate : public CheckpointConversionBase
       return joined_federate_handles;
    }
 
-   //
+
+   //-------------------------------------------------------------------------
    // Object Management interfaces.
    //
    /*! @brief Publishes Object & Interaction classes and their member data. */
@@ -435,7 +436,8 @@ class Federate : public CheckpointConversionBase
     *  @param obj_instance_name Object instance name to wait for data. */
    void wait_to_receive_blocking_io_data( std::string const &obj_instance_name );
 
-   //
+
+   //-------------------------------------------------------------------------
    // Time Management interfaces.
    //
    // Delegate these to the TimeManagementServices instance.
@@ -578,7 +580,8 @@ class Federate : public CheckpointConversionBase
       time_management_service.time_advance_request_to_GALT();
    }
 
-   //
+
+   //-------------------------------------------------------------------------
    // Management Object Model (MOM) interfaces.
    //
    /*! @brief Initialize the MOM interface handles. */
@@ -645,36 +648,6 @@ class Federate : public CheckpointConversionBase
     *  @param instance_hndl Object instance handle. */
    void remove_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
-   //
-   // CheckpointConversionBase Interface.
-   //
-   /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint();
-
-   /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint();
-
-   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint();
-
-   //
-   // Checkpoint
-   //
-   /*! @brief Perform setup for federate save.
-    * Delegates to Execution Control interface. */
-   void setup_checkpoint();
-
-   /*! @brief Federates that did not announce the save, perform a checkpoint.
-    *  Delegates to Execution Control interface. */
-   void perform_checkpoint();
-
-   /*! @brief Perform setup for federate restore.
-    *  Delegates to Execution Control interface.*/
-   void setup_restore();
-
-   /*! @brief Federates that did not announce the restore, perform a restore.
-    *  Delegates to Execution Control interface. */
-   void perform_restore();
 
    /*! @brief Checks for the existence 'startup' initialization sync point as
     *  an indication if this federate is running.
@@ -699,7 +672,7 @@ class Federate : public CheckpointConversionBase
 
    //=======================================================================
 
-   //
+   //-------------------------------------------------------------------------
    // Clean up / shutdown functions.
    //
    /*! @brief Checks to see if shutdown has been commanded.
@@ -743,7 +716,8 @@ class Federate : public CheckpointConversionBase
     *  @param encoded_handle encoded Federate Handle */
    RTI1516_NAMESPACE::FederateHandle decode_federate_handle( RTI1516_NAMESPACE::VariableLengthData const &encoded_handle );
 
-   //
+
+   //-------------------------------------------------------------------------
    // MOM HLAfederate class and attributes.
    //
    /*! @brief Check with the MOM if the is an HLAfederate class.
@@ -808,71 +782,10 @@ class Federate : public CheckpointConversionBase
    void set_MOM_HLAfederation_instance_attributes( RTI1516_NAMESPACE::ObjectInstanceHandle const    &instance_hndl,
                                                    RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
 
-   //
+
+   //-------------------------------------------------------------------------
    // Routines to return Federate state values.
    //
-   /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
-    *  @return Pointer to associated RTI Ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const // cppcheck-suppress [functionStatic, unmatchedSuppression]
-   {
-      return RTI_ambassador.get();
-   }
-
-   /*! @brief Get the pointer to the associated TrickHLA Federate Ambassador instance.
-    *  @return Pointer to associated TrickHLA::FedAmb. */
-   FedAmb *get_fed_ambassador()
-   {
-      return ( &( this->federate_ambassador ) );
-   }
-
-   /*! @brief Get the pointer to the associated TrickHLA::ObjectServices instance.
-    *  @return Pointer to associated TrickHLA::ObjectServices. */
-   ObjectServices *get_object_service()
-   {
-      return ( &( this->object_service ) );
-   }
-
-   /*! @brief Get the pointer to the associated TrickHLA::TimeManagementServices instance.
-    *  @return Pointer to associated TrickHLA::TimeManagementServices. */
-   TimeManagementServices *get_time_management_service()
-   {
-      return ( &( this->time_management_service ) );
-   }
-
-   /*! @brief Get the pointer to the associated TrickHLA::SaveRestoreService instance.
-    *  @return Pointer to the associated TrickHLA::SaveRestoreService instance. */
-   SaveRestoreServices *get_save_restore_service()
-   {
-      return ( &( this->save_restore_service ) );
-   }
-
-   /*! @brief Get the pointer to the associated TrickHLA::InteractionServices instance.
-    *  @return Pointer to the associated TrickHLA::InteractionServices instance. */
-   InteractionServices *get_interaction_service()
-   {
-      return ( &( this->interaction_service ) );
-   }
-
-   /*! @brief Test is an execution configuration object is used.
-    *  @return True if an execution configuration object is used. */
-   bool is_execution_configuration_used()
-   {
-      return this->execution_control->is_execution_configuration_used();
-   }
-
-   /*! @brief Get the pointer to the associated TrickHLA::ExecutionControlBase instance.
-    *  @return Pointer to associated TrickHLA::ExecutionControlBase. */
-   ExecutionControlBase *get_execution_control()
-   {
-      return this->execution_control;
-   }
-
-   /*! @brief Get the pointer to the associated TrickHLA::ExecutionConfigurationBase instance.
-    *  @return Pointer to associated TrickHLA::ExecutionConfigurationBase. */
-   ExecutionConfigurationBase *get_execution_configuration()
-   {
-      return this->execution_config;
-   }
 
    /*! @brief Check if this is a late joining federate.
     *  @return True if the is a late joining federate. */
@@ -938,33 +851,185 @@ class Federate : public CheckpointConversionBase
     *  @return True if the federate is execution member; False otherwise. */
    bool is_execution_member();
 
-   //
-   // Federation freeze management functions.
-   //
-
-   /*! @brief Routine to handle going from run to freeze. */
-   void freeze_init();
-
-   /*! @brief Check for exit from freeze. */
-   void check_freeze();
-
-   /*! @brief Check if a Trick freeze was commanded; if we announced freeze,
-    *  tell other federates to freeze. */
-   void enter_freeze();
-
-   /*! @brief Routine to handle going from freeze to run; if we announced the
-    * freeze, tell other federates to run. */
-   void exit_freeze();
-
-   /*! @brief Unfreeze the simulation. */
-   static void un_freeze();
-
-   /*! @brief Query if federate should publish data.
+   /*! @brief Query if Federate should publish data.
     *  @return True if data should be published; False otherwise. */
    bool should_publish_data() const
    {
       return publish_data;
    }
+
+
+   //-------------------------------------------------------------------------
+   // Federate service accessor methods.
+   //
+   // These functions provide access to the Federate's service instances.
+   // These are typically used to support the service classes.
+   //
+   /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
+    *  @return Pointer to associated RTI Ambassador. */
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() const // cppcheck-suppress [functionStatic, unmatchedSuppression]
+   {
+      return RTI_ambassador.get();
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA Federate Ambassador instance.
+    *  @return Pointer to associated TrickHLA::FedAmb. */
+   FedAmb *get_fed_ambassador()
+   {
+      return ( &( this->federate_ambassador ) );
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::ObjectServices instance.
+    *  @return Pointer to associated TrickHLA::ObjectServices. */
+   ObjectServices *get_object_service()
+   {
+      return ( &( this->object_service ) );
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::TimeManagementServices instance.
+    *  @return Pointer to associated TrickHLA::TimeManagementServices. */
+   TimeManagementServices *get_time_management_service()
+   {
+      return ( &( this->time_management_service ) );
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::SaveRestoreService instance.
+    *  @return Pointer to the associated TrickHLA::SaveRestoreService instance. */
+   SaveRestoreServices *get_save_restore_service()
+   {
+      return ( &( this->save_restore_service ) );
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::InteractionServices instance.
+    *  @return Pointer to the associated TrickHLA::InteractionServices instance. */
+   InteractionServices *get_interaction_service()
+   {
+      return ( &( this->interaction_service ) );
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::ExecutionControlBase instance.
+    *  @return Pointer to associated TrickHLA::ExecutionControlBase. */
+   ExecutionControlBase *get_execution_control()
+   {
+      return this->execution_control;
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::ExecutionConfigurationBase instance.
+    *  @return Pointer to associated TrickHLA::ExecutionConfigurationBase. */
+   ExecutionConfigurationBase *get_execution_configuration()
+   {
+      return this->execution_config;
+   }
+
+   /*! @brief Test is an execution configuration object is used.
+    *  @return True if an execution configuration object is used. */
+   bool is_execution_configuration_used()
+   {
+      return this->execution_control->is_execution_configuration_used();
+   }
+
+
+   //-------------------------------------------------------------------------
+   // Federate freeze management functions.
+   //
+   // This functions support the Trick freeze mode executive processes.
+   // These functions are used in the THLABase.sm simulation module.  Users
+   // will typically NOT interact with these functions.
+   //
+   /*! @brief Routine to handle going from run to freeze. */
+   void freeze_init();
+
+   /*! @brief Check if a Trick freeze was commanded; if we announced freeze,
+    *  tell other Federates to freeze. */
+   void enter_freeze();
+
+   /*! @brief Check for exit from freeze. */
+   void freeze_check_mode();
+
+   /*! @brief Freeze routine to manage Federation Save state.
+    *  Delegates to Execution Control interface. */
+   void freeze_save();
+
+   /*! @brief Freeze routine to manage Federation Restore state..
+    *  Delegates to Execution Control interface. */
+   void freeze_restore();
+
+   /*! @brief Routine to handle going from freeze to run; if we announced the
+    * freeze, tell other Federates to run. */
+   void freeze_exit();
+
+   /*! @brief Tell the simulation executive to transition into Run mode. */
+   static void goto_run();
+
+
+   //-------------------------------------------------------------------------
+   // Federate SaveRestore service interfaces.
+   //
+   /*! @brief Federate commmand to initiate a Federation wide save.
+    *  @param label The Save label for the HLA save process. */
+   virtual void save( std::wstring const &label );
+
+   /*! @brief Initiate a Federation wide save at a specified simulation
+    *  elapsed time (SET).
+    *  @param label    The Save label for the HLA save process.
+    *  @param sim_time The SET to initiate the save. */
+   virtual void save_at_SET( std::wstring const &label,
+                             double              sim_time );
+
+   /*! @brief Initiate a Federation wide save at a specified simulation
+    *  scenario time (SST).
+    *  @param label         The Save label for the HLA save process.
+    *  @param scenario_time The SST to initiate the save. */
+   virtual void save_at_SST( std::wstring const &label,
+                             double              scenario_time );
+
+   /*! @brief Initiate a Federation wide save at a specified HLA logical
+    *  time (HLT).
+    *  @param label The Save label for the HLA save process.
+    *  @param time  The HLT to initiate the save. */
+   virtual void save_at_HLT( std::wstring                   const &label,
+                             RTI1516_NAMESPACE::LogicalTime const &time );
+
+
+   //-------------------------------------------------------------------------
+   // CheckpointConversionBase Interface.
+   //
+   // These functions provide the functions used by the CheckpointConversionBase
+   // interface class to support Trick checkpoint processing.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint();
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint();
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint();
+
+
+   //-------------------------------------------------------------------------
+   // Checkpoint functions.
+   //
+   // These functions support the Trick checkpoint processes. These functions
+   // are used in the THLABase.sm simulation module.  Users will typically NOT
+   // interact with these functions.
+   //
+   /*! @brief Prepare the Federate for checkpointing.  Usually for an HLA Save.
+    * Delegates to Execution Control interface. */
+   void checkpoint_before();
+
+   /*! @brief Prepare the Federate to load a checkpoint file.  Usually as part
+    *  of an HLA Restore.  Delegates to Execution Control interface.*/
+   void checkpoint_preload();
+
+   /*! @brief Federate tasks to perform after a checkpoint.  Usually for an HLA Save.
+    * Delegates to Execution Control interface. */
+   void checkpoint_after();
+
+   /*! @brief Federate tasks to perform after a checkpoint load.  Usually as
+    *  part of an HLA Restore.  Delegates to Execution Control interface.*/
+   void checkpoint_restart();
+
 
   private:
    //

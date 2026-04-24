@@ -111,7 +111,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       return ( type );
    }
 
-   // Execution Control initialization routine.
+   //-------------------------------------------------------------------------
+   // Execution Control initialization methods.
+   //
+   /*! @brief Setup the IMSim elelments needed in the ExecutionControl class
+    * instance.
+    * @param fed Associated federate object_service class instance. */
+   virtual void setup( TrickHLA::Federate &fed );
    // This is called by the TrickHLA::Federate::initialize routine.
    /*! @brief Execution Control initialization routine. */
    virtual void initialize();
@@ -269,15 +275,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param mtr_value MTR value for next execution mode. */
    virtual void set_mode_request_from_mtr( MTREnum mtr_value );
 
-   //
-   // Federation save and checkpoint
-   //
-   // Federation save and checkpoint
-   /*! @brief Start the Federation save at the specified scenario time.
-    *  @param freeze_scenario_time Scenario time to freeze.
-    *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double             freeze_scenario_time,
-                                                        std::string const &file_name );
+   /*!
+    * @details If they have, true is returned if the 'create HLA instance' object
+    * was discovered. If no discoveries took place or if the required
+    * 'create HLA instance' object was not discovered, false is returned.
+    * @job_class{initialization}
+    */
+   bool is_this_a_rejoining_federate();
 
    //
    // Federation freeze/pause management functions.
@@ -301,6 +305,22 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @return True is time to go to freeze; False otherwise. */
    virtual bool check_scenario_freeze_time();
 
+
+   //-------------------------------------------------------------------------
+   // Save and Restore
+   /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
+    * @return True if Save and Restore is supported by this ExecutionControl method. */
+
+   //
+   // Federation save and checkpoint
+   //
+   // Federation save and checkpoint
+   /*! @brief Start the Federation save at the specified scenario time.
+    *  @param freeze_sst Simulation scenario time to freeze.
+    *  @param save_label Save label for HLA Federation Save. */
+   virtual void start_federation_save_at_SST( double             freeze_sst,
+                                              std::wstring const &save_label );
+
    //
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
@@ -314,10 +334,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */
    virtual bool is_save_initiated();
-
-   /*! @brief Federates that did not announce the save, perform a save.
-    * @return True if Save can proceed, False if not. */
-   virtual bool perform_save();
 
    /*! @brief IMSim: Check to see if this federate is to be restored.
     *  @return federate restore state. */
@@ -347,13 +363,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       restore_federate = state;
    }
 
-   /*!
-    * @details If they have, true is returned if the 'create HLA instance' object
-    * was discovered. If no discoveries took place or if the required
-    * 'create HLA instance' object was not discovered, false is returned.
-    * @job_class{initialization}
-    */
-   bool is_this_a_rejoining_federate();
+
+   //-------------------------------------------------------------------------
+   // IMSim specific Execution Control functions that support checkpointing.
+   //
 
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.

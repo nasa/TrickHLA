@@ -50,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -65,6 +66,11 @@ NASA, Johnson Space Center\n
 #include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
+//#if defined( IEEE_1516_2025 )
+//#   include "RTI/time/LogicalTime.h"
+//#else
+//#   include "RTI/LogicalTime.h"
+//#endif // IEEE_1516_2025
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -74,17 +80,40 @@ namespace TrickHLA
 {
 
 /*
- * Enumerated type used to step through the restore process.
+ * Enumerated type used to step through the Save process.
  */
-typedef enum {
-   NO_RESTORE                = 0,
-   RESTORE_REQUEST_FAILED    = 1,
-   RESTORE_REQUEST_SUCCEEDED = 2,
-   INITIATE_RESTORE          = 3,
-   RESTORE_IN_PROGRESS       = 4,
-   RESTORE_COMPLETE          = 5,
-   RESTORE_FAILED            = 6
-} THLARestoreProcessEnum;
+enum class THLASaveProcessEnum : uint8_t {
+   SAVE_NONE        = 0,
+   SAVE_INITIATED   = 1,
+   SAVE_REQUESTED   = 2,
+   SAVE_IN_PROGRESS = 3,
+   SAVE_COMPLETE    = 4,
+   SAVE_FAILED      = 5,
+   SAVE_UNSUPPORTED = 0xff
+};
+
+/*! @brief Convert a THLASaveProcessEnum value into a string representation.
+ *  @param save_state Value to convert to a string. */
+std::string to_string( THLASaveProcessEnum save_state );
+
+/*
+ * Enumerated type used to step through the Restore process.
+ */
+enum class THLARestoreProcessEnum : uint8_t {
+   RESTORE_NONE              = 0,
+   RESTORE_REQUESTED         = 1,
+   RESTORE_REQUEST_FAILED    = 2,
+   RESTORE_REQUEST_SUCCEEDED = 3,
+   RESTORE_INITIATE          = 4,
+   RESTORE_IN_PROGRESS       = 5,
+   RESTORE_COMPLETE          = 6,
+   RESTORE_FAILED            = 7,
+   RESTORE_UNSUPPORTED       = 0xff
+};
+
+/*! @brief Convert a THLARestoreProcessEnum value into a string representation.
+ *  @param restore_state Value to convert to string. */
+std::string to_string( THLARestoreProcessEnum restore_state );
 
 // Forward Declared Classes: Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
@@ -110,19 +139,6 @@ class SaveRestoreServices : public CheckpointConversionBase
    friend class Federate;
    friend class ExecutionControlBase;
 
-   //----------------------------- USER VARIABLES -----------------------------
-   // The variables below this point are configured by the user in either the
-   // input or modified-data files.
-  public:
-   bool        restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore.
-   std::string restore_file_name;           ///< @trick_io{*i} @trick_units{--} Filename, which will be the label name.
-   bool        initiated_a_federation_save; ///< @trick_io{**} Did this federate initiate the federation save?
-
-   bool unfreeze_after_save; /**< @trick_units{--} Flag to indicate that we should go to run immediately after a save. */
-
-   //--------------------------------------------------------------------------
-   // Public member functions.
-   //--------------------------------------------------------------------------
   public:
    //
    // Public constructors and destructor.
@@ -132,6 +148,51 @@ class SaveRestoreServices : public CheckpointConversionBase
    explicit SaveRestoreServices( Federate &fed );
    /*! @brief Destructor for the TrickHLA SaveRestoreServices class. */
    virtual ~SaveRestoreServices();
+
+   //--------------------------------------------------------------------------
+   // Principal public SaveRestoreService functions.
+   //--------------------------------------------------------------------------
+
+   //
+   // General support functions.
+   //
+   /*! @brief Load the running federate names from the RTI. */
+   void load_and_print_running_federate_names();
+
+   /*! @brief Update running federates based on current known information. */
+   void update_running_feds();
+
+   /*! @brief Deallocate running federates based on current known information
+    * in preparation for re-size. */
+   void clear_running_feds();
+
+   /*! @brief Grow the running_feds by one entry. */
+   void add_a_single_entry_into_running_feds();
+
+   /*! @brief Get the count of the currently running federates.
+    *  @return Count of the currently running federates. */
+   std::size_t get_running_feds_count() const
+   {
+      return running_feds_count;
+   }
+
+   /*! @brief Set the HLA save directory.
+    * @return Success of setting the HLA Save directory path.
+    * @detail If a path isn't provided, then a default path is constructed.
+    * @param  path Full path to the HLA Save directory.  */
+   bool set_HLA_save_directory( std::string const & path = "" );
+
+   /*! @brief Get the HLA save directory.
+    * @return HLA save directory. */
+   std::string const &get_HLA_save_directory()
+   {
+      return HLA_save_directory;
+   }
+
+   /*! @brief Check if HLA_save_directory is empty. If so, ask the EXECUTIVE
+    * for info and build the absolute path of the RUN directory.
+    * @return Success of HLA Save directory path. */
+   bool check_HLA_save_directory();
 
    //
    // CheckpointConversionBase Interface.
@@ -154,54 +215,121 @@ class SaveRestoreServices : public CheckpointConversionBase
       return;
    }
 
-   //
-   // Accessor functions.
-   //
-   /*! @brief Tell the federate to initiate a save announce with the
-    * user-supplied checkpoint name set for the current frame.
-    *  @param file_name Checkpoint file name. */
-   void initiate_federation_save( std::string const &file_name );
+   //..........................................................................
+   // Save functions.
+   //..........................................................................
 
-   /*! @brief Start the federation save as soon as possible.
-    *  @param file_name Checkpoint file name. */
-   void start_federation_save( std::string const &file_name );
-
-   /*! @brief Start the Federation save at the specified simulation time.
-    *  @param freeze_sim_time Simulation time to freeze.
-    *  @param file_name       Checkpoint file name. */
-   void start_federation_save_at_sim_time( double             freeze_sim_time,
-                                           std::string const &file_name );
-
-   /*! @brief Start the Federation save at the specified scenario time.
-    *  @param freeze_scenario_time Scenario time to freeze.
-    *  @param file_name            Checkpoint file name. */
-   void start_federation_save_at_scenario_time( double             freeze_scenario_time,
-                                                std::string const &file_name );
-
-   /*! @brief Load the running federate names from the RTI. */
-   void load_and_print_running_federate_names();
-
-   /*! @brief Update running federates based on current known information. */
-   void update_running_feds();
-
-   /*! @brief Deallocate running federates based on current known information
-    * in preparation for re-size. */
-   void clear_running_feds();
-
-   /*! @brief Grow the running_feds by one entry. */
-   void add_a_single_entry_into_running_feds();
-
-   /*! @brief Get the count of the currently running federates.
-    *  @return Count of the currently running federates. */
-   std::size_t get_running_feds_count() const
+   /*! @brief Set if Trick Control Panel checkpoint Save is supported.
+    *  @param state Desired save state. */
+   void set_tcp_save_supported( bool status )
    {
-      return running_feds_count;
+      support_tcp_checkpoint = status;
+      return;
    }
+
+   /*! @brief Check if Trick Control Panel checkpoint Save is supported.
+    *  @return TCP Save support status. */
+   bool is_tcp_save_supported()
+   {
+      return( support_tcp_checkpoint );
+   }
+
+   /*! @brief Set the Save state.
+    *  @param state Desired save state. */
+   bool set_save_state( THLASaveProcessEnum state );
+
+   /*! @brief Get the current Federate HLA Save state.
+    *  @return Federate HLA Save state. */
+   THLASaveProcessEnum get_save_state()
+   {
+      return( save_state );
+   }
+
+   /*! @brief Set the Save label.
+    *  @param label Desired save label. */
+   void set_save_label( std::wstring const & label );
+
+   /*! @brief Get the current Federate HLA Save label.
+    *  @return Federate HLA Save lable. */
+   std::wstring get_save_label()
+   {
+      return( save_label );
+   }
+
+   /*! @brief Set the Save time.
+    *  @param time Desired save time. */
+   void set_save_time( Int64Time const & time );
+
+   /*! @brief Get the current Federate HLA Save time.
+    *  @return Federate HLA Save time. */
+   Int64Time get_save_time()
+   {
+      return( save_time );
+   }
+
+   /*! @brief Tell the federate to initiate a federation Save with the
+    * associated Save label.
+    *  @param label The HLA Save label. */
+   void save_request( std::wstring const &label = L"" );
+
+   /*! @brief Save this federate's state with the associated Save label.
+    *  @param label The HLA Save label. */
+   void save( std::wstring const &label = L"" );
+
+   /*! @brief Check if a Save is in progress and report.
+    *  @return Returns true is the Save is in progress.  Otherwise, it
+    *  returns false. */
+   bool save_in_progress_check();
+
+   /*! @brief The Federation Save process completed successfully. */
+   void save_succeded();
+
+   /*! @brief The Federation Save process did NOT complete successfully. */
+   void save_failed();
+
+   /*! @brief Dumps the contents of the running_feds object into the supplied
+    *  file name with ".running_feds" appended to it.
+    *  @param file_name Checkpoint file name. */
+   void write_running_feds_file( std::string const &file_name );
+
+   /*! @brief Prints the reason for the federation save failure.
+    * @param reason Save failure reason. */
+   static void print_save_failure_reason( RTI1516_NAMESPACE::SaveFailureReason reason );
+
+
+   //..........................................................................
+   // Restore functions.
+   //..........................................................................
 
    /*! @brief Read the running_feds file, replacing the data in known federates
     * data structure.
     * @param file_name Checkpoint file name. */
    void read_running_feds_file( std::string const &file_name );
+
+
+   //--------------------------------------------------------------------------
+   // Potentially deprecated SaveRestoreService functions.
+   //--------------------------------------------------------------------------
+
+   //
+   // Accessor functions.
+   //
+
+   /*! @brief Start the federation save as soon as possible.
+    *  @param label The HLA Save label. */
+   void start_federation_save( std::wstring const &label );
+
+   /*! @brief Start the Federation save at the specified simulation time.
+    *  @param set   Simulation elapsed time to save.
+    *  @param label The HLA Save label. */
+   void start_federation_save_at_SET( double              set,
+                                      std::wstring const &label );
+
+   /*! @brief Start the Federation save at the specified scenario time.
+    *  @param sst   Scenario scenario time to save.
+    *  @param label The HLA Save label. */
+   void start_federation_save_at_SST( double              sst,
+                                      std::wstring const &label );
 
    /*! @brief Copies the contents of the checkpoint's list of federates into
     * known federates data structure. */
@@ -216,9 +344,6 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Restart the sim from a checkpoint. */
    void restart_checkpoint();
-
-   /*! @brief Federation save completed. */
-   void federation_saved();
 
    /*! @brief Federation restore completed. */
    void federation_restored();
@@ -259,28 +384,28 @@ class SaveRestoreServices : public CheckpointConversionBase
     *  @return True if failed, False otherwise. */
    bool has_restore_process_restore_request_failed() const
    {
-      return ( restore_process == RESTORE_REQUEST_FAILED );
+      return ( restore_state == THLARestoreProcessEnum::RESTORE_REQUEST_FAILED );
    }
 
    /*! @brief Query if restore process restore request succeeded.
     *  @return True if succeeded, False otherwise. */
    bool has_restore_process_restore_request_succeeded() const
    {
-      return ( restore_process == RESTORE_REQUEST_SUCCEEDED );
+      return ( restore_state == THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED );
    }
 
    /*! @brief Query if restore request failed.
     *  @return True if failed, False otherwise. */
    bool has_restore_request_failed() const
    {
-      return ( restore_process == RESTORE_REQUEST_FAILED );
+      return ( restore_state == THLARestoreProcessEnum::RESTORE_REQUEST_FAILED );
    }
 
    /*! @brief Query if restore request succeeded.
     *  @return True if succeeded, False otherwise. */
    bool has_restore_request_succeeded() const
    {
-      return ( restore_process == RESTORE_REQUEST_SUCCEEDED );
+      return ( restore_state == THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED );
    }
 
    /*! @brief Get the announce save flag.
@@ -317,20 +442,20 @@ class SaveRestoreServices : public CheckpointConversionBase
     *  @return The Restore process state. */
    THLARestoreProcessEnum get_restore_process()
    {
-      return restore_process;
+      return restore_state;
    }
 
    /*! @brief Set the restore process state.
     *  @param process_state The Restore process state. */
    void set_restore_process( THLARestoreProcessEnum process_state )
    {
-      this->restore_process = process_state;
+      this->restore_state = process_state;
    }
 
    /*! @brief Save the restore process state as a previous value. */
    void preserve_restore_process()
    {
-      this->prev_restore_process = restore_process;
+      this->prev_restore_process = restore_state;
    }
 
    /*! @brief Set the restore begun state. */
@@ -345,13 +470,13 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Set the restore request failed state. */
    void set_restore_request_failed()
    {
-      this->restore_process = RESTORE_REQUEST_FAILED;
+      this->restore_state = THLARestoreProcessEnum::RESTORE_REQUEST_FAILED;
    }
 
    /*! @brief Set the restore request succeeded state. */
    void set_restore_request_succeeded()
    {
-      this->restore_process = RESTORE_REQUEST_SUCCEEDED;
+      this->restore_state = THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED;
    }
 
    /*! @brief Set the restore is imminent flag. */
@@ -383,10 +508,6 @@ class SaveRestoreServices : public CheckpointConversionBase
     * @param reason Restore failure reason. */
    void print_restore_failure_reason( RTI1516_NAMESPACE::RestoreFailureReason reason );
 
-   /*! @brief Prints the reason for the federation save failure.
-    * @param reason Save failure reason. */
-   static void print_save_failure_reason( RTI1516_NAMESPACE::SaveFailureReason reason );
-
    /*! @brief Save the supplied checkpoint file name.
     * @param name Checkpoint file name. */
    void set_checkpoint_file_name( std::string const &name );
@@ -410,7 +531,7 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Sets the Save filename and flag.
     *  @param restore_name_label Restore file name. */
-   void initiate_restore_announce( std::string const &restore_name_label );
+   void initiate_restore_announce( std::wstring const &restore_name_label );
 
    /*! @brief Sets the Save filename and flag.
     *  @return True if restore has been announced; False otherwise. */
@@ -434,26 +555,8 @@ class SaveRestoreServices : public CheckpointConversionBase
       start_to_save = true;
    }
 
-   /*! @brief Get the HLA save directory.
-    * @return HLA save directory. */
-   std::string const &get_HLA_save_directory()
-   {
-      return HLA_save_directory;
-   }
-
-   /*! @brief Check if HLA_save_directory is empty. If so, ask the EXECUTIVE
-    * for info and build the absolute path of the RUN directory. */
-   void check_HLA_save_directory();
-
    /*! @brief Set the federate has begun execution state. */
    void set_federate_has_begun_execution();
-
-   /*! @brief Get the save label.
-    *  @return Save label. */
-   std::string const &get_save_label()
-   {
-      return save_label;
-   }
 
    /*! @brief Get the name of the save.
     *  @return Save name as a wide string. */
@@ -554,13 +657,9 @@ class SaveRestoreServices : public CheckpointConversionBase
       this->restart_cfg_flag = restart_cfg_now;
    }
 
-   /*! @brief Dumps the contents of the running_feds object into the supplied
-    *  file name with ".running_feds" appended to it.
-    *  @param file_name Checkpoint file name. */
-   void write_running_feds_file( std::string const &file_name );
-
    /*! @brief Request federation save from the RTI. */
-   void request_federation_save();
+   //void request_federation_save();
+
 
   protected:
    //
@@ -570,46 +669,67 @@ class SaveRestoreServices : public CheckpointConversionBase
    TimeManagementServices *time_management_service; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
    ExecutionControlBase   *execution_control;       ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
 
-   std::wstring save_name;    ///< @trick_io{**} Name for a save file
-   std::wstring restore_name; ///< @trick_io{**} Name for a restore file
+   // The SaveRestoreServices information known at execution time. This is
+   // loaded when we join the federation and is automatically kept current when
+   // other federates join / resign from the federation.
+   std::size_t    running_feds_count;                    ///< @trick_units{--} Number of running SaveRestoreServicess (default: 0)
+   KnownFederate *running_feds;                          ///< @trick_units{--} Checkpoint-able Array of running Federation SaveRestoreServicess
+   std::size_t    running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of running Federates at the time of the restore (default: 0)
+   std::string    running_feds_file_name;                ///< @trick_io{**} File containing the names of the running federates.
 
-   std::string HLA_save_directory; ///< @trick_io{*i} @trick_units{--} HLA Save directory
-   bool        initiate_save_flag; ///< @trick_io{**} Save announce flag
+   // Save and Restore variables.
+   bool        support_tcp_checkpoint; ///< @trick_units{--} Support Save/Restore from Trick Control Panel.
+   std::string checkpoint_file_name;   ///< @trick_units{--} Checkpoint file name generated from Save label.
+   std::string HLA_save_directory;     ///< @trick_units{--} HLA Save directory.
 
-   THLARestoreProcessEnum restore_process;       ///< @trick_io{**} Where we are in the restore process
+   // Save process variables.
+   THLASaveProcessEnum save_state; ///< @trick_units{1} Where we are in the Save process.
+   std::wstring        save_label; ///< @trick_units{--} Save label.
+   Int64Time           save_time;  ///< @trick_units{--} HLA Logical Time for Save.
+
+
+   // Restore process variables.
+   THLARestoreProcessEnum restore_state; ///< @trick_units{1} Where we are in the restore process
+   std::wstring           restore_label; ///< @trick_units{--} Restore label.
+
+
+   //*************************************************************************
+   // Possibly deprecated variables.
+   //*************************************************************************
+
+   // Save variables
+   std::wstring save_name;             ///< @trick_io{**} Name for a save file
+   bool         initiate_save_flag;    ///< @trick_io{**} Save announce flag
+   bool         announce_save;         ///< @trick_io{**} flag to indicate whether we have announced the federation save
+   bool         save_label_generated;  ///< @trick_io{**} Save filename has been generated.
+   bool         save_request_complete; ///< @trick_io{**} save status request complete
+   bool         save_completed;        ///< @trick_io{**} Save completed.
+   bool         start_to_save;         ///< @trick_io{**} Save flag
+   bool         initiated_a_federation_save; ///< @trick_io{**} Did this federate initiate the federation save?
+
+   bool unfreeze_after_save; /**< @trick_units{--} Flag to indicate that we should go to run immediately after a save. */
+
+   // Restore variables.
+  public:
+   bool        restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore.
+   std::string restore_file_name;           ///< @trick_io{*i} @trick_units{--} Filename, which will be the label name.
+
+  protected:
+   std::wstring           restore_name;          ///< @trick_io{**} Name for a restore file
    THLARestoreProcessEnum prev_restore_process;  ///< @trick_io{**} previous state of the restore process
-   bool                   initiate_restore_flag; ///< @trick_io{**} Restore announce flag
-   bool                   restore_in_progress;   ///< @trick_io{**} Restore in progress flag
-   bool                   restore_failed;        ///< @trick_io{**} Restore of the federate failed
-   bool                   restore_is_imminent;   ///< @trick_io{**} Restore has been signaled by the Federate
-
-   std::string save_label;            ///< @trick_io{**} Save label
-   bool        announce_save;         ///< @trick_io{**} flag to indicate whether we have announced the federation save
-   bool        save_label_generated;  ///< @trick_io{**} Save filename has been generated.
-   bool        save_request_complete; ///< @trick_io{**} save status request complete
-   bool        save_completed;        ///< @trick_io{**} Save completed.
-
-   std::string restore_label;                               ///< @trick_io{**} Restore file label.
-   bool        announce_restore;                            ///< @trick_io{**} flag to indicate whether we have announced the federation restore
-   bool        restore_label_generated;                     ///< @trick_io{**} Restore filename has been generated.
-   bool        restore_begun;                               ///< @trick_io{**} Restore begun
-   bool        restore_request_complete;                    ///< @trick_io{**} restore status request complete
-   bool        restore_completed;                           ///< @trick_io{**} Restore completed.
-   bool        federation_restore_failed_callback_complete; ///< @trick_io{**} federation not restored callback complete
+   bool initiate_restore_flag; ///< @trick_io{**} Restore announce flag
+   bool restore_in_progress;   ///< @trick_io{**} Restore in progress flag
+   bool restore_failed;        ///< @trick_io{**} Restore of the federate failed
+   bool restore_is_imminent;   ///< @trick_io{**} Restore has been signaled by the Federate
+   bool announce_restore;                            ///< @trick_io{**} flag to indicate whether we have announced the federation restore
+   bool restore_label_generated;                     ///< @trick_io{**} Restore filename has been generated.
+   bool restore_begun;                               ///< @trick_io{**} Restore begun
+   bool restore_request_complete;                    ///< @trick_io{**} restore status request complete
+   bool restore_completed;                           ///< @trick_io{**} Restore completed.
+   bool federation_restore_failed_callback_complete; ///< @trick_io{**} federation not restored callback complete
 
    bool federate_has_been_restarted; /**< @trick_io{**} SaveRestoreServices has restarted; so, do not restart again! */
 
-   // The SaveRestoreServicess known at execution time. This is loaded when we join the
-   // federation and is automatically kept current when other federates
-   // join / resign from the federation.
-   std::size_t    running_feds_count;                    ///< @trick_units{--} Number of running SaveRestoreServicess (default: 0)
-   KnownFederate *running_feds;                          ///< @trick_units{--} Checkpoint-able Array of running Federation SaveRestoreServicess
-   std::size_t    running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of running SaveRestoreServicess at the time of the restore (default: 0)
-
-   std::string checkpoint_file_name; ///< @trick_io{*i} @trick_units{--} label to attach to sync point
-   Flag        checkpoint_rt_itimer; ///< @trick_io{**} loaded checkpoint RT ITIMER
-
-   bool start_to_save;    ///< @trick_io{**} Save flag
    bool start_to_restore; ///< @trick_io{**} Restore flag
    bool restart_flag;     ///< @trick_io{**} Restart flag
    bool restart_cfg_flag; ///< @trick_io{**} Restart flag with new configuration
