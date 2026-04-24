@@ -26,7 +26,6 @@ transfer at initialization and how to coordinate initialization data exchanges.
 |receive_init_data:<br>P-side-Federate.Sine|send_init_data:<br>P-side-Federate.Sine|receive_init_data:<br>P-side-Federate.Sine|
 |wait_for_init_sync_point:<br>"Propagated_init_phase"|wait_for_init_sync_point:<br>"Propagated_init_phase"|wait_for_init_sync_point:<br>"Propagated_init_phase"|
 
-
 ---
 
 ### Building the Simulation
