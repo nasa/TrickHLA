@@ -35,26 +35,26 @@ NASA, Johnson Space Center\n
 @revs_end
 
 */
+#ifndef TRICKHLA_TSYNC_CTE_TIMELINE_HH
+#define TRICKHLA_TSYNC_CTE_TIMELINE_HH
+
 #if defined( TSYNC_CTE ) // Needed for Trickified TrickHLA without the error below.
 
-#   ifndef TRICKHLA_TSYNC_CTE_TIMELINE_HH
-#      define TRICKHLA_TSYNC_CTE_TIMELINE_HH
-
 // System includes.
-#      include <string>
+#   include <string>
 
 // TrickHLA includes
-#      include "TrickHLA/time/CTETimelineBase.hh"
+#   include "TrickHLA/time/CTETimelineBase.hh"
 
-#      if !defined( SWIG )
-#         if !defined( __linux__ )
-#            error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
-#         endif
+#   if !defined( SWIG )
+#      if !defined( __linux__ )
+#         error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
+#      endif
 
 extern "C" {
-#         include "tsync.h" // cppcheck-suppress [missingInclude]
+#      include "tsync.h" // cppcheck-suppress [missingInclude]
 }
-#      endif // SWIG
+#   endif // SWIG
 
 namespace TrickHLA
 {
@@ -126,5 +126,5 @@ class TSyncCTETimeline : public CTETimelineBase
 
 } // namespace TrickHLA
 
-#   endif // TRICKHLA_TSYNC_CTE_TIMELINE_HH: Do NOT put anything after this line!
-#endif    // TSYNC_CTE
+#endif // TSYNC_CTE
+#endif // TRICKHLA_TSYNC_CTE_TIMELINE_HH: Do NOT put anything after this line!
