@@ -12,6 +12,7 @@ We will show how to layout multiphase initialization to support ownership
 transfer at initialization and how to coordinate initialization data exchanges.
 
 ---
+
 ###Multiphase Initialization Steps
 
 |Federate "A"                 |Federate "P"                 |Federate "Other"             |
@@ -27,6 +28,7 @@ transfer at initialization and how to coordinate initialization data exchanges.
 
 
 ---
+
 ### Building the Simulation
 In the SIM_sine_ownership_Fed_A, SIM_sine_ownership_Fed_P, or 
 SIM_sine_ownership_Fed_other directory, type **trick-CP** to build the
@@ -37,6 +39,7 @@ Trick Build Process Complete
 ```
 
 ---
+
 ### Running the Simulation
 Run the following simulations to run the Ownership Transfers at Initialization
 with split ownership multiphase initialization data updates.
