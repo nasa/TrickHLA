@@ -3,7 +3,7 @@
 @ingroup TrickHLA
 @brief This class provides basic services for an HLA federate.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, SRFOM support & test.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, May 2026, --, Adjustments for SaveRestore support.}
 @revs_end
 
 */

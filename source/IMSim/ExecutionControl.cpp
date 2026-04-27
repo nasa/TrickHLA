@@ -4,7 +4,7 @@
 @brief This class provides and abstract base class as the base implementation
 for managing mode transitions.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, IMSim support and testing.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, June 2019, --, Version 3 rewrite.}
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2024, --, Refactor to use sync-point object_service.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, May 2026, --, Reformulation for SaveRestore state machine architecture.}
 @revs_end
 
 */

@@ -4,7 +4,7 @@
 @brief This class provides and abstract base class as the base implementation
 for managing mode transitions.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, TrickHLA support and testing.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, June 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, May 2026, --, Adjustments for SaveRestore support.}
 @revs_end
 
 */
@@ -1447,7 +1448,7 @@ void ExecutionControlBase::save_setup()
 
    // This is a shortcut so that we can enforce that only these federates exist
    // when we restore
-   save_restore_service->write_running_feds_file( str_save_label );
+   save_restore_service->write_running_feds_file( save_restore_service->get_save_label() );
 
    // Tell the object_service to setup the checkpoint data structures.
    object_service->convert_data_before_checkpoint();
@@ -1813,6 +1814,7 @@ const std::string ExecutionControlBase::map_save_label_to_checkpoint_file_name(
  */
 void ExecutionControlBase::checkpoint_before()
 {
+   THLASaveProcessEnum current_save_state;
 
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
@@ -1833,6 +1835,22 @@ void ExecutionControlBase::checkpoint_before()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+   // Get the current Save state.
+   current_save_state = save_restore_service->get_save_state();
+
+   // Check to see if this checkpoint was initiated from Federate Ambassador
+   // initiateFederateSave callback.  If so, a Save has already been requested
+   // and will be handled in the freeze job save_process().
+   if ( current_save_state == THLASaveProcessEnum::SAVE_REQUESTED ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         ostringstream msg;
+         msg << "SaveRestoreServices::checkpoint_before():"
+             << __LINE__ << " : Save already requested." << std::endl;
+         message_publish( MSG_NORMAL, msg.str().c_str() );
+      }
+      return;
+   }
+
    // Check to see if we are set up to support a Trick Control Panel checkpoint.
    if ( save_restore_service->is_tcp_save_supported() ) {
 
@@ -1842,10 +1860,6 @@ void ExecutionControlBase::checkpoint_before()
              << __LINE__ << " : Save initiated from Trick Control Panel checkpoint." << std::endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
-
-      // Get the current Save state.
-      THLASaveProcessEnum current_save_state;
-      current_save_state = save_restore_service->get_save_state();
 
       // Only initiate a Save if one is NOT already in progress.
       if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ){

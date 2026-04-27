@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 @revs_title
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2020, --, IMSim development.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, May 2026, --, Reformulation for SaveRestore state machine architecture.}
 @revs_end
 
 */

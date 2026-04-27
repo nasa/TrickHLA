@@ -9,7 +9,7 @@ that RTI can call functions in the federate.
 - None of the methods in this class are intended to be called from the Trick
 S_define level.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2025, --, Add HLA 4 support}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, May 2026, --, Adjustments for SaveRestore support.}
 @revs_end
 
 */
@@ -280,18 +281,25 @@ void FedAmb::initiateFederateSave(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   Int64Time i64time;
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d\n",
-                       __LINE__ );
-   }
-   save_restore_service->set_save_label( label );
-   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_REQUESTED );
+   std::string save_label_str;
+   Int64Time   i64time;
 
    // Get the current granted time.
    i64time = federate->get_granted_time();
+
+   // Set the Save and Restore state.
+   save_restore_service->set_save_label( label );
+   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_REQUESTED );
    save_restore_service->set_save_time( i64time );
+
+   // Convert the Save label wstring to a string.
+   StringUtilities::to_string( save_label_str, label );
+
+   // Status message.
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+      message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d: Label: \'%s\'\n",
+                       __LINE__, save_label_str.c_str() );
+   }
 
    // FIXME: Possibly deprecated code.
    save_restore_service->set_save_name( label );
@@ -306,16 +314,25 @@ void FedAmb::initiateFederateSave(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   Int64Time i64time;
+   std::string save_label_str;
+   Int64Time   i64time;
+
+   // Convert the time.
    i64time.set( time );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d HLA-time:%.12G seconds.\n",
-                       __LINE__, i64time.get_time_in_seconds() );
-   }
+   // Set the Save and Restore state.
    save_restore_service->set_save_label( label );
    save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_REQUESTED );
    save_restore_service->set_save_time( i64time );
+
+   // Convert the Save label wstring to a string.
+   StringUtilities::to_string( save_label_str, label );
+
+   // Status message.
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+      message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d: Label: \'%s\', HLA-time:%.12G seconds.\n",
+                       __LINE__, save_label_str.c_str(), i64time.get_time_in_seconds() );
+   }
 
    // FIXME: Possibly deprecated code.
    save_restore_service->set_save_name( label );

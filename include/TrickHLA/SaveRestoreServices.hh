@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @revs_title
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2026, --, Refactor HLA Save and Restore services.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, May 2026, --, Reformulation for SaveRestore state machine architecture.}
 @revs_end
 
 */
@@ -119,6 +120,7 @@ std::string to_string( THLARestoreProcessEnum restore_state );
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
+class ObjectServices;
 class TimeManagementServices;
 class ExecutionControlBase;
 
@@ -287,14 +289,23 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief The Federation Save process did NOT complete successfully. */
    void save_failed();
 
-   /*! @brief Dumps the contents of the running_feds object into the supplied
-    *  file name with ".running_feds" appended to it.
-    *  @param file_name Checkpoint file name. */
-   void write_running_feds_file( std::string const &file_name );
+   /*! @brief Write the running federates file as part of the Save process.
+    *  @detail This routine uses the ExecutionControl class call to map the
+    *  HLA Save label into an identifiable file name.  If label is empty then
+    *  this routine uses the current Save label.
+    *  @param label The identifying Save label. */
+   bool write_running_feds_file( std::wstring const &label );
 
    /*! @brief Prints the reason for the federation save failure.
     * @param reason Save failure reason. */
    static void print_save_failure_reason( RTI1516_NAMESPACE::SaveFailureReason reason );
+
+   /*! @brief Requests the status of the Federation Save. */
+   void request_federation_save_status();
+
+   /*! @brief Blocks until the RTI responds with a federation status of the
+    * save is complete. */
+   void wait_for_save_status_to_complete();
 
 
    //..........................................................................
@@ -366,16 +377,9 @@ class SaveRestoreServices : public CheckpointConversionBase
     * restore is complete. */
    void wait_for_restore_status_to_complete();
 
-   /*! @brief Blocks until the RTI responds with a federation status of the
-    * save is complete. */
-   void wait_for_save_status_to_complete();
-
    /*! @brief Blocks until the RTI responds with a federation not restored
     * callback via the federate ambassador. */
    void wait_for_federation_restore_failed_callback_to_complete();
-
-   /*! @brief Requests the status of the Federation Save. */
-   void request_federation_save_status();
 
    /*! @brief Requests the status of the Federation Restore. */
    void request_federation_restore_status();
@@ -666,6 +670,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    // References to the Federate and associated services.
    //
    Federate               *federate;                ///< @trick_units{--} Associated TrickHLA::Federate.
+   ObjectServices         *object_service;          ///< @trick_units{--} Associated ObjectServices.
    TimeManagementServices *time_management_service; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
    ExecutionControlBase   *execution_control;       ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
 
