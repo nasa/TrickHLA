@@ -4,7 +4,7 @@
 @brief This class provides and abstract base class as the base implementation
 for managing mode transitions.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, SpaceFOM support and testing.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, June 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, May 2026, --, Reformulation for SaveRestore state machine architecture.}
 @revs_end
 
 */
@@ -177,6 +178,22 @@ ExecutionControl::ExecutionControl(
 ExecutionControl::~ExecutionControl()
 {
    clear_mode_values();
+}
+
+/*!
+ * @job_class{default_data}
+ */
+void ExecutionControl::setup(
+   TrickHLA::Federate &fed )
+{
+   // Call the ExecutionControlBase method first.
+   ExecutionControlBase::setup( fed );
+
+   // Mark the IMSim ExecutionControl class as supporting HLA Save using the
+   // Trick Control Panel (TCP) checkpoint interface.
+   save_restore_service->set_tcp_save_supported( true );
+
+   return;
 }
 
 /*!
@@ -1228,6 +1245,11 @@ process described in section 7.2 and figures 7-8 and 7-9.
 void ExecutionControl::post_multi_phase_init_processes()
 {
    ExecutionConfiguration *ExCO = get_execution_configuration();
+
+   // When we join the federation, setup the list of current federates.
+   // When a federate joins / resigns, this list will be automatically
+   // updated by each federate.
+   save_restore_service->load_and_print_running_federate_names();
 
    // Setup HLA time management.
    federate->setup_time_management();
@@ -3076,8 +3098,8 @@ bool ExecutionControl::is_designated_late_joiner()
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::start_federation_save_at_SST(
-   double        freeze_sst,
-   string const &file_name )
+   double         freeze_sst,
+   wstring const &file_name )
 {
    ostringstream errmsg;
    errmsg << "SpaceFOM::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__

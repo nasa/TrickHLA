@@ -148,6 +148,8 @@ ExecutionControl::ExecutionControl(
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
      next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
+     save_sync_point( false ),
+     announce_save( false ),
      rejoining_federate( false ),
      restore_determined( false ),
      restore_federate( false )
@@ -1255,7 +1257,7 @@ void ExecutionControl::sync_point_federation_synchronized(
 
    // Check for the case when the SYncPoint is FEDSAVE_SYNC_POINT.
    if( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
-      save_restore_service->set_initiate_save_flag( true );
+      save_sync_point = true;
    }
 
    return;
@@ -2325,24 +2327,31 @@ void ExecutionControl::start_federation_save_at_SST(
    checkpoint_file_name = map_save_label_to_checkpoint_file_name( save_label );
 
    if ( freeze_interaction->get_handler() != NULL ) {
+
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d\n",
                           freeze_sst, save_label.c_str(), __LINE__ );
       }
-      save_restore_service->set_announce_save();
+      set_announce_save();
 
       double new_scenario_time = freeze_sst;
 
       trigger_freeze_interaction( new_scenario_time );
 
       save_restore_service->save_request( save_label );
+
    } else {
+
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
 freeze_interaction's HANLDER is NULL! Request was ignored!\n",
                           freeze_sst, save_label.c_str(), __LINE__ );
+
       }
+
    }
+
+   return;
 }
 
 void ExecutionControl::add_freeze_scenario_time(
@@ -2350,7 +2359,7 @@ void ExecutionControl::add_freeze_scenario_time(
 {
    if ( federate->is_late_joining_federate() ) {
 
-      if ( save_restore_service->is_announce_save() ) {
+      if ( is_announce_save() ) {
          freeze_scenario_times.insert( t );
       } else {
          // If we received the interaction, save on the current frame.
@@ -2389,7 +2398,7 @@ bool ExecutionControl::check_freeze_time()
       exec_freeze(); // go to freeze at top of next frame (other federates MUST have their software frame set in input.py file!)
       // If we are to initiate the federation save, register a sync point
       // which must be acknowledged only in freeze mode!!!
-      if ( save_restore_service->is_announce_save() ) {
+      if ( is_announce_save() ) {
          register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
          set_freeze_announced( true );
       }
@@ -2475,23 +2484,28 @@ bool ExecutionControl::check_scenario_freeze_time()
  */
 bool ExecutionControl::is_save_initiated()
 {
+   THLASaveProcessEnum save_state;
+
+   // Get the current Save state.
+   save_state = save_restore_service->get_save_state();
+
    // When user calls start_federation_save, initiate_save_flag is
    // set in federation_synchronized when feds sync to FEDSAVE_v2 sync point
    // if it's not set, we are here because Dump Chkpnt was clicked, so we
    // need to register sync point
-   if ( save_restore_service->is_announce_save()
-        && !save_restore_service->is_initiate_save_flag()
-        && !save_restore_service->is_save_completed() ) {
+   if (    (is_announce_save())
+        && (save_state != THLASaveProcessEnum::SAVE_INITIATED)
+        && (save_state != THLASaveProcessEnum::SAVE_COMPLETE)  ) {
       register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
       SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
-      while ( !save_restore_service->is_initiate_save_flag() ) { // wait for federation to be synced
+      while ( !save_sync_point ) { // wait for federation to be synced
 
          sleep_timer.sleep();
 
-         if ( !save_restore_service->is_initiate_save_flag() ) {
+         if ( !save_sync_point ) {
 
             // To be more efficient, we get the time once and share it.
             int64_t wallclock_time = sleep_timer.time();

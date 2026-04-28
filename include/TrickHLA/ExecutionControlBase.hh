@@ -709,6 +709,11 @@ class ExecutionControlBase : public SyncPointManagerBase
 
    //-------------------------------------------------------------------------
    // Save and Restore
+   //-------------------------------------------------------------------------
+
+   //..........................................................................
+   // Save functions.
+   //..........................................................................
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
     * @return True if Save and Restore is supported by this ExecutionControl method. */
    virtual bool is_save_and_restore_supported()
@@ -717,10 +722,14 @@ class ExecutionControlBase : public SyncPointManagerBase
    }
 
    /*! @brief Generate an HLA Save label. */
-   virtual const std::wstring & generate_save_label();
+   virtual std::wstring generate_save_label();
 
    /*! @brief Map a Save label into a running federates file name. */
    virtual const std::string map_save_label_to_running_feds_file_name( std::wstring const &save_label );
+
+   /*! @brief Get the number of pending scheduled Saves.
+    *  @return Number of pending Saves in Save queue. */
+   virtual unsigned int number_of_pending_saves();
 
    /*! @brief Federate HLA Save process executive. */
    virtual void save_process();
@@ -751,9 +760,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual void save_at_HLT( std::wstring                   const &label,
                              RTI1516_NAMESPACE::LogicalTime const &time );
 
-   /*! @brief Perform setup for Federate save. */
-   virtual void save_setup();
-
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_sst Simulation scenario time to freeze.
     *  @param save_label Save label for HLA Federation Save. */
@@ -772,6 +778,11 @@ class ExecutionControlBase : public SyncPointManagerBase
       return ( false );
    }
 
+
+   //..........................................................................
+   // Restore functions.
+   //..........................................................................
+
    /*! @brief Federate HLA Restore process executive. */
    virtual void restore_process();
 
@@ -785,9 +796,9 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual void restore_after();
 
 
-   //-------------------------------------------------------------------------
-   // Execution Control functions that support checkpointing.
-   //
+   //..........................................................................
+   // Checkpointing functions.
+   //..........................................................................
    /*! @brief Map a Save label into a checkpoint file name. */
    virtual const std::string map_save_label_to_checkpoint_file_name( std::wstring const &save_label );
 

@@ -336,6 +336,27 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * False if Save not supported. */
    virtual bool is_save_initiated();
 
+   /*! @brief Checks if Save has been announced by this ExecutionControl method.
+    * @return True if Save is announced, False if not. */
+   virtual bool is_announce_save()
+   {
+      return( announce_save );
+   }
+
+   /*! @brief Set that Save has been announced. */
+   virtual void set_announce_save()
+   {
+      announce_save = true;
+      return;
+   }
+
+   /*! @brief Set that Save has been announced. */
+   virtual void unset_announce_save()
+   {
+      announce_save = false;
+      return;
+   }
+
    /*! @brief IMSim: Check to see if this federate is to be restored.
     *  @return federate restore state. */
    bool is_restore_determined() const
@@ -396,6 +417,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       used in conjunction with the cte_mode_time, sim_mode_time and
       associated sync point mechanisms to coordinate federation execution
       mode transitions.*/
+
+   bool save_sync_point; ///< @trick_units{--} Internal flag to indicate if the Save synchpoint is synchronized.
+   bool announce_save;   ///< @trick_units{--} Internal flag to indicate if the Save is announced.
 
    bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
 

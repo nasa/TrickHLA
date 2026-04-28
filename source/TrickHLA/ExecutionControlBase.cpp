@@ -1015,30 +1015,27 @@ bool ExecutionControlBase::can_initiate_save()
 
 /*!
  *  @job_class{scheduled}
+ *  @detail The default behavior is to use the current granted time as the
+ *  Save label.  This can be overridden in any extending ExecutionControl
+ *  class.
  */
-const std::wstring & ExecutionControlBase::generate_save_label()
+std::wstring ExecutionControlBase::generate_save_label()
 {
    // FIXME: Check for time management to insure that there is a granted time.
-
-   // Get the current Federation Execution name.
-   std::string federation_name = federate->get_federation_name();
 
    // Get the current HLA Logical Time.
    int64_t granted_time = time_management_service->get_granted_time().get_base_time();
 
    // Formulate the save label based on the Federation Execution name and the
    // current HLA logical time.
-   std::string save_label_str = federation_name + "_" + std::to_string( granted_time );
+   std::string save_label_str = std::to_string( granted_time );
 
    // Convert the label to a wide string.
-   wstring save_name_wstr;
-   StringUtilities::to_wstring( save_name_wstr, save_label_str );
-
-   // Set the Save label.
-   save_restore_service->set_save_name( save_name_wstr );
+   wstring save_label_wstr;
+   StringUtilities::to_wstring( save_label_wstr, save_label_str );
 
    // Return the Save label.
-   return( save_restore_service->save_label );
+   return( save_label_wstr );
 }
 
 /*
@@ -1063,9 +1060,18 @@ const std::string ExecutionControlBase::map_save_label_to_running_feds_file_name
    // Add the specified HLA Save label.
    running_fed_file += save_label_str;
    // Add the running_feds suffix.
-   running_fed_file += ".running_feds";
+   running_fed_file += ".rfeds";
 
    return( running_fed_file );
+}
+
+
+/*!
+ *  @job_class{scheduled}
+ */
+unsigned int ExecutionControlBase::number_of_pending_saves()
+{
+   return( save_restore_service->pending_saves.size() );
 }
 
 
@@ -1108,7 +1114,6 @@ void ExecutionControlBase::save_process()
       break;
 
    case THLASaveProcessEnum::SAVE_COMPLETE:
-      std::cout << "ExecutionControlBase::save_process(): SAVE_COMPLETE" << std::endl;
       // The Save was successfully completed.
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::save_process():%d Save: \'%s\' completed!\n",
@@ -1281,181 +1286,60 @@ void ExecutionControlBase::save_at_HLT(
    return;
 }
 
-/*! @brief Perform setup for federate save. */
-void ExecutionControlBase::save_setup()
+
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::restore_process()
 {
-   // Do not do federate save during Init or Exit (this allows "regular" init
-   // and shutdown checkpoints)
-   if ( ( exec_get_mode() == Initialization ) || ( exec_get_mode() == ExitMode ) ) {
-      return;
+
+   switch ( save_restore_service->restore_state ) {
+
+   case THLARestoreProcessEnum::RESTORE_NONE:
+      // Save has not been initiated.  So, just proceed without action.
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_REQUESTED:
+      // Call the ExecutionControl restore method.
+      restore();
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_INITIATE:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_COMPLETE:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_FAILED:
+      break;
+
+   case THLARestoreProcessEnum::RESTORE_UNSUPPORTED:
+      // Restore is not supported.  So, just proceed without action.
+      break;
+
+   default:
+      // Unknown Restore state.  This is bad, so exit with error.
+      ostringstream errmsg;
+      errmsg << "Federate::freeze_restore():" << __LINE__
+             << " ERROR: Unknown Restore state = "
+             << static_cast<int>(save_restore_service->restore_state) << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      break;
+
    }
 
-   string str_save_label;
-   StringUtilities::to_string( str_save_label, save_restore_service->get_save_label() );
-
-   // Determine if I am the federate that clicked Dump Chkpnt on sim control panel
-   // or I am the federate that called start_federation_save
-
-   save_restore_service->set_announce_save( !save_restore_service->is_start_to_save() );
-
-   // Check to see if the save has been initiated in the ExecutionControl process?
-   // If not then just return.
-   if ( !is_save_initiated() ) {
-      return;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::setup_checkpoint():%d Federate Save Pre-checkpoint\n",
-                       __LINE__ );
-   }
-
-   // If I announced the save, must initiate federation save
-   if ( save_restore_service->is_announce_save() ) {
-
-      if ( save_restore_service->get_save_name().length() ) {
-         // When user calls start_federation_save, save_name is already set
-      } else {
-
-         // FIXME: DO NOT rely on Trick checkpoint from the SimControl panel
-         // to drive the save and restore process.
-
-
-         // When user clicks Dump Chkpnt, we need to set the save_name here
-         string trick_filename;
-         string slash( "/" );
-         size_t found;
-         string save_name_str;
-
-         // get checkpoint file name specified in control panel
-         trick_filename = checkpoint_get_output_file();
-
-         // Trick filename contains dir/filename,
-         // need to prepend federation name to filename entered in sim control panel popup
-         found = trick_filename.rfind( slash );
-         if ( found != string::npos ) {
-            save_name_str              = trick_filename.substr( found + 1 );
-            string federation_name_str = federate->get_federation_name();
-            if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
-               // dir/federation_filename
-               trick_filename.replace( found, slash.length(), slash + federation_name_str + "_" );
-            } else {
-               // If it already has federation name prepended, output_file name
-               // is good to go but remove it from save_name_str so our
-               // str_save_label setting below is correct
-               save_name_str = trick_filename.substr( found + 1 + federation_name_str.length() + 1 ); // filename
-            }
-         } else {
-            save_name_str = trick_filename;
-         }
-
-         // TODO: Clean this up later.
-         // Set the checkpoint restart filename.
-         the_cpr->output_file = trick_filename;
-
-         // federation_filename
-         str_save_label = federate->get_federation_name() + "_" + save_name_str;
-
-         // Set the federate save_name to filename (without the federation name)
-         // - this gets announced to other feds
-         wstring save_name_ws;
-         StringUtilities::to_wstring( save_name_ws, save_name_str );
-
-         save_restore_service->set_save_name( save_name_ws );
-      } // end set save_name
-
-      // Don't request a save if another federate has already requested one
-      if ( save_restore_service->is_initiate_save_flag() ) {
-         // initiate_save_flag becomes false if another save is occurring
-         save_restore_service->request_federation_save_status();
-         save_restore_service->wait_for_save_status_to_complete();
-
-         //save_restore_service->request_federation_save();
-         save_restore_service->save_request( save_restore_service->get_save_label() );
-
-         SleepTimeout print_timer;
-         SleepTimeout sleep_timer;
-
-         // need to wait for federation to initiate save
-         while ( !save_restore_service->is_start_to_save() ) {
-
-            // Check for shutdown.
-            check_for_shutdown_with_termination();
-
-            sleep_timer.sleep();
-
-            if ( !save_restore_service->is_start_to_save() ) {
-
-               // To be more efficient, we get the time once and share it.
-               int64_t wallclock_time = sleep_timer.time();
-
-               if ( sleep_timer.timeout( wallclock_time ) ) {
-                  sleep_timer.reset();
-                  if ( !federate->is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "ExecutionControlBase::setup_checkpoint():" << __LINE__
-                            << " ERROR: Unexpectedly the Federate is no longer an execution"
-                            << " member. This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!" << endl;
-                     DebugHandler::terminate_with_message( errmsg.str() );
-                  }
-               }
-
-               if ( print_timer.timeout( wallclock_time ) ) {
-                  print_timer.reset();
-                  message_publish( MSG_NORMAL, "ExecutionControlBase::setup_checkpoint():%d Federate Save Pre-checkpoint, wiating...\n",
-                                   __LINE__ );
-               }
-            }
-         }
-         save_restore_service->set_initiate_save_flag( false );
-      } else {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::setup_checkpoint():%d Federation Save is already in progress!\n",
-                          __LINE__ );
-         return;
-      }
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-   try {
-      // FIXME: Should this be in the Federate and not TimeManagementServices?
-      // Or, should this be in the Save & Restore services.
-      federate->get_RTI_ambassador()->federateSaveBegun();
-   } catch ( SaveNotInitiated const &e ) {
-      message_publish( MSG_WARNING, "ExecutionControlBase::setup_checkpoint():%d EXCEPTION: SaveNotInitiated\n",
-                       __LINE__ );
-   } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "ExecutionControlBase::setup_checkpoint():%d EXCEPTION: FederateNotExecutionMember\n",
-                       __LINE__ );
-   } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "ExecutionControlBase::setup_checkpoint():%d EXCEPTION: RestoreInProgress\n",
-                       __LINE__ );
-   } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "ExecutionControlBase::setup_checkpoint():%d EXCEPTION: NotConnected\n",
-                       __LINE__ );
-      federate->set_connection_lost();
-   } catch ( RTIinternalError const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "ExecutionControlBase::setup_checkpoint():%d EXCEPTION: RTIinternalError: '%s'\n",
-                       __LINE__, rti_err_msg.c_str() );
-   }
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   // This is a shortcut so that we can enforce that only these federates exist
-   // when we restore
-   save_restore_service->write_running_feds_file( save_restore_service->get_save_label() );
-
-   // Tell the object_service to setup the checkpoint data structures.
-   object_service->convert_data_before_checkpoint();
-
-   // Save any synchronization points.
-   save_restore_service->convert_sync_pts();
+   return;
 }
+
 
 /*! @brief Perform setup for federate restore. */
 void ExecutionControlBase::restore_setup()
@@ -1560,60 +1444,6 @@ void ExecutionControlBase::restore_setup()
    }
 
    save_restore_service->set_restore_process( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
-}
-
-
-/*!
- *  @job_class{scheduled}
- */
-void ExecutionControlBase::restore_process()
-{
-
-   switch ( save_restore_service->restore_state ) {
-
-   case THLARestoreProcessEnum::RESTORE_NONE:
-      // Save has not been initiated.  So, just proceed without action.
-      break;
-
-   case THLARestoreProcessEnum::RESTORE_REQUESTED:
-      // Call the ExecutionControl restore method.
-      restore();
-      break;
-
-   case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
-      break;
-
-   case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
-      break;
-
-   case THLARestoreProcessEnum::RESTORE_INITIATE:
-      break;
-
-   case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
-      break;
-
-   case THLARestoreProcessEnum::RESTORE_COMPLETE:
-      break;
-
-   case THLARestoreProcessEnum::RESTORE_FAILED:
-      break;
-
-   case THLARestoreProcessEnum::RESTORE_UNSUPPORTED:
-      // Restore is not supported.  So, just proceed without action.
-      break;
-
-   default:
-      // Unknown Restore state.  This is bad, so exit with error.
-      ostringstream errmsg;
-      errmsg << "Federate::freeze_restore():" << __LINE__
-             << " ERROR: Unknown Restore state = "
-             << static_cast<int>(save_restore_service->restore_state) << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      break;
-
-   }
-
-   return;
 }
 
 /*!
@@ -1816,6 +1646,13 @@ void ExecutionControlBase::checkpoint_before()
 {
    THLASaveProcessEnum current_save_state;
 
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "SaveRestoreServices::checkpoint_before():"
+          << __LINE__ << " : Checkpoint initiated." << std::endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !is_save_and_restore_supported() ) {
@@ -1828,11 +1665,11 @@ void ExecutionControlBase::checkpoint_before()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "SaveRestoreServices::checkpoint_before():"
-          << __LINE__ << " : Checkpoint initiated." << std::endl;
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+   // Check to see if Trick is in Freeze.  If not, then this is a normal
+   // checkpoint.  If it is, then we can proceed to see if a Save from the
+   // Trick Control Panel is supported.
+   if ( exec_get_mode() != Freeze ) {
+      return;
    }
 
    // Get the current Save state.

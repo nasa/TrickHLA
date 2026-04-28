@@ -4,7 +4,7 @@
 @brief This class provides and abstract base class as the base implementation
 for managing mode transitions.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 @revs_title
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2020, --, SpaceFOM development.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, May 2026, --, Reformulation for SaveRestore state machine architecture.}
 @revs_end
 
 */
@@ -119,6 +120,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    }
    //
    // Execution Control initialization routines.
+   /*! @brief Setup the IMSim elelments needed in the ExecutionControl class
+    * instance.
+    * @param fed Associated federate object_service class instance. */
+   virtual void setup( TrickHLA::Federate &fed );
    // This is called by the TrickHLA::Federate::initialize routine.
    /*! @brief Execution Control initialization routine. */
    virtual void initialize();
@@ -291,16 +296,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    bool is_designated_late_joiner();
 
    //
-   // Federation save and checkpoint
-   //
-   // Federation save and checkpoint
-   /*! @brief Start the Federation save at the specified scenario time.
-    *  @param freeze_sst Simulation scenario time to freeze.
-    *  @param save_label Save label for HLA Federation Save. */
-   virtual void start_federation_save_at_SST( double             freeze_sst,
-                                              std::wstring const &save_label );
-
-   //
    // Freeze time management functions.
    /*! @brief Set the least common time step in seconds for the federation.
     *  @param lcts Least Common Time Step time in seconds. */
@@ -312,6 +307,22 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
    virtual void set_time_padding( double t );
+
+
+   //-------------------------------------------------------------------------
+   // Save and Restore
+   /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
+    * @return True if Save and Restore is supported by this ExecutionControl method. */
+   virtual bool is_save_and_restore_supported()
+   {
+      return ( true );
+   }
+
+   /*! @brief Start the Federation save at the specified scenario time.
+    *  @param freeze_sst Simulation scenario time to freeze.
+    *  @param save_label Save label for HLA Federation Save. */
+   virtual void start_federation_save_at_SST( double             freeze_sst,
+                                              std::wstring const &save_label );
 
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.

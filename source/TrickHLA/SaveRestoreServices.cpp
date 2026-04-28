@@ -179,22 +179,14 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      running_feds_count_at_time_of_restore( 0 ),
      running_feds_file_name( "" ),
      support_tcp_checkpoint( false ),
-     checkpoint_file_name( "" ),
      HLA_save_directory( "" ),
      save_state( THLASaveProcessEnum::SAVE_UNSUPPORTED ),
      save_label( L"" ),
+     save_status_request_complete( false ),
      restore_state( THLARestoreProcessEnum::RESTORE_UNSUPPORTED ),
      restore_label( L"" ),
      // Possibly deprecated after this.
      // Save variables.
-     save_name( L"" ),
-     initiate_save_flag( false ),
-     announce_save( false ),
-     save_label_generated( false ),
-     save_request_complete( false ),
-     save_completed( false ),
-     start_to_save( false ),
-     initiated_a_federation_save( false ),
      unfreeze_after_save( false ),
      // Restore variables.
      restore_federation( false ),
@@ -233,6 +225,9 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
  */
 SaveRestoreServices::~SaveRestoreServices()
 {
+   // Clear the pending Save set.
+   pending_saves.clear();
+
    // Free the memory used by the array of running Federates for the Federation.
    clear_running_feds();
 }
@@ -836,6 +831,7 @@ void SaveRestoreServices::save_request(
 void SaveRestoreServices::save( std::wstring const &label )
 {
    std::string label_str;
+   std::string checkpoint_file_name;
 
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ){
@@ -1030,9 +1026,8 @@ void SaveRestoreServices::save_succeded()
    }
 
    // Restore the base Save state.
-   this->save_label            = L"";
-   this->checkpoint_file_name  = "";
-   this->save_state            = THLASaveProcessEnum::SAVE_NONE;
+   this->save_label = L"";
+   this->save_state = THLASaveProcessEnum::SAVE_NONE;
 
    return;
 }
@@ -1075,9 +1070,8 @@ void SaveRestoreServices::save_failed()
    }
 
    // Restore the base Save state.
-   this->save_label            = L"";
-   this->checkpoint_file_name  = "";
-   this->save_state            = THLASaveProcessEnum::SAVE_NONE;
+   this->save_label = L"";
+   this->save_state = THLASaveProcessEnum::SAVE_NONE;
 
    return;
 }
@@ -1222,61 +1216,6 @@ void SaveRestoreServices::request_federation_save_status() // cppcheck-suppress 
 }
 
 
-/*!
- *  @job_class{scheduled}
- */
-void SaveRestoreServices::wait_for_save_status_to_complete()
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_save_status_to_complete():%d Waiting...\n",
-                       __LINE__ );
-   }
-
-   SleepTimeout print_timer;
-   SleepTimeout sleep_timer;
-
-   while ( !this->save_request_complete ) {
-
-      // Check for shutdown.
-      federate->check_for_shutdown_with_termination();
-
-      sleep_timer.sleep(); // sleep until RTI responds...
-
-      if ( !this->save_request_complete ) { // cppcheck-suppress [knownConditionTrueFalse]
-
-         // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
-
-         if ( sleep_timer.timeout( wallclock_time ) ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "SaveRestoreServices::wait_for_save_status_to_complete():" << __LINE__
-                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
-            }
-         }
-
-         if ( print_timer.timeout( wallclock_time ) ) {
-            print_timer.reset();
-            message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_save_status_to_complete():%d Waiting...\n",
-                             __LINE__ );
-         }
-      }
-   }
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::wait_for_save_status_to_complete():%d Done.\n",
-                       __LINE__ );
-   }
-
-   return;
-}
-
-
 //----------------------------------------------------------------------------
 // SaveRestoreService Restore functions.
 //----------------------------------------------------------------------------
@@ -1287,29 +1226,6 @@ void SaveRestoreServices::wait_for_save_status_to_complete()
 //--------------------------------------------------------------------------
 // Potentially deprecated SaveRestoreService functions.
 //--------------------------------------------------------------------------
-
-void SaveRestoreServices::start_federation_save(
-   wstring const &label )
-{
-   start_federation_save_at_SST( -DBL_MAX, label );
-}
-
-void SaveRestoreServices::start_federation_save_at_SET(
-   double         set,
-   wstring const &label )
-{
-   start_federation_save_at_SST(
-      execution_control->convert_sim_time_to_scenario_time( set ),
-      label );
-}
-
-void SaveRestoreServices::start_federation_save_at_SST(
-   double         sst,
-   wstring const &label )
-{
-   // Call the ExecutionControl method.
-   federate->get_execution_control()->start_federation_save_at_SST( sst, label );
-}
 
 void SaveRestoreServices::restore_checkpoint(
    string const &file_name )
@@ -1571,7 +1487,6 @@ void SaveRestoreServices::federation_restored()
    complete_restore();
    this->start_to_restore     = false;
    this->announce_restore     = false;
-   this->save_label_generated = false;
    this->restore_begun        = false;
    this->restore_is_imminent  = false;
    this->restore_label        = L"";
@@ -2010,16 +1925,6 @@ void SaveRestoreServices::requested_federation_restore_status(
 /*!
  *  @job_class{freeze}
  */
-void SaveRestoreServices::set_save_completed()
-{
-   this->save_completed   = true;
-   this->start_to_save    = false;
-   federate->publish_data = true;
-}
-
-/*!
- *  @job_class{freeze}
- */
 void SaveRestoreServices::set_restore_begun()
 {
    this->restore_begun     = true;
@@ -2120,29 +2025,6 @@ void SaveRestoreServices::process_requested_federation_restore_status(
    restore_request_complete = true;
 }
 
-void SaveRestoreServices::process_requested_federation_save_status(
-   FederateHandleSaveStatusPairVector const &status_vector )
-{
-   FederateHandleSaveStatusPairVector::const_iterator vector_iter;
-   FederateHandleSaveStatusPairVector::const_iterator vector_end;
-   vector_iter = status_vector.begin();
-   vector_end  = status_vector.end();
-
-   // If any of our federates have a save in progress, we will NOT initiate save
-   initiate_save_flag = true;
-
-   // while there are elements in Federate Save Status Vector...
-   while ( initiate_save_flag && ( vector_iter != vector_end ) ) {
-      if ( vector_iter->second != RTI1516_NAMESPACE::NO_SAVE_IN_PROGRESS ) {
-         initiate_save_flag = false;
-      }
-      ++vector_iter;
-   }
-
-   // indicate that the request has completed...
-   save_request_complete = true;
-}
-
 void SaveRestoreServices::print_restore_failure_reason(
    RestoreFailureReason reason )
 {
@@ -2170,61 +2052,6 @@ void SaveRestoreServices::print_restore_failure_reason(
    this->federation_restore_failed_callback_complete = true;
 }
 
-/*!
- *  @job_class{environment}
- */
-void SaveRestoreServices::set_checkpoint_file_name(
-   string const &name )
-{
-
-   // Make sure that we are in an appropriate state to set the checkpoint file .
-   if (    (this->save_state != THLASaveProcessEnum::SAVE_NONE)
-        && (this->save_state != THLASaveProcessEnum::SAVE_REQUESTED)
-        && (this->save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED) ){
-
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::set_checkpoint_file_name():%d : Save already in progress: \'%s\'!\n",
-                          __LINE__, TrickHLA::to_string( save_state ).c_str() );
-      }
-      return;
-
-   }
-
-   // Set the Trick checkpoint file name.
-   this->checkpoint_file_name = name;
-
-   return;
-}
-
-/*!
- *  @job_class{environment}
- */
-void SaveRestoreServices::initiate_save_announce()
-{
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !federate->get_execution_control()->is_save_and_restore_supported() ) {
-      return;
-   }
-
-   if ( this->save_label_generated ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::initiate_save_announce():%d save_label already generated for federate '%s'\n",
-                          __LINE__, federate->get_federate_name().c_str() );
-      }
-      return;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::initiate_save_announce():%d Checkpoint filename:'%s'\n",
-                       __LINE__, checkpoint_file_name.c_str() );
-   }
-
-   // Save the checkpoint_file_name into 'save_label'
-   StringUtilities::to_wstring( this->save_label, this->checkpoint_file_name );
-
-   this->save_label_generated = true;
-}
 
 void SaveRestoreServices::initiate_restore_announce(
    wstring const &restore_name_label )

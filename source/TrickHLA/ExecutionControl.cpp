@@ -269,6 +269,12 @@ void ExecutionControl::pre_multi_phase_init_processes()
 */
 void ExecutionControl::post_multi_phase_init_processes()
 {
+
+   // When we join the federation, setup the list of current federates.
+   // When a federate joins / resigns, this list will be automatically
+   // updated by each federate.
+   save_restore_service->load_and_print_running_federate_names();
+
    // Make sure we setup time constrained and time regulating with the RTI.
    federate->setup_time_management();
 
@@ -590,8 +596,8 @@ void ExecutionControl::set_time_padding( double t )
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::start_federation_save_at_SST(
-   double        freeze_sst,
-   string const &file_name )
+   double         freeze_sst,
+   wstring const &file_name )
 {
    ostringstream errmsg;
    errmsg << "TrickHLA::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__

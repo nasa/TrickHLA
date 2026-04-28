@@ -301,9 +301,6 @@ void FedAmb::initiateFederateSave(
                        __LINE__, save_label_str.c_str() );
    }
 
-   // FIXME: Possibly deprecated code.
-   save_restore_service->set_save_name( label );
-
    return;
 }
 
@@ -333,9 +330,6 @@ void FedAmb::initiateFederateSave(
       message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d: Label: \'%s\', HLA-time:%.12G seconds.\n",
                        __LINE__, save_label_str.c_str(), i64time.get_time_in_seconds() );
    }
-
-   // FIXME: Possibly deprecated code.
-   save_restore_service->set_save_name( label );
 
    return;
 }
@@ -392,7 +386,7 @@ void FedAmb::federationSaveStatusResponse(
       message_publish( MSG_NORMAL, "FedAmb::federationSaveStatusResponse():%d\n",
                        __LINE__ );
    }
-   save_restore_service->process_requested_federation_save_status( response );
+   return;
 }
 
 void FedAmb::requestFederationRestoreSucceeded(
