@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Changed the SpaceFOM Quaternion and Space Time Coordinate data types to use the built-in TrickHLA fixed record support instead of the previous workaround of creating a custom encoder that required the use of an opaque-buffer to hold encoded data.
 - Fixed compile time warnings about variable initialization for the IMSim ExecutionControl class.
 - Fixed Python exception handling based on pull request #185.
 - Simulations using the --verbose command-line setting no longer need 'on' to be specified to enable verbose messages.

@@ -75,12 +75,16 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
     *  @param entity_pkg_name Name of the DynamicalEntity object in the SimObject.
     *  @param entity_fed_name Name of the DynamicalEntity instance.
     *  @param mngr_object TrickHLA::Object associated with this DynamicalEntity.
+    *  @param publish True to publish attributes, default will publish if create is true.
+    *  @param subscribe True to subscribe attributes, default will subscribe if create if false.
     *  */
    virtual void base_config( bool               create,
                              std::string const &sim_obj_name,
                              std::string const &entity_pkg_name,
                              std::string const &entity_fed_name,
-                             TrickHLA::Object  *mngr_object = NULL );
+                             TrickHLA::Object  *mngr_object = NULL,
+                             bool const         publish     = false,
+                             bool const         subscribe   = false );
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();

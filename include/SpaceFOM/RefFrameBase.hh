@@ -42,6 +42,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_BASE_HH
 #define SPACEFOM_REF_FRAME_BASE_HH
 
+#define NO_ENABLE_STC_ENCODER
+
 // System includes.
 #include <iostream>
 #include <string>
@@ -50,7 +52,9 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/LRTreeNodeBase.hh"
 #include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#endif // USE_SPACEFOM_ENCODERS
 
 // TrickHLA includes.
 #include "TrickHLA/Packing.hh"
@@ -109,12 +113,16 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
     *  @param ref_frame_parent_name Name of the parent frame for this ReferenceFrame instance.
     *  @param ref_frame_parent      Reference to parent frame for this ReferenceFrame instance.
     *  @param mngr_object           TrickHLA::Object associated with this reference frame.
+    *  @param publish               True to publish attributes, default will publish if create is true.
+    *  @param subscribe             True to subscribe attributes, default will subscribe if create if false.
     *  */
    virtual void base_config( bool               create,
                              std::string const &sim_obj_name,
                              std::string const &ref_frame_pkg_name,
                              std::string const &ref_frame_fed_name,
-                             TrickHLA::Object  *mngr_object = NULL );
+                             TrickHLA::Object  *mngr_object = NULL,
+                             bool const         publish     = false,
+                             bool const         subscribe   = false );
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */
@@ -209,7 +217,9 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
    RefFrameData packing_data; ///< @trick_units{--} Reference frame packing data.
 
    // Instantiate the Space/Time Coordinate encoder
+#if defined( USE_SPACEFOM_ENCODERS )
    SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
+#endif                                     // USE_SPACEFOM_ENCODERS
 
   private:
    // This object is not copyable

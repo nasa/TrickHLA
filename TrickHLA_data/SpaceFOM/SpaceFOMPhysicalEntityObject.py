@@ -16,6 +16,8 @@
 import trick
 from ..TrickHLA.TrickHLAObjectConfig import *
 from ..TrickHLA.TrickHLAAttributeConfig import *
+from ..SpaceFOM.SpaceFOMQuaternionAttributeConfig import *
+from ..SpaceFOM.SpaceFOMSpaceTimeCoordinateAttributeConfig import *
 
 
 class SpaceFOMPhysicalEntityObject( TrickHLAObjectConfig ):
@@ -53,18 +55,19 @@ class SpaceFOMPhysicalEntityObject( TrickHLAObjectConfig ):
          entity_S_define_instance.set_name( '' )
 
       # Call the base class constructor.
-      TrickHLAObjectConfig.__init__( self,
-                                     thla_create               = create_entity_object,
-                                     thla_instance_name        = entity_instance_name,
-                                     thla_FOM_name             = self.entity_FOM_name,
-                                     thla_lag_comp_instance    = entity_lag_comp,
-                                     thla_lag_comp_type        = entity_lag_comp_type,
-                                     thla_ownership_instance   = entity_ownership,
-                                     thla_deleted_instance     = entity_deleted,
-                                     thla_conditional_instance = entity_conditional,
-                                     thla_packing_instance     = entity_S_define_instance,
-                                     thla_object               = entity_thla_manager_object,
-                                     thla_thread_IDs           = entity_thread_IDs )
+      TrickHLAObjectConfig.__init__(
+                        self,
+                        thla_create               = create_entity_object,
+                        thla_instance_name        = entity_instance_name,
+                        thla_FOM_name             = self.entity_FOM_name,
+                        thla_lag_comp_instance    = entity_lag_comp,
+                        thla_lag_comp_type        = entity_lag_comp_type,
+                        thla_ownership_instance   = entity_ownership,
+                        thla_deleted_instance     = entity_deleted,
+                        thla_conditional_instance = entity_conditional,
+                        thla_packing_instance     = entity_S_define_instance,
+                        thla_object               = entity_thla_manager_object,
+                        thla_thread_IDs           = entity_thread_IDs )
 
       # Build the object attribute list.
       self.add_attributes()
@@ -85,101 +88,132 @@ class SpaceFOMPhysicalEntityObject( TrickHLAObjectConfig ):
 
       # Set up the map to the reference PhysicalEntity's name.
       trick_data_name = str( entity_instance_name ) + '.pe_packing_data.name'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'name',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
+      attribute = TrickHLAAttributeConfig(
+                        FOM_name      = 'name',
+                        trick_name    = trick_data_name,
+                        publish       = self.hla_attribute_publish,
+                        subscribe     = self.hla_attribute_subscribe,
+                        locally_owned = self.hla_create,
+                        config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                        rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
       # Set up the map to the reference PhysicalEntity's type.
       trick_data_name = str( entity_instance_name ) + '.pe_packing_data.type'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'type',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
+      attribute = TrickHLAAttributeConfig(
+                        FOM_name      = 'type',
+                        trick_name    = trick_data_name,
+                        publish       = self.hla_attribute_publish,
+                        subscribe     = self.hla_attribute_subscribe,
+                        locally_owned = self.hla_create,
+                        config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                        rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
       # Set up the map to the reference PhysicalEntity's status.
       trick_data_name = str( entity_instance_name ) + '.pe_packing_data.status'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'status',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
+      attribute = TrickHLAAttributeConfig(
+                        FOM_name      = 'status',
+                        trick_name    = trick_data_name,
+                        publish       = self.hla_attribute_publish,
+                        subscribe     = self.hla_attribute_subscribe,
+                        locally_owned = self.hla_create,
+                        config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                        rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
       # Set up the map to the name of the PhysicalEntity's parent reference frame.
       trick_data_name = str( entity_instance_name ) + '.pe_packing_data.parent_frame'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'parent_reference_frame',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
+      attribute = TrickHLAAttributeConfig(
+                        FOM_name      = 'parent_reference_frame',
+                        trick_name    = trick_data_name,
+                        publish       = self.hla_attribute_publish,
+                        subscribe     = self.hla_attribute_subscribe,
+                        locally_owned = self.hla_create,
+                        config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                        rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
       # Set up the map to the PhysicalEntity's space/time coordinate state.
-      trick_data_name = str( entity_instance_name ) + '.stc_encoder.buffer'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'state',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_NONE )
-      self.add_attribute( attribute )
+      if True:
+         trick_data_name = str( entity_instance_name ) + '.pe_packing_data.state'
+         attribute = SpaceFOMSpaceTimeCoordinateAttributeConfig(
+                           stc_FOM_name      = 'state',
+                           stc_trick_name    = trick_data_name,
+                           stc_publish       = self.hla_attribute_publish,
+                           stc_subscribe     = self.hla_attribute_subscribe,
+                           stc_locally_owned = self.hla_create,
+                           stc_config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC )
+         self.add_attribute( attribute )
+      else:
+         trick_data_name = str( entity_instance_name ) + '.stc_encoder.buffer'
+         attribute = TrickHLAAttributeConfig(
+                           FOM_name      = 'state',
+                           trick_name    = trick_data_name,
+                           publish       = self.hla_attribute_publish,
+                           subscribe     = self.hla_attribute_subscribe,
+                           locally_owned = self.hla_create,
+                           config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                           rti_encoding  = trick.TrickHLA.ENCODING_NONE )
+         self.add_attribute( attribute )
 
       # Set up the map to the PhysicalEntity's translational acceleration.
       trick_data_name = str( entity_instance_name ) + '.pe_packing_data.accel'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'acceleration',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
+      attribute = TrickHLAAttributeConfig(
+                        FOM_name      = 'acceleration',
+                        trick_name    = trick_data_name,
+                        publish       = self.hla_attribute_publish,
+                        subscribe     = self.hla_attribute_subscribe,
+                        locally_owned = self.hla_create,
+                        config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                        rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
       # Set up the map to the PhysicalEntity's rotational acceleration.
       trick_data_name = str( entity_instance_name ) + '.pe_packing_data.ang_accel'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'rotational_acceleration',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
+      attribute = TrickHLAAttributeConfig(
+                        FOM_name      = 'rotational_acceleration',
+                        trick_name    = trick_data_name,
+                        publish       = self.hla_attribute_publish,
+                        subscribe     = self.hla_attribute_subscribe,
+                        locally_owned = self.hla_create,
+                        config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                        rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
       # Set up the map to the PhysicalEntity's center of mass.
       trick_data_name = str( entity_instance_name ) + '.pe_packing_data.cm'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'center_of_mass',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
+      attribute = TrickHLAAttributeConfig(
+                        FOM_name      = 'center_of_mass',
+                        trick_name    = trick_data_name,
+                        publish       = self.hla_attribute_publish,
+                        subscribe     = self.hla_attribute_subscribe,
+                        locally_owned = self.hla_create,
+                        config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                        rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
       # Set up the map to the PhysicalEntity's struct to body attitude quaternion.
-      trick_data_name = str( entity_instance_name ) + '.quat_encoder.buffer'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'body_wrt_structural',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_NONE )
-      self.add_attribute( attribute )
+      if ( True ):
+         trick_data_name = str( entity_instance_name ) + '.pe_packing_data.body_wrt_struct'
+         attribute = SpaceFOMQuaternionAttributeConfig(
+                           quat_FOM_name      = 'body_wrt_structural',
+                           quat_trick_name    = trick_data_name,
+                           quat_publish       = self.hla_attribute_publish,
+                           quat_subscribe     = self.hla_attribute_subscribe,
+                           quat_locally_owned = self.hla_create,
+                           quat_config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC )
+         self.add_attribute( attribute )
+      else:
+         trick_data_name = str( entity_instance_name ) + '.quat_encoder.buffer'
+         attribute = TrickHLAAttributeConfig(
+                           FOM_name      = 'body_wrt_structural',
+                           trick_name    = trick_data_name,
+                           publish       = self.hla_attribute_publish,
+                           subscribe     = self.hla_attribute_subscribe,
+                           locally_owned = self.hla_create,
+                           config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                           rti_encoding  = trick.TrickHLA.ENCODING_NONE )
+         self.add_attribute( attribute )
 
       return
