@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <cstddef>
 #include <ostream>
 
 // Trick includes.
@@ -40,6 +41,7 @@ NASA, Johnson Space Center\n
 
 using namespace std;
 using namespace SpaceFOM;
+using namespace TrickHLA;
 
 /*!
  * @job_class{initialization}
@@ -115,7 +117,7 @@ bool SpaceTimeCoordinateData::operator==(
 bool SpaceTimeCoordinateData::operator!=(
    SpaceTimeCoordinateData const &rhs )
 {
-   return ( !( is_equal( rhs ) ) );
+   return ( !is_equal( rhs ) );
 }
 
 /*!
@@ -166,18 +168,18 @@ void SpaceTimeCoordinateData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\ttime: " << time << endl;
-   stream << "\tposition: "
-          << "\t\t" << pos[0] << ", "
+   stream << "               time: " << time << endl;
+   stream << "           position: "
+          << "\t" << pos[0] << ", "
           << "\t\t" << pos[1] << ", "
           << "\t\t" << pos[2] << endl;
-   stream << "\tvelocity: "
-          << "\t\t" << vel[0] << ", "
+   stream << "           velocity: "
+          << "\t" << vel[0] << ", "
           << "\t\t" << vel[1] << ", "
           << "\t\t" << vel[2] << endl;
    att.print_data( stream );
-   stream << "\tangular velocity: "
-          << "\t\t" << ang_vel[0] << ", "
+   stream << "   angular velocity: "
+          << "\t" << ang_vel[0] << ", "
           << "\t\t" << ang_vel[1] << ", "
           << "\t\t" << ang_vel[2] << endl;
 

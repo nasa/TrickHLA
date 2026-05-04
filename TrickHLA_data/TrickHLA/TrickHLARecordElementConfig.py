@@ -63,7 +63,6 @@ class TrickHLARecordElementConfig( object ):
                                                 input_elem.elements[indx] )
                else:
                   thla_elem.elements[indx].rti_encoding = input_elem.elements[indx].rti_encoding
-
                   if ( input_elem.elements[indx].trick_name != None ):
                      thla_elem.elements[indx].trick_name = str( input_elem.elements[indx].trick_name )
                   else:

@@ -22,6 +22,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
+@trick_link_dependency{SpaceTimeCoordinateConfig.cpp}
+@trick_link_dependency{SpaceTimeCoordinateData.cpp}
+@trick_link_dependency{SpaceTimeCoordinateEncoder.cpp}
 
 @revs_title
 @revs_begin
@@ -43,14 +46,17 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
-// SpaceFOM includes.
-#include "SpaceFOM/RefFrameBase.hh"
-
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
+
+// SpaceFOM includes.
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -68,8 +74,11 @@ RefFrameBase::RefFrameBase()
      name_attr( NULL ),
      parent_name_attr( NULL ),
      state_attr( NULL ),
-     packing_data(),
+     packing_data()
+#if defined( USE_SPACEFOM_ENCODERS )
+     ,
      stc_encoder( packing_data.state )
+#endif // USE_SPACEFOM_ENCODERS
 {
    return;
 }
@@ -91,7 +100,9 @@ void RefFrameBase::base_config(
    std::string const &sim_obj_name,
    std::string const &ref_frame_pkg_name,
    std::string const &ref_frame_fed_name,
-   TrickHLA::Object  *mngr_object )
+   TrickHLA::Object  *mngr_object,
+   bool const         publish,
+   bool const         subscribe )
 {
    string ref_frame_full_name = sim_obj_name + "." + ref_frame_pkg_name;
 
@@ -128,6 +139,10 @@ void RefFrameBase::base_config(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
+   // Determine the publish and subscribe attribute values.
+   bool publish_attr   = create || publish;
+   bool subscribe_attr = !create || subscribe;
+
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
@@ -143,32 +158,43 @@ void RefFrameBase::base_config(
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name   = "name";
-   object->attributes[0].trick_name = ref_frame_full_name + string( ".packing_data.name" );
-   ;
-   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[0].publish       = create;
-   object->attributes[0].subscribe     = !create;
+   object->attributes[0].FOM_name      = "name";
+   object->attributes[0].trick_name    = ref_frame_full_name + string( ".packing_data.name" );
+   object->attributes[0].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[0].publish       = publish_attr;
+   object->attributes[0].subscribe     = subscribe_attr;
    object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name   = "parent_name";
-   object->attributes[1].trick_name = ref_frame_full_name + string( ".packing_data.parent_name" );
-   ;
-   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[1].publish       = create;
-   object->attributes[1].subscribe     = !create;
+   object->attributes[1].FOM_name      = "parent_name";
+   object->attributes[1].trick_name    = ref_frame_full_name + string( ".packing_data.parent_name" );
+   object->attributes[1].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[1].publish       = publish_attr;
+   object->attributes[1].subscribe     = subscribe_attr;
    object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[2].FOM_name   = "state";
-   object->attributes[2].trick_name = ref_frame_full_name + string( ".stc_encoder.buffer" );
-   ;
-   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[2].publish       = create;
-   object->attributes[2].subscribe     = !create;
+#if defined( USE_SPACEFOM_ENCODERS )
+   object->attributes[2].FOM_name      = "state";
+   object->attributes[2].trick_name    = ref_frame_full_name + string( ".stc_encoder.buffer" );
+   object->attributes[2].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[2].publish       = publish_attr;
+   object->attributes[2].subscribe     = subscribe_attr;
    object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_NONE;
+#else
+   string const fom_name   = "state";
+   string const trick_name = ref_frame_full_name + string( ".packing_data.state" );
+
+   SpaceTimeCoordinateConfig::configure(
+      &object->attributes[2],
+      fom_name,
+      trick_name,
+      TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC,
+      publish_attr,
+      subscribe_attr,
+      create );
+#endif
 
    return;
 }
@@ -459,16 +485,12 @@ void RefFrameBase::publish()
          return;
       }
 
-      object->create_HLA_instance         = true;
-      object->attributes[0].publish       = true;
-      object->attributes[0].subscribe     = false;
-      object->attributes[0].locally_owned = true;
-      object->attributes[1].publish       = true;
-      object->attributes[1].subscribe     = false;
-      object->attributes[1].locally_owned = true;
-      object->attributes[2].publish       = true;
-      object->attributes[2].subscribe     = false;
-      object->attributes[2].locally_owned = true;
+      object->create_HLA_instance = true;
+      for ( int i = 0; i < object->attr_count; ++i ) {
+         object->attributes[i].publish       = true;
+         object->attributes[i].subscribe     = false;
+         object->attributes[i].locally_owned = true;
+      }
    }
 
    return;
@@ -510,16 +532,12 @@ void RefFrameBase::subscribe()
          return;
       }
 
-      object->create_HLA_instance         = false;
-      object->attributes[0].publish       = false;
-      object->attributes[0].subscribe     = true;
-      object->attributes[0].locally_owned = false;
-      object->attributes[1].publish       = false;
-      object->attributes[1].subscribe     = true;
-      object->attributes[1].locally_owned = false;
-      object->attributes[2].publish       = false;
-      object->attributes[2].subscribe     = true;
-      object->attributes[2].locally_owned = false;
+      object->create_HLA_instance = false;
+      for ( int i = 0; i < object->attr_count; ++i ) {
+         object->attributes[i].publish       = false;
+         object->attributes[i].subscribe     = true;
+         object->attributes[i].locally_owned = false;
+      }
    }
 
    return;
@@ -553,8 +571,10 @@ void RefFrameBase::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Encode the data into the buffer.
    stc_encoder.encode();
+#endif
 
    return;
 }
@@ -573,8 +593,10 @@ void RefFrameBase::unpack()
       }
    }
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
    stc_encoder.decode();
+#endif
 
    // Transfer the packing data into the working data.
    unpack_into_working_data();
@@ -598,8 +620,8 @@ void RefFrameBase::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << endl;
-   stream << "\ttime:   " << packing_data.state.time << endl;
+   stream << "         Object-Name: '" << object->get_name() << "'" << endl;
+   stream << "                time: " << packing_data.state.time << endl;
    packing_data.print_data( stream );
    stream << endl;
 
