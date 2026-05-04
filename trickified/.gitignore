@@ -1,5 +1,0 @@
-build/
-.trick/
-python
-*.o
-S_source.hh
