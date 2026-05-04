@@ -11,6 +11,8 @@
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
 
+##include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
 ##include "encoding/include/EncodingTest.hh"
 ##include "encoding/include/BoolData.hh"
 ##include "encoding/include/Enum8Data.hh"
@@ -38,6 +40,7 @@
 %header{
  using namespace TrickHLA;
  using namespace TrickHLAModel;
+ using namespace SpaceFOM;
 %}
 
 //=============================================================================
@@ -153,6 +156,9 @@ class TestSimObj : public Trick::SimObject {
 
    FixedRecData fixed_rec_data3 = FixedRecData();
    FixedRecData fixed_rec_data4 = FixedRecData();
+
+   SpaceTimeCoordinateData stc_fixed_rec1 = SpaceTimeCoordinateData();
+   SpaceTimeCoordinateData stc_fixed_rec2 = SpaceTimeCoordinateData();
 
    EncodingTest encoder_test;
 
@@ -301,6 +307,9 @@ class TestSimObj : public Trick::SimObject {
 
       ("initialization") encoder_test.fixed_record_attribute_test( "T.fixed_rec_data3", fixed_rec_data3,
                                                                    "T.fixed_rec_data4", fixed_rec_data4 );
+
+      ("initialization") encoder_test.stc_fixed_record_attribute_test( "T.stc_fixed_rec1", stc_fixed_rec1,
+                                                                       "T.stc_fixed_rec2", stc_fixed_rec2 );
 
       ("initialization") exec_terminate( __FILE__, "Done" );
    }

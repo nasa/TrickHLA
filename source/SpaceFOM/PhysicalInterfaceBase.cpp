@@ -43,15 +43,19 @@ NASA, Johnson Space Center\n
 #include "trick/reference_frame.h"
 #include "trick/vector_macros.h"
 
-// SpaceFOM includes.
-#include "SpaceFOM/PhysicalInterfaceBase.hh"
-#include "SpaceFOM/QuaternionData.hh"
-
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
+
+// SpaceFOM includes.
+#include "SpaceFOM/PhysicalInterfaceBase.hh"
+#include "SpaceFOM/QuaternionData.hh"
+#if !defined( USE_SPACEFOM_ENCODERS )
+#   include "SpaceFOM/QuaternionConfig.hh"
+#endif
 
 using namespace std;
 using namespace TrickHLA;
@@ -66,8 +70,11 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
      name_attr( NULL ),
      parent_attr( NULL ),
      position_attr( NULL ),
-     attitude_attr( NULL ),
+     attitude_attr( NULL )
+#if defined( USE_SPACEFOM_ENCODERS )
+     ,
      quat_encoder( packing_data.attitude )
+#endif
 {
    V_INIT( packing_data.position );
 }
@@ -92,7 +99,9 @@ void PhysicalInterfaceBase::base_config(
    std::string const &sim_obj_name,
    std::string const &interface_pkg_name,
    std::string const &interface_fed_name,
-   TrickHLA::Object  *mngr_object )
+   TrickHLA::Object  *mngr_object,
+   bool const         publish,
+   bool const         subscribe )
 {
    string interface_full_name_str = sim_obj_name + "." + interface_pkg_name;
 
@@ -131,44 +140,57 @@ void PhysicalInterfaceBase::base_config(
    object->attr_count = 9;
    object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
+   bool const publish_attr   = create || publish;
+   bool const subscribe_attr = !create || subscribe;
+
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name   = "name";
-   object->attributes[0].trick_name = interface_full_name_str + string( ".packing_data.name" );
-   ;
-   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[0].publish       = create;
-   object->attributes[0].subscribe     = !create;
+   object->attributes[0].FOM_name      = "name";
+   object->attributes[0].trick_name    = interface_full_name_str + string( ".packing_data.name" );
+   object->attributes[0].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[0].publish       = publish_attr;
+   object->attributes[0].subscribe     = subscribe_attr;
    object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name   = "parent_name";
-   object->attributes[1].trick_name = interface_full_name_str + string( ".packing_data.parent_name" );
-   ;
-   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[1].publish       = create;
-   object->attributes[1].subscribe     = !create;
+   object->attributes[1].FOM_name      = "parent_name";
+   object->attributes[1].trick_name    = interface_full_name_str + string( ".packing_data.parent_name" );
+   object->attributes[1].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[1].publish       = publish_attr;
+   object->attributes[1].subscribe     = subscribe_attr;
    object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[2].FOM_name   = "position";
-   object->attributes[2].trick_name = interface_full_name_str + string( ".packing_data.position" );
-   ;
-   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[2].publish       = create;
-   object->attributes[2].subscribe     = !create;
+   object->attributes[2].FOM_name      = "position";
+   object->attributes[2].trick_name    = interface_full_name_str + string( ".packing_data.position" );
+   object->attributes[2].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[2].publish       = publish_attr;
+   object->attributes[2].subscribe     = subscribe_attr;
    object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[3].FOM_name   = "attitude";
-   object->attributes[3].trick_name = interface_full_name_str + string( ".quat_encoder.buffer" );
-   ;
-   object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[3].publish       = create;
-   object->attributes[3].subscribe     = !create;
+#if defined( USE_SPACEFOM_ENCODERS )
+   object->attributes[3].FOM_name      = "attitude";
+   object->attributes[3].trick_name    = interface_full_name_str + string( ".quat_encoder.buffer" );
+   object->attributes[3].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[3].publish       = publish_attr;
+   object->attributes[3].subscribe     = subscribe_attr;
    object->attributes[3].locally_owned = create;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_NONE;
+#else
+   string const quat_fom_name   = "attitude";
+   string const quat_trick_name = interface_full_name_str + string( ".packing_data.attitude" );
+
+   QuaternionConfig::configure(
+      &object->attributes[3],
+      quat_fom_name,
+      quat_trick_name,
+      TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC,
+      publish_attr,
+      subscribe_attr,
+      create );
+#endif // USE_SPACEFOM_ENCODERS
 
    return;
 }
@@ -299,8 +321,10 @@ void PhysicalInterfaceBase::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Encode the data into the buffer.
    quat_encoder.encode();
+#endif
 
    return;
 }
@@ -314,8 +338,10 @@ void PhysicalInterfaceBase::unpack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Use the HLA encoder helpers to decode the PhysicalInterface fixed record.
    quat_encoder.decode();
+#endif
 
    // Transfer the packing data into the working data.
    unpack_into_working_data();
@@ -344,23 +370,22 @@ void PhysicalInterfaceBase::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
-          << "\tname:   '" << packing_data.name << "'" << endl
-          << "\tparent: '" << packing_data.parent_name << "'" << endl;
-   stream << "\tposition: "
-          << "\t\t" << packing_data.position[0] << ", "
+   stream << "        Object-Name: '" << object->get_name() << "'" << endl
+          << "               name: '" << packing_data.name << "'" << endl
+          << "             parent: '" << packing_data.parent_name << "'" << endl
+          << "           position: "
+          << "\t" << packing_data.position[0] << ", "
           << "\t\t" << packing_data.position[1] << ", "
-          << "\t\t" << packing_data.position[2] << endl;
-   stream << "\tattitude (s,v): "
-          << "\t\t" << packing_data.attitude.scalar << "; "
+          << "\t\t" << packing_data.position[2] << endl
+          << "     attitude (s,v): "
+          << "\t" << packing_data.attitude.scalar << "; "
           << "\t\t" << packing_data.attitude.vector[0] << ", "
           << "\t\t" << packing_data.attitude.vector[1] << ", "
-          << "\t\t" << packing_data.attitude.vector[2] << endl;
-   stream << "\tattitude (RPY){deg}: "
-          << "\t\t" << euler_angles[0] << ", "
+          << "\t\t" << packing_data.attitude.vector[2] << endl
+          << "attitude (RPY){deg}: "
+          << "\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << endl;
-   stream << endl;
-
+          << "\t\t" << euler_angles[2] << endl
+          << endl;
    return;
 }

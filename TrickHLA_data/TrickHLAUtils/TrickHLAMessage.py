@@ -38,7 +38,7 @@ class TrickHLAMessage():
    @staticmethod
    def comment( message ):
       print ( TrickHLAMessage._COMMENT_COLOR + TrickHLAMessage._COMMENT_TAG \
-       +message + TrickHLAMessage._END_COLOR )
+       + message + TrickHLAMessage._END_COLOR )
 
    @staticmethod
    def status( message ):
@@ -48,14 +48,14 @@ class TrickHLAMessage():
    @staticmethod
    def success( message ):
       print ( TrickHLAMessage._SUCCESS_COLOR + TrickHLAMessage._SUCCESS_TAG \
-       +message + TrickHLAMessage._END_COLOR )
+       + message + TrickHLAMessage._END_COLOR )
 
    @staticmethod
    def warning( message ):
       print ( TrickHLAMessage._WARNING_COLOR + TrickHLAMessage._WARNING_TAG \
-       +message + TrickHLAMessage._END_COLOR )
+       + message + TrickHLAMessage._END_COLOR )
 
    @staticmethod
    def failure( message ):
       sys.exit( TrickHLAMessage._FAILURE_COLOR + TrickHLAMessage._FAILURE_TAG \
-                +message + TrickHLAMessage._END_COLOR + TrickHLAMessage._EOL )
+                + message + TrickHLAMessage._END_COLOR + TrickHLAMessage._EOL )

@@ -4019,22 +4019,30 @@ void Object::pull_ownership()
                Attribute const *attr = attr_map_iter->second;
 
                // Determine if attribute ownership can be pulled.
-               if ( attr->is_remotely_owned() && attr->is_publish() ) {
+               if ( attr->is_remotely_owned() ) {
+                  if ( attr->is_publish() ) {
 
-                  // We will try and pull ownership of this attribute.
-                  attr_hdl_set.insert( attr->get_attribute_handle() );
+                     // We will try and pull ownership of this attribute.
+                     attr_hdl_set.insert( attr->get_attribute_handle() );
 
-                  if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                     message_publish( MSG_NORMAL, "Object::pull_ownership():%d\
-\n   Attribute '%s'->'%s' of object '%s'.\n",
-                                      __LINE__, get_FOM_name().c_str(),
-                                      attr->get_FOM_name().c_str(), get_name().c_str() );
+                     if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                        message_publish( MSG_NORMAL, "Object::pull_ownership():%d\n   Attribute '%s'->'%s' of object '%s'.\n",
+                                         __LINE__, get_FOM_name().c_str(),
+                                         attr->get_FOM_name().c_str(), get_name().c_str() );
+                     }
+                  } else {
+                     if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                        message_publish( MSG_NORMAL, "Object::pull_ownership():%d Can \
+not pull ownership of Attribute '%s'->'%s' of object '%s' for time %G because it is not \
+configured to be published.\n",
+                                         __LINE__, get_FOM_name().c_str(),
+                                         attr->get_FOM_name().c_str(), get_name().c_str(), pull_time );
+                     }
                   }
                } else {
                   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                     message_publish( MSG_NORMAL, "Object::pull_ownership():%d Can not \
-pull Attribute '%s'->'%s' of object '%s' for time %G because it is either already \
-owned or is not configured to be published.\n",
+                     message_publish( MSG_NORMAL, "Object::pull_ownership():%d Can not pull \
+ownership of Attribute '%s'->'%s' of object '%s' for time %G because it is already owned.\n",
                                       __LINE__, get_FOM_name().c_str(),
                                       attr->get_FOM_name().c_str(), get_name().c_str(), pull_time );
                   }
@@ -4064,8 +4072,8 @@ owned or is not configured to be published.\n",
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          message_publish( MSG_NORMAL, "Object::pull_ownership():%d No active requests, \
 %d scheduled request(s) pending for object '%s'.\n",
-                          __LINE__,
-                          (int)ownership->pull_requests.size(), get_name().c_str() );
+                          __LINE__, (int)ownership->pull_requests.size(),
+                          get_name().c_str() );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -4089,7 +4097,8 @@ for Attributes of object '%s'.\n",
          StringUtilities::to_string( rti_err_msg, e.what() );
          message_publish( MSG_WARNING, "Object::pull_ownership():%d Unable to pull attributes of \
 object '%s' because of error: '%s'\n",
-                          __LINE__, get_name().c_str(), rti_err_msg.c_str() );
+                          __LINE__, get_name().c_str(),
+                          rti_err_msg.c_str() );
       }
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4126,7 +4135,7 @@ void Object::pull_ownership_at_init(
    if ( attr_name_vector.empty() ) {
       ostringstream errmsg;
       errmsg << "Object::pull_ownership_at_init():" << __LINE__
-             << " ERROR: No attributes found to push ownership for object '"
+             << " ERROR: No attributes found to pull ownership for object '"
              << get_name() << "'!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
@@ -4157,20 +4166,28 @@ void Object::pull_ownership_at_init(
          }
 
          // Determine if attribute ownership can be pulled.
-         if ( !attr->is_locally_owned() ) {
+         if ( attr->is_remotely_owned() ) {
+            if ( attr->publish ) {
 
-            // We are will try and push ownership of this attribute.
-            attr_hdl_set.insert( attr->get_attribute_handle() );
+               // We will try and pull ownership of this attribute.
+               attr_hdl_set.insert( attr->get_attribute_handle() );
 
-            if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d\n   Attribute '%s'->'%s' of object '%s'.\n",
-                                __LINE__, get_FOM_name().c_str(),
-                                attr->get_FOM_name().c_str(), get_name().c_str() );
+               if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                  message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d\n   Attribute '%s'->'%s' of object '%s'.\n",
+                                   __LINE__, get_FOM_name().c_str(),
+                                   attr->get_FOM_name().c_str(), get_name().c_str() );
+               }
+            } else {
+               if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                  message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d Can not \
+pull ownership of Attribute '%s'->'%s' of object '%s' because it is not configured to be published.\n",
+                                   __LINE__, get_FOM_name().c_str(), attr->get_FOM_name().c_str(), get_name().c_str() );
+               }
             }
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d Can not \
-push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n",
+pull ownership of Attribute '%s'->'%s' of object '%s' because it is already owned.\n",
                                 __LINE__, get_FOM_name().c_str(), attr->get_FOM_name().c_str(), get_name().c_str() );
             }
          }
@@ -4848,16 +4865,14 @@ void Object::push_ownership()
                   attr_hdl_set->insert( attr->get_attribute_handle() );
 
                   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                     message_publish( MSG_NORMAL, "Object::push_ownership():%d\
-\n   Attribute '%s'->'%s' of object '%s'.\n",
+                     message_publish( MSG_NORMAL, "Object::push_ownership():%d\n   Attribute '%s'->'%s' of object '%s'.\n",
                                       __LINE__, get_FOM_name().c_str(),
                                       attr->get_FOM_name().c_str(), get_name().c_str() );
                   }
                } else {
                   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                      message_publish( MSG_NORMAL, "Object::push_ownership():%d Can not \
-push Attribute '%s'->'%s' of object '%s' for time %G because it is either already \
-owned or is not configured to be published.\n",
+push Attribute '%s'->'%s' of object '%s' for time %G because it is already remotely owned.\n",
                                       __LINE__, get_FOM_name().c_str(),
                                       attr->get_FOM_name().c_str(), get_name().c_str(), push_time );
                   }
