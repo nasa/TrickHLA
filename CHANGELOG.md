@@ -18,11 +18,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added a check to verify an attribute is not already owned and is configured to be published before executing a pull ownership request. Otherwise an error message is displayed and the simulation is terminated.
 - Added more detailed status messages indicating if an Attribute is sent or received for the TrickHLA::Conditional and TrickHLA::Packing interfaces used by the sine wave example simulations.
 
 
 ### Changed
 
+- Changed S_hla.mk to use c++14 as the default c++ standard for HLA Evolved now that Trick requires c++14 as the minimum.
 - Changed the SpaceFOM Quaternion and Space Time Coordinate data types to use the built-in TrickHLA fixed record support instead of the previous workaround of creating a custom encoder that required the use of an opaque-buffer to hold encoded data.
 - Fixed compile time warnings about variable initialization for the IMSim ExecutionControl class.
 - Fixed Python exception handling based on pull request #185.
