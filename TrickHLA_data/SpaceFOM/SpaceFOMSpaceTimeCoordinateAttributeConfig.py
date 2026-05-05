@@ -21,7 +21,7 @@ class SpaceFOMSpaceTimeCoordinateAttributeConfig( TrickHLAAttributeConfig, Space
 
    def __init__( self,
                  stc_FOM_name,
-                 stc_trick_name      = None,
+                 stc_trick_name,
                  stc_publish         = True,
                  stc_subscribe       = True,
                  stc_locally_owned   = True,

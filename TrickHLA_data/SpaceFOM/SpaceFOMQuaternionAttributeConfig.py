@@ -21,7 +21,7 @@ class SpaceFOMQuaternionAttributeConfig( TrickHLAAttributeConfig, SpaceFOMQuater
 
    def __init__( self,
                  quat_FOM_name,
-                 quat_trick_name      = None,
+                 quat_trick_name,
                  quat_publish         = True,
                  quat_subscribe       = True,
                  quat_locally_owned   = True,

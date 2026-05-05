@@ -20,7 +20,7 @@ from ..SpaceFOM.SpaceFOMQuaternionFixedRecordConfig import *
 class SpaceFOMSpaceTimeCoordinateFixedRecordConfig( TrickHLARecordElementConfig ):
 
    def __init__( self,
-                 stc_rec_trick_name = None ):
+                 stc_rec_trick_name ):
 
       TrickHLARecordElementConfig.__init__(
                                  self,
