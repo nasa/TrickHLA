@@ -161,13 +161,11 @@ trick.exec_set_enable_freeze( True )
 trick.exec_set_freeze_command( True )
 trick.exec_set_stack_trace( False )
 
-trick.var_server_set_port( 7000 )
-# trick.var_server_set_source_address( "127.0.0.1" )
-trick.sim_control_panel_set_enabled( True )
-
-# simControlPanel = trick.SimControlPanel()
-# simControlPanel.set_host( "localhost" )
-# trick.add_external_application( simControlPanel )
+enable_sim_control_panel = True
+if ( enable_sim_control_panel ):
+   trick.var_allow_connections()
+   trick.sim_control_panel_set_enabled( enable_sim_control_panel )
+   trick.var_server_set_port( 7000 )
 
 #---------------------------------------------
 # Set up data to record.

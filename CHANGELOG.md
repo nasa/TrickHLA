@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added support for Trick variable server security that disables the variable server by default. Any Trick simulation that uses the simulation control panel will need to enable the Trick variable server and the TrickHLA example simulations do that.
 - Added a check to verify an attribute is not already owned and is configured to be published before executing a pull ownership request. Otherwise an error message is displayed and the simulation is terminated.
 - Added more detailed status messages indicating if an Attribute is sent or received for the TrickHLA::Conditional and TrickHLA::Packing interfaces used by the sine wave example simulations.
 

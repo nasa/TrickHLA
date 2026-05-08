@@ -202,8 +202,11 @@ trick.exec_set_enable_freeze( freeze_enabled )
 trick.exec_set_freeze_command( freeze_enabled )
 trick.exec_set_stack_trace( False )
 
-trick.var_server_set_port( 7000 )
-trick.sim_control_panel_set_enabled( freeze_enabled )
+enable_sim_control_panel = True
+if ( enable_sim_control_panel ):
+   trick.var_allow_connections()
+   trick.sim_control_panel_set_enabled( enable_sim_control_panel )
+   trick.var_server_set_port( 7000 )
 
 #---------------------------------------------
 # Set up data to record.

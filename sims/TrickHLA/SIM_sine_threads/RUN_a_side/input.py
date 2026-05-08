@@ -13,8 +13,13 @@ exec(open( "Modified_data/trick/realtime.py" ).read())
 # Trick config
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
+
+enable_sim_control_panel = True
+if ( enable_sim_control_panel ):
+   trick.var_allow_connections()
+   trick.sim_control_panel_set_enabled( enable_sim_control_panel )
+   trick.var_server_set_port( 7000 )
 
 trick.exec_set_thread_process_type( 1, trick.PROCESS_TYPE_AMF_CHILD )
 trick.exec_set_thread_amf_cycle_time( 1, 0.250 )

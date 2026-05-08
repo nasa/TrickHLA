@@ -39,12 +39,14 @@ exec(open( "Modified_data/trick/realtime.py" ).read())
 # Trick config
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
 
-#trick.var_server_set_source_address( "127.0.0.1" )
-
-fix_var_server_source_address()
+enable_sim_control_panel = True
+if ( enable_sim_control_panel ):
+   trick.var_allow_connections()
+   trick.sim_control_panel_set_enabled( enable_sim_control_panel )
+   trick.var_server_set_port( 7000 )
+   fix_var_server_source_address()
 
 run_duration = 15.0
 

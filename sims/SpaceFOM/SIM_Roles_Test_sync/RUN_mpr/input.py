@@ -207,8 +207,13 @@ else:
 
 trick.exec_set_enable_freeze( False )
 trick.exec_set_freeze_command( False )
-trick.sim_control_panel_set_enabled( False )
 trick.exec_set_stack_trace( False )
+
+enable_sim_control_panel = False
+if ( enable_sim_control_panel ):
+   trick.var_allow_connections()
+   trick.sim_control_panel_set_enabled( enable_sim_control_panel )
+   trick.var_server_set_port( 7000 )
 
 # =========================================================================
 # Set up the HLA interfaces.
