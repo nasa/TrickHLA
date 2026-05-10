@@ -185,8 +185,8 @@ class TrickHLAFederateConfig( object ):
          self.disable()
 
       return
-   
-   
+
+
    def fix_var_server_source_address( self ):
       # The Trick variable server uses the local host name without verifying the
       # IP address it resolves to is actually used by the local host computer.
@@ -198,17 +198,19 @@ class TrickHLAFederateConfig( object ):
             try:
                ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode()
                if ( ifconfig_out.find( host_ip_addr ) < 0 ):
-                  print( 'WARNING: Invalid IP address ' + host_ip_addr
+                  print( '\033[33m' + 'WARNING: Invalid IP address ' + host_ip_addr
                          + ' resolved for host \'' + trick.var_server_get_hostname()
-                         + '\', setting the variable server source address to 127.0.0.1!' )
+                         + '\', setting the variable server source address to 127.0.0.1!'
+                         + '\033[0m' )
                   trick.var_server_set_source_address( '127.0.0.1' )
             except Exception:
                return  # Use host source address as is.
-      except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
-         print( 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
-                + '\' host name to an address, setting the variable server source address to 127.0.0.1!' )
+      except Exception:
+         print( '\033[33m' + 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
+                + '\' host name to an address, setting the variable server source address to 127.0.0.1!'
+                + '\033[0m' )
          trick.var_server_set_source_address( '127.0.0.1' )
-         
+
       return
 
 
