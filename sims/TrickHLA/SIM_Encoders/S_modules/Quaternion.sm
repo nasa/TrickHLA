@@ -5,7 +5,6 @@
 
 // SpaceFOM include files.
 ##include "SpaceFOM/QuaternionData.hh"
-##include "SpaceFOM/QuaternionEncoder.hh"
 
 // SpaceFOM include files.
 ##include "models/include/QuaternionPacking.hh"

@@ -15,11 +15,21 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
 ##############################################################################
-import socket
-import subprocess
+import os
 import sys
 
-sys.path.append( '../../../' )
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig2 import *
@@ -193,17 +203,21 @@ trick.exec_set_trap_sigfpe( True )
 # trick.add_read( 0.0 , '''trick.checkpoint('chkpnt_point')''' )
 # trick.checkpoint_end( 1 )
 
-# Setup for Trick real time execution. This is the "Pacing" function.
-exec( open( "Modified_data/trick/realtime.py" ).read() )
-if ( realtime_enabled != True ):
-   trick.real_time_disable()
-
-trick.exec_set_enable_freeze( freeze_enabled )
-trick.exec_set_freeze_command( freeze_enabled )
 trick.exec_set_stack_trace( False )
 
-trick.var_server_set_port( 7000 )
-trick.sim_control_panel_set_enabled( freeze_enabled )
+# Import and configure the TrickHLA base Simulation Configuration class.
+# Setup for Trick real time execution. This is the "Pacing" function.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+sine_sim_config = TrickHLASimConfig( 'sine' )
+sine_sim_config.realtime( frame_rate = 0.250 )
+sine_sim_config.fix_var_server_source_address()
+sine_sim_config.sim_control_panel()
+
+if ( realtime_enabled ):
+   trick.real_time_enable()
+else:
+   trick.real_time_disable()
+
 
 #---------------------------------------------
 # Set up data to record.
@@ -224,8 +238,6 @@ federate = SpaceFOMFederateConfig2(
    thla_federation_name = federation_name,
    thla_federate_name   = federate_name,
    thla_enabled         = True )
-
-federate.fix_var_server_source_address()
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job

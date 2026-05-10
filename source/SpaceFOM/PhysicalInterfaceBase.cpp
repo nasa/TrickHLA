@@ -303,9 +303,9 @@ void PhysicalInterfaceBase::pack()
    // Check for initialization.
    if ( !initialized ) {
       ostringstream errmsg;
-      errmsg << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
-             << " been called!" << endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      errmsg << "PhysicalInterfaceBase::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check for latency/lag compensation.
@@ -332,10 +332,10 @@ void PhysicalInterfaceBase::pack()
 void PhysicalInterfaceBase::unpack()
 {
    if ( !initialized ) {
-      ostringstream msg;
-      msg << "PhysicalInterfaceBase::unpack():" << __LINE__
-          << " ERROR: The initialize() function has not been called!" << endl;
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      ostringstream errmsg;
+      errmsg << "PhysicalInterfaceBase::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
 #if defined( USE_SPACEFOM_ENCODERS )

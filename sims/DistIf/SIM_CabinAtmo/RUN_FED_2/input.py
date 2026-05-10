@@ -109,7 +109,9 @@ if not override_settings:
 if ( print_usage == True ):
    print_usage_message()
 
-# trick setup
+# Trick setup
+trick.var_resolve_hostname()
+trick.var_allow_connections()
 trick.sim_services.exec_set_trap_sigfpe( 1 )
 simControlPanel = trick.SimControlPanel()
 trick.add_external_application( simControlPanel )

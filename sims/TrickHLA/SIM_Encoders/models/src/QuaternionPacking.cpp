@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../source/SpaceFOM/QuaternionConfig.cpp}
 @trick_link_dependency{models/src/QuaternionPacking.cpp}
 
 @revs_title
@@ -54,6 +55,11 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/ExecutionControl.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#  include "SpaceFOM/QuaternionEncoder.hh"
+#else
+#  include "SpaceFOM/QuaternionConfig.hh"
+#endif
 
 // Artemis FOM includes.
 #include "models/include/QuaternionPacking.hh"
@@ -70,8 +76,11 @@ QuaternionPacking::QuaternionPacking()
      test( true ),
      working_data( NULL ),
      quat_attr( NULL ),
-     packing_data(),
+     packing_data()
+#if defined( USE_SPACEFOM_ENCODERS )
+     ,
      quat_encoder( packing_data )
+#endif
 {
    return;
 }
@@ -81,6 +90,7 @@ QuaternionPacking::QuaternionPacking()
  */
 QuaternionPacking::~QuaternionPacking()
 {
+   return;
 }
 
 /*!
@@ -94,7 +104,7 @@ void QuaternionPacking::base_config(
    SpaceFOM::QuaternionData *working,
    TrickHLA::Object         *mngr_object  )
 {
-   string stc_name_str = string( sim_obj_name ) + "." + string( packing_name );
+   string quat_name_str = string( sim_obj_name ) + "." + string( packing_name );
    string trick_name_str;
 
    // Associate the instantiated Manager object with this packing object.
@@ -138,14 +148,25 @@ void QuaternionPacking::base_config(
    //
    // Specify the attributes.
    //
+#if defined( USE_SPACEFOM_ENCODERS )
    object->attributes[0].FOM_name      = "quaternion";
-   trick_name_str                      = stc_name_str + string( ".quat_encoder.buffer" );
+   trick_name_str                      = quat_name_str + string( ".quat_encoder.buffer" );
    object->attributes[0].trick_name    = trick_name_str.c_str();
-   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
+   object->attributes[0].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_NONE;
+#else
+   trick_name_str = quat_name_str + string( ".packing_data" );
+   QuaternionConfig::configure( &object->attributes[0],
+                                "quaternion",
+                                trick_name_str,
+                                TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC,
+                                publishes,
+                                !publishes,
+                                publishes );
+#endif // USE_SPACEFOM_ENCODERS
 
    return;
 }
@@ -268,8 +289,10 @@ void QuaternionPacking::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Encode the data into the buffer.
    quat_encoder.encode();
+#endif
 
    return;
 }
@@ -288,8 +311,10 @@ void QuaternionPacking::unpack()
       }
    }
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Use the HLA encoder helpers to decode the Quaternion fixed record.
    quat_encoder.decode();
+#endif
 
    // Transfer the packing data into the working data.
    unpack_into_working_data();

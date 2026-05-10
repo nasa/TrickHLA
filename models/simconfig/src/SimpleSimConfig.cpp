@@ -150,6 +150,13 @@ void SimpleSimConfig::initialize()
  */
 void SimpleSimConfig::pack()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "SimpleSimConfig::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    ostringstream msg;
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
@@ -201,6 +208,13 @@ void SimpleSimConfig::pack()
 
 void SimpleSimConfig::unpack()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "SimpleSimConfig::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       msg << "===================================================" << endl;

@@ -140,6 +140,13 @@ void SineLagCompensation::initialize_callback(
  */
 void SineLagCompensation::send_lag_compensation()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "SineLagCompensation::send_lag_compensation():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    double const dt   = get_lookahead().get_time_in_seconds();
    double const time = get_scenario_time() + dt;
 
@@ -214,6 +221,13 @@ void SineLagCompensation::bypass_send_lag_compensation()
  */
 void SineLagCompensation::receive_lag_compensation()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "SineLagCompensation::receive_lag_compensation():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    double const time = get_scenario_time();
 
    // Use the inherited debug-handler to allow debug comments to be turned

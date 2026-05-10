@@ -1,7 +1,9 @@
 # @copyright Copyright 2024 United States Government as represented by the Administrator of the
 #            National Aeronautics and Space Administration.  All Rights Reserved. */
 #
-# trick setup
+# Trick setup
+trick.var_resolve_hostname()
+trick.var_allow_connections()
 trick.sim_services.exec_set_trap_sigfpe( 1 )
 simControlPanel = trick.SimControlPanel()
 trick.add_external_application( simControlPanel )

@@ -101,9 +101,9 @@ bool WStringData::compare(
    msg << "WStringData::compare():" << __LINE__ << endl;
 
    if ( this->_wstring == data._wstring ) {
-      msg << "this->string (" << this->_wstring << ") == (" << data._wstring << ") data.string" << endl;
+      msg << "this->wstring (" << this->_wstring << ") == (" << data._wstring << ") data.wstring" << endl;
    } else {
-      msg << "this->string (" << this->_wstring << ") != (" << data._wstring << ") data.string" << endl;
+      msg << "this->wstring (" << this->_wstring << ") != (" << data._wstring << ") data.wstring" << endl;
       equal_values = false;
    }
 
@@ -172,7 +172,7 @@ wstring WStringData::to_wstring()
 {
    wstringstream msg;
    msg << "WStringData::to_wstring():" << __LINE__ << endl
-       << "string:" << _wstring << endl;
+       << "wstring:" << _wstring << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_wstring[" << i << "]:" << vec3_wstring[i] << " ";

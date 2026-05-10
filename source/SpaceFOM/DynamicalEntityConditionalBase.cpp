@@ -31,9 +31,12 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <ostream>
+#include <sstream>
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 
 // SpaceFOM includes.
@@ -96,7 +99,6 @@ void DynamicalEntityConditionalBase::initialize()
 void DynamicalEntityConditionalBase::initialize_callback(
    TrickHLA::Object *obj )
 {
-
    // Get references to all the TrickHLA::Attribute for this object status.
    // We do this here so that we only do the attribute lookup once instead of
    // looking it up every time the unpack function is called.
@@ -119,6 +121,13 @@ void DynamicalEntityConditionalBase::initialize_callback(
 bool DynamicalEntityConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "DynamicalEntityConditionalBase::should_send():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    bool send_attr = false;
 
    // If there is simulation data to compare to and if the attribute FOM name

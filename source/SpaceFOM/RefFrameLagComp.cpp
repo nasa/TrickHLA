@@ -108,7 +108,7 @@ void RefFrameLagComp::initialize()
       errmsg << "SpaceFOM::RefFrameLagComp::initialize():" << __LINE__
              << " ERROR: Unexpected NULL Trick integrator!" << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Call the base class initialize function.l
