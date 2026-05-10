@@ -209,7 +209,6 @@ trick.exec_set_trap_sigfpe( True )
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 roles_sim_config = TrickHLASimConfig( 'roles' )
 roles_sim_config.realtime( frame_rate = 0.250 )
-roles_sim_config.fix_var_server_source_address()
 roles_sim_config.sim_control_panel()
 
 # Setup for Trick real time execution. This is the "Pacing" function.
@@ -235,8 +234,6 @@ federate = SpaceFOMFederateConfig(
    thla_federation_name = federation_name,
    thla_federate_name   = federate_name,
    thla_enabled         = True )
-
-federate.fix_var_server_source_address()
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job

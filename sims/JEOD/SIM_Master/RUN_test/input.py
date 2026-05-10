@@ -132,7 +132,6 @@ trick.exec_set_stack_trace( True )
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 jeod_sim_config = TrickHLASimConfig( 'jeod' )
 jeod_sim_config.realtime( frame_rate = 0.250 )
-jeod_sim_config.fix_var_server_source_address()
 jeod_sim_config.sim_control_panel()
 
 # FIXME: Use echo jobs to debug an initialization issue.

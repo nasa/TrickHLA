@@ -51,7 +51,6 @@ from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball Sim' )
 ball_sim_config.realtime()
-ball_sim_config.fix_var_server_source_address()
 ball_sim_config.sim_control_panel()
 
 

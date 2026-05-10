@@ -162,9 +162,6 @@ ball_fed_config = BallFederateConfig(
    federation_name = 'BallFederation',
    enabled         = True )
 
-# Check to see if we need to fix the Trick variable server address.
-ball_fed_config.fix_var_server_source_address()
-
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_2_TRACE )

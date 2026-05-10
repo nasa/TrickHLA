@@ -31,7 +31,6 @@ trick.checkpoint_post_init(1)
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 sine_sim_config = TrickHLASimConfig( 'sine' )
 sine_sim_config.realtime( frame_rate = 0.250 )
-sine_sim_config.fix_var_server_source_address()
 sine_sim_config.sim_control_panel()
 
 trick.exec_set_thread_process_type( 1, trick.PROCESS_TYPE_AMF_CHILD )
