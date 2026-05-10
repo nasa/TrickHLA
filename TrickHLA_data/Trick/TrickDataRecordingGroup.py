@@ -79,21 +79,22 @@ class TrickDataRecordingGroup( ABC ):
          return
 
       # Check for change variable if not always.
-      if (self.when != TrickDRWhen.ALWAYS) & (self.change_var == None ):
+      if ( self.when != TrickDRWhen.ALWAYS ) & ( self.change_var == None ):
          raise ValueError( 'TrickDataRecordingGroup:__init__: Selected on change with no change variable!' )
          return
 
+      # NOTE: Using a match statement was introduced in Python 3.10, but Python
+      # version 3.9 is the default on RHEL 9, so use if statement instead.
       # Instantiate the formatted Data Recording Group
-      match self.format:
-         case TrickDRFormat.ASCII:
-            self.drg = trick.DRAscii( self.name )
-         case TrickDRFormat.BINARY:
-            self.drg = trick.DRBinary( self.name )
-         case TrickDRFormat.HDF5:
-            self.drg = trick.HDF5( self.name )
-         case _:
-            raise ValueError( 'TrickDataRecordingGroup:__init__: Unknown Trick Data Recording Format!' )
-            return
+      if ( self.format == TrickDRFormat.ASCII ):
+         self.drg = trick.DRAscii( self.name )
+      elif ( self.format == TrickDRFormat.BINARY ):
+         self.drg = trick.DRBinary( self.name )
+      elif ( self.format ==  TrickDRFormat.HDF5 ):
+         self.drg = trick.HDF5( self.name )
+      else:
+         raise ValueError( 'TrickDataRecordingGroup:__init__: Unknown Trick Data Recording Format!' )
+         return
 
       # Set the rate for the Data Recording Group.
       self.drg.set_cycle( self.rate )
