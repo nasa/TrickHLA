@@ -48,8 +48,8 @@ NASA, Johnson Space Center\n
 // Default: NO_TRICKHLA_CYCLIC_READ_TIME_STATS
 #define NO_TRICKHLA_CYCLIC_READ_TIME_STATS
 
-// Insert a compile time error if an unsupported version of Trick 19 is used.
-// Minimum supported Trick 19 version: 25.0.3
+// Insert a compile time error if an unsupported version of Trick is used.
+// Minimum supported Trick version: 25.0.3
 #define MIN_TRICK_VER 25  // Set to the minimum supported Trick Major version.
 #define MIN_TRICK_MINOR 0 // Set to the minimum supported Trick Minor version.
 #define MIN_TRICK_PATCH 3 // Set to the minimum supported Trick Patch version.
