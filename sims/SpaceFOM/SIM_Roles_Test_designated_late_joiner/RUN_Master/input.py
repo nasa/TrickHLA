@@ -177,7 +177,6 @@ trick.exec_set_stack_trace( True )
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 roles_sim_config = TrickHLASimConfig( 'roles' )
 roles_sim_config.realtime( frame_rate = 0.250 )
-roles_sim_config.fix_var_server_source_address()
 roles_sim_config.sim_control_panel()
 
 

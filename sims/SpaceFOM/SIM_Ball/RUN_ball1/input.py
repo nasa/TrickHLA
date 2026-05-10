@@ -75,7 +75,6 @@ run_duration = 10.0
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball 1 Sim' )
 ball_sim_config.realtime()
-ball_sim_config.fix_var_server_source_address()
 ball_sim_config.sim_control_panel()
 
 
@@ -163,9 +162,6 @@ ball_fed_config = BallFederateConfig(
    federate_name   = 'Ball 1 Sim',
    federation_name = 'BallFederation',
    enabled         = True )
-
-# Check to see if we need to fix the Trick variable server address.
-ball_fed_config.fix_var_server_source_address()
 
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )

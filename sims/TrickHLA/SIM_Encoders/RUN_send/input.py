@@ -24,7 +24,6 @@ if trickhla_home not in sys.path :
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 encoder_sim_config = TrickHLASimConfig( 'encoder' )
 encoder_sim_config.realtime( frame_rate = 0.1 )
-encoder_sim_config.fix_var_server_source_address()
 encoder_sim_config.sim_control_panel()
 
 

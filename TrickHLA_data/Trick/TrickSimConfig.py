@@ -81,6 +81,7 @@ class TrickSimConfig( ABC ):
    # Setup to use the Trick Simulation Control Panel
    def sim_control_panel( self ):
 
+      self.fix_var_server_source_address()
       trick.var_resolve_hostname()
       trick.var_allow_connections()
       trick.exec_set_freeze_command( True )
@@ -102,15 +103,17 @@ class TrickSimConfig( ABC ):
             try:
                ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode()
                if ( ifconfig_out.find( host_ip_addr ) < 0 ):
-                  print( 'WARNING: Invalid IP address ' + host_ip_addr
+                  print( '\033[33m' + 'WARNING: Invalid IP address ' + host_ip_addr
                          + ' resolved for host \'' + trick.var_server_get_hostname()
-                         + '\', setting the variable server source address to 127.0.0.1!' )
+                         + '\', setting the variable server source address to 127.0.0.1!'
+                         + '\033[0m' )
                   trick.var_server_set_source_address( '127.0.0.1' )
             except Exception:
                return  # Use host source address as is.
       except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
-         print( 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
-                + '\' host name to an address, setting the variable server source address to 127.0.0.1!' )
+         print( '\033[33m' + 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
+                + '\' host name to an address, setting the variable server source address to 127.0.0.1!'
+                + '\033[0m' )
          trick.var_server_set_source_address( '127.0.0.1' )
 
       return
