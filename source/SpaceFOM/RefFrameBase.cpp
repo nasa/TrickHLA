@@ -330,7 +330,6 @@ void RefFrameBase::set_name( std::string const &new_name )
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
-      // Print message and terminate.
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -351,7 +350,6 @@ void RefFrameBase::set_parent_name( std::string const &name )
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
-      // Print message and terminate.
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -376,7 +374,6 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
-      // Print message and terminate.
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -550,12 +547,10 @@ void RefFrameBase::pack()
 {
    // Check for initialization.
    if ( !initialized ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         ostringstream errmsg;
-         errmsg << "RefFrameBase::pack() Warning: The initialize() function has not"
-                << " been called!" << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
-      }
+      ostringstream errmsg;
+      errmsg << "RefFrameBase::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check for latency/lag compensation.
@@ -585,12 +580,10 @@ void RefFrameBase::pack()
 void RefFrameBase::unpack()
 {
    if ( !initialized ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         ostringstream errmsg;
-         errmsg << "RefFrameBase::unpack():" << __LINE__
-                << " Warning: The initialize() function has not been called!" << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
-      }
+      ostringstream errmsg;
+      errmsg << "RefFrameBase::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
 #if defined( USE_SPACEFOM_ENCODERS )

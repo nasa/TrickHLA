@@ -158,6 +158,13 @@ void DynamicalEntityLagCompBase::initialize_states()
  *  TrickHLALagCompensation class. */
 void DynamicalEntityLagCompBase::send_lag_compensation()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "DynamicalEntityLagCompBase::send_lag_compensation():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    double begin_t = get_scenario_time();
    double end_t;
 
@@ -211,6 +218,13 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void DynamicalEntityLagCompBase::receive_lag_compensation()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "DynamicalEntityLagCompBase::receive_lag_compensation():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    double end_t  = get_scenario_time();
    double data_t = entity.get_time();
 
@@ -398,7 +412,6 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
  */
 void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream ) const
 {
-
    PhysicalEntityLagCompBase::print_lag_comp_data( stream );
 
    // Set the print precision.

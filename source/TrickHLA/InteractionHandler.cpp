@@ -101,7 +101,7 @@ void InteractionHandler::set_interaction( TrickHLA::Interaction *inter )
       errmsg << "TrickHLA::InteractionHandler::set_interaction():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Assign the object.

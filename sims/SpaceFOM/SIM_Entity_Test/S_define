@@ -105,7 +105,7 @@ class THLAInitSimObject : public Trick::SimObject {
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
-      // P60 THLA.manager->initialize() job.
+      // P60 THLA.federate->initialize() job.
       //--------------------------------------------------------------------
 
       // Alternative method: Send and receive all the initialization data.
@@ -148,7 +148,7 @@ class EntityDynamicsSimObject : public Trick::SimObject {
    EntityDynamicsSimObject()
    {
       ("default_data")            entity.default_data();
-      ("initialization")          entity.initialize();
+      P3("initialization")        entity.initialize();
       ("derivative")              entity.derivative();
       ("integration") trick_ret = entity.integrate();
    }

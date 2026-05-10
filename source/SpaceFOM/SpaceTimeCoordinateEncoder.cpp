@@ -171,7 +171,7 @@ void SpaceTimeCoordinateEncoder::encode()
              << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Copy the encoded data into the buffer.
@@ -215,7 +215,7 @@ void SpaceTimeCoordinateEncoder::decode()
              << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    return;

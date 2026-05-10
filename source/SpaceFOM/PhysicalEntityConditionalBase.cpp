@@ -131,6 +131,13 @@ void PhysicalEntityConditionalBase::initialize_callback(
 bool PhysicalEntityConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    bool send_attr = false;
 
    // If there is simulation data to compare to and if the attribute FOM name
@@ -257,7 +264,7 @@ bool PhysicalEntityConditionalBase::should_send(
              << "ERROR: Could not find the data for the specified FOM attribute!"
              << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    return send_attr;

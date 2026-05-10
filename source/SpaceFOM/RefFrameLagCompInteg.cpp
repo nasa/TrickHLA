@@ -83,7 +83,7 @@ void RefFrameLagCompInteg::initialize()
              << " ERROR: Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Call the base class initialize routine.
@@ -97,6 +97,13 @@ void RefFrameLagCompInteg::initialize()
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::send_lag_compensation()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "RefFrameLagCompInteg::send_lag_compensation():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    double begin_t = get_scenario_time();
    double end_t;
 
@@ -150,6 +157,13 @@ void RefFrameLagCompInteg::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::receive_lag_compensation()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    double end_t  = get_scenario_time();
    double data_t = ref_frame.get_time();
 
