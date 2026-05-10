@@ -110,7 +110,7 @@ class TrickSimConfig( ABC ):
                   trick.var_server_set_source_address( '127.0.0.1' )
             except Exception:
                return  # Use host source address as is.
-      except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
+      except Exception:
          print( '\033[33m' + 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
                 + '\' host name to an address, setting the variable server source address to 127.0.0.1!'
                 + '\033[0m' )
