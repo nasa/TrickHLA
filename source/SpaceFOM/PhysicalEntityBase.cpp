@@ -304,7 +304,7 @@ void PhysicalEntityBase::initialize()
              << " ERROR: Unexpected empty federation instance name!"
              << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Must have federation instance parent_ref_frame.
@@ -315,7 +315,7 @@ void PhysicalEntityBase::initialize()
              << " Setting parent_ref_frame to empty string."
              << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -405,8 +405,10 @@ void PhysicalEntityBase::pack()
 {
    // Check for initialization.
    if ( !initialized ) {
-      message_publish( MSG_WARNING, "PhysicalEntityBase::pack():%d WARNING: The initialize() function has not been called!\n",
-                       __LINE__ );
+      ostringstream errmsg;
+      errmsg << "PhysicalEntityBase::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check for latency/lag compensation.
@@ -439,8 +441,10 @@ void PhysicalEntityBase::unpack()
    // double dt; // Local vs. remote time difference.
 
    if ( !initialized ) {
-      message_publish( MSG_WARNING, "PhysicalEntityBase::unpack():%d WARNING: The initialize() function has not been called!\n",
-                       __LINE__ );
+      ostringstream errmsg;
+      errmsg << "PhysicalEntityBase::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.

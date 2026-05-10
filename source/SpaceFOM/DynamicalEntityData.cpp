@@ -114,7 +114,6 @@ void DynamicalEntityData::copy( DynamicalEntityData const &source )
  */
 void DynamicalEntityData::print_data( std::ostream &stream ) const
 {
-
    // Set the print precision.
    stream.precision( 15 );
 
@@ -136,6 +135,5 @@ void DynamicalEntityData::print_data( std::ostream &stream ) const
           << "\t" << inertia_rate[0][0] << ", " << inertia_rate[1][0] << ", " << inertia_rate[2][0] << endl
           << "              \t" << inertia_rate[0][1] << ", " << inertia_rate[1][1] << ", " << inertia_rate[2][1] << endl
           << "              \t" << inertia_rate[0][2] << ", " << inertia_rate[1][2] << ", " << inertia_rate[2][2] << endl;
-
    return;
 }

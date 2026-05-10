@@ -37,13 +37,13 @@ from enum import IntEnum
 from abc import ABC, abstractmethod
 
 class TrickSimConfig( ABC ):
-   
+
    # Make this a singleton class.
    _instance = None
-   
+
    # Override the allocation function to ensure on and only one instance.
    def __new__( tsc, *args, **kwargs ):
-      
+
       # Check if and instance already exists.
       if tsc._instance is None:
          # Not already allocated.  So, allocate one and only one instance.
@@ -51,7 +51,7 @@ class TrickSimConfig( ABC ):
       else:
          # Already allocated!  This is an error.
          sys.exit( 'TrickSimConfig:Error: Can only have one TrickSimConfig instance!' )
-         
+
       # Return the single existing instance.
       return tsc._instance
 
@@ -59,31 +59,34 @@ class TrickSimConfig( ABC ):
    # Class constructor.
    def __init__( self,
                  name ):
-            
+
       return
-   
-   
+
+
    # Common Trick realtime configuration.
    def realtime( self, frame_rate = 0.1 ):
       
       trick.frame_log_on()
       trick.real_time_enable()
       trick.exec_set_software_frame( frame_rate )
+      trick.exec_set_freeze_frame( frame_rate )
       trick.itimer_enable()
 
       trick.exec_set_enable_freeze( True )
       trick.exec_set_freeze_command( False )
       
       return
-   
-   
+
+
    # Setup to use the Trick Simulation Control Panel
    def sim_control_panel( self ):
 
+      trick.var_resolve_hostname()
+      trick.var_allow_connections()
       trick.exec_set_freeze_command( True )
       self.simControlPanel = trick.SimControlPanel()
       trick.add_external_application( self.simControlPanel )
-      
+
       return
 
 
@@ -111,5 +114,3 @@ class TrickSimConfig( ABC ):
          trick.var_server_set_source_address( '127.0.0.1' )
 
       return
-   
-   

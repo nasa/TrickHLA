@@ -150,6 +150,13 @@ void SineConditional::initialize_callback(
 bool SineConditional::should_send(
    TrickHLA::Attribute *attr )
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "SineConditional::should_send():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    if ( attr == NULL ) {
       return false;
    }

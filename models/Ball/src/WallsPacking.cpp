@@ -228,10 +228,11 @@ void WallsPacking::initialize_callback(
  */
 void WallsPacking::pack()
 {
-   // Check for initialization.
    if ( !initialized ) {
-      message_publish( MSG_WARNING, "WallsPacking::pack():%d WARNING: The initialize() function has not been called!\n",
-                       __LINE__ );
+      ostringstream errmsg;
+      errmsg << "WallsPacking::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check for latency/lag compensation.
@@ -255,10 +256,11 @@ void WallsPacking::pack()
  */
 void WallsPacking::unpack()
 {
-
    if ( !initialized ) {
-      message_publish( MSG_WARNING, "WallsPacking::unpack():%d WARNING: The initialize() function has not been called!\n",
-                       __LINE__ );
+      ostringstream errmsg;
+      errmsg << "WallsPacking::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Transfer the packing data into the working data.

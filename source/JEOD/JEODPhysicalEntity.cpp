@@ -96,8 +96,7 @@ void JEODPhysicalEntity::initialize()
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_data: "
              << this->pe_packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -253,8 +252,7 @@ void JEODPhysicalEntity::set_data(
       errmsg << "SpaceFOM::JEODPhysicalEntity::set_data():" << __LINE__
              << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
              << this->pe_packing_data.name << endl;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->dyn_body_data = dyn_body_data_ptr;
 

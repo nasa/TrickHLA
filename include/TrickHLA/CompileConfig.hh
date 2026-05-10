@@ -30,7 +30,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_COMPILE_CONFIG_HH
 
 // TEMP
-#define NO_USE_SPACEFOM_ENCODERS
+#define DONT_USE_SPACEFOM_ENCODERS
 
 // Trick does not support the std::wstring type in the Memory Manager for now.
 // Default: NO_TRICK_WSTRING_MM_SUPPORT

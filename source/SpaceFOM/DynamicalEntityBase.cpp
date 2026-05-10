@@ -348,9 +348,9 @@ void DynamicalEntityBase::pack()
    // Check for initialization.
    if ( !initialized ) {
       ostringstream errmsg;
-      errmsg << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
-             << " been called!" << endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      errmsg << "DynamicalEntityBase::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Print out debug information if desired.
@@ -374,8 +374,8 @@ void DynamicalEntityBase::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!" << endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Print out debug information if desired.

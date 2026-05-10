@@ -41,11 +41,14 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#  include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#endif
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
@@ -157,8 +160,10 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
    // SpaceFOM TrickHLAObject data for the SpaceTimeCoordinate.
    SpaceFOM::SpaceTimeCoordinateData packing_data; ///< @trick_units{--} STC packing data.
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Instantiate the Space/Time Coordinate encoder
    SpaceFOM::SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
+#endif
 
   private:
    // This object is not copyable

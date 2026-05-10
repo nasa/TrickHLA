@@ -50,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace SpaceFOM;
 
 #define REF_FRAME_PACKING_DEBUG 0
@@ -90,14 +91,13 @@ RefFrameState::~RefFrameState()
 void RefFrameState::set_data(
    RefFrameData *ref_frame_data_ptr )
 {
-
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
    this->ref_frame_data = ref_frame_data_ptr;
@@ -117,7 +117,7 @@ void RefFrameState::initialize()
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
