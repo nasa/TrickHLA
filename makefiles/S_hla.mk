@@ -72,8 +72,12 @@ endif
 
 # Needed for TrickHLA.
 TRICK_SFLAGS   += -I${TRICKHLA_HOME}/S_modules
-TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
-TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
+TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD}
+TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD}
+ifeq ($(HLA_STANDARD),IEEE_1516_2010)
+	TRICK_CFLAGS   += -Wno-deprecated-declarations
+	TRICK_CXXFLAGS += -Wno-deprecated-declarations
+endif
 
 # Configure the ICG and swig excludes.
 ifdef TRICK_ICG_EXCLUDE
