@@ -68,8 +68,9 @@ run_duration = 10.0
 # Configure the Ball simulation.
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball Sim' )
-ball_sim_config.realtime()
+ball_sim_config.realtime( software_frame_time = 0.1 )
 ball_sim_config.sim_control_panel()
+ball_sim_config.start_in_freeze()
 
 
 #---------------------------------------------------------------------------

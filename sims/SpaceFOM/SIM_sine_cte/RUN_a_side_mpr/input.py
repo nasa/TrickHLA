@@ -159,20 +159,18 @@ if ( print_usage == True ):
 # Set up Trick executive parameters.
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe( True )
 # trick.checkpoint_pre_init( 1 )
 # trick.checkpoint_post_init( 1 )
 # trick.add_read( 0.0 , '''trick.checkpoint('chkpnt_point')''' )
 # trick.checkpoint_end( 1 )
 
-trick.exec_set_stack_trace( False )
-
 # Import and configure the TrickHLA base Simulation Configuration class.
 # Setup for Trick real time execution. This is the "Pacing" function.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 sine_sim_config = TrickHLASimConfig( 'sine' )
-sine_sim_config.realtime( frame_rate = 0.250 )
+sine_sim_config.realtime( software_frame_time = 0.250 )
 sine_sim_config.sim_control_panel()
+sine_sim_config.start_in_freeze()
 
 
 #---------------------------------------------

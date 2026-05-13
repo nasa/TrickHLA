@@ -119,11 +119,11 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
 void JEODPhysicalInterface::initialize()
 {
    // Check if the DynBody is set.
-   if ( dyn_body == NULL ) {
+   if ( this->dyn_body == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body reference: for interface "
-             << this->packing_data.name << endl;
+             << " ERROR: Unexpected NULL dyn_body reference: for interface '"
+             << this->packing_data.name << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -131,14 +131,14 @@ void JEODPhysicalInterface::initialize()
    if ( this->vehicle_point_id == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_id for interface "
-             << this->packing_data.name << endl;
+             << " ERROR: Unexpected NULL vehicle_point_id for interface '"
+             << this->packing_data.name << "'." << endl;
       // Print message and terminate.
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check to make sure the JEODPhysicalInterface data is set.
-   if ( vehicle_point_data == NULL ) {
+   if ( this->vehicle_point_data == NULL ) {
       // It is not already set; so, let's try to look it up.
       this->vehicle_point_data = dyn_body->find_vehicle_point( vehicle_point_id );
    }
@@ -147,9 +147,8 @@ void JEODPhysicalInterface::initialize()
    if ( this->vehicle_point_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_data for interface "
-             << vehicle_point_id << endl;
-      // Print message and terminate.
+             << " ERROR: Unexpected NULL vehicle_point_data for interface '"
+             << vehicle_point_id << "'." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -176,8 +175,8 @@ void JEODPhysicalInterface::pack_from_working_data()
    // Check for initialization.
    if ( !initialized ) {
       ostringstream errmsg;
-      errmsg << "JEODPhysicalInterface::pack() ERROR: The initialize() function has not"
-             << " been called!" << endl;
+      errmsg << "JEODPhysicalInterface::pack() ERROR: The initialize() function"
+             << " has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
