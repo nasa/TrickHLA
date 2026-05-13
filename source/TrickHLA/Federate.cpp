@@ -828,7 +828,7 @@ FederateHandle Federate::decode_federate_handle(
 {
    // Handles defined by the MOM interface have a an encoding of
    // HLAvariableArray, which is different than the Handles returned
-   // by the  RTI-ambassador with the encoding of VariableLengthData.
+   // by the RTI-ambassador with the encoding of VariableLengthData.
    //
    // From IEEE 1516.1-2025:
    // Table 15 — MOM array data type table, page 327

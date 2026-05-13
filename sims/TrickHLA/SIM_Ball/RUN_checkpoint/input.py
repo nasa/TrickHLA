@@ -50,8 +50,9 @@ from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 # Configure the Ball simulation.
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball Sim' )
-ball_sim_config.realtime()
+ball_sim_config.realtime( software_frame_time = 0.1 )
 ball_sim_config.sim_control_panel()
+ball_sim_config.start_in_freeze()
 
 
 #---------------------------------------------------------------------------
@@ -68,8 +69,6 @@ trick.TMM_hexfloat_checkpoint(True)
 #---------------------------------------------------------------------------
 # Read in the 5 second checkpoint from the RUN_test directory.
 #---------------------------------------------------------------------------
-trick.exec_set_enable_freeze( True )
-trick.exec_set_freeze_command( True )
 # Start up in Freeze and manually load the modified checkpoint.
 # Eventually, the Trick team will have an ability to restart from a
 # checkpoint without entering into Freeze and manually loading the

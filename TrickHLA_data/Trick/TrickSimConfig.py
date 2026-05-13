@@ -41,7 +41,7 @@ class TrickSimConfig( ABC ):
    # Make this a singleton class.
    _instance = None
 
-   # Override the allocation function to ensure on and only one instance.
+   # Override the allocation function to ensure one and only one instance.
    def __new__( tsc, *args, **kwargs ):
 
       # Check if and instance already exists.
@@ -57,24 +57,34 @@ class TrickSimConfig( ABC ):
 
    @abstractmethod
    # Class constructor.
-   def __init__( self,
-                 name ):
+   def __init__( self, name ):
+
+      trick.exec_set_trap_sigfpe( True )
+      trick.exec_set_stack_trace( False )
+
+      # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
+      trick.exec_set_enable_freeze( True )
+
+      return
+
+
+   # Set the Trick software and freeze frame times.
+   def set_software_and_freeze_frame_time( self, software_frame_time ):
+
+      trick.exec_set_software_frame( software_frame_time )
+      trick.exec_set_freeze_frame( software_frame_time )
 
       return
 
 
    # Common Trick realtime configuration.
-   def realtime( self, frame_rate = 0.1 ):
+   def realtime( self, software_frame_time ):
       
       trick.frame_log_on()
       trick.real_time_enable()
-      trick.exec_set_software_frame( frame_rate )
-      trick.exec_set_freeze_frame( frame_rate )
       trick.itimer_enable()
+      self.set_software_and_freeze_frame_time( software_frame_time )
 
-      trick.exec_set_enable_freeze( True )
-      trick.exec_set_freeze_command( False )
-      
       return
 
 
@@ -84,9 +94,20 @@ class TrickSimConfig( ABC ):
       self.fix_var_server_source_address()
       trick.var_resolve_hostname()
       trick.var_allow_connections()
-      trick.exec_set_freeze_command( True )
       self.simControlPanel = trick.SimControlPanel()
       trick.add_external_application( self.simControlPanel )
+
+      return
+
+
+   # Setup to start the simulation in freeze or run.
+   def start_in_freeze(self, freeze = True ):
+
+      # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
+      trick.exec_set_enable_freeze( True )
+
+      # Set to True to start the simulation in freeze.
+      trick.exec_set_freeze_command( freeze )
 
       return
 

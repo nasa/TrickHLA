@@ -68,7 +68,7 @@ run_duration = 10.0
 # Configure the Ball simulation.
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball 3 Sim' )
-ball_sim_config.realtime()
+ball_sim_config.realtime( software_frame_time = 0.1 )
 
 
 #---------------------------------------------------------------------------
