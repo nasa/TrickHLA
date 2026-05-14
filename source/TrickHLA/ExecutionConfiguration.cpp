@@ -206,19 +206,19 @@ void ExecutionConfiguration::configure()
 
    // Release the memory used by the required_federates c-string.
    if ( !required_federates.empty() ) {
-      required_federates = "";
+      required_federates = L"";
    }
 
-   ostringstream federate_list;
+   wstringstream federate_list;
    int           required_federate_count = 0;
 
    // Build a comma separated list of required federate names.
-   for ( int i = 0; i < federate->known_feds_count; ++i ) {
-      if ( federate->known_feds[i].required ) {
+   for ( int i = 0; i < federate->known_federates.size(); ++i ) {
+      if ( federate->known_federates[i].required ) {
          if ( required_federate_count > 0 ) {
             federate_list << ",";
          }
-         federate_list << federate->known_feds[i].name;
+         federate_list << federate->known_federates[i].name;
          ++required_federate_count;
       }
    }
@@ -227,7 +227,7 @@ void ExecutionConfiguration::configure()
    this->num_federates = required_federate_count;
 
    // Make sure we use correct function so that it is Trick managed memory.
-   this->required_federates = string( federate_list.str() );
+   this->required_federates = wstring( federate_list.str() );
 }
 
 /*!
@@ -270,13 +270,16 @@ void ExecutionConfiguration::pack()
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      string owner_str, required_feds_str;
+      StringUtilities::to_string( owner_str, owner );
+      StringUtilities::to_string( required_feds_str, required_federates );
       msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << endl
           << "\tObject-Name:'" << object->get_name() << "'" << endl
-          << "\towner:'" << owner << "'" << endl
+          << "\towner:'" << owner_str << "'" << endl
           << "\trun_duration:" << run_duration << " seconds" << endl
           << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_base_unit() << endl
           << "\tnum_federates:" << num_federates << endl
-          << "\trequired_federates:'" << required_federates << "'" << endl
+          << "\trequired_federates:'" << required_feds_str << "'" << endl
           << "===================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -307,13 +310,16 @@ void ExecutionConfiguration::unpack()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      string owner_str, required_feds_str;
+      StringUtilities::to_string( owner_str, owner );
+      StringUtilities::to_string( required_feds_str, required_federates );
       msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << endl
           << "\tObject-Name:'" << object->get_name() << "'" << endl
-          << "\towner:'" << owner << "'" << endl
+          << "\towner:'" << owner_str << "'" << endl
           << "\trun_duration:" << run_duration << " seconds" << endl
           << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_base_unit() << endl
           << "\tnum_federates:" << num_federates << endl
-          << "\trequired_federates:'" << required_federates << "'" << endl
+          << "\trequired_federates:'" << required_feds_str << "'" << endl
           << "===================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -337,6 +343,9 @@ void ExecutionConfiguration::setup_ref_attributes(
 void ExecutionConfiguration::print_execution_configuration() const
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      string owner_str, required_feds_str;
+      StringUtilities::to_string( owner_str, owner );
+      StringUtilities::to_string( required_feds_str, required_federates );
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl
@@ -345,8 +354,8 @@ void ExecutionConfiguration::print_execution_configuration() const
           << "\t run_duration:          " << setprecision( 18 ) << run_duration << " seconds" << endl
           << "\t run_duration_base_time:" << setprecision( 18 ) << run_duration_base_time << " " << Int64BaseTime::get_base_unit() << endl
           << "\t num_federates:         " << setprecision( 18 ) << num_federates << endl
-          << "\t required_federates:    '" << required_federates << "'" << endl
-          << "\t owner:                 '" << owner << "'" << endl
+          << "\t required_federates:    '" << required_feds_str << "'" << endl
+          << "\t owner:                 '" << owner_str << "'" << endl
           << "=============================================================" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

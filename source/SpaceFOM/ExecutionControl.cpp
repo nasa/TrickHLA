@@ -666,6 +666,8 @@ described in section 7.2 and figure 7-4.
 */
 void ExecutionControl::role_determination_process()
 {
+   RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;
+
    // Initialize the MOM interface handles.
    federate->initialize_MOM_handles();
 
@@ -682,19 +684,19 @@ void ExecutionControl::role_determination_process()
       // Make sure all required federates have joined the federation.
       federate->wait_for_required_federates_to_join();
 
+      // Get the list of joined federates.
+      federate->get_joined_federate_handle_set( joined_federate_handles );
+
       // Register the initialization synchronization points used to control
       // the SpaceFOM startup process. Section 7.2 Figure 7-4.
-      register_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT,
-                           federate->get_joined_federate_handles() );
-      register_sync_point( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT,
-                           federate->get_joined_federate_handles() );
-      register_sync_point( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT,
-                           federate->get_joined_federate_handles() );
+      register_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT, joined_federate_handles );
+      register_sync_point( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT, joined_federate_handles );
+      register_sync_point( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT, joined_federate_handles );
 
       // Register all the user defined multiphase initialization
       // synchronization points just for the joined federates.
-      register_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST,
-                                federate->get_joined_federate_handles() );
+      register_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST, joined_federate_handles );
+
    } else {
 
       //
@@ -1249,7 +1251,7 @@ void ExecutionControl::post_multi_phase_init_processes()
    // When we join the federation, setup the list of current federates.
    // When a federate joins / resigns, this list will be automatically
    // updated by each federate.
-   save_restore_service->load_and_print_running_federate_names();
+   federate->update_and_print_joined_federates();
 
    // Setup HLA time management.
    federate->setup_time_management();

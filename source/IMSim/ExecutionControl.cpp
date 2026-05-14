@@ -412,7 +412,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
             // read the required federates data from external file, replacing
             // the contents of 'known_feds'.
-            save_restore_service->read_running_feds_file( tRestoreName );
+            save_restore_service->read_joined_feds_file( tRestoreName );
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
@@ -570,6 +570,8 @@ Simulation has started and is now running...\n",
          }
       } else { // MASTER but restore was not specified
 
+         RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;
+
          // Setup all the RTI handles for the objects, attributes and interaction
          // parameters.
          object_service->setup_object_RTI_handles();           // NOLINT
@@ -578,19 +580,19 @@ Simulation has started and is now running...\n",
          // Make sure all required federates have joined the federation.
          federate->wait_for_required_federates_to_join();
 
+         // Get the list of joined federates.
+         federate->get_joined_federate_handle_set( joined_federate_handles );
+
          // Register the initialization synchronization points used to control
          // the IMSim startup process.
-         register_sync_point( IMSim::SIM_CONFIG_SYNC_POINT,
-                              federate->get_joined_federate_handles() );
-         register_sync_point( IMSim::INITIALIZE_SYNC_POINT,
-                              federate->get_joined_federate_handles() );
-         register_sync_point( IMSim::STARTUP_SYNC_POINT,
-                              federate->get_joined_federate_handles() );
+         register_sync_point( IMSim::SIM_CONFIG_SYNC_POINT, joined_federate_handles );
+         register_sync_point( IMSim::INITIALIZE_SYNC_POINT, joined_federate_handles );
+         register_sync_point( IMSim::STARTUP_SYNC_POINT, joined_federate_handles );
 
          // Register all the user defined multiphase initialization
          // synchronization points just for the joined federates.
          register_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST,
-                                   federate->get_joined_federate_handles() );
+                                   joined_federate_handles );
 
          // Call publish_and_subscribe AFTER we've initialized the
          // federate, and FedAmb.
@@ -988,7 +990,7 @@ void ExecutionControl::post_multi_phase_init_processes()
    // When we join the federation, setup the list of current federates.
    // When a federate joins / resigns, this list will be automatically
    // updated by each federate.
-   save_restore_service->load_and_print_running_federate_names();
+   federate->update_and_print_joined_federates();
 
    // Setup HLA time management.
    federate->setup_time_management();

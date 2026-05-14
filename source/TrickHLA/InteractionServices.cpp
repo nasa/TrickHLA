@@ -373,7 +373,7 @@ void InteractionServices::setup_interaction_RTI_handles(
          StringUtilities::to_wstring( ws_FOM_name, inter_FOM_name );
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-            msg << "InteractionServices::setup_interaction_RTI_handles()" << __LINE__ << endl
+            msg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__ << endl
                 << "----------------- RTI Handles (Interactions & Parameters) ---------------\n"
                 << "Getting RTI Interaction-Class-Handle for"
                 << " FOM-Name:'" << inter_FOM_name << "'" << endl;

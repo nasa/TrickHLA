@@ -63,10 +63,10 @@ class ExecutionConfiguration : public ExecutionConfigurationBase
    double  run_duration;           ///< @trick_units{s}  The run duration of the simulation.
    int64_t run_duration_base_time; ///< @trick_units{us} The run duration in base HLA Logical Time.
 
-   int         num_federates;      ///< @trick_units{--} Number of required federates.
-   std::string required_federates; ///< @trick_units{--} Comma-separated list of required federates.
+   int          num_federates;      ///< @trick_units{--} Number of required federates.
+   std::wstring required_federates; ///< @trick_units{--} Comma-separated list of required federates.
 
-   std::string owner; ///< @trick_units{--} Federate's name publishing the object.
+   std::wstring owner; ///< @trick_units{--} Federate's name publishing the object.
 
   public:
    // Public constructors and destructors.

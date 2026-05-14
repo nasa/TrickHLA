@@ -155,15 +155,13 @@ class TrickHLAFederateConfig( object ):
 
       # Loop through the known federates and add them.
       if len( self.known_federates ):
+         temp_federate = trick.KnownFederate()
          self.federate.enable_known_feds = True
-         self.federate.known_feds_count = len( self.known_federates )
-         self.federate.known_feds = trick.sim_services.alloc_type( self.federate.known_feds_count,
-                                                                   "TrickHLA::KnownFederate" )
-         indx = 0
          for known_federate in self.known_federates:
-            self.federate.known_feds[indx].name = str( known_federate[1] )
-            self.federate.known_feds[indx].required = known_federate[0]
-            indx += 1
+            temp_federate.name     = known_federate[0]
+            temp_federate.type     = known_federate[1]
+            temp_federate.required = known_federate[2]
+            self.federate.known_federates.push_back( temp_federate )
 
       else:
          # Disable known federates if none have been added.
@@ -447,7 +445,7 @@ class TrickHLAFederateConfig( object ):
    def enable( self ):
 
       self.enabled = True
-
+ 
       # Turn on all the HLA sim objects associated with this HLA federate.
       for sim_object in self.sim_objects:
          trick.exec_set_sim_object_onoff( sim_object, True )
@@ -496,13 +494,17 @@ class TrickHLAFederateConfig( object ):
       return
 
 
-   def add_known_federate( self, is_required, name ):
+   def add_known_federate( self, is_required, name, type = None ):
+      
+      # If the type isn't specified, use an empty string.
+      if ( not type ) :
+         type = ''
 
       # You can only add known federates before initialize method is called.
       if self.initialized:
          print( 'TrickHLAFederateConfig.add_known_federate(): Warning, already initialized, function ignored!' )
       else:
-         self.known_federates.append( ( is_required, str( name ) ) )
+         self.known_federates.append( ( str( name ), str( type ), is_required ) )
 
       return
 

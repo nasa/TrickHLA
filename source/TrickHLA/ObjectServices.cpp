@@ -845,7 +845,7 @@ void ObjectServices::setup_object_RTI_handles(
          ostringstream msg;
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            msg << "ObjectServices::setup_object_RTI_handles()" << __LINE__ << endl
+            msg << "ObjectServices::setup_object_RTI_handles():" << __LINE__ << endl
                 << "----------------- RTI Handles (Objects & Attributes) ---------------"
                 << endl
                 << "Getting RTI Object-Class-Handle for"
@@ -1778,6 +1778,7 @@ bool ObjectServices::discover_object_instance(
 
    // Determine if the discovered instance was for a data object.
    if ( trickhla_obj != NULL ) {
+
       // Set the Instance ID for the discovered object.
       trickhla_obj->set_instance_handle_and_name( theObject, theObjectInstanceName );
 
@@ -1794,13 +1795,12 @@ bool ObjectServices::discover_object_instance(
          message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d Data-Object '%s' Instance-ID:%s\n",
                           __LINE__, trickhla_obj->get_name().c_str(), id_str.c_str() );
       }
+
    } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederate_class( theObjectClass ) ) {
 
-      federate->add_federate_instance_id( theObject );
+      // Add this to the list of joined federates.
+      federate->add_joined_federate( theObject, theObjectInstanceName );
       return_value = true;
-
-      // Save into my federate's discovered federate storage area
-      federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          string id_str, name_str;
@@ -1809,9 +1809,10 @@ bool ObjectServices::discover_object_instance(
          message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d Discovered MOM HLA-Federate Object-Instance-ID:%s Name:'%s'\n",
                           __LINE__, id_str.c_str(), name_str.c_str() );
       }
+
    } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_class( theObjectClass ) ) {
 
-      federate->add_MOM_HLAfederation_instance_id( theObject );
+      federate->add_MOM_HLAfederation_instance_handle( theObject );
       return_value = true;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
@@ -1821,6 +1822,7 @@ bool ObjectServices::discover_object_instance(
          message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d MOM HLA-Federation '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
       }
+
    }
 
    return return_value;

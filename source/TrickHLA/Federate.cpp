@@ -118,6 +118,39 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
+//--------------------------------------------------------------------
+// Joined federate update process state enumeration support functions.
+//--------------------------------------------------------------------
+std::string TrickHLA::to_string( THLAFederateUpdateProcessEnum update_state )
+{
+   switch (update_state) {
+   case THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE:
+      return( "FEDERATE_UPDATE_NONE" );
+      break;
+   case THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE:
+      return( "FEDERATE_UPDATE_ACTIVATE" );
+      break;
+   case THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED:
+      return( "FEDERATE_UPDATE_INITIATED" );
+      break;
+   case THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED:
+      return( "FEDERATE_UPDATE_RECEIVED" );
+      break;
+   case THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS:
+      return( "FEDERATE_UPDATE_IN_PROGRESS" );
+      break;
+   case THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE:
+      return( "FEDERATE_UPDATE_COMPLETE" );
+      break;
+   case THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED:
+      return( "FEDERATE_UPDATE_FAILED" );
+      break;
+   default:
+      return( "FEDERATE_UPDATE_UNKNOWN" );
+   }
+   return( "FEDERATE_UPDATE_UNKNOWN" );
+}
+
 /*!
  * @details NOTE: In most cases, we would allocate and set default names in
  * the constructor. However, since we want this class to be Input Processor
@@ -138,8 +171,8 @@ Federate::Federate()
      MIM_module(),
      join_constraint( TrickHLA::FEDERATE_JOIN_EARLY_OR_LATE ),
      enable_known_feds( true ),
-     known_feds_count( 0 ),
-     known_feds( NULL ),
+     //known_feds_count( 0 ),
+     //known_feds( NULL ),
      debug_level( TrickHLA::DEBUG_LEVEL_NO_TRACE ),
      code_section( TrickHLA::DEBUG_SOURCE_ALL_MODULES ),
      can_rejoin_federation( false ),
@@ -150,7 +183,6 @@ Federate::Federate()
      connected( false ),
      shutdown_called( false ),
      got_startup_sync_point( false ),
-     make_copy_of_run_directory( false ),
      publish_data( true ),
      MOM_HLAfederation_class_handle(),
      MOM_HLAfederatesInFederation_handle(),
@@ -162,11 +194,14 @@ Federate::Federate()
      MOM_HLAfederateType_handle(),
      MOM_HLAfederateName_handle(),
      MOM_HLAfederate_handle(),
-     MOM_HLAfederate_instance_name_map(),
+     //MOM_HLAfederate_instance_name_map(),
      joined_federate_mutex(),
-     joined_federate_name_map(),
-     joined_federate_handles(),
-     joined_federate_names(),
+     //joined_federate_name_map(),
+     //joined_federate_handles(),
+     //joined_federate_names(),
+     //joined_federate_types(),
+     joined_federates_map(),
+     federate_update_state(THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE),
      federate_ambassador( *this ),
      time_management_service( *this ),
      object_service( *this ),
@@ -192,28 +227,21 @@ Federate::Federate()
  */
 Federate::~Federate()
 {
-   // Free the memory used by the array of known Federates for the Federation.
-   clear_known_feds();
-   known_feds_count = 0;
 
-   // Clear the joined federate name map.
-   joined_federate_name_map.clear();
+   // Clear the list of known federates.
+   known_federates.clear();
 
-   // Clear the set of federate handles for the joined federates.
-   joined_federate_handles.clear();
-
-   // Clear the list of joined federate names.
-   joined_federate_names.clear();
+   // Clear the list of joined federates.
+   joined_federates_map.clear();
 
    // Clear the MOM HLAfederation instance name map.
    MOM_HLAfederation_instance_name_map.clear();
 
-   // Clear the list of discovered object federate names.
-   MOM_HLAfederate_instance_name_map.clear();
-
    // Make sure we destroy the mutex.
    time_management_service.time_adv_state_mutex.destroy();
    joined_federate_mutex.destroy();
+
+   return;
 }
 
 /*!
@@ -435,11 +463,7 @@ void Federate::restart_initialization()
    if ( enable_known_feds ) {
 
       // Only need to do anything if there are known federates.
-      if ( ( known_feds_count <= 0 ) || ( known_feds == NULL ) ) {
-
-         // Make sure the count reflects the state of the array.
-         known_feds_count = 0;
-
+      if ( known_federates.empty() ) {
          // If we are enabling known federates, then there probably should be some.
          ostringstream errmsg;
          errmsg << "Federate::restart_initialization():" << __LINE__
@@ -447,19 +471,19 @@ void Federate::restart_initialization()
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      if ( known_feds_count >= INT_MAX ) {
+      if ( known_federates.size() >= INT_MAX ) {
          ostringstream errmsg;
          errmsg << "Federate::restart_initialization():" << __LINE__
-                << " ERROR: Known Federates count (" << known_feds_count
+                << " ERROR: Known Federates count (" << known_federates.size()
                 << ") is >= " << INT_MAX << "!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Validate the name of each Federate known to be in the Federation.
-      for ( int i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_federates.size(); ++i ) {
 
          // A zero length Federate name is not allowed.
-         if ( known_feds[i].name.empty() ) {
+         if ( known_federates[i].name.empty() ) {
             ostringstream errmsg;
             errmsg << "Federate::restart_initialization():" << __LINE__
                    << " ERROR: Invalid name of known Federate at array index: "
@@ -834,36 +858,75 @@ bool Federate::is_RTI_ready(
    return rti_valid;
 }
 
-void Federate::add_federate_instance_id(
-   ObjectInstanceHandle const &instance_hndl )
+void Federate::add_joined_federate(
+   ObjectInstanceHandle const &instance_hndl,
+   wstring const              &instance_name )
 {
-   joined_federate_name_map[instance_hndl] = L"";
-}
+   // Only add the federate instance if not already present.
+   if ( !is_joined_federate_by_object_handle( instance_hndl ) ){
 
-void Federate::remove_federate_instance_id(
-   ObjectInstanceHandle const &instance_hndl )
-{
-   TrickHLAObjInstanceNameMap::iterator iter;
-   iter = joined_federate_name_map.find( instance_hndl );
-   if ( iter != joined_federate_name_map.end() ) {
-      joined_federate_name_map.erase( iter );
+      // Add a new entry into the joined federates list.
+      // NOTE: This entry isn't completely filled out yet.
+      KnownFederate known_federate;
+      known_federate.object_instance_handle = instance_hndl;
+      known_federate.MOM_instance_name      = instance_name;
+      joined_federates_map[instance_hndl] = known_federate;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, instance_hndl );
+         string name_str;
+         StringUtilities::to_string( name_str, instance_name );
 
          ostringstream summary;
-         summary << "Federate::remove_federate_instance_id():" << __LINE__
-                 << " Object Instance:" << handle_str << endl;
+         summary << "Federate::add_joined_federate():" << __LINE__
+                 << " Object '" << name_str << "', with Instance Handle:"
+                 << handle_str << endl;
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
+
    }
+
+   return;
 }
 
-bool Federate::is_federate_instance_id(
-   ObjectInstanceHandle const &id )
+void Federate::remove_joined_federate(
+   ObjectInstanceHandle const &instance_hndl )
 {
-   return ( joined_federate_name_map.find( id ) != joined_federate_name_map.end() );
+   // If this isn't a joined federate, then just return.
+   if ( !is_joined_federate_by_object_handle( instance_hndl ) ) {
+      return;
+   }
+   // Concurrency critical code section because joined-federate state is changed
+   // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
+   // function.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+
+      // Find the federate in the joined federate map and remove it.
+      KnownFederateMap::iterator iter;
+      iter = joined_federates_map.find( instance_hndl );
+      if ( iter != joined_federates_map.end() ) {
+
+         joined_federates_map.erase( iter );
+
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            string handle_str;
+            StringUtilities::to_string( handle_str, instance_hndl );
+
+            ostringstream summary;
+            summary << "Federate::remove_joined_federate():" << __LINE__
+                    << " Object Instance:" << handle_str << endl;
+            message_publish( MSG_NORMAL, summary.str().c_str() );
+         }
+
+      }
+
+   }
+
+   return;
 }
 
 /*! @brief Decode the specified encoded Federate Handle.
@@ -991,10 +1054,85 @@ FederateHandle Federate::decode_federate_handle(
    return fed_handle;
 }
 
+std::wstring Federate::get_federate_MOM_name( KnownFederate const & federate )
+{
+   std::wstring federate_MOM_name;
+
+   // Sanity check to make sure we have an RTI ambassador.
+   RTIambassador *rti_amb = get_RTI_ambassador();
+   if ( rti_amb == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::determine_federate_MOM_object_instance_names():" << __LINE__
+             << " Unexpected NULL RTIambassador." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return( federate_MOM_name );
+   }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   try {
+
+      federate_MOM_name = rti_amb->getObjectInstanceName( federate.object_instance_handle );
+
+   } catch ( ObjectInstanceNotKnown const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+      message_publish( MSG_WARNING, "Federate::get_federate_MOM_name():%d rti_amb->getObjectInstanceName() ERROR: ObjectInstanceNotKnown\n",
+                       __LINE__ );
+   } catch ( FederateNotExecutionMember const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+      message_publish( MSG_WARNING, "Federate::get_federate_MOM_name():%d rti_amb->getObjectInstanceName() ERROR: FederateNotExecutionMember\n",
+                       __LINE__ );
+   } catch ( NotConnected const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+      message_publish( MSG_WARNING, "Federate::get_federate_MOM_name():%d rti_amb->getObjectInstanceName() ERROR: NotConnected\n",
+                       __LINE__ );
+      set_connection_lost();
+   } catch ( RTIinternalError const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      message_publish( MSG_WARNING, "Federate::get_federate_MOM_name():%d rti_amb->getObjectInstanceName() ERROR: RTIinternalError: '%s'\n",
+                       __LINE__, rti_err_msg.c_str() );
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+      string id_str;
+      StringUtilities::to_string( id_str, federate.MOM_instance_name );
+      string fed_name_str;
+      StringUtilities::to_string( fed_name_str, federate.name );
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      ostringstream errmsg;
+      errmsg << "Federate::get_federate_MOM_name():" << __LINE__
+             << " ERROR: Exception getting MOM instance name for '"
+             << fed_name_str << "' ID:" << id_str
+             << " '" << rti_err_msg << "'." << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   return( federate_MOM_name );
+
+}
+
 void Federate::set_MOM_HLAfederate_instance_attributes(
-   ObjectInstanceHandle const    &id,
+   ObjectInstanceHandle const    &handle,
    AttributeHandleValueMap const &values )
 {
+
    // Concurrency critical code section because joined-federate state used by
    // the blocking Federate::wait_for_required_federates_to_join() function.
    //
@@ -1002,12 +1140,17 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-   // Add the federate ID (i.e. federate handle) if we don't know about it already.
-   if ( !is_federate_instance_id( id ) ) {
-      add_federate_instance_id( id );
+   // Add the federate handle if we don't know about it already.
+   if ( !is_joined_federate_by_object_handle( handle ) ) {
+      add_joined_federate( handle );
    }
 
-   wstring federate_name_ws( L"" );
+   // Get the associate joined federate reference.
+   KnownFederate * joined_federate = &(joined_federates_map[handle]);
+
+   //
+   // Let's get the federate name information.
+   //
 
    // Find the Federate name for the given MOM federate Name attribute handle.
    AttributeHandleValueMap::const_iterator attr_iter = values.find( MOM_HLAfederateName_handle );
@@ -1021,118 +1164,107 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // Decode the federate name that is encoded as a Unicode string.
       HLAunicodeString fed_name_unicode;
       fed_name_unicode.decode( value );
-      federate_name_ws = wstring( fed_name_unicode );
-
-      // Map the federate name to the federate ID.
-      joined_federate_name_map[id] = federate_name_ws;
-
-      // Make sure that the federate name does not exist before adding.
-      bool found = false;
-      for ( size_t i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
-         if ( joined_federate_names[i] == federate_name_ws ) {
-            found = true;
-         }
-      }
-      if ( !found ) {
-         // Record the federate name.
-         joined_federate_names.push_back( federate_name_ws );
-      }
+      joined_federate->name = wstring( fed_name_unicode );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string id_str;
-         StringUtilities::to_string( id_str, id );
+         string handle_str;
+         StringUtilities::to_string( handle_str, handle );
+         string name_str;
+         StringUtilities::to_string( name_str, joined_federate->name );
          message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Name:'%s' size:%d\n",
-                          __LINE__, id_str.c_str(), federate_name_ws.c_str(),
-                          (int)federate_name_ws.size() );
+                          __LINE__, handle_str.c_str(), name_str.c_str(),
+                          (int)joined_federate->name.size() );
       }
    }
+
+   //
+   // Let's determine if this is a required federate.
+   //
+   for ( KnownFederate known_fed : known_federates ) {
+      if ( joined_federate->name == known_fed.name ) {
+         joined_federate->required = known_fed.required;
+      }
+   }
+
+   //
+   // Let's get the federate type information.
+   //
+
+   // Find the Federate type for the given MOM federate Type attribute handle.
+   attr_iter = values.find( MOM_HLAfederateType_handle );
+
+   // Determine if we have a federate type attribute.
+   if ( attr_iter != values.end() ) {
+
+      // Federate type is encoded into variable length data.
+      VariableLengthData const &value = attr_iter->second;
+
+      // Decode the federate type that is encoded as a Unicode string.
+      HLAunicodeString fed_type_unicode;
+      fed_type_unicode.decode( value );
+      joined_federate->type = wstring( fed_type_unicode );
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, handle );
+         string type_str;
+         StringUtilities::to_string( type_str, joined_federate->type );
+         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Type'%s' size:%d\n",
+                          __LINE__, handle_str.c_str(), type_str.c_str(),
+                          (int)joined_federate->type.size() );
+      }
+
+   }
+
+   //
+   // Let's get the MOM federate handle.
+   //
 
    // Find the FederateHandle attribute for the given MOM federate handle.
    attr_iter = values.find( MOM_HLAfederate_handle );
 
    // Determine if we have a federate handle attribute.
    if ( attr_iter == values.end() ) {
+
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string id_str;
-         StringUtilities::to_string( id_str, id );
+         string handle_str;
+         StringUtilities::to_string( handle_str, handle );
          message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d FederateHandle Not found for Federate-OID:%s\n",
-                          __LINE__, id_str.c_str() );
+                          __LINE__, handle_str.c_str() );
       }
-   } else {
 
-      FederateHandle fed_handle = decode_federate_handle( attr_iter->second );
+   }
+   else { // We have a federate handle so decode it.
 
-      // Add this FederateHandle to the set of joined federates.
-      joined_federate_handles.insert( fed_handle );
+      joined_federate->federate_handle = decode_federate_handle( attr_iter->second );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string id_str, fed_id;
-         StringUtilities::to_string( id_str, id );
-         StringUtilities::to_string( fed_id, fed_handle );
+         string handle_str, fed_handle;
+         StringUtilities::to_string( handle_str, handle );
+         StringUtilities::to_string( fed_handle, joined_federate->federate_handle );
          message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Federate-ID:%s\n",
-                          __LINE__, id_str.c_str(), fed_id.c_str() );
+                          __LINE__, handle_str.c_str(), fed_handle.c_str() );
       }
 
-      // If this federate is running, add the new entry into running_feds.
-      if ( this->is_federate_executing() ) {
-         bool found = false;
-         for ( size_t loop = 0; loop < save_restore_service.running_feds_count; ++loop ) {
-            string tName;
-            StringUtilities::to_string( tName, federate_name_ws );
-
-            if ( save_restore_service.running_feds[loop].name == tName ) {
-               found = true;
-               break;
-            }
-         }
-         // Update the running_feds if the federate name was not found.
-         if ( !found ) {
-            if ( joined_federate_name_map.size() == 1 ) {
-               save_restore_service.add_a_single_entry_into_running_feds();
-
-               // Clear the entry after it is absorbed into running_feds.
-               joined_federate_name_map.clear();
-            } else {
-               // Loop thru all joined_federate_name_map entries removing stray
-               // NULL string entries.
-               TrickHLAObjInstanceNameMap::iterator map_iter;
-               for ( map_iter = joined_federate_name_map.begin();
-                     map_iter != joined_federate_name_map.end(); ++map_iter ) {
-                  if ( map_iter->second.length() == 0 ) {
-                     joined_federate_name_map.erase( map_iter );
-
-                     // Re-process all entries if any are deleted since the
-                     // delete modified the iterator position.
-                     map_iter = joined_federate_name_map.begin();
-                  }
-               }
-
-               // After the purge, if there is only one value, process the
-               // single element.
-               if ( joined_federate_name_map.size() == 1 ) {
-                  save_restore_service.add_a_single_entry_into_running_feds();
-
-                  // Clear the entry after it is absorbed into running_feds.
-                  joined_federate_name_map.clear();
-               } else {
-                  // Process multiple joined_federate_name_map entries.
-                  save_restore_service.clear_running_feds();
-                  ++save_restore_service.running_feds_count;
-                  save_restore_service.update_running_feds();
-
-                  // Clear the entries after they are absorbed into running_feds.
-                  joined_federate_name_map.clear();
-               }
-            }
-         }
-      }
    }
+
+   return;
 }
 
 void Federate::set_all_federate_MOM_instance_handles_by_name()
 {
    // Make sure the discovered federate instances list is cleared.
-   joined_federate_name_map.clear();
+   // Concurrency critical code section because joined-federate state is changed
+   // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
+   // function.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+
+      // Clear the list of joined federates.
+      joined_federates_map.clear();
+   }
 
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
@@ -1155,25 +1287,29 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
    // Resolve all the federate instance handles given the federate names.
    try {
-      for ( int i = 0; i < known_feds_count; ++i ) {
-         if ( !known_feds[i].MOM_instance_name.empty() ) {
+      for ( int i = 0; i < known_federates.size(); ++i ) {
+         if ( !known_federates[i].MOM_instance_name.empty() ) {
 
-            // Create the wide-string version of the MOM instance name.
-            StringUtilities::to_wstring( fed_mom_instance_name_ws,
-                                         known_feds[i].MOM_instance_name );
+            // Copy the MOM instance name for the exception messages below.
+            fed_mom_instance_name_ws = known_federates[i].MOM_instance_name;
 
             // Get the instance handle based on the instance name.
             ObjectInstanceHandle fed_mom_obj_instance_hdl =
-               rti_amb->getObjectInstanceHandle( fed_mom_instance_name_ws );
+               rti_amb->getObjectInstanceHandle( known_federates[i].MOM_instance_name );
 
             // Add the federate instance handle.
-            add_federate_instance_id( fed_mom_obj_instance_hdl );
+            add_joined_federate( fed_mom_obj_instance_hdl );
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-               string id_str;
+               string id_str, mom_str, name_str, type_str;
                StringUtilities::to_string( id_str, fed_mom_obj_instance_hdl );
+               StringUtilities::to_string( mom_str, known_federates[i].MOM_instance_name );
+               StringUtilities::to_string( name_str, known_federates[i].name );
+               StringUtilities::to_string( type_str, known_federates[i].type );
                summary << endl
-                       << "    Federate:'" << known_feds[i].name
+                       << "    Federate:'" << name_str
+                       << "' Type:'" << type_str
+                       << "' MOM-Name: '" << mom_str
                        << "' MOM-Object-ID:" << id_str;
             }
          }
@@ -1272,97 +1408,32 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
  */
 void Federate::determine_federate_MOM_object_instance_names()
 {
-   RTIambassador *rti_amb = get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::determine_federate_MOM_object_instance_names():" << __LINE__
-             << " Unexpected NULL RTIambassador." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      return;
-   }
+   KnownFederateMap::iterator   fed_iter;
+   KnownFederate              * joined_federate;
 
-   wstring                                    fed_name_ws = L"";
-   ObjectInstanceHandle                       fed_mom_instance_hdl;
-   TrickHLAObjInstanceNameMap::const_iterator fed_iter;
+   // Iterate through the collection of joined federates.
+   for ( fed_iter = joined_federates_map.begin();
+         fed_iter != joined_federates_map.end();
+         ++fed_iter ) {
 
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+      // Cast to the KnownFederate type.
+      joined_federate = static_cast<KnownFederate*>(&(fed_iter->second));
 
-   try {
-      for ( fed_iter = joined_federate_name_map.begin();
-            fed_iter != joined_federate_name_map.end(); ++fed_iter ) {
-
-         for ( int i = 0; i < known_feds_count; ++i ) {
-            StringUtilities::to_wstring( fed_name_ws, known_feds[i].name );
-
-            if ( fed_iter->second.compare( fed_name_ws ) == 0 ) {
-               fed_mom_instance_hdl = fed_iter->first;
-
-               // Get the instance name based on the MOM object instance handle
-               // and make sure it is in the Trick memory space.
-               known_feds[i].MOM_instance_name =
-                  StringUtilities::mm_strdup_wstring(
-                     rti_amb->getObjectInstanceName( fed_mom_instance_hdl ) );
-            }
-         }
+      // If we don't already have the MOM instance name, then get it.
+      if ( joined_federate->MOM_instance_name.empty() ){
+         joined_federate->MOM_instance_name = get_federate_MOM_name( *joined_federate );
       }
-   } catch ( ObjectInstanceNotKnown const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: ObjectInstanceNotKnown\n",
-                       __LINE__ );
-   } catch ( FederateNotExecutionMember const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: FederateNotExecutionMember\n",
-                       __LINE__ );
-   } catch ( NotConnected const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: NotConnected\n",
-                       __LINE__ );
-      set_connection_lost();
-   } catch ( RTIinternalError const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Federate::determine_federate_MOM_object_instance_names():%d rti_amb->getObjectInstanceName() ERROR: RTIinternalError: '%s'\n",
-                       __LINE__, rti_err_msg.c_str() );
-   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      string id_str;
-      StringUtilities::to_string( id_str, fed_mom_instance_hdl );
-      string fed_name_str;
-      StringUtilities::to_string( fed_name_str, fed_name_ws );
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "Federate::determine_federate_MOM_object_instance_names():" << __LINE__
-             << " ERROR: Exception getting MOM instance name for '"
-             << fed_name_str << "' ID:" << id_str
-             << " '" << rti_err_msg << "'." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
    }
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   return;
 }
 
 bool Federate::is_required_federate(
    wstring const &federate_name )
 {
-   for ( int i = 0; i < known_feds_count; ++i ) {
-      if ( known_feds[i].required ) {
-         wstring required_fed_name;
-         StringUtilities::to_wstring( required_fed_name, known_feds[i].name );
-         if ( federate_name == required_fed_name ) {
+   for ( int i = 0; i < known_federates.size(); ++i ) {
+      if ( known_federates[i].required ) {
+         if ( federate_name == known_federates[i].name ) {
             return true;
          }
       }
@@ -1370,23 +1441,269 @@ bool Federate::is_required_federate(
    return false;
 }
 
-bool Federate::is_joined_federate(
-   string const &federate_name )
+bool Federate::is_joined_federate_by_federate_handle(
+   FederateHandle const &handle )
 {
-   wstring fed_name_ws;
-   StringUtilities::to_wstring( fed_name_ws, federate_name );
-   return is_joined_federate( fed_name_ws );
-}
+   // Loop thru all joined_federate_map entries.
+   KnownFederateMap::iterator map_iter;
+   for ( map_iter  = joined_federates_map.begin();
+         map_iter != joined_federates_map.end();
+         ++map_iter ) {
 
-bool Federate::is_joined_federate(
-   wstring const &federate_name )
-{
-   for ( size_t i = 0; i < joined_federate_names.size(); ++i ) {
-      if ( federate_name == joined_federate_names[i] ) { // cppcheck-suppress [useStlAlgorithm]
+      // Get the associate joined federate reference.
+      KnownFederate * joined_federate;
+      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+      // Compare the federate handles.
+      if ( handle == joined_federate->federate_handle ) {
          return true;
       }
    }
    return false;
+}
+
+bool Federate::is_joined_federate_by_object_handle(
+   ObjectInstanceHandle const &handle )
+{
+   return ( joined_federates_map.find( handle ) != joined_federates_map.end() );
+}
+
+bool Federate::is_joined_federate_by_MOM_name(
+   wstring const &MOM_name )
+{
+   // Loop thru all joined_federate_map entries.
+   KnownFederateMap::iterator map_iter;
+   for ( map_iter  = joined_federates_map.begin();
+         map_iter != joined_federates_map.end();
+         ++map_iter ) {
+
+      // Get the associate joined federate reference.
+      KnownFederate * joined_federate;
+      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+      // Compare the MOM instance names.
+      if ( MOM_name == joined_federate->MOM_instance_name ) {
+         return true;
+      }
+   }
+   return false;
+}
+
+bool Federate::is_joined_federate_by_name(
+   string const &federate_name )
+{
+   wstring fed_name_ws;
+   StringUtilities::to_wstring( fed_name_ws, federate_name );
+   return is_joined_federate_by_name( fed_name_ws );
+}
+
+bool Federate::is_joined_federate_by_name(
+   wstring const &federate_name )
+{
+   // Loop thru all joined_federate_map entries.
+   KnownFederateMap::iterator map_iter;
+   for ( map_iter  = joined_federates_map.begin();
+         map_iter != joined_federates_map.end();
+         ++map_iter ) {
+
+      // Get the associate joined federate reference.
+      KnownFederate * joined_federate;
+      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+      // Compare the names.
+      if ( federate_name == joined_federate->name ) {
+         return true;
+      }
+   }
+   return false;
+}
+
+
+/*!
+ *  @job_class{freeze}
+ *  @detail This routine is designed to be called cyclicly as a freeze class
+ *  job.
+ */
+void Federate::update_joined_federates()
+{
+
+   // Just return if the joined federate update process is not active.
+   if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE ) {
+      return;
+   }
+
+   // Just return if the joined federate update process has failed.  If the
+   // process failed, it needs to be reset before proceeding.
+   if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED ) {
+      return;
+   }
+
+   // Ask the MOM for the federate names if the the joined federate update
+   // process is active.  Subscribe to Federate names using MOM interface and
+   // request an update.
+   if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE ) {
+
+      // Concurrency critical code section because joined-federate state is changed
+      // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
+      // function.
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+
+         // Clear the list of joined federates.
+         joined_federates_map.clear();
+      }
+
+      // Ask the MOM to get the federation information we need.
+      ask_MOM_for_federation_info();
+
+      // Mark the update process and having been initiated.
+      federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED;
+
+   }
+
+   // If the federates in Federation list hasn't been updated yet, then just return.
+   // We're waiting for a callback to update the list of federatesInFederation.
+   if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED ) {
+      return;
+   }
+
+   // The federatesInFederation list has been received and the federate
+   // handles need to be decoded.  It would be nice if we could do this in
+   // the federate ambassador callback.  However, this makes a call to the
+   // RTI ambassador to get the federate handle.
+   if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED ) {
+
+      // Loop through the federatesInFederation encoded handle list.  Decode
+      // each handle in the encoded list and add it to the decoded list.
+      for ( VariableLengthData encoded_handle : encoded_federate_handles ) {
+         federate_handles.insert( decode_federate_handle( encoded_handle ) );
+      }
+
+      // Mark the update state as in progress.  Now we wait to recieve all
+      // the discoveries and reflections for the joined federates.
+      federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS;
+
+      // Ask the MOM to unsubscribe to the federation info.
+      unsubscribe_from_MOM_federation_info();
+
+      // Ask the MOM to get the federate information.
+      ask_MOM_for_federate_info();
+
+      return;
+   }
+
+   // The federates in the Federation list has been completed and we are now
+   // checking if all the federates have been discovered and added into the
+   // joined federates map.
+   if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS ) {
+
+      bool all_found = true;
+
+      // If we have more handles than joined federate, we know we haven't
+      // found them all yet.
+      if ( federate_handles.size() > joined_federates_map.size() ) {
+
+         all_found = false;
+
+      } // If we have more joined federates than federate handles,
+        // something went wrong.
+      else if ( federate_handles.size() < joined_federates_map.size() ) {
+
+         ostringstream errmsg;
+         errmsg << "Federate::update_joined_federates():" << __LINE__
+                << " ERROR: Found " << federate_handles.size()
+                << " in the federatesInFederation list but there are "
+                << joined_federates_map.size()
+                << " in the joined federates map!" << std::endl;
+         message_publish( MSG_ERROR, errmsg.str().c_str() );
+
+         // Mark the update process as failed.
+         federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED;
+
+         all_found = false;
+
+      }
+
+      // Iterate through the federates in Federation set to see if they have a
+      // counterpart in the joined federates map.
+      for ( FederateHandle fed_handle : federate_handles ){
+         if ( !is_joined_federate_by_federate_handle( fed_handle ) ){
+            all_found = false;
+         }
+      }
+
+      // Mark the joined federate update process as complete if all the
+      // federates in the Federation list have been discovered.
+      if ( all_found ) {
+         federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE;
+      }
+
+      // Mark that all federate have joined.
+      all_federates_joined = true;
+
+   }
+
+   // The joined federate update process is marked as complete.
+   if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE ) {
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         ostringstream errmsg;
+         errmsg << "Federate::update_joined_federates():" << __LINE__
+                << ": Federate Name, Type, Required:" << std::endl;
+         message_publish( MSG_NORMAL, errmsg.str().c_str() );
+         std::wcout << list_joined_federates() << std::endl;
+      }
+
+      // FIXME: Should this be moved into the federate Save/Restore logic?
+
+      // Unsubscribe from all attributes for the MOM HLAfederate class.
+      unsubscribe_all_HLAfederate_class_attributes_from_MOM();
+
+      // The MOM federate discovery process does not fill in the MOM object
+      // instance names.  We need to get them from the RTI and complete the
+      // information in the joined federates list.
+      determine_federate_MOM_object_instance_names();
+
+   }
+
+   // Deactivate the joined federate update process.
+   federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE;
+
+   return;
+}
+
+/*!
+ *  @job_class{initialization}
+ */
+wstring Federate::list_joined_federates()
+{
+   wstringstream federates_summary;
+
+   // Iterate through the joined federates map.
+   KnownFederateMap::iterator map_iter;
+   for ( map_iter  = joined_federates_map.begin();
+         map_iter != joined_federates_map.end(); ++map_iter ) {
+
+      // Get the associate joined federate reference.
+      KnownFederate * joined_federate;
+      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+      // No end of line at the beginning.
+      if ( map_iter != joined_federates_map.begin() ){
+         federates_summary << std::endl;
+      }
+
+      // List out the federate information.
+      federates_summary << joined_federate->name;
+      federates_summary << ", " << joined_federate->type;
+      federates_summary << ", " << (joined_federate->required ? "True" : "False");
+
+   }
+
+   // Return the joined federate list as a wide string.
+   return( federates_summary.str() );
 }
 
 /*!
@@ -1407,8 +1724,8 @@ string Federate::wait_for_required_federates_to_join()
 
    // Determine how many required federates we have.
    int required_feds_count = 0;
-   for ( int i = 0; i < known_feds_count; ++i ) {
-      if ( known_feds[i].required ) {
+   for ( int i = 0; i < known_federates.size(); ++i ) {
+      if ( known_federates[i].required ) {
          ++required_feds_count;
       }
    }
@@ -1432,14 +1749,16 @@ string Federate::wait_for_required_federates_to_join()
 
       // Display the initial summary of the required federates we are waiting for.
       int cnt = 0;
-      for ( int i = 0; i < known_feds_count; ++i ) {
+      for ( int i = 0; i < known_federates.size(); ++i ) {
          // Create a summary of the required federates by name.
-         if ( known_feds[i].required ) {
+         if ( known_federates[i].required ) {
             ++cnt;
+            std::string name_str;
+            StringUtilities::to_string( name_str, known_federates[i].name );
             required_fed_summary << endl
                                  << "    " << cnt
                                  << ": Waiting for required federate '"
-                                 << known_feds[i].name << "'";
+                                 << name_str << "'";
          }
       }
 
@@ -1454,7 +1773,7 @@ string Federate::wait_for_required_federates_to_join()
    }
 
    // Subscribe to Federate names using MOM interface and request an update.
-   ask_MOM_for_federate_names();
+   ask_MOM_for_federate_info();
 
    size_t joined_fed_cnt = 0;
 
@@ -1474,7 +1793,7 @@ string Federate::wait_for_required_federates_to_join()
       // Check for shutdown.
       check_for_shutdown_with_termination();
 
-      // Sleep a little while to wait for more federates to join.
+      // Sleep a little while we wait for more federates to join.
       sleep_timer.sleep();
 
       // Concurrency critical code section because joined-federate state is changed
@@ -1487,18 +1806,29 @@ string Federate::wait_for_required_federates_to_join()
 
          // Determine what federates have joined only if the joined federate
          // count has changed.
-         if ( joined_fed_cnt != joined_federate_names.size() ) {
-            joined_fed_cnt = joined_federate_names.size();
+         if ( joined_fed_cnt != joined_federates_map.size() ) {
 
+            // Reset the joined federate size count.
+            joined_fed_cnt = joined_federates_map.size();
+
+            // Loop thru all joined_federates_map entries.
             // Count the number of joined Required federates.
             int req_fed_cnt = 0;
-            for ( size_t i = 0; i < joined_federate_names.size(); ++i ) {
-               if ( is_required_federate( joined_federate_names[i] ) ) {
+            KnownFederateMap::iterator map_iter;
+            for ( map_iter  = joined_federates_map.begin();
+                  map_iter != joined_federates_map.end();
+                  ++map_iter ) {
+
+               // Get the associate joined federate reference.
+               KnownFederate * joined_federate;
+               joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+               if ( is_required_federate( joined_federate->name ) ) {
                   ++req_fed_cnt;
                } else {
                   found_an_unrequired_federate = true;
                   string fedname;
-                  StringUtilities::to_string( fedname, joined_federate_names[i] );
+                  StringUtilities::to_string( fedname, joined_federate->name );
                   if ( save_restore_service.restore_is_imminent ) {
                      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                         message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!\n",
@@ -1531,31 +1861,41 @@ string Federate::wait_for_required_federates_to_join()
 
             // Summarize the required federates first.
             int cnt = 0;
-            for ( int i = 0; i < known_feds_count; ++i ) {
+            for ( int i = 0; i < known_federates.size(); ++i ) {
                ++cnt;
-               if ( known_feds[i].required ) {
-                  if ( is_joined_federate( known_feds[i].name ) ) {
+               std::string know_fed_str;
+               StringUtilities::to_string( know_fed_str, known_federates[i].name );
+               if ( known_federates[i].required ) {
+                  if ( is_joined_federate_by_name( known_federates[i].name ) ) {
                      summary << endl
                              << "    " << cnt
                              << ": Found joined required federate '"
-                             << known_feds[i].name << "'";
+                             << know_fed_str << "'";
                   } else {
                      summary << endl
                              << "    " << cnt
                              << ": Waiting for required federate '"
-                             << known_feds[i].name << "'";
+                             << know_fed_str << "'";
                   }
                }
             }
 
             // Summarize all the remaining non-required joined federates.
-            for ( size_t i = 0; i < joined_federate_names.size(); ++i ) {
-               if ( !is_required_federate( joined_federate_names[i] ) ) {
+            KnownFederateMap::iterator map_iter;
+            for ( map_iter  = joined_federates_map.begin();
+                  map_iter != joined_federates_map.end();
+                  ++map_iter ) {
+
+               // Get the associate joined federate reference.
+               KnownFederate * joined_federate;
+               joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+               if ( !joined_federate->required ) {
                   ++cnt;
 
                   // We need a string version of the wide-string federate name.
                   string fedname;
-                  StringUtilities::to_string( fedname, joined_federate_names[i] );
+                  StringUtilities::to_string( fedname, joined_federate->name );
 
                   summary << endl
                           << "    " << cnt << ": Found joined federate '"
@@ -1569,6 +1909,8 @@ string Federate::wait_for_required_federates_to_join()
          }
       } // Mutex protection goes out of scope here
 
+      // If not all the required federates have joined, then reset the timers
+      // for the next loop.
       if ( !this->all_federates_joined ) {
 
          // To be more efficient, we get the time once and share it.
@@ -1593,7 +1935,8 @@ string Federate::wait_for_required_federates_to_join()
             print_summary = true;
          }
       }
-   }
+
+   } // End while ( !this->all_federates_joined )
 
    // Once a list of joined federates has been built, and we are to restore the
    // checkpoint if there are any non-required federates. If any are found,
@@ -1621,7 +1964,7 @@ string Federate::wait_for_required_federates_to_join()
          errmsg << "federates are: ";
       }
       set< string >::const_iterator cii;
-      string                        names;
+      std::string                   names;
       for ( cii = unrequired_federates_list.begin();
             cii != unrequired_federates_list.end(); ++cii ) {
          names += *cii + ", ";
@@ -1630,9 +1973,11 @@ string Federate::wait_for_required_federates_to_join()
       errmsg << names << endl
              << "\tThe required federates are: ";
       names = "";
-      for ( int i = 0; i < known_feds_count; ++i ) {
-         if ( known_feds[i].required ) {
-            names += known_feds[i].name;
+      for ( int i = 0; i < known_federates.size(); ++i ) {
+         if ( known_federates[i].required ) {
+            std::string known_fed_str;
+            StringUtilities::to_string( known_fed_str, known_federates[i].name );
+            names += known_fed_str;
             names += ", ";
          }
       }
@@ -1647,8 +1992,9 @@ string Federate::wait_for_required_federates_to_join()
    // Unsubscribe from all attributes for the MOM HLAfederate class.
    unsubscribe_all_HLAfederate_class_attributes_from_MOM();
 
-   // Get the federate object instance names so that we can recover the
-   // instance handles for the MOM object associated with each federate.
+   // The MOM federate discovery process does not fill in the MOM object
+   // instance names.  We need to get them from the RTI and complete the
+   // information in the joined federates list.
    determine_federate_MOM_object_instance_names();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -1657,6 +2003,190 @@ string Federate::wait_for_required_federates_to_join()
    }
 
    return status_string;
+}
+/*!
+ *  @job_class{initialization}
+ *  @detail NOTE: This function will block.
+ */
+void Federate::update_and_print_joined_federates()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      message_publish( MSG_NORMAL, "SaveRestoreServices::update_and_print_joined_federates():%d started.\n",
+                       __LINE__ );
+   }
+
+   // Check the state of the joined federates update process.
+   // If we are not in an inactive state, something is wrong.
+   if ( federate_update_state != THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE ) {
+      ostringstream errmsg;
+      errmsg << "SaveRestoreServices::update_and_print_joined_federates():" << __LINE__
+             << ": ERROR: Unexpected Federates update state."
+             << "  We expected FEDERATE_UPDATE_NONE but the state was "
+             << to_string( federate_update_state )
+             << "!" << std::endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Timers used to manage wait and print cycles.
+   int64_t      wallclock_time;
+   SleepTimeout print_timer;
+   SleepTimeout sleep_timer;
+
+   // Activate the joined federate update process.
+   federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE;
+
+   // Iterate through the joined federate update process until the joined
+   // federates have been updated.
+   // NOTE: This loop will block until all the joined federates are updated.
+   while(    (federate_update_state != THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE)
+          && (federate_update_state != THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED) ) {
+
+      // Check for shutdown.
+      check_for_shutdown_with_termination();
+
+      // Sleep a little while to wait for the information to update.
+      sleep_timer.sleep();
+
+      // Run the update joined federates process.
+      update_joined_federates();
+
+      // To be more efficient, we get the time once and share it.
+      wallclock_time = sleep_timer.time();
+
+      // Make sure we're still an execution member.
+      if ( sleep_timer.timeout( wallclock_time ) ) {
+         sleep_timer.reset();
+         if ( !is_execution_member() ) {
+            ostringstream errmsg;
+            errmsg << "SaveRestoreServices::update_and_print_joined_federates():" << __LINE__
+                   << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                   << " This means we are either not connected to the"
+                   << " RTI or we are no longer joined to the federation"
+                   << " execution because someone forced our resignation at"
+                   << " the Central RTI Component (CRC) level!" << endl;
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+      }
+
+      // Check for scheduled print.
+      if ( print_timer.timeout( wallclock_time ) ) {
+
+         print_timer.reset();
+
+         // Let's print out some useful status information.
+         if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE ) {
+            message_publish( MSG_NORMAL,
+                             "SaveRestoreServices::update_and_print_joined_federates():%d: Active.\n",
+                             __LINE__ );
+         }
+         else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED ) {
+            message_publish( MSG_NORMAL,
+                             "SaveRestoreServices::update_and_print_joined_federates():%d: \
+Waiting for the federatesInFederation update.\n",
+                             __LINE__ );
+         }
+         else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+               message_publish( MSG_NORMAL, "SaveRestoreServices::update_and_print_joined_federates():%d: \
+MOM just informed us that there are %d federates currently joined to the federation.\n",
+                   __LINE__, encoded_federate_handles.size() );
+            }
+         }
+         else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS ) {
+            message_publish( MSG_NORMAL,
+                             "SaveRestoreServices::update_and_print_joined_federates():%d: \
+Waiting for the identified federates to join.\n",
+                             __LINE__ );
+         }
+         else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE ) {
+            message_publish( MSG_NORMAL,
+                             "SaveRestoreServices::update_and_print_joined_federates():%d: \
+Successfully updated the joined federates.\n",
+                             __LINE__ );
+         }
+         else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED ) {
+            message_publish( MSG_ERROR,
+                             "SaveRestoreServices::update_and_print_joined_federates():%d: \
+ERROR: Something went wrong while updating the joined federates.\n",
+                             __LINE__ );
+         }
+
+      }
+
+   } // End of while( federate_update_state ) . . .
+
+   // Print out a list of the joined Federates.
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+
+      // Build the federate summary as an output string stream.
+      ostringstream summary;
+      unsigned int  cnt = 0;
+
+      summary << "SaveRestoreServices::update_and_print_joined_federates():"
+              << __LINE__ << endl
+              << "There are " << joined_federates_map.size() << " federates:";
+
+      // Iterate through the joined federates map.
+      KnownFederateMap::iterator map_iter;
+      for ( map_iter  = joined_federates_map.begin();
+            map_iter != joined_federates_map.end(); ++map_iter ) {
+
+         // Get the associate joined federate reference.
+         KnownFederate * joined_federate;
+         joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+         ++cnt;
+         std::string name_str;
+         StringUtilities::to_string( name_str, joined_federate->name );
+         summary << endl
+                 << "    " << cnt
+                 << ": Found running federate '"
+                 << name_str << "'";
+      }
+      summary << endl;
+
+      // Display the federate summary.
+      message_publish( MSG_NORMAL, summary.str().c_str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      message_publish( MSG_NORMAL,
+                       "SaveRestoreServices::update_and_print_joined_federates():%d Done.\n",
+                       __LINE__ );
+   }
+
+   return;
+}
+
+/*!
+ *  @job_class{initialization}
+ */
+void Federate::get_joined_federate_handle_set( RTI1516_NAMESPACE::FederateHandleSet & handle_set )
+{
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+
+   // Clear the set of federate handles for the joined federates.
+   handle_set.clear();
+
+   // Iterate through the joined federates map to construct a new set of
+   // joined federates.  This is a convenience function for some HLA calls.
+   // NULL string entries.
+   KnownFederateMap::iterator map_iter;
+   for ( map_iter = joined_federates_map.begin();
+         map_iter != joined_federates_map.end(); ++map_iter ) {
+
+      // Get the associate joined federate reference.
+      KnownFederate * joined_federate;
+      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+      // Grab the federate handle from the joined federate entry.
+      handle_set.insert( joined_federate->federate_handle );
+
+   }
+
+   return;
 }
 
 /*!
@@ -2241,7 +2771,7 @@ void Federate::request_attribute_update(
    }
 }
 
-void Federate::ask_MOM_for_federate_names()
+void Federate::ask_MOM_for_federate_info()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::ask_MOM_for_federate_names():%d\n",
@@ -2256,33 +2786,96 @@ void Federate::ask_MOM_for_federate_names()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-      // NOTE: Do not clear the joined_federate_name_map because it will cause
-      // reflections to fail because lookup will not find the discovered instance.
-
-      // Clear the set of federate handles for the joined federates.
-      joined_federate_handles.clear();
-
-      // Clear the list of joined federate names.
-      joined_federate_names.clear();
+      // Clear the list of joined federates.
+      joined_federates_map.clear();
    }
 
    // Make sure the MOM handles get initialized before we try to use them.
-   if ( !MOM_HLAfederateName_handle.isValid() ) {
+   if (    !MOM_HLAfederateName_handle.isValid()
+        || !MOM_HLAfederateType_handle.isValid()
+        || !MOM_HLAfederate_handle.isValid()     ) {
       initialize_MOM_handles();
    }
 
    AttributeHandleSet fedMomAttributes;
+   fedMomAttributes.insert( MOM_HLAfederateType_handle );
    fedMomAttributes.insert( MOM_HLAfederateName_handle );
    fedMomAttributes.insert( MOM_HLAfederate_handle );
    subscribe_attributes( MOM_HLAfederate_class_handle, fedMomAttributes );
 
    AttributeHandleSet requestedAttributes;
+   requestedAttributes.insert( MOM_HLAfederateType_handle );
    requestedAttributes.insert( MOM_HLAfederateName_handle );
    requestedAttributes.insert( MOM_HLAfederate_handle );
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
    fedMomAttributes.clear();
    requestedAttributes.clear();
+
+   return;
+}
+
+void Federate::ask_MOM_for_federation_info()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      message_publish( MSG_NORMAL, "Federate::ask_MOM_for_federation_info():%d\n",
+                       __LINE__ );
+   }
+
+   // Concurrency critical code section because joined-federate state is changed
+   // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
+   // function.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &federate_update_mutex );
+
+      // Clear the list of federates.
+      federate_handles.clear();
+      encoded_federate_handles.clear();
+
+      // Activate the federates in Federation update process.
+      federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE;
+   }
+
+   // Make sure the MOM handles get initialized before we try to use them.
+   if (    !MOM_HLAfederatesInFederation_handle.isValid()
+        || !MOM_HLAautoProvide_handle.isValid() ) {
+      initialize_MOM_handles();
+   }
+
+   // Subscribe to the attributes we need.
+   AttributeHandleSet fedMomAttributes;
+   fedMomAttributes.insert( MOM_HLAfederatesInFederation_handle );
+   fedMomAttributes.insert( MOM_HLAautoProvide_handle );
+   subscribe_attributes( MOM_HLAfederation_class_handle, fedMomAttributes );
+
+   AttributeHandleSet requestedAttributes;
+   requestedAttributes.insert( MOM_HLAfederatesInFederation_handle );
+   requestedAttributes.insert( MOM_HLAautoProvide_handle );
+   request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
+
+   fedMomAttributes.clear();
+   requestedAttributes.clear();
+
+   return;
+}
+
+void Federate::unsubscribe_from_MOM_federation_info()
+{
+   AttributeHandleSet attributes;
+
+   // Build the attribute list.
+   attributes.insert( MOM_HLAfederatesInFederation_handle );
+   attributes.insert( MOM_HLAautoProvide_handle );
+
+   // Unsubscribe from there particular attributes.
+   unsubscribe_attributes( MOM_HLAfederation_class_handle, attributes );
+
+   // Clear the attribute list before returning.
+   attributes.clear();
+
+   return;
 }
 
 void Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM()
@@ -4457,137 +5050,7 @@ void Federate::restore_orig_MOM_auto_provide_setting()
    }
 }
 
-void Federate::clear_known_feds()
-{
-   if ( this->known_feds != NULL ) {
-      // Clear out the known_feds from memory...
-      for ( int i = 0; i < known_feds_count; ++i ) {
-         known_feds[i].MOM_instance_name = "";
-         known_feds[i].name              = "";
-      }
-      if ( trick_MM->delete_var( static_cast< void * >( this->known_feds ) ) ) {
-         message_publish( MSG_WARNING, "Federate::clear_known_feds():%d WARNING failed to delete Trick Memory for 'this->known_feds'\n",
-                          __LINE__ );
-      }
-      this->known_feds = NULL;
-   }
-}
-
-void Federate::add_MOM_HLAfederate_instance_id(
-   ObjectInstanceHandle const &instance_hndl,
-   wstring const              &instance_name )
-{
-   this->MOM_HLAfederate_instance_name_map[instance_hndl] = instance_name;
-
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string handle_str;
-      StringUtilities::to_string( handle_str, instance_hndl );
-      string name_str;
-      StringUtilities::to_string( name_str, instance_name );
-
-      ostringstream summary;
-      summary << "Federate::add_MOM_HLAfederate_instance_id():" << __LINE__
-              << " Object '" << name_str << "', with Instance Handle:"
-              << handle_str << endl;
-      message_publish( MSG_NORMAL, summary.str().c_str() );
-   }
-}
-
-void Federate::remove_MOM_HLAfederate_instance_id(
-   ObjectInstanceHandle const &instance_hndl )
-{
-   remove_federate_instance_id( instance_hndl );
-   remove_MOM_HLAfederation_instance_id( instance_hndl );
-
-   string tMOMName  = "";
-   string tFedName  = "";
-   bool   foundName = false;
-
-   TrickHLAObjInstanceNameMap::iterator iter = MOM_HLAfederate_instance_name_map.find( instance_hndl );
-   if ( iter != MOM_HLAfederate_instance_name_map.end() ) {
-      StringUtilities::to_string( tMOMName, iter->second );
-      foundName = true;
-      MOM_HLAfederate_instance_name_map.erase( iter );
-
-      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, instance_hndl );
-
-         ostringstream summary;
-         summary << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
-                 << " Object '" << tMOMName << "', with Instance Handle:"
-                 << handle_str << endl;
-         message_publish( MSG_NORMAL, summary.str().c_str() );
-      }
-   }
-
-   // If the federate_id was not found, there is nothing else to do so exit the routine...
-   if ( !foundName ) {
-      return;
-   }
-
-   // Search for the federate information from running_feds...
-   foundName = false;
-   for ( size_t i = 0; i < save_restore_service.running_feds_count; ++i ) {
-      if ( save_restore_service.running_feds[i].MOM_instance_name != tMOMName ) {
-         foundName = true;
-         tFedName  = save_restore_service.running_feds[i].name;
-      }
-   }
-
-   // if the name was not found, there is nothing else to do so exit the routine...
-   if ( !foundName ) {
-      return;
-   }
-
-   // otherwise, the name was found. it needs to be deleted from the list of running_feds.
-   // since the memory is Trick-controlled and not random access, the only way to delete
-   // it is to copy the whole element list omitting the requested name...
-   KnownFederate *tmp_feds;
-
-   // allocate temporary list...
-   tmp_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( (int)( save_restore_service.running_feds_count - 1 ), "TrickHLA::KnownFederate" ) );
-   if ( tmp_feds == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
-             << " ERROR: Could not allocate memory for tmp_feds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   // now, copy everything minus the requested name from the original list...
-   int tmp_feds_cnt = 0;
-   for ( size_t i = 0; i < save_restore_service.running_feds_count; ++i ) {
-      // if the name is not the one we are looking for...
-      if ( save_restore_service.running_feds[i].name != tFedName ) {
-         if ( save_restore_service.running_feds[i].MOM_instance_name.empty() ) {
-            tmp_feds[tmp_feds_cnt].MOM_instance_name = save_restore_service.running_feds[i].MOM_instance_name;
-         }
-         tmp_feds[tmp_feds_cnt].name     = save_restore_service.running_feds[i].name;
-         tmp_feds[tmp_feds_cnt].required = save_restore_service.running_feds[i].required;
-         ++tmp_feds_cnt;
-      }
-   }
-
-   // now, clear out the original memory...
-   save_restore_service.clear_running_feds();
-
-   // assign the new element count into running_feds_count.
-   save_restore_service.running_feds_count = tmp_feds_cnt;
-
-   // assign pointer from the temporary list to the permanent list...
-   save_restore_service.running_feds = tmp_feds;
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_hndl );
-      message_publish( MSG_INFO, "Federate::remove_MOM_HLAfederate_instance_id():%d \
-Removed Federate '%s' Instance-ID:%s Valid-ID:%s\n",
-                       __LINE__, tFedName.c_str(), id_str.c_str(),
-                       ( instance_hndl.isValid() ? "Yes" : "No" ) );
-   }
-}
-
-void Federate::add_MOM_HLAfederation_instance_id(
+void Federate::add_MOM_HLAfederation_instance_handle(
    ObjectInstanceHandle const &instance_hndl )
 {
    string id_str;
@@ -4604,7 +5067,7 @@ void Federate::add_MOM_HLAfederation_instance_id(
    }
 }
 
-void Federate::remove_MOM_HLAfederation_instance_id(
+void Federate::remove_MOM_HLAfederation_instance_handle(
    ObjectInstanceHandle const &instance_hndl )
 {
    TrickHLAObjInstanceNameMap::iterator iter;
@@ -4632,7 +5095,7 @@ bool Federate::is_federate_executing() const
    return execution_control->execution_has_begun;
 }
 
-bool Federate::is_MOM_HLAfederation_instance_id(
+bool Federate::is_MOM_HLAfederation_instance_handle(
    ObjectInstanceHandle const &instance_hndl )
 {
    return ( MOM_HLAfederation_instance_name_map.find( instance_hndl ) != MOM_HLAfederation_instance_name_map.end() );
@@ -4643,7 +5106,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
    AttributeHandleValueMap const &values )
 {
    // Determine if this is a MOM HLAfederation instance.
-   if ( !is_MOM_HLAfederation_instance_id( instance_hndl ) ) {
+   if ( !is_MOM_HLAfederation_instance_handle( instance_hndl ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_WARNING, "Federate::set_federation_instance_attributes():%d WARNING: Unknown object class, expected 'HLAmanager.HLAfederation'.\n",
                           __LINE__ );
@@ -4651,22 +5114,27 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
       return;
    }
 
+   // Look for the Federation attributes we are interested in.
    AttributeHandleValueMap::const_iterator attr_iter;
    for ( attr_iter = values.begin(); attr_iter != values.end(); ++attr_iter ) {
 
-      if ( attr_iter->first == MOM_HLAautoProvide_handle ) {
+      AttributeHandle const & handle = attr_iter->first;
+      VariableLengthData const & data = attr_iter->second;
+
+      if ( handle == MOM_HLAautoProvide_handle ) {
+
          try {
             // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
             // Decode directly into the auto_provide_setting variable.
             HLAinteger32BE auto_provide_encoder( &auto_provide_setting );
 
-            auto_provide_encoder.decode( attr_iter->second );
+            auto_provide_encoder.decode( data );
 
          } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
             ostringstream errmsg;
-            errmsg << "Federate::set_federation_instance_attributes():" << __LINE__
+            errmsg << "Federate::set_MOM_HLAfederation_instance_attributes():" << __LINE__
                    << " ERROR: Encoder exception '" << rti_err_msg << "'"
                    << " trying to decode auto-provide switch setting"
                    << " (HLAautoProvide)!" << endl;
@@ -4674,31 +5142,63 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          }
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
-            message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d Auto-Provide:%s value:%d\n",
+            message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederation_instance_attributes():%d Auto-Provide:%s value:%d\n",
                              __LINE__, auto_provide_status.c_str(),
                              auto_provide_setting );
          }
 
-      } else if ( attr_iter->first == MOM_HLAfederatesInFederation_handle ) {
+      } else if ( handle == MOM_HLAfederatesInFederation_handle ) {
 
-         // HLAfederatesInFederation has a data type of HLAfederateReferenceList,
-         // which is an HLAvariableArray of HLAfederateReferences.
-         // HLAfederateReference is a HLAfederateHandle representation that is
-         // an HLAvariableArray of HLAbyte elements.
+         // HLAfederatesInFederation is a data type of HLAhandleList,
+         // which is an HLAvariableArray encoding of element type HLAhandle.
+         // HLAhandle is an HLAvariableArray encoding of element type HLAbyte.
          try {
+
             HLAbyte          byte_proto;
             HLAvariableArray fed_handle_proto( byte_proto );
             HLAvariableArray feds_list( fed_handle_proto );
 
-            feds_list.decode( attr_iter->second );
+            VariableLengthData encoded_fed_handle;
 
-            // Since this list of federate id's is current, there is no reason
-            // to thrash the RTI and chase down each federate handle ID and
-            // convert into a name. The wait_for_required_federates_to_join()
-            // method already queries the names from the RTI for all required
-            // federates. We will eventually utilize the same MOM interface to
-            // rebuild this list.
-            save_restore_service.running_feds_count = feds_list.size();
+            // Clear the federates in federation list.
+            encoded_federate_handles.clear();
+
+            // Decode the federatesInFederation attribute.
+            feds_list.decode( data );
+
+            // FIXME: Debugging code.
+            std::cout << "Federate::set_MOM_HLAfederation_instance_attributes(): "
+                      << "Found " << feds_list.size() << " federates." << std::endl;
+            std::cout << "Federate::set_MOM_HLAfederation_instance_attributes(): "
+                      << "Encoding length " << feds_list.getEncodedLength() << std::endl;
+
+            // Iterate through the decoded federate handle list to extract the handles.
+            for ( unsigned int iinc = 0 ; iinc < feds_list.size() ; iinc++ ){
+
+               // FIXME: Debugging code.
+               std::cout << "Encoding length: " << feds_list[iinc].getEncodedLength() << std::endl;
+
+               // FIXME: This isn't working!!!!!
+               // Here we need to extract the encoded federate handle.  It would
+               // be even better if we could get the actual federate handle
+               // but that requires and RTIambassador call and this routine is
+               // called from the FedAmb.
+               encoded_fed_handle = feds_list[iinc].encode();
+
+               // Insert the encoded Federate handle into the federates in
+               // Federation vector.
+               encoded_federate_handles.push_back( encoded_fed_handle );
+
+            }
+
+            // Check if a joined federate update process is active.
+            if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED ) {
+               federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED;
+            }
+
+            // FIXME: Debugging code.
+            std::cout << "Federate::set_MOM_HLAfederation_instance_attributes(): "
+                      << "There are " << feds_list.size() << " federates in the federates list." << std::endl;
 
          } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
             string rti_err_msg;
@@ -4712,11 +5212,13 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          }
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d Found a FederationID list with %d elements.\n",
-                             __LINE__, save_restore_service.running_feds_count );
+            message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederation_instance_attributes():%d Found a FederationID list with %d elements.\n",
+                             __LINE__, encoded_federate_handles.size() );
          }
       }
    }
+
+   return;
 }
 
 void Federate::restore_federate_handles_from_MOM()
@@ -4737,16 +5239,8 @@ void Federate::restore_federate_handles_from_MOM()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-      // Note: Since we are doing reset we can safely clear the joined federate
-      // name map. If we were not resetting, clearing the map will cause reflections
-      // to fail since the instance lookup will fail.
-      joined_federate_name_map.clear();
-
-      // Clear the set of federate handles for the joined federates.
-      joined_federate_handles.clear();
-
-      // Clear the list of joined federate names.
-      joined_federate_names.clear();
+      // Clear the list of joined federates.
+      joined_federates_map.clear();
    }
 
    // Make sure we initialize the MOM handles we will use below. This should
@@ -4776,8 +5270,10 @@ void Federate::restore_federate_handles_from_MOM()
          // mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
+         // FIXME: Is this sufficient?  Do we need to check for the needed federates?
+         // We should probably be using the update_joined_federates here.
          // Determine if all the federate handles have been found.
-         all_found = ( joined_federate_handles.size() >= save_restore_service.running_feds_count );
+         //all_found = ( joined_federates_map.size() >= save_restore_service.running_feds_count );
       }
 
       if ( !all_found ) {
@@ -4826,7 +5322,22 @@ void Federate::rebuild_federate_handles(
    ObjectInstanceHandle const    &instance_hndl,
    AttributeHandleValueMap const &values )
 {
+   KnownFederate * joined_federate;
+   KnownFederateMap::iterator fed_iter;
    AttributeHandleValueMap::const_iterator attr_iter;
+
+   // Find the joined federate associated with this object instance handle.
+   fed_iter = joined_federates_map.find( instance_hndl );
+   if ( fed_iter == joined_federates_map.end() ){
+      string id_str, fed_id;
+      StringUtilities::to_string( id_str, instance_hndl );
+      message_publish( MSG_ERROR, "Federate::rebuild_federate_handles():%d Federate OID:%s\n",
+                       __LINE__, id_str.c_str() );
+      return;
+   }
+
+   // Get the reference to the joined federate.
+   joined_federate = static_cast<KnownFederate *>(&(fed_iter->second));
 
    // Loop through all federate handles
    for ( attr_iter = values.begin(); attr_iter != values.end(); ++attr_iter ) {
@@ -4841,8 +5352,11 @@ void Federate::rebuild_federate_handles(
          // mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
+         // FIXME:
          // Add this FederateHandle to the set of joined federates.
-         joined_federate_handles.insert( fed_handle );
+         //joined_federate_handles.insert( fed_handle );
+         joined_federate->federate_handle = fed_handle;
+
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -4866,10 +5380,9 @@ bool Federate::is_a_required_startup_federate(
    wstring const &fed_name )
 {
    wstring required_fed_name;
-   for ( int i = 0; i < this->known_feds_count; ++i ) {
-      if ( known_feds[i].required ) {
-         StringUtilities::to_wstring( required_fed_name, known_feds[i].name );
-         if ( fed_name == required_fed_name ) { // found an exact match
+   for ( int i = 0; i < this->known_federates.size(); ++i ) {
+      if ( known_federates[i].required ) {
+         if ( fed_name == known_federates[i].name ) { // found an exact match
             return true;
          } else {
             // look for instance attributes of a required object. to do this,

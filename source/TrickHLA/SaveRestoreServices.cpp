@@ -174,12 +174,14 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      object_service( NULL ),
      time_management_service( NULL ),
      execution_control( NULL ),
-     running_feds_count( 0 ),
-     running_feds( NULL ),
+     //running_feds_count( 0 ),
+     //running_feds( NULL ),
      running_feds_count_at_time_of_restore( 0 ),
-     running_feds_file_name( "" ),
-     support_tcp_checkpoint( false ),
+     joined_federates_file_name( "" ),
      HLA_save_directory( "" ),
+     copy_run_directory( false ),
+     unfreeze_after_save( false ),
+     support_tcp_checkpoint( false ),
      save_state( THLASaveProcessEnum::SAVE_UNSUPPORTED ),
      save_label( L"" ),
      save_status_request_complete( false ),
@@ -187,7 +189,6 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      restore_label( L"" ),
      // Possibly deprecated after this.
      // Save variables.
-     unfreeze_after_save( false ),
      // Restore variables.
      restore_federation( false ),
      restore_file_name(),
@@ -226,10 +227,9 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
 SaveRestoreServices::~SaveRestoreServices()
 {
    // Clear the pending Save set.
-   pending_saves.clear();
+   pending_save_queue.clear();
 
-   // Free the memory used by the array of running Federates for the Federation.
-   clear_running_feds();
+   return;
 }
 
 
@@ -250,345 +250,6 @@ void SaveRestoreServices::set_save_label( std::wstring const & label )
 //----------------------------------------------------------------------------
 // General SavRestoreService support functions.
 //----------------------------------------------------------------------------
-
-void SaveRestoreServices::load_and_print_running_federate_names()
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d started.\n",
-                       __LINE__ );
-   }
-
-   // Make sure the MOM handles get initialized before we try to use them.
-   if ( !federate->MOM_HLAfederation_class_handle.isValid() ) {
-      federate->initialize_MOM_handles();
-   }
-
-   AttributeHandleSet fedMomAttributes;
-   fedMomAttributes.insert( federate->MOM_HLAfederatesInFederation_handle );
-   federate->subscribe_attributes( federate->MOM_HLAfederation_class_handle, fedMomAttributes );
-
-   AttributeHandleSet requestedAttributes;
-   requestedAttributes.insert( federate->MOM_HLAfederatesInFederation_handle );
-   federate->request_attribute_update( federate->MOM_HLAfederation_class_handle, requestedAttributes );
-
-   int64_t      wallclock_time;
-   SleepTimeout print_timer;
-   SleepTimeout sleep_timer;
-
-   while ( this->running_feds_count == 0 ) {
-
-      // Check for shutdown.
-      federate->check_for_shutdown_with_termination();
-
-      // Sleep a little while to wait for the information to update.
-      sleep_timer.sleep();
-
-      if ( this->running_feds_count == 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
-
-         // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
-
-         if ( sleep_timer.timeout( wallclock_time ) ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "SaveRestoreServices::load_and_print_running_federate_names():" << __LINE__
-                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
-            }
-         }
-
-         if ( print_timer.timeout( wallclock_time ) ) {
-            print_timer.reset();
-            message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d Waiting...\n",
-                             __LINE__ );
-         }
-      }
-   }
-
-   // Only unsubscribe from the attributes we subscribed to in this function.
-   federate->unsubscribe_attributes( federate->MOM_HLAfederation_class_handle, fedMomAttributes );
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d \
-MOM just informed us that there are %d federates currently running in the federation.\n",
-                       __LINE__, running_feds_count );
-   }
-
-   federate->ask_MOM_for_federate_names();
-
-   size_t joinedFedCount = 0;
-
-   // Wait for all the required federates to join.
-   federate->all_federates_joined = false;
-
-   print_timer.reset();
-   sleep_timer.reset();
-
-   while ( !federate->all_federates_joined ) {
-
-      // Check for shutdown.
-      federate->check_for_shutdown_with_termination();
-
-      // Sleep a little while to wait for more federates to join.
-      sleep_timer.sleep();
-
-      // Determine what federates have joined only if the joined federate
-      // count has changed.
-      if ( joinedFedCount != federate->joined_federate_names.size() ) {
-         joinedFedCount = federate->joined_federate_names.size();
-
-         if ( joinedFedCount >= running_feds_count ) {
-            federate->all_federates_joined = true;
-         }
-      }
-      if ( !federate->all_federates_joined ) {
-
-         // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
-
-         if ( sleep_timer.timeout( wallclock_time ) ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "SaveRestoreServices::load_and_print_running_federate_names():" << __LINE__
-                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
-            }
-         }
-
-         if ( print_timer.timeout( wallclock_time ) ) {
-            print_timer.reset();
-            message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d Waiting...\n",
-                             __LINE__ );
-         }
-      }
-   }
-
-   // Execute a blocking loop until the RTI responds with information for all
-   // running federates
-   print_timer.reset();
-   sleep_timer.reset();
-   while ( federate->joined_federate_names.size() < (unsigned int)running_feds_count ) {
-
-      // Check for shutdown.
-      federate->check_for_shutdown_with_termination();
-
-      sleep_timer.sleep();
-
-      if ( federate->joined_federate_names.size() < (unsigned int)running_feds_count ) {
-
-         // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
-
-         if ( sleep_timer.timeout( wallclock_time ) ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "SaveRestoreServices::load_and_print_running_federate_names():" << __LINE__
-                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
-            }
-         }
-
-         if ( print_timer.timeout( wallclock_time ) ) {
-            print_timer.reset();
-            message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d Waiting...\n",
-                             __LINE__ );
-         }
-      }
-   }
-
-   // Now, copy the new information into my data stores and restore the saved
-   // information back to what is was before this routine ran (so we can get a
-   // valid checkpoint).
-   clear_running_feds();
-   update_running_feds();
-
-   // Print out a list of the Running Federates.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      // Build the federate summary as an output string stream.
-      ostringstream summary;
-      unsigned int  cnt = 0;
-
-      summary << "SaveRestoreServices::load_and_print_running_federate_names():"
-              << __LINE__ << endl
-              << "'running_feds' data structure contains these "
-              << running_feds_count << " federates:";
-
-      // Summarize the required federates first.
-      for ( size_t i = 0; i < running_feds_count; ++i ) {
-         ++cnt;
-         summary << endl
-                 << "    " << cnt
-                 << ": Found running federate '"
-                 << running_feds[i].name << "'";
-      }
-      summary << endl;
-
-      // Display the federate summary.
-      message_publish( MSG_NORMAL, summary.str().c_str() );
-   }
-
-   // Clear the entry since it was absorbed into running_feds...
-   federate->joined_federate_name_map.clear();
-
-   fedMomAttributes.clear();
-   requestedAttributes.clear();
-
-   // Do not un-subscribe to this MOM data; we DO want updates as federates
-   // join / resign the federation!
-
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::load_and_print_running_federate_names():%d Done.\n",
-                       __LINE__ );
-   }
-}
-
-void SaveRestoreServices::update_running_feds()
-{
-   // Make a copy of the updated known feds before restoring the saved copy...
-   running_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( (int)running_feds_count, "TrickHLA::KnownFederate" ) );
-
-   if ( running_feds == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SaveRestoreServices::update_running_feds():" << __LINE__
-             << " ERROR: Could not allocate memory for running_feds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   if ( federate->joined_federate_name_map.size() != running_feds_count ) {
-      // Show the contents of 'joined_federate_name_map'
-      TrickHLAObjInstanceNameMap::const_iterator map_iter;
-      for ( map_iter = federate->joined_federate_name_map.begin();
-            map_iter != federate->joined_federate_name_map.end();
-            ++map_iter ) {
-         string fed_name_str;
-         StringUtilities::to_string( fed_name_str, federate->MOM_HLAfederate_instance_name_map[map_iter->first] );
-         string obj_name_str;
-         StringUtilities::to_string( obj_name_str, map_iter->second );
-         message_publish( MSG_NORMAL, "SaveRestoreServices::update_running_feds():%d joined_federate_name_map[%s]=%s\n",
-                          __LINE__, fed_name_str.c_str(), obj_name_str.c_str() );
-      }
-
-      for ( size_t i = 0; i < running_feds_count; ++i ) {
-         message_publish( MSG_NORMAL, "SaveRestoreServices::update_running_feds():%d running_feds[%d]=%s\n",
-                          __LINE__, i, running_feds[i].name.c_str() );
-      }
-
-      // Terminate the execution since the counters are out of sync...
-      ostringstream errmsg;
-      errmsg << "SaveRestoreServices::update_running_feds():" << __LINE__
-             << " FATAL_ERROR: joined_federate_name_map contains "
-             << federate->joined_federate_name_map.size()
-             << " entries but running_feds_count = " << running_feds_count
-             << "!!!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Loop through joined_federate_name_map to build the running_feds list
-   unsigned int index = 0;
-
-   TrickHLAObjInstanceNameMap::const_iterator map_iter;
-   for ( map_iter = federate->joined_federate_name_map.begin();
-         map_iter != federate->joined_federate_name_map.end(); ++map_iter ) {
-
-      running_feds[index].name = StringUtilities::mm_strdup_wstring( map_iter->second.c_str() );
-
-      running_feds[index].MOM_instance_name = StringUtilities::mm_strdup_wstring(
-         federate->MOM_HLAfederate_instance_name_map[map_iter->first].c_str() );
-
-      // If the federate was running at the time of the checkpoint, it must be
-      // a 'required' federate in the restore, regardless if it is was required
-      // when the federation originally started up.
-      running_feds[index].required = true;
-
-      ++index;
-   }
-}
-
-void SaveRestoreServices::clear_running_feds()
-{
-   if ( this->running_feds != NULL ) {
-      for ( size_t i = 0; i < running_feds_count; ++i ) {
-         running_feds[i].MOM_instance_name = "";
-         running_feds[i].name              = "";
-      }
-      if ( trick_MM->delete_var( static_cast< void * >( this->running_feds ) ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::clear_running_feds():%d WARNING failed to delete Trick Memory for 'this->running_feds'\n",
-                          __LINE__ );
-      }
-      this->running_feds = NULL;
-   }
-}
-
-void SaveRestoreServices::add_a_single_entry_into_running_feds()
-{
-   // Allocate a new structure to absorb the original values plus the new one.
-   KnownFederate *temp_feds;
-   temp_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( (int)( running_feds_count + 1 ), "TrickHLA::KnownFederate" ) );
-
-   if ( temp_feds == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SaveRestoreServices::add_a_single_entry_into_running_feds():" << __LINE__
-             << " ERROR: Could not allocate memory for temp_feds when attempting to add"
-             << " an entry into running_feds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
-
-      // copy current running_feds entries into temporary structure...
-      for ( size_t i = 0; i < running_feds_count; ++i ) {
-         temp_feds[i].MOM_instance_name = running_feds[i].MOM_instance_name;
-         temp_feds[i].name              = running_feds[i].name;
-         temp_feds[i].required          = running_feds[i].required;
-      }
-
-      TrickHLAObjInstanceNameMap::const_iterator map_iter = federate->joined_federate_name_map.begin();
-      StringUtilities::to_string( temp_feds[running_feds_count].MOM_instance_name,
-                                  federate->MOM_HLAfederate_instance_name_map[map_iter->first] );
-      StringUtilities::to_string( temp_feds[running_feds_count].name, map_iter->second );
-      temp_feds[running_feds_count].required = true;
-
-      // delete running_feds data structure.
-      clear_running_feds();
-
-      // assign temp_feds into running_feds
-      this->running_feds = temp_feds;
-
-      ++running_feds_count; // make the new running_feds_count size permanent
-   }
-
-#if 0 // TODO: Update for IMSim.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::add_a_single_entry_into_running_feds():%d Exiting routine, here is what running_feds contains:\n",
-               __LINE__, '\n');
-      for ( int t = 0; t < running_feds_count; t++) {
-         message_publish( MSG_NORMAL, "SaveRestoreServices::add_a_single_entry_into_running_feds():%d running_feds[%d].MOM_instance_name='%s'\n",
-                  __LINE__, t, running_feds[t].MOM_instance_name, '\n');
-         message_publish( MSG_NORMAL, "SaveRestoreServices::add_a_single_entry_into_running_feds():%d running_feds[%d].name='%s'\n",
-                  __LINE__, t, running_feds[t].name, '\n');
-         message_publish( MSG_NORMAL, "SaveRestoreServices::add_a_single_entry_into_running_feds():%d running_feds[%d].required=%d\n",
-                  __LINE__, t, running_feds[t].required, '\n');
-      }
-   }
-#endif
-
-   return;
-}
 
 /*!
  *  @job_class{initialization}
@@ -902,9 +563,9 @@ void SaveRestoreServices::save( std::wstring const &label )
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   // Write out the list of currently running federates.  We do this so that we
+   // Write out the list of currently joined federates.  We do this so that we
    // can enforce that only these federates exist when we restore.
-   this->write_running_feds_file( this->save_label );
+   this->write_joined_federates_to_file( this->save_label );
 
    // Tell the object_service to setup the checkpoint data structures.
    object_service->convert_data_before_checkpoint();
@@ -1079,57 +740,66 @@ void SaveRestoreServices::save_failed()
 /*!
  *  @job_class{scheduled}
  */
-bool SaveRestoreServices::write_running_feds_file(
+bool SaveRestoreServices::write_joined_federates_to_file(
    wstring const &label )
 {
-   std::string file_name;
-   std::string full_file_path;
-   ofstream    file;
+   std::string    file_name;
+   std::string    full_file_path;
+   std::wofstream file;
 
    // Check the Save label.
    if ( label.empty() ){
       // If no label is passed in, then we must have a label already set.
       if ( this->save_label.empty() ){
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::save():" << __LINE__
+         errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
                 << " ERROR: No Save label set!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      // Get the running federates file name from the ExecutionControl service.
-      file_name = execution_control->map_save_label_to_running_feds_file_name( this->save_label );
+      // Get the joined federates file name from the ExecutionControl service.
+      file_name = execution_control->map_save_label_to_federates_file_name( this->save_label );
    }
    else {
-      // Get the running federates file name from the ExecutionControl service.
-      file_name = execution_control->map_save_label_to_running_feds_file_name( label );
+      // Get the joined federates file name from the ExecutionControl service.
+      file_name = execution_control->map_save_label_to_federates_file_name( label );
    }
 
 
    // Form the full path.
    full_file_path = this->HLA_save_directory + "/" + file_name;
 
-   // Open the running federates file for writing.
+   // Open the joined federates file for writing.
    file.open( full_file_path.c_str(), ios::out ); // flawfinder: ignore
 
    // Check to make sure the file was successfully opened.
    if ( file.is_open() ) {
 
-      // Start by writing the number of running federates.
-      file << this->running_feds_count << std::endl;
+      // Start by writing the number of joined federates.
+      file << federate->joined_federates_map.size() << std::endl;
 
       // Write the contents of running_feds into file...
-      for ( size_t i = 0; i < this->running_feds_count; ++i ) {
-         file << running_feds[i].MOM_instance_name << endl;
-         file << running_feds[i].name << endl;
-         file << running_feds[i].required << endl;
+      KnownFederateMap::iterator map_iter;
+      for ( map_iter = federate->joined_federates_map.begin();
+            map_iter != federate->joined_federates_map.end(); ++map_iter ) {
+
+         // Get the associate joined federate reference.
+         KnownFederate * joined_federate;
+         joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+
+         // Write the federate information out to file.
+         file << joined_federate->name << endl;
+         file << joined_federate->type << endl;
+         file << joined_federate->required << endl;
+
       }
 
-      // Close the running federates file.
+      // Close the joined federates file.
       file.close();
 
    } else {
 
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::write_running_feds_file():" << __LINE__
+      errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
              << " ERROR: Failed to open file '" << full_file_path << "' for writing!" << std::endl;
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
@@ -1348,12 +1018,16 @@ Unexpected restore process %d, which is not 'RESTORE_COMPLETE' or 'Restore_Reque
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
-void SaveRestoreServices::read_running_feds_file(
+bool SaveRestoreServices::read_known_federates_from_file(
    string const &file_name )
 {
-   string   full_path;
-   ifstream file;
+   std::string    full_path;
+   std::wifstream file; // Note that this is a wide string file stream.
+   unsigned int   line_num;
+   std::wstring   num_feds_wstr = L"";
+   int            num_feds = 0;
 
+   // FIXME: This needs to use the restore feds file name.
    // Prepend federation name to the filename (if it's not already prepended)
    string federation_name_str = federate->get_federation_name();
    if ( file_name.compare( 0, federation_name_str.length(), federation_name_str ) == 0 ) {
@@ -1364,66 +1038,199 @@ void SaveRestoreServices::read_running_feds_file(
       full_path = this->HLA_save_directory + "/" + federation_name_str + "_" + file_name + ".running_feds";
    }
 
+   // Try to open the known federates file for reading.
    file.open( full_path.c_str(), ios::in ); // flawfinder: ignore
-   if ( file.is_open() ) {
 
-      federate->clear_known_feds();
-
-      file >> federate->known_feds_count;
-
-      // Re-allocate it...
-      federate->known_feds = reinterpret_cast< KnownFederate * >(
-         alloc_type( (int)federate->known_feds_count, "TrickHLA::KnownFederate" ) );
-      if ( federate->known_feds == NULL ) {
-         ostringstream errmsg;
-         errmsg << "SaveRestoreServices::read_running_feds_file():" << __LINE__
-                << " ERROR: Could not allocate memory for known_feds!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-
-      string current_line;
-      for ( int i = 0; i < federate->known_feds_count; ++i ) {
-         file >> current_line;
-         federate->known_feds[i].MOM_instance_name = current_line;
-
-         file >> current_line;
-         federate->known_feds[i].name = current_line;
-
-         file >> current_line;
-         federate->known_feds[i].required = ( atoi( current_line.c_str() ) != 0 ); // flawfinder: ignore
-      }
-
-      file.close(); // Close the file before exiting
-   } else {
+   // Check if the file is open for reading.
+   if ( !file.is_open() ) {
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::read_running_feds_file()" << __LINE__
+      errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
              << " ERROR: Failed to open file '" << full_path << "'!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+      return( false );
    }
-}
 
-void SaveRestoreServices::copy_running_feds_into_known_feds()
-{
-   federate->clear_known_feds();
+   //
+   // We're going to place the data into the known federates list.
+   //
 
-   // Re-allocate it...
-   federate->known_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( (int)running_feds_count, "TrickHLA::KnownFederate" ) );
-   if ( federate->known_feds == NULL ) {
+   // Clear the know federates list.
+   federate->known_federates.clear();
+
+   // Read in the number of known federates from the joined federates Save file.
+   if ( std::getline( file, num_feds_wstr ) ){
+      line_num = 1;
+      try {
+         num_feds = stoi( num_feds_wstr );
+      } catch (const std::invalid_argument& e) {
+         std::wcerr << L"Invalid input: No conversion could be performed." << std::endl;
+         ostringstream errmsg;
+         errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
+                << " ERROR: Reading number of known federates:'"
+                << " Invalid input: No conversion could be performed." << "'!" << endl;
+         message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+         file.close();
+         return( false );
+      } catch (const std::out_of_range& e) {
+         file.close();
+         std::wcerr << L"Error: Number is out of range for an int." << std::endl;
+         return( false );
+      }
+   }
+
+   // Sanity check.  There has to be at least 1 federate.
+   if ( num_feds <= 0 ) {
+      file.close();
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::copy_running_feds_into_known_feds():" << __LINE__
-             << " ERROR: Could not allocate memory for known_feds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
+             << " ERROR: There has to be at least 1 federate.  Read in "
+             << num_feds << " from '" << full_path << "'!" << endl;
+      message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+      return( false );
    }
 
-   // Copy everything from running_feds into known_feds...
-   federate->known_feds_count = 0;
-   for ( size_t i = 0; i < this->running_feds_count; ++i ) {
-      federate->known_feds[federate->known_feds_count].MOM_instance_name = running_feds[i].MOM_instance_name;
-      federate->known_feds[federate->known_feds_count].name              = running_feds[i].name;
-      federate->known_feds[federate->known_feds_count].required          = running_feds[i].required;
-      federate->known_feds_count++;
+   // Now read in each federate entry.
+   bool          read_error = false;
+   unsigned int  fed_count = 0;
+   std::string   fed_name_str;
+   std::wstring  required_wstr;
+   KnownFederate known_federate;
+   while ( std::getline( file, known_federate.name ) ) {
+
+      // Get the federate name in string form for output.
+      StringUtilities::to_string( fed_name_str, known_federate.name );
+
+      // Increment the line count.
+      ++line_num;
+
+      // Read in the federate type.
+      if ( std::getline( file, known_federate.type ) ){
+
+         // Increment the line count.
+         ++line_num;
+
+      }
+      else {
+
+         // There must have been an error reading the file.
+         read_error = true;
+
+         // Let the user know that something went wrong.
+         ostringstream errmsg;
+         errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
+                << " ERROR: Error reading the type for known federate '"
+                << fed_name_str << "' at line " << line_num
+                << " from '" << full_path << "'!" << endl;
+         message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+
+         // Break out of the read while loop.
+         break;
+
+      }
+
+      // Read in the federate required flag.
+      ++line_num;
+      if ( std::getline( file, required_wstr ) ){
+
+         // Increment the line count.
+         ++line_num;
+
+         // Convert to boolean value.
+         int bool_val = 1;
+         try {
+
+            // Convert the string in the file to an integer.
+            bool_val = stoi( required_wstr );
+
+         } catch (const std::invalid_argument& e) {
+
+            // Let the user know that something went wrong.
+            ostringstream errmsg;
+            errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
+                   << " ERROR: Error reading if known federate '"
+                   << fed_name_str << "' is required at line " << line_num
+                   << " from '" << full_path << "'!" << std::endl;
+            message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+
+         } catch (const std::out_of_range& e) {
+
+            // Let the user know that something went wrong.
+            std::wcerr << L"Error: Number is out of range for an int." << std::endl;
+
+         }
+
+         // NOTE that a boolean conversion error is NOT a read error.
+         // In the case of a conversion error, the federate is required.
+
+         // Convert to boolean values.
+         known_federate.required = (bool_val != 0) ? true : false;
+
+      }
+      else {
+
+         // There must have been an error reading the file.
+         read_error = true;
+
+         // Let the user know that something went wrong.
+         ostringstream errmsg;
+         errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
+                << " ERROR: Error reading if known federate '"
+                << fed_name_str << "' is required at line " << line_num
+                << " from '" << full_path << "'!" << std::endl;
+         message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+
+         // Break out of the read while loop.
+         break;
+
+      }
+
+      // Increment the fed count.
+      ++fed_count;
+
+      // Add the known federate to the known federates list.
+      federate->known_federates.push_back( known_federate );
+
    }
+
+   // We're done reading.  So, close the file.
+   file.close();
+
+   // Check for error while reading the known federates file.
+   if ( read_error ) {
+
+      // Clear the known federates list.
+      federate->known_federates.clear();
+
+      // Let the user know that something went wrong.
+      ostringstream errmsg;
+      errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
+             << " ERROR: Error reading the known federates file '"
+             << full_path << "'!" << std::endl;
+      message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+
+      return( false );
+
+   }
+
+   // Check that the number of federates read in matches the number written.
+   if ( fed_count != num_feds ) {
+
+      // Let the user know that something went wrong.
+      ostringstream errmsg;
+      errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
+             << " ERROR: Federate file specified " << num_feds
+             << " but read in " << fed_count << "!" << std::endl;
+      message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+
+      // NOTE that we are NOT clearing the known federates file.  We are just
+      // informing the user that there was a mismatch between the specified
+      // number of federates and the number read.  We also return false to
+      // indicate a discrepency.
+
+      return( false );
+   }
+
+   return( true );
 }
 
 /*!
@@ -1632,7 +1439,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
 
-      if ( this->running_feds_count_at_time_of_restore > this->running_feds_count ) {
+      if ( this->running_feds_count_at_time_of_restore > federate->joined_federates_map.size() ) {
          // someone has resigned since the federation restore has been initiated.
          // build a message detailing what happened and exit the routine.
          return_string = "SaveRestoreServices::wait_for_federation_restore_to_complete() "
@@ -2089,7 +1896,7 @@ restore with label '%s'.\n",
 
          // Save the # of running_feds at the time federation restore is initiated.
          // this way, when the count decreases, we know someone has resigned!
-         this->running_feds_count_at_time_of_restore = this->running_feds_count;
+         this->running_feds_count_at_time_of_restore = federate->joined_federates_map.size();
       } catch ( FederateNotExecutionMember const &e ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::initiate_restore_announce():%d EXCEPTION: FederateNotExecutionMember\n",
                           __LINE__ );
@@ -2170,6 +1977,18 @@ void SaveRestoreServices::reinstate_logged_sync_pts()
 void SaveRestoreServices::set_federate_has_begun_execution()
 {
    execution_control->execution_has_begun = true;
-   federate->joined_federate_name_map.clear(); // clear out joined federate names
+
+   // Concurrency critical code section because joined-federate state is changed
+   // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
+   // function.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &federate->joined_federate_mutex );
+
+      // Clear the list of joined federates.
+      federate->joined_federates_map.clear();
+   }
+
    check_HLA_save_directory();
 }

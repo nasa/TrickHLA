@@ -36,8 +36,34 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 
+// HLA include files.
+#include <RTI/Typedefs.h>
+
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
+
 namespace TrickHLA
 {
+
+/*
+ * Enumerated type used to step through the Save process.
+ */
+enum class THLAFederateUpdateProcessEnum : uint8_t {
+   FEDERATE_UPDATE_FIRST       = 0,
+   FEDERATE_UPDATE_NONE        = 0,
+   FEDERATE_UPDATE_ACTIVATE    = 1,
+   FEDERATE_UPDATE_INITIATED   = 2,
+   FEDERATE_UPDATE_RECEIVED    = 3,
+   FEDERATE_UPDATE_IN_PROGRESS = 4,
+   FEDERATE_UPDATE_COMPLETE    = 5,
+   FEDERATE_UPDATE_FAILED      = 6,
+   FEDERATE_UPDATE_LAST        = 6
+};
+
+/*! @brief Convert a THLAFederateUpdateProcessEnum value into a string
+ *  representation.
+ *  @param update_state Value to convert to a string. */
+std::string to_string( THLAFederateUpdateProcessEnum update_state );
 
 class KnownFederate
 {
@@ -51,22 +77,29 @@ class KnownFederate
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__KnownFederate();
 
+   // Allow the TrickHLA core classes to have direct access to protected
+   // and private data.
+   friend class Federate;
+   friend class SaveRestoreServices;
+
   public:
-   std::string MOM_instance_name; ///< @trick_units{--} MOM instance name for the federate object.
 
    //----------------------------- USER VARIABLES -----------------------------
    // Variables below this point are for either use within a users simulation
    // or must be configured by the user.
 
-   std::string name;     ///< @trick_units{--} Name of a Federate in the Federation.
-   bool        required; ///< @trick_units{--} True requires federate to be in federation before continuing.
+   std::wstring name;     ///< @trick_units{--} Name of a Federate in the Federation.
+   std::wstring type;     ///< @trick_units{--} Type of a Federate in the Federation.
+   bool         required; ///< @trick_units{--} True requires federate to be in federation before continuing.
 
   public:
    /*! @brief Default constructor for the TrickHLA KnownFederate class. */
    KnownFederate()
-      : MOM_instance_name(),
-        name(),
-        required( false )
+      : name(),
+        type(),
+        required( false ),
+        object_instance_handle(),
+        MOM_instance_name()
    {
       return;
    };
@@ -76,16 +109,59 @@ class KnownFederate
       return;
    };
 
+   /*! @brief Check if the known federate MOM data is completely resolved.
+    *  @return True if all items have been resolved; otherwise, false. */
+   bool is_complete()
+   {
+      if (    name.empty()
+           || type.empty()
+           || MOM_instance_name.empty()
+           || !federate_handle.isValid()
+           || !object_instance_handle.isValid() )
+      {
+         return false;
+      }
+
+      return( true );
+   }
+
+   /*! @brief Get a copy of the federate MOM instance name.
+    *  @return Wide string with the federate MOM instance name. */
+   std::wstring get_MOM_instance_name()
+   {
+      return( MOM_instance_name );
+   }
+
+   /*! @brief Get a copy of the federate MOM instance handle.
+    *  @return Copy of the federate MOM instance handle. */
+   RTI1516_NAMESPACE::ObjectInstanceHandle get_object_instance_handle()
+   {
+      return( object_instance_handle );
+   }
+
+  protected:
+   RTI1516_NAMESPACE::FederateHandle       federate_handle;        ///< @trick_io{**}    HLA Federate handle.
+   RTI1516_NAMESPACE::ObjectInstanceHandle object_instance_handle; ///< @trick_io{**}    HLA Federate object instance handle.
+   std::wstring                            MOM_instance_name;      ///< @trick_units{--} MOM instance name for the federate object.
+
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for KnownFederate class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   KnownFederate( KnownFederate const &rhs );
+   //KnownFederate( KnownFederate const &rhs );
    /*! @brief Assignment operator for KnownFederate class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   KnownFederate &operator=( KnownFederate const &rhs );
+   //KnownFederate &operator=( KnownFederate const &rhs );
 };
 
+typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, KnownFederate > KnownFederateMap;
+typedef std::vector< KnownFederate > KnownFederateVector;
+typedef std::vector< RTI1516_NAMESPACE::VariableLengthData > EncodedFederateHandleVector;
+
 } // namespace TrickHLA
+
+#ifdef SWIG
+   %template(KnownFederateVector) std::vector< TrickHLA::KnownFederate >;
+#endif
 
 #endif // TRICKHLA_KNOWN_FEDERATE_HH

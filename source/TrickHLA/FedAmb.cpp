@@ -369,10 +369,6 @@ void FedAmb::federationNotSaved(
    // Mark the Save process as failed.
    save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_FAILED );
 
-
-   // FIXME: Possibly deprecated code.
-   //save_restore_service->save_failed();
-
    return;
 }
 
@@ -732,6 +728,9 @@ void FedAmb::reflectAttributeValues(
    // Get the TrickHLA object for the given Object Instance Handle.
    Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
 
+   // If the HLA Object Instance is found in the list of TrickHLA Object
+   // Instances then this is to be processed as a federate recognized/defined
+   // object instance.  Queue the data and return.
    if ( trickhla_obj != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s'\n",
@@ -743,7 +742,15 @@ void FedAmb::reflectAttributeValues(
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
-   } else if ( ( federate != NULL ) && federate->is_federate_instance_id( objectInstance ) ) {
+
+      return;
+
+   }
+
+   // If we get here, then this isn't a federate recognized/defined object
+   // instance.  Now we check to see if it is a joined federate MOM object
+   // instance.  We use these to process joined federate data.
+   if ( ( federate != NULL ) && federate->is_joined_federate_by_object_handle( objectInstance ) ) {
 
       if ( federation_restored_rebuild_federate_handle_set ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -763,8 +770,16 @@ void FedAmb::reflectAttributeValues(
          }
          federate->set_MOM_HLAfederate_instance_attributes( objectInstance, attributeValues );
       }
-   } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_instance_id( objectInstance ) ) {
-      // This was an instance-ID for the MOV interface.
+
+      return;
+
+   }
+
+   // If we get here, then check to see if this is the MOM federation
+   // object instance.
+   if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_instance_handle( objectInstance ) ) {
+
+      // This was an instance-ID for the MOM interface.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, objectInstance );
@@ -772,26 +787,34 @@ void FedAmb::reflectAttributeValues(
                           __LINE__, id_str.c_str() );
       }
       federate->set_MOM_HLAfederation_instance_attributes( objectInstance, attributeValues );
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, objectInstance );
 
-         ostringstream summary;
-         summary << "FedAmb::reflectAttributeValues():" << __LINE__
-                 << " Received update to Unknown Object Instance:"
-                 << handle_str << endl;
-
-         AttributeHandleValueMap::const_iterator attr_iter;
-         for ( attr_iter = attributeValues.begin();
-               attr_iter != attributeValues.end();
-               ++attr_iter ) {
-            StringUtilities::to_string( handle_str, attr_iter->first );
-            summary << "   + Attribute-Handle:" << handle_str << endl;
-         }
-         message_publish( MSG_NORMAL, summary.str().c_str() );
-      }
+      return;
    }
+
+   // If we get here, we don't know what this is.
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+
+      string handle_str;
+      StringUtilities::to_string( handle_str, objectInstance );
+
+      ostringstream summary;
+      summary << "FedAmb::reflectAttributeValues():" << __LINE__
+            << " Received update to Unknown Object Instance:"
+            << handle_str << endl;
+
+      AttributeHandleValueMap::const_iterator attr_iter;
+      for ( attr_iter = attributeValues.begin();
+            attr_iter != attributeValues.end();
+            ++attr_iter ) {
+         StringUtilities::to_string( handle_str, attr_iter->first );
+         summary << "   + Attribute-Handle:" << handle_str << endl;
+      }
+      message_publish( MSG_NORMAL, summary.str().c_str() );
+
+   }
+
+   return;
+
 }
 
 #if defined( IEEE_1516_2010 )
@@ -1058,7 +1081,7 @@ void FedAmb::removeObjectInstance(
    }
 
    // Remove the instance ID for a federate, which this function will test for.
-   federate->remove_MOM_HLAfederate_instance_id( objectInstance );
+   federate->remove_joined_federate( objectInstance );
 
    // Mark this object as deleted from the RTI.
    object_service->mark_object_as_deleted_from_federation( objectInstance );
@@ -1074,7 +1097,7 @@ void FedAmb::removeObjectInstance(
    SupplementalRemoveInfo    removeInfo ) throw( FederateInternalError )
 {
    // Remove the instance ID for a federate, which this function will test for.
-   federate->remove_MOM_HLAfederate_instance_id( objectInstance );
+   federate->remove_joined_federate( objectInstance );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string id_str;
@@ -1117,7 +1140,7 @@ void FedAmb::removeObjectInstance(
 #endif // IEEE_1516_2025
 {
    // Remove the instance ID for a federate, which this function will test for.
-   federate->remove_MOM_HLAfederate_instance_id( objectInstance );
+   federate->remove_joined_federate( objectInstance );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string id_str;

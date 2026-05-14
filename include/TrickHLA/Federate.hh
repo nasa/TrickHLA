@@ -151,9 +151,10 @@ class Federate : public CheckpointConversionBase
 
    // The Federates known to be in the Federation, and specified in the input files.
    // TODO: change this to be an STL Array.
-   bool           enable_known_feds; ///< @trick_units{--} Enable use of known Federates list (default: true)
-   int            known_feds_count;  ///< @trick_units{--} Number of required Federates (default: 0)
-   KnownFederate *known_feds;        ///< @trick_units{--} Array of all the known Federates in the simulation.
+   bool                enable_known_feds; ///< @trick_units{--} Enable use of known Federates list (default: true)
+   //int            known_feds_count;  ///< @trick_units{--} Number of required Federates (default: 0)
+   //KnownFederate *known_feds;        ///< @trick_units{--} Array of all the known Federates in the simulation.
+   KnownFederateVector known_federates;   ///< @trick_units{--} Array of all the known Federates in the simulation.
 
    DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
    DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
@@ -269,16 +270,25 @@ class Federate : public CheckpointConversionBase
       execution_control->clear_multiphase_init_sync_points();
    }
 
+   /*! @brief Update the joined federates list. */
+   void update_joined_federates();
+
+   /*! @brief Get a wide string list of joined federates.
+    *  @return Wide string containing a line separated list of the federates
+    *  in the joined_federates_map. */
+   std::wstring list_joined_federates();
+
    /*! @brief Wait for all the required federates to joined the federation.
-    *  @return A non-empty string whrn there is a problem. */
+    *  @return A non-empty string when there is a problem. */
    std::string wait_for_required_federates_to_join();
 
-   /*! @brief Get a const reference to the joined federate handles.
-    *  @return Pointer to associated federation execution name. */
-   RTI1516_NAMESPACE::FederateHandleSet const &get_joined_federate_handles()
-   {
-      return joined_federate_handles;
-   }
+   /*! @brief Update and print the joined federates list. */
+   void update_and_print_joined_federates();
+
+   /*! @brief Get a list of the joined federate handles.
+    *  @detail This function will clear the incoming list.
+    *  @param handle_set The set to fill with joined federate handles. */
+   void get_joined_federate_handle_set( RTI1516_NAMESPACE::FederateHandleSet & handle_set );
 
 
    //-------------------------------------------------------------------------
@@ -588,8 +598,14 @@ class Federate : public CheckpointConversionBase
    /*! @brief Initialize the MOM interface handles. */
    void initialize_MOM_handles();
 
-   /*! @brief Request names of joined federates from the MOM. */
-   void ask_MOM_for_federate_names();
+   /*! @brief Subscribe and request MOM information of joined federates. */
+   void ask_MOM_for_federate_info();
+
+   /*! @brief Subscribe and request MOM information on the federation. */
+   void ask_MOM_for_federation_info();
+
+   /*! @brief Unsubscribe from MOM federation information. */
+   void unsubscribe_from_MOM_federation_info();
 
    /*! @brief Unsubscribe from all MOM federate class attributes. */
    void unsubscribe_all_HLAfederate_class_attributes_from_MOM();
@@ -622,32 +638,6 @@ class Federate : public CheckpointConversionBase
 
    /*! @brief Restore the backed up "auto-provide" state to the MOM. */
    void restore_orig_MOM_auto_provide_setting();
-
-   // TODO: Consider renaming "instance_id" functions from ID to handle.
-
-   /*! @brief Add the specified Federate instance ID to the list of discovered federates.
-    * @param instance_hndl Federate instance to add. */
-   void add_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
-
-   /*! @brief Remove the specified Federate instance ID from the list of discovered federates.
-    * @param instance_hndl Federate instance to remove. */
-   void remove_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
-
-   /*! @brief Deallocate running federates based on current known information
-    * in preparation for re-size. */
-   void clear_known_feds();
-
-   /*! @brief Add the specified MOM HLAfederate instance ID to the list of
-    * discovered federates.
-    *  @param instance_hndl Object instance handle.
-    *  @param instance_name Object instance Name. */
-   void add_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl,
-                                         std::wstring const                            &instance_name );
-
-   /*! @brief Remove the specified Federate instance ID to the list of
-    * discovered federates.
-    *  @param instance_hndl Object instance handle. */
-   void remove_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
 
    /*! @brief Checks for the existence 'startup' initialization sync point as
@@ -707,11 +697,6 @@ class Federate : public CheckpointConversionBase
     * simulation run that did not shutdown cleanly. */
    void destroy_orphaned_federation();
 
-   /*! @brief Determine if the specified instance ID is for one of the discovered federates.
-    *  @return True if ID is for a federate.
-    *  @param id MOM HLAfederate instance ID. */
-   bool is_federate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &id );
-
    /*! @brief Decode the specified encoded Federate Handle.
     *  @return Federate Handle.
     *  @param encoded_handle encoded Federate Handle */
@@ -756,17 +741,17 @@ class Federate : public CheckpointConversionBase
     *  HLAfederation instance.
     *  @return True if ID is for a federate; False otherwise.
     *  @param instance_hndl Federate instance handle. */
-   bool is_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
+   bool is_MOM_HLAfederation_instance_handle( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
-   /*! @brief Add the specified MOM HLAfederation instance handle to the list
-    *  of running federates.
+   /*! @brief Add the specified MOM HLAfederation instance handle to list of
+    *  federations.
     *  @param instance_hndl Object instance handle. */
-   void add_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
+   void add_MOM_HLAfederation_instance_handle( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    /*! @brief Remove the specified MOM HLAfederation instance handle from the
-    *  list of running federates.
+    *  list of federations.
     *  @param instance_hndl Object instance handle. */
-   void remove_MOM_HLAfederation_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
+   void remove_MOM_HLAfederation_instance_handle( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    /*! @brief Query if the an object class handle is a federation class.
     *  @return True if class handle is a federation class; False otherwise.
@@ -782,6 +767,50 @@ class Federate : public CheckpointConversionBase
     * @param values        Attribute values. */
    void set_MOM_HLAfederation_instance_attributes( RTI1516_NAMESPACE::ObjectInstanceHandle const    &instance_hndl,
                                                    RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
+
+   //-------------------------------------------------------------------------
+   // Routines to manage the Joined Federates list.
+   //
+
+   /*! @brief Determine if the specified federate handle is for one of the joined federates.
+    *  @return True if joined federate, otherwise false.
+    *  @param handle MOM HLAfederate instance handle. */
+   bool is_joined_federate_by_federate_handle( RTI1516_NAMESPACE::FederateHandle const &handle );
+
+   /*! @brief Determine if the specified instance handle is for one of the joined federates.
+    *  @return True if joined federate, otherwise false.
+    *  @param handle MOM HLAfederate instance handle. */
+   bool is_joined_federate_by_object_handle( RTI1516_NAMESPACE::ObjectInstanceHandle const &handle );
+
+   /*! @brief Determine if the specified federate MOM name is a joined federate.
+    *  @return True if a name of joined federate, otherwise false.
+    *  @param MOM_name Federate MOM name to test. */
+   bool is_joined_federate_by_MOM_name( std::wstring const &MOM_name );
+
+   /*! @brief Determine if the specified federate name is a joined federate.
+    *  @return True if a name of joined federate, otherwise false.
+    *  @param federate_name Federate name to test. */
+   bool is_joined_federate_by_name( std::string const &federate_name );
+
+   /*! @brief Determine if the specified federate name is a joined federate.
+    *  @return True if a name of joined federate, otherwise false.
+    *  @param federate_name Federate name to test. */
+   bool is_joined_federate_by_name( std::wstring const &federate_name );
+
+   /*! @brief Add the specified Federate to the list of joined federates.
+    * @param instance_hndl Federate object instance to add.
+    * @param instance_name Federate MOM instance name to add. */
+   void add_joined_federate( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl,
+                             std::wstring const                            &instance_name = L"" );
+
+   /*! @brief Remove the specified Federate instance ID from the list of discovered federates.
+    * @param instance_hndl Federate instance to remove. */
+   void remove_joined_federate( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
+
+   /*! @brief Get the joined federate MOM object instance name from the RTI.
+    *  @return True if an ID of joined federate, otherwise false.
+    *  @param handle MOM HLAfederate instance handle. */
+   std::wstring get_federate_MOM_name( KnownFederate const & federate );
 
 
    //-------------------------------------------------------------------------
@@ -1048,29 +1077,39 @@ class Federate : public CheckpointConversionBase
 
   private:
    bool got_startup_sync_point;     ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
-   bool make_copy_of_run_directory; ///< @trick_units{--} Make a backup of RUN directory before restarting the federation via federation object_service (default: false).
-
    bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederatesInFederation_handle; ///< @trick_io{**} MOM attribute handle to Federate-count.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAautoProvide_handle;           ///< @trick_io{**} MOM AutoProvide attribute handle.
+
+   // FIXME: What is this used for?
    TrickHLAObjInstanceNameMap           MOM_HLAfederation_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederation instances.
 
    int auto_provide_setting;      ///< @trick_units{--} MOM Federation wide HLAautoProvide setting.
    int orig_auto_provide_setting; ///< @trick_units{--} Original MOM Federation wide HLAautoProvide setting when we joined the federation.
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederate_class_handle; ///< @trick_io{**} MOM Federate class handle.
-   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateType_handle;   ///< @trick_io{**} MOM attribute handle to Federate type (a.k.a name in IEEE 1516-2000).
+   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateType_handle;   ///< @trick_io{**} MOM attribute handle to Federate type.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateName_handle;   ///< @trick_io{**} MOM attribute handle to Federate name.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederate_handle;       ///< @trick_io{**} MOM attribute handle to Federate-Handle.
 
-   TrickHLAObjInstanceNameMap MOM_HLAfederate_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederate instances name map.
+   // FIXME: Delete all of these when we get this working.
+   //TrickHLAObjInstanceNameMap MOM_HLAfederate_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederate instances name map.
 
-   MutexLock                            joined_federate_mutex;    ///< @trick_io{**} Mutex to lock thread over critical code sections.
-   TrickHLAObjInstanceNameMap           joined_federate_name_map; ///< @trick_io{**} Map of the federate instances and corresponding names.
-   RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;  ///< @trick_io{**} FederateHandles of joined federates.
-   VectorOfWstrings                     joined_federate_names;    ///< @trick_io{**} Names of the joined federates.
+   //TrickHLAObjInstanceNameMap           joined_federate_name_map; ///< @trick_io{**} Map of the federate instances and corresponding names.
+   //RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;  ///< @trick_io{**} FederateHandles of joined federates.
+   //VectorOfWstrings                     joined_federate_names;    ///< @trick_io{**} Names of the joined federates.
+   //VectorOfWstrings                     joined_federate_types;    ///< @trick_io{**} Types of the joined federates.
+   MutexLock        joined_federate_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   KnownFederateMap joined_federates_map;  ///< @trick_io{**} Map used to manage the dynamic list of joined federates.
+
+   MutexLock                            federate_update_mutex;    ///< @trick_io{**}    Mutex to lock thread over critical code sections.
+   THLAFederateUpdateProcessEnum        federate_update_state;    ///< @trick_units{--} State for joined federate update process.
+   RTI1516_NAMESPACE::FederateHandleSet federate_handles;         ///< @trick_io{**}    Handles from MOM for federates in the federation list.
+   EncodedFederateHandleVector          encoded_federate_handles; ///< @trick_io{**}    Encoded handles from MOM for federates in the federation list.
+   //bool                        all_federates_found;     ///< @trick_units{--} Flag indicating if all federate in Federation discovered.
+   //bool                        federate_list_updated;   ///< @trick_units{--} Flag indicating if the federate list has been updated.
 
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
@@ -1153,16 +1192,6 @@ class Federate : public CheckpointConversionBase
     *  @return True if a name of required federate, otherwise false.
     *  @param federate_name Federate name to test. */
    bool is_required_federate( std::wstring const &federate_name );
-
-   /*! @brief Determine if the specified federate name is a joined federate.
-    *  @return True if a name of joined federate, otherwise false.
-    *  @param federate_name Federate name to test. */
-   bool is_joined_federate( std::string const &federate_name );
-
-   /*! @brief Determine if the specified federate name is a joined federate.
-    *  @return True if a name of joined federate, otherwise false.
-    *  @param federate_name Federate name to test. */
-   bool is_joined_federate( std::wstring const &federate_name );
 
   private:
    // Do not allow the copy constructor or assignment operator.

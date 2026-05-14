@@ -148,7 +148,6 @@ void ExecutionControl::initialize()
 
    // Simple initialization does not support known federates.
    federate->enable_known_feds = false;
-   federate->known_feds_count  = 0;
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -273,7 +272,7 @@ void ExecutionControl::post_multi_phase_init_processes()
    // When we join the federation, setup the list of current federates.
    // When a federate joins / resigns, this list will be automatically
    // updated by each federate.
-   save_restore_service->load_and_print_running_federate_names();
+   federate->update_and_print_joined_federates();
 
    // Make sure we setup time constrained and time regulating with the RTI.
    federate->setup_time_management();

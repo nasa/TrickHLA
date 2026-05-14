@@ -1041,7 +1041,7 @@ std::wstring ExecutionControlBase::generate_save_label()
 /*
  * @job_class{checkpoint}
  */
-const std::string ExecutionControlBase::map_save_label_to_running_feds_file_name(
+const std::string ExecutionControlBase::map_save_label_to_federates_file_name(
    std::wstring const &save_label )
 {
    std::string save_label_str;
@@ -1071,7 +1071,7 @@ const std::string ExecutionControlBase::map_save_label_to_running_feds_file_name
  */
 unsigned int ExecutionControlBase::number_of_pending_saves()
 {
-   return( save_restore_service->pending_saves.size() );
+   return( save_restore_service->pending_save_queue.size() );
 }
 
 
@@ -1388,7 +1388,7 @@ void ExecutionControlBase::restore_setup()
       save_restore_service->check_HLA_save_directory();
 
       // make sure only the required federates are in the federation before we do the restore
-      save_restore_service->read_running_feds_file( str_restore_label );
+      save_restore_service->read_known_federates_from_file( str_restore_label );
 
       string return_string;
       return_string = federate->wait_for_required_federates_to_join(); // sets running_feds_count
@@ -1518,7 +1518,8 @@ void ExecutionControlBase::restore_after()
       // (backward compatibility with previous restore process)
       save_restore_service->preserve_restore_process();
 
-      save_restore_service->copy_running_feds_into_known_feds();
+      // FIXME:
+      //save_restore_service->copy_running_feds_into_known_feds();
 
       // wait for RTI to inform us that the federation restore has
       // begun before informing the RTI that we are done.

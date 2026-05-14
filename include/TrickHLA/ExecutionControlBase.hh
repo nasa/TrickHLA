@@ -724,8 +724,8 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Generate an HLA Save label. */
    virtual std::wstring generate_save_label();
 
-   /*! @brief Map a Save label into a running federates file name. */
-   virtual const std::string map_save_label_to_running_feds_file_name( std::wstring const &save_label );
+   /*! @brief Map a Save label into a federates file name. */
+   virtual const std::string map_save_label_to_federates_file_name( std::wstring const &save_label );
 
    /*! @brief Get the number of pending scheduled Saves.
     *  @return Number of pending Saves in Save queue. */
