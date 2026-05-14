@@ -101,16 +101,16 @@ else
 endif
 
 # Determine the Trick patch version number.
-#ifneq (,$(findstring trick-version, $(shell which trick-version)))
-#   TRICK_PATCH_VER = $(shell trick-version -v | cut -d . -f 3 | cut -d - -f 1)
-#   ifeq (,$(TRICK_PATCH_VER))
-#      $(error ${RED_TXT}S_hla.mk:ERROR: Could not determine Trick patch version using trick-version command!${RESET_TXT})
-#   endif
-#else
-#   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the trick-version command!${RESET_TXT})
-#endif
-#TRICK_CFLAGS   += -DTRICK_PATCH=${TRICK_PATCH_VER}
-#TRICK_CXXFLAGS += -DTRICK_PATCH=${TRICK_PATCH_VER}
+ifneq (,$(findstring trick-version, $(shell which trick-version)))
+   TRICK_PATCH_VER = $(shell trick-version -v | cut -d . -f 3 | cut -d - -f 1)
+   ifeq (,$(TRICK_PATCH_VER))
+      $(error ${RED_TXT}S_hla.mk:ERROR: Could not determine Trick patch version using trick-version command!${RESET_TXT})
+   endif
+else
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the trick-version command!${RESET_TXT})
+endif
+TRICK_CFLAGS   += -DTRICK_PATCH=${TRICK_PATCH_VER}
+TRICK_CXXFLAGS += -DTRICK_PATCH=${TRICK_PATCH_VER}
 
 ifeq ($(TRICK_HOST_TYPE),Darwin)
    # macOS
