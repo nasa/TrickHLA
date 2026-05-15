@@ -115,13 +115,11 @@ class EncoderFactory
       TrickHLA::EncodingEnum const hla_encoding,
       std::string const           &data_name );
 
-#if defined( TRICK_WSTRING_MM_SUPPORT )
    static EncoderBase *create_wstring_encoder(
       void                        *address,
       ATTRIBUTES                  *attr,
       TrickHLA::EncodingEnum const hla_encoding,
       std::string const           &data_name );
-#endif // TRICK_WSTRING_MM_SUPPORT
 
    static EncoderBase *create_int16_encoder(
       void                        *address,

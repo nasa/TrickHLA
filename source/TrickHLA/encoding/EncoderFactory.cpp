@@ -363,17 +363,7 @@ EncoderBase *EncoderFactory::create(
       }
       case TRICK_WSTRING: {
          // std::wstring
-#if defined( TRICK_WSTRING_MM_SUPPORT )
          encoder = create_wstring_encoder( address, attr, hla_encoding, data_name );
-#else
-         ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
-                << "' is of type 'std::wstring', the specified HLA-encoding ("
-                << encoding_enum_to_string( hla_encoding )
-                << ") is not supported." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
-#endif // TRICK_WSTRING_MM_SUPPORT
          break;
       }
       case TRICK_VOID_PTR: {
@@ -626,7 +616,6 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
    return NULL;
 }
 
-#if defined( TRICK_WSTRING_MM_SUPPORT )
 EncoderBase *EncoderFactory::create_wstring_encoder(
    void              *address,
    ATTRIBUTES        *attr,
@@ -662,7 +651,6 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
    }
    return NULL;
 }
-#endif // TRICK_WSTRING_MM_SUPPORT
 
 EncoderBase *EncoderFactory::create_int16_encoder(
    void              *address,
