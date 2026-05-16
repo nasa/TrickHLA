@@ -129,6 +129,8 @@ DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32BEFixedArrayEncoder, HLAinteger32B
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int32LEFixedArrayEncoder, HLAinteger32LE, Integer32 )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64BEFixedArrayEncoder, HLAinteger64BE, Integer64 )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( Int64LEFixedArrayEncoder, HLAinteger64LE, Integer64 )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeCharFixedArrayEncoder, HLAunicodeChar, wchar_t )
+DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeStringFixedArrayEncoder, HLAunicodeString, std::wstring )
 
 #if defined( IEEE_1516_2025 )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt16BEFixedArrayEncoder, HLAunsignedInteger16BE, UnsignedInteger16 )
@@ -138,9 +140,3 @@ DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt32LEFixedArrayEncoder, HLAunsignedI
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64BEFixedArrayEncoder, HLAunsignedInteger64BE, UnsignedInteger64 )
 DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UInt64LEFixedArrayEncoder, HLAunsignedInteger64LE, UnsignedInteger64 )
 #endif // IEEE_1516_2025
-
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeCharFixedArrayEncoder, HLAunicodeChar, wchar_t )
-
-#if defined( TRICK_WSTRING_MM_SUPPORT )
-DECLARE_BASIC_FIXED_ARRAY_ENCODER_CLASS( UnicodeStringFixedArrayEncoder, HLAunicodeString, std::wstring )
-#endif // TRICK_WSTRING_MM_SUPPORT

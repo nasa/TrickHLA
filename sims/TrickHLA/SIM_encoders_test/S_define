@@ -3,9 +3,6 @@
 
 ##include <climits>
 
-// Change to TRICK_WSTRING_MM_SUPPORT to test support for std::wtring.
-#define NO_TRICK_WSTRING_MM_SUPPORT
-
 ##include "TrickHLA/CompileConfig.hh"
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/encoding/EncoderFactory.hh"
@@ -69,11 +66,8 @@ class TestSimObj : public Trick::SimObject {
    WCharData wchar_data1 = WCharData( 0 );
    WCharData wchar_data2 = WCharData( 10 );
 
-#ifdef TRICK_WSTRING_MM_SUPPORT
-   // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
    WStringData wstring_data1 = WStringData( 0 );
    WStringData wstring_data2 = WStringData( 10 );
-#endif
 
    Int16Data int16_data1 = Int16Data( 0 );
    Int16Data int16_data2 = Int16Data( 0 );
@@ -191,11 +185,9 @@ class TestSimObj : public Trick::SimObject {
                                                   "T.wchar_data2", wchar_data2,
                                                   TrickHLA::ENCODING_UNICODE_CHAR );
 
-#ifdef TRICK_WSTRING_MM_SUPPORT
       ("initialization") encoder_test.wstring_test( "T.wstring_data1", wstring_data1,
                                                     "T.wstring_data2", wstring_data2,
                                                     TrickHLA::ENCODING_UNICODE_STRING );
-#endif
 
       ("initialization") encoder_test.int16_test( "T.int16_data1", int16_data1,
                                                   "T.int16_data2", int16_data2,
