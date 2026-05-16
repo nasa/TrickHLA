@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Breaking Changes
 
-- The minimum supported Trick version is 25.0.3 because of Trick changes for variable server security and swig class pointers.
+- The minimum supported Trick version is 25.0.3 because of Trick changes for variable server security, swig class pointers, and std::wstring support.
 - The function name to disable Trick child thread associations in TrickHLA was changed and the corresponding function call in the TrickHLAFederateConfig.py has also been updated.
   - FROM: disable_trick_child_thread_associations()
   - TO: disable_trick_thread_associations()
