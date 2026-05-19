@@ -559,9 +559,6 @@ void SaveRestoreServices::save( std::wstring const &label )
       message_publish( MSG_WARNING, "ExecutionControlBase::setup_checkpoint():%d EXCEPTION: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
    }
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Write out the list of currently joined federates.  We do this so that we
    // can enforce that only these federates exist when we restore.
@@ -581,9 +578,6 @@ void SaveRestoreServices::save( std::wstring const &label )
 
    // Save the federate state using the Trick checkpoint mechanism.
    checkpoint( checkpoint_file_name.c_str() );
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    //
    // Let the Federation know that our Save process is finished.
