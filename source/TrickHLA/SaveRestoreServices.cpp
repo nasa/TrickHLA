@@ -1020,7 +1020,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
    std::wifstream file; // Note that this is a wide string file stream.
    unsigned int   line_num;
    std::wstring   num_feds_wstr = L"";
-   int            num_feds = 0;
+   unsigned int   num_feds = 0;
 
    // Check the Save label.
    if ( label.empty() ){

@@ -31,7 +31,7 @@ NASA, Johnson Space Center\n
 
 // Trick does not support the std::wstring type in the Memory Manager for now.
 // Default: NO_TRICK_WSTRING_MM_SUPPORT
-#define NO_TRICK_WSTRING_MM_SUPPORT
+#define TRICK_WSTRING_MM_SUPPORT
 
 // Collect statistics on the wait times for the Time Advance Grant (TAG).
 // Default: NO_TRICKHLA_COLLECT_TAG_STATS
