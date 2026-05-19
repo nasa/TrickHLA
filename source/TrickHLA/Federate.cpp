@@ -107,6 +107,7 @@ NASA, Johnson Space Center\n
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/EncodingExceptions.h"
 #include "RTI/encoding/HLAvariableArray.h"
+#include "RTI/encoding/HLAopaqueData.h"
 
 #if defined( IEEE_1516_2025 )
 #   include "RTI/RtiConfiguration.h"
@@ -1146,7 +1147,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    }
 
    // Get the associate joined federate reference.
-   KnownFederate * joined_federate = &(joined_federates_map[handle]);
+   KnownFederate & joined_federate = joined_federates_map[handle];
 
    //
    // Let's get the federate name information.
@@ -1159,21 +1160,21 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    if ( attr_iter != values.end() ) {
 
       // Federate name is encoded into variable length data.
-      VariableLengthData const &value = attr_iter->second;
+      VariableLengthData const &value = dynamic_cast<VariableLengthData const &>(attr_iter->second);
 
       // Decode the federate name that is encoded as a Unicode string.
       HLAunicodeString fed_name_unicode;
       fed_name_unicode.decode( value );
-      joined_federate->name = wstring( fed_name_unicode );
+      joined_federate.name = wstring( fed_name_unicode );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, handle );
          string name_str;
-         StringUtilities::to_string( name_str, joined_federate->name );
+         StringUtilities::to_string( name_str, joined_federate.name );
          message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Name:'%s' size:%d\n",
                           __LINE__, handle_str.c_str(), name_str.c_str(),
-                          (int)joined_federate->name.size() );
+                          (int)joined_federate.name.size() );
       }
    }
 
@@ -1181,8 +1182,8 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    // Let's determine if this is a required federate.
    //
    for ( KnownFederate known_fed : known_federates ) {
-      if ( joined_federate->name == known_fed.name ) {
-         joined_federate->required = known_fed.required;
+      if ( joined_federate.name == known_fed.name ) {
+         joined_federate.required = known_fed.required;
       }
    }
 
@@ -1202,16 +1203,16 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // Decode the federate type that is encoded as a Unicode string.
       HLAunicodeString fed_type_unicode;
       fed_type_unicode.decode( value );
-      joined_federate->type = wstring( fed_type_unicode );
+      joined_federate.type = wstring( fed_type_unicode );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, handle );
          string type_str;
-         StringUtilities::to_string( type_str, joined_federate->type );
+         StringUtilities::to_string( type_str, joined_federate.type );
          message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Type'%s' size:%d\n",
                           __LINE__, handle_str.c_str(), type_str.c_str(),
-                          (int)joined_federate->type.size() );
+                          (int)joined_federate.type.size() );
       }
 
    }
@@ -1236,12 +1237,12 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    }
    else { // We have a federate handle so decode it.
 
-      joined_federate->federate_handle = decode_federate_handle( attr_iter->second );
+      joined_federate.federate_handle = decode_federate_handle( attr_iter->second );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string handle_str, fed_handle;
          StringUtilities::to_string( handle_str, handle );
-         StringUtilities::to_string( fed_handle, joined_federate->federate_handle );
+         StringUtilities::to_string( fed_handle, joined_federate.federate_handle );
          message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Federate-ID:%s\n",
                           __LINE__, handle_str.c_str(), fed_handle.c_str() );
       }
@@ -1445,17 +1446,16 @@ bool Federate::is_joined_federate_by_federate_handle(
    FederateHandle const &handle )
 {
    // Loop thru all joined_federate_map entries.
-   KnownFederateMap::iterator map_iter;
+   KnownFederateMap::const_iterator map_iter;
    for ( map_iter  = joined_federates_map.begin();
          map_iter != joined_federates_map.end();
          ++map_iter ) {
 
       // Get the associate joined federate reference.
-      KnownFederate * joined_federate;
-      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+      const KnownFederate & joined_federate = static_cast<const KnownFederate &>(map_iter->second);
 
       // Compare the federate handles.
-      if ( handle == joined_federate->federate_handle ) {
+      if ( handle == joined_federate.federate_handle ) {
          return true;
       }
    }
@@ -1472,17 +1472,16 @@ bool Federate::is_joined_federate_by_MOM_name(
    wstring const &MOM_name )
 {
    // Loop thru all joined_federate_map entries.
-   KnownFederateMap::iterator map_iter;
+   KnownFederateMap::const_iterator map_iter;
    for ( map_iter  = joined_federates_map.begin();
          map_iter != joined_federates_map.end();
          ++map_iter ) {
 
       // Get the associate joined federate reference.
-      KnownFederate * joined_federate;
-      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+      const KnownFederate & joined_federate = static_cast<const KnownFederate &>(map_iter->second);
 
       // Compare the MOM instance names.
-      if ( MOM_name == joined_federate->MOM_instance_name ) {
+      if ( MOM_name == joined_federate.MOM_instance_name ) {
          return true;
       }
    }
@@ -1507,11 +1506,10 @@ bool Federate::is_joined_federate_by_name(
          ++map_iter ) {
 
       // Get the associate joined federate reference.
-      KnownFederate * joined_federate;
-      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+      const KnownFederate & joined_federate = static_cast<const KnownFederate &>(map_iter->second);
 
       // Compare the names.
-      if ( federate_name == joined_federate->name ) {
+      if ( federate_name == joined_federate.name ) {
          return true;
       }
    }
@@ -1575,12 +1573,6 @@ void Federate::update_joined_federates()
    // RTI ambassador to get the federate handle.
    if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED ) {
 
-      // Loop through the federatesInFederation encoded handle list.  Decode
-      // each handle in the encoded list and add it to the decoded list.
-      for ( VariableLengthData encoded_handle : encoded_federate_handles ) {
-         federate_handles.insert( decode_federate_handle( encoded_handle ) );
-      }
-
       // Mark the update state as in progress.  Now we wait to recieve all
       // the discoveries and reflections for the joined federates.
       federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS;
@@ -1637,11 +1629,13 @@ void Federate::update_joined_federates()
       // Mark the joined federate update process as complete if all the
       // federates in the Federation list have been discovered.
       if ( all_found ) {
-         federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE;
-      }
 
-      // Mark that all federate have joined.
-      all_federates_joined = true;
+         federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE;
+
+         // Mark that all federate have joined.
+         all_federates_joined = true;
+
+      }
 
    }
 
@@ -1655,8 +1649,6 @@ void Federate::update_joined_federates()
          message_publish( MSG_NORMAL, errmsg.str().c_str() );
          std::wcout << list_joined_federates() << std::endl;
       }
-
-      // FIXME: Should this be moved into the federate Save/Restore logic?
 
       // Unsubscribe from all attributes for the MOM HLAfederate class.
       unsubscribe_all_HLAfederate_class_attributes_from_MOM();
@@ -1687,8 +1679,7 @@ wstring Federate::list_joined_federates()
          map_iter != joined_federates_map.end(); ++map_iter ) {
 
       // Get the associate joined federate reference.
-      KnownFederate * joined_federate;
-      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+      const KnownFederate & joined_federate = static_cast<const KnownFederate &>(map_iter->second);
 
       // No end of line at the beginning.
       if ( map_iter != joined_federates_map.begin() ){
@@ -1696,9 +1687,9 @@ wstring Federate::list_joined_federates()
       }
 
       // List out the federate information.
-      federates_summary << joined_federate->name;
-      federates_summary << ", " << joined_federate->type;
-      federates_summary << ", " << (joined_federate->required ? "True" : "False");
+      federates_summary << joined_federate.name;
+      federates_summary << ", " << joined_federate.type;
+      federates_summary << ", " << (joined_federate.required ? "True" : "False");
 
    }
 
@@ -1712,6 +1703,7 @@ wstring Federate::list_joined_federates()
 string Federate::wait_for_required_federates_to_join()
 {
    string status_string;
+   FederateObjectInstanceSet matched_federates;
 
    // If the known Federates list is disabled then just return.
    if ( !enable_known_feds ) {
@@ -1723,15 +1715,15 @@ string Federate::wait_for_required_federates_to_join()
    }
 
    // Determine how many required federates we have.
-   int required_feds_count = 0;
-   for ( int i = 0; i < known_federates.size(); ++i ) {
-      if ( known_federates[i].required ) {
-         ++required_feds_count;
+   int num_required_feds = 0;
+   for ( KnownFederate known_fed: known_federates ) {
+      if ( known_fed.required ) {
+         ++num_required_feds;
       }
    }
 
    // If we don't have any required Federates then return.
-   if ( required_feds_count == 0 ) {
+   if ( num_required_feds == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d NO REQUIRED FEDERATES!!!\n",
                           __LINE__ );
@@ -1744,7 +1736,7 @@ string Federate::wait_for_required_federates_to_join()
       ostringstream required_fed_summary;
       required_fed_summary << "Federate::wait_for_required_federates_to_join():"
                            << __LINE__ << endl
-                           << "WAITING FOR " << required_feds_count
+                           << "WAITING FOR " << num_required_feds
                            << " REQUIRED FEDERATES:";
 
       // Display the initial summary of the required federates we are waiting for.
@@ -1775,10 +1767,9 @@ string Federate::wait_for_required_federates_to_join()
    // Subscribe to Federate names using MOM interface and request an update.
    ask_MOM_for_federate_info();
 
-   size_t joined_fed_cnt = 0;
-
-   bool print_summary                = false;
+   bool joined_federate_change       = false;
    bool found_an_unrequired_federate = false;
+   bool print_summary                = false;
 
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
@@ -1789,6 +1780,8 @@ string Federate::wait_for_required_federates_to_join()
 
    // Wait for all the required federates to join.
    while ( !this->all_federates_joined ) {
+
+      size_t required_fed_cnt = 0;
 
       // Check for shutdown.
       check_for_shutdown_with_termination();
@@ -1804,48 +1797,88 @@ string Federate::wait_for_required_federates_to_join()
          // mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-         // Determine what federates have joined only if the joined federate
-         // count has changed.
-         if ( joined_fed_cnt != joined_federates_map.size() ) {
+         // Check for the possibility that a matched federate may have resigned.
+         for ( const RTI1516_NAMESPACE::ObjectInstanceHandle & oih : matched_federates ) {
+            KnownFederateMap::const_iterator map_iter;
+            map_iter = joined_federates_map.find( oih );
+            if ( map_iter ==  joined_federates_map.end() ) {
+               // The matched federate is no longer joined.  Remove it.
+               matched_federates.erase( oih );
+               joined_federate_change = true;
+            }
+         }
 
-            // Reset the joined federate size count.
-            joined_fed_cnt = joined_federates_map.size();
+         // Check for a newly joined federate and add is to the match list.
+         for ( const auto & map_entry : joined_federates_map ){
+            const KnownFederate & federate = map_entry.second;
+            // Only check against completely determined joined federates.
+            if ( federate.is_complete() ){
+               FederateObjectInstanceSet::iterator set_iter;
+               set_iter = matched_federates.find( federate.object_instance_handle );
+               if ( set_iter == matched_federates.end() ) {
+                  // Add the joined federate to the matched list.
+                  matched_federates.insert( federate.object_instance_handle );
+                  joined_federate_change = true;
+               }
+            }
+         }
+
+         // Only check if the matched joined federate list has changed.
+         if ( joined_federate_change ) {
+
+            // Reset the joined federate change state.
+            joined_federate_change = false;
+
+            // Reset the required federates counts.
+            required_fed_cnt = 0;
 
             // Loop thru all joined_federates_map entries.
             // Count the number of joined Required federates.
-            int req_fed_cnt = 0;
-            KnownFederateMap::iterator map_iter;
-            for ( map_iter  = joined_federates_map.begin();
-                  map_iter != joined_federates_map.end();
-                  ++map_iter ) {
+            for ( const auto & map_entry : joined_federates_map ){
 
                // Get the associate joined federate reference.
-               KnownFederate * joined_federate;
-               joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+               const KnownFederate & joined_federate = map_entry.second;
 
-               if ( is_required_federate( joined_federate->name ) ) {
-                  ++req_fed_cnt;
-               } else {
-                  found_an_unrequired_federate = true;
-                  string fedname;
-                  StringUtilities::to_string( fedname, joined_federate->name );
-                  if ( save_restore_service.restore_is_imminent ) {
-                     if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-                        message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!\n",
-                                         __LINE__, fedname.c_str() );
+               // Only check against a completely determined joined federate.
+               // Federate discovery is separate from the MOM interface that
+               // is used to populate the information associated with a
+               // discovered federate.  This means that a federate may be in
+               // the joined federate list without having all it's federate
+               // information complete.  This protects against that.
+               if ( joined_federate.is_complete() ){
+
+                  if ( is_required_federate( joined_federate.name ) ) {
+
+                     // Increment the required federate count.
+                     ++required_fed_cnt;
+
+                  } else {
+
+                     found_an_unrequired_federate = true;
+                     string fedname;
+                     StringUtilities::to_string( fedname, joined_federate.name );
+                     if ( save_restore_service.restore_is_imminent ) {
+                        if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+                           message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!\n",
+                                            __LINE__, fedname.c_str() );
+                        }
+                        unrequired_federates_list.insert( fedname );
                      }
-                     unrequired_federates_list.insert( fedname );
+
                   }
+
                }
+
             }
 
             // Determine if all the Required federates have joined.
-            if ( req_fed_cnt >= required_feds_count ) {
+            if ( required_fed_cnt >= num_required_feds ) {
                this->all_federates_joined = true;
             }
 
             // Determine if we should print a summary.
             print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
+
          }
 
          // Print out a list of the Joined Federates.
@@ -1856,17 +1889,17 @@ string Federate::wait_for_required_federates_to_join()
             ostringstream summary;
             summary << "Federate::wait_for_required_federates_to_join():"
                     << __LINE__ << endl
-                    << "WAITING FOR " << required_feds_count
+                    << "WAITING FOR " << num_required_feds
                     << " REQUIRED FEDERATES:";
 
             // Summarize the required federates first.
             int cnt = 0;
-            for ( int i = 0; i < known_federates.size(); ++i ) {
+            for ( KnownFederate & known_fed : known_federates ) {
                ++cnt;
                std::string know_fed_str;
-               StringUtilities::to_string( know_fed_str, known_federates[i].name );
-               if ( known_federates[i].required ) {
-                  if ( is_joined_federate_by_name( known_federates[i].name ) ) {
+               StringUtilities::to_string( know_fed_str, known_fed.name );
+               if ( known_fed.required ) {
+                  if ( is_joined_federate_by_name( known_fed.name ) ) {
                      summary << endl
                              << "    " << cnt
                              << ": Found joined required federate '"
@@ -1881,21 +1914,20 @@ string Federate::wait_for_required_federates_to_join()
             }
 
             // Summarize all the remaining non-required joined federates.
-            KnownFederateMap::iterator map_iter;
+            KnownFederateMap::const_iterator map_iter;
             for ( map_iter  = joined_federates_map.begin();
                   map_iter != joined_federates_map.end();
                   ++map_iter ) {
 
                // Get the associate joined federate reference.
-               KnownFederate * joined_federate;
-               joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+               const KnownFederate & joined_federate = static_cast<const KnownFederate &>(map_iter->second);
 
-               if ( !joined_federate->required ) {
+               if ( joined_federate.is_complete() && !joined_federate.required ) {
                   ++cnt;
 
                   // We need a string version of the wide-string federate name.
                   string fedname;
-                  StringUtilities::to_string( fedname, joined_federate->name );
+                  StringUtilities::to_string( fedname, joined_federate.name );
 
                   summary << endl
                           << "    " << cnt << ": Found joined federate '"
@@ -1906,7 +1938,9 @@ string Federate::wait_for_required_federates_to_join()
 
             // Display the federate summary.
             message_publish( MSG_NORMAL, summary.str().c_str() );
+
          }
+
       } // Mutex protection goes out of scope here
 
       // If not all the required federates have joined, then reset the timers
@@ -1934,6 +1968,7 @@ string Federate::wait_for_required_federates_to_join()
             print_timer.reset();
             print_summary = true;
          }
+
       }
 
    } // End while ( !this->all_federates_joined )
@@ -2004,6 +2039,7 @@ string Federate::wait_for_required_federates_to_join()
 
    return status_string;
 }
+
 /*!
  *  @job_class{initialization}
  *  @detail NOTE: This function will block.
@@ -2011,7 +2047,7 @@ string Federate::wait_for_required_federates_to_join()
 void Federate::update_and_print_joined_federates()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::update_and_print_joined_federates():%d started.\n",
+      message_publish( MSG_NORMAL, "Federate::update_and_print_joined_federates():%d started.\n",
                        __LINE__ );
    }
 
@@ -2019,7 +2055,7 @@ void Federate::update_and_print_joined_federates()
    // If we are not in an inactive state, something is wrong.
    if ( federate_update_state != THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE ) {
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::update_and_print_joined_federates():" << __LINE__
+      errmsg << "Federate::update_and_print_joined_federates():" << __LINE__
              << ": ERROR: Unexpected Federates update state."
              << "  We expected FEDERATE_UPDATE_NONE but the state was "
              << to_string( federate_update_state )
@@ -2058,7 +2094,7 @@ void Federate::update_and_print_joined_federates()
          sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
-            errmsg << "SaveRestoreServices::update_and_print_joined_federates():" << __LINE__
+            errmsg << "Federate::update_and_print_joined_federates():" << __LINE__
                    << " ERROR: Unexpectedly the Federate is no longer an execution member."
                    << " This means we are either not connected to the"
                    << " RTI or we are no longer joined to the federation"
@@ -2076,37 +2112,37 @@ void Federate::update_and_print_joined_federates()
          // Let's print out some useful status information.
          if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE ) {
             message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::update_and_print_joined_federates():%d: Active.\n",
+                             "Federate::update_and_print_joined_federates():%d: Active.\n",
                              __LINE__ );
          }
          else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED ) {
             message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::update_and_print_joined_federates():%d: \
+                             "Federate::update_and_print_joined_federates():%d: \
 Waiting for the federatesInFederation update.\n",
                              __LINE__ );
          }
          else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-               message_publish( MSG_NORMAL, "SaveRestoreServices::update_and_print_joined_federates():%d: \
+               message_publish( MSG_NORMAL, "Federate::update_and_print_joined_federates():%d: \
 MOM just informed us that there are %d federates currently joined to the federation.\n",
-                   __LINE__, encoded_federate_handles.size() );
+                   __LINE__, federate_handles.size() );
             }
          }
          else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS ) {
             message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::update_and_print_joined_federates():%d: \
+                             "Federate::update_and_print_joined_federates():%d: \
 Waiting for the identified federates to join.\n",
                              __LINE__ );
          }
          else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE ) {
             message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::update_and_print_joined_federates():%d: \
+                             "Federate::update_and_print_joined_federates():%d: \
 Successfully updated the joined federates.\n",
                              __LINE__ );
          }
          else if ( federate_update_state ==  THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED ) {
             message_publish( MSG_ERROR,
-                             "SaveRestoreServices::update_and_print_joined_federates():%d: \
+                             "Federate::update_and_print_joined_federates():%d: \
 ERROR: Something went wrong while updating the joined federates.\n",
                              __LINE__ );
          }
@@ -2122,7 +2158,7 @@ ERROR: Something went wrong while updating the joined federates.\n",
       ostringstream summary;
       unsigned int  cnt = 0;
 
-      summary << "SaveRestoreServices::update_and_print_joined_federates():"
+      summary << "Federate::update_and_print_joined_federates():"
               << __LINE__ << endl
               << "There are " << joined_federates_map.size() << " federates:";
 
@@ -2132,12 +2168,11 @@ ERROR: Something went wrong while updating the joined federates.\n",
             map_iter != joined_federates_map.end(); ++map_iter ) {
 
          // Get the associate joined federate reference.
-         KnownFederate * joined_federate;
-         joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+         KnownFederate & joined_federate = static_cast<KnownFederate &>(map_iter->second);
 
          ++cnt;
          std::string name_str;
-         StringUtilities::to_string( name_str, joined_federate->name );
+         StringUtilities::to_string( name_str, joined_federate.name );
          summary << endl
                  << "    " << cnt
                  << ": Found running federate '"
@@ -2151,7 +2186,7 @@ ERROR: Something went wrong while updating the joined federates.\n",
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL,
-                       "SaveRestoreServices::update_and_print_joined_federates():%d Done.\n",
+                       "Federate::update_and_print_joined_federates():%d Done.\n",
                        __LINE__ );
    }
 
@@ -2178,11 +2213,10 @@ void Federate::get_joined_federate_handle_set( RTI1516_NAMESPACE::FederateHandle
          map_iter != joined_federates_map.end(); ++map_iter ) {
 
       // Get the associate joined federate reference.
-      KnownFederate * joined_federate;
-      joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+      KnownFederate & joined_federate = static_cast<KnownFederate &>(map_iter->second);
 
       // Grab the federate handle from the joined federate entry.
-      handle_set.insert( joined_federate->federate_handle );
+      handle_set.insert( joined_federate.federate_handle );
 
    }
 
@@ -2832,7 +2866,6 @@ void Federate::ask_MOM_for_federation_info()
 
       // Clear the list of federates.
       federate_handles.clear();
-      encoded_federate_handles.clear();
 
       // Activate the federates in Federation update process.
       federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE;
@@ -5154,40 +5187,26 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          // HLAhandle is an HLAvariableArray encoding of element type HLAbyte.
          try {
 
-            HLAbyte          byte_proto;
-            HLAvariableArray fed_handle_proto( byte_proto );
-            HLAvariableArray feds_list( fed_handle_proto );
-
+            HLAopaqueData      fed_handle_proto;
+            HLAvariableArray   feds_list( fed_handle_proto );
             VariableLengthData encoded_fed_handle;
 
             // Clear the federates in federation list.
-            encoded_federate_handles.clear();
+            federate_handles.clear();
 
             // Decode the federatesInFederation attribute.
             feds_list.decode( data );
 
-            // FIXME: Debugging code.
-            std::cout << "Federate::set_MOM_HLAfederation_instance_attributes(): "
-                      << "Found " << feds_list.size() << " federates." << std::endl;
-            std::cout << "Federate::set_MOM_HLAfederation_instance_attributes(): "
-                      << "Encoding length " << feds_list.getEncodedLength() << std::endl;
-
             // Iterate through the decoded federate handle list to extract the handles.
             for ( unsigned int iinc = 0 ; iinc < feds_list.size() ; iinc++ ){
 
-               // FIXME: Debugging code.
-               std::cout << "Encoding length: " << feds_list[iinc].getEncodedLength() << std::endl;
+               // Place the encoded federate handle data into a VariableLengthData.
+               const HLAopaqueData& opaqueData = dynamic_cast<const HLAopaqueData&>( feds_list.get(iinc) );
+               VariableLengthData encoded_fed_data( opaqueData.get(), opaqueData.dataLength() );
 
-               // FIXME: This isn't working!!!!!
-               // Here we need to extract the encoded federate handle.  It would
-               // be even better if we could get the actual federate handle
-               // but that requires and RTIambassador call and this routine is
-               // called from the FedAmb.
-               encoded_fed_handle = feds_list[iinc].encode();
-
-               // Insert the encoded Federate handle into the federates in
-               // Federation vector.
-               encoded_federate_handles.push_back( encoded_fed_handle );
+               // Decode the federate handle and insert it into the federates
+               // in Federation handle set.
+               federate_handles.insert( decode_federate_handle( encoded_fed_data ) );
 
             }
 
@@ -5195,10 +5214,6 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED ) {
                federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED;
             }
-
-            // FIXME: Debugging code.
-            std::cout << "Federate::set_MOM_HLAfederation_instance_attributes(): "
-                      << "There are " << feds_list.size() << " federates in the federates list." << std::endl;
 
          } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
             string rti_err_msg;
@@ -5213,9 +5228,11 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederation_instance_attributes():%d Found a FederationID list with %d elements.\n",
-                             __LINE__, encoded_federate_handles.size() );
+                             __LINE__, federate_handles.size() );
          }
+
       }
+
    }
 
    return;
@@ -5322,7 +5339,6 @@ void Federate::rebuild_federate_handles(
    ObjectInstanceHandle const    &instance_hndl,
    AttributeHandleValueMap const &values )
 {
-   KnownFederate * joined_federate;
    KnownFederateMap::iterator fed_iter;
    AttributeHandleValueMap::const_iterator attr_iter;
 
@@ -5337,12 +5353,14 @@ void Federate::rebuild_federate_handles(
    }
 
    // Get the reference to the joined federate.
-   joined_federate = static_cast<KnownFederate *>(&(fed_iter->second));
+   KnownFederate & joined_federate = static_cast<KnownFederate &>(fed_iter->second);
 
    // Loop through all federate handles
    for ( attr_iter = values.begin(); attr_iter != values.end(); ++attr_iter ) {
 
-      FederateHandle fed_handle = decode_federate_handle( attr_iter->second );
+      const VariableLengthData & encoded_federate_handle = static_cast<const VariableLengthData &>(attr_iter->second);
+
+      FederateHandle fed_handle = decode_federate_handle( encoded_federate_handle );
 
       // Concurrency critical code section because joined-federate state is changed
       // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
@@ -5352,10 +5370,8 @@ void Federate::rebuild_federate_handles(
          // mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-         // FIXME:
          // Add this FederateHandle to the set of joined federates.
-         //joined_federate_handles.insert( fed_handle );
-         joined_federate->federate_handle = fed_handle;
+         joined_federate.federate_handle = fed_handle;
 
       }
 

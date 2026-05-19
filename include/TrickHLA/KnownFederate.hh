@@ -111,7 +111,7 @@ class KnownFederate
 
    /*! @brief Check if the known federate MOM data is completely resolved.
     *  @return True if all items have been resolved; otherwise, false. */
-   bool is_complete()
+   bool is_complete() const
    {
       if (    name.empty()
            || type.empty()
@@ -155,8 +155,9 @@ class KnownFederate
 };
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, KnownFederate > KnownFederateMap;
+typedef std::set< RTI1516_NAMESPACE::ObjectInstanceHandle> FederateObjectInstanceSet;
 typedef std::vector< KnownFederate > KnownFederateVector;
-typedef std::vector< RTI1516_NAMESPACE::VariableLengthData > EncodedFederateHandleVector;
+//typedef std::vector< RTI1516_NAMESPACE::VariableLengthData > EncodedFederateHandleVector;
 
 } // namespace TrickHLA
 

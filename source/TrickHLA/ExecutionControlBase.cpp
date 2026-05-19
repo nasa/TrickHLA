@@ -1045,24 +1045,24 @@ const std::string ExecutionControlBase::map_save_label_to_federates_file_name(
    std::wstring const &save_label )
 {
    std::string save_label_str;
-   std::string running_fed_file;
+   std::string federates_file_name;
 
    // Convert the Save label wstring to a string.
    StringUtilities::to_string( save_label_str, save_label );
 
    // Build up the checkpoint file name.
    // First get the federation name.
-   running_fed_file = federate->get_federation_name();
-   running_fed_file += "_";
+   federates_file_name = federate->get_federation_name();
+   federates_file_name += "_";
    // Next get the federate name.
-   running_fed_file += federate->get_federate_name();
-   running_fed_file += "_";
+   federates_file_name += federate->get_federate_name();
+   federates_file_name += "_";
    // Add the specified HLA Save label.
-   running_fed_file += save_label_str;
+   federates_file_name += save_label_str;
    // Add the running_feds suffix.
-   running_fed_file += ".rfeds";
+   federates_file_name += ".feds";
 
-   return( running_fed_file );
+   return( federates_file_name );
 }
 
 
@@ -1365,30 +1365,14 @@ void ExecutionControlBase::restore_setup()
 
    // if I announced the restore, must initiate federation restore
    if ( save_restore_service->is_announce_restore() ) {
-      string trick_filename;
-      string slash_fedname( "/" + federate->get_federation_name() + "_" );
-      size_t found;
 
-      // Otherwise set restore_name_str using trick's file name
-      trick_filename = checkpoint_get_load_file();
+      string federates_file_name;
 
-      // Trick memory object_service load_checkpoint_file_name already contains correct dir/federation_filename
-      // (chosen in sim control panel popup) we need just the filename minus the federation name to initiate restore
-      found = trick_filename.rfind( slash_fedname );
-      string restore_name_str;
-      if ( found != string::npos ) {
-         restore_name_str = trick_filename.substr( found + slash_fedname.length() ); // filename
-      } else {
-         restore_name_str = trick_filename;
-      }
-      // federation_filename
-      string str_restore_label = federate->get_federation_name() + "_" + restore_name_str;
-
-      // make sure we have a save directory specified
+      // Make sure we have a save directory specified
       save_restore_service->check_HLA_save_directory();
 
-      // make sure only the required federates are in the federation before we do the restore
-      save_restore_service->read_known_federates_from_file( str_restore_label );
+      // Read in the known required federates before we do the restore
+      save_restore_service->read_known_federates_from_file();
 
       string return_string;
       return_string = federate->wait_for_required_federates_to_join(); // sets running_feds_count
@@ -1399,10 +1383,10 @@ void ExecutionControlBase::restore_setup()
                 << "ERROR: " << return_string;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
-      std::wstring restore_name_wstr;
-      StringUtilities::to_wstring( restore_name_wstr, restore_name_str );
-      save_restore_service->initiate_restore_announce( restore_name_wstr );
+
+      // FIXME: This need work.
+      // Initiate the restore.
+      save_restore_service->initiate_restore_announce( save_restore_service->restore_label);
 
       SleepTimeout print_timer;
       SleepTimeout sleep_timer;
@@ -1517,9 +1501,6 @@ void ExecutionControlBase::restore_after()
       // inform_RTI_of_restore_completion() function.
       // (backward compatibility with previous restore process)
       save_restore_service->preserve_restore_process();
-
-      // FIXME:
-      //save_restore_service->copy_running_feds_into_known_feds();
 
       // wait for RTI to inform us that the federation restore has
       // begun before informing the RTI that we are done.

@@ -308,7 +308,7 @@ class SaveRestoreServices : public CheckpointConversionBase
     *  HLA Save label into an identifiable file name.  If label is empty then
     *  this routine uses the current Save label.
     *  @param label The identifying Save label. */
-   bool write_joined_federates_to_file( std::wstring const &label );
+   bool write_joined_federates_to_file( std::wstring const &label = L"" );
 
    /*! @brief Prints the reason for the federation save failure.
     * @param reason Save failure reason. */
@@ -324,8 +324,8 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Read the known federates file.
     * @return True is read from file succeeded, False otherwise.
-    * @param file_name Known federates file name. */
-   bool read_known_federates_from_file( std::string const &file_name );
+    * @param label Restore label. */
+   bool read_known_federates_from_file( std::wstring const &label = L"" );
 
 
    //--------------------------------------------------------------------------

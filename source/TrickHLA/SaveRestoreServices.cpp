@@ -1019,24 +1019,34 @@ Unexpected restore process %d, which is not 'RESTORE_COMPLETE' or 'Restore_Reque
 }
 
 bool SaveRestoreServices::read_known_federates_from_file(
-   string const &file_name )
+   wstring const &label )
 {
+   std::string    file_name;
    std::string    full_path;
    std::wifstream file; // Note that this is a wide string file stream.
    unsigned int   line_num;
    std::wstring   num_feds_wstr = L"";
    int            num_feds = 0;
 
-   // FIXME: This needs to use the restore feds file name.
-   // Prepend federation name to the filename (if it's not already prepended)
-   string federation_name_str = federate->get_federation_name();
-   if ( file_name.compare( 0, federation_name_str.length(), federation_name_str ) == 0 ) {
-      // Already prepended
-      full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
-   } else {
-      // Prepend it here
-      full_path = this->HLA_save_directory + "/" + federation_name_str + "_" + file_name + ".running_feds";
+   // Check the Save label.
+   if ( label.empty() ){
+      // If no label is passed in, then we must have a label already set.
+      if ( this->restore_label.empty() ){
+         ostringstream errmsg;
+         errmsg << "SaveRestoreServices::read_known_federates_from_file():" << __LINE__
+                << " ERROR: No Restore label set!" << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      // Get the joined federates file name from the ExecutionControl service.
+      file_name = execution_control->map_save_label_to_federates_file_name( this->restore_label );
    }
+   else {
+      // Get the joined federates file name from the ExecutionControl service.
+      file_name = execution_control->map_save_label_to_federates_file_name( label );
+   }
+
+   // Create the full path to the federates file.
+   full_path = this->HLA_save_directory + "/" + file_name + ".feds";
 
    // Try to open the known federates file for reading.
    file.open( full_path.c_str(), ios::in ); // flawfinder: ignore

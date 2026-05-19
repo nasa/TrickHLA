@@ -150,11 +150,8 @@ class Federate : public CheckpointConversionBase
    FederateJoinConstraintsEnum join_constraint; ///< @trick_units{--} The Join constraints for this federate.
 
    // The Federates known to be in the Federation, and specified in the input files.
-   // TODO: change this to be an STL Array.
    bool                enable_known_feds; ///< @trick_units{--} Enable use of known Federates list (default: true)
-   //int            known_feds_count;  ///< @trick_units{--} Number of required Federates (default: 0)
-   //KnownFederate *known_feds;        ///< @trick_units{--} Array of all the known Federates in the simulation.
-   KnownFederateVector known_federates;   ///< @trick_units{--} Array of all the known Federates in the simulation.
+   KnownFederateVector known_federates;   ///< @trick_io{**} Array of all the known Federates in the simulation.
 
    DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
    DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
@@ -1082,8 +1079,6 @@ class Federate : public CheckpointConversionBase
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederatesInFederation_handle; ///< @trick_io{**} MOM attribute handle to Federate-count.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAautoProvide_handle;           ///< @trick_io{**} MOM AutoProvide attribute handle.
-
-   // FIXME: What is this used for?
    TrickHLAObjInstanceNameMap           MOM_HLAfederation_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederation instances.
 
    int auto_provide_setting;      ///< @trick_units{--} MOM Federation wide HLAautoProvide setting.
@@ -1094,22 +1089,12 @@ class Federate : public CheckpointConversionBase
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateName_handle;   ///< @trick_io{**} MOM attribute handle to Federate name.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederate_handle;       ///< @trick_io{**} MOM attribute handle to Federate-Handle.
 
-   // FIXME: Delete all of these when we get this working.
-   //TrickHLAObjInstanceNameMap MOM_HLAfederate_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederate instances name map.
-
-   //TrickHLAObjInstanceNameMap           joined_federate_name_map; ///< @trick_io{**} Map of the federate instances and corresponding names.
-   //RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;  ///< @trick_io{**} FederateHandles of joined federates.
-   //VectorOfWstrings                     joined_federate_names;    ///< @trick_io{**} Names of the joined federates.
-   //VectorOfWstrings                     joined_federate_types;    ///< @trick_io{**} Types of the joined federates.
    MutexLock        joined_federate_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
    KnownFederateMap joined_federates_map;  ///< @trick_io{**} Map used to manage the dynamic list of joined federates.
 
    MutexLock                            federate_update_mutex;    ///< @trick_io{**}    Mutex to lock thread over critical code sections.
    THLAFederateUpdateProcessEnum        federate_update_state;    ///< @trick_units{--} State for joined federate update process.
    RTI1516_NAMESPACE::FederateHandleSet federate_handles;         ///< @trick_io{**}    Handles from MOM for federates in the federation list.
-   EncodedFederateHandleVector          encoded_federate_handles; ///< @trick_io{**}    Encoded handles from MOM for federates in the federation list.
-   //bool                        all_federates_found;     ///< @trick_units{--} Flag indicating if all federate in Federation discovered.
-   //bool                        federate_list_updated;   ///< @trick_units{--} Flag indicating if the federate list has been updated.
 
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.

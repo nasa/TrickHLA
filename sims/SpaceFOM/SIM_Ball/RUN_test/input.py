@@ -78,7 +78,6 @@ run_duration = 10.0
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball Sim' )
 ball_sim_config.realtime()
-ball_sim_config.fix_var_server_source_address()
 ball_sim_config.sim_control_panel()
 
 
@@ -154,10 +153,6 @@ TrickDataRecordingGroup.initialize_groups()
 # Setup Ball graphics and add to the Trick external applications list.
 #---------------------------------------------------------------------------
 ball_sim_config.ball_graphics()
-
-# Test new Trick requirements.
-trick.var_resolve_hostname()
-trick.var_allow_connections()
 
 
 #---------------------------------------------------------------------------

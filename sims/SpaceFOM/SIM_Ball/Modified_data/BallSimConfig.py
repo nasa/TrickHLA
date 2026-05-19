@@ -39,6 +39,14 @@ class BallSimConfig( TrickSimConfig ):
    def __init__( self,
                  sim_name ):
 
+      # Newer Trick releases require activation of the variable server interface.
+      if "var_allow_connections" in dir(trick):
+         trick.var_resolve_hostname()
+         trick.var_allow_connections()
+         
+      # Fix the variable server address error.
+      self.fix_var_server_source_address()
+
       # Set the name for the simulation.
       self.sim_name = sim_name
 

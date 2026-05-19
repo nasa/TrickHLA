@@ -39,6 +39,8 @@ CP_out
 log_*.header
 log_*.trk
 log_*.csv
+*.chkpt
+*.feds
 _init_log*.csv
 chkpnt_*_init
 chkpnt_end

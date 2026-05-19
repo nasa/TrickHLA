@@ -347,9 +347,6 @@ void FedAmb::federationSaved()
    // Mark the Save process as completed.
    save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_COMPLETE );
 
-   // FIXME: Possibly deprecated code.
-   //save_restore_service->save_succeded();
-
    return;
 }
 
