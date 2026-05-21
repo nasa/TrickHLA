@@ -244,6 +244,12 @@ class Utilities
     *  @return TrickHLA release date string. */
    static std::string const &get_release_date();
 
+   /*! @brief Return the RTI version string. */
+   static std::string const get_rti_version();
+
+   /*! @brief Return the RTI version string. */
+   static std::string const get_rti_name();
+
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Default constructor for the TrickHLA Utilities class. */
