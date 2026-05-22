@@ -36,9 +36,14 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Version.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
+
+// HLA include files.
+#include "RTI/RTI1516.h"
 
 // For a Mac, add support for the FPU control word value at program start.
 #if defined( FPU_CW_PROTECTION ) && defined( __APPLE__ ) && ( defined( __i386__ ) || defined( __x86_64__ ) )
@@ -461,4 +466,18 @@ string const Utilities::get_version()
 string const &Utilities::get_release_date()
 {
    return TRICKHLA_RELEASE_DATE;
+}
+
+string const Utilities::get_rti_version()
+{
+   string rti_version;
+   StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
+   return rti_version;
+}
+
+string const Utilities::get_rti_name()
+{
+   string rti_name;
+   StringUtilities::to_string( rti_name, RTI1516_NAMESPACE::rtiName() );
+   return rti_name;
 }

@@ -51,6 +51,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
@@ -161,8 +162,13 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityLagCompBase::send_lag_compensation():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
    double begin_t = get_scenario_time();
@@ -221,8 +227,13 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "DynamicalEntityLagCompBase::receive_lag_compensation():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
    double end_t  = get_scenario_time();

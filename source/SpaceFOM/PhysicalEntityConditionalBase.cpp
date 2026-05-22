@@ -34,12 +34,17 @@ NASA, Johnson Space Center\n
 #include <ostream>
 #include <sstream>
 
+// Trick includes.
+#include "trick/message_proto.h"
+#include "trick/message_type.h"
+
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityConditionalBase.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
@@ -134,8 +139,13 @@ bool PhysicalEntityConditionalBase::should_send(
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
    bool send_attr = false;

@@ -549,8 +549,13 @@ void RefFrameBase::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::pack():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
    // Check for latency/lag compensation.
@@ -582,8 +587,13 @@ void RefFrameBase::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::unpack():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
 #if defined( USE_SPACEFOM_ENCODERS )
