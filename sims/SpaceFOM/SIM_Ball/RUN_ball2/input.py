@@ -170,7 +170,7 @@ ball_fed_config.fix_var_server_source_address()
 
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
-ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_2_TRACE )
+ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
 
 # Configure this federate SpaceFOM roles for this federate.
 ball_fed_config.set_master_role( False )  # This is NOT the Master federate.

@@ -2530,6 +2530,9 @@ bool ExecutionControl::check_for_shutdown_with_termination()
  */
 void ExecutionControl::freeze_init()
 {
+   // Call the ExecutionControlBase freeze_init() job first.
+   ExecutionControlBase::freeze_init();
+
    // Mark the freeze as announced.
    set_freeze_announced( true );
 

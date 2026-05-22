@@ -48,5 +48,5 @@ clean_runs: $(RUN_DIRS)
 
 $(RUN_DIRS):
 	@echo "Cleaning up run directory: $@"
-	@cd $@; rm -f _init_log.csv chkpnt_* log_* S_job_execution S_run_summary send_hs varserver_log *.rfeds *.chkpt
+	@cd $@; rm -f _init_log.csv chkpnt_* log_* S_job_execution S_run_summary send_hs varserver_log *.feds *.chkpt
 

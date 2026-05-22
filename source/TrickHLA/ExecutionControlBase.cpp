@@ -933,6 +933,9 @@ bool ExecutionControlBase::check_for_shutdown_with_termination()
 
 void ExecutionControlBase::freeze_init()
 {
+   // Wait while we get an updated joined federate list.
+   federate->wait_for_joined_federates_update();
+
    return;
 }
 
@@ -1103,8 +1106,26 @@ void ExecutionControlBase::save_process()
 
    case THLASaveProcessEnum::SAVE_REQUESTED:
       // This federate is responding to a Save Request from the Federation.
-      // Call the SaveRestoreServices Save method.
-      save_restore_service->save();
+
+      // Check the currency of the joined federates.
+      if ( federate->verify_joined_federates() ) {
+
+         // Call the SaveRestoreServices Save method.
+         save_restore_service->save();
+
+      } else {
+
+         // The Save failed.
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
+                             __LINE__, save_label_str.c_str() );
+         }
+         // Save actions when Save failed.
+         save_restore_service->save_state = THLASaveProcessEnum::SAVE_FAILED;
+         save_restore_service->save_failed();
+
+      }
+
       break;
 
    case THLASaveProcessEnum::SAVE_IN_PROGRESS:
@@ -1129,10 +1150,10 @@ void ExecutionControlBase::save_process()
    case THLASaveProcessEnum::SAVE_FAILED:
       // The Save failed.
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
+         message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
                           __LINE__, save_label_str.c_str() );
       }
-      // Save actions when Save completed successfully.
+      // Save actions when Save failed.
       save_restore_service->save_failed();
       break;
 

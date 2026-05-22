@@ -238,7 +238,7 @@ SaveRestoreServices::~SaveRestoreServices()
  */
 void SaveRestoreServices::set_save_label( std::wstring const & label )
 {
-   // FIXME: Need some protections here.
+   // FIXME: May need some protections here.
 
    // Copy the label.
    save_label = label;
@@ -1981,18 +1981,6 @@ void SaveRestoreServices::reinstate_logged_sync_pts()
 void SaveRestoreServices::set_federate_has_begun_execution()
 {
    execution_control->execution_has_begun = true;
-
-   // Concurrency critical code section because joined-federate state is changed
-   // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
-   // function.
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &federate->joined_federate_mutex );
-
-      // Clear the list of joined federates.
-      federate->joined_federates_map.clear();
-   }
 
    check_HLA_save_directory();
 }

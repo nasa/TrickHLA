@@ -172,8 +172,6 @@ Federate::Federate()
      MIM_module(),
      join_constraint( TrickHLA::FEDERATE_JOIN_EARLY_OR_LATE ),
      enable_known_feds( true ),
-     //known_feds_count( 0 ),
-     //known_feds( NULL ),
      debug_level( TrickHLA::DEBUG_LEVEL_NO_TRACE ),
      code_section( TrickHLA::DEBUG_SOURCE_ALL_MODULES ),
      can_rejoin_federation( false ),
@@ -195,12 +193,7 @@ Federate::Federate()
      MOM_HLAfederateType_handle(),
      MOM_HLAfederateName_handle(),
      MOM_HLAfederate_handle(),
-     //MOM_HLAfederate_instance_name_map(),
      joined_federate_mutex(),
-     //joined_federate_name_map(),
-     //joined_federate_handles(),
-     //joined_federate_names(),
-     //joined_federate_types(),
      joined_federates_map(),
      federate_update_state(THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE),
      federate_ambassador( *this ),
@@ -1063,7 +1056,7 @@ std::wstring Federate::get_federate_MOM_name( KnownFederate const & federate )
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
-      errmsg << "Federate::determine_federate_MOM_object_instance_names():" << __LINE__
+      errmsg << "Federate::get_federate_MOM_name():" << __LINE__
              << " Unexpected NULL RTIambassador." << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
       return( federate_MOM_name );
@@ -1288,15 +1281,17 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
    // Resolve all the federate instance handles given the federate names.
    try {
-      for ( int i = 0; i < known_federates.size(); ++i ) {
-         if ( !known_federates[i].MOM_instance_name.empty() ) {
+
+      for ( KnownFederate known_fed : known_federates ) {
+
+         if ( !known_fed.MOM_instance_name.empty() ) {
 
             // Copy the MOM instance name for the exception messages below.
-            fed_mom_instance_name_ws = known_federates[i].MOM_instance_name;
+            fed_mom_instance_name_ws = known_fed.MOM_instance_name;
 
             // Get the instance handle based on the instance name.
             ObjectInstanceHandle fed_mom_obj_instance_hdl =
-               rti_amb->getObjectInstanceHandle( known_federates[i].MOM_instance_name );
+               rti_amb->getObjectInstanceHandle( known_fed.MOM_instance_name );
 
             // Add the federate instance handle.
             add_joined_federate( fed_mom_obj_instance_hdl );
@@ -1304,17 +1299,20 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                string id_str, mom_str, name_str, type_str;
                StringUtilities::to_string( id_str, fed_mom_obj_instance_hdl );
-               StringUtilities::to_string( mom_str, known_federates[i].MOM_instance_name );
-               StringUtilities::to_string( name_str, known_federates[i].name );
-               StringUtilities::to_string( type_str, known_federates[i].type );
+               StringUtilities::to_string( mom_str, known_fed.MOM_instance_name );
+               StringUtilities::to_string( name_str, known_fed.name );
+               StringUtilities::to_string( type_str, known_fed.type );
                summary << endl
                        << "    Federate:'" << name_str
                        << "' Type:'" << type_str
                        << "' MOM-Name: '" << mom_str
                        << "' MOM-Object-ID:" << id_str;
             }
+
          }
+
       }
+
    } catch ( ObjectInstanceNotKnown const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1518,6 +1516,169 @@ bool Federate::is_joined_federate_by_name(
 
 
 /*!
+ *  @job_class{scheduled}
+ *  @detail This function will check the list of joined federates against
+ *  the federates in the federates in Federation list received from the MOM
+ *  Federation federatesInFederation interface.  It returns true
+ *  if every joined federates has a match against an entry in the
+ *  federatesInFederation list.  Otherwise, it will return false.
+ */
+bool Federate::check_joined_federates_match()
+{
+   bool success = true;
+
+   // The first trivial check is if the number of joined federates is larger
+   // than the federatesInFederation list.  This indicates that there is a
+   // mismatch between the MOM reported federatesInFederation and the number
+   // of federates we have already discovered.
+   if ( joined_federates_map.size() > federate_handles.size() ) {
+      return( false );
+   }
+
+   // Concurrency critical code section because joined-federate state is changed
+   // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
+   // function.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+
+      // Iterate through the joined federates map checking for a match.
+      for ( const auto & map_entry : joined_federates_map ){
+
+         bool found = false;
+
+         // Get the known federate reference.
+         const KnownFederate & joined_federate = map_entry.second;
+
+         // First trivial check for valid federate handle.  If it's not valid,
+         // this this joined federate is not complete.  That's a fail.
+         if ( !joined_federate.federate_handle.isValid() ){
+            success = false;
+            break;
+         }
+
+         // Iterate through the federates in Federation list.
+         for ( FederateHandle federate_handle : federate_handles ) {
+
+            // Check for matching federate handle.
+            if ( federate_handle == joined_federate.federate_handle ){
+               found = true;
+               break;
+            }
+
+         }
+
+         // If no match was found for at least one federate in the federates
+         // in Federation list, then mark this as a fail.
+         if ( !found ) {
+            success = false;
+         }
+
+         // Break out of the loop if the we find any fail.
+         if ( !success ) {
+            break;
+         }
+
+      } // End joined federates loop.
+
+   }
+
+   return( success );
+}
+
+
+/*!
+ *  @job_class{scheduled}
+ *  @detail This function will check the list of federate in the Federation
+ *  received from the MOM Federation federatesInFederation interface and
+ *  compare it to the list of discovered joined federates.  It returns true
+ *  if all the federates in the federatesInFederation list match exactly with
+ *  discovered and completely filled out joined federates.  Otherwise, it
+ *  will return false.
+ */
+bool Federate::verify_joined_federates()
+{
+   bool success = true;
+
+   // Concurrency critical code section because joined-federate state is changed
+   // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
+   // function.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+
+      // Initial check is that the number of federates is the same.
+      if ( federate_handles.size() != joined_federates_map.size() ){
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            ostringstream errmsg;
+            errmsg << "Federate::verify_joined_federates():" << __LINE__
+                   << ": There are " << joined_federates_map.size()
+                   << " joined federates but expected "
+                   << federate_handles.size() << "." << std::endl;
+            message_publish( MSG_WARNING, errmsg.str().c_str() );
+            std::wcout << list_joined_federates() << std::endl;
+         }
+         return( false );
+      }
+
+      // Iterate through the federates in Federation list.
+      for ( FederateHandle federate_handle : federate_handles ) {
+
+         bool found = false;
+
+         // Iterate through the joined federates map checking for a match.
+         for ( const auto & map_entry : joined_federates_map ){
+
+            // Get the known federate reference.
+            const KnownFederate & joined_federate = map_entry.second;
+
+            // Only check against completely determined joined federates.
+            if ( joined_federate.is_complete() ){
+               // Check for matching federate handle.
+               if ( federate_handle == joined_federate.federate_handle ){
+                  found = true;
+                  break;
+               }
+            } else {
+               // An incomplete joined federate is an automatic fail.
+               success = false;
+               break;
+            }
+
+         } // End joined federates loop.
+
+         // If no match was found then mark this as a fail.
+         if ( !found ) {
+            success = false;
+         }
+
+         // Break out of the loop if the we find any fail.
+         if ( !success ) {
+            break;
+         }
+
+      } // End federates in Federation loop.
+
+   } // End mutex scope.
+
+   // Print out an error message if check failed.
+   if ( !success ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         ostringstream errmsg;
+         errmsg << "Federate::verify_joined_federates():" << __LINE__
+                << ": Could not match joined federates with federates in Federation:" << std::endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         std::wcout << list_joined_federates() << std::endl;
+      }
+   }
+
+   return( success );
+}
+
+
+/*!
  *  @job_class{freeze}
  *  @detail This routine is designed to be called cyclicly as a freeze class
  *  job.
@@ -1541,23 +1702,13 @@ void Federate::update_joined_federates()
    // request an update.
    if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE ) {
 
-      // Concurrency critical code section because joined-federate state is changed
-      // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
-      // function.
-      {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
-
-         // Clear the list of joined federates.
-         joined_federates_map.clear();
-      }
-
       // Ask the MOM to get the federation information we need.
       ask_MOM_for_federation_info();
 
       // Mark the update process and having been initiated.
       federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED;
+
+      return;
 
    }
 
@@ -1567,21 +1718,70 @@ void Federate::update_joined_federates()
       return;
    }
 
-   // The federatesInFederation list has been received and the federate
-   // handles need to be decoded.  It would be nice if we could do this in
-   // the federate ambassador callback.  However, this makes a call to the
-   // RTI ambassador to get the federate handle.
+   // The federatesInFederation list has been received.  Now we will check for
+   // compatibility between the federates in the federatesInFederation list
+   // against the joined federates.  Depending on the match status, we are
+   // either finished or need to wait for more updates.
    if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED ) {
-
-      // Mark the update state as in progress.  Now we wait to recieve all
-      // the discoveries and reflections for the joined federates.
-      federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS;
 
       // Ask the MOM to unsubscribe to the federation info.
       unsubscribe_from_MOM_federation_info();
 
-      // Ask the MOM to get the federate information.
-      ask_MOM_for_federate_info();
+      // Check if the federates in Federation all match with joined federates.
+      // If so, we can mark the update process as complete.
+      if ( verify_joined_federates() ) {
+
+         // Mark that all federate have joined.
+         all_federates_joined = true;
+
+         // Joined federates are up to date, so the process is complete.
+         federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE;
+
+         return;
+
+      }
+
+      // If we have more joined federates than the federatesInFederation list
+      // then something is wrong.  This indicates that there is a mismatch
+      // between the MOM reported federatesInFederation and the number of
+      // federates we have already discovered.
+      if ( joined_federates_map.size() > federate_handles.size() ) {
+         ostringstream errmsg;
+         errmsg << "Federate::update_joined_federates():" << __LINE__
+                << " ERROR: There are " << joined_federates_map.size()
+                << " but only " << federate_handles.size()
+                << " federate in the federatesInFederation list!"
+                << std::endl;
+         message_publish( MSG_ERROR, errmsg.str().c_str() );
+
+         // Mark the update process as failed.
+         federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED;
+      }
+
+      // Check if we may have discovered additional federates since the
+      // last update.  Then we need to reactivate the MOM federate interface
+      // and wait for all the federates to update.
+      if ( check_joined_federates_match() ) {
+
+         // Joined federates are NOT up to date, so wait for up dates.
+         federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS;
+
+         // Ask the MOM to get the federate information.
+         ask_MOM_for_federate_info();
+
+         return;
+
+      }
+
+      // Something went wrong.
+      ostringstream errmsg;
+      errmsg << "Federate::update_joined_federates():" << __LINE__
+             << " ERROR: The federatesInFederation list is not consistent with the joined federates list!"
+             << std::endl;
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
+
+      // Mark the update process as failed.
+      federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED;
 
       return;
    }
@@ -1637,6 +1837,8 @@ void Federate::update_joined_federates()
 
       }
 
+      return;
+
    }
 
    // The joined federate update process is marked as complete.
@@ -1665,6 +1867,54 @@ void Federate::update_joined_federates()
 
    return;
 }
+
+
+/*!
+ *  @job_class{freeze}
+ *  @detail This job will block until all the federates in the federation are
+ *  discovered and updated in the joined_federates_map.
+ */
+void Federate::wait_for_joined_federates_update()
+{
+   THLAFederateUpdateProcessEnum prev_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE;
+
+   //
+   // Use the update_joined_federates cyclic job.
+   //
+
+   // First activate the update process.
+   federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE;
+
+   // Now enter a while loop waiting on completion or error.
+   while (    federate_update_state != THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE
+           && federate_update_state != THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED ) {
+
+      // Only print out debug information when the state changes.
+      if ( prev_state != federate_update_state ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            ostringstream errmsg;
+            errmsg << "Federate::wait_for_joined_federates_update(): State "
+                   << to_string( federate_update_state ) << std::endl;
+            message_publish( MSG_NORMAL, errmsg.str().c_str() );
+            prev_state = federate_update_state;
+         }
+      }
+
+      // Call the update function.
+      update_joined_federates();
+
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::wait_for_joined_federates_update(): Joined federates: " << std::endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+      std::wcout << list_joined_federates() << std::endl;
+   }
+
+   return;
+}
+
 
 /*!
  *  @job_class{initialization}
@@ -2810,18 +3060,6 @@ void Federate::ask_MOM_for_federate_info()
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::ask_MOM_for_federate_names():%d\n",
                        __LINE__ );
-   }
-
-   // Concurrency critical code section because joined-federate state is changed
-   // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
-   // function.
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
-
-      // Clear the list of joined federates.
-      joined_federates_map.clear();
    }
 
    // Make sure the MOM handles get initialized before we try to use them.

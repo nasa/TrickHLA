@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{../../../source/TrickHLA/ObjectServices.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/StringUtilities.cpp}
 
 @revs_title
 @revs_begin
@@ -102,6 +103,17 @@ class StringUtilities
    {
       return;
    }
+
+   // Useful static foreground color strings.
+   static const std::string BLACK_TEXT;
+   static const std::string RED_TEXT;
+   static const std::string GREEN_TEXT;
+   static const std::string YELLOW_TEXT;
+   static const std::string BLUE_TEXT;
+   static const std::string MAGENTA_TEXT;
+   static const std::string CYAN_TEXT;
+   static const std::string WHITE_TEXT;
+   static const std::string DEFAULT_TEXT;
 
    /*! @brief Wide character string (i.e. wchar_t *) duplication in Trick memory.
     *  @param s The input wide string.

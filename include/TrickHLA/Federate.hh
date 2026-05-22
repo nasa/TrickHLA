@@ -267,8 +267,20 @@ class Federate : public CheckpointConversionBase
       execution_control->clear_multiphase_init_sync_points();
    }
 
+   /*! @brief Verify the joined federates list against the federates in Federatio list.
+    *  @return True if all federate in Federation and only all are in the joined federates map. */
+   bool verify_joined_federates();
+
+   /*! @brief Check that every federate in the joined federates list has a
+    *  match in the federatesInFederation list.
+    *  @return True if all joined federates have a match. */
+   bool check_joined_federates_match();
+
    /*! @brief Update the joined federates list. */
    void update_joined_federates();
+
+   /*! @brief Wait for the joined federates list to be updated. */
+   void wait_for_joined_federates_update();
 
    /*! @brief Get a wide string list of joined federates.
     *  @return Wide string containing a line separated list of the federates
@@ -804,6 +816,11 @@ class Federate : public CheckpointConversionBase
     * @param instance_hndl Federate instance to remove. */
    void remove_joined_federate( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
+   /*! @brief Get the federate MOM information from the RTI.
+    *  @param handle MOM HLAfederate instance handle. */
+   //void get_federate_info( RTI1516_NAMESPACE::FederateHandle & federate_handle,
+   //                        KnownFederate                     & federate       );
+
    /*! @brief Get the joined federate MOM object instance name from the RTI.
     *  @return True if an ID of joined federate, otherwise false.
     *  @param handle MOM HLAfederate instance handle. */
@@ -1092,9 +1109,9 @@ class Federate : public CheckpointConversionBase
    MutexLock        joined_federate_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
    KnownFederateMap joined_federates_map;  ///< @trick_io{**} Map used to manage the dynamic list of joined federates.
 
-   MutexLock                            federate_update_mutex;    ///< @trick_io{**}    Mutex to lock thread over critical code sections.
-   THLAFederateUpdateProcessEnum        federate_update_state;    ///< @trick_units{--} State for joined federate update process.
-   RTI1516_NAMESPACE::FederateHandleSet federate_handles;         ///< @trick_io{**}    Handles from MOM for federates in the federation list.
+   MutexLock                            federate_update_mutex; ///< @trick_io{**}    Mutex to lock thread over critical code sections.
+   THLAFederateUpdateProcessEnum        federate_update_state; ///< @trick_units{--} State for joined federate update process.
+   RTI1516_NAMESPACE::FederateHandleSet federate_handles;      ///< @trick_io{**}    Handles from MOM for federates in the federation list.
 
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
