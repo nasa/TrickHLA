@@ -407,8 +407,13 @@ void PhysicalEntityBase::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "PhysicalEntityBase::pack():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
    // Check for latency/lag compensation.
@@ -443,8 +448,13 @@ void PhysicalEntityBase::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "PhysicalEntityBase::unpack():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
       DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.

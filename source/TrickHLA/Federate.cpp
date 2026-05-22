@@ -96,7 +96,6 @@ NASA, Johnson Space Center\n
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
 #include "RTI/Handle.h"
-#include "RTI/RTI1516.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/RTIambassadorFactory.h"
 #include "RTI/Typedefs.h"
@@ -218,17 +217,12 @@ Federate::~Federate()
 void Federate::print_version()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string rti_name;
-      StringUtilities::to_string( rti_name, RTI1516_NAMESPACE::rtiName() );
-      string rti_version;
-      StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
-
       ostringstream msg;
       msg << "Federate::print_version():" << __LINE__ << endl
           << "     TrickHLA-version:'" << Utilities::get_version() << "'" << endl
           << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'" << endl
-          << "             RTI-name:'" << rti_name << "'" << endl
-          << "          RTI-version:'" << rti_version << "'" << endl;
+          << "             RTI-name:'" << Utilities::get_rti_name() << "'" << endl
+          << "          RTI-version:'" << Utilities::get_rti_version() << "'" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
