@@ -666,8 +666,6 @@ described in section 7.2 and figure 7-4.
 */
 void ExecutionControl::role_determination_process()
 {
-   RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;
-
    // Initialize the MOM interface handles.
    federate->initialize_MOM_handles();
 
@@ -683,6 +681,8 @@ void ExecutionControl::role_determination_process()
 
       // Make sure all required federates have joined the federation.
       federate->wait_for_required_federates_to_join();
+
+      RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;
 
       // Get the list of joined federates.
       federate->get_joined_federate_handle_set( joined_federate_handles );

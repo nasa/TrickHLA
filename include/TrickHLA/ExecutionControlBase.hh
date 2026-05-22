@@ -131,7 +131,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Destructor for the ExecutionControlBase class. */
    virtual ~ExecutionControlBase() = 0;
 
-
   public:
    //-------------------------------------------------------------------------
    // Execution Control initialization methods.
@@ -150,7 +149,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual void post_multi_phase_init_processes() = 0;
    /*! @brief Execution control specific shutdown process. */
    virtual void shutdown() = 0;
-
 
    //-------------------------------------------------------------------------
    // Execution Control support methods.
@@ -215,7 +213,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual void subscribe() = 0;
    /*! Unsubscribe the ExecutionControl objects and interactions. */
    virtual void unsubscribe() = 0;
-
 
    //-------------------------------------------------------------------------
    // ExecutionControl runtime methods.
@@ -284,7 +281,6 @@ class ExecutionControlBase : public SyncPointManagerBase
       return ( true );
    }
 
-
    //-------------------------------------------------------------------------
    // ExecutionControl interaction methods.
    //
@@ -316,7 +312,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Process changes from any received Execution Control Objects (ExCOs).
     *  @return True if mode transition occurred. */
    virtual bool process_execution_control_updates() = 0;
-
 
    //-------------------------------------------------------------------------
    // Timeline access and management methods.
@@ -376,7 +371,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return ( get_scenario_time() + ( sim_time - get_sim_time() ) );
    }
-
 
    //-------------------------------------------------------------------------
    // Mode management support methods.
@@ -440,7 +434,6 @@ class ExecutionControlBase : public SyncPointManagerBase
       return ( current_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN );
    }
 
-
    //-------------------------------------------------------------------------
    // Federation freeze/pause management functions.
    //
@@ -487,7 +480,6 @@ class ExecutionControlBase : public SyncPointManagerBase
       return this->freeze_the_federation;
    }
 
-
    //-------------------------------------------------------------------------
    // Functions for the freeze ExecutionControl methodology.
    //
@@ -517,7 +509,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return this->mode_transition_requested;
    }
-
 
    //-------------------------------------------------------------------------
    // Role determination methods.
@@ -552,7 +543,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return this->late_joiner_determined;
    }
-
 
    //-------------------------------------------------------------------------
    // Execution mode access methods.
@@ -590,7 +580,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       this->current_execution_control_mode = mode;
    }
-
 
    //-------------------------------------------------------------------------
    // Execution Control association methods.
@@ -638,7 +627,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return ( execution_configuration != NULL );
    }
-
 
    //-------------------------------------------------------------------------
    // Freeze time management functions.
@@ -706,7 +694,6 @@ class ExecutionControlBase : public SyncPointManagerBase
       this->scenario_freeze_time = freeze_time;
    }
 
-
    //-------------------------------------------------------------------------
    // Save and Restore
    //-------------------------------------------------------------------------
@@ -725,11 +712,11 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual std::wstring generate_save_label();
 
    /*! @brief Map a Save label into a federates file name. */
-   virtual const std::string map_save_label_to_federates_file_name( std::wstring const &save_label );
+   virtual std::string const map_save_label_to_federates_file_name( std::wstring const &save_label );
 
    /*! @brief Get the number of pending scheduled Saves.
     *  @return Number of pending Saves in Save queue. */
-   virtual unsigned int number_of_pending_saves();
+   virtual std::size_t number_of_pending_saves();
 
    /*! @brief Federate HLA Save process executive. */
    virtual void save_process();
@@ -757,13 +744,13 @@ class ExecutionControlBase : public SyncPointManagerBase
     *  time (HLT).
     *  @param label The Save label for the HLA save process.
     *  @param time  The HLT to initiate the save. */
-   virtual void save_at_HLT( std::wstring                   const &label,
+   virtual void save_at_HLT( std::wstring const                   &label,
                              RTI1516_NAMESPACE::LogicalTime const &time );
 
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_sst Simulation scenario time to freeze.
     *  @param save_label Save label for HLA Federation Save. */
-   virtual void start_federation_save_at_SST( double             freeze_sst,
+   virtual void start_federation_save_at_SST( double              freeze_sst,
                                               std::wstring const &save_label ) = 0;
 
    /*! @brief Check if this Federate can initiate a Federation save.
@@ -777,7 +764,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    {
       return ( false );
    }
-
 
    //..........................................................................
    // Restore functions.
@@ -795,12 +781,11 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Complete Federate restore and prepare to restart execution. */
    virtual void restore_after();
 
-
    //..........................................................................
    // Checkpointing functions.
    //..........................................................................
    /*! @brief Map a Save label into a checkpoint file name. */
-   virtual const std::string map_save_label_to_checkpoint_file_name( std::wstring const &save_label );
+   virtual std::string const map_save_label_to_checkpoint_file_name( std::wstring const &save_label );
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
@@ -838,7 +823,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Execution Control functions to perform after loading a Trick
     *  simulation checkpoint file to prepare for simulation restart. */
    virtual void checkpoint_restart();
-
 
   protected:
    double time_padding; ///< @trick_units{s} Time in seconds to add to the go-to-run time.

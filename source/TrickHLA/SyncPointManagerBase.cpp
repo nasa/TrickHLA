@@ -207,7 +207,7 @@ int SyncPointManagerBase::get_list_index_for_list_name(
 }
 
 SyncPtStateEnum SyncPointManagerBase::get_sync_point_state(
-   std::wstring const &label )
+   wstring const &label )
 {
 #if SYNC_POINT_LIST_TMM_ARRAY
    for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
@@ -588,7 +588,7 @@ bool SyncPointManagerBase::achieve_sync_point(
 }
 
 bool SyncPointManagerBase::achieve_sync_point(
-   std::wstring const       &label,
+   wstring const            &label,
    VariableLengthData const &user_supplied_tag )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -704,7 +704,7 @@ bool SyncPointManagerBase::wait_for_all_sync_points_synchronized(
 }
 
 bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
-   std::wstring const &label )
+   wstring const &label )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string label_str;
@@ -767,7 +767,7 @@ string SyncPointManagerBase::to_string()
 }
 
 string SyncPointManagerBase::to_string(
-   std::wstring const &label )
+   wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.

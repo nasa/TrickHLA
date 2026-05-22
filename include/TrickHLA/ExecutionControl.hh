@@ -222,7 +222,7 @@ class ExecutionControl : public ExecutionControlBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_sst Simulation scenario time to freeze.
     *  @param save_label Save label for HLA Federation Save. */
-   virtual void start_federation_save_at_SST( double             freeze_sst,
+   virtual void start_federation_save_at_SST( double              freeze_sst,
                                               std::wstring const &save_label );
 
   protected:

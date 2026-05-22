@@ -297,8 +297,7 @@ class Federate : public CheckpointConversionBase
    /*! @brief Get a list of the joined federate handles.
     *  @detail This function will clear the incoming list.
     *  @param handle_set The set to fill with joined federate handles. */
-   void get_joined_federate_handle_set( RTI1516_NAMESPACE::FederateHandleSet & handle_set );
-
+   void get_joined_federate_handle_set( RTI1516_NAMESPACE::FederateHandleSet &handle_set );
 
    //-------------------------------------------------------------------------
    // Object Management interfaces.
@@ -456,7 +455,6 @@ class Federate : public CheckpointConversionBase
     *  @param obj_instance_name Object instance name to wait for data. */
    void wait_to_receive_blocking_io_data( std::string const &obj_instance_name );
 
-
    //-------------------------------------------------------------------------
    // Time Management interfaces.
    //
@@ -600,7 +598,6 @@ class Federate : public CheckpointConversionBase
       time_management_service.time_advance_request_to_GALT();
    }
 
-
    //-------------------------------------------------------------------------
    // Management Object Model (MOM) interfaces.
    //
@@ -647,7 +644,6 @@ class Federate : public CheckpointConversionBase
 
    /*! @brief Restore the backed up "auto-provide" state to the MOM. */
    void restore_orig_MOM_auto_provide_setting();
-
 
    /*! @brief Checks for the existence 'startup' initialization sync point as
     *  an indication if this federate is running.
@@ -710,7 +706,6 @@ class Federate : public CheckpointConversionBase
     *  @return Federate Handle.
     *  @param encoded_handle encoded Federate Handle */
    RTI1516_NAMESPACE::FederateHandle decode_federate_handle( RTI1516_NAMESPACE::VariableLengthData const &encoded_handle );
-
 
    //-------------------------------------------------------------------------
    // MOM HLAfederate class and attributes.
@@ -818,14 +813,13 @@ class Federate : public CheckpointConversionBase
 
    /*! @brief Get the federate MOM information from the RTI.
     *  @param handle MOM HLAfederate instance handle. */
-   //void get_federate_info( RTI1516_NAMESPACE::FederateHandle & federate_handle,
-   //                        KnownFederate                     & federate       );
+   // void get_federate_info( RTI1516_NAMESPACE::FederateHandle & federate_handle,
+   //                         KnownFederate                     & federate       );
 
    /*! @brief Get the joined federate MOM object instance name from the RTI.
     *  @return True if an ID of joined federate, otherwise false.
     *  @param handle MOM HLAfederate instance handle. */
-   std::wstring get_federate_MOM_name( KnownFederate const & federate );
-
+   std::wstring get_federate_MOM_name( KnownFederate const &federate );
 
    //-------------------------------------------------------------------------
    // Routines to return Federate state values.
@@ -902,7 +896,6 @@ class Federate : public CheckpointConversionBase
       return publish_data;
    }
 
-
    //-------------------------------------------------------------------------
    // Federate service accessor methods.
    //
@@ -972,7 +965,6 @@ class Federate : public CheckpointConversionBase
       return this->execution_control->is_execution_configuration_used();
    }
 
-
    //-------------------------------------------------------------------------
    // Federate freeze management functions.
    //
@@ -1005,7 +997,6 @@ class Federate : public CheckpointConversionBase
    /*! @brief Tell the simulation executive to transition into Run mode. */
    static void goto_run();
 
-
    //-------------------------------------------------------------------------
    // Federate SaveRestore service interfaces.
    //
@@ -1031,9 +1022,8 @@ class Federate : public CheckpointConversionBase
     *  time (HLT).
     *  @param label The Save label for the HLA save process.
     *  @param time  The HLT to initiate the save. */
-   virtual void save_at_HLT( std::wstring                   const &label,
+   virtual void save_at_HLT( std::wstring const                   &label,
                              RTI1516_NAMESPACE::LogicalTime const &time );
-
 
    //-------------------------------------------------------------------------
    // CheckpointConversionBase Interface.
@@ -1049,7 +1039,6 @@ class Federate : public CheckpointConversionBase
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
    virtual void free_converted_data_for_checkpoint();
-
 
    //-------------------------------------------------------------------------
    // Checkpoint functions.
@@ -1074,7 +1063,6 @@ class Federate : public CheckpointConversionBase
     *  part of an HLA Restore.  Delegates to Execution Control interface.*/
    void checkpoint_restart();
 
-
   private:
    //
    // Federation state variables.
@@ -1090,8 +1078,8 @@ class Federate : public CheckpointConversionBase
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
   private:
-   bool got_startup_sync_point;     ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
-   bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
+   bool got_startup_sync_point; ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
+   bool publish_data;           /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederatesInFederation_handle; ///< @trick_io{**} MOM attribute handle to Federate-count.

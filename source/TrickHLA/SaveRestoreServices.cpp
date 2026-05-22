@@ -35,21 +35,18 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
-#include <float.h>
 #include <fstream>
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <sys/stat.h>
 
 // Trick includes.
 #include "trick/CheckPointRestart_c_intf.hh"
-#include "trick/Flag.h"
-#include "trick/MemoryManager.hh"
 #include "trick/command_line_protos.h"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -62,6 +59,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -95,68 +93,68 @@ using namespace TrickHLA;
 //-----------------------------------------------------------
 std::string TrickHLA::to_string( THLASaveProcessEnum save_state )
 {
-   switch (save_state) {
-   case THLASaveProcessEnum::SAVE_NONE:
-      return( "SAVE_NONE" );
-      break;
-   case THLASaveProcessEnum::SAVE_INITIATED:
-      return( "SAVE_INITIATED" );
-      break;
-   case THLASaveProcessEnum::SAVE_REQUESTED:
-      return( "SAVE_REQUESTED" );
-      break;
-   case THLASaveProcessEnum::SAVE_IN_PROGRESS:
-      return( "SAVE_IN_PROGRESS" );
-      break;
-   case THLASaveProcessEnum::SAVE_COMPLETE:
-      return( "SAVE_COMPLETE" );
-      break;
-   case THLASaveProcessEnum::SAVE_FAILED:
-      return( "SAVE_FAILED" );
-      break;
-   case THLASaveProcessEnum::SAVE_UNSUPPORTED:
-      return( "SAVE_UNSUPPORTED" );
-      break;
-   default:
-      return( "SAVE_UNKNOWN" );
+   switch ( save_state ) {
+      case THLASaveProcessEnum::SAVE_NONE:
+         return ( "SAVE_NONE" );
+         break;
+      case THLASaveProcessEnum::SAVE_INITIATED:
+         return ( "SAVE_INITIATED" );
+         break;
+      case THLASaveProcessEnum::SAVE_REQUESTED:
+         return ( "SAVE_REQUESTED" );
+         break;
+      case THLASaveProcessEnum::SAVE_IN_PROGRESS:
+         return ( "SAVE_IN_PROGRESS" );
+         break;
+      case THLASaveProcessEnum::SAVE_COMPLETE:
+         return ( "SAVE_COMPLETE" );
+         break;
+      case THLASaveProcessEnum::SAVE_FAILED:
+         return ( "SAVE_FAILED" );
+         break;
+      case THLASaveProcessEnum::SAVE_UNSUPPORTED:
+         return ( "SAVE_UNSUPPORTED" );
+         break;
+      default:
+         return ( "SAVE_UNKNOWN" );
    }
-   return( "SAVE_UNKNOWN" );
+   return ( "SAVE_UNKNOWN" );
 }
 
 std::string TrickHLA::to_string( THLARestoreProcessEnum restore_state )
 {
-   switch (restore_state) {
-   case THLARestoreProcessEnum::RESTORE_NONE:
-      return( "RESTORE_NONE" );
-      break;
-   case THLARestoreProcessEnum::RESTORE_REQUESTED:
-      return( "RESTORE_REQUESTED" );
-      break;
-   case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
-      return( "RESTORE_REQUEST_FAILED" );
-      break;
-   case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
-      return( "RESTORE_REQUEST_SUCCEEDED" );
-      break;
-   case THLARestoreProcessEnum::RESTORE_INITIATE:
-      return( "RESTORE_INITIATE" );
-      break;
-   case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
-      return( "RESTORE_IN_PROGRESS" );
-      break;
-   case THLARestoreProcessEnum::RESTORE_COMPLETE:
-      return( "RESTORE_COMPLETE" );
-      break;
-   case THLARestoreProcessEnum::RESTORE_FAILED:
-      return( "RESTORE_FAILED" );
-      break;
-   case THLARestoreProcessEnum::RESTORE_UNSUPPORTED:
-      return( "RESTORE_UNSUPPORTED" );
-      break;
-   default:
-      return( "RESTORE_UNKNOWN" );
+   switch ( restore_state ) {
+      case THLARestoreProcessEnum::RESTORE_NONE:
+         return ( "RESTORE_NONE" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_REQUESTED:
+         return ( "RESTORE_REQUESTED" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
+         return ( "RESTORE_REQUEST_FAILED" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
+         return ( "RESTORE_REQUEST_SUCCEEDED" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_INITIATE:
+         return ( "RESTORE_INITIATE" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
+         return ( "RESTORE_IN_PROGRESS" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_COMPLETE:
+         return ( "RESTORE_COMPLETE" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_FAILED:
+         return ( "RESTORE_FAILED" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_UNSUPPORTED:
+         return ( "RESTORE_UNSUPPORTED" );
+         break;
+      default:
+         return ( "RESTORE_UNKNOWN" );
    }
-   return( "RESTORE_UNKNOWN" );
+   return ( "RESTORE_UNKNOWN" );
 }
 
 /*!
@@ -174,8 +172,8 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      object_service( NULL ),
      time_management_service( NULL ),
      execution_control( NULL ),
-     //running_feds_count( 0 ),
-     //running_feds( NULL ),
+     // running_feds_count( 0 ),
+     // running_feds( NULL ),
      running_feds_count_at_time_of_restore( 0 ),
      joined_federates_file_name( "" ),
      HLA_save_directory( "" ),
@@ -232,11 +230,10 @@ SaveRestoreServices::~SaveRestoreServices()
    return;
 }
 
-
 /*!
  *  @job_class{scheduled}
  */
-void SaveRestoreServices::set_save_label( std::wstring const & label )
+void SaveRestoreServices::set_save_label( wstring const &label )
 {
    // FIXME: May need some protections here.
 
@@ -246,7 +243,6 @@ void SaveRestoreServices::set_save_label( std::wstring const & label )
    return;
 }
 
-
 //----------------------------------------------------------------------------
 // General SavRestoreService support functions.
 //----------------------------------------------------------------------------
@@ -254,7 +250,7 @@ void SaveRestoreServices::set_save_label( std::wstring const & label )
 /*!
  *  @job_class{initialization}
  */
-bool SaveRestoreServices::set_HLA_save_directory( std::string const & path )
+bool SaveRestoreServices::set_HLA_save_directory( std::string const &path )
 {
 
    // If the save directory is not specified, set it to the current RUN directory
@@ -268,13 +264,12 @@ bool SaveRestoreServices::set_HLA_save_directory( std::string const & path )
       // and run_dir from the EXECUTIVE.
       this->HLA_save_directory = def_dir + "/" + run_dir;
 
-   }
-   else {
+   } else {
       this->HLA_save_directory = path;
    }
 
    // Check if path is valid and return status.
-   return( this->check_HLA_save_directory() );
+   return ( this->check_HLA_save_directory() );
 }
 
 /*!
@@ -285,35 +280,33 @@ bool SaveRestoreServices::check_HLA_save_directory()
    struct stat info;
 
    // Check for the existence of the path and that it is a directory.
-   if( stat( this->HLA_save_directory.c_str(), &info ) != 0 ){
+   if ( stat( this->HLA_save_directory.c_str(), &info ) != 0 ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
-             << " ERROR: Save directory path \'" << this->HLA_save_directory.c_str()
+             << " ERROR: Save directory path \'" << this->HLA_save_directory
              << "\' does NOT exist!";
          message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
       }
 
-      return( false );
+      return ( false );
 
-   }
-   else if ( (info.st_mode & S_IFDIR) == 0  ) {
+   } else if ( ( info.st_mode & S_IFDIR ) == 0 ) { // NOLINT(misc-include-cleaner)
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
-             << " ERROR: Save directory path \'" << this->HLA_save_directory.c_str()
+             << " ERROR: Save directory path \'" << this->HLA_save_directory
              << "\' exists but is NOT a directory!";
          message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
       }
 
-      return( false );
+      return ( false );
    }
 
-   return( true );
+   return ( true );
 }
-
 
 //----------------------------------------------------------------------------
 // SaveRestoreService Save functions.
@@ -325,47 +318,44 @@ bool SaveRestoreServices::check_HLA_save_directory()
 bool SaveRestoreServices::set_save_state( THLASaveProcessEnum state )
 {
    // Check to make sure that Save and Restore is supported for this federate.
-   if (    (!execution_control->is_save_and_restore_supported())
-        && (state != THLASaveProcessEnum::SAVE_UNSUPPORTED)      ){
+   if ( ( !execution_control->is_save_and_restore_supported() )
+        && ( state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING,
                           "SaveRestoreServices::set_save_time():%d : HLA SaveRetore NOT supported!\n",
-                          __LINE__  );
+                          __LINE__ );
       }
 
       // Make sure that the service state reflects the unsupported state.
       this->save_state = THLASaveProcessEnum::SAVE_UNSUPPORTED;
 
-      return( false );
-
+      return ( false );
    }
 
    // Set the Save state.
    save_state = state;
 
-   return( true );
-
+   return ( true );
 }
 
 /*!
  *  @job_class{scheduled}
  */
 void SaveRestoreServices::set_save_time(
-   Int64Time const & time )
+   Int64Time const &time )
 {
 
    // Make sure that we are in an appropriate state to set the Save time.
-   if (    (this->save_state != THLASaveProcessEnum::SAVE_NONE)
-        && (this->save_state != THLASaveProcessEnum::SAVE_REQUESTED)
-        && (this->save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED) ){
+   if ( ( this->save_state != THLASaveProcessEnum::SAVE_NONE )
+        && ( this->save_state != THLASaveProcessEnum::SAVE_REQUESTED )
+        && ( this->save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::set_save_time():%d : Save already in progress: \'%s\'!\n",
                           __LINE__, TrickHLA::to_string( save_state ).c_str() );
       }
       return;
-
    }
 
    // Check to make sure the time hasn't already passed.
@@ -386,7 +376,6 @@ void SaveRestoreServices::set_save_time(
       }
 
       return;
-
    }
 
    // Set the Save time.
@@ -406,7 +395,7 @@ void SaveRestoreServices::save_request(
 {
 
    // If Federation SaveRestore is not supported then return without action.
-   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ){
+   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d : HLA SaveRetore NOT supported!\n",
                           __LINE__ );
@@ -415,8 +404,8 @@ void SaveRestoreServices::save_request(
    }
 
    // Check the Federation Save state to ensure that a Save is applicable .
-   if (    (save_state != THLASaveProcessEnum::SAVE_NONE)
-        && (save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED) ){
+   if ( ( save_state != THLASaveProcessEnum::SAVE_NONE )
+        && ( save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d : Save already in progress: \'%s\'!\n",
@@ -426,17 +415,16 @@ void SaveRestoreServices::save_request(
    }
 
    // Check the Save label.
-   if ( label.empty() ){
+   if ( label.empty() ) {
       // If no label is passed in, then we must have a label already set.
-      if ( this->save_label.empty() ){
+      if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save_request():" << __LINE__
                 << " ERROR: No Save label set!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       return;
-   }
-   else{
+   } else {
       this->save_label = label;
    }
 
@@ -489,13 +477,13 @@ void SaveRestoreServices::save_request(
 /*!
  *  @job_class{scheduled}
  */
-void SaveRestoreServices::save( std::wstring const &label )
+void SaveRestoreServices::save( wstring const &label )
 {
    std::string label_str;
    std::string checkpoint_file_name;
 
    // If Federation SaveRestore is not supported then return without action.
-   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ){
+   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save():%d HLA SaveRetore NOT supported!\n",
                           __LINE__ );
@@ -504,12 +492,12 @@ void SaveRestoreServices::save( std::wstring const &label )
    }
 
    // Do a little sanity checking.
-   if ( save_state != THLASaveProcessEnum::SAVE_REQUESTED ){
+   if ( save_state != THLASaveProcessEnum::SAVE_REQUESTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
                 << " ERROR: Save state mismatch: "
-                << TrickHLA::to_string( save_state) << "!" << std::endl;
+                << TrickHLA::to_string( save_state ) << "!" << std::endl;
          message_publish( MSG_WARNING, "%s\n",
                           __LINE__, errmsg.str().c_str() );
       }
@@ -517,16 +505,15 @@ void SaveRestoreServices::save( std::wstring const &label )
    }
 
    // Check the Save label.
-   if ( label.empty() ){
+   if ( label.empty() ) {
       // If no label is passed in, then we must have a label already set.
-      if ( this->save_label.empty() ){
+      if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
                 << " ERROR: No Save label set!" << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-   }
-   else{
+   } else {
       this->save_label = label;
    }
 
@@ -628,15 +615,15 @@ bool SaveRestoreServices::save_in_progress_check()
 {
 
    // If Federation SaveRestore is not supported then return without action.
-   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ){
+   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d HLA SaveRetore NOT supported!\n",
                           __LINE__ );
       }
-      return( false );
+      return ( false );
    }
 
-   if ( save_state == THLASaveProcessEnum::SAVE_IN_PROGRESS ){
+   if ( save_state == THLASaveProcessEnum::SAVE_IN_PROGRESS ) {
 
       std::string label_str;
       StringUtilities::to_string( label_str, save_label );
@@ -646,10 +633,10 @@ bool SaveRestoreServices::save_in_progress_check()
                           "SaveRestoreServices::save_in_progress_check():%d HLA Save for label \'%s\' in progress!\n",
                           __LINE__, label_str.c_str() );
       }
-      return( true );
+      return ( true );
    }
 
-   return( false );
+   return ( false );
 }
 
 /*!
@@ -660,7 +647,7 @@ void SaveRestoreServices::save_succeded()
    std::string label_str;
 
    // If Federation SaveRestore is not supported then return without action.
-   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ){
+   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_succeded():%d HLA SaveRetore NOT supported!\n",
                           __LINE__ );
@@ -672,11 +659,11 @@ void SaveRestoreServices::save_succeded()
    StringUtilities::to_string( label_str, save_label );
 
    // Do a little sanity checking.
-   if ( save_state != THLASaveProcessEnum::SAVE_COMPLETE ){
+   if ( save_state != THLASaveProcessEnum::SAVE_COMPLETE ) {
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::save_succeded():" << __LINE__
              << " ERROR: Save state mismatch: "
-             << TrickHLA::to_string( save_state) << "!" << std::endl;
+             << TrickHLA::to_string( save_state ) << "!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -695,7 +682,7 @@ void SaveRestoreServices::save_failed()
    std::string label_str;
 
    // If Federation SaveRestore is not supported then return without action.
-   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ){
+   if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_failed():%d HLA SaveRetore NOT supported!\n",
                           __LINE__ );
@@ -707,11 +694,11 @@ void SaveRestoreServices::save_failed()
    StringUtilities::to_string( label_str, save_label );
 
    // Do a little sanity checking.
-   if ( save_state != THLASaveProcessEnum::SAVE_FAILED ){
+   if ( save_state != THLASaveProcessEnum::SAVE_FAILED ) {
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::save_failed():" << __LINE__
              << " ERROR: Save state mismatch: "
-             << TrickHLA::to_string( save_state) << "!" << std::endl;
+             << TrickHLA::to_string( save_state ) << "!" << std::endl;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -719,7 +706,7 @@ void SaveRestoreServices::save_failed()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       ostringstream msg;
       msg << "SaveRestoreServices::save_failed():" << __LINE__
-          << " : Save for label \'" << label_str.c_str()
+          << " : Save for label \'" << label_str
           << "\' failed!" << std::endl;
       message_publish( MSG_ERROR, msg.str().c_str() );
    }
@@ -742,9 +729,9 @@ bool SaveRestoreServices::write_joined_federates_to_file(
    std::wofstream file;
 
    // Check the Save label.
-   if ( label.empty() ){
+   if ( label.empty() ) {
       // If no label is passed in, then we must have a label already set.
-      if ( this->save_label.empty() ){
+      if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
                 << " ERROR: No Save label set!" << endl;
@@ -752,12 +739,10 @@ bool SaveRestoreServices::write_joined_federates_to_file(
       }
       // Get the joined federates file name from the ExecutionControl service.
       file_name = execution_control->map_save_label_to_federates_file_name( this->save_label );
-   }
-   else {
+   } else {
       // Get the joined federates file name from the ExecutionControl service.
       file_name = execution_control->map_save_label_to_federates_file_name( label );
    }
-
 
    // Form the full path.
    full_file_path = this->HLA_save_directory + "/" + file_name;
@@ -777,14 +762,12 @@ bool SaveRestoreServices::write_joined_federates_to_file(
             map_iter != federate->joined_federates_map.end(); ++map_iter ) {
 
          // Get the associate joined federate reference.
-         KnownFederate * joined_federate;
-         joined_federate = static_cast<KnownFederate *>(&(map_iter->second));
+         KnownFederate const *joined_federate = static_cast< KnownFederate * >( &( map_iter->second ) );
 
          // Write the federate information out to file.
          file << joined_federate->name << endl;
          file << joined_federate->type << endl;
          file << joined_federate->required << endl;
-
       }
 
       // Close the joined federates file.
@@ -797,11 +780,10 @@ bool SaveRestoreServices::write_joined_federates_to_file(
              << " ERROR: Failed to open file '" << full_file_path << "' for writing!" << std::endl;
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
-      return( false );
-
+      return ( false );
    }
 
-   return( true );
+   return ( true );
 }
 
 /*!
@@ -837,7 +819,6 @@ void SaveRestoreServices::print_save_failure_reason(
 
    return;
 }
-
 
 /*!
  *  @job_class{scheduled}
@@ -879,13 +860,9 @@ void SaveRestoreServices::request_federation_save_status() // cppcheck-suppress 
    return;
 }
 
-
 //----------------------------------------------------------------------------
 // SaveRestoreService Restore functions.
 //----------------------------------------------------------------------------
-
-
-
 
 //--------------------------------------------------------------------------
 // Potentially deprecated SaveRestoreService functions.
@@ -1019,13 +996,13 @@ bool SaveRestoreServices::read_known_federates_from_file(
    std::string    full_path;
    std::wifstream file; // Note that this is a wide string file stream.
    unsigned int   line_num;
-   std::wstring   num_feds_wstr = L"";
-   unsigned int   num_feds = 0;
+   wstring        num_feds_wstr = L"";
+   unsigned int   num_feds      = 0;
 
    // Check the Save label.
-   if ( label.empty() ){
+   if ( label.empty() ) {
       // If no label is passed in, then we must have a label already set.
-      if ( this->restore_label.empty() ){
+      if ( this->restore_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file():" << __LINE__
                 << " ERROR: No Restore label set!" << endl;
@@ -1033,8 +1010,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       }
       // Get the joined federates file name from the ExecutionControl service.
       file_name = execution_control->map_save_label_to_federates_file_name( this->restore_label );
-   }
-   else {
+   } else {
       // Get the joined federates file name from the ExecutionControl service.
       file_name = execution_control->map_save_label_to_federates_file_name( label );
    }
@@ -1051,7 +1027,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
              << " ERROR: Failed to open file '" << full_path << "'!" << endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
-      return( false );
+      return ( false );
    }
 
    //
@@ -1062,11 +1038,11 @@ bool SaveRestoreServices::read_known_federates_from_file(
    federate->known_federates.clear();
 
    // Read in the number of known federates from the joined federates Save file.
-   if ( std::getline( file, num_feds_wstr ) ){
+   if ( std::getline( file, num_feds_wstr ) ) {
       line_num = 1;
       try {
          num_feds = stoi( num_feds_wstr );
-      } catch (const std::invalid_argument& e) {
+      } catch ( std::invalid_argument const &e ) {
          std::wcerr << L"Invalid input: No conversion could be performed." << std::endl;
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
@@ -1074,30 +1050,30 @@ bool SaveRestoreServices::read_known_federates_from_file(
                 << " Invalid input: No conversion could be performed." << "'!" << endl;
          message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
          file.close();
-         return( false );
-      } catch (const std::out_of_range& e) {
+         return ( false );
+      } catch ( std::out_of_range const &e ) {
          file.close();
          std::wcerr << L"Error: Number is out of range for an int." << std::endl;
-         return( false );
+         return ( false );
       }
    }
 
    // Sanity check.  There has to be at least 1 federate.
-   if ( num_feds <= 0 ) {
+   if ( num_feds == 0 ) {
       file.close();
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
              << " ERROR: There has to be at least 1 federate.  Read in "
              << num_feds << " from '" << full_path << "'!" << endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
-      return( false );
+      return ( false );
    }
 
    // Now read in each federate entry.
    bool          read_error = false;
-   unsigned int  fed_count = 0;
+   unsigned int  fed_count  = 0;
    std::string   fed_name_str;
-   std::wstring  required_wstr;
+   wstring       required_wstr;
    KnownFederate known_federate;
    while ( std::getline( file, known_federate.name ) ) {
 
@@ -1108,13 +1084,12 @@ bool SaveRestoreServices::read_known_federates_from_file(
       ++line_num;
 
       // Read in the federate type.
-      if ( std::getline( file, known_federate.type ) ){
+      if ( std::getline( file, known_federate.type ) ) {
 
          // Increment the line count.
          ++line_num;
 
-      }
-      else {
+      } else {
 
          // There must have been an error reading the file.
          read_error = true;
@@ -1129,12 +1104,11 @@ bool SaveRestoreServices::read_known_federates_from_file(
 
          // Break out of the read while loop.
          break;
-
       }
 
       // Read in the federate required flag.
       ++line_num;
-      if ( std::getline( file, required_wstr ) ){
+      if ( std::getline( file, required_wstr ) ) {
 
          // Increment the line count.
          ++line_num;
@@ -1146,7 +1120,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
             // Convert the string in the file to an integer.
             bool_val = stoi( required_wstr );
 
-         } catch (const std::invalid_argument& e) {
+         } catch ( std::invalid_argument const &e ) {
 
             // Let the user know that something went wrong.
             ostringstream errmsg;
@@ -1156,21 +1130,19 @@ bool SaveRestoreServices::read_known_federates_from_file(
                    << " from '" << full_path << "'!" << std::endl;
             message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
-         } catch (const std::out_of_range& e) {
+         } catch ( std::out_of_range const &e ) {
 
             // Let the user know that something went wrong.
             std::wcerr << L"Error: Number is out of range for an int." << std::endl;
-
          }
 
          // NOTE that a boolean conversion error is NOT a read error.
          // In the case of a conversion error, the federate is required.
 
          // Convert to boolean values.
-         known_federate.required = (bool_val != 0) ? true : false;
+         known_federate.required = ( bool_val != 0 ) ? true : false;
 
-      }
-      else {
+      } else {
 
          // There must have been an error reading the file.
          read_error = true;
@@ -1185,7 +1157,6 @@ bool SaveRestoreServices::read_known_federates_from_file(
 
          // Break out of the read while loop.
          break;
-
       }
 
       // Increment the fed count.
@@ -1193,7 +1164,6 @@ bool SaveRestoreServices::read_known_federates_from_file(
 
       // Add the known federate to the known federates list.
       federate->known_federates.push_back( known_federate );
-
    }
 
    // We're done reading.  So, close the file.
@@ -1212,8 +1182,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
              << full_path << "'!" << std::endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
-      return( false );
-
+      return ( false );
    }
 
    // Check that the number of federates read in matches the number written.
@@ -1231,10 +1200,10 @@ bool SaveRestoreServices::read_known_federates_from_file(
       // number of federates and the number read.  We also return false to
       // indicate a discrepency.
 
-      return( false );
+      return ( false );
    }
 
-   return( true );
+   return ( true );
 }
 
 /*!
@@ -1296,12 +1265,12 @@ void SaveRestoreServices::federation_restored()
                        __LINE__ );
    }
    complete_restore();
-   this->start_to_restore     = false;
-   this->announce_restore     = false;
-   this->restore_begun        = false;
-   this->restore_is_imminent  = false;
-   this->restore_label        = L"";
-   this->restore_state        = THLARestoreProcessEnum::RESTORE_NONE;
+   this->start_to_restore    = false;
+   this->announce_restore    = false;
+   this->restore_begun       = false;
+   this->restore_is_imminent = false;
+   this->restore_label       = L"";
+   this->restore_state       = THLARestoreProcessEnum::RESTORE_NONE;
 }
 
 void SaveRestoreServices::wait_for_federation_restore_begun()
@@ -1482,7 +1451,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
       }
    }
 
-   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) { // cppcheck-suppress [knownConditionTrueFalse]
+   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) {
       // after this federate restore blocking loop has finished, check if the RTI
       // accepted the failure of the federate restore. build and return a message.
       return_string = "SaveRestoreServices::wait_for_federation_restore_to_complete() "
@@ -1862,7 +1831,6 @@ void SaveRestoreServices::print_restore_failure_reason(
 
    this->federation_restore_failed_callback_complete = true;
 }
-
 
 void SaveRestoreServices::initiate_restore_announce(
    wstring const &restore_name_label )

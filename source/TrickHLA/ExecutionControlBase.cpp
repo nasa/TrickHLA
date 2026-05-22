@@ -312,10 +312,9 @@ Trick simulation time as the default scenario-timeline.\n",
    }
 
    // Depending on if Save and Restore is supported, set the intial state.
-   if ( this->is_save_and_restore_supported() ){
+   if ( this->is_save_and_restore_supported() ) {
       this->save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_NONE );
-   }
-   else {
+   } else {
       this->save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_UNSUPPORTED );
    }
 
@@ -362,7 +361,7 @@ void ExecutionControlBase::join_federation_process()
 @job_class{initialization}
 */
 bool ExecutionControlBase::object_instance_name_reservation_succeeded(
-   std::wstring const &obj_instance_name )
+   wstring const &obj_instance_name )
 {
    // If ExecutionConfiguration is not set, then there is no match.
    if ( execution_configuration != NULL ) {
@@ -401,7 +400,7 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
 @job_class{initialization}
 */
 bool ExecutionControlBase::object_instance_name_reservation_failed(
-   std::wstring const &obj_instance_name )
+   wstring const &obj_instance_name )
 {
    // If ExecutionConfiguration is not set, then there is no match.
    if ( execution_configuration == NULL ) {
@@ -789,7 +788,7 @@ Object *ExecutionControlBase::get_trickhla_object(
  */
 Object *ExecutionControlBase::get_unregistered_object(
    ObjectClassHandle const &theObjectClass,
-   std::wstring const      &theObjectInstanceName )
+   wstring const           &theObjectInstanceName )
 {
    // Check to see if there is and ExecutionConfiguration object.
    if ( execution_configuration != NULL ) {
@@ -1022,7 +1021,7 @@ bool ExecutionControlBase::can_initiate_save()
  *  Save label.  This can be overridden in any extending ExecutionControl
  *  class.
  */
-std::wstring ExecutionControlBase::generate_save_label()
+wstring ExecutionControlBase::generate_save_label()
 {
    // FIXME: Check for time management to insure that there is a granted time.
 
@@ -1038,14 +1037,14 @@ std::wstring ExecutionControlBase::generate_save_label()
    StringUtilities::to_wstring( save_label_wstr, save_label_str );
 
    // Return the Save label.
-   return( save_label_wstr );
+   return ( save_label_wstr );
 }
 
 /*
  * @job_class{checkpoint}
  */
-const std::string ExecutionControlBase::map_save_label_to_federates_file_name(
-   std::wstring const &save_label )
+std::string const ExecutionControlBase::map_save_label_to_federates_file_name(
+   wstring const &save_label )
 {
    std::string save_label_str;
    std::string federates_file_name;
@@ -1065,18 +1064,16 @@ const std::string ExecutionControlBase::map_save_label_to_federates_file_name(
    // Add the running_feds suffix.
    federates_file_name += ".feds";
 
-   return( federates_file_name );
+   return ( federates_file_name );
 }
-
 
 /*!
  *  @job_class{scheduled}
  */
-unsigned int ExecutionControlBase::number_of_pending_saves()
+size_t ExecutionControlBase::number_of_pending_saves()
 {
-   return( save_restore_service->pending_save_queue.size() );
+   return ( save_restore_service->pending_save_queue.size() );
 }
-
 
 /*!
  *  @job_class{scheduled}
@@ -1094,82 +1091,80 @@ void ExecutionControlBase::save_process()
    // Manage the Federate HLA Save process state.
    switch ( save_restore_service->save_state ) {
 
-   case THLASaveProcessEnum::SAVE_NONE:
-      // Save has not been initiated.  So, just proceed without action.
-      break;
+      case THLASaveProcessEnum::SAVE_NONE:
+         // Save has not been initiated.  So, just proceed without action.
+         break;
 
-   case THLASaveProcessEnum::SAVE_INITIATED:
-      // This federate initiated the Federation Save.
-      // Make the call to the RTI ambassador to request a Federation save.
-      save_restore_service->save_request();
-      break;
+      case THLASaveProcessEnum::SAVE_INITIATED:
+         // This federate initiated the Federation Save.
+         // Make the call to the RTI ambassador to request a Federation save.
+         save_restore_service->save_request();
+         break;
 
-   case THLASaveProcessEnum::SAVE_REQUESTED:
-      // This federate is responding to a Save Request from the Federation.
+      case THLASaveProcessEnum::SAVE_REQUESTED:
+         // This federate is responding to a Save Request from the Federation.
 
-      // Check the currency of the joined federates.
-      if ( federate->verify_joined_federates() ) {
+         // Check the currency of the joined federates.
+         if ( federate->verify_joined_federates() ) {
 
-         // Call the SaveRestoreServices Save method.
-         save_restore_service->save();
+            // Call the SaveRestoreServices Save method.
+            save_restore_service->save();
 
-      } else {
+         } else {
 
+            // The Save failed.
+            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
+                                __LINE__, save_label_str.c_str() );
+            }
+            // Save actions when Save failed.
+            save_restore_service->save_state = THLASaveProcessEnum::SAVE_FAILED;
+            save_restore_service->save_failed();
+         }
+
+         break;
+
+      case THLASaveProcessEnum::SAVE_IN_PROGRESS:
+         // A Save is in progress.  This routine checks status while waiting for
+         // the
+         save_restore_service->save_in_progress_check();
+         break;
+
+      case THLASaveProcessEnum::SAVE_COMPLETE:
+         // The Save was successfully completed.
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            message_publish( MSG_NORMAL, "ExecutionControlBase::save_process():%d Save: \'%s\' completed!\n",
+                             __LINE__, save_label_str.c_str() );
+         }
+         // Save actions when Save completed successfully.
+         save_restore_service->save_succeded();
+
+         // Reset the Save state to SAVE_NONE.
+         save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
+         break;
+
+      case THLASaveProcessEnum::SAVE_FAILED:
          // The Save failed.
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
                              __LINE__, save_label_str.c_str() );
          }
          // Save actions when Save failed.
-         save_restore_service->save_state = THLASaveProcessEnum::SAVE_FAILED;
          save_restore_service->save_failed();
+         break;
 
-      }
+      case THLASaveProcessEnum::SAVE_UNSUPPORTED:
+         // Save is not supported.  So, just proceed without action.
+         break;
 
-      break;
-
-   case THLASaveProcessEnum::SAVE_IN_PROGRESS:
-      // A Save is in progress.  This routine checks status while waiting for
-      // the
-      save_restore_service->save_in_progress_check();
-      break;
-
-   case THLASaveProcessEnum::SAVE_COMPLETE:
-      // The Save was successfully completed.
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::save_process():%d Save: \'%s\' completed!\n",
-                          __LINE__, save_label_str.c_str() );
-      }
-      // Save actions when Save completed successfully.
-      save_restore_service->save_succeded();
-
-      // Reset the Save state to SAVE_NONE.
-      save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
-      break;
-
-   case THLASaveProcessEnum::SAVE_FAILED:
-      // The Save failed.
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
-                          __LINE__, save_label_str.c_str() );
-      }
-      // Save actions when Save failed.
-      save_restore_service->save_failed();
-      break;
-
-   case THLASaveProcessEnum::SAVE_UNSUPPORTED:
-      // Save is not supported.  So, just proceed without action.
-      break;
-
-   default:
-      // Unknown Save state.  This is bad, so exit with error.
-      ostringstream errmsg;
-      errmsg << "Federate::freeze_save():" << __LINE__
-             << " ERROR: Unknown Save state = "
-             << static_cast<int>(save_restore_service->save_state) << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      break;
-
+      default:
+         // Unknown Save state.  This is bad, so exit with error.
+         ostringstream errmsg;
+         errmsg << "Federate::freeze_save():" << __LINE__
+                << " ERROR: Unknown Save state = "
+                << static_cast< int >( save_restore_service->save_state ) << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
    }
 
    return;
@@ -1178,7 +1173,7 @@ void ExecutionControlBase::save_process()
 /*!
  *  @job_class{scheduled}
  */
-bool ExecutionControlBase::save( std::wstring const &label )
+bool ExecutionControlBase::save( wstring const &label )
 {
    THLASaveProcessEnum current_save_state;
    std::string         current_save_state_str;
@@ -1190,32 +1185,30 @@ bool ExecutionControlBase::save( std::wstring const &label )
    current_save_state_str = TrickHLA::to_string( current_save_state );
 
    // If Federation SaveRestore is not supported then return without action.
-   if ( current_save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ){
+   if ( current_save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::save():%d HLA SaveRetore NOT supported!\n",
                           __LINE__ );
       }
 
-      return( false );
-
+      return ( false );
    }
 
    // Check the Federation Save state to ensure that a Save is applicable .
-   if (    (current_save_state != THLASaveProcessEnum::SAVE_NONE)
-        && (current_save_state != THLASaveProcessEnum::SAVE_REQUESTED)
-        && (current_save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED) ){
+   if ( ( current_save_state != THLASaveProcessEnum::SAVE_NONE )
+        && ( current_save_state != THLASaveProcessEnum::SAVE_REQUESTED )
+        && ( current_save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) { // cppcheck-suppress [knownConditionTrueFalse]
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::save():%d : Save already in progress: \'%s\'!\n",
                           __LINE__, current_save_state_str.c_str() );
       }
-      return( false );
-
+      return ( false );
    }
 
    // Check to see if we are initiating the Save.
-   if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ){
+   if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::save():%d : Initiating Save: \'%s\'!\n",
@@ -1225,8 +1218,7 @@ bool ExecutionControlBase::save( std::wstring const &label )
       // We are initiating the Save.
       save_restore_service->save_request( label );
 
-   }
-   else if ( current_save_state == THLASaveProcessEnum::SAVE_REQUESTED ) {
+   } else if ( current_save_state == THLASaveProcessEnum::SAVE_REQUESTED ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::save():%d : Save Requested: \'%s\'!\n",
@@ -1235,25 +1227,29 @@ bool ExecutionControlBase::save( std::wstring const &label )
 
       // We have been requested to Save.
       save_restore_service->save( label );
-
    }
 
-   return( true );
+   return ( true );
 }
 
 /*!
  *  @job_class{scheduled}
  */
 void ExecutionControlBase::save_at_SET(
-   std::wstring const &label,
-   double              sim_time )
+   wstring const &label,
+   double         sim_time )
 {
-
    // If Federation SaveRestore is not supported then return without action.
-   if ( !is_save_and_restore_supported() ){
+   if ( !is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::save_at_SET():%d HLA SaveRetore NOT supported!\n",
-               __LINE__ );
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::save_at_SET():" << __LINE__
+                << " ERROR: SaveRetore NOT supported!" << endl
+                << " Label:'" << label_str << "'" << endl
+                << " sim_time:" << sim_time << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       }
       return;
    }
@@ -1267,15 +1263,20 @@ void ExecutionControlBase::save_at_SET(
  *  @job_class{scheduled}
  */
 void ExecutionControlBase::save_at_SST(
-   std::wstring const &label,
-   double              scenario_time )
+   wstring const &label,
+   double         scenario_time )
 {
-
    // If Federation SaveRestore is not supported then return without action.
-   if ( !is_save_and_restore_supported() ){
+   if ( !is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::save_at_SST():%d HLA SaveRetore NOT supported!\n",
-               __LINE__ );
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::save_at_SST():" << __LINE__
+                << " ERROR: SaveRetore NOT supported!" << endl
+                << " Label:'" << label_str << "'" << endl
+                << " scenario_time:" << scenario_time << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       }
       return;
    }
@@ -1289,15 +1290,21 @@ void ExecutionControlBase::save_at_SST(
  *  @job_class{scheduled}
  */
 void ExecutionControlBase::save_at_HLT(
-   std::wstring                   const &label,
+   wstring const                        &label,
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
-
    // If Federation SaveRestore is not supported then return without action.
-   if ( !is_save_and_restore_supported() ){
+   if ( !is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::save_at_HLT():%d HLA SaveRetore NOT supported!\n",
-               __LINE__ );
+         string label_str, time_str;
+         StringUtilities::to_string( label_str, label );
+         StringUtilities::to_string( time_str, time.toString() );
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::save_at_HLT():" << __LINE__
+                << " ERROR: SaveRetore NOT supported!" << endl
+                << " Label:'" << label_str << "'" << endl
+                << " time:" << time_str << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       }
       return;
    }
@@ -1307,60 +1314,55 @@ void ExecutionControlBase::save_at_HLT(
    return;
 }
 
-
 /*!
  *  @job_class{scheduled}
  */
 void ExecutionControlBase::restore_process()
 {
-
    switch ( save_restore_service->restore_state ) {
+      case THLARestoreProcessEnum::RESTORE_NONE:
+         // Save has not been initiated.  So, just proceed without action.
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_NONE:
-      // Save has not been initiated.  So, just proceed without action.
-      break;
+      case THLARestoreProcessEnum::RESTORE_REQUESTED:
+         // Call the ExecutionControl restore method.
+         restore();
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_REQUESTED:
-      // Call the ExecutionControl restore method.
-      restore();
-      break;
+      case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
-      break;
+      case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
-      break;
+      case THLARestoreProcessEnum::RESTORE_INITIATE:
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_INITIATE:
-      break;
+      case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
-      break;
+      case THLARestoreProcessEnum::RESTORE_COMPLETE:
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_COMPLETE:
-      break;
+      case THLARestoreProcessEnum::RESTORE_FAILED:
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_FAILED:
-      break;
+      case THLARestoreProcessEnum::RESTORE_UNSUPPORTED:
+         // Restore is not supported.  So, just proceed without action.
+         break;
 
-   case THLARestoreProcessEnum::RESTORE_UNSUPPORTED:
-      // Restore is not supported.  So, just proceed without action.
-      break;
-
-   default:
-      // Unknown Restore state.  This is bad, so exit with error.
-      ostringstream errmsg;
-      errmsg << "Federate::freeze_restore():" << __LINE__
-             << " ERROR: Unknown Restore state = "
-             << static_cast<int>(save_restore_service->restore_state) << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      break;
-
+      default:
+         // Unknown Restore state.  This is bad, so exit with error.
+         ostringstream errmsg;
+         errmsg << "Federate::freeze_restore():" << __LINE__
+                << " ERROR: Unknown Restore state = "
+                << static_cast< int >( save_restore_service->restore_state ) << endl;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         break;
    }
 
    return;
 }
-
 
 /*! @brief Perform setup for federate restore. */
 void ExecutionControlBase::restore_setup()
@@ -1387,8 +1389,6 @@ void ExecutionControlBase::restore_setup()
    // if I announced the restore, must initiate federation restore
    if ( save_restore_service->is_announce_restore() ) {
 
-      string federates_file_name;
-
       // Make sure we have a save directory specified
       save_restore_service->check_HLA_save_directory();
 
@@ -1407,7 +1407,7 @@ void ExecutionControlBase::restore_setup()
 
       // FIXME: This need work.
       // Initiate the restore.
-      save_restore_service->initiate_restore_announce( save_restore_service->restore_label);
+      save_restore_service->initiate_restore_announce( save_restore_service->restore_label );
 
       SleepTimeout print_timer;
       SleepTimeout sleep_timer;
@@ -1618,8 +1618,8 @@ void ExecutionControlBase::restore_after()
 /*
  * @job_class{checkpoint}
  */
-const std::string ExecutionControlBase::map_save_label_to_checkpoint_file_name(
-   std::wstring const &save_label )
+std::string const ExecutionControlBase::map_save_label_to_checkpoint_file_name(
+   wstring const &save_label )
 {
    std::string save_label_str;
    std::string checkpoint_file_name;
@@ -1639,7 +1639,7 @@ const std::string ExecutionControlBase::map_save_label_to_checkpoint_file_name(
    // Add the checkpoint suffix.
    checkpoint_file_name += ".chkpt";
 
-   return( checkpoint_file_name );
+   return ( checkpoint_file_name );
 }
 
 /*
@@ -1702,7 +1702,7 @@ void ExecutionControlBase::checkpoint_before()
       }
 
       // Only initiate a Save if one is NOT already in progress.
-      if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ){
+      if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ) {
 
          // Get the Save label from the Trick Control Panel checkpoint interface.
          string  trick_filename;
@@ -1732,9 +1732,7 @@ void ExecutionControlBase::checkpoint_before()
          // The rest will be handled like all other federates in the cyclic
          // save_process freeze job.
          save( save_label_wstr );
-
       }
-
    }
 
    return;

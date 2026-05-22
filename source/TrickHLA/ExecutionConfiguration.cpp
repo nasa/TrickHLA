@@ -67,6 +67,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

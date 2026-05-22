@@ -83,7 +83,6 @@ class KnownFederate
    friend class SaveRestoreServices;
 
   public:
-
    //----------------------------- USER VARIABLES -----------------------------
    // Variables below this point are for either use within a users simulation
    // or must be configured by the user.
@@ -113,30 +112,29 @@ class KnownFederate
     *  @return True if all items have been resolved; otherwise, false. */
    bool is_complete() const
    {
-      if (    name.empty()
+      if ( name.empty()
            || type.empty()
            || MOM_instance_name.empty()
            || !federate_handle.isValid()
-           || !object_instance_handle.isValid() )
-      {
+           || !object_instance_handle.isValid() ) {
          return false;
       }
 
-      return( true );
+      return ( true );
    }
 
    /*! @brief Get a copy of the federate MOM instance name.
     *  @return Wide string with the federate MOM instance name. */
-   std::wstring get_MOM_instance_name()
+   std::wstring const &get_MOM_instance_name()
    {
-      return( MOM_instance_name );
+      return ( MOM_instance_name );
    }
 
    /*! @brief Get a copy of the federate MOM instance handle.
     *  @return Copy of the federate MOM instance handle. */
    RTI1516_NAMESPACE::ObjectInstanceHandle get_object_instance_handle()
    {
-      return( object_instance_handle );
+      return ( object_instance_handle );
    }
 
   protected:
@@ -148,16 +146,16 @@ class KnownFederate
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for KnownFederate class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   //KnownFederate( KnownFederate const &rhs );
+   // KnownFederate( KnownFederate const &rhs );
    /*! @brief Assignment operator for KnownFederate class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   //KnownFederate &operator=( KnownFederate const &rhs );
+   // KnownFederate &operator=( KnownFederate const &rhs );
 };
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, KnownFederate > KnownFederateMap;
-typedef std::set< RTI1516_NAMESPACE::ObjectInstanceHandle> FederateObjectInstanceSet;
-typedef std::vector< KnownFederate > KnownFederateVector;
-//typedef std::vector< RTI1516_NAMESPACE::VariableLengthData > EncodedFederateHandleVector;
+typedef std::set< RTI1516_NAMESPACE::ObjectInstanceHandle >                FederateObjectInstanceSet;
+typedef std::vector< KnownFederate >                                       KnownFederateVector;
+// typedef std::vector< RTI1516_NAMESPACE::VariableLengthData > EncodedFederateHandleVector;
 
 } // namespace TrickHLA
 

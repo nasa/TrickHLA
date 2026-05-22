@@ -306,7 +306,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @return True is time to go to freeze; False otherwise. */
    virtual bool check_scenario_freeze_time();
 
-
    //-------------------------------------------------------------------------
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
@@ -319,7 +318,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_sst Simulation scenario time to freeze.
     *  @param save_label Save label for HLA Federation Save. */
-   virtual void start_federation_save_at_SST( double             freeze_sst,
+   virtual void start_federation_save_at_SST( double              freeze_sst,
                                               std::wstring const &save_label );
 
    //
@@ -340,7 +339,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * @return True if Save is announced, False if not. */
    virtual bool is_announce_save()
    {
-      return( announce_save );
+      return ( announce_save );
    }
 
    /*! @brief Set that Save has been announced. */
@@ -384,7 +383,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    {
       restore_federate = state;
    }
-
 
    //-------------------------------------------------------------------------
    // IMSim specific Execution Control functions that support checkpointing.

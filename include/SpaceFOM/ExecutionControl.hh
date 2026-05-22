@@ -308,7 +308,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param t Time in seconds to pad for time based mode transitions. */
    virtual void set_time_padding( double t );
 
-
    //-------------------------------------------------------------------------
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
@@ -321,7 +320,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_sst Simulation scenario time to freeze.
     *  @param save_label Save label for HLA Federation Save. */
-   virtual void start_federation_save_at_SST( double             freeze_sst,
+   virtual void start_federation_save_at_SST( double              freeze_sst,
                                               std::wstring const &save_label );
 
   protected:

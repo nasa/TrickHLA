@@ -26,6 +26,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{FedAmbBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{ObjectServices.cpp}
+@trick_link_dependency{SaveRestoreServices.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{utils/MutexLock.cpp}
 @trick_link_dependency{utils/MutexProtection.cpp}
@@ -64,6 +65,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
+#include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
@@ -170,7 +172,7 @@ FedAmb::reportFederationExecutions():%d\n",
 
 #if defined( IEEE_1516_2025 )
 void FedAmb::reportFederationExecutionMembers(
-   std::wstring const                               &federationName,
+   const                                            &federationName,
    FederationExecutionMemberInformationVector const &report )
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
@@ -179,7 +181,7 @@ FedAmb::reportFederationExecutionMembers():%d\n",
 }
 
 void FedAmb::reportFederationExecutionDoesNotExist(
-   std::wstring const &federationName )
+   wstring const &federationName )
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::reportFederationExecutionDoesNotExist():%d\n",
@@ -187,7 +189,7 @@ FedAmb::reportFederationExecutionDoesNotExist():%d\n",
 }
 
 void FedAmb::federateResigned(
-   std::wstring const &reasonForResignDescription )
+   wstring const &reasonForResignDescription )
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
 FedAmb::federateResigned():%d\n",
@@ -741,7 +743,6 @@ void FedAmb::reflectAttributeValues(
 #endif
 
       return;
-
    }
 
    // If we get here, then this isn't a federate recognized/defined object
@@ -769,7 +770,6 @@ void FedAmb::reflectAttributeValues(
       }
 
       return;
-
    }
 
    // If we get here, then check to see if this is the MOM federation
@@ -796,8 +796,8 @@ void FedAmb::reflectAttributeValues(
 
       ostringstream summary;
       summary << "FedAmb::reflectAttributeValues():" << __LINE__
-            << " Received update to Unknown Object Instance:"
-            << handle_str << endl;
+              << " Received update to Unknown Object Instance:"
+              << handle_str << endl;
 
       AttributeHandleValueMap::const_iterator attr_iter;
       for ( attr_iter = attributeValues.begin();
@@ -807,11 +807,9 @@ void FedAmb::reflectAttributeValues(
          summary << "   + Attribute-Handle:" << handle_str << endl;
       }
       message_publish( MSG_NORMAL, summary.str().c_str() );
-
    }
 
    return;
-
 }
 
 #if defined( IEEE_1516_2010 )

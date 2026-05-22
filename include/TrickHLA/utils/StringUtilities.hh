@@ -105,15 +105,15 @@ class StringUtilities
    }
 
    // Useful static foreground color strings.
-   static const std::string BLACK_TEXT;
-   static const std::string RED_TEXT;
-   static const std::string GREEN_TEXT;
-   static const std::string YELLOW_TEXT;
-   static const std::string BLUE_TEXT;
-   static const std::string MAGENTA_TEXT;
-   static const std::string CYAN_TEXT;
-   static const std::string WHITE_TEXT;
-   static const std::string DEFAULT_TEXT;
+   static std::string const BLACK_TEXT;
+   static std::string const RED_TEXT;
+   static std::string const GREEN_TEXT;
+   static std::string const YELLOW_TEXT;
+   static std::string const BLUE_TEXT;
+   static std::string const MAGENTA_TEXT;
+   static std::string const CYAN_TEXT;
+   static std::string const WHITE_TEXT;
+   static std::string const DEFAULT_TEXT;
 
    /*! @brief Wide character string (i.e. wchar_t *) duplication in Trick memory.
     *  @param s The input wide string.

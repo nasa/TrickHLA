@@ -185,7 +185,7 @@ void SyncPointList::set_federate(
 }
 
 SyncPtStateEnum SyncPointList::get_state(
-   std::wstring const &label )
+   wstring const &label )
 {
    MutexProtection  auto_unlock_mutex( mutex );
    SyncPoint const *sp = get( label );
@@ -1189,7 +1189,7 @@ std::string SyncPointList::to_string()
 }
 
 std::string SyncPointList::to_string(
-   std::wstring const &label )
+   wstring const &label )
 {
    // Scope this mutex lock because locking over the blocking wait call
    // below will cause deadlock.

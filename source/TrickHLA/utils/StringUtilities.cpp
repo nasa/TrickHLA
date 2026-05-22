@@ -26,22 +26,19 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-
-// Trick includes.
+#include <string>
 
 // TrickHLA includes.
 #include "TrickHLA/utils/StringUtilities.hh"
 
-using namespace std;
 using namespace TrickHLA;
 
-const std::string StringUtilities::BLACK_TEXT   = "\x1b[30m";
-const std::string StringUtilities::RED_TEXT     = "\x1b[31m";
-const std::string StringUtilities::GREEN_TEXT   = "\x1b[32m";
-const std::string StringUtilities::YELLOW_TEXT  = "\x1b[33m";
-const std::string StringUtilities::BLUE_TEXT    = "\x1b[34m";
-const std::string StringUtilities::MAGENTA_TEXT = "\x1b[35m";
-const std::string StringUtilities::CYAN_TEXT    = "\x1b[36m";
-const std::string StringUtilities::WHITE_TEXT   = "\x1b[37m";
-const std::string StringUtilities::DEFAULT_TEXT = "\x1b[0m";
-
+std::string const StringUtilities::BLACK_TEXT   = "\x1b[30m";
+std::string const StringUtilities::RED_TEXT     = "\x1b[31m";
+std::string const StringUtilities::GREEN_TEXT   = "\x1b[32m";
+std::string const StringUtilities::YELLOW_TEXT  = "\x1b[33m";
+std::string const StringUtilities::BLUE_TEXT    = "\x1b[34m";
+std::string const StringUtilities::MAGENTA_TEXT = "\x1b[35m";
+std::string const StringUtilities::CYAN_TEXT    = "\x1b[36m";
+std::string const StringUtilities::WHITE_TEXT   = "\x1b[37m";
+std::string const StringUtilities::DEFAULT_TEXT = "\x1b[0m";

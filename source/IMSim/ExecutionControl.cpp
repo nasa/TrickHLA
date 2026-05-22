@@ -180,7 +180,6 @@ ExecutionControl::ExecutionControl(
    // Inherited from ExecutionControlBase, and for IMSim the default is 0;
    this->least_common_time_step         = 0;
    this->least_common_time_step_seconds = 0.0;
-
 }
 
 /*!
@@ -461,7 +460,7 @@ initiating restore request for '%s' with the RTI.\n",
                                 __LINE__, tRestoreName );
             }
             // request federation restore from RTI
-            std::wstring tRestoreName_wstr;
+            wstring tRestoreName_wstr;
             StringUtilities::to_wstring( tRestoreName_wstr, tRestoreName );
             save_restore_service->initiate_restore_announce( tRestoreName_wstr );
 
@@ -1232,10 +1231,10 @@ void ExecutionControl::sync_point_announced(
    }
 
    // Check for the case when the SyncPoint is FEDSAVE_SYNC_POINT.
-   if( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
+   if ( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          ostringstream msg2;
-         string save_sp_label;
+         string        save_sp_label;
          StringUtilities::to_string( save_sp_label, IMSim::FEDSAVE_SYNC_POINT );
          msg2 << "IMSim::ExecutionControl::sync_point_announced():" << __LINE__
               << ": " << save_sp_label << endl;
@@ -1244,9 +1243,7 @@ void ExecutionControl::sync_point_announced(
       // Acieve the Save synchronization point.
       achieve_sync_point( IMSim::FEDSAVE_SYNC_POINT );
    }
-
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -1258,7 +1255,7 @@ void ExecutionControl::sync_point_federation_synchronized(
    SyncPointManagerBase::sync_point_federation_synchronized( label );
 
    // Check for the case when the SYncPoint is FEDSAVE_SYNC_POINT.
-   if( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
+   if ( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
       save_sync_point = true;
    }
 
@@ -2326,7 +2323,7 @@ void ExecutionControl::start_federation_save_at_SST(
    string checkpoint_file_name;
 
    // Map the save label to the needed file names.
-   checkpoint_file_name = map_save_label_to_checkpoint_file_name( save_label );
+   checkpoint_file_name = map_save_label_to_checkpoint_file_name( save_label ); // cppcheck-suppress [unreadVariable]
 
    if ( freeze_interaction->get_handler() != NULL ) {
 
@@ -2348,9 +2345,7 @@ void ExecutionControl::start_federation_save_at_SST(
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
 freeze_interaction's HANLDER is NULL! Request was ignored!\n",
                           freeze_sst, save_label.c_str(), __LINE__ );
-
       }
-
    }
 
    return;
@@ -2407,7 +2402,6 @@ bool ExecutionControl::check_freeze_time()
    }
    return do_immediate_freeze;
 }
-
 
 bool ExecutionControl::check_scenario_freeze_time()
 {
@@ -2495,9 +2489,9 @@ bool ExecutionControl::is_save_initiated()
    // set in federation_synchronized when feds sync to FEDSAVE_v2 sync point
    // if it's not set, we are here because Dump Chkpnt was clicked, so we
    // need to register sync point
-   if (    (is_announce_save())
-        && (save_state != THLASaveProcessEnum::SAVE_INITIATED)
-        && (save_state != THLASaveProcessEnum::SAVE_COMPLETE)  ) {
+   if ( is_announce_save()
+        && ( save_state != THLASaveProcessEnum::SAVE_INITIATED )
+        && ( save_state != THLASaveProcessEnum::SAVE_COMPLETE ) ) {
       register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
       SleepTimeout print_timer;
@@ -2507,7 +2501,7 @@ bool ExecutionControl::is_save_initiated()
 
          sleep_timer.sleep();
 
-         if ( !save_sync_point ) {
+         if ( !save_sync_point ) { // cppcheck-suppress [identicalInnerCondition]
 
             // To be more efficient, we get the time once and share it.
             int64_t wallclock_time = sleep_timer.time();

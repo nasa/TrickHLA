@@ -1822,7 +1822,6 @@ bool ObjectServices::discover_object_instance(
          message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d MOM HLA-Federation '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
       }
-
    }
 
    return return_value;
