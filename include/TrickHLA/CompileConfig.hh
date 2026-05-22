@@ -32,6 +32,11 @@ NASA, Johnson Space Center\n
 // TEMP
 #define DONT_USE_SPACEFOM_ENCODERS
 
+// Print an error and terminate if the Conditional, Packing or LagCompenstion
+// user code is not initialized before use.
+// Default: TRICKHLA_ERROR_IF_NOT_INITIALIZED
+#define NO_TRICKHLA_ERROR_IF_NOT_INITIALIZED
+
 // Collect statistics on the wait times for the Time Advance Grant (TAG).
 // Default: NO_TRICKHLA_COLLECT_TAG_STATS
 #define NO_TRICKHLA_COLLECT_TAG_STATS

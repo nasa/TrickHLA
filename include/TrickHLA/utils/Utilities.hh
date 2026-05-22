@@ -247,7 +247,7 @@ class Utilities
    /*! @brief Return the RTI version string. */
    static std::string const get_rti_version();
 
-   /*! @brief Return the RTI version string. */
+   /*! @brief Return the RTI name string. */
    static std::string const get_rti_name();
 
   private:
