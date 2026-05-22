@@ -13,10 +13,21 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
 ##############################################################################
-import socket
-import subprocess
+import os
 import sys
-sys.path.append( '../../../' )
+
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
@@ -143,21 +154,18 @@ if ( print_usage == True ):
 # Set up Trick executive parameters.
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe( True )
 # trick.checkpoint_pre_init(1)
 # trick.checkpoint_post_init(1)
 # trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 # trick.checkpoint_end(1)
 
-# Setup for Trick real time execution. This is the "Pacing" function.
-exec( open( "Modified_data/trick/realtime.py" ).read() )
+# Import and configure the TrickHLA base Simulation Configuration class.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+roles_sim_config = TrickHLASimConfig( 'Roles' )
+roles_sim_config.realtime( software_frame_time = 0.250 )
+roles_sim_config.sim_control_panel()
+roles_sim_config.start_in_freeze()
 
-trick.exec_set_enable_freeze( True )
-trick.exec_set_freeze_command( True )
-trick.exec_set_stack_trace( False )
-
-trick.sim_control_panel_set_enabled( True )
-trick.var_server_set_port( 7000 )
 
 # =========================================================================
 # Set up the HLA interfaces.
@@ -170,8 +178,6 @@ federate = SpaceFOMFederateConfig(
    thla_federation_name = federation_name,
    thla_federate_name   = federate_name,
    thla_enabled         = True )
-
-federate.fix_var_server_source_address()
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job

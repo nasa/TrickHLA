@@ -23,41 +23,45 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#if defined( USE_SPACEFOM_ENCODERS )
+
 // System includes.
-#include <cstring>
-#include <ostream>
-#include <sstream>
-#include <string>
+#   include <cstring>
+#   include <ostream>
+#   include <sstream>
+#   include <string>
 
 // Trick includes.
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
-// SpaceFOM includes.
-#include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#   include "trick/message_proto.h"
+#   include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/utils/StringUtilities.hh"
+#   include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#   include "TrickHLA/DebugHandler.hh"
+#   include "TrickHLA/HLAStandardSupport.hh"
+#   include "TrickHLA/utils/StringUtilities.hh"
+
+// SpaceFOM includes.
+#   include "SpaceFOM/QuaternionData.hh"
+#   include "SpaceFOM/SpaceTimeCoordinateData.hh"
+#   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wdeprecated"
-#endif
+#   if defined( IEEE_1516_2010 )
+#      pragma GCC diagnostic push
+#      pragma GCC diagnostic ignored "-Wdeprecated"
+#   endif
 
 // HLA Encoder helper includes.
-#include "RTI/VariableLengthData.h"
-#include "RTI/encoding/EncodingExceptions.h"
+#   include "RTI/VariableLengthData.h"
+#   include "RTI/encoding/EncodingExceptions.h"
 
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic pop
-#endif
+#   if defined( IEEE_1516_2010 )
+#      pragma GCC diagnostic pop
+#   endif
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -167,7 +171,7 @@ void SpaceTimeCoordinateEncoder::encode()
              << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Copy the encoded data into the buffer.
@@ -211,8 +215,10 @@ void SpaceTimeCoordinateEncoder::decode()
              << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    return;
 }
+
+#endif // USE_SPACEFOM_ENCODERS

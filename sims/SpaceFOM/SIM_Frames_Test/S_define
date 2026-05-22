@@ -382,19 +382,20 @@ void create_connections() {
       // frame tree using default data instead of in the input file.
       //
       // Allocate the HLA objects for the Reference Frame tree.
-      THLA.manager->obj_count = 9;
-      THLA.manager->objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
-                                                                        THLA.manager->obj_count );
+      TrickHLA::ObjectServices * obj_services = THLA.federate.get_object_service();
+      obj_services->obj_count = 9;
+      obj_services->objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                        obj_services->obj_count );
       // Assign the HLA objects to the associated frame.
-      solar_system_barycenter.set_object( &(THLA.manager->objects[0]) );
-      sun_inertial.set_object( &(THLA.manager->objects[1]) );
-      earth_moon_barycenter.set_object( &(THLA.manager->objects[2]) );
-      earth_centered_inertial.set_object( &(THLA.manager->objects[3]) );
-      moon_centered_inertial.set_object( &(THLA.manager->objects[4]) );
-      mars_centered_inertial.set_object( &(THLA.manager->objects[5]) );
-      earth_centered_fixed.set_object( &(THLA.manager->objects[6]) );
-      moon_centered_fixed.set_object( &(THLA.manager->objects[7]) );
-      mars_centered_fixed.set_object( &(THLA.manager->objects[8]) );
+      solar_system_barycenter.set_object( &(obj_services->objects[0]) );
+      sun_inertial.set_object( &(obj_services->objects[1]) );
+      earth_moon_barycenter.set_object( &(obj_services->objects[2]) );
+      earth_centered_inertial.set_object( &(obj_services->objects[3]) );
+      moon_centered_inertial.set_object( &(obj_services->objects[4]) );
+      mars_centered_inertial.set_object( &(obj_services->objects[5]) );
+      earth_centered_fixed.set_object( &(obj_services->objects[6]) );
+      moon_centered_fixed.set_object( &(obj_services->objects[7]) );
+      mars_centered_fixed.set_object( &(obj_services->objects[8]) );
 
    }
 

@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{sine/src/SineConditional.cpp}
 @trick_link_dependency{sine/src/SineData.cpp}
@@ -31,6 +32,8 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstddef>
 #include <cstdlib>
+#include <ostream>
+#include <sstream>
 #include <string>
 
 // Trick include files.
@@ -40,7 +43,9 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/Types.hh"
 
 // Model include files.
 #include "sine/include/SineConditional.hh"
@@ -92,9 +97,10 @@ void SineConditional::set_data(
 void SineConditional::initialize()
 {
    if ( this->sim_data == NULL ) {
-      message_publish( MSG_ERROR, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!\n",
-                       __LINE__ );
-      exit( -1 );
+      ostringstream errmsg;
+      errmsg << "SineConditional::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL sim_data!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Make a copy of the incoming data so that we have a previous state
@@ -144,13 +150,21 @@ void SineConditional::initialize_callback(
 bool SineConditional::should_send(
    TrickHLA::Attribute *attr )
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "SineConditional::should_send():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    if ( attr == NULL ) {
       return false;
    }
    if ( this->sim_data == NULL ) {
-      message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: Unexpected NULL sim_data!\n",
-                       attr->get_FOM_name().c_str(), __LINE__ );
-      exit( -1 );
+      ostringstream errmsg;
+      errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
+             << " ERROR: Unexpected NULL sim_data!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    bool send_attr = false;
@@ -195,10 +209,17 @@ bool SineConditional::should_send(
          set_tolerance( sim_data->get_tolerance() ); // Update to the current state
       }
    } else {
-      message_publish( MSG_ERROR, "SineConditional::should_send('%s'):%d ERROR: \
-Could not find the data for the specified FOM attribute!\n",
-                       attr->get_FOM_name().c_str(), __LINE__ );
-      exit( -1 );
+      ostringstream errmsg;
+      errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
+             << " ERROR: Could not find the data for the specified FOM attribute!"
+             << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_CONDITIONAL ) ) {
+      message_publish( MSG_NORMAL, "SineConditional::should_send('%s'):%d %s\n",
+                       attr->get_FOM_name().c_str(), __LINE__,
+                       ( send_attr ? "Yes" : "No" ) );
    }
 
    return send_attr;

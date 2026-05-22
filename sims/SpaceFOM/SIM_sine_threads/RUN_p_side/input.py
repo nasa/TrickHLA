@@ -16,8 +16,21 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
 ##############################################################################
+import os
 import sys
-sys.path.append( '../../../' )
+
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
@@ -134,16 +147,17 @@ if ( print_usage == True ):
 # Set up Trick executive parameters.
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe( True )
 # trick.checkpoint_pre_init( 1 )
 # trick.checkpoint_post_init( 1 )
 # trick.add_read( 0.0 , '''trick.checkpoint('chkpnt_point')''' )
 # trick.checkpoint_end( 1 )
 
-trick.exec_set_enable_freeze( False )
-trick.exec_set_freeze_command( False )
-trick.sim_control_panel_set_enabled( False )
-trick.exec_set_stack_trace( False )
+# Import and configure the TrickHLA base Simulation Configuration class.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+sine_sim_config = TrickHLASimConfig( 'sine' )
+sine_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.250 )
+sine_sim_config.start_in_freeze( False )
+
 
 #---------------------------------------------
 # Set up data to record.
@@ -230,6 +244,9 @@ trick.exec_set_software_frame( 0.250 )
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 
+# Example showing how to disable Trick thread associations to TrickHLA.
+#federate.disable_trick_thread_associations( '1, 2' )
+
 #---------------------------------------------
 # Set up the initial Sine states
 #---------------------------------------------
@@ -261,17 +278,18 @@ P.interaction_handler.message = 'P-side: P.interaction_hdlr.message'
 # Even though we don't create the object instance, set the attributes to
 # publish so that we can take ownership of this object.
 sine_A = SineObject(
-   sine_create_object      = False,
-   sine_obj_instance_name  = 'A-side-Federate.Sine',
-   sine_trick_sim_obj_name = 'A',
-   sine_packing            = A.packing,
-   sine_conditional        = A.conditional,
-   sine_lag_comp           = A.lag_compensation,
-   sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_ownership          = A.ownership_handler,
-   sine_deleted            = A.obj_deleted,
-   sine_thread_IDs         = '1',  # Trick child thread 1.
-   sine_attribute_publish  = True )
+   sine_create_object       = False,
+   sine_obj_instance_name   = 'A-side-Federate.Sine',
+   sine_trick_sim_obj_name  = 'A',
+   sine_packing             = A.packing,
+   sine_conditional         = A.conditional,
+   sine_lag_comp            = A.lag_compensation,
+   sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_ownership           = A.ownership_handler,
+   sine_deleted             = A.obj_deleted,
+   sine_thread_IDs          = '1', # Trick child thread 1.
+   sine_attribute_publish   = True,
+   sine_attribute_subscribe = True )
 
 trick.exec_set_thread_process_type( 1 , trick.PROCESS_TYPE_AMF_CHILD )
 trick.exec_set_thread_amf_cycle_time( 1 , 0.250 )
@@ -280,15 +298,17 @@ trick.exec_set_thread_amf_cycle_time( 1 , 0.250 )
 federate.add_fed_object( sine_A )
 
 sine_P = SineObject(
-   sine_create_object      = True,
-   sine_obj_instance_name  = 'P-side-Federate.Sine',
-   sine_trick_sim_obj_name = 'P',
-   sine_packing            = P.packing,
-   sine_conditional        = P.conditional,
-   sine_lag_comp           = P.lag_compensation,
-   sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_deleted            = P.obj_deleted,
-   sine_thread_IDs         = '2' )  # Trick child thread 2.
+   sine_create_object       = True,
+   sine_obj_instance_name   = 'P-side-Federate.Sine',
+   sine_trick_sim_obj_name  = 'P',
+   sine_packing             = P.packing,
+   sine_conditional         = P.conditional,
+   sine_lag_comp            = P.lag_compensation,
+   sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_deleted             = P.obj_deleted,
+   sine_thread_IDs          = '2', # Trick child thread 2.
+   sine_attribute_publish   = True,
+   sine_attribute_subscribe = True )
 
 trick.exec_set_thread_process_type( 2 , trick.PROCESS_TYPE_AMF_CHILD )
 trick.exec_set_thread_amf_cycle_time( 2 , 0.250 )

@@ -29,6 +29,8 @@ NASA, Johnson Space Center\n
 
 #include "sim_objects/default_trick_sys.sm"
 
+#define DONT_USE_SPACEFOM_ENCODERS
+
 //=============================================================================
 // Define the job calling intervals.
 //=============================================================================
@@ -98,7 +100,7 @@ class THLAInitSimObj : public Trick::SimObject {
 
    // Do not allow the default constructor.
    THLAInitSimObj();
-   
+
 };
 
 //=============================================================================
@@ -140,18 +142,15 @@ SpaceTimeCoordinateSimObject stc_encoder_test( true,
 
 // Connect objects
 void create_connections() {
-   
    //
    // This code will only be executed when we want to configure using default
    // data instead of in the input file.
    //
    // Allocate the HLA objects.
-   TrickHLA::Manager * obj_manager = THLA.federate.get_manager();
-   obj_manager->obj_count = 2;
-   obj_manager->objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
-                                                                    obj_manager->obj_count );
-   quat_encoder_test.thla_object = &(obj_manager->objects[1]);
-   stc_encoder_test.thla_object  = &(obj_manager->objects[0]);
-   
+   TrickHLA::ObjectServices * obj_services = THLA.federate.get_object_service();
+   obj_services->obj_count = 2;
+   obj_services->objects   = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                       obj_services->obj_count );
+   quat_encoder_test.thla_object = &(obj_services->objects[1]);
+   stc_encoder_test.thla_object  = &(obj_services->objects[0]);
 }
-

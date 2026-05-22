@@ -1,16 +1,31 @@
+import os
+import sys
+
+#---------------------------------------------
+# Set up path so the sim modules can be found.
+#---------------------------------------------
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
+
 #---------------------------------------------------------------------------
 # Set up the Trick executive parameters
 #---------------------------------------------------------------------------
-trick.frame_log_on()
-trick.real_time_enable()
-trick.exec_set_software_frame(0.1)
-trick.itimer_enable()
-
-trick.exec_set_enable_freeze(True)
-trick.exec_set_freeze_command(True)
-
-trick.sim_control_panel_set_enabled( True )
-#trick.var_server_set_port( 7000 )
+# Import and configure the TrickHLA base Simulation Configuration class.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+encoder_sim_config = TrickHLASimConfig( 'encoder' )
+encoder_sim_config.realtime( software_frame_time = 0.1 )
+encoder_sim_config.sim_control_panel()
+encoder_sim_config.start_in_freeze()
 
 
 #---------------------------------------------------------------------------

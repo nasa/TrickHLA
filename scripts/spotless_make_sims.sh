@@ -23,13 +23,14 @@ do
             echo "sims/${sim_pkg}/${sim}"
             cd ${TRICKHLA_HOME}/sims/${sim_pkg}/${sim}
             if [ -f makefile ]; then
-               make spotless
-            fi
-            trick-CP
-            status=$?
-            if [ $status -ne 0 ]; then
-               echo "ERROR for sims/${sim_pkg}/${sim}"
-               exit 1
+               echo "Found a makefile, skipping build..."
+            else
+	            trick-CP
+	            status=$?
+	            if [ $status -ne 0 ]; then
+	               echo "ERROR for sims/${sim_pkg}/${sim}"
+	               exit 1
+	            fi
             fi
          fi
       done

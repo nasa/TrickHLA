@@ -54,8 +54,6 @@ WStringData::WStringData()
 WStringData::WStringData(
    unsigned int const offset )
 {
-   // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
-
    int value = 1 + offset;
    _wstring  = L"wstring-" + std::to_wstring( value );
 
@@ -75,7 +73,6 @@ WStringData::WStringData(
 
    int const ptr_wstring_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
-   // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
    ptr_wstring = static_cast< std::wstring * >( TMM_declare_var_1d( "std::wstring", ptr_wstring_size ) );
    for ( int i = 0; i < ptr_wstring_size; ++i ) {
       value          = i + 1 + offset;
@@ -101,9 +98,9 @@ bool WStringData::compare(
    msg << "WStringData::compare():" << __LINE__ << endl;
 
    if ( this->_wstring == data._wstring ) {
-      msg << "this->string (" << this->_wstring << ") == (" << data._wstring << ") data.string" << endl;
+      msg << "this->wstring (" << this->_wstring << ") == (" << data._wstring << ") data.wstring" << endl;
    } else {
-      msg << "this->string (" << this->_wstring << ") != (" << data._wstring << ") data.string" << endl;
+      msg << "this->wstring (" << this->_wstring << ") != (" << data._wstring << ") data.wstring" << endl;
       equal_values = false;
    }
 
@@ -172,7 +169,7 @@ wstring WStringData::to_wstring()
 {
    wstringstream msg;
    msg << "WStringData::to_wstring():" << __LINE__ << endl
-       << "string:" << _wstring << endl;
+       << "wstring:" << _wstring << endl;
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_wstring[" << i << "]:" << vec3_wstring[i] << " ";

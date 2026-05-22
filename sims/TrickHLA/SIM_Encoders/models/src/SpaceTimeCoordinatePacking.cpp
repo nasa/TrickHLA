@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../source/SpaceFOM/SpaceTimeCoordinateConfig.cpp}
 @trick_link_dependency{models/src/SpaceTimeCoordinatePacking.cpp}
 
 @revs_title
@@ -54,6 +55,11 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/ExecutionControl.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#  include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#else
+#  include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
+#endif
 
 // Artemis FOM includes.
 #include "models/include/SpaceTimeCoordinatePacking.hh"
@@ -70,8 +76,11 @@ SpaceTimeCoordinatePacking::SpaceTimeCoordinatePacking()
      test( true ),
      working_data( NULL ),
      stc_attr( NULL ),
-     packing_data(),
+     packing_data()
+#if defined( USE_SPACEFOM_ENCODERS )
+     ,
      stc_encoder( packing_data )
+#endif
 {
    return;
 }
@@ -81,6 +90,7 @@ SpaceTimeCoordinatePacking::SpaceTimeCoordinatePacking()
  */
 SpaceTimeCoordinatePacking::~SpaceTimeCoordinatePacking()
 {
+   return;
 }
 
 /*!
@@ -138,14 +148,25 @@ void SpaceTimeCoordinatePacking::base_config(
    //
    // Specify the attributes.
    //
+#if defined( USE_SPACEFOM_ENCODERS )
    object->attributes[0].FOM_name      = "state";
    trick_name_str                      = stc_name_str + string( ".stc_encoder.buffer" );
    object->attributes[0].trick_name    = trick_name_str.c_str();
-   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
+   object->attributes[0].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
    object->attributes[0].locally_owned = publishes;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_NONE;
+#else
+   trick_name_str = stc_name_str + string( ".packing_data" );
+   SpaceTimeCoordinateConfig::configure( &object->attributes[0],
+                                         "state",
+                                         trick_name_str,
+                                         TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC,
+                                         publishes,
+                                         !publishes,
+                                         publishes );
+#endif // USE_SPACEFOM_ENCODERS
 
    return;
 }
@@ -155,7 +176,6 @@ void SpaceTimeCoordinatePacking::base_config(
  */
 void SpaceTimeCoordinatePacking::initialize()
 {
-
    // Check to make sure the working data has been set.
    if ( working_data == NULL ){
       ostringstream errmsg;
@@ -268,8 +288,10 @@ void SpaceTimeCoordinatePacking::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Encode the data into the buffer.
    stc_encoder.encode();
+#endif
 
    return;
 }
@@ -288,8 +310,10 @@ void SpaceTimeCoordinatePacking::unpack()
       }
    }
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Use the HLA encoder helpers to decode the STC fixed record.
    stc_encoder.decode();
+#endif
 
    // Transfer the packing data into the working data.
    unpack_into_working_data();
@@ -461,7 +485,9 @@ void SpaceTimeCoordinatePacking::unpack_test()
    if ( abs( test_stc.time - packing_data.time ) > tol ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Failed time test!" << std::endl;
+          << " : Failed time test! (test_stc.time:" << test_stc.time
+          << " != packing_data.time:" << packing_data.time << ")"
+          << std::endl;
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;

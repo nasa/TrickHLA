@@ -72,8 +72,12 @@ endif
 
 # Needed for TrickHLA.
 TRICK_SFLAGS   += -I${TRICKHLA_HOME}/S_modules
-TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
-TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
+TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD}
+TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD}
+ifeq ($(HLA_STANDARD),IEEE_1516_2010)
+	TRICK_CFLAGS   += -Wno-deprecated-declarations
+	TRICK_CXXFLAGS += -Wno-deprecated-declarations
+endif
 
 # Configure the ICG and swig excludes.
 ifdef TRICK_ICG_EXCLUDE
@@ -120,7 +124,12 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       # C++14 for ICG because the IEEE 1516-2010 APIs use dynamic exception
       # specifications. Otherwise this will result in compile time errors.
       TRICK_ICGFLAGS += --icg-std=c++14
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+
+      # Trick now requires at least c++14, and given HLA Evolved is using
+      # deprecated c++ APIs, we can only use c++14.
+      TRICK_CXXFLAGS += -std=c++14
+
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Using the c++14 standard.${RESET_TXT})
    endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
@@ -247,23 +256,17 @@ else
    COMPILER_VERSION = $(shell $(CPPC_CMD) -dumpversion | cut -d . -f 1)
 
    ifeq ($(HLA_STANDARD),IEEE_1516_2010)
-      # The gcc version 11 compiler defaults to C++17 which removed the
-      # dynamic exception specification. Instead fallback to C++14 because
-      # the IEEE 1516-2010 APIs use dynamic exception specifications.
-      # Otherwise this will result in compile time errors for C++17.
-      ifeq ($(shell echo $(COMPILER_VERSION)\>=11 | bc),1)
-         TRICK_CXXFLAGS += -std=c++14
-         $(info ${GREEN_TXT}S_hla.mk:INFO: Falling back to C++14 to compile Trick simulation.${RESET_TXT})
-      endif
-
       # ICG code needs to be targeted to either C++14 (gcc versions 6.1 to 10)
       # or C++11 (gcc 4.8.1+) because C++17 (gcc version 11+) removed the dynamic
       # exception specification and the IEEE 1516-2010 APIs use it. Otherwise
       # this will result in compile time errors.
-      ifeq ($(shell echo $(COMPILER_VERSION)\>=6 | bc),1)
-         TRICK_ICGFLAGS += --icg-std=c++14
-         $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
-      endif
+      TRICK_ICGFLAGS += --icg-std=c++14
+
+      # Trick now requires at least c++14, and given HLA Evolved is using
+      # deprecated c++ APIs, we can only use c++14.
+      TRICK_CXXFLAGS += -std=c++14
+
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Using the c++14 standard.${RESET_TXT})
    endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)

@@ -29,9 +29,13 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_COMPILE_CONFIG_HH
 #define TRICKHLA_COMPILE_CONFIG_HH
 
-// Trick does not support the std::wstring type in the Memory Manager for now.
-// Default: NO_TRICK_WSTRING_MM_SUPPORT
-#define TRICK_WSTRING_MM_SUPPORT
+// TEMP
+#define DONT_USE_SPACEFOM_ENCODERS
+
+// Print an error and terminate if the Conditional, Packing or LagCompenstion
+// user code is not initialized before use.
+// Default: TRICKHLA_ERROR_IF_NOT_INITIALIZED
+#define NO_TRICKHLA_ERROR_IF_NOT_INITIALIZED
 
 // Collect statistics on the wait times for the Time Advance Grant (TAG).
 // Default: NO_TRICKHLA_COLLECT_TAG_STATS
@@ -45,8 +49,8 @@ NASA, Johnson Space Center\n
 // Default: NO_TRICKHLA_CYCLIC_READ_TIME_STATS
 #define NO_TRICKHLA_CYCLIC_READ_TIME_STATS
 
-// Insert a compile time error if an unsupported version of Trick 19 is used.
-// Minimum supported Trick 19 version: 25.0.3
+// Insert a compile time error if an unsupported version of Trick is used.
+// Minimum supported Trick version: 25.0.3
 #define MIN_TRICK_VER 25  // Set to the minimum supported Trick Major version.
 #define MIN_TRICK_MINOR 0 // Set to the minimum supported Trick Minor version.
 #define MIN_TRICK_PATCH 3 // Set to the minimum supported Trick Patch version.

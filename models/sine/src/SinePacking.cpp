@@ -135,10 +135,10 @@ void SinePacking::initialize_callback(
 void SinePacking::pack()
 {
    if ( !initialized ) {
-      ostringstream msg;
-      msg << "SinePacking::pack():" << __LINE__
-          << " ERROR: The initialize() function has not been called!" << endl;
-      message_publish( MSG_WARNING, msg.str().c_str() );
+      ostringstream errmsg;
+      errmsg << "SinePacking::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Just count the number of times the pack() function gets called.
@@ -170,48 +170,64 @@ void SinePacking::pack()
       string        obj_name = ( this->object != NULL ) ? object->get_name() : "";
       ostringstream msg;
       msg << "SinePacking::pack():" << __LINE__ << endl
-          << "\t Object-Name:'" << obj_name << "'" << endl
+          << "\t Object-Name:'" << obj_name << "'" << endl;
 
-          << "\t sim_data->name:'" << sim_data->get_name()
-          << "', Send-HLA-Data:"
-          << ( ( name_attr->is_publish() && name_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << endl
+      if ( name_attr->is_publish() && name_attr->is_locally_owned() ) {
+         msg << "\t sim_data->name:'" << sim_data->get_name()
+             << "', Send-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->name, Send-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time() << " seconds"
-          << ", Send-HLA-Data:"
-          << ( ( time_attr->is_publish() && time_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << endl
+      if ( time_attr->is_publish() && time_attr->is_locally_owned() ) {
+         msg << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time()
+             << " seconds, Send-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->time, Send-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->value:" << sim_data->get_value()
-          << ", Send-HLA-Data:"
-          << ( ( value_attr->is_publish() && value_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << endl
+      if ( value_attr->is_publish() && value_attr->is_locally_owned() ) {
+         msg << "\t sim_data->value:" << sim_data->get_value()
+             << ", Send-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->value, Send-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->dvdt:" << sim_data->get_derivative()
-          << ", Send-HLA-Data:"
-          << ( ( dvdt_attr->is_publish() && dvdt_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << endl
+      if ( dvdt_attr->is_publish() && dvdt_attr->is_locally_owned() ) {
+         msg << "\t sim_data->dvdt:" << sim_data->get_derivative()
+             << ", Send-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->dvdt, Send-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->phase:" << sim_data->get_phase() << " radians"
-          << " ==> packing-phase:" << phase_deg << " degrees"
-          << ", Send-HLA-Data:"
-          << ( ( phase_attr->is_publish() && phase_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << endl
+      if ( phase_attr->is_publish() && phase_attr->is_locally_owned() ) {
+         msg << "\t sim_data->phase:" << sim_data->get_phase() << " radians"
+             << " ==> packing-phase:" << phase_deg << " degrees"
+             << ", Send-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->phase, Send-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->amp:" << sim_data->get_amplitude()
-          << ", Send-HLA-Data:"
-          << ( ( amp_attr->is_publish() && amp_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << endl
+      if ( amp_attr->is_publish() && amp_attr->is_locally_owned() ) {
+         msg << "\t sim_data->amp:" << sim_data->get_amplitude()
+             << ", Send-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->amp, Send-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->freq:" << sim_data->get_frequency()
-          << ", Send-HLA-Data:"
-          << ( ( freq_attr->is_publish() && freq_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << endl
+      if ( freq_attr->is_publish() && freq_attr->is_locally_owned() ) {
+         msg << "\t sim_data->freq:" << sim_data->get_frequency()
+             << ", Send-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->freq, Send-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->tol:" << sim_data->get_tolerance()
-          << ", Send-HLA-Data:"
-          << ( ( tol_attr->is_publish() && tol_attr->is_locally_owned() ) ? "Yes" : "No" )
-          << endl;
+      if ( tol_attr->is_publish() && tol_attr->is_locally_owned() ) {
+         msg << "\t sim_data->tol:" << sim_data->get_tolerance()
+             << ", Send-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->tol, Send-HLA-Data:No" << endl;
+      }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -251,10 +267,10 @@ void SinePacking::pack()
 void SinePacking::unpack()
 {
    if ( !initialized ) {
-      ostringstream msg;
-      msg << "SinePacking::unpack():" << __LINE__
-          << " ERROR: The initialize() function has not been called!" << endl;
-      message_publish( MSG_WARNING, msg.str().c_str() );
+      ostringstream errmsg;
+      errmsg << "SinePacking::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // If the HLA phase attribute has changed and is remotely owned (i.e. is
@@ -305,39 +321,63 @@ void SinePacking::unpack()
 
       ostringstream msg;
       msg << "SinePacking::unpack():" << __LINE__ << endl
-          << "\t Object-Name:'" << obj_name << "'" << endl
+          << "\t Object-Name:'" << obj_name << "'" << endl;
 
-          << "\t sim_data->name:'" << sim_data->get_name()
-          << "', Received-HLA-Data:"
-          << ( name_attr->is_received() ? "Yes" : "No" ) << endl
+      if ( name_attr->is_received() ) {
+         msg << "\t sim_data->name:'" << sim_data->get_name()
+             << "', Received-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->name, Received-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time()
-          << " seconds, Received-HLA-Data:"
-          << ( time_attr->is_received() ? "Yes" : "No" ) << endl
+      if ( time_attr->is_received() ) {
+         msg << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time()
+             << " seconds, Received-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->time, Received-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->value:" << sim_data->get_value()
-          << ", Received-HLA-Data:"
-          << ( value_attr->is_received() ? "Yes" : "No" ) << endl
+      if ( value_attr->is_received() ) {
+         msg << "\t sim_data->value:" << sim_data->get_value()
+             << ", Received-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->value, Received-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->dvdt:" << sim_data->get_derivative()
-          << ", Received-HLA-Data:"
-          << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
+      if ( dvdt_attr->is_received() ) {
+         msg << "\t sim_data->dvdt:" << sim_data->get_derivative()
+             << ", Received-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->dvdt, Received-HLA-Data:No" << endl;
+      }
 
-          << "\t packing-phase:" << phase_deg << " degrees ==> sim_data->phase:"
-          << sim_data->get_phase() << " radians, Received-HLA-Data:"
-          << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
+      if ( phase_attr->is_received() ) {
+         msg << "\t packing-phase:" << phase_deg << " degrees ==> sim_data->phase:"
+             << sim_data->get_phase() << " radians, Received-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t packing-phase, Received-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->amp:" << sim_data->get_amplitude()
-          << ", Received-HLA-Data:"
-          << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
+      if ( amp_attr->is_received() ) {
+         msg << "\t sim_data->amp:" << sim_data->get_amplitude()
+             << ", Received-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->amp, Received-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->freq:" << sim_data->get_frequency()
-          << ", Received-HLA-Data:"
-          << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
+      if ( freq_attr->is_received() ) {
+         msg << "\t sim_data->freq:" << sim_data->get_frequency()
+             << ", Received-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->freq, Received-HLA-Data:No" << endl;
+      }
 
-          << "\t sim_data->tol:" << sim_data->get_tolerance()
-          << ", Received-HLA-Data:"
-          << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
+      if ( tol_attr->is_received() ) {
+         msg << "\t sim_data->tol:" << sim_data->get_tolerance()
+             << ", Received-HLA-Data:Yes" << endl;
+      } else {
+         msg << "\t sim_data->tol, Received-HLA-Data:No" << endl;
+      }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 

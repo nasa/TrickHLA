@@ -41,11 +41,14 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/QuaternionEncoder.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#  include "SpaceFOM/QuaternionEncoder.hh"
+#endif
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
@@ -150,8 +153,10 @@ class QuaternionPacking : public TrickHLA::Packing
    // SpaceFOM TrickHLAObject data for the Quaternion.
    SpaceFOM::QuaternionData packing_data; ///< @trick_units{--} STC packing data.
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Instantiate the Space/Time Coordinate encoder
    SpaceFOM::QuaternionEncoder quat_encoder; ///< @trick_units{--} Encoder.
+#endif
 
   private:
    // This object is not copyable

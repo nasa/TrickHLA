@@ -90,7 +90,7 @@ void PhysicalInterface::initialize()
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
              << packing_data.name << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
 
@@ -213,15 +213,14 @@ void PhysicalInterface::set_parent( std::string const &new_parent_name )
  */
 void PhysicalInterface::set_data( PhysicalInterfaceData *interface_data_ptr )
 {
-
    // Set the reference to the PhysicalInterface data.
    if ( interface_data_ptr == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
              << packing_data.name << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
    this->interface_data = interface_data_ptr;

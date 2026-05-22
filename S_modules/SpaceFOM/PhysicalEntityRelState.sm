@@ -51,7 +51,7 @@ class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
         frame_tree( frame_tree_in ),
         entity_data( entity_data_in )
    {
-      ("initialization") initialize( );
+      ("initialization") initialize();
       (THLA_DATA_CYCLE_TIME, "scheduled") rel_state.compute_state( &(entity_data), rel_state_frame );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_frames( *rel_state_frame, *entity_frame, std::cout );
       (THLA_DATA_CYCLE_TIME, "scheduled") print_entity( std::cout );

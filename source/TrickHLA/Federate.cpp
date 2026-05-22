@@ -97,7 +97,6 @@ NASA, Johnson Space Center\n
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
 #include "RTI/Handle.h"
-#include "RTI/RTI1516.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/RTIambassadorFactory.h"
 #include "RTI/Typedefs.h"
@@ -242,17 +241,12 @@ Federate::~Federate()
 void Federate::print_version()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string rti_name;
-      StringUtilities::to_string( rti_name, RTI1516_NAMESPACE::rtiName() );
-      string rti_version;
-      StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
-
       ostringstream msg;
       msg << "Federate::print_version():" << __LINE__ << endl
           << "     TrickHLA-version:'" << Utilities::get_version() << "'" << endl
           << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'" << endl
-          << "             RTI-name:'" << rti_name << "'" << endl
-          << "          RTI-version:'" << rti_version << "'" << endl;
+          << "             RTI-name:'" << Utilities::get_rti_name() << "'" << endl
+          << "          RTI-version:'" << Utilities::get_rti_version() << "'" << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -926,7 +920,7 @@ FederateHandle Federate::decode_federate_handle(
 {
    // Handles defined by the MOM interface have a an encoding of
    // HLAvariableArray, which is different than the Handles returned
-   // by the  RTI-ambassador with the encoding of VariableLengthData.
+   // by the RTI-ambassador with the encoding of VariableLengthData.
    //
    // From IEEE 1516.1-2025:
    // Table 15 — MOM array data type table, page 327
@@ -1940,7 +1934,7 @@ string Federate::wait_for_required_federates_to_join()
    size_t num_required_feds = 0;
    for ( auto const &known_fed : known_federates ) {
       if ( known_fed.required ) {
-         ++num_required_feds; // cppcheck-suppress [useStlAlgorithm]
+         ++num_required_feds;
       }
    }
 

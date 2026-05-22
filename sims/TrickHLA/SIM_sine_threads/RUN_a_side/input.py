@@ -1,20 +1,37 @@
+import os
+import sys
+
+#---------------------------------------------
+# Set up path so the sim modules can be found.
+#---------------------------------------------
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
+
+
 #---------------------------------------------
 # Set up Trick executive parameters.
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
 
-# Realtime setup
-exec(open( "Modified_data/trick/realtime.py" ).read())
-
-# Trick config
-trick.exec_set_enable_freeze(True)
-trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
-trick.exec_set_stack_trace(False)
+# Import and configure the TrickHLA base Simulation Configuration class.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+sine_sim_config = TrickHLASimConfig( 'sine' )
+sine_sim_config.realtime( software_frame_time = 0.250 )
+sine_sim_config.sim_control_panel()
+sine_sim_config.start_in_freeze()
 
 trick.exec_set_thread_process_type( 1, trick.PROCESS_TYPE_AMF_CHILD )
 trick.exec_set_thread_amf_cycle_time( 1, 0.250 )
@@ -22,8 +39,8 @@ trick.exec_set_thread_amf_cycle_time( 1, 0.250 )
 trick.exec_set_thread_process_type( 2, trick.PROCESS_TYPE_AMF_CHILD )
 trick.exec_set_thread_amf_cycle_time( 2, 0.250 )
 
-
 run_duration = 15.0
+
 
 #---------------------------------------------
 # Set up data to record.
@@ -83,7 +100,7 @@ THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_M
 
 # Disable Trick child thread IDs associated to TrickHLA in the S_define file
 # as a comma separated list.
-#THLA.federate.disable_trick_child_thread_associations( '1, 2' )
+#THLA.federate.disable_trick_thread_associations( '1, 2' )
 
 # Configure the federate.
 THLA.federate.name             = 'A-side-Federate'

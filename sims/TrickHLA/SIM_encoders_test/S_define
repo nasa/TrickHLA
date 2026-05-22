@@ -3,13 +3,12 @@
 
 ##include <climits>
 
-// Change to TRICK_WSTRING_MM_SUPPORT to test support for std::wtring.
-#define NO_TRICK_WSTRING_MM_SUPPORT
-
 ##include "TrickHLA/CompileConfig.hh"
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
+
+##include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 ##include "encoding/include/EncodingTest.hh"
 ##include "encoding/include/BoolData.hh"
@@ -38,6 +37,7 @@
 %header{
  using namespace TrickHLA;
  using namespace TrickHLAModel;
+ using namespace SpaceFOM;
 %}
 
 //=============================================================================
@@ -66,11 +66,8 @@ class TestSimObj : public Trick::SimObject {
    WCharData wchar_data1 = WCharData( 0 );
    WCharData wchar_data2 = WCharData( 10 );
 
-#ifdef TRICK_WSTRING_MM_SUPPORT
-   // ISSUE: MemoryManager:ERROR:size of type "std::wstring" not found.
    WStringData wstring_data1 = WStringData( 0 );
    WStringData wstring_data2 = WStringData( 10 );
-#endif
 
    Int16Data int16_data1 = Int16Data( 0 );
    Int16Data int16_data2 = Int16Data( 0 );
@@ -154,6 +151,9 @@ class TestSimObj : public Trick::SimObject {
    FixedRecData fixed_rec_data3 = FixedRecData();
    FixedRecData fixed_rec_data4 = FixedRecData();
 
+   SpaceTimeCoordinateData stc_fixed_rec1 = SpaceTimeCoordinateData();
+   SpaceTimeCoordinateData stc_fixed_rec2 = SpaceTimeCoordinateData();
+
    EncodingTest encoder_test;
 
    TestSimObj()
@@ -185,11 +185,9 @@ class TestSimObj : public Trick::SimObject {
                                                   "T.wchar_data2", wchar_data2,
                                                   TrickHLA::ENCODING_UNICODE_CHAR );
 
-#ifdef TRICK_WSTRING_MM_SUPPORT
       ("initialization") encoder_test.wstring_test( "T.wstring_data1", wstring_data1,
                                                     "T.wstring_data2", wstring_data2,
                                                     TrickHLA::ENCODING_UNICODE_STRING );
-#endif
 
       ("initialization") encoder_test.int16_test( "T.int16_data1", int16_data1,
                                                   "T.int16_data2", int16_data2,
@@ -301,6 +299,9 @@ class TestSimObj : public Trick::SimObject {
 
       ("initialization") encoder_test.fixed_record_attribute_test( "T.fixed_rec_data3", fixed_rec_data3,
                                                                    "T.fixed_rec_data4", fixed_rec_data4 );
+
+      ("initialization") encoder_test.stc_fixed_record_attribute_test( "T.stc_fixed_rec1", stc_fixed_rec1,
+                                                                       "T.stc_fixed_rec2", stc_fixed_rec2 );
 
       ("initialization") exec_terminate( __FILE__, "Done" );
    }

@@ -37,13 +37,13 @@ from enum import IntEnum
 from abc import ABC, abstractmethod
 
 class TrickSimConfig( ABC ):
-   
+
    # Make this a singleton class.
    _instance = None
-   
-   # Override the allocation function to ensure on and only one instance.
+
+   # Override the allocation function to ensure one and only one instance.
    def __new__( tsc, *args, **kwargs ):
-      
+
       # Check if and instance already exists.
       if tsc._instance is None:
          # Not already allocated.  So, allocate one and only one instance.
@@ -51,39 +51,64 @@ class TrickSimConfig( ABC ):
       else:
          # Already allocated!  This is an error.
          sys.exit( 'TrickSimConfig:Error: Can only have one TrickSimConfig instance!' )
-         
+
       # Return the single existing instance.
       return tsc._instance
 
    @abstractmethod
    # Class constructor.
-   def __init__( self,
-                 name ):
-            
+   def __init__( self, name ):
+
+      trick.exec_set_trap_sigfpe( True )
+      trick.exec_set_stack_trace( False )
+
+      # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
+      trick.exec_set_enable_freeze( True )
+
       return
-   
-   
+
+
+   # Set the Trick software and freeze frame times.
+   def set_software_and_freeze_frame_time( self, software_frame_time ):
+
+      trick.exec_set_software_frame( software_frame_time )
+      trick.exec_set_freeze_frame( software_frame_time )
+
+      return
+
+
    # Common Trick realtime configuration.
-   def realtime( self, frame_rate = 0.1 ):
+   def realtime( self, software_frame_time ):
       
       trick.frame_log_on()
       trick.real_time_enable()
-      trick.exec_set_software_frame( frame_rate )
       trick.itimer_enable()
+      self.set_software_and_freeze_frame_time( software_frame_time )
 
-      trick.exec_set_enable_freeze( True )
-      trick.exec_set_freeze_command( False )
-      
       return
-   
-   
+
+
    # Setup to use the Trick Simulation Control Panel
    def sim_control_panel( self ):
 
-      trick.exec_set_freeze_command( True )
+      self.fix_var_server_source_address()
+      trick.var_resolve_hostname()
+      trick.var_allow_connections()
       self.simControlPanel = trick.SimControlPanel()
       trick.add_external_application( self.simControlPanel )
-      
+
+      return
+
+
+   # Setup to start the simulation in freeze or run.
+   def start_in_freeze(self, freeze = True ):
+
+      # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
+      trick.exec_set_enable_freeze( True )
+
+      # Set to True to start the simulation in freeze.
+      trick.exec_set_freeze_command( freeze )
+
       return
 
 
@@ -99,17 +124,17 @@ class TrickSimConfig( ABC ):
             try:
                ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode()
                if ( ifconfig_out.find( host_ip_addr ) < 0 ):
-                  print( 'WARNING: Invalid IP address ' + host_ip_addr
+                  print( '\033[33m' + 'WARNING: Invalid IP address ' + host_ip_addr
                          + ' resolved for host \'' + trick.var_server_get_hostname()
-                         + '\', setting the variable server source address to 127.0.0.1!' )
+                         + '\', setting the variable server source address to 127.0.0.1!'
+                         + '\033[0m' )
                   trick.var_server_set_source_address( '127.0.0.1' )
             except Exception:
                return  # Use host source address as is.
-      except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
-         print( 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
-                + '\' host name to an address, setting the variable server source address to 127.0.0.1!' )
+      except Exception:
+         print( '\033[33m' + 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
+                + '\' host name to an address, setting the variable server source address to 127.0.0.1!'
+                + '\033[0m' )
          trick.var_server_set_source_address( '127.0.0.1' )
 
       return
-   
-   

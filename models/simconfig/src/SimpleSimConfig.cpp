@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #include <ostream>
 #include <sstream>
 #include <stdlib.h>
+#include <string>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -51,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // Model include files.
 #include "simconfig/include/SimpleSimConfig.hh"
@@ -119,7 +121,9 @@ void SimpleSimConfig::configure(
          if ( req_fed_cnt > 0 ) {
             fed_list << ",";
          }
-         fed_list << known_feds[i].name;
+         string fed_name;
+         StringUtilities::to_string( fed_name, known_feds[i].name );
+         fed_list << fed_name;
          ++req_fed_cnt;
       }
    }
@@ -150,6 +154,13 @@ void SimpleSimConfig::initialize()
  */
 void SimpleSimConfig::pack()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "SimpleSimConfig::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    ostringstream msg;
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
@@ -201,6 +212,13 @@ void SimpleSimConfig::pack()
 
 void SimpleSimConfig::unpack()
 {
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "SimpleSimConfig::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       msg << "===================================================" << endl;

@@ -23,6 +23,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderBase.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/EncoderFactory.cpp}
 @trick_link_dependency{../../../source/TrickHLA/encoding/FixedRecordEncoder.cpp}
+@trick_link_dependency{../../../source/SpaceFOM/SpaceTimeCoordinateConfig.cpp}
+@trick_link_dependency{../../../source/SpaceFOM/SpaceTimeCoordinateData.cpp}
 @trick_link_dependency{encoding/src/EncodingTest.cpp}
 @trick_link_dependency{encoding/src/BoolData.cpp}
 @trick_link_dependency{encoding/src/Enum8Data.cpp}
@@ -73,6 +75,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/FixedRecordEncoder.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
+// SpaceFOM includes.
+#include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
 // Model include files.
 #include "FixedRecord/include/FixedRecData.hh"
 #include "encoding/include/BoolData.hh"
@@ -117,6 +123,7 @@ NASA, Johnson Space Center\n
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
+using namespace SpaceFOM;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
 
@@ -2493,6 +2500,83 @@ void EncodingTest::fixed_record_attribute_test(
            << "Data1: " << data1.to_string()
            << "-----------------------------" << endl
            << "Data2: " << data2.to_string();
+      message_publish( MSG_NORMAL, msg3.str().c_str() );
+   }
+}
+
+void EncodingTest::stc_fixed_record_attribute_test(
+   string const            &data1_trick_base_name,
+   SpaceTimeCoordinateData &data1,
+   string const            &data2_trick_base_name,
+   SpaceTimeCoordinateData &data2 )
+{
+   data1.pos[0]        = 1.0;
+   data1.pos[1]        = 2.0;
+   data1.pos[2]        = 3.0;
+   data1.vel[0]        = 4.0;
+   data1.vel[1]        = 5.0;
+   data1.vel[2]        = 6.0;
+   data1.att.scalar    = 1.0;
+   data1.att.vector[0] = 1.0;
+   data1.att.vector[1] = 0.5;
+   data1.att.vector[2] = 0.1;
+   data1.ang_vel[0]    = 7.0;
+   data1.ang_vel[1]    = 8.0;
+   data1.ang_vel[2]    = 9.0;
+   data1.time          = 10.0;
+
+   data2.pos[0]        = 100.0;
+   data2.pos[1]        = 200.0;
+   data2.pos[2]        = 300.0;
+   data2.vel[0]        = 400.0;
+   data2.vel[1]        = 500.0;
+   data2.vel[2]        = 600.0;
+   data2.att.scalar    = -1.0;
+   data2.att.vector[0] = -1.0;
+   data2.att.vector[1] = 0.0;
+   data2.att.vector[2] = -1.0;
+   data2.ang_vel[0]    = 700.0;
+   data2.ang_vel[1]    = 800.0;
+   data2.ang_vel[2]    = 900.0;
+   data2.time          = 1000.0;
+
+   string const fom_name = "state";
+
+   Attribute *attr_data1 = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", 1 ) );
+   SpaceTimeCoordinateConfig::configure(
+      attr_data1, fom_name, data1_trick_base_name,
+      TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC, true, true, true );
+   attr_data1->initialize_element_encoder();
+
+   Attribute *attr_data2 = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", 1 ) );
+   SpaceTimeCoordinateConfig::configure(
+      attr_data2, fom_name, data2_trick_base_name,
+      TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC, true, true, true );
+   attr_data2->initialize_element_encoder();
+
+   attr_data1->update_before_encode();
+   VariableLengthData encoded_data = attr_data1->encode();
+   attr_data2->decode( encoded_data );
+   attr_data2->update_after_decode();
+
+   ostringstream compare_msg;
+   if ( data1.is_equal( data2 ) ) {
+      compare_msg << "(ENCODING_FIXED_RECORD) attribute_stc_fixed_rec_data1 == attribute_stc_fixed_rec_data2" << endl;
+      message_publish( MSG_INFO, compare_msg.str().c_str() );
+   } else {
+      compare_msg << "(ENCODING_FIXED_RECORD) attribute_stc_fixed_rec_data1 != attribute_stc_fixed_rec_data2" << endl;
+      message_publish( MSG_ERROR, compare_msg.str().c_str() );
+   }
+
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
+      ostringstream msg3;
+      msg3 << "EncodingTest::stc_fixed_record_attribute_test():" << __LINE__ << endl
+           << "AFTER encode/decode:" << endl
+           << "SpaceTimeCoordinate (STC) Data1:" << endl;
+      data1.print_data( msg3 );
+      msg3 << "-----------------------------" << endl
+           << "SpaceTimeCoordinate (STC) Data2:" << endl;
+      data2.print_data( msg3 );
       message_publish( MSG_NORMAL, msg3.str().c_str() );
    }
 }

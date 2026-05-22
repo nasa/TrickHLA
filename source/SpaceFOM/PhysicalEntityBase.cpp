@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{PhysicalEntityBase.cpp}
+@trick_link_dependency{SpaceTimeCoordinateConfig.cpp}
 
 
 @revs_title
@@ -47,15 +48,20 @@ NASA, Johnson Space Center\n
 #include "trick/reference_frame.h"
 #include "trick/vector_macros.h"
 
-// SpaceFOM includes.
-#include "SpaceFOM/PhysicalEntityBase.hh"
-#include "SpaceFOM/QuaternionData.hh"
-
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
+
+// SpaceFOM includes.
+#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/QuaternionData.hh"
+#if !defined( USE_SPACEFOM_ENCODERS )
+#   include "SpaceFOM/QuaternionConfig.hh"
+#   include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
+#endif // USE_SPACEFOM_ENCODERS
 
 using namespace std;
 using namespace TrickHLA;
@@ -75,9 +81,12 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
      accel_attr( NULL ),
      ang_accel_attr( NULL ),
      cm_attr( NULL ),
-     body_frame_attr( NULL ),
+     body_frame_attr( NULL )
+#if defined( USE_SPACEFOM_ENCODERS )
+     ,
      stc_encoder( pe_packing_data.state ),
      quat_encoder( pe_packing_data.body_wrt_struct )
+#endif // USE_SPACEFOM_ENCODERS
 {
    //
    // Initialize the PhysicalEntity packing data structure.
@@ -125,7 +134,9 @@ void PhysicalEntityBase::base_config(
    std::string const &sim_obj_name,
    std::string const &entity_pkg_name,
    std::string const &entity_fed_name,
-   Object            *mngr_object )
+   Object            *mngr_object,
+   bool const         publish,
+   bool const         subscribe )
 {
    string entity_full_name_str = sim_obj_name + "." + entity_pkg_name;
 
@@ -174,90 +185,110 @@ void PhysicalEntityBase::base_config(
    object->attr_count = 9;
    object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
+   bool const publish_attr   = create || publish;
+   bool const subscribe_attr = !create || subscribe;
    //
    // Specify the Reference Frame attributes.
    //
-   object->attributes[0].FOM_name   = "name";
-   object->attributes[0].trick_name = entity_full_name_str + string( ".pe_packing_data.name" );
-
-   object->attributes[0].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[0].publish       = create;
-   object->attributes[0].subscribe     = !create;
+   object->attributes[0].FOM_name      = "name";
+   object->attributes[0].trick_name    = entity_full_name_str + string( ".pe_packing_data.name" );
+   object->attributes[0].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[0].publish       = publish_attr;
+   object->attributes[0].subscribe     = subscribe_attr;
    object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[1].FOM_name   = "type";
-   object->attributes[1].trick_name = entity_full_name_str + string( ".pe_packing_data.type" );
-
-   object->attributes[1].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[1].publish       = create;
-   object->attributes[1].subscribe     = !create;
+   object->attributes[1].FOM_name      = "type";
+   object->attributes[1].trick_name    = entity_full_name_str + string( ".pe_packing_data.type" );
+   object->attributes[1].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[1].publish       = publish_attr;
+   object->attributes[1].subscribe     = subscribe_attr;
    object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[2].FOM_name   = "status";
-   object->attributes[2].trick_name = entity_full_name_str + string( ".pe_packing_data.status" );
-
-   object->attributes[2].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[2].publish       = create;
-   object->attributes[2].subscribe     = !create;
+   object->attributes[2].FOM_name      = "status";
+   object->attributes[2].trick_name    = entity_full_name_str + string( ".pe_packing_data.status" );
+   object->attributes[2].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[2].publish       = publish_attr;
+   object->attributes[2].subscribe     = subscribe_attr;
    object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[3].FOM_name   = "parent_reference_frame";
-   object->attributes[3].trick_name = entity_full_name_str + string( ".pe_packing_data.parent_frame" );
-
-   object->attributes[3].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[3].publish       = create;
-   object->attributes[3].subscribe     = !create;
+   object->attributes[3].FOM_name      = "parent_reference_frame";
+   object->attributes[3].trick_name    = entity_full_name_str + string( ".pe_packing_data.parent_frame" );
+   object->attributes[3].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[3].publish       = publish_attr;
+   object->attributes[3].subscribe     = subscribe_attr;
    object->attributes[3].locally_owned = create;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-   object->attributes[4].FOM_name   = "state";
-   object->attributes[4].trick_name = entity_full_name_str + string( ".stc_encoder.buffer" );
-
-   object->attributes[4].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[4].publish       = create;
-   object->attributes[4].subscribe     = !create;
+#if defined( USE_SPACEFOM_ENCODERS )
+   object->attributes[4].FOM_name      = "state";
+   object->attributes[4].trick_name    = entity_full_name_str + string( ".stc_encoder.buffer" );
+   object->attributes[4].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[4].publish       = publish_attr;
+   object->attributes[4].subscribe     = subscribe_attr;
    object->attributes[4].locally_owned = create;
    object->attributes[4].rti_encoding  = TrickHLA::ENCODING_NONE;
+#else
+   string const stc_fom_name   = "state";
+   string const stc_trick_name = entity_full_name_str + string( ".pe_packing_data.state" );
 
-   object->attributes[5].FOM_name   = "acceleration";
-   object->attributes[5].trick_name = entity_full_name_str + string( ".pe_packing_data.accel" );
+   SpaceTimeCoordinateConfig::configure(
+      &object->attributes[4],
+      stc_fom_name,
+      stc_trick_name,
+      TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC,
+      publish_attr,
+      subscribe_attr,
+      create );
+#endif // USE_SPACEFOM_ENCODERS
 
-   object->attributes[5].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[5].publish       = create;
-   object->attributes[5].subscribe     = !create;
+   object->attributes[5].FOM_name      = "acceleration";
+   object->attributes[5].trick_name    = entity_full_name_str + string( ".pe_packing_data.accel" );
+   object->attributes[5].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[5].publish       = publish_attr;
+   object->attributes[5].subscribe     = subscribe_attr;
    object->attributes[5].locally_owned = create;
    object->attributes[5].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[6].FOM_name   = "rotational_acceleration";
-   object->attributes[6].trick_name = entity_full_name_str + string( ".pe_packing_data.ang_accel" );
-
-   object->attributes[6].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[6].publish       = create;
-   object->attributes[6].subscribe     = !create;
+   object->attributes[6].FOM_name      = "rotational_acceleration";
+   object->attributes[6].trick_name    = entity_full_name_str + string( ".pe_packing_data.ang_accel" );
+   object->attributes[6].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[6].publish       = publish_attr;
+   object->attributes[6].subscribe     = subscribe_attr;
    object->attributes[6].locally_owned = create;
    object->attributes[6].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[7].FOM_name   = "center_of_mass";
-   object->attributes[7].trick_name = entity_full_name_str + string( ".pe_packing_data.cm" );
-
-   object->attributes[7].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[7].publish       = create;
-   object->attributes[7].subscribe     = !create;
+   object->attributes[7].FOM_name      = "center_of_mass";
+   object->attributes[7].trick_name    = entity_full_name_str + string( ".pe_packing_data.cm" );
+   object->attributes[7].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[7].publish       = publish_attr;
+   object->attributes[7].subscribe     = subscribe_attr;
    object->attributes[7].locally_owned = create;
    object->attributes[7].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-   object->attributes[8].FOM_name   = "body_wrt_structural";
-   object->attributes[8].trick_name = entity_full_name_str + string( ".quat_encoder.buffer" );
-
-   object->attributes[8].config        = static_cast< TrickHLA::DataUpdateEnum >( TrickHLA::CONFIG_INITIALIZE + TrickHLA::CONFIG_CYCLIC );
-   object->attributes[8].publish       = create;
-   object->attributes[8].subscribe     = !create;
+#if defined( USE_SPACEFOM_ENCODERS )
+   object->attributes[8].FOM_name      = "body_wrt_structural";
+   object->attributes[8].trick_name    = entity_full_name_str + string( ".quat_encoder.buffer" );
+   object->attributes[8].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
+   object->attributes[8].publish       = publish_attr;
+   object->attributes[8].subscribe     = subscribe_attr;
    object->attributes[8].locally_owned = create;
    object->attributes[8].rti_encoding  = TrickHLA::ENCODING_NONE;
+#else
+   string const quat_fom_name   = "body_wrt_structural";
+   string const quat_trick_name = entity_full_name_str + string( ".pe_packing_data.body_wrt_struct" );
 
+   QuaternionConfig::configure(
+      &object->attributes[8],
+      quat_fom_name,
+      quat_trick_name,
+      TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC,
+      publish_attr,
+      subscribe_attr,
+      create );
+#endif // USE_SPACEFOM_ENCODERS
    return;
 }
 
@@ -273,7 +304,7 @@ void PhysicalEntityBase::initialize()
              << " ERROR: Unexpected empty federation instance name!"
              << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Must have federation instance parent_ref_frame.
@@ -284,7 +315,7 @@ void PhysicalEntityBase::initialize()
              << " Setting parent_ref_frame to empty string."
              << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -374,8 +405,15 @@ void PhysicalEntityBase::pack()
 {
    // Check for initialization.
    if ( !initialized ) {
-      message_publish( MSG_WARNING, "PhysicalEntityBase::pack():%d WARNING: The initialize() function has not been called!\n",
-                       __LINE__ );
+      ostringstream errmsg;
+      errmsg << "PhysicalEntityBase::pack():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
    // Check for latency/lag compensation.
@@ -392,8 +430,10 @@ void PhysicalEntityBase::pack()
    }
 
    // Encode the data into the buffer.
+#if defined( USE_SPACEFOM_ENCODERS )
    stc_encoder.encode();
    quat_encoder.encode();
+#endif // USE_SPACEFOM_ENCODERS
 
    return;
 }
@@ -406,13 +446,22 @@ void PhysicalEntityBase::unpack()
    // double dt; // Local vs. remote time difference.
 
    if ( !initialized ) {
-      message_publish( MSG_WARNING, "PhysicalEntityBase::unpack():%d WARNING: The initialize() function has not been called!\n",
-                       __LINE__ );
+      ostringstream errmsg;
+      errmsg << "PhysicalEntityBase::unpack():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate_with_message( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
    }
 
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
+#if defined( USE_SPACEFOM_ENCODERS )
    stc_encoder.decode();
    quat_encoder.decode();
+#endif // USE_SPACEFOM_ENCODERS
 
    // Transfer the packing data into the working data.
    unpack_into_working_data();
@@ -439,7 +488,7 @@ void PhysicalEntityBase::debug_print( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tObject-Name: '" << object->get_name() << "'" << endl;
+   stream << "        Object-Name: '" << object->get_name() << "'" << endl;
 
    pe_packing_data.print_data( stream );
 

@@ -145,7 +145,7 @@ class EntityDynamicsSimObject : public Trick::SimObject {
    EntityDynamicsSimObject()
    {
       ("default_data")            entity.default_data();
-      ("initialization")          entity.initialize();
+      P3("initialization")        entity.initialize();
       ("derivative")              entity.derivative();
       ("integration") trick_ret = entity.integrate();
    }

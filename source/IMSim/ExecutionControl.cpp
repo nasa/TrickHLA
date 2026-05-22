@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
 @trick_link_dependency{../TrickHLA/ObjectServices.cpp}
+@trick_link_dependency{../TrickHLA/SaveRestoreServices.cpp}
 @trick_link_dependency{../TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../TrickHLA/SyncPointTimed.cpp}
 @trick_link_dependency{../TrickHLA/SyncPointManagerBase.cpp}
@@ -75,6 +76,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
@@ -411,7 +413,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
             // read the required federates data from external file, replacing
             // the contents of 'known_feds'.
-            save_restore_service->read_joined_feds_file( tRestoreName );
+            save_restore_service->read_known_federates_from_file( tRestoreName );
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \

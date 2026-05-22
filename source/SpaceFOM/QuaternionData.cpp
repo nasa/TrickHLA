@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cmath>
+#include <cstddef>
 #include <math.h>
 #include <ostream>
 
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 
 using namespace std;
 using namespace SpaceFOM;
+using namespace TrickHLA;
 
 /*!
  * @job_class{initialization}
@@ -128,13 +130,13 @@ void QuaternionData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tattitude (s,v): "
-          << "\t\t" << scalar << "; "
+   stream << "      attitude (s,v): "
+          << "\t" << scalar << "; "
           << "\t\t" << vector[0] << ", "
           << "\t\t" << vector[1] << ", "
-          << "\t\t" << vector[2] << endl;
-   stream << "\tattitude (RPY){deg}: "
-          << "\t\t" << euler_angles[0] << ", "
+          << "\t\t" << vector[2] << endl
+          << " attitude (RPY){deg}: "
+          << "\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
           << "\t\t" << euler_angles[2] << endl;
 

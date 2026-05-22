@@ -49,13 +49,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     THLA.federate.setup_time_management( 0.250, True, True )
 ```
 
+- The minimum supported Trick version is 25.0.3 because of Trick changes for variable server security, swig class pointers, and std::wstring support.
+- The function name to disable Trick child thread associations in TrickHLA was changed and the corresponding function call in the TrickHLAFederateConfig.py has also been updated.
+  - FROM: disable_trick_child_thread_associations()
+  - TO: disable_trick_thread_associations()
+
 
 ### Added
+
+- Added checks to the Packing and Lag Compensation implementations to verify initialization and will terminate with an error message if not initialized before use.
+- Added support for Trick variable server security that disables the variable server by default. Any Trick simulation that uses the simulation control panel will need to enable the Trick variable server and the TrickHLA example simulations do that.
+- Added a check to verify an attribute is not already owned and is configured to be published before executing a pull ownership request. Otherwise an error message is displayed and the simulation is terminated.
+- Added more detailed status messages indicating if an Attribute is sent or received for the TrickHLA::Conditional and TrickHLA::Packing interfaces used by the sine wave example simulations.
 
 
 ### Changed
 
-- The minimum supported Trick version is now 25.TBD because of a critical SWIG bug fix. For a particular set of circumstances, SWIG would not return the class type for an allocation.
+- Changed S_hla.mk to use c++14 as the default c++ standard for HLA Evolved now that Trick requires c++14 as the minimum.
+- Changed the SpaceFOM Quaternion and Space Time Coordinate data types to use the built-in TrickHLA fixed record support instead of the previous workaround of creating a custom encoder that required the use of an opaque-buffer to hold encoded data.
 - Fixed compile time warnings about variable initialization for the IMSim ExecutionControl class.
 - Fixed Python exception handling based on pull request #185.
 - Simulations using the --verbose command-line setting no longer need 'on' to be specified to enable verbose messages.
