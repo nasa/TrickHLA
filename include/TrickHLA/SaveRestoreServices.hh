@@ -170,7 +170,7 @@ class SaveRestoreServices : public CheckpointConversionBase
     * @return Success of setting the HLA Save directory path.
     * @detail If a path isn't provided, then a default path is constructed.
     * @param  path Full path to the HLA Save directory.  */
-   bool set_HLA_save_directory( std::string const &path = "" );
+   bool set_HLA_save_directory( std::string const &path );
 
    /*! @brief Get the HLA save directory.
     * @return HLA save directory. */
