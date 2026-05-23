@@ -168,6 +168,14 @@ class SaveRestoreServices : public CheckpointConversionBase
    //
    /*! @brief Set the HLA save directory.
     * @return Success of setting the HLA Save directory path.
+    * @detail If a path isn't provided, then a default path is constructed. */
+   bool set_HLA_save_directory()
+   {
+      return set_HLA_save_directory( "" );
+   }
+
+   /*! @brief Set the HLA save directory.
+    * @return Success of setting the HLA Save directory path.
     * @detail If a path isn't provided, then a default path is constructed.
     * @param  path Full path to the HLA Save directory.  */
    bool set_HLA_save_directory( std::string const &path );
@@ -279,9 +287,22 @@ class SaveRestoreServices : public CheckpointConversionBase
    }
 
    /*! @brief Tell the federate to initiate a federation Save with the
+    * associated Save label. */
+   void save_request()
+   {
+      save_request( L"" );
+   }
+
+   /*! @brief Tell the federate to initiate a federation Save with the
     * associated Save label.
     *  @param label The HLA Save label. */
    void save_request( std::wstring const &label );
+
+   /*! @brief Save this federate's state with the associated Save label. */
+   void save()
+   {
+      save( L"" );
+   }
 
    /*! @brief Save this federate's state with the associated Save label.
     *  @param label The HLA Save label. */
@@ -301,6 +322,15 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Write the joined federates file as part of the Save process.
     *  @detail This routine uses the ExecutionControl class call to map the
     *  HLA Save label into an identifiable file name.  If label is empty then
+    *  this routine uses the current Save label. */
+   bool write_joined_federates_to_file()
+   {
+      return write_joined_federates_to_file( L"" );
+   }
+
+   /*! @brief Write the joined federates file as part of the Save process.
+    *  @detail This routine uses the ExecutionControl class call to map the
+    *  HLA Save label into an identifiable file name.  If label is empty then
     *  this routine uses the current Save label.
     *  @param label The identifying Save label. */
    bool write_joined_federates_to_file( std::wstring const &label );
@@ -315,6 +345,13 @@ class SaveRestoreServices : public CheckpointConversionBase
    //..........................................................................
    // Restore functions.
    //..........................................................................
+
+   /*! @brief Read the known federates file.
+    * @return True is read from file succeeded, False otherwise. */
+   bool read_known_federates_from_file()
+   {
+      return read_known_federates_from_file( L"" );
+   }
 
    /*! @brief Read the known federates file.
     * @return True is read from file succeeded, False otherwise.
