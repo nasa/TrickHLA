@@ -110,6 +110,8 @@ def main():
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/simconfig' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/sine' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/sine' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'sims/TrickHLA/SIM_Encoders/models' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'sims/TrickHLA/SIM_Encoders/models' ) )
 
    # Find the CLANG format command.
    clang_format_cmd = find_clang_format( args.llvm_bin, args.verbose )

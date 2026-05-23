@@ -287,9 +287,12 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
       if os.path.isdir( './models/SAIntegrator/src' ):
          source_dirs.extend( ['./models/SAIntegrator/src/'] )
       if os.path.isdir( './models/simconfig/src' ):
-         source_dirs.extend ( ['./models/simconfig/src/'] )
+         source_dirs.extend( ['./models/simconfig/src/'] )
       if os.path.isdir( './models/sine/src' ):
-         source_dirs.extend ( ['./models/sine/src/'] )
+         source_dirs.extend( ['./models/sine/src/'] )
+      if os.path.isdir( './sims/TrickHLA/SIM_Encoders/models' ):
+         source_dirs.extend( ['./sims/TrickHLA/SIM_Encoders/models/src/'] )
+         include_dirs.extend( ['-I./sims/TrickHLA/SIM_Encoders'] )
 
    # JEOD
    if args.process_all or args.process_JEOD:
@@ -359,7 +362,7 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
    if args.hla4:
       clang_tidy_extra_args.append( '-std=c++14' )
    else:
-      clang_tidy_extra_args.append( '-std=c++11' )
+      clang_tidy_extra_args.append( '-std=c++14' )
 
    # Echo check the data if verbose is selected.
    if args.verbose:

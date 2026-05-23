@@ -298,6 +298,9 @@ Examples:\n  check_code -s -o -v --exhaustive --hla3\n  check_code -i -o -v --ex
       trickhla_source_dirs.extend ( ['./models/simconfig/src'] )
    if os.path.isdir( './models/sine/src' ):
       trickhla_source_dirs.extend ( ['./models/sine/src'] )
+   if os.path.isdir( './sims/TrickHLA/SIM_Encoders/models' ):
+      trickhla_source_dirs.extend ( ['./sims/TrickHLA/SIM_Encoders/models/src'] )
+      trickhla_include_dirs.extend( ['-I', './sims/TrickHLA/SIM_Encoders'] )
 
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
@@ -409,8 +412,8 @@ Examples:\n  check_code -s -o -v --exhaustive --hla3\n  check_code -i -o -v --ex
    if args.use_clang_parser:
       cppcheck_args.append( '--clang' )
 
-   # Use the c++03 standard.
-   cppcheck_args.append( '--std=c++03' )
+   # Use the c++14 standard.
+   cppcheck_args.append( '--std=c++14' )
 
    # Configure cppcheck to use an output directory to cache build results.
    cppcheck_args.append( '--cppcheck-build-dir=' + cppcheck_build_dir )
