@@ -281,11 +281,11 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Tell the federate to initiate a federation Save with the
     * associated Save label.
     *  @param label The HLA Save label. */
-   void save_request( std::wstring const &label = L"" );
+   void save_request( std::wstring const &label );
 
    /*! @brief Save this federate's state with the associated Save label.
     *  @param label The HLA Save label. */
-   void save( std::wstring const &label = L"" );
+   void save( std::wstring const &label );
 
    /*! @brief Check if a Save is in progress and report.
     *  @return Returns true is the Save is in progress.  Otherwise, it
@@ -303,7 +303,7 @@ class SaveRestoreServices : public CheckpointConversionBase
     *  HLA Save label into an identifiable file name.  If label is empty then
     *  this routine uses the current Save label.
     *  @param label The identifying Save label. */
-   bool write_joined_federates_to_file( std::wstring const &label = L"" );
+   bool write_joined_federates_to_file( std::wstring const &label );
 
    /*! @brief Prints the reason for the federation save failure.
     * @param reason Save failure reason. */
@@ -319,7 +319,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Read the known federates file.
     * @return True is read from file succeeded, False otherwise.
     * @param label Restore label. */
-   bool read_known_federates_from_file( std::wstring const &label = L"" );
+   bool read_known_federates_from_file( std::wstring const &label );
 
    //--------------------------------------------------------------------------
    // Potentially deprecated SaveRestoreService functions.
