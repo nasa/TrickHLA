@@ -802,10 +802,17 @@ class Federate : public CheckpointConversionBase
    bool is_joined_federate_by_name( std::wstring const &federate_name );
 
    /*! @brief Add the specified Federate to the list of joined federates.
+    * @param instance_hndl Federate object instance to add. */
+   void add_joined_federate( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl )
+   {
+      add_joined_federate( instance_hndl, L"" );
+   }
+
+   /*! @brief Add the specified Federate to the list of joined federates.
     * @param instance_hndl Federate object instance to add.
     * @param instance_name Federate MOM instance name to add. */
    void add_joined_federate( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl,
-                             std::wstring const                            &instance_name = L"" );
+                             std::wstring const                            &instance_name );
 
    /*! @brief Remove the specified Federate instance ID from the list of discovered federates.
     * @param instance_hndl Federate instance to remove. */
