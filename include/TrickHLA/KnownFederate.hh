@@ -36,11 +36,23 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 
+// TrickHLA includes.
+#include "TrickHLA/HLAStandardSupport.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated"
+#endif
+
 // HLA include files.
 #include <RTI/Typedefs.h>
 
-// TrickHLA includes.
-#include "TrickHLA/HLAStandardSupport.hh"
+#if defined( IEEE_1516_2010 )
+#   pragma GCC diagnostic pop
+#endif
 
 namespace TrickHLA
 {

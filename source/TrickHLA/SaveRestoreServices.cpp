@@ -172,8 +172,6 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      object_service( NULL ),
      time_management_service( NULL ),
      execution_control( NULL ),
-     // running_feds_count( 0 ),
-     // running_feds( NULL ),
      running_feds_count_at_time_of_restore( 0 ),
      joined_federates_file_name( "" ),
      HLA_save_directory( "" ),
@@ -207,7 +205,6 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      restart_flag( false ),
      restart_cfg_flag( false )
 {
-
    // Set the TrickHLA::Manager instance reference.
    this->object_service = fed.get_object_service();
 
@@ -252,7 +249,6 @@ void SaveRestoreServices::set_save_label( wstring const &label )
  */
 bool SaveRestoreServices::set_HLA_save_directory( std::string const &path )
 {
-
    // If the save directory is not specified, set it to the current RUN directory
    if ( path.empty() ) {
 
@@ -345,7 +341,6 @@ bool SaveRestoreServices::set_save_state( THLASaveProcessEnum state )
 void SaveRestoreServices::set_save_time(
    Int64Time const &time )
 {
-
    // Make sure that we are in an appropriate state to set the Save time.
    if ( ( this->save_state != THLASaveProcessEnum::SAVE_NONE )
         && ( this->save_state != THLASaveProcessEnum::SAVE_REQUESTED )
@@ -393,7 +388,6 @@ void SaveRestoreServices::set_save_time(
 void SaveRestoreServices::save_request(
    wstring const &label )
 {
-
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
@@ -613,7 +607,6 @@ void SaveRestoreServices::save( wstring const &label )
  */
 bool SaveRestoreServices::save_in_progress_check()
 {
-
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
