@@ -78,7 +78,7 @@ class ExecutionConfigurationBase : public Object, public Packing
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
    explicit ExecutionConfigurationBase( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the TrickHLA ExecutionConfigurationBase class. */
-   virtual ~ExecutionConfigurationBase() = 0;
+   virtual ~ExecutionConfigurationBase() override = 0;
 
    // Default data.
    /*! @brief Sets up the attributes for this Execution Configuration object
@@ -107,8 +107,8 @@ class ExecutionConfigurationBase : public Object, public Packing
    }
 
    // From the TrickHLA::Packing class.
-   virtual void pack()   = 0;
-   virtual void unpack() = 0;
+   virtual void pack() override   = 0;
+   virtual void unpack() override = 0;
 
    /*! @brief Resets the object and attribute preferred-order flags to Receive-Order. */
    virtual void reset_preferred_order();
@@ -163,19 +163,19 @@ class ExecutionConfigurationBase : public Object, public Packing
    // CheckpointConversionBase Interface.
    //
    /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint()
+   virtual void convert_data_before_checkpoint() override
    {
       Object::convert_data_before_checkpoint();
    }
 
    /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint()
+   virtual void restore_data_after_checkpoint() override
    {
       Object::restore_data_after_checkpoint();
    }
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint()
+   virtual void free_converted_data_for_checkpoint() override
    {
       Object::free_converted_data_for_checkpoint();
    }

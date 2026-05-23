@@ -102,7 +102,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
    /*! @brief Default constructor for the SpaceFOM RefFrameBase class. */
    RefFrameBase();
    /*! @brief Destructor for the SpaceFOM RefFrameBase class. */
-   virtual ~RefFrameBase();
+   virtual ~RefFrameBase() override;
 
    // Default data.
    /*! @brief Sets up the attributes for a reference frame using default values.
@@ -126,16 +126,16 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    // Access functions.
    /*! @brief Access function to set the HLA federation instance name for the reference frame.
     *  @param new_name Object instance name for this reference frame. */
-   virtual void set_name( std::string const &new_name );
+   virtual void set_name( std::string const &new_name ) override;
 
    /*! @brief Access function to get the HLA federation instance name for the reference frame.
     *  @return Object instance name for this reference frame. */
@@ -168,7 +168,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    /*! @brief Set this reference frame as the root reference frame.
     *  @return True if set succeeded, false otherwise. */
-   virtual bool set_root( bool root_state );
+   virtual bool set_root( bool root_state ) override;
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
     *  @return Current time associated with the PhysicalEntity. */
@@ -185,11 +185,11 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   virtual void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   virtual void unpack() override;
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working

@@ -76,26 +76,26 @@ class ExecutionConfiguration : public ExecutionConfigurationBase
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
    explicit ExecutionConfiguration( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the TrickHLA ExecutionConfiguration class. */
-   virtual ~ExecutionConfiguration();
+   virtual ~ExecutionConfiguration() override;
 
    // Default data.
    /*! @brief Sets up the attributes for the ExCO using default values.
     *  These can be overridden in the input file. */
-   virtual void configure_attributes();
+   virtual void configure_attributes() override;
 
    /*! @brief Configure the execution configuration object. */
-   virtual void configure();
+   virtual void configure() override;
 
    // From the TrickHLA::Packing class.
-   virtual void pack();
-   virtual void unpack();
+   virtual void pack() override;
+   virtual void unpack() override;
 
    // Execution configuration specific functions.
    /*! @brief Setup the Trick Ref Attributes for the ExecutionConfiguration object.
     *  @param packing_obj Associated packing object. */
-   virtual void setup_ref_attributes( Packing *packing_obj );
+   virtual void setup_ref_attributes( Packing *packing_obj ) override;
    /*! @brief Print the current Execution Configuration object to the console. */
-   virtual void print_execution_configuration() const;
+   virtual void print_execution_configuration() const override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

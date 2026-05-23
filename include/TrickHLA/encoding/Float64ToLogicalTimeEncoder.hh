@@ -86,18 +86,18 @@ class Float64ToLogicalTimeEncoder : public VariableArrayEncoderBase
                                 std::string const &name );
 
    /*! @brief Destructor for the TrickHLA Float64ToLogicalTimeEncoder class. */
-   virtual ~Float64ToLogicalTimeEncoder();
+   virtual ~Float64ToLogicalTimeEncoder() override;
 
-   virtual void update_before_encode();
+   virtual void update_before_encode() override;
 
-   virtual void update_after_decode();
+   virtual void update_after_decode() override;
 
-   virtual std::size_t get_data_size()
+   virtual std::size_t get_data_size() override
    {
       return sizeof( time_data );
    }
 
-   virtual std::string to_string()
+   virtual std::string to_string() override
    {
       return "Float64ToLogicalTimeEncoder[" + data_name + "]";
    }

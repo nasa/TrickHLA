@@ -104,7 +104,7 @@ class SyncPointManagerBase : public CheckpointConversionBase
    explicit SyncPointManagerBase( Federate *fed );
 
    /*! @brief Pure virtual destructor for the TrickHLA SyncPointManagerBase class. */
-   virtual ~SyncPointManagerBase() = 0;
+   virtual ~SyncPointManagerBase() override = 0;
 
   public:
    void setup( Federate *fed );
@@ -198,13 +198,13 @@ class SyncPointManagerBase : public CheckpointConversionBase
    // CheckpointConversionBase Interface.
    //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint();
+   virtual void convert_data_before_checkpoint() override;
 
    /*! @brief Decode the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint();
+   virtual void restore_data_after_checkpoint() override;
 
    /*! @brief Free/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint() override;
 
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.

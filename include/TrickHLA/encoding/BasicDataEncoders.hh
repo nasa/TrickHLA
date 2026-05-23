@@ -84,21 +84,21 @@ namespace TrickHLA
                         ATTRIBUTES        *attr,                                    \
                         std::string const &name );                                  \
                                                                                     \
-      virtual ~EncoderClassName();                                                  \
+      virtual ~EncoderClassName() override;                                         \
                                                                                     \
-      virtual void update_before_encode()                                           \
+      virtual void update_before_encode() override                                  \
       {                                                                             \
          return;                                                                    \
       }                                                                             \
                                                                                     \
-      virtual void update_after_decode()                                            \
+      virtual void update_after_decode() override                                   \
       {                                                                             \
          return;                                                                    \
       }                                                                             \
                                                                                     \
-      virtual std::size_t get_data_size();                                          \
+      virtual std::size_t get_data_size() override;                                 \
                                                                                     \
-      virtual std::string to_string()                                               \
+      virtual std::string to_string() override                                      \
       {                                                                             \
          return std::string( #EncoderClassName ) + "[" + data_name + "]";           \
       }                                                                             \

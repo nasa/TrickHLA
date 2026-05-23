@@ -69,7 +69,7 @@ class Packing : public ObjectCallbackBase, public CheckpointConversionBase
    /*! @brief Constructor for the TrickHLA Packing class with a name. */
    explicit Packing( std::string name );
    /*! @brief Destructor for the TrickHLA Packing class. */
-   virtual ~Packing();
+   virtual ~Packing() override;
 
    //-----------------------------------------------------------------
    // These are virtual functions and must be defined by a full class.
@@ -85,19 +85,19 @@ class Packing : public ObjectCallbackBase, public CheckpointConversionBase
    // CheckpointConversionBase Interface.
    //
    /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint()
+   virtual void convert_data_before_checkpoint() override
    {
       return;
    }
 
    /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint()
+   virtual void restore_data_after_checkpoint() override
    {
       return;
    }
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint()
+   virtual void free_converted_data_for_checkpoint() override
    {
       return;
    }

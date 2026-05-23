@@ -60,11 +60,11 @@ class SineOwnershipHandler : public TrickHLA::OwnershipHandler
    /*! @brief Default constructor for the TrickHLAModel SineOwnershipHandler class. */
    SineOwnershipHandler();
    /*! @brief Destructor for the TrickHLAModel SineOwnershipHandler class. */
-   virtual ~SineOwnershipHandler();
+   virtual ~SineOwnershipHandler() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::OwnershipHandler functions.
     *  @param obj Object associated with this OwnershipHandler class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   void initialize_callback( TrickHLA::Object *obj ) override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

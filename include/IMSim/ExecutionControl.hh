@@ -98,16 +98,16 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Initialization constructor for the IMSim ExecutionControl class. */
    explicit ExecutionControl( IMSim::ExecutionConfiguration &imsim_config );
    /*! @brief Destructor for the IMSim ExecutionControl class. */
-   virtual ~ExecutionControl();
+   virtual ~ExecutionControl() override;
 
    /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
     *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */
-   ExecutionConfiguration *get_execution_configuration();
+   ExecutionConfiguration *get_execution_configuration() override;
 
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual std::string const &get_type()
+   virtual std::string const &get_type() override
    {
       return ( type );
    }
@@ -118,16 +118,16 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Setup the IMSim elelments needed in the ExecutionControl class
     * instance.
     * @param fed Associated federate object_service class instance. */
-   virtual void setup( TrickHLA::Federate &fed );
+   virtual void setup( TrickHLA::Federate &fed ) override;
    // This is called by the TrickHLA::Federate::initialize routine.
    /*! @brief Execution Control initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
    /*! @brief Process run before the multi-phase initialization begins. */
-   virtual void pre_multi_phase_init_processes();
+   virtual void pre_multi_phase_init_processes() override;
    /*! @brief Process run after the multi-phase initialization ends. */
-   virtual void post_multi_phase_init_processes();
+   virtual void post_multi_phase_init_processes() override;
    /*! @brief Execution control specific shutdown process. */
-   virtual void shutdown();
+   virtual void shutdown() override;
 
    // IMSim extensions to Exection Control.
    /*! @brief Determine if this federate is late in joining the federation or is
@@ -142,36 +142,36 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    //
    // Execution Control support routines.routines.
    /*! Setup the ExecutionControl object Trick ref ATTRIBUTES. */
-   virtual void setup_object_ref_attributes();
+   virtual void setup_object_ref_attributes() override;
    /*! Setup the ExecutionControl interaction Trick ref ATTRIBUTES. */
-   virtual void setup_interaction_ref_attributes();
+   virtual void setup_interaction_ref_attributes() override;
    /*! Setup the ExecutionControl objects HLA RTI handles. */
-   virtual void setup_object_RTI_handles();
+   virtual void setup_object_RTI_handles() override;
    /*! Setup the ExecutionControl interaction HLA RTI handles. */
-   virtual void setup_interaction_RTI_handles();
+   virtual void setup_interaction_RTI_handles() override;
 
    /*! Add initialization synchronization points to regulate startup. */
-   virtual void add_initialization_sync_points();
+   virtual void add_initialization_sync_points() override;
 
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
    virtual void sync_point_announced(
       std::wstring const                          &label,
-      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
+      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag ) override;
 
    /*! @brief Specialized handling of IMSim synchronization points.
     *  @param label The synchronization point label. */
-   virtual void sync_point_federation_synchronized( std::wstring const &label );
+   virtual void sync_point_federation_synchronized( std::wstring const &label ) override;
 
    /*! Publish the ExecutionControl objects and interactions. */
-   virtual void publish();
+   virtual void publish() override;
    /*! Unpublish the ExecutionControl objects and interactions. */
-   virtual void unpublish();
+   virtual void unpublish() override;
    /*! Subscribe to the ExecutionControl objects and interactions. */
-   virtual void subscribe();
+   virtual void subscribe() override;
    /*! Unsubscribe the ExecutionControl objects and interactions. */
-   virtual void unsubscribe();
+   virtual void unsubscribe() override;
 
    //
    // ExecutionControl runtime routines.
@@ -187,15 +187,15 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
-      bool const                                        received_as_TSO );
+      bool const                                        received_as_TSO ) override;
 
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
-   virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode );
+   virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode ) override;
 
    /*! @brief Get a comma separated list of interaction FOM names used.
     *  @return Comma separated list of interaction FOM names used. */
-   virtual std::string get_interaction_FOM_names()
+   virtual std::string get_interaction_FOM_names() override
    {
       // Only have one interaction used by this execution control.
       return ( freeze_interaction != NULL ) ? freeze_interaction->get_FOM_name() : "";
@@ -203,11 +203,11 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
-   virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );
+   virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control ) override;
 
    /*! @brief Process changes from any received Execution Control Objects (ExCOs).
     *  @return True if mode change occurred. */
-   virtual bool process_execution_control_updates();
+   virtual bool process_execution_control_updates() override;
 
    // Mode transition routines.
    /*! @brief Check to see if a new MTR is valid.
@@ -216,7 +216,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
-   virtual bool process_mode_interaction();
+   virtual bool process_mode_interaction() override;
 
    /*! @brief Process a new Mode Transition Request (MTR).
     *  @return True if new MTR is successfully processed. */
@@ -224,46 +224,46 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    /*! @brief The run mode transition routine.
     *  @return Currently always returns True. */
-   virtual bool run_mode_transition();
+   virtual bool run_mode_transition() override;
 
    /*! @brief Announce the pending freeze mode transition with an 'mtr_freeze' sync-point. */
-   virtual void freeze_mode_announce();
+   virtual void freeze_mode_announce() override;
 
    /*! @brief The freeze mode transition routine.
     *  @return Currently always returns False. */
-   virtual bool freeze_mode_transition();
+   virtual bool freeze_mode_transition() override;
 
    /*! @brief Announce to the federation execution that a shutdown is occurring. */
-   virtual void shutdown_mode_announce();
+   virtual void shutdown_mode_announce() override;
 
    /*! @brief The shutdown mode transition routine. */
-   virtual void shutdown_mode_transition();
+   virtual void shutdown_mode_transition() override;
 
    //
    // Federation freeze/pause management functions.
    //
    /*! @brief Check if a Trick freeze was commanded; if we announced freeze,
     *  tell other federates to freeze. */
-   virtual void enter_freeze();
+   virtual void enter_freeze() override;
 
    /*! @brief Check for exit from freeze.
     *  @return True if should exit from freeze. */
-   virtual bool check_freeze_exit();
+   virtual bool check_freeze_exit() override;
 
    /*! @brief Routine to handle going from freeze to run; if we announced the
     * freeze, tell other federates to run. */
-   virtual void exit_freeze();
+   virtual void exit_freeze() override;
 
    //
    // FIXME: These pause functions should be worked into the general freeze
    // ExecutionControl methodology.
    /*! @brief Check if we hit a pause sync point and need to go to freeze.
     *  @param check_pause_delta Check pause job delta time in seconds. */
-   virtual void check_pause( double const check_pause_delta );
+   virtual void check_pause( double const check_pause_delta ) override;
 
    /*! @brief Checking if we started in freeze.
     *  @param check_pause_delta Check pause job delta time in seconds. */
-   void check_pause_at_init( double const check_pause_delta );
+   void check_pause_at_init( double const check_pause_delta ) override;
 
    virtual bool set_pending_mtr( MTREnum mtr_value );
 
@@ -319,13 +319,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param freeze_sst Simulation scenario time to freeze.
     *  @param save_label Save label for HLA Federation Save. */
    virtual void start_federation_save_at_SST( double              freeze_sst,
-                                              std::wstring const &save_label );
+                                              std::wstring const &save_label ) override;
 
    //
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
     * @return True if Save and Restore is supported by this ExecutionControl method. */
-   virtual bool is_save_and_restore_supported()
+   virtual bool is_save_and_restore_supported() override
    {
       return ( true );
    }
@@ -333,7 +333,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Checks if Save has been initiated by this ExecutionControl method.
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */
-   virtual bool is_save_initiated();
+   virtual bool is_save_initiated() override;
 
    /*! @brief Checks if Save has been announced by this ExecutionControl method.
     * @return True if Save is announced, False if not. */

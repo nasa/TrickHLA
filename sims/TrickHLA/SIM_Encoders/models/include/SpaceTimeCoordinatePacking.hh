@@ -47,7 +47,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM include files.
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 #if defined( USE_SPACEFOM_ENCODERS )
-#  include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 #endif
 
 // Forward Declared Classes:  Since these classes are only used as references
@@ -76,14 +76,14 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
    friend void init_attrSpaceFOM__SpaceTimeCoordinatePacking();
 
   public:
-   SpaceTimeCoordinateData test_stc;  ///< @trick_units{--} Test STC.
+   SpaceTimeCoordinateData test_stc; ///< @trick_units{--} Test STC.
 
   public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the SpaceFOM SpaceTimeCoordinatePacking class. */
    SpaceTimeCoordinatePacking();
    /*! @brief Destructor for the SpaceFOM SpaceTimeCoordinatePacking class. */
-   virtual ~SpaceTimeCoordinatePacking();
+   virtual ~SpaceTimeCoordinatePacking() override;
 
    // Default data.
    /*! @brief Sets up the attributes for using default values.
@@ -93,19 +93,19 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
     *  @param working_data  Reference to the working data associated with this STC object.
     *  @param mngr_object   TrickHLA::Object associated with this STC object.
     *  */
-   virtual void base_config( bool                               publishes,
-                             char const                        *sim_obj_name,
-                             char const                        *packing_name,
-                             SpaceFOM::SpaceTimeCoordinateData *working_data = NULL,
-                             TrickHLA::Object                  *mngr_object = NULL );
+   virtual void base_config( bool                     publishes,
+                             char const              *sim_obj_name,
+                             char const              *packing_name,
+                             SpaceTimeCoordinateData *working_data = NULL,
+                             TrickHLA::Object        *mngr_object  = NULL );
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
     *  @return Current time associated with the PhysicalEntity. */
@@ -122,11 +122,11 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   virtual void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   virtual void unpack() override;
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
@@ -150,15 +150,15 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
    bool test;  ///< @trick_units{--} Flag to enable testing.
 
   protected:
-   SpaceFOM::SpaceTimeCoordinateData * working_data; ///< @trick_units{--} Working data.
+   SpaceTimeCoordinateData *working_data; ///< @trick_units{--} Working data.
 
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
-   TrickHLA::Attribute * stc_attr; ///< @trick_io{**} SpaceTimeCoordinate Attribute.
+   TrickHLA::Attribute *stc_attr; ///< @trick_io{**} SpaceTimeCoordinate Attribute.
 
    // Assign to these parameters when setting up the data associations for the
    // SpaceFOM TrickHLAObject data for the SpaceTimeCoordinate.
-   SpaceFOM::SpaceTimeCoordinateData packing_data; ///< @trick_units{--} STC packing data.
+   SpaceTimeCoordinateData packing_data; ///< @trick_units{--} STC packing data.
 
 #if defined( USE_SPACEFOM_ENCODERS )
    // Instantiate the Space/Time Coordinate encoder

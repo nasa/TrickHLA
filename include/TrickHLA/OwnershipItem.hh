@@ -84,7 +84,7 @@ class OwnershipItem : public Item
       return;
    }
    /*! @brief Destructor for the TrickHLA OwnershipItem class. */
-   virtual ~OwnershipItem()
+   virtual ~OwnershipItem() override
    {
       clear();
    }

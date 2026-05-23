@@ -172,7 +172,7 @@ class Federate : public CheckpointConversionBase
    /*! @brief Default constructor for the TrickHLA Federate class. */
    Federate();
    /*! @brief Destructor for the TrickHLA Federate class. */
-   virtual ~Federate();
+   virtual ~Federate() override;
 
    /*! @brief Print the TrickHLA version string. */
    static void print_version();
@@ -1032,13 +1032,13 @@ class Federate : public CheckpointConversionBase
    // interface class to support Trick checkpoint processing.
    //
    /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint();
+   virtual void convert_data_before_checkpoint() override;
 
    /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint();
+   virtual void restore_data_after_checkpoint() override;
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint() override;
 
    //-------------------------------------------------------------------------
    // Checkpoint functions.

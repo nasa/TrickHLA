@@ -84,7 +84,7 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
    /*! @brief Default constructor for the TrickHLA FreezeInteractionHandler class. */
    FreezeInteractionHandler();
    /*! @brief Destructor for the TrickHLA FreezeInteractionHandler class. */
-   virtual ~FreezeInteractionHandler();
+   virtual ~FreezeInteractionHandler() override;
 
   public:
    /*! @brief Send the freeze interaction scenario time immediately using Timestamp Order.
@@ -94,7 +94,7 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Called when the interaction is received from the RTI.
     *  @param theUserSuppliedTag User tag. */
-   void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag );
+   void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) override;
 
    // FIXME: This is not a good thing to do. Why have the data private?
    /*! @brief Get the address of the interaction time.

@@ -34,31 +34,30 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
 #include <limits>
 #include <math.h>
+#include <ostream>
 #include <sstream>
 #include <string>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA model include files.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/ExecutionControl.hh"
 #if defined( USE_SPACEFOM_ENCODERS )
-#  include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 #else
-#  include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
+#   include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
 #endif
 
 // Artemis FOM includes.
@@ -98,11 +97,11 @@ SpaceTimeCoordinatePacking::~SpaceTimeCoordinatePacking()
  * @job_class{default_data}
  */
 void SpaceTimeCoordinatePacking::base_config(
-   bool                               publishes,
-   char const                        *sim_obj_name,
-   char const                        *packing_name,
-   SpaceFOM::SpaceTimeCoordinateData *working,
-   TrickHLA::Object                  *mngr_object  )
+   bool                     publishes,
+   char const              *sim_obj_name,
+   char const              *packing_name,
+   SpaceTimeCoordinateData *working,
+   Object                  *mngr_object )
 {
    string stc_name_str = string( sim_obj_name ) + "." + string( packing_name );
    string trick_name_str;
@@ -143,7 +142,7 @@ void SpaceTimeCoordinatePacking::base_config(
    object->packing             = this;
    // Allocate the attributes for the SpaceTimeCoordinatePacking HLA object.
    object->attr_count = 1;
-   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
+   object->attributes = static_cast< Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the attributes.
@@ -151,7 +150,7 @@ void SpaceTimeCoordinatePacking::base_config(
 #if defined( USE_SPACEFOM_ENCODERS )
    object->attributes[0].FOM_name      = "state";
    trick_name_str                      = stc_name_str + string( ".stc_encoder.buffer" );
-   object->attributes[0].trick_name    = trick_name_str.c_str();
+   object->attributes[0].trick_name    = trick_name_str;
    object->attributes[0].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
@@ -177,7 +176,7 @@ void SpaceTimeCoordinatePacking::base_config(
 void SpaceTimeCoordinatePacking::initialize()
 {
    // Check to make sure the working data has been set.
-   if ( working_data == NULL ){
+   if ( working_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinatePacking::initialize():" << __LINE__
              << " ERROR: NULL latitude reference!\n";
@@ -188,7 +187,7 @@ void SpaceTimeCoordinatePacking::initialize()
    pack_from_working_data();
 
    // Mark this as initialized.
-   TrickHLA::Packing::initialize();
+   Packing::initialize();
 
    // Return to calling routine.
    return;
@@ -207,10 +206,10 @@ void SpaceTimeCoordinatePacking::initialize()
  * @job_class{initialization}
  */
 void SpaceTimeCoordinatePacking::initialize_callback(
-   TrickHLA::Object *obj )
+   Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   TrickHLA::Packing::initialize_callback( obj );
+   Packing::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
@@ -409,9 +408,9 @@ void SpaceTimeCoordinatePacking::unpack_test()
    double tol = 4.0 * std::numeric_limits< double >::min();
 
    // Position
-   if (     (abs( test_stc.pos[0] - packing_data.pos[0] ) > tol )
-         || (abs( test_stc.pos[1] - packing_data.pos[1] ) > tol )
-         || (abs( test_stc.pos[2] - packing_data.pos[2] ) > tol ) ) {
+   if ( ( abs( test_stc.pos[0] - packing_data.pos[0] ) > tol )
+        || ( abs( test_stc.pos[1] - packing_data.pos[1] ) > tol )
+        || ( abs( test_stc.pos[2] - packing_data.pos[2] ) > tol ) ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
           << " : Failed position test!" << std::endl;
@@ -424,9 +423,9 @@ void SpaceTimeCoordinatePacking::unpack_test()
    }
 
    // Velocity
-   if (     (abs( test_stc.vel[0] - packing_data.vel[0] ) > tol )
-         || (abs( test_stc.vel[1] - packing_data.vel[1] ) > tol )
-         || (abs( test_stc.vel[2] - packing_data.vel[2] ) > tol ) ) {
+   if ( ( abs( test_stc.vel[0] - packing_data.vel[0] ) > tol )
+        || ( abs( test_stc.vel[1] - packing_data.vel[1] ) > tol )
+        || ( abs( test_stc.vel[2] - packing_data.vel[2] ) > tol ) ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
           << " : Failed velocity test!" << std::endl;
@@ -452,9 +451,9 @@ void SpaceTimeCoordinatePacking::unpack_test()
    }
 
    // Quaternion vector
-   if (     (abs( test_stc.att.vector[0] - packing_data.att.vector[0] ) > tol )
-         || (abs( test_stc.att.vector[1] - packing_data.att.vector[1] ) > tol )
-         || (abs( test_stc.att.vector[2] - packing_data.att.vector[2] ) > tol ) ) {
+   if ( ( abs( test_stc.att.vector[0] - packing_data.att.vector[0] ) > tol )
+        || ( abs( test_stc.att.vector[1] - packing_data.att.vector[1] ) > tol )
+        || ( abs( test_stc.att.vector[2] - packing_data.att.vector[2] ) > tol ) ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
           << " : Failed quaternion vector test!" << std::endl;
@@ -467,9 +466,9 @@ void SpaceTimeCoordinatePacking::unpack_test()
    }
 
    // Angular velocity
-   if (     (abs( test_stc.ang_vel[0] - packing_data.ang_vel[0] ) > tol )
-         || (abs( test_stc.ang_vel[1] - packing_data.ang_vel[1] ) > tol )
-         || (abs( test_stc.ang_vel[2] - packing_data.ang_vel[2] ) > tol ) ) {
+   if ( ( abs( test_stc.ang_vel[0] - packing_data.ang_vel[0] ) > tol )
+        || ( abs( test_stc.ang_vel[1] - packing_data.ang_vel[1] ) > tol )
+        || ( abs( test_stc.ang_vel[2] - packing_data.ang_vel[2] ) > tol ) ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
           << " : Failed angular velocity test!" << std::endl;

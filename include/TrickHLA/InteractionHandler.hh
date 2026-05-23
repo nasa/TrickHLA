@@ -91,7 +91,7 @@ class InteractionHandler : public CheckpointConversionBase
    /*! @brief Default constructor for the TrickHLA InteractionHandler class. */
    InteractionHandler();
    /*! @brief Destructor for the TrickHLA InteractionHandler class. */
-   virtual ~InteractionHandler();
+   virtual ~InteractionHandler() override;
 
   public:
    // Initialize the Interaction handler.
@@ -171,19 +171,19 @@ class InteractionHandler : public CheckpointConversionBase
    // CheckpointConversionBase Interface.
    //
    /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint()
+   virtual void convert_data_before_checkpoint() override
    {
       return;
    }
 
    /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint()
+   virtual void restore_data_after_checkpoint() override
    {
       return;
    }
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint()
+   virtual void free_converted_data_for_checkpoint() override
    {
       return;
    }

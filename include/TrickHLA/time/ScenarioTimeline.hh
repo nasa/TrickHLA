@@ -78,19 +78,19 @@ class ScenarioTimeline : public Timeline
                               double const st0 = 0.0 );
 
    /*! @brief Destructor for the TrickHLA ScenarioTimeline class. */
-   virtual ~ScenarioTimeline();
+   virtual ~ScenarioTimeline() override;
 
    //-----------------------------------------------------------------
    // This is virtual function must be defined by a full class.
    //-----------------------------------------------------------------
    /*! @brief Get the current scenario time.
     *  @return Current scenario time in seconds. */
-   virtual double get_time() const;
+   virtual double get_time() const override;
 
    /*! Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the minimum time resolution in seconds. */
-   virtual double get_min_resolution() const;
+   virtual double get_min_resolution() const override;
 
    //
    // Additional function specific to this implementation.

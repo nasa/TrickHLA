@@ -72,7 +72,7 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
    /*! @brief Default constructor for the SpaceFOM RefFrameBase class. */
    RefFrameTree();
    /*! @brief Destructor for the SpaceFOM RefFrameBase class. */
-   virtual ~RefFrameTree();
+   virtual ~RefFrameTree() override;
 
    /*! @brief Add a reference frame to the tree.
     *  @details Add a SpaceFOM reference frame into the reference frame tree.

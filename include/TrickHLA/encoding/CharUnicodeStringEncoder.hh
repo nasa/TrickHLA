@@ -85,18 +85,18 @@ class CharUnicodeStringEncoder : public VariableArrayEncoderBase
                              std::string const &name );
 
    /*! @brief Destructor for the TrickHLA CharUnicodeStringEncoder class. */
-   virtual ~CharUnicodeStringEncoder();
+   virtual ~CharUnicodeStringEncoder() override;
 
-   virtual void update_before_encode();
+   virtual void update_before_encode() override;
 
-   virtual void update_after_decode();
+   virtual void update_after_decode() override;
 
-   virtual std::size_t get_data_size()
+   virtual std::size_t get_data_size() override
    {
       return ( sizeof( wchar_t ) * wstring_data.size() );
    }
 
-   virtual std::string to_string()
+   virtual std::string to_string() override
    {
       return "CharUnicodeStringEncoder[" + data_name + "]";
    }

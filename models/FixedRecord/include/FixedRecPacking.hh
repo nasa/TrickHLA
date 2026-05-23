@@ -66,15 +66,15 @@ class FixedRecPacking : public FixedRecData, public TrickHLA::Packing
    /*! @brief Default constructor for the TrickHLAModel FixedRecPacking class. */
    FixedRecPacking();
    /*! @brief Destructor for the TrickHLAModel FixedRecPacking class. */
-   virtual ~FixedRecPacking();
+   virtual ~FixedRecPacking() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   void unpack() override;
 
    /*! @brief Set the packing object working data.
     *  @param data The sine wave data object for packing and unpacking. */

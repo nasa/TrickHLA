@@ -61,7 +61,7 @@ class SineObjectDeleted : public TrickHLA::ObjectDeletedHandler
    /*! @brief Default constructor for the TrickHLAModel SineObjectDeleted class. */
    SineObjectDeleted();
    /*! @brief Destructor for the TrickHLAModel SineObjectDeleted class. */
-   virtual ~SineObjectDeleted();
+   virtual ~SineObjectDeleted() override;
 
    //-----------------------------------------------------------------
    // These functions must be defined to make this a concrete class.
@@ -69,7 +69,7 @@ class SineObjectDeleted : public TrickHLA::ObjectDeletedHandler
 
    /*! @brief Callback routine implementation to report that this object has
     *  been deleted from the RTI. */
-   virtual void deleted();
+   void deleted() override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

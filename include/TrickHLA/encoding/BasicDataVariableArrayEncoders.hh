@@ -84,13 +84,13 @@ namespace TrickHLA
                         std::string const &name );                                  \
                                                                                     \
       /*! @brief Destructor for the TrickHLA EncoderClassName class. */             \
-      virtual ~EncoderClassName();                                                  \
+      virtual ~EncoderClassName() override;                                         \
                                                                                     \
-      virtual void update_before_encode();                                          \
+      virtual void update_before_encode() override;                                 \
                                                                                     \
-      virtual void update_after_decode();                                           \
+      virtual void update_after_decode() override;                                  \
                                                                                     \
-      virtual std::string to_string()                                               \
+      virtual std::string to_string() override                                      \
       {                                                                             \
          return std::string( #EncoderClassName ) + "[" + data_name + "]";           \
       }                                                                             \

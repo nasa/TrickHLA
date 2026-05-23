@@ -86,7 +86,7 @@ class SyncPoint : public CheckpointConversionBase
    explicit SyncPoint( std::wstring const &lbl );
 
    /*! @brief Destructor for the TrickHLA SyncPoint class. */
-   virtual ~SyncPoint();
+   virtual ~SyncPoint() override;
 
    // Functions to check synchronization point state.
    /*! @brief Check if the synchronization point has been created and is_known
@@ -166,13 +166,13 @@ class SyncPoint : public CheckpointConversionBase
    // CheckpointConversionBase Interface.
    //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint();
+   virtual void convert_data_before_checkpoint() override;
 
    /*! @brief Decode the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint();
+   virtual void restore_data_after_checkpoint() override;
 
    /*! @brief Free/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint() override;
 
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.

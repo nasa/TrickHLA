@@ -87,15 +87,15 @@ class StringUnicodeFixedArrayEncoder : public VariableArrayEncoderBase
                                    std::string const &name );
 
    /*! @brief Destructor for the TrickHLA StringUnicodeFixedArrayEncoder class. */
-   virtual ~StringUnicodeFixedArrayEncoder();
+   virtual ~StringUnicodeFixedArrayEncoder() override;
 
-   virtual void update_before_encode();
+   virtual void update_before_encode() override;
 
-   virtual void update_after_decode();
+   virtual void update_after_decode() override;
 
-   virtual std::size_t get_data_size();
+   virtual std::size_t get_data_size() override;
 
-   virtual std::string to_string()
+   virtual std::string to_string() override
    {
       return "StringUnicodeFixedArrayEncoder[" + data_name + "]";
    }

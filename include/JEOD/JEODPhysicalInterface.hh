@@ -72,21 +72,21 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
    explicit JEODPhysicalInterface( jeod::DynBody &dyn_body_ref ); // Initialization constructor.
    JEODPhysicalInterface( jeod::DynBody      &dyn_body_ref,
                           jeod::BodyRefFrame &vehicle_point_ref ); // Initialization constructor.
-   virtual ~JEODPhysicalInterface();                               // Destructor.
+   virtual ~JEODPhysicalInterface() override;                      // Destructor.
 
    // Initialize the packing object.
    /*! @brief Initialize the class assuming that the vehicle point data is set. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
-   virtual void pack_from_working_data();
+   virtual void pack_from_working_data() override;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
     *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
-   virtual void unpack_into_working_data();
+   virtual void unpack_into_working_data() override;
 
    /*! @brief Set the ID string of the vehicle point for the JEOD Vehicle Point.
     *  @param new_id The ID string for vehicle point associated with the JEOD

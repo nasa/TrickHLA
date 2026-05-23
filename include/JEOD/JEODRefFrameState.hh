@@ -76,11 +76,11 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    JEODRefFrameState( jeod::TimeTT        &time_tt_in,
                       jeod::RefFrameState &ref_frame_state_ref );
    /*! @brief Destructor for the SpaceFOM JEODRefFrameState class. */
-   virtual ~JEODRefFrameState();
+   virtual ~JEODRefFrameState() override;
 
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Access function to set the HLA federation scenario time.
     *  @param new_time Associated federation scenario time. */
@@ -99,12 +99,12 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
-   virtual void pack_from_working_data();
+   virtual void pack_from_working_data() override;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
     *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
-   virtual void unpack_into_working_data();
+   virtual void unpack_into_working_data() override;
 
    /*! @brief Set the references to time and the reference frame data.
     *  @param time_tt_in Pointer to the jeod::TimeTT instance.

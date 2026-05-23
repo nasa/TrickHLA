@@ -106,7 +106,7 @@ class SyncPointList : public CheckpointConversionBase
                   Federate          *fed );
 
    /*! @brief Pure virtual destructor for the TrickHLA SyncPointList class. */
-   virtual ~SyncPointList();
+   virtual ~SyncPointList() override;
 
   public:
    void setup( Federate *fed );
@@ -203,13 +203,13 @@ class SyncPointList : public CheckpointConversionBase
    // CheckpointConversionBase Interface.
    //
    /*! @brief Encode the variables to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint();
+   virtual void convert_data_before_checkpoint() override;
 
    /*! @brief Decode the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint();
+   virtual void restore_data_after_checkpoint() override;
 
    /*! @brief Free/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint() override;
 
   protected:
 #if SYNC_POINT_TMM_ARRAY

@@ -108,12 +108,12 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
    explicit ExecutionConfiguration( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the IMSim ExecutionConfiguration class. */
-   virtual ~ExecutionConfiguration();
+   virtual ~ExecutionConfiguration() override;
 
    // Default data.
    /*! @brief Sets up the attributes for the simulation configuration using default values.
     *  These can be overridden in the input file. */
-   virtual void configure_attributes();
+   virtual void configure_attributes() override;
 
    /*! @brief Sets up the attributes for the simulation configuration using
     *  default values.  These can be overridden in the input file.
@@ -121,7 +121,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    virtual void configure_attributes( std::string const &sim_config_name );
 
    /*! @brief Configure the execution configuration object. */
-   virtual void configure();
+   virtual void configure() override;
 
    /*! @brief Get the reference to the associated IMSim::ExecutionControl object.
     *  @param exec_control Pointer to the associated IMSim::ExecutionControl object. */
@@ -132,8 +132,8 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    virtual IMSim::ExecutionControl *get_imsim_control();
 
    // From the TrickHLA::Packing class.
-   virtual void pack();
-   virtual void unpack();
+   virtual void pack() override;
+   virtual void unpack() override;
 
    //
    // FOM data public accessor interface.
@@ -259,17 +259,17 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    // IMSim Simulation Configuration specific functions.
    /*! @brief Setup the Trick Ref Attributes for the ExecutionConfiguration object.
     *  @param packing_obj Associated packing object. */
-   virtual void setup_ref_attributes( TrickHLA::Packing *packing_obj );
+   virtual void setup_ref_attributes( TrickHLA::Packing *packing_obj ) override;
 
    /*! @brief Print the current Execution Configuration object to the console. */
-   virtual void print_execution_configuration() const;
+   virtual void print_execution_configuration() const override;
 
    /*! @brief Print the current simulation configuration state to the console. */
    virtual void print_simconfig( std::ostream &stream = std::cout ) const;
 
    /*! @brief Wait on an ExCO update.
     *  @return True for successful wait. */
-   virtual bool wait_for_update();
+   virtual bool wait_for_update() override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

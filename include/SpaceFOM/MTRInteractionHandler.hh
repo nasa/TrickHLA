@@ -93,7 +93,7 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
     *  @param fed  TrickHLA::Federate associated with this MTRInteractionHandler instance. */
    explicit MTRInteractionHandler( TrickHLA::Federate const *fed );
    /*! @brief Destructor for the SpaceFOM MTRInteractionHandler class. */
-   virtual ~MTRInteractionHandler(); // Destructor.
+   virtual ~MTRInteractionHandler() override; // Destructor.
 
   public:
    // Working send and receive functions.
@@ -103,7 +103,7 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Receive the HLA interaction.
     *  @param the_user_supplied_tag User supplied interaction tag. */
-   virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
+   virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag ) override;
 
    // Public utility functions.
    /*! @brief Set the associated name for this interaction handler.

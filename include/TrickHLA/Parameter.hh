@@ -90,7 +90,7 @@ class Parameter : public RecordElement
    Parameter();
 
    /*! @brief Destructor for the TrickHLA Parameter class. */
-   virtual ~Parameter();
+   virtual ~Parameter() override;
 
    /*! @brief Initializes the TrickHLA Parameter from the trick variable name
     *  supplied in the input file.

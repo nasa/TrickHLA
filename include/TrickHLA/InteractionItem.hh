@@ -145,7 +145,7 @@ class InteractionItem : public Item
    InteractionItem( InteractionItem const &rhs );
 
    /*! @brief Destructor for the TrickHLA InteractionItem class. */
-   virtual ~InteractionItem();
+   virtual ~InteractionItem() override;
 
    /*! @brief Decode all the parameter_queue values into parm_items linear array. */
    void checkpoint_queue();

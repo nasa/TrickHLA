@@ -60,19 +60,19 @@ class SimTimeline : public Timeline
    SimTimeline();
 
    /*! @brief Destructor for the TrickHLA SimTimeline class. */
-   virtual ~SimTimeline();
+   virtual ~SimTimeline() override;
 
    //-----------------------------------------------------------------
    // This is a virtual function and must be defined by a full class.
    //-----------------------------------------------------------------
    /*! @brief Get the current time for this timeline in seconds.
     *  @return Returns the current timeline time in seconds. */
-   virtual double get_time() const;
+   virtual double get_time() const override;
 
    /*! Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline in seconds.
     *  @return Returns the minimum time resolution in seconds. */
-   virtual double get_min_resolution() const;
+   virtual double get_min_resolution() const override;
 
    //
    // Additional function specific to this implementation.

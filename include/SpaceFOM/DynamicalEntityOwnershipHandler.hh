@@ -59,11 +59,11 @@ class DynamicalEntityOwnershipHandler : public PhysicalEntityOwnershipHandler
    /*! @brief Default constructor for the SpaceFOM DynamicalEntityOwnershipHandler class. */
    DynamicalEntityOwnershipHandler();
    /*! @brief Destructor for the SpaceFOM DynamicalEntityOwnershipHandler class. */
-   virtual ~DynamicalEntityOwnershipHandler();
+   virtual ~DynamicalEntityOwnershipHandler() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::OwnershipHandler functions.
     *  @param obj Object associated with this OwnershipHandler class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

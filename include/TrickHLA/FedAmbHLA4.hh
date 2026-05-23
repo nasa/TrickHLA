@@ -79,7 +79,7 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
    // as the usual public data.
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
-   // Syntax: friend void init_attr<namespace>__<class name>();
+   // Syntax: friend void init_attr<namespace>__<class name>() override;
    friend void init_attrTrickHLA__FedAmb();
 
   public:
@@ -87,7 +87,7 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
     *  @param fed Associated Federate instance. */
    explicit FedAmb( Federate &fed );
    /*! @brief Destructor for the TrickHLA FedAmb class. */
-   virtual ~FedAmb();
+   virtual ~FedAmb() override;
 
    // *****************************************************************
    // The following methods fill out the required virtual methods of
@@ -105,91 +105,91 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
 
    // 4.4
    virtual void connectionLost(
-      std::wstring const &faultDescription );
+      std::wstring const &faultDescription ) override;
 
    // 4.8
    virtual void reportFederationExecutions(
-      rti1516_2025::FederationExecutionInformationVector const &report );
+      rti1516_2025::FederationExecutionInformationVector const &report ) override;
 
    // 4.10
    virtual void reportFederationExecutionMembers(
       std::wstring const                                             &federationName,
-      rti1516_2025::FederationExecutionMemberInformationVector const &report );
+      rti1516_2025::FederationExecutionMemberInformationVector const &report ) override;
 
    // 4.11
    virtual void reportFederationExecutionDoesNotExist(
-      std::wstring const &federationName );
+      std::wstring const &federationName ) override;
 
    // 4.13
    virtual void federateResigned(
-      std::wstring const &reasonForResignDescription );
+      std::wstring const &reasonForResignDescription ) override;
 
    // 4.15
    virtual void synchronizationPointRegistrationSucceeded(
-      std::wstring const &label );
+      std::wstring const &label ) override;
 
    // 4.15
    virtual void synchronizationPointRegistrationFailed(
       std::wstring const                             &label,
-      rti1516_2025::SynchronizationPointFailureReason reason );
+      rti1516_2025::SynchronizationPointFailureReason reason ) override;
 
    // 4.16
    virtual void announceSynchronizationPoint(
       std::wstring const                     &label,
-      rti1516_2025::VariableLengthData const &userSuppliedTag );
+      rti1516_2025::VariableLengthData const &userSuppliedTag ) override;
 
    // 4.18
    virtual void federationSynchronized(
       std::wstring const                    &label,
-      rti1516_2025::FederateHandleSet const &failedToSyncSet );
+      rti1516_2025::FederateHandleSet const &failedToSyncSet ) override;
 
    // 4.20
    virtual void initiateFederateSave(
-      std::wstring const &label );
+      std::wstring const &label ) override;
 
    // 4.20
    virtual void initiateFederateSave(
       std::wstring const              &label,
-      rti1516_2025::LogicalTime const &time );
+      rti1516_2025::LogicalTime const &time ) override;
 
    // 4.23
-   virtual void federationSaved();
+   virtual void federationSaved() override;
 
    // 4.23
    virtual void federationNotSaved(
-      rti1516_2025::SaveFailureReason reason );
+      rti1516_2025::SaveFailureReason reason ) override;
 
    // 4.26
    virtual void federationSaveStatusResponse(
-      rti1516_2025::FederateHandleSaveStatusPairVector const &response );
+      rti1516_2025::FederateHandleSaveStatusPairVector const &response ) override;
 
    // 4.28
    virtual void requestFederationRestoreSucceeded(
-      std::wstring const &label );
+      std::wstring const &label ) override;
 
    // 4.28
    virtual void requestFederationRestoreFailed(
-      std::wstring const &label );
+      std::wstring const &label ) override;
 
    // 4.29
-   virtual void federationRestoreBegun();
+   virtual void federationRestoreBegun() override;
 
    // 4.30
    virtual void initiateFederateRestore(
       std::wstring const                 &label,
       std::wstring const                 &federateName,
-      rti1516_2025::FederateHandle const &postRestoreFederateHandle );
+      rti1516_2025::FederateHandle const &postRestoreFederateHandle ) override;
 
    // 4.32
-   virtual void federationRestored();
+   virtual void federationRestored() override;
 
    // 4.32
    virtual void federationNotRestored(
-      rti1516_2025::RestoreFailureReason reason );
+      rti1516_2025::RestoreFailureReason reason ) override;
 
    // 4.35
    virtual void federationRestoreStatusResponse(
-      rti1516_2025::FederateRestoreStatusVector const &response );
+      rti1516_2025::FederateRestoreStatusVector const &response ) override;
 
    /////////////////////////////////////
    // Declaration Management Services //
@@ -197,19 +197,19 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
 
    // 5.14
    virtual void startRegistrationForObjectClass(
-      rti1516_2025::ObjectClassHandle const &objectClass );
+      rti1516_2025::ObjectClassHandle const &objectClass ) override;
 
    // 5.15
    virtual void stopRegistrationForObjectClass(
-      rti1516_2025::ObjectClassHandle const &objectClass );
+      rti1516_2025::ObjectClassHandle const &objectClass ) override;
 
    // 5.16
    virtual void turnInteractionsOn(
-      rti1516_2025::InteractionClassHandle const &interactionClass );
+      rti1516_2025::InteractionClassHandle const &interactionClass ) override;
 
    // 5.17
    virtual void turnInteractionsOff(
-      rti1516_2025::InteractionClassHandle const &interactionClass );
+      rti1516_2025::InteractionClassHandle const &interactionClass ) override;
 
    ////////////////////////////////
    // Object Management Services //
@@ -217,26 +217,26 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
 
    // 6.3
    virtual void objectInstanceNameReservationSucceeded(
-      std::wstring const &objectInstanceName );
+      std::wstring const &objectInstanceName ) override;
 
    // 6.3
    virtual void objectInstanceNameReservationFailed(
-      std::wstring const &objectInstanceName );
+      std::wstring const &objectInstanceName ) override;
 
    // 6.6
    virtual void multipleObjectInstanceNameReservationSucceeded(
-      std::set< std::wstring > const &objectInstanceNames );
+      std::set< std::wstring > const &objectInstanceNames ) override;
 
    // 6.6
    virtual void multipleObjectInstanceNameReservationFailed(
-      std::set< std::wstring > const &objectInstanceNames );
+      std::set< std::wstring > const &objectInstanceNames ) override;
 
    // 6.9
    virtual void discoverObjectInstance(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::ObjectClassHandle const    &objectClass,
       std::wstring const                       &objectInstanceName,
-      rti1516_2025::FederateHandle const       &producingFederate );
+      rti1516_2025::FederateHandle const       &producingFederate ) override;
 
    // 6.11
    virtual void reflectAttributeValues(
@@ -245,7 +245,7 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
       rti1516_2025::VariableLengthData const       &userSuppliedTag,
       rti1516_2025::TransportationTypeHandle const &transportationType,
       rti1516_2025::FederateHandle const           &producingFederate,
-      rti1516_2025::RegionHandleSet const          *optionalSentRegions );
+      rti1516_2025::RegionHandleSet const          *optionalSentRegions ) override;
 
    // 6.11
    virtual void reflectAttributeValues(
@@ -258,7 +258,7 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
       rti1516_2025::LogicalTime const              &time,
       rti1516_2025::OrderType                       sentOrderType,
       rti1516_2025::OrderType                       receivedOrderType,
-      rti1516_2025::MessageRetractionHandle const  *optionalRetraction );
+      rti1516_2025::MessageRetractionHandle const  *optionalRetraction ) override;
 
    // 6.13
    virtual void receiveInteraction(
@@ -267,7 +267,7 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
       rti1516_2025::VariableLengthData const       &userSuppliedTag,
       rti1516_2025::TransportationTypeHandle const &transportationType,
       rti1516_2025::FederateHandle const           &producingFederate,
-      rti1516_2025::RegionHandleSet const          *optionalSentRegions );
+      rti1516_2025::RegionHandleSet const          *optionalSentRegions ) override;
 
    // 6.13
    virtual void receiveInteraction(
@@ -280,7 +280,7 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
       rti1516_2025::LogicalTime const              &time,
       rti1516_2025::OrderType                       sentOrderType,
       rti1516_2025::OrderType                       receivedOrderType,
-      rti1516_2025::MessageRetractionHandle const  *optionalRetraction );
+      rti1516_2025::MessageRetractionHandle const  *optionalRetraction ) override;
 
    // 6.15
    virtual void receiveDirectedInteraction(
@@ -289,7 +289,7 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
       rti1516_2025::ParameterHandleValueMap const  &parameterValues,
       rti1516_2025::VariableLengthData const       &userSuppliedTag,
       rti1516_2025::TransportationTypeHandle const &transportationType,
-      rti1516_2025::FederateHandle const           &producingFederate );
+      rti1516_2025::FederateHandle const           &producingFederate ) override;
 
    // 6.15
    virtual void receiveDirectedInteraction(
@@ -302,13 +302,13 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
       rti1516_2025::LogicalTime const              &time,
       rti1516_2025::OrderType                       sentOrderType,
       rti1516_2025::OrderType                       receivedOrderType,
-      rti1516_2025::MessageRetractionHandle const  *optionalRetraction );
+      rti1516_2025::MessageRetractionHandle const  *optionalRetraction ) override;
 
    // 6.17
    virtual void removeObjectInstance(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::VariableLengthData const   &userSuppliedTag,
-      rti1516_2025::FederateHandle const       &producingFederate );
+      rti1516_2025::FederateHandle const       &producingFederate ) override;
 
    // 6.17
    virtual void removeObjectInstance(
@@ -318,62 +318,62 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
       rti1516_2025::LogicalTime const             &time,
       rti1516_2025::OrderType                      sentOrderType,
       rti1516_2025::OrderType                      receivedOrderType,
-      rti1516_2025::MessageRetractionHandle const *optionalRetraction );
+      rti1516_2025::MessageRetractionHandle const *optionalRetraction ) override;
 
    // 6.19
    virtual void attributesInScope(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
-      rti1516_2025::AttributeHandleSet const   &attributes );
+      rti1516_2025::AttributeHandleSet const   &attributes ) override;
 
    // 6.20
    virtual void attributesOutOfScope(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
-      rti1516_2025::AttributeHandleSet const   &attributes );
+      rti1516_2025::AttributeHandleSet const   &attributes ) override;
 
    // 6.22
    virtual void provideAttributeValueUpdate(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::AttributeHandleSet const   &attributes,
-      rti1516_2025::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::VariableLengthData const   &userSuppliedTag ) override;
 
    // 6.23
    virtual void turnUpdatesOnForObjectInstance(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
-      rti1516_2025::AttributeHandleSet const   &attributes );
+      rti1516_2025::AttributeHandleSet const   &attributes ) override;
 
    // 6.23
    virtual void turnUpdatesOnForObjectInstance(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::AttributeHandleSet const   &attributes,
-      std::wstring const                       &updateRateDesignator );
+      std::wstring const                       &updateRateDesignator ) override;
 
    // 6.24
    virtual void turnUpdatesOffForObjectInstance(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
-      rti1516_2025::AttributeHandleSet const   &attributes );
+      rti1516_2025::AttributeHandleSet const   &attributes ) override;
 
    // 6.26
    virtual void confirmAttributeTransportationTypeChange(
       rti1516_2025::ObjectInstanceHandle const     &objectInstance,
       rti1516_2025::AttributeHandleSet const       &attributes,
-      rti1516_2025::TransportationTypeHandle const &transportationType );
+      rti1516_2025::TransportationTypeHandle const &transportationType ) override;
 
    // 6.29
    virtual void reportAttributeTransportationType(
       rti1516_2025::ObjectInstanceHandle const     &objectInstance,
       rti1516_2025::AttributeHandle const          &attribute,
-      rti1516_2025::TransportationTypeHandle const &transportationType );
+      rti1516_2025::TransportationTypeHandle const &transportationType ) override;
 
    // 6.31
    virtual void confirmInteractionTransportationTypeChange(
       rti1516_2025::InteractionClassHandle const   &interactionClass,
-      rti1516_2025::TransportationTypeHandle const &transportationType );
+      rti1516_2025::TransportationTypeHandle const &transportationType ) override;
 
    // 6.33
    virtual void reportInteractionTransportationType(
       rti1516_2025::FederateHandle const           &federateHandle,
       rti1516_2025::InteractionClassHandle const   &interactionClass,
-      rti1516_2025::TransportationTypeHandle const &transportationType );
+      rti1516_2025::TransportationTypeHandle const &transportationType ) override;
 
    ///////////////////////////////////
    // Ownership Management Services //
@@ -383,52 +383,52 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
    virtual void requestAttributeOwnershipAssumption(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::AttributeHandleSet const   &offeredAttributes,
-      rti1516_2025::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::VariableLengthData const   &userSuppliedTag ) override;
 
    // 7.5
    virtual void requestDivestitureConfirmation(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::AttributeHandleSet const   &releasedAttributes,
-      rti1516_2025::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::VariableLengthData const   &userSuppliedTag ) override;
 
    // 7.7
    virtual void attributeOwnershipAcquisitionNotification(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::AttributeHandleSet const   &securedAttributes,
-      rti1516_2025::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::VariableLengthData const   &userSuppliedTag ) override;
 
    // 7.10
    virtual void attributeOwnershipUnavailable(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::AttributeHandleSet const   &attributes,
-      rti1516_2025::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::VariableLengthData const   &userSuppliedTag ) override;
 
    // 7.11
    virtual void requestAttributeOwnershipRelease(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::AttributeHandleSet const   &candidateAttributes,
-      rti1516_2025::VariableLengthData const   &userSuppliedTag );
+      rti1516_2025::VariableLengthData const   &userSuppliedTag ) override;
 
    // 7.16
    virtual void confirmAttributeOwnershipAcquisitionCancellation(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
-      rti1516_2025::AttributeHandleSet const   &attributes );
+      rti1516_2025::AttributeHandleSet const   &attributes ) override;
 
    // 7.18
    virtual void informAttributeOwnership(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
       rti1516_2025::AttributeHandleSet const   &attributes,
-      rti1516_2025::FederateHandle const       &owner );
+      rti1516_2025::FederateHandle const       &owner ) override;
 
    // 7.18
    virtual void attributeIsNotOwned(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
-      rti1516_2025::AttributeHandleSet const   &attributes );
+      rti1516_2025::AttributeHandleSet const   &attributes ) override;
 
    // 7.18
    virtual void attributeIsOwnedByRTI(
       rti1516_2025::ObjectInstanceHandle const &objectInstance,
-      rti1516_2025::AttributeHandleSet const   &attributes );
+      rti1516_2025::AttributeHandleSet const   &attributes ) override;
 
    //////////////////////////////
    // Time Management Services //
@@ -436,24 +436,24 @@ class FedAmb : public rti1516_2025::FederateAmbassador, public FedAmbBase
 
    // 8.3
    virtual void timeRegulationEnabled(
-      rti1516_2025::LogicalTime const &time );
+      rti1516_2025::LogicalTime const &time ) override;
 
    // 8.6
    virtual void timeConstrainedEnabled(
-      rti1516_2025::LogicalTime const &time );
+      rti1516_2025::LogicalTime const &time ) override;
 
    // 8.13
    virtual void flushQueueGrant(
       rti1516_2025::LogicalTime const &time,
-      rti1516_2025::LogicalTime const &optimisticTime );
+      rti1516_2025::LogicalTime const &optimisticTime ) override;
 
    // 8.14
    virtual void timeAdvanceGrant(
-      rti1516_2025::LogicalTime const &time );
+      rti1516_2025::LogicalTime const &time ) override;
 
    // 8.23
    virtual void requestRetraction(
-      rti1516_2025::MessageRetractionHandle const &retraction );
+      rti1516_2025::MessageRetractionHandle const &retraction ) override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

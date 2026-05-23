@@ -59,19 +59,19 @@ class TimeOfDayTimeline : public Timeline
    TimeOfDayTimeline();
 
    /*! @brief Destructor for the TrickHLA TimeOfDayTimeline class. */
-   virtual ~TimeOfDayTimeline();
+   virtual ~TimeOfDayTimeline() override;
 
    //-----------------------------------------------------------------
    // This is a virtual function and must be defined by a full class.
    //-----------------------------------------------------------------
    /*! @brief Get the current time for this timeline in seconds.
     *  @return Current Time-Of-Day time in seconds to represent realtime. */
-   virtual double get_time() const;
+   virtual double get_time() const override;
 
    /*! @brief Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the minimum time resolution in seconds. */
-   virtual double get_min_resolution() const;
+   virtual double get_min_resolution() const override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

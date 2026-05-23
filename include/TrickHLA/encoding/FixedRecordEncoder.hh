@@ -84,19 +84,19 @@ class FixedRecordEncoder : public EncoderBase
    FixedRecordEncoder();
 
    /*! @brief Destructor for the TrickHLA FixedRecordEncoder class. */
-   virtual ~FixedRecordEncoder();
+   virtual ~FixedRecordEncoder() override;
 
-   virtual void update_before_encode();
+   virtual void update_before_encode() override;
 
-   virtual void update_after_decode();
+   virtual void update_after_decode() override;
 
-   virtual std::size_t get_data_size();
+   virtual std::size_t get_data_size() override;
 
    static void update_before_encode( RTI1516_NAMESPACE::HLAfixedRecord const *fixed_rec );
 
    static void update_after_decode( RTI1516_NAMESPACE::HLAfixedRecord const *fixed_rec );
 
-   virtual std::string to_string()
+   virtual std::string to_string() override
    {
       return "FixedRecordEncoder[" + data_name + "]";
    }

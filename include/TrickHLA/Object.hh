@@ -162,7 +162,7 @@ class Object : public CheckpointConversionBase
    /*! @brief Default constructor for the TrickHLA Object class. */
    Object();
    /*! @brief Destructor for the TrickHLA Object class. */
-   virtual ~Object();
+   virtual ~Object() override;
 
    //-----------------------------------------------------------------
    // Post-constructor initialization stuff
@@ -338,15 +338,15 @@ class Object : public CheckpointConversionBase
    // CheckpointConversionBase Interface.
    //
    /*! @brief Setup the checkpoint data structures. */
-   virtual void convert_data_before_checkpoint();
+   virtual void convert_data_before_checkpoint() override;
 
    /*! @brief If an ownership_transfer object has been created by the user,
     * trigger it's restore() method is re-establish the pull / push
     * AttributeOwnershipMaps. */
-   virtual void restore_data_after_checkpoint();
+   virtual void restore_data_after_checkpoint() override;
 
    /*! @brief Clears out the push / pull checkpoint-able queues. */
-   virtual void free_converted_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint() override;
 
    //
    // Instance methods

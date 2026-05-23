@@ -59,7 +59,7 @@ class DynamicalEntityDeleted : public SpaceFOM::PhysicalEntityDeleted
    /*! @brief Default constructor for the SpaceFOM DynamicalEntityDeleted class. */
    DynamicalEntityDeleted();
    /*! @brief Destructor for the SpaceFOM DynamicalEntityDeleted class. */
-   virtual ~DynamicalEntityDeleted();
+   virtual ~DynamicalEntityDeleted() override;
 
    //-----------------------------------------------------------------
    // These functions must be defined to make this a concrete class.
@@ -67,7 +67,7 @@ class DynamicalEntityDeleted : public SpaceFOM::PhysicalEntityDeleted
 
    /*! @brief Callback routine implementation to report that this object has
     *  been deleted from the RTI. */
-   virtual void deleted();
+   virtual void deleted() override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

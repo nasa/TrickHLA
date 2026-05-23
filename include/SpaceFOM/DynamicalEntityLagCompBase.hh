@@ -64,37 +64,37 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
   public:
    // Public constructors and destructors.
    explicit DynamicalEntityLagCompBase( DynamicalEntityBase &entity_ref ); // Initialization constructor.
-   virtual ~DynamicalEntityLagCompBase();                                  // Destructor.
+   virtual ~DynamicalEntityLagCompBase() override;                         // Destructor.
 
    /*! @brief Entity instance initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    /*! @brief Initialization integration states. */
-   virtual void initialize_states();
+   virtual void initialize_states() override;
 
    /*! @brief Sending side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void send_lag_compensation();
+   virtual void send_lag_compensation() override;
 
    /*! @brief Receive side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void receive_lag_compensation();
+   virtual void receive_lag_compensation() override;
 
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the send side lag compensation and your implementation must copy
     * the sim-data to the lag-comp data to effect the bypass. */
-   virtual void bypass_send_lag_compensation();
+   virtual void bypass_send_lag_compensation() override;
 
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the receive side lag compensation and your implementation must
     * copy the lag-comp data to the sim-data to effect the bypass. You must
     * make sure to check the lag-comp data was received before copying to
     * the sim-data otherwise you will be copying stale data. */
-   virtual void bypass_receive_lag_compensation();
+   virtual void bypass_receive_lag_compensation() override;
 
   protected:
    DynamicalEntityBase &de_entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
@@ -126,17 +126,17 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       double const t_begin,
-      double const t_end ) = 0;
+      double const t_end ) override = 0;
 
    /*! @brief Unload the lag compensation state into the packing data. */
-   virtual void unload_lag_comp_data();
+   virtual void unload_lag_comp_data() override;
 
    /*! @brief Load the packing data into the lag compensation state. */
-   virtual void load_lag_comp_data();
+   virtual void load_lag_comp_data() override;
 
    /*! @brief Print out the lag compensation data values.
     *  @param stream Output stream. */
-   virtual void print_lag_comp_data( std::ostream &stream = std::cout ) const;
+   virtual void print_lag_comp_data( std::ostream &stream = std::cout ) const override;
 
   private:
    // This object is not copyable

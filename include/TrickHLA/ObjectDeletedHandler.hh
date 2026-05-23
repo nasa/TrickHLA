@@ -65,7 +65,7 @@ class ObjectDeletedHandler : public CheckpointConversionBase
    /*! @brief Default constructor for the TrickHLA ObjectDeletedHandler class. */
    ObjectDeletedHandler();
    /*! @brief Destructor for the TrickHLA ObjectDeletedHandler class. */
-   virtual ~ObjectDeletedHandler();
+   virtual ~ObjectDeletedHandler() override;
 
    // Use implicit copy constructor and assignment operator.
 
@@ -84,19 +84,19 @@ class ObjectDeletedHandler : public CheckpointConversionBase
    // CheckpointConversionBase Interface.
    //
    /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint()
+   virtual void convert_data_before_checkpoint() override
    {
       return;
    }
 
    /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint()
+   virtual void restore_data_after_checkpoint() override
    {
       return;
    }
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint()
+   virtual void free_converted_data_for_checkpoint() override
    {
       return;
    }

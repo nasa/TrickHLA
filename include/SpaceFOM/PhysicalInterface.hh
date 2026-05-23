@@ -57,31 +57,31 @@ class PhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
    // Public constructors and destructors.
    PhysicalInterface();                                                     // Default constructor.
    explicit PhysicalInterface( PhysicalInterfaceData &interface_data_ref ); // Initialization constructor.
-   virtual ~PhysicalInterface();                                            // Destructor.
+   virtual ~PhysicalInterface() override;                                   // Destructor.
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    // Access functions.
    /*! @brief Set the name of the PhysicalInterface object instance.
     *  @param new_name Name of the PhysicalInterface object instance. */
-   virtual void set_name( std::string const &new_name );
+   virtual void set_name( std::string const &new_name ) override;
 
    /*! @brief Set the name of the parent reference frame for the PhysicalInterface.
     *  @param new_parent_name The name of the parent reference frame associated
     *  with the PhysicalInterface. */
-   virtual void set_parent( std::string const &new_parent_name );
+   virtual void set_parent( std::string const &new_parent_name ) override;
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
-   virtual void pack_from_working_data();
+   virtual void pack_from_working_data() override;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
     *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
-   virtual void unpack_into_working_data();
+   virtual void unpack_into_working_data() override;
 
    /*! @brief Set the reference to the physical entity data.
     *  @param interface_data_ptr Pointer to the PhysicalInterface data instance. */

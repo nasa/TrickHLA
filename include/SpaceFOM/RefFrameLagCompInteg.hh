@@ -61,18 +61,18 @@ class RefFrameLagCompInteg : public RefFrameLagCompBase, public TrickHLA::LagCom
   public:
    // Public constructors and destructors.
    explicit RefFrameLagCompInteg( RefFrameBase &ref_frame_ref ); // Initialization constructor.
-   virtual ~RefFrameLagCompInteg();                              // Destructor.
+   virtual ~RefFrameLagCompInteg() override;                     // Destructor.
 
    /*! @brief Entity instance initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Sending side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void send_lag_compensation();
+   virtual void send_lag_compensation() override;
 
    /*! @brief Receive side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void receive_lag_compensation();
+   virtual void receive_lag_compensation() override;
 
   protected:
    /*! @brief Compensate the state data from the data time to the current scenario time.
@@ -80,7 +80,7 @@ class RefFrameLagCompInteg : public RefFrameLagCompBase, public TrickHLA::LagCom
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       double const t_begin,
-      double const t_end )
+      double const t_end ) override
    {
       this->compensate_dt = t_end - t_begin;
       return ( integrate( t_begin, t_end ) );

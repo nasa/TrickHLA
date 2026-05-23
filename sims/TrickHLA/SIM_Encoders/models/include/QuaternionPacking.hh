@@ -47,7 +47,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionData.hh"
 #if defined( USE_SPACEFOM_ENCODERS )
-#  include "SpaceFOM/QuaternionEncoder.hh"
+#   include "SpaceFOM/QuaternionEncoder.hh"
 #endif
 
 // Forward Declared Classes:  Since these classes are only used as references
@@ -76,14 +76,14 @@ class QuaternionPacking : public TrickHLA::Packing
    friend void init_attrSpaceFOM__QuaternionPacking();
 
   public:
-   SpaceFOM::QuaternionData test_data; ///< @trick_units{--} Test quaternion.
+   QuaternionData test_data; ///< @trick_units{--} Test quaternion.
 
   public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the SpaceFOM QuaternionPacking class. */
    QuaternionPacking();
    /*! @brief Destructor for the SpaceFOM QuaternionPacking class. */
-   virtual ~QuaternionPacking();
+   virtual ~QuaternionPacking() override;
 
    // Default data.
    /*! @brief Sets up the attributes for using default values.
@@ -93,19 +93,19 @@ class QuaternionPacking : public TrickHLA::Packing
     *  @param working_data  Reference to the working data associated with this STC object.
     *  @param mngr_object   TrickHLA::Object associated with this STC object.
     *  */
-   virtual void base_config( bool                      publishes,
-                             char const               *sim_obj_name,
-                             char const               *packing_name,
-                             SpaceFOM::QuaternionData *working_data = NULL,
-                             TrickHLA::Object         *mngr_object = NULL );
+   virtual void base_config( bool              publishes,
+                             char const       *sim_obj_name,
+                             char const       *packing_name,
+                             QuaternionData   *working_data = NULL,
+                             TrickHLA::Object *mngr_object  = NULL );
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    /*! @brief Access function to set the appropriate publish flags. */
    virtual void publish();
@@ -115,11 +115,11 @@ class QuaternionPacking : public TrickHLA::Packing
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   virtual void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   virtual void unpack() override;
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
@@ -143,15 +143,15 @@ class QuaternionPacking : public TrickHLA::Packing
    bool test;  ///< @trick_units{--} Flag to enable testing.
 
   protected:
-   SpaceFOM::QuaternionData * working_data; ///< @trick_units{--} Working data.
+   QuaternionData *working_data; ///< @trick_units{--} Working data.
 
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
-   TrickHLA::Attribute * quat_attr; ///< @trick_io{**} Quaternion Attribute.
+   TrickHLA::Attribute *quat_attr; ///< @trick_io{**} Quaternion Attribute.
 
    // Assign to these parameters when setting up the data associations for the
    // SpaceFOM TrickHLAObject data for the Quaternion.
-   SpaceFOM::QuaternionData packing_data; ///< @trick_units{--} STC packing data.
+   QuaternionData packing_data; ///< @trick_units{--} STC packing data.
 
 #if defined( USE_SPACEFOM_ENCODERS )
    // Instantiate the Space/Time Coordinate encoder

@@ -68,7 +68,7 @@ class RelStateBase : public SpaceFOM::PhysicalEntityData
     *  @param tree  The reference frame tree containing all reference frames. */
    RelStateBase( RefFrameBase &wrt_frame, RefFrameTree &tree );
    /*! @brief Destructor for the SpaceFOM RelStateBase class. */
-   virtual ~RelStateBase();
+   virtual ~RelStateBase() override;
 
    /*! @brief Set the frame in which to express a source state.
     *  @return True if frame is set, false otherwise.

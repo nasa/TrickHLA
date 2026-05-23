@@ -72,7 +72,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
    // Public constructors and destructors.
    BallPacking();                                     // Default constructor.
    explicit BallPacking( BallState &ball_state_ref ); // Initialization constructor.
-   virtual ~BallPacking();                            // Destructor.
+   virtual ~BallPacking() override;                   // Destructor.
 
    // Default data.
    /*! @brief Sets up the attributes for a Ball using default values.
@@ -87,14 +87,14 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
                              char const       *ball_obj_name,
                              char const       *ball_name,
                              bool              publishes,
-                             TrickHLA::Object *mngr_object = NULL );
+                             TrickHLA::Object *mngr_object = NULL ) override;
 
    /*! @brief Entity instance initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   void initialize_callback( TrickHLA::Object *obj ) override;
 
    // Access functions.
    /*! @brief Set the name of the Ball object instance.
@@ -189,11 +189,11 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   void unpack() override;
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working

@@ -11,11 +11,10 @@ else
    $(error S_overrides.mk:ERROR: You must set the TRICKHLA_HOME environment variable.)
 endif
 
-FOM_HOME?=../../
+FOM_HOME?=${TRICKHLA_HOME}
 
 ifdef FOM_HOME
-   TRICK_SFLAGS += -I${FOM_HOME}/S_modules -I${FOM_HOME} -L${FOM_HOME}
-#   include ${FOM_HOME}/makefiles/S_hla.mk
+   TRICK_SFLAGS += -I${FOM_HOME}/S_modules -I${FOM_HOME}
 else
    $(error S_overrides.mk:ERROR: You must set the FOM_HOME environment variable.)
 endif

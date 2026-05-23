@@ -104,9 +104,9 @@ class Distributed2WayBusFluidInterfaceData : public FluidDistributedMixtureData,
    /// @brief  Default constructs this Fluid Distributed 2-Way Bus interface data.
    Distributed2WayBusFluidInterfaceData();
    /// @brief  Default destructs this Fluid Distributed 2-Way Bus interface data.
-   virtual ~Distributed2WayBusFluidInterfaceData();
+   virtual ~Distributed2WayBusFluidInterfaceData() override;
    /// @brief  Returns whether this object has received valid data.
-   virtual bool hasValidData() const;
+   virtual bool hasValidData() const override;
    /// @brief Assignment operator for this Fluid Distributed 2-Way Bus interface data.
    Distributed2WayBusFluidInterfaceData &operator=( Distributed2WayBusFluidInterfaceData const &that );
 
@@ -128,7 +128,7 @@ class Distributed2WayBusFluidFluidState : public FluidDistributedMixtureData
    /// @brief Default constructor.
    Distributed2WayBusFluidFluidState();
    /// @brief Default destructor.
-   virtual ~Distributed2WayBusFluidFluidState();
+   virtual ~Distributed2WayBusFluidFluidState() override;
    /// @brief Assignment operator.
    Distributed2WayBusFluidFluidState &operator=( Distributed2WayBusFluidFluidState const &that );
 
@@ -150,7 +150,7 @@ class Distributed2WayBusFluidFlowState : public FluidDistributedMixtureData
    /// @brief Default constructor.
    Distributed2WayBusFluidFlowState();
    /// @brief Default destructor.
-   virtual ~Distributed2WayBusFluidFlowState();
+   virtual ~Distributed2WayBusFluidFlowState() override;
    /// @brief Assignment operator.
    Distributed2WayBusFluidFlowState &operator=( Distributed2WayBusFluidFlowState const &that );
 
@@ -214,7 +214,7 @@ class Distributed2WayBusFluid : public Distributed2WayBusBase
    /// @brief Default Constructor.
    Distributed2WayBusFluid();
    /// @brief Default Destructor.
-   virtual ~Distributed2WayBusFluid();
+   virtual ~Distributed2WayBusFluid() override;
    /// @brief Initializes this Distributed 2-Way Bus Interface.
    void initialize( bool const         isPairMaster,
                     unsigned int const nIfBulk,

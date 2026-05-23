@@ -86,20 +86,20 @@ class CharOpaqueDataEncoder : public VariableArrayEncoderBase
                           std::string const &name );
 
    /*! @brief Destructor for the TrickHLA CharOpaqueDataEncoder class. */
-   virtual ~CharOpaqueDataEncoder();
+   virtual ~CharOpaqueDataEncoder() override;
 
-   virtual void update_before_encode();
+   virtual void update_before_encode() override;
 
-   virtual void update_after_decode();
+   virtual void update_after_decode() override;
 
-   virtual std::size_t get_data_size()
+   virtual std::size_t get_data_size() override
    {
       return ( ( data_encoder != NULL )
                   ? dynamic_cast< RTI1516_NAMESPACE::HLAopaqueData * >( data_encoder )->dataLength()
                   : 0 );
    }
 
-   virtual std::string to_string()
+   virtual std::string to_string() override
    {
       return "CharOpaqueDataEncoder[" + data_name + "]";
    }

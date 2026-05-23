@@ -86,8 +86,8 @@ class PhysicalEntityBase : public TrickHLA::Packing
 
   public:
    // Public constructors and destructors.
-   PhysicalEntityBase();          // Default constructor.
-   virtual ~PhysicalEntityBase(); // Destructor.
+   PhysicalEntityBase();                   // Default constructor.
+   virtual ~PhysicalEntityBase() override; // Destructor.
 
    // Default data.
    /*! @brief Sets up the attributes for a PhysicalEntity using default values.
@@ -108,11 +108,11 @@ class PhysicalEntityBase : public TrickHLA::Packing
                              bool const         subscribe   = false );
 
    /*! @brief Entity instance initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    // Access functions.
    /*! @brief Set the name of the PhysicalEntity object instance.
@@ -169,11 +169,11 @@ class PhysicalEntityBase : public TrickHLA::Packing
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   virtual void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   virtual void unpack() override;
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working

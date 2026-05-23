@@ -86,28 +86,28 @@ class CharRawDataEncoder : public VariableArrayEncoderBase
                        std::string const &name );
 
    /*! @brief Destructor for the TrickHLA CharRawDataEncoder class. */
-   virtual ~CharRawDataEncoder();
+   virtual ~CharRawDataEncoder() override;
 
-   virtual void update_before_encode();
+   virtual void update_before_encode() override;
 
-   virtual void update_after_decode();
+   virtual void update_after_decode() override;
 
 #if defined( IEEE_1516_2025 )
-   virtual RTI1516_NAMESPACE::DataElement &decode( RTI1516_NAMESPACE::VariableLengthData const &inData );
+   virtual RTI1516_NAMESPACE::DataElement &decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) override;
 #else
-   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException );
+   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException ) override;
 #endif // IEEE_1516_2025
 
    virtual std::size_t decodeFrom(
 #if defined( IEEE_1516_2025 )
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
-      std::size_t                                    index );
+      std::size_t                                    index ) override;
 #else
       std::vector< RTI1516_NAMESPACE::Octet > const &buffer,
-      std::size_t                                    index ) throw( RTI1516_NAMESPACE::EncoderException );
+      std::size_t                                    index ) throw( RTI1516_NAMESPACE::EncoderException ) override;
 #endif // IEEE_1516_2025
 
-   virtual std::string to_string()
+   virtual std::string to_string() override
    {
       return "CharRawDataEncoder[" + data_name + "]";
    }

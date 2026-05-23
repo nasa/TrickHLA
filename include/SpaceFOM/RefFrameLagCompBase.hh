@@ -68,37 +68,37 @@ class RefFrameLagCompBase : public TrickHLA::LagCompensation
   public:
    // Public constructors and destructors.
    explicit RefFrameLagCompBase( RefFrameBase &ref_frame_ref ); // Initialization constructor.
-   virtual ~RefFrameLagCompBase();                              // Destructor.
+   virtual ~RefFrameLagCompBase() override;                     // Destructor.
 
    /*! @brief Entity instance initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    /*! @brief Initialization integration states. */
    virtual void initialize_states();
 
    /*! @brief Sending side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void send_lag_compensation() = 0;
+   virtual void send_lag_compensation() override = 0;
 
    /*! @brief Receive side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void receive_lag_compensation() = 0;
+   virtual void receive_lag_compensation() override = 0;
 
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the send side lag compensation and your implementation must copy
     * the sim-data to the lag-comp data to effect the bypass. */
-   virtual void bypass_send_lag_compensation();
+   virtual void bypass_send_lag_compensation() override;
 
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the receive side lag compensation and your implementation must
     * copy the lag-comp data to the sim-data to effect the bypass. You must
     * make sure to check the lag-comp data was received before copying to
     * the sim-data otherwise you will be copying stale data. */
-   virtual void bypass_receive_lag_compensation();
+   virtual void bypass_receive_lag_compensation() override;
 
   public:
    bool debug; ///< @trick_units{--} Debug output flag.

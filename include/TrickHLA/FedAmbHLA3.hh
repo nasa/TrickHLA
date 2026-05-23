@@ -95,7 +95,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
     *  @param fed Associated Federate instance. */
    explicit FedAmb( Federate &fed );
    /*! @brief Destructor for the TrickHLA FedAmb class. */
-   virtual ~FedAmb();
+   virtual ~FedAmb() override;
 
    // *****************************************************************
    // The following methods fill out the required virtual methods of
@@ -113,89 +113,89 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
 
    // 4.4
    virtual void connectionLost(
-      std::wstring const &faultDescription ) throw( rti1516e::FederateInternalError );
+      std::wstring const &faultDescription ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.8
    virtual void reportFederationExecutions(
       rti1516e::FederationExecutionInformationVector const &
-         report ) throw( rti1516e::FederateInternalError );
+         report ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.7
    virtual void
    synchronizationPointRegistrationSucceeded(
-      std::wstring const &label ) throw( rti1516e::FederateInternalError );
+      std::wstring const &label ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.7
    virtual void
    synchronizationPointRegistrationFailed(
       std::wstring const                         &label,
-      rti1516e::SynchronizationPointFailureReason reason ) throw( rti1516e::FederateInternalError );
+      rti1516e::SynchronizationPointFailureReason reason ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.8
    virtual void
    announceSynchronizationPoint(
       std::wstring const                 &label,
-      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError );
+      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.10
    virtual void
    federationSynchronized(
       std::wstring const                &label,
-      rti1516e::FederateHandleSet const &failedToSyncSet ) throw( rti1516e::FederateInternalError );
+      rti1516e::FederateHandleSet const &failedToSyncSet ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.12
    virtual void initiateFederateSave(
-      std::wstring const &label ) throw( rti1516e::FederateInternalError );
+      std::wstring const &label ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.12
    virtual void
    initiateFederateSave(
       std::wstring const          &label,
-      rti1516e::LogicalTime const &time ) throw( rti1516e::FederateInternalError );
+      rti1516e::LogicalTime const &time ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.15
-   virtual void federationSaved() throw( rti1516e::FederateInternalError );
+   virtual void federationSaved() throw( rti1516e::FederateInternalError ) override;
 
    // 4.15
    virtual void
    federationNotSaved(
-      rti1516e::SaveFailureReason reason ) throw( rti1516e::FederateInternalError );
+      rti1516e::SaveFailureReason reason ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.17
    virtual void federationSaveStatusResponse(
       rti1516e::FederateHandleSaveStatusPairVector const &
-         response ) throw( rti1516e::FederateInternalError );
+         response ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.19
    virtual void requestFederationRestoreSucceeded(
-      std::wstring const &label ) throw( rti1516e::FederateInternalError );
+      std::wstring const &label ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.19
    virtual void requestFederationRestoreFailed(
-      std::wstring const &label ) throw( rti1516e::FederateInternalError );
+      std::wstring const &label ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.20
-   virtual void federationRestoreBegun() throw( rti1516e::FederateInternalError );
+   virtual void federationRestoreBegun() throw( rti1516e::FederateInternalError ) override;
 
    // 4.21
    virtual void
    initiateFederateRestore(
       std::wstring const      &label,
       std::wstring const      &federateName,
-      rti1516e::FederateHandle postRestoreFederateHandle ) throw( rti1516e::FederateInternalError );
+      rti1516e::FederateHandle postRestoreFederateHandle ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.23
-   virtual void federationRestored() throw( rti1516e::FederateInternalError );
+   virtual void federationRestored() throw( rti1516e::FederateInternalError ) override;
 
    // 4.23
    virtual void
    federationNotRestored(
-      rti1516e::RestoreFailureReason reason ) throw( rti1516e::FederateInternalError );
+      rti1516e::RestoreFailureReason reason ) throw( rti1516e::FederateInternalError ) override;
 
    // 4.25
    virtual void federationRestoreStatusResponse(
       rti1516e::FederateRestoreStatusVector const &
-         response ) throw( rti1516e::FederateInternalError );
+         response ) throw( rti1516e::FederateInternalError ) override;
 
    /////////////////////////////////////
    // Declaration Management Services //
@@ -204,22 +204,22 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
    // 5.10
    virtual void
    startRegistrationForObjectClass(
-      rti1516e::ObjectClassHandle objectClass ) throw( rti1516e::FederateInternalError );
+      rti1516e::ObjectClassHandle objectClass ) throw( rti1516e::FederateInternalError ) override;
 
    // 5.11
    virtual void
    stopRegistrationForObjectClass(
-      rti1516e::ObjectClassHandle objectClass ) throw( rti1516e::FederateInternalError );
+      rti1516e::ObjectClassHandle objectClass ) throw( rti1516e::FederateInternalError ) override;
 
    // 5.12
    virtual void
    turnInteractionsOn(
-      rti1516e::InteractionClassHandle interactionClass ) throw( rti1516e::FederateInternalError );
+      rti1516e::InteractionClassHandle interactionClass ) throw( rti1516e::FederateInternalError ) override;
 
    // 5.13
    virtual void
    turnInteractionsOff(
-      rti1516e::InteractionClassHandle interactionClass ) throw( rti1516e::FederateInternalError );
+      rti1516e::InteractionClassHandle interactionClass ) throw( rti1516e::FederateInternalError ) override;
 
    ////////////////////////////////
    // Object Management Services //
@@ -228,34 +228,34 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
    // 6.3
    virtual void
    objectInstanceNameReservationSucceeded(
-      std::wstring const &objectInstanceName ) throw( rti1516e::FederateInternalError );
+      std::wstring const &objectInstanceName ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.3
    virtual void
    objectInstanceNameReservationFailed(
-      std::wstring const &objectInstanceName ) throw( rti1516e::FederateInternalError );
+      std::wstring const &objectInstanceName ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    multipleObjectInstanceNameReservationSucceeded(
-      std::set< std::wstring > const &objectInstanceNames ) throw( rti1516e::FederateInternalError );
+      std::set< std::wstring > const &objectInstanceNames ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    multipleObjectInstanceNameReservationFailed(
-      std::set< std::wstring > const &objectInstanceNames ) throw( rti1516e::FederateInternalError );
+      std::set< std::wstring > const &objectInstanceNames ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.5
    virtual void
    discoverObjectInstance(
       rti1516e::ObjectInstanceHandle objectInstance,
       rti1516e::ObjectClassHandle    objectClass,
-      std::wstring const            &objectInstanceName ) throw( rti1516e::FederateInternalError );
+      std::wstring const            &objectInstanceName ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    discoverObjectInstance(
       rti1516e::ObjectInstanceHandle objectInstance,
       rti1516e::ObjectClassHandle    objectClass,
       std::wstring const            &objectInstanceName,
-      rti1516e::FederateHandle       producingFederate ) throw( rti1516e::FederateInternalError );
+      rti1516e::FederateHandle       producingFederate ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.7
    virtual void
@@ -265,7 +265,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::VariableLengthData const      &userSuppliedTag,
       rti1516e::OrderType                      sentOrderType,
       rti1516e::TransportationType             transportationType,
-      rti1516e::SupplementalReflectInfo        reflectInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalReflectInfo        reflectInfo ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    reflectAttributeValues(
@@ -276,7 +276,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::TransportationType             transportationType,
       rti1516e::LogicalTime const             &time,
       rti1516e::OrderType                      receivedOrderType,
-      rti1516e::SupplementalReflectInfo        reflectInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalReflectInfo        reflectInfo ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    reflectAttributeValues(
@@ -288,7 +288,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::LogicalTime const             &time,
       rti1516e::OrderType                      receivedOrderType,
       rti1516e::MessageRetractionHandle        optionalRetraction,
-      rti1516e::SupplementalReflectInfo        reflectInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalReflectInfo        reflectInfo ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.9
    virtual void
@@ -298,7 +298,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::VariableLengthData const      &userSuppliedTag,
       rti1516e::OrderType                      sentOrderType,
       rti1516e::TransportationType             transportationType,
-      rti1516e::SupplementalReceiveInfo        receiveInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalReceiveInfo        receiveInfo ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    receiveInteraction(
@@ -309,7 +309,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::TransportationType             transportationType,
       rti1516e::LogicalTime const             &time,
       rti1516e::OrderType                      receivedOrderType,
-      rti1516e::SupplementalReceiveInfo        receiveInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalReceiveInfo        receiveInfo ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    receiveInteraction(
@@ -321,7 +321,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::LogicalTime const             &time,
       rti1516e::OrderType                      receivedOrderType,
       rti1516e::MessageRetractionHandle        optionalRetraction,
-      rti1516e::SupplementalReceiveInfo        receiveInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalReceiveInfo        receiveInfo ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.11
    virtual void
@@ -329,7 +329,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::ObjectInstanceHandle      objectInstance,
       rti1516e::VariableLengthData const &userSuppliedTag,
       rti1516e::OrderType                 sentOrderType,
-      rti1516e::SupplementalRemoveInfo    removeInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalRemoveInfo    removeInfo ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    removeObjectInstance(
@@ -338,7 +338,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::OrderType                 sentOrderType,
       rti1516e::LogicalTime const        &time,
       rti1516e::OrderType                 receivedOrderType,
-      rti1516e::SupplementalRemoveInfo    removeInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalRemoveInfo    removeInfo ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    removeObjectInstance(
@@ -348,71 +348,71 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
       rti1516e::LogicalTime const        &time,
       rti1516e::OrderType                 receivedOrderType,
       rti1516e::MessageRetractionHandle   optionalRetraction,
-      rti1516e::SupplementalRemoveInfo    removeInfo ) throw( rti1516e::FederateInternalError );
+      rti1516e::SupplementalRemoveInfo    removeInfo ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.15
    virtual void
    attributesInScope(
       rti1516e::ObjectInstanceHandle      objectInstance,
-      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.16
    virtual void
    attributesOutOfScope(
       rti1516e::ObjectInstanceHandle      objectInstance,
-      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.18
    virtual void
    provideAttributeValueUpdate(
       rti1516e::ObjectInstanceHandle      objectInstance,
       rti1516e::AttributeHandleSet const &attributes,
-      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError );
+      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.19
    virtual void
    turnUpdatesOnForObjectInstance(
       rti1516e::ObjectInstanceHandle      objectInstance,
-      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    turnUpdatesOnForObjectInstance(
       rti1516e::ObjectInstanceHandle      objectInstance,
       rti1516e::AttributeHandleSet const &attributes,
-      std::wstring const                 &updateRateDesignator ) throw( rti1516e::FederateInternalError );
+      std::wstring const                 &updateRateDesignator ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.20
    virtual void
    turnUpdatesOffForObjectInstance(
       rti1516e::ObjectInstanceHandle      objectInstance,
-      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.24
    virtual void
    confirmAttributeTransportationTypeChange(
       rti1516e::ObjectInstanceHandle objectInstance,
       rti1516e::AttributeHandleSet   attributes,
-      rti1516e::TransportationType   transportationType ) throw( rti1516e::FederateInternalError );
+      rti1516e::TransportationType   transportationType ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.26
    virtual void
    reportAttributeTransportationType(
       rti1516e::ObjectInstanceHandle objectInstance,
       rti1516e::AttributeHandle      attribute,
-      rti1516e::TransportationType   transportationType ) throw( rti1516e::FederateInternalError );
+      rti1516e::TransportationType   transportationType ) throw( rti1516e::FederateInternalError ) override;
 #
    // 6.28
    virtual void
    confirmInteractionTransportationTypeChange(
       rti1516e::InteractionClassHandle interactionClass,
-      rti1516e::TransportationType     transportationType ) throw( rti1516e::FederateInternalError );
+      rti1516e::TransportationType     transportationType ) throw( rti1516e::FederateInternalError ) override;
 
    // 6.30
    virtual void
    reportInteractionTransportationType(
       rti1516e::FederateHandle         federateHandle,
       rti1516e::InteractionClassHandle interactionClass,
-      rti1516e::TransportationType     transportationType ) throw( rti1516e::FederateInternalError );
+      rti1516e::TransportationType     transportationType ) throw( rti1516e::FederateInternalError ) override;
 
    ///////////////////////////////////
    // Ownership Management Services //
@@ -423,55 +423,55 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
    requestAttributeOwnershipAssumption(
       rti1516e::ObjectInstanceHandle      objectInstance,
       rti1516e::AttributeHandleSet const &attributes,
-      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError );
+      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError ) override;
 
    // 7.5
    virtual void
    requestDivestitureConfirmation(
       rti1516e::ObjectInstanceHandle      objectInstance,
-      rti1516e::AttributeHandleSet const &releasedAttributes ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandleSet const &releasedAttributes ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    attributeOwnershipAcquisitionNotification(
       rti1516e::ObjectInstanceHandle      objectInstance,
       rti1516e::AttributeHandleSet const &securedAttributes,
-      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError );
+      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError ) override;
 
    // 7.10
    virtual void
    attributeOwnershipUnavailable(
       rti1516e::ObjectInstanceHandle      objectInstance,
-      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError ) override;
 
    // 7.11
    virtual void
    requestAttributeOwnershipRelease(
       rti1516e::ObjectInstanceHandle      objectInstance,
       rti1516e::AttributeHandleSet const &attributes,
-      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError );
+      rti1516e::VariableLengthData const &userSuppliedTag ) throw( rti1516e::FederateInternalError ) override;
 
    // 7.15
    virtual void
    confirmAttributeOwnershipAcquisitionCancellation(
       rti1516e::ObjectInstanceHandle      objectInstance,
-      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandleSet const &attributes ) throw( rti1516e::FederateInternalError ) override;
 
    // 7.17
    virtual void
    informAttributeOwnership(
       rti1516e::ObjectInstanceHandle objectInstance,
       rti1516e::AttributeHandle      attribute,
-      rti1516e::FederateHandle       owner ) throw( rti1516e::FederateInternalError );
+      rti1516e::FederateHandle       owner ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    attributeIsNotOwned(
       rti1516e::ObjectInstanceHandle objectInstance,
-      rti1516e::AttributeHandle      attribute ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandle      attribute ) throw( rti1516e::FederateInternalError ) override;
 
    virtual void
    attributeIsOwnedByRTI(
       rti1516e::ObjectInstanceHandle objectInstance,
-      rti1516e::AttributeHandle      attribute ) throw( rti1516e::FederateInternalError );
+      rti1516e::AttributeHandle      attribute ) throw( rti1516e::FederateInternalError ) override;
 
    //////////////////////////////
    // Time Management Services //
@@ -480,22 +480,22 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
    // 8.3
    virtual void
    timeRegulationEnabled(
-      rti1516e::LogicalTime const &time ) throw( rti1516e::FederateInternalError );
+      rti1516e::LogicalTime const &time ) throw( rti1516e::FederateInternalError ) override;
 
    // 8.6
    virtual void
    timeConstrainedEnabled(
-      rti1516e::LogicalTime const &time ) throw( rti1516e::FederateInternalError );
+      rti1516e::LogicalTime const &time ) throw( rti1516e::FederateInternalError ) override;
 
    // 8.13
    virtual void
    timeAdvanceGrant(
-      rti1516e::LogicalTime const &time ) throw( rti1516e::FederateInternalError );
+      rti1516e::LogicalTime const &time ) throw( rti1516e::FederateInternalError ) override;
 
    // 8.22
    virtual void
    requestRetraction(
-      rti1516e::MessageRetractionHandle retraction ) throw( rti1516e::FederateInternalError );
+      rti1516e::MessageRetractionHandle retraction ) throw( rti1516e::FederateInternalError ) override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

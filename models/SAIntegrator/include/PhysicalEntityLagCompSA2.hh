@@ -65,10 +65,10 @@ class PhysicalEntityLagCompSA2 : public TrickHLA::LagCompensationIntegBase, publ
   public:
    // Public constructors and destructors.
    explicit PhysicalEntityLagCompSA2( PhysicalEntityBase &entity_ref ); // Initialization constructor.
-   virtual ~PhysicalEntityLagCompSA2();                                 // Destructor.
+   virtual ~PhysicalEntityLagCompSA2() override;                        // Destructor.
 
    /*! @brief Entity instance initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
 
   protected:
    double                   *integ_states[7]; ///< @trick_units{--} @trick_io{**} Integrator state vector.
@@ -93,37 +93,37 @@ class PhysicalEntityLagCompSA2 : public TrickHLA::LagCompensationIntegBase, publ
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       double const t_begin,
-      double const t_end )
+      double const t_end ) override
    {
       this->compensate_dt = t_end - t_begin;
       return ( integrate( t_begin, t_end ) );
    }
 
    /*! @brief Update the latency compensation time from the integrator. */
-   virtual void update_time() { lag_comp_data.time = this->integ_t; }
+   virtual void update_time() override { lag_comp_data.time = this->integ_t; }
 
    /*! @brief Load the integration state into the integrator. */
-   virtual void load();
+   virtual void load() override;
 
    /*! @brief Unload the integration state from the integrator. */
-   virtual void unload();
+   virtual void unload() override;
 
    /*! @brief Compute the first time derivative of the lag compensation state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_first( void *user_data = NULL );
+   virtual void derivative_first( void *user_data = NULL ) override;
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
     *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_second( void *user_data = NULL ) { return; }
+   virtual void derivative_second( void *user_data = NULL ) override { return; }
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int integrate(
       double const t_begin,
-      double const t_end );
+      double const t_end ) override;
 
   private:
    // This object is not copyable

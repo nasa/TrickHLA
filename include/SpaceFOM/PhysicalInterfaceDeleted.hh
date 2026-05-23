@@ -59,7 +59,7 @@ class PhysicalInterfaceDeleted : public TrickHLA::ObjectDeletedHandler
    /*! @brief Default constructor for the SpaceFOM PhysicalInterfaceDeleted class. */
    PhysicalInterfaceDeleted();
    /*! @brief Destructor for the SpaceFOM PhysicalInterfaceDeleted class. */
-   virtual ~PhysicalInterfaceDeleted();
+   virtual ~PhysicalInterfaceDeleted() override;
 
    //-----------------------------------------------------------------
    // These functions must be defined to make this a concrete class.
@@ -67,7 +67,7 @@ class PhysicalInterfaceDeleted : public TrickHLA::ObjectDeletedHandler
 
    /*! @brief Callback routine implementation to report that this object has
     *  been deleted from the RTI.*/
-   virtual void deleted();
+   virtual void deleted() override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

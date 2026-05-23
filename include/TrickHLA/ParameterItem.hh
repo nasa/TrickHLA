@@ -92,7 +92,7 @@ class ParameterItem : public Item
    ParameterItem( ParameterItem const &rhs );
 
    /*! @brief Destructor for the TrickHLA ParameterItem class. */
-   virtual ~ParameterItem();
+   virtual ~ParameterItem() override;
 
    /*! @brief Frees allocated memory. */
    void clear();

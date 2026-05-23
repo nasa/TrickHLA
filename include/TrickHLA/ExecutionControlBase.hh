@@ -129,7 +129,7 @@ class ExecutionControlBase : public SyncPointManagerBase
     *  @param exec_config The associated ExecutionConfigurationBase class instance. */
    explicit ExecutionControlBase( ExecutionConfigurationBase &exec_config );
    /*! @brief Destructor for the ExecutionControlBase class. */
-   virtual ~ExecutionControlBase() = 0;
+   virtual ~ExecutionControlBase() override = 0;
 
   public:
    //-------------------------------------------------------------------------
@@ -788,13 +788,13 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual std::string const map_save_label_to_checkpoint_file_name( std::wstring const &save_label );
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
+   virtual void convert_data_before_checkpoint() override; // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
    /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
+   virtual void restore_data_after_checkpoint() override; // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint(); // cppcheck-suppress [uselessOverride, unmatchedSuppression]
+   virtual void free_converted_data_for_checkpoint() override; // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
    /*! @brief Converts HLA sync points into something Trick can save in a checkpoint. */
    virtual void convert_loggable_sync_pts()

@@ -126,25 +126,25 @@ class TimeManagementServices : public TrickThreadCoordinator, public CheckpointC
     *  @param fed Associated Federate instance. */
    explicit TimeManagementServices( Federate &fed );
    /*! @brief Destructor for the TrickHLA TimeManagementServices class. */
-   virtual ~TimeManagementServices();
+   virtual ~TimeManagementServices() override;
 
    //
    // CheckpointConversionBase Interface.
    //
    /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint()
+   virtual void convert_data_before_checkpoint() override
    {
       return;
    }
 
    /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint()
+   virtual void restore_data_after_checkpoint() override
    {
       return;
    }
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint()
+   virtual void free_converted_data_for_checkpoint() override
    {
       return;
    }
@@ -206,7 +206,7 @@ class TimeManagementServices : public TrickThreadCoordinator, public CheckpointC
    void initialize_thread_state( double const main_thread_data_cycle_time );
 
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
-   virtual bool verify_time_constraints();
+   virtual bool verify_time_constraints() override;
 
    /*! @brief Shutdown this federate's time management. */
    void shutdown_time_management();

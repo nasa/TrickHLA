@@ -61,36 +61,36 @@ class LagCompensationInteg : public LagCompensationIntegBase
    // Public constructors and destructors.
    //-----------------------------------------------------------------
    LagCompensationInteg();
-   virtual ~LagCompensationInteg() = 0;
+   virtual ~LagCompensationInteg() override = 0;
 
   protected:
    Trick::Integrator *integrator; ///< @trick_units{--} Reference to a specific Trick integration method.
 
    /*! @brief Update the latency compensation time from the integrator. */
-   virtual void update_time() = 0;
+   virtual void update_time() override = 0;
 
    /*! @brief Load the integration state into the integrator. */
-   virtual void load() = 0;
+   virtual void load() override = 0;
 
    /*! @brief Unload the integration state from the integrator. */
-   virtual void unload() = 0;
+   virtual void unload() override = 0;
 
    /*! @brief Compute the first time derivative of the lag compensation state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_first( void *user_data = NULL ) = 0;
+   virtual void derivative_first( void *user_data = NULL ) override = 0;
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
     *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_second( void *user_data = NULL ) = 0;
+   virtual void derivative_second( void *user_data = NULL ) override = 0;
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int integrate(
       double const t_begin,
-      double const t_end );
+      double const t_end ) override;
 };
 
 } // namespace TrickHLA

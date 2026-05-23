@@ -114,7 +114,7 @@ class Attribute : public RecordElement
    /*! @brief Default constructor for the TrickHLA Attribute class. */
    Attribute();
    /*! @brief Destructor for the TrickHLA Attribute class. */
-   virtual ~Attribute();
+   virtual ~Attribute() override;
 
    /*! @brief Initializes the TrickHLA Attribute.
     *  @param obj_FOM_name The FOM name of the parent object.

@@ -59,11 +59,11 @@ class PhysicalInterfaceOwnershipHandler : public TrickHLA::OwnershipHandler
    /*! @brief Default constructor for the SpaceFOM PhysicalInterfaceOwnershipHandler class. */
    PhysicalInterfaceOwnershipHandler();
    /*! @brief Destructor for the SpaceFOM PhysicalInterfaceOwnershipHandler class. */
-   virtual ~PhysicalInterfaceOwnershipHandler();
+   virtual ~PhysicalInterfaceOwnershipHandler() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::OwnershipHandler functions.
     *  @param obj Object associated with this OwnershipHandler class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

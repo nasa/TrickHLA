@@ -72,7 +72,7 @@ class SineLagCompensation : public SineData, public TrickHLA::LagCompensation
    /*! @brief Default constructor for the TrickHLAModel SineLagCompensation class. */
    SineLagCompensation();
    /*! @brief Destructor for the TrickHLAModel SineLagCompensation class. */
-   virtual ~SineLagCompensation();
+   virtual ~SineLagCompensation() override;
 
    /*! @brief Set the simulation data.
     *  @param data The sine wave data object. */
@@ -83,25 +83,25 @@ class SineLagCompensation : public SineData, public TrickHLA::LagCompensation
    //
    /*! @brief Initialization callback as part of the TrickHLA::LagCompensation functions.
     *  @param obj TrickHLA Object associated with this LagCompensation class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   void initialize_callback( TrickHLA::Object *obj ) override;
 
    /*! @brief Send side lag-compensation where we propagate the sine wave state
     *  head by dt to predict the value at the next data cycle. */
-   virtual void send_lag_compensation();
+   void send_lag_compensation() override;
 
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the send side lag compensation and your implementation must copy
     * the sim-data to the lag-comp data to effect the bypass. */
-   virtual void bypass_send_lag_compensation();
+   void bypass_send_lag_compensation() override;
 
    /*! @brief Receive side lag-compensation where we propagate the sine wave
     *  state ahead by dt to predict the value at the next data cycle. */
-   virtual void receive_lag_compensation();
+   void receive_lag_compensation() override;
 
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the receive side lag compensation and your implementation must
     * copy the lag-comp data to the sim-data to effect the bypass. */
-   virtual void bypass_receive_lag_compensation();
+   void bypass_receive_lag_compensation() override;
 
   private:
    SineData *sim_data; ///< @trick_units{--} Simulation data.

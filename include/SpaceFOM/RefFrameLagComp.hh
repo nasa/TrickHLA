@@ -57,26 +57,26 @@ class RefFrameLagComp : public RefFrameLagCompInteg
   public:
    // Public constructors and destructors.
    explicit RefFrameLagComp( RefFrameBase &ref_frame_ref ); // Initialization constructor.
-   virtual ~RefFrameLagComp();                              // Destructor.
+   virtual ~RefFrameLagComp() override;                     // Destructor.
 
    /*! @brief Entity instance initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
 
   protected:
    double *integ_states[13]; ///< @trick_units{--} @trick_io{**} Integration states.
 
    /*! @brief Update the latency compensation time from the integrator. */
-   virtual void update_time();
+   virtual void update_time() override;
 
    /*! @brief Load the integration state into the integrator. */
-   virtual void load();
+   virtual void load() override;
 
    /*! @brief Unload the integration state from the integrator. */
-   virtual void unload();
+   virtual void unload() override;
 
    /*! @brief Compute the first time derivative of the lag compensation state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_first( void *user_data = NULL );
+   virtual void derivative_first( void *user_data = NULL ) override;
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
     *  @details This function is called for second order integrators to compute
@@ -84,7 +84,7 @@ class RefFrameLagComp : public RefFrameLagCompInteg
     *  @param user_data Any special user data needed to compute the derivative values. */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-   virtual void derivative_second( void *user_data ) { return; }
+   virtual void derivative_second( void *user_data ) override { return; }
 #pragma GCC diagnostic pop
 
   private:

@@ -77,7 +77,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    CTETimelineBase( uint64_t const     clock_tics_per_sec,
                     std::string const &clock_name );
    /*! @brief Destructor for the TrickHLA CTETimelineBase class. */
-   virtual ~CTETimelineBase();
+   virtual ~CTETimelineBase() override;
 
    //-----------------------------------------------------------------
    // These virtual function must be defined by a full class.
@@ -87,7 +87,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    /*! Get the time resolution which is the smallest nonzero
     *  time for the given timeline.
     *  @return Returns the time resolution in seconds. */
-   virtual double get_min_resolution() const = 0;
+   virtual double get_min_resolution() const override = 0;
 
    /*! @brief Update the clock tics per second resolution of this clock
     *  to match the Trick executive resolution. */
@@ -95,18 +95,18 @@ class CTETimelineBase : public Trick::Clock, public Timeline
 
    /*! @brief Get the current CTE time.
     *  @return Current time of day in seconds. */
-   virtual double get_time() const = 0;
+   virtual double get_time() const override = 0;
 
    /*! @brief Initialize the Trick::Clock functions. */
-   virtual int clock_init();
+   virtual int clock_init() override;
 
    /*! @brief Get the wall clock time.
     *  @return The current real time as a count of microseconds. */
-   virtual long long wall_clock_time() = 0;
+   virtual long long wall_clock_time() override = 0;
 
    /*! @brief Stop the CTE clock.
     *  @return Default implementation always returns 0. */
-   virtual int clock_stop() = 0;
+   virtual int clock_stop() override = 0;
 
   private:
    // Do not allow the copy constructor or assignment operator.

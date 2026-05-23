@@ -64,20 +64,20 @@ class PhysicalInterfaceConditionalBase : public TrickHLA::Conditional
    /*! @brief Initialization constructor to associate with PhysicalInterface instance. */
    explicit PhysicalInterfaceConditionalBase( PhysicalInterfaceBase &interface_ref );
    /*! @brief Destructor. */
-   virtual ~PhysicalInterfaceConditionalBase();
+   virtual ~PhysicalInterfaceConditionalBase() override;
 
    /*! @brief Initializes the conditional data. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    /*! @brief Determines if the attribute has changed and returns the truth of
     *  that determination.
     *  @return True if value should be sent.
     *  @param attr Attribute to check. */
-   virtual bool should_send( TrickHLA::Attribute *attr );
+   virtual bool should_send( TrickHLA::Attribute *attr ) override;
 
   public:
    bool debug; ///< @trick_units{--} Debug output flag.

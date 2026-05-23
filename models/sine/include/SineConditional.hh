@@ -65,23 +65,23 @@ class SineConditional : public SineData, public TrickHLA::Conditional
    /*! @brief Default constructor for the TrickHLAModel SineConditional class. */
    SineConditional();
    /*! @brief Destructor for the TrickHLAModel SineConditional class. */
-   virtual ~SineConditional();
+   virtual ~SineConditional() override;
 
    /*! @brief Set the sim_datad.
     *  @param data External simulation data. */
    void set_data( SineData *data );
 
    /*! @brief Initializes conditional object. */
-   virtual void initialize();
+   void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   void initialize_callback( TrickHLA::Object *obj ) override;
 
    /*! @brief Determines if the attribute value should be sent.
     *  @return True if attribute value should be sent.
     *  @param attr Attribute to check. */
-   virtual bool should_send( TrickHLA::Attribute *attr );
+   bool should_send( TrickHLA::Attribute *attr ) override;
 
   protected:
    SineData *sim_data; ///< @trick_units{--} pointer to the data to reflect in this cycle

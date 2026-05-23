@@ -1934,7 +1934,7 @@ string Federate::wait_for_required_federates_to_join()
    size_t num_required_feds = 0;
    for ( auto const &known_fed : known_federates ) {
       if ( known_fed.required ) {
-         ++num_required_feds;
+         ++num_required_feds; // cppcheck-suppress [useStlAlgorithm]
       }
    }
 

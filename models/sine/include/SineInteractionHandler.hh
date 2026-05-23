@@ -68,7 +68,7 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
    /*! @brief Default constructor for the TrickHLAModel SineInteractionHandler class. */
    SineInteractionHandler();
    /*! @brief Destructor for the TrickHLAModel SineInteractionHandler class. */
-   virtual ~SineInteractionHandler();
+   virtual ~SineInteractionHandler() override;
 
   public:
    /*! @brief Send the HLA interaction using either Timestamp Order or Receive
@@ -78,7 +78,7 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Receive the HLA interaction.
     *  @param the_user_supplied_tag User tag. */
-   virtual void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag );
+   void receive_interaction( RTI1516_NAMESPACE::VariableLengthData const &the_user_supplied_tag ) override;
 
   protected:
    double time; ///< @trick_units{s}  Example of floating-point data.

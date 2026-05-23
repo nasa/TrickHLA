@@ -34,31 +34,30 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
 #include <limits>
 #include <math.h>
+#include <ostream>
 #include <sstream>
 #include <string>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA model include files.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/ExecutionControl.hh"
 #if defined( USE_SPACEFOM_ENCODERS )
-#  include "SpaceFOM/QuaternionEncoder.hh"
+#   include "SpaceFOM/QuaternionEncoder.hh"
 #else
-#  include "SpaceFOM/QuaternionConfig.hh"
+#   include "SpaceFOM/QuaternionConfig.hh"
 #endif
 
 // Artemis FOM includes.
@@ -98,11 +97,11 @@ QuaternionPacking::~QuaternionPacking()
  * @job_class{default_data}
  */
 void QuaternionPacking::base_config(
-   bool                      publishes,
-   char const               *sim_obj_name,
-   char const               *packing_name,
-   SpaceFOM::QuaternionData *working,
-   TrickHLA::Object         *mngr_object  )
+   bool            publishes,
+   char const     *sim_obj_name,
+   char const     *packing_name,
+   QuaternionData *working,
+   Object         *mngr_object )
 {
    string quat_name_str = string( sim_obj_name ) + "." + string( packing_name );
    string trick_name_str;
@@ -143,7 +142,7 @@ void QuaternionPacking::base_config(
    object->packing             = this;
    // Allocate the attributes for the QuaternionPacking HLA object.
    object->attr_count = 1;
-   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
+   object->attributes = static_cast< Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the attributes.
@@ -151,7 +150,7 @@ void QuaternionPacking::base_config(
 #if defined( USE_SPACEFOM_ENCODERS )
    object->attributes[0].FOM_name      = "quaternion";
    trick_name_str                      = quat_name_str + string( ".quat_encoder.buffer" );
-   object->attributes[0].trick_name    = trick_name_str.c_str();
+   object->attributes[0].trick_name    = trick_name_str;
    object->attributes[0].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
    object->attributes[0].publish       = publishes;
    object->attributes[0].subscribe     = !publishes;
@@ -176,9 +175,8 @@ void QuaternionPacking::base_config(
  */
 void QuaternionPacking::initialize()
 {
-
    // Check to make sure the working data has been set.
-   if ( working_data == NULL ){
+   if ( working_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::QuaternionPacking::initialize():" << __LINE__
              << " ERROR: NULL latitude reference!\n";
@@ -189,7 +187,7 @@ void QuaternionPacking::initialize()
    pack_from_working_data();
 
    // Mark this as initialized.
-   TrickHLA::Packing::initialize();
+   Packing::initialize();
 
    // Return to calling routine.
    return;
@@ -208,10 +206,10 @@ void QuaternionPacking::initialize()
  * @job_class{initialization}
  */
 void QuaternionPacking::initialize_callback(
-   TrickHLA::Object *obj )
+   Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   TrickHLA::Packing::initialize_callback( obj );
+   Packing::initialize_callback( obj );
 
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
@@ -407,9 +405,9 @@ void QuaternionPacking::unpack_test()
    }
 
    // Vector
-   if (     (abs( test_data.vector[0] - packing_data.vector[0] ) > tol )
-         || (abs( test_data.vector[1] - packing_data.vector[1] ) > tol )
-         || (abs( test_data.vector[2] - packing_data.vector[2] ) > tol ) ) {
+   if ( ( abs( test_data.vector[0] - packing_data.vector[0] ) > tol )
+        || ( abs( test_data.vector[1] - packing_data.vector[1] ) > tol )
+        || ( abs( test_data.vector[2] - packing_data.vector[2] ) > tol ) ) {
       ostringstream msg;
       msg << "QuaternionPacking::unpack_test(): " << __LINE__
           << " : Failed vector test!" << std::endl;

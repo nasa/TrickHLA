@@ -85,7 +85,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    explicit EncoderBase( std::string const &name );
 
    /*! @brief Destructor for the TrickHLA EncoderBase class. */
-   virtual ~EncoderBase();
+   virtual ~EncoderBase() override;
 
    virtual void update_before_encode() = 0;
 
@@ -101,9 +101,9 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 
 #if !defined( SWIG )
 #   if defined( IEEE_1516_2025 )
-   virtual std::unique_ptr< RTI1516_NAMESPACE::DataElement > clone() const
+   virtual std::unique_ptr< RTI1516_NAMESPACE::DataElement > clone() const override
 #   else
-   virtual std::auto_ptr< RTI1516_NAMESPACE::DataElement > clone() const
+   virtual std::auto_ptr< RTI1516_NAMESPACE::DataElement > clone() const override
 #   endif // IEEE_1516_2025
    {
       return data_encoder->clone();
@@ -113,6 +113,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
 #   endif // IEEE_1516_2010
+         override
    {
       return ( data_encoder != NULL ) ? data_encoder->encode()
                                       : RTI1516_NAMESPACE::VariableLengthData();
@@ -122,6 +123,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
 #   endif // IEEE_1516_2010
+         override
    {
       if ( data_encoder != NULL ) {
          data_encoder->encode( inData );
@@ -132,6 +134,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
 #   endif // IEEE_1516_2010
+         override
    {
       if ( data_encoder != NULL ) {
          data_encoder->encodeInto( buffer );
@@ -139,12 +142,12 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
    }
 
 #   if defined( IEEE_1516_2025 )
-   virtual RTI1516_NAMESPACE::DataElement &decode( RTI1516_NAMESPACE::VariableLengthData const &inData )
+   virtual RTI1516_NAMESPACE::DataElement &decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) override
    {
       return ( ( data_encoder != NULL ) ? data_encoder->decode( inData ) : *this ); // cppcheck-suppress [returnTempReference]
    }
 #   else
-   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException )
+   virtual void decode( RTI1516_NAMESPACE::VariableLengthData const &inData ) throw( RTI1516_NAMESPACE::EncoderException ) override
    {
       if ( data_encoder != NULL ) {
          data_encoder->decode( inData );
@@ -158,6 +161,7 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
 #   endif // IEEE_1516_2010
+         override
    {
       return ( data_encoder != NULL ) ? data_encoder->decodeFrom( buffer, index ) : index;
    }
@@ -166,21 +170,22 @@ class EncoderBase : public RTI1516_NAMESPACE::DataElement
 #   if defined( IEEE_1516_2010 )
       throw( RTI1516_NAMESPACE::EncoderException )
 #   endif // IEEE_1516_2010
+         override
    {
       return ( data_encoder != NULL ) ? data_encoder->getEncodedLength() : 0;
    }
 
-   virtual unsigned int getOctetBoundary() const
+   virtual unsigned int getOctetBoundary() const override
    {
       return ( data_encoder != NULL ) ? data_encoder->getOctetBoundary() : 1;
    }
 
-   virtual bool isSameTypeAs( RTI1516_NAMESPACE::DataElement const &inData ) const
+   virtual bool isSameTypeAs( RTI1516_NAMESPACE::DataElement const &inData ) const override
    {
       return ( data_encoder != NULL ) ? data_encoder->isSameTypeAs( inData ) : false;
    }
 
-   virtual RTI1516_NAMESPACE::Integer64 hash() const
+   virtual RTI1516_NAMESPACE::Integer64 hash() const override
    {
       return ( data_encoder != NULL ) ? data_encoder->hash() : RTI1516_NAMESPACE::Integer64( 0 );
    }

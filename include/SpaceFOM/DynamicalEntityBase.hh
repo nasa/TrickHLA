@@ -69,8 +69,8 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
 
   public:
    // Public constructors and destructors.
-   DynamicalEntityBase();          // Default constructor.
-   virtual ~DynamicalEntityBase(); // Destructor.
+   DynamicalEntityBase();                   // Default constructor.
+   virtual ~DynamicalEntityBase() override; // Destructor.
 
    // Default data.
    /*! @brief Sets up the attributes for a DynamicalEntity using default values.
@@ -88,32 +88,32 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
                              std::string const &entity_fed_name,
                              TrickHLA::Object  *mngr_object = NULL,
                              bool const         publish     = false,
-                             bool const         subscribe   = false );
+                             bool const         subscribe   = false ) override;
 
    /*! @brief Entity instance initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   virtual void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   virtual void unpack() override;
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
-   virtual void pack_from_working_data() = 0;
+   virtual void pack_from_working_data() override = 0;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
     *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
-   virtual void unpack_into_working_data() = 0;
+   virtual void unpack_into_working_data() override = 0;
 
   protected:
    // Setup Object Attribute references. These are set in initialize_callback
@@ -130,7 +130,7 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
    DynamicalEntityData de_packing_data; ///< @trick_units{--} Additional dynamical entity packing data.
 
    /*! @brief Print out the packing data debug information. */
-   virtual void debug_print( std::ostream &stream ) const;
+   virtual void debug_print( std::ostream &stream ) const override;
 
   private:
    // This object is not copyable

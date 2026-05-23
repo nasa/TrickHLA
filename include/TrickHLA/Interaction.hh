@@ -124,7 +124,7 @@ class Interaction : public CheckpointConversionBase
    /*! @brief Default constructor for the TrickHLA Interaction class. */
    Interaction();
    /*! @brief Destructor for the TrickHLA Interaction class. */
-   virtual ~Interaction();
+   virtual ~Interaction() override;
 
   public:
    //
@@ -138,13 +138,13 @@ class Interaction : public CheckpointConversionBase
    // CheckpointConversionBase Interface.
    //
    /*! @brief Encode/setup the checkpoint data structures. */
-   virtual void convert_data_before_checkpoint();
+   virtual void convert_data_before_checkpoint() override;
 
    /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_data_after_checkpoint();
+   virtual void restore_data_after_checkpoint() override;
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void free_converted_data_for_checkpoint();
+   virtual void free_converted_data_for_checkpoint() override;
 
    //
    // RTI

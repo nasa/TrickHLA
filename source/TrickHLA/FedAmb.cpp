@@ -172,7 +172,7 @@ FedAmb::reportFederationExecutions():%d\n",
 
 #if defined( IEEE_1516_2025 )
 void FedAmb::reportFederationExecutionMembers(
-   const                                            &federationName,
+   wstring const                                    &federationName,
    FederationExecutionMemberInformationVector const &report )
 {
    message_publish( MSG_WARNING, "This federate '%s' does not support this function: \

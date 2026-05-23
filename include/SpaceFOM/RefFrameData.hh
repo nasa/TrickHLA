@@ -59,7 +59,7 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
 
    // Destructor.
    /*! @brief Destructor for the SpaceFOM RefFrameData class. */
-   virtual ~RefFrameData();
+   virtual ~RefFrameData() override;
 
    /*! @brief Assignment operator for RefFrameData class.
     *  @param rhs Right operand data to copy from. */
@@ -73,7 +73,7 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
    using RefFrameDataState::copy;
 
    /*! @brief Initialize the RefFrameData. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    // Access functions.
    /*! @brief Access function to set the name for the reference frame.
@@ -132,7 +132,7 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
 
    /*! @brief Print out the reference frame data values.
     *  @param stream Output stream. */
-   virtual void print_data( std::ostream &stream = std::cout ) const;
+   virtual void print_data( std::ostream &stream = std::cout ) const override;
 };
 
 } // namespace SpaceFOM

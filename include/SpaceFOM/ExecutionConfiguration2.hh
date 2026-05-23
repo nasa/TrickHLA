@@ -75,16 +75,16 @@ class ExecutionConfiguration2 : public SpaceFOM::ExecutionConfiguration
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration2 instance. */
    explicit ExecutionConfiguration2( std::string const &s_define_name );
    /*! @brief Pure virtual destructor for the SpaceFOM ExecutionConfiguration2 class. */
-   virtual ~ExecutionConfiguration2();
+   virtual ~ExecutionConfiguration2() override;
 
    // Default data.
    /*! @brief Sets up the attributes for the ExCO using default values.
     *  These can be overridden in the input file. */
-   virtual void configure_attributes();
+   virtual void configure_attributes() override;
 
    // From the TrickHLA::Packing class.
-   virtual void pack();
-   virtual void unpack();
+   virtual void pack() override;
+   virtual void unpack() override;
 
    /*! @brief Get the value of the ExCO base time multiplier.
     *  @return Base time multiplier. */
@@ -92,7 +92,7 @@ class ExecutionConfiguration2 : public SpaceFOM::ExecutionConfiguration
 
    // ExecutionConfiguration2 specific functions.
    /*! @brief Print the current ExCO state to the console. */
-   virtual void print_execution_configuration() const;
+   virtual void print_execution_configuration() const override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

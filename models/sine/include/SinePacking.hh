@@ -86,7 +86,7 @@ class SinePacking : public SineData, public TrickHLA::Packing
    /*! @brief Default constructor for the TrickHLAModel SinePacking class. */
    SinePacking();
    /*! @brief Destructor for the TrickHLAModel SinePacking class. */
-   virtual ~SinePacking();
+   virtual ~SinePacking() override;
 
    /*! @brief Set the packing object working data.
     *  @param data The sine wave data object for packing and unpacking. */
@@ -94,15 +94,15 @@ class SinePacking : public SineData, public TrickHLA::Packing
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   void initialize_callback( TrickHLA::Object *obj ) override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   void unpack() override;
 
   private:
    // Do not allow the copy constructor or assignment operator.

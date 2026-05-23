@@ -108,13 +108,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param exec_config The associated ExecutionControl class instance. */
    explicit ExecutionControl( SpaceFOM::ExecutionConfiguration &exec_config );
    /*! @brief Destructor for the SpaceFOM ExecutionControl class. */
-   virtual ~ExecutionControl();
+   virtual ~ExecutionControl() override;
 
   public:
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual std::string const &get_type()
+   virtual std::string const &get_type() override
    {
       return ( type );
    }
@@ -123,16 +123,16 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Setup the IMSim elelments needed in the ExecutionControl class
     * instance.
     * @param fed Associated federate object_service class instance. */
-   virtual void setup( TrickHLA::Federate &fed );
+   virtual void setup( TrickHLA::Federate &fed ) override;
    // This is called by the TrickHLA::Federate::initialize routine.
    /*! @brief Execution Control initialization routine. */
-   virtual void initialize();
+   virtual void initialize() override;
    /*! @brief Process run before the multi-phase initialization begins. */
-   virtual void pre_multi_phase_init_processes();
+   virtual void pre_multi_phase_init_processes() override;
    /*! @brief Process run after the multi-phase initialization ends. */
-   virtual void post_multi_phase_init_processes();
+   virtual void post_multi_phase_init_processes() override;
    /*! @brief Execution control specific shutdown process. */
-   virtual void shutdown();
+   virtual void shutdown() override;
 
    // SpaceFOM extensions.
    /*! @brief Determine the federate role in the federation execution. */
@@ -147,30 +147,30 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    //
    // Execution Control support routines.
    /*! @brief Setup the ExecutionControl object Trick ref ATTRIBUTES. */
-   virtual void setup_object_ref_attributes();
+   virtual void setup_object_ref_attributes() override;
    /*! @brief Setup the ExecutionControl interaction Trick ref ATTRIBUTES. */
-   virtual void setup_interaction_ref_attributes();
+   virtual void setup_interaction_ref_attributes() override;
    /*! @brief Setup the ExecutionControl objects HLA RTI handles. */
-   virtual void setup_object_RTI_handles();
+   virtual void setup_object_RTI_handles() override;
    /*! @brief Setup the ExecutionControl interaction HLA RTI handles. */
-   virtual void setup_interaction_RTI_handles();
+   virtual void setup_interaction_RTI_handles() override;
    /*! Add initialization synchronization points to regulate startup. */
-   virtual void add_initialization_sync_points();
+   virtual void add_initialization_sync_points() override;
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
    virtual void sync_point_announced(
       std::wstring const                          &label,
-      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
+      RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag ) override;
 
    /*! @brief Publish the ExecutionControl objects and interactions. */
-   virtual void publish();
+   virtual void publish() override;
    /*! @brief Unpublish the ExecutionControl objects and interactions. */
-   virtual void unpublish();
+   virtual void unpublish() override;
    /*! @brief Subscribe to the ExecutionControl objects and interactions. */
-   virtual void subscribe();
+   virtual void subscribe() override;
    /*! @brief Unsubscribe the ExecutionControl objects and interactions. */
-   virtual void unsubscribe();
+   virtual void unsubscribe() override;
 
    //
    // ExecutionControl runtime routines.
@@ -186,26 +186,26 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
-      bool const                                        received_as_TSO );
+      bool const                                        received_as_TSO ) override;
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
-   virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode );
+   virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode ) override;
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
-   virtual bool process_mode_interaction();
+   virtual bool process_mode_interaction() override;
    /*! @brief Get a comma separated list of interaction FOM names used.
     *  @return Comma separated list of interaction FOM names used. */
-   virtual std::string get_interaction_FOM_names()
+   virtual std::string get_interaction_FOM_names() override
    {
       // Only have one interaction used by this execution control.
       return ( mtr_interaction != NULL ) ? mtr_interaction->get_FOM_name() : "";
    }
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
-   virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );
+   virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control ) override;
    /*! @brief Process changes from any received Execution Control Objects (ExCOs).
     *  @return True if mode change occurred. */
-   virtual bool process_execution_control_updates();
+   virtual bool process_execution_control_updates() override;
 
    // SpaceFOM extensions.
    /*! @brief Process to determine the federation execution epoch and root reference frame. */
@@ -235,37 +235,37 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // Mode management support routines.
    /*! @brief The run mode transition routine.
     *  @return Currently always returns True. */
-   virtual bool run_mode_transition();
+   virtual bool run_mode_transition() override;
    /*! @brief Announce the pending freeze mode transition with an 'mtr_freeze' sync-point. */
-   virtual void freeze_mode_announce();
+   virtual void freeze_mode_announce() override;
    /*! @brief The freeze mode transition routine.
     *  @return Currently always returns False. */
-   virtual bool freeze_mode_transition();
+   virtual bool freeze_mode_transition() override;
    /*! @brief Announce to the federation execution that a shutdown is occurring. */
-   virtual void shutdown_mode_announce();
+   virtual void shutdown_mode_announce() override;
    /*! @brief The shutdown mode transition routine. */
-   virtual void shutdown_mode_transition();
+   virtual void shutdown_mode_transition() override;
    /*! @brief Checks to see if shutdown has been commanded.
     *  @return True if shutdown has been announced, else False. */
-   virtual bool check_for_shutdown();
+   virtual bool check_for_shutdown() override;
    /*! @brief Checks to see if shutdown has been commanded and, if so, terminates the simulation.
     *  @return False if shutdown has NOT been announced. */
-   virtual bool check_for_shutdown_with_termination();
+   virtual bool check_for_shutdown_with_termination() override;
 
    //
    // Federation freeze management functions.
    //
    /*! @brief Routine to handle going from run to freeze. */
-   virtual void freeze_init();
+   virtual void freeze_init() override;
    /*! @brief Check if a Trick freeze was commanded; if we announced freeze,
     *  tell other federates to freeze. */
-   virtual void enter_freeze();
+   virtual void enter_freeze() override;
    /*! @brief Check for exit from freeze.
     *  @return True if should exit from freeze. */
-   virtual bool check_freeze_exit();
+   virtual bool check_freeze_exit() override;
    /*! @brief Routine to handle going from freeze to run; if we announced the
     * freeze, tell other federates to run. */
-   virtual void exit_freeze();
+   virtual void exit_freeze() override;
 
    // SpaceFOM extensions.
    virtual bool set_pending_mtr( MTREnum mtr_value );
@@ -299,20 +299,20 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // Freeze time management functions.
    /*! @brief Set the least common time step in seconds for the federation.
     *  @param lcts Least Common Time Step time in seconds. */
-   virtual void set_least_common_time_step( double const lcts );
+   virtual void set_least_common_time_step( double const lcts ) override;
 
    /*! @brief Refresh the least common time step especially if the HLA base time units changed. */
-   virtual void refresh_least_common_time_step();
+   virtual void refresh_least_common_time_step() override;
 
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
-   virtual void set_time_padding( double t );
+   virtual void set_time_padding( double t ) override;
 
    //-------------------------------------------------------------------------
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
     * @return True if Save and Restore is supported by this ExecutionControl method. */
-   virtual bool is_save_and_restore_supported()
+   virtual bool is_save_and_restore_supported() override
    {
       return ( true );
    }
@@ -321,7 +321,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param freeze_sst Simulation scenario time to freeze.
     *  @param save_label Save label for HLA Federation Save. */
    virtual void start_federation_save_at_SST( double              freeze_sst,
-                                              std::wstring const &save_label );
+                                              std::wstring const &save_label ) override;
 
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.
@@ -333,7 +333,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    /*! @brief Return the relevant SpaceFOM::ExecutionConfiguration object.
     *  @return Pointer to the relevant SpaceFOM::ExecutionConfiguration object. */
-   ExecutionConfiguration *get_execution_configuration();
+   ExecutionConfiguration *get_execution_configuration() override;
 
   private:
    // Do not allow the copy constructor.

@@ -62,20 +62,20 @@ class DynamicalEntityConditionalBase : public SpaceFOM::PhysicalEntityConditiona
    /*! @brief Initialization constructor to associate with DynamicalEntity instance. */
    explicit DynamicalEntityConditionalBase( DynamicalEntityBase &entity_ref );
    /*! @brief Destructor. */
-   virtual ~DynamicalEntityConditionalBase();
+   virtual ~DynamicalEntityConditionalBase() override;
 
    /*! @brief Initializes the DynamicalEntity. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback( TrickHLA::Object *obj );
+   virtual void initialize_callback( TrickHLA::Object *obj ) override;
 
    /*! @brief Determines if the attribute has changed and returns the truth of
     *  that determination.
     *  @return True if value should be sent.
     *  @param attr Attribute to check. */
-   virtual bool should_send( TrickHLA::Attribute *attr );
+   virtual bool should_send( TrickHLA::Attribute *attr ) override;
 
   protected:
    DynamicalEntityBase &de_entity;    ///< @trick_units{--} @trick_io{**} Associated DynamicalEntity.

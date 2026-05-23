@@ -70,7 +70,7 @@ class SimpleSimConfig : public TrickHLA::Packing
    /*! @brief Default constructor for the TrickHLAModel SimpleSimConfig class. */
    SimpleSimConfig();
    /*! @brief Destructor for the TrickHLAModel SimpleSimConfig class. */
-   virtual ~SimpleSimConfig();
+   virtual ~SimpleSimConfig() override;
 
    /*! @brief Configure the simulation configuration and build the list of
     * federates based on the known federates.
@@ -80,15 +80,15 @@ class SimpleSimConfig : public TrickHLA::Packing
 
    /*! @brief Initialize the simulation configuration and build the list of
     * federates based on the known federates. */
-   virtual void initialize();
+   virtual void initialize() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   virtual void pack() override;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   virtual void unpack() override;
 
   private:
    // Do not allow the copy constructor or assignment operator.
