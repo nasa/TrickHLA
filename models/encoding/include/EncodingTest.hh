@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{encoding/src/StringData.cpp}
 @trick_link_dependency{encoding/src/WCharData.cpp}
 @trick_link_dependency{encoding/src/WStringData.cpp}
-@trick_link_dependency{SpaceFOM/SpaceTimeCoordinateData.cpp}
+@trick_link_dependency{../source/SpaceFOM/SpaceTimeCoordinateData.cpp}
 
 @revs_title
 @revs_begin
