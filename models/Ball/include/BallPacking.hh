@@ -87,7 +87,7 @@ class BallPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
                              char const       *ball_obj_name,
                              char const       *ball_name,
                              bool              publishes,
-                             TrickHLA::Object *mngr_object = NULL ) override;
+                             TrickHLA::Object *mngr_object = NULL );
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize() override;
