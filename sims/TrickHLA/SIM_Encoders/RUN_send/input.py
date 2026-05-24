@@ -70,13 +70,17 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 # The list of Federates known to be in our Federation. The simulation will
 # wait for all Federates marked as required to join the Federation before
 # continuing on.
-THLA.federate.enable_known_feds      = True
-THLA.federate.known_feds_count       = 2
-THLA.federate.known_feds             = trick.sim_services.alloc_type( THLA.federate.known_feds_count, 'TrickHLA::KnownFederate' )
-THLA.federate.known_feds[0].name     = 'Sender'
-THLA.federate.known_feds[0].required = True
-THLA.federate.known_feds[1].name     = 'Receiver'
-THLA.federate.known_feds[1].required = True
+fedSender = trick.KnownFederate()
+fedSender.name     = 'Sender'
+fedSender.type     = 'Sender'
+fedSender.required = True
+fedReceiver = trick.KnownFederate()
+fedReceiver.name     = 'Receiver'
+fedReceiver.type     = 'Receiver'
+fedReceiver.required = True
+THLA.federate.enable_known_feds = True
+THLA.federate.known_federates.push_back( fedSender )
+THLA.federate.known_federates.push_back( fedReceiver )
 
 
 #---------------------------------------------
