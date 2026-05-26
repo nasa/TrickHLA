@@ -29,7 +29,9 @@ NASA, Johnson Space Center\n
 
 #include "sim_objects/default_trick_sys.sm"
 
-#define DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
+// NOTE: To test the old method of encoding into an opaque buffer instead of using
+// the EncoderFactory, edit the $TRICKHLA_HOME/include/TrickHLA/CompileConfig.hh
+// file and ensure USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS is set.
 
 //=============================================================================
 // Define the job calling intervals.
