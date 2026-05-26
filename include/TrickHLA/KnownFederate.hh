@@ -156,20 +156,11 @@ class KnownFederate
    RTI1516_NAMESPACE::ObjectInstanceHandle object_instance_handle; ///< @trick_io{**}    HLA Federate object instance handle.
    std::wstring                            MOM_instance_name;      ///< @trick_units{--} MOM instance name for the federate object.
 
-  private:
-   // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for KnownFederate class.
-    *  @details This constructor is private to prevent inadvertent copies. */
-   // KnownFederate( KnownFederate const &rhs );
-   /*! @brief Assignment operator for KnownFederate class.
-    *  @details This assignment operator is private to prevent inadvertent copies. */
-   // KnownFederate &operator=( KnownFederate const &rhs );
 };
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, KnownFederate > KnownFederateMap;
 typedef std::set< RTI1516_NAMESPACE::ObjectInstanceHandle >                FederateObjectInstanceSet;
 typedef std::vector< KnownFederate >                                       KnownFederateVector;
-// typedef std::vector< RTI1516_NAMESPACE::VariableLengthData > EncodedFederateHandleVector;
 
 } // namespace TrickHLA
 

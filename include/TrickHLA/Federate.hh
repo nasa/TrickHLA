@@ -267,6 +267,9 @@ class Federate : public CheckpointConversionBase
       execution_control->clear_multiphase_init_sync_points();
    }
 
+   //
+   // Federate management functions.
+   //
    /*! @brief Verify the joined federates list against the federates in Federatio list.
     *  @return True if all federate in Federation and only all are in the joined federates map. */
    bool verify_joined_federates();
