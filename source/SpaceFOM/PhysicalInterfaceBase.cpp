@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterfaceBase.hh"
 #include "SpaceFOM/QuaternionData.hh"
-#if !defined( USE_SPACEFOM_ENCODERS )
+#if !defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/QuaternionConfig.hh"
 #endif
 
@@ -71,7 +71,7 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
      parent_attr( NULL ),
      position_attr( NULL ),
      attitude_attr( NULL )
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
      quat_encoder( packing_data.attitude )
 #endif
@@ -170,7 +170,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    object->attributes[3].FOM_name      = "attitude";
    object->attributes[3].trick_name    = interface_full_name_str + string( ".quat_encoder.buffer" );
    object->attributes[3].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
@@ -190,7 +190,7 @@ void PhysicalInterfaceBase::base_config(
       publish_attr,
       subscribe_attr,
       create );
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
    return;
 }
@@ -326,7 +326,7 @@ void PhysicalInterfaceBase::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Encode the data into the buffer.
    quat_encoder.encode();
 #endif
@@ -348,7 +348,7 @@ void PhysicalInterfaceBase::unpack()
 #endif
    }
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Use the HLA encoder helpers to decode the PhysicalInterface fixed record.
    quat_encoder.decode();
 #endif

@@ -75,10 +75,10 @@ RefFrameBase::RefFrameBase()
      parent_name_attr( NULL ),
      state_attr( NULL ),
      packing_data()
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
      stc_encoder( packing_data.state )
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 {
    return;
 }
@@ -174,7 +174,7 @@ void RefFrameBase::base_config(
    object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    object->attributes[2].FOM_name      = "state";
    object->attributes[2].trick_name    = ref_frame_full_name + string( ".stc_encoder.buffer" );
    object->attributes[2].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
@@ -571,7 +571,7 @@ void RefFrameBase::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Encode the data into the buffer.
    stc_encoder.encode();
 #endif
@@ -596,7 +596,7 @@ void RefFrameBase::unpack()
 #endif
    }
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
    stc_encoder.decode();
 #endif

@@ -56,7 +56,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityBase.hh"
-#if !defined( USE_SPACEFOM_ENCODERS )
+#if !defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
 #endif
 
@@ -193,7 +193,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[3].locally_owned = create;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    object->attributes[4].FOM_name      = "state";
    object->attributes[4].trick_name    = entity_full_name_str + string( ".stc_encoder.buffer" );
    object->attributes[4].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
@@ -214,7 +214,7 @@ void DynamicalEntityBase::base_config(
       subscribe_attr,
       create );
 
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
    object->attributes[5].FOM_name      = "acceleration";
    object->attributes[5].trick_name    = entity_full_name_str + string( ".pe_packing_data.accel" );

@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 #endif
 
@@ -160,7 +160,7 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
    // SpaceFOM TrickHLAObject data for the SpaceTimeCoordinate.
    SpaceTimeCoordinateData packing_data; ///< @trick_units{--} STC packing data.
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Instantiate the Space/Time Coordinate encoder
    SpaceFOM::SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
 #endif

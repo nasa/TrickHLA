@@ -38,7 +38,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
 
-#if !defined( USE_SPACEFOM_ENCODERS )
+#if !defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   error QuaternionEncoder is not supported!
 #else
 
@@ -119,5 +119,5 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
 };
 
 } // namespace SpaceFOM
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 #endif /* SPACEFOM_QUATERNION_ENCODER_HH */

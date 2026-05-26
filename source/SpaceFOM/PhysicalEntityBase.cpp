@@ -58,10 +58,10 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/QuaternionData.hh"
-#if !defined( USE_SPACEFOM_ENCODERS )
+#if !defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/QuaternionConfig.hh"
 #   include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
 using namespace std;
 using namespace TrickHLA;
@@ -82,11 +82,11 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
      ang_accel_attr( NULL ),
      cm_attr( NULL ),
      body_frame_attr( NULL )
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
      stc_encoder( pe_packing_data.state ),
      quat_encoder( pe_packing_data.body_wrt_struct )
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 {
    //
    // Initialize the PhysicalEntity packing data structure.
@@ -222,7 +222,7 @@ void PhysicalEntityBase::base_config(
    object->attributes[3].locally_owned = create;
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    object->attributes[4].FOM_name      = "state";
    object->attributes[4].trick_name    = entity_full_name_str + string( ".stc_encoder.buffer" );
    object->attributes[4].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
@@ -242,7 +242,7 @@ void PhysicalEntityBase::base_config(
       publish_attr,
       subscribe_attr,
       create );
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
    object->attributes[5].FOM_name      = "acceleration";
    object->attributes[5].trick_name    = entity_full_name_str + string( ".pe_packing_data.accel" );
@@ -268,7 +268,7 @@ void PhysicalEntityBase::base_config(
    object->attributes[7].locally_owned = create;
    object->attributes[7].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    object->attributes[8].FOM_name      = "body_wrt_structural";
    object->attributes[8].trick_name    = entity_full_name_str + string( ".quat_encoder.buffer" );
    object->attributes[8].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
@@ -288,7 +288,7 @@ void PhysicalEntityBase::base_config(
       publish_attr,
       subscribe_attr,
       create );
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
    return;
 }
 
@@ -430,10 +430,10 @@ void PhysicalEntityBase::pack()
    }
 
    // Encode the data into the buffer.
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    stc_encoder.encode();
    quat_encoder.encode();
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
    return;
 }
@@ -458,10 +458,10 @@ void PhysicalEntityBase::unpack()
    }
 
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    stc_encoder.decode();
    quat_encoder.decode();
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
    // Transfer the packing data into the working data.
    unpack_into_working_data();

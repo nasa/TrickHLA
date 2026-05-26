@@ -42,22 +42,21 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_BASE_HH
 #define SPACEFOM_REF_FRAME_BASE_HH
 
-#define NO_ENABLE_STC_ENCODER
-
 // System includes.
 #include <iostream>
 #include <string>
+
+// TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/Packing.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/LRTreeNodeBase.hh"
 #include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
-#endif // USE_SPACEFOM_ENCODERS
-
-// TrickHLA includes.
-#include "TrickHLA/Packing.hh"
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
@@ -217,9 +216,9 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
    RefFrameData packing_data; ///< @trick_units{--} Reference frame packing data.
 
    // Instantiate the Space/Time Coordinate encoder
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
-#endif                                     // USE_SPACEFOM_ENCODERS
+#endif                                     // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
   private:
    // This object is not copyable

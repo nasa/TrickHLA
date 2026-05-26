@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 */
 
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 
 // System includes.
 #   include <cstring>
@@ -221,4 +221,4 @@ void SpaceTimeCoordinateEncoder::decode()
    return;
 }
 
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
