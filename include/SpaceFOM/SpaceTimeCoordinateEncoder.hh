@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/RecordElement.hh"
 
-#if !defined( USE_SPACEFOM_ENCODERS )
+#if !defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   error SpaceTimeCoordinateEncoder is not supported!
 #else
 
@@ -135,5 +135,5 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
 
 } // namespace SpaceFOM
 
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 #endif // End of SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH: Do NOT put anything after this line!

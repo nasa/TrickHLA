@@ -29,8 +29,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_COMPILE_CONFIG_HH
 #define TRICKHLA_COMPILE_CONFIG_HH
 
-// TEMP
-#define DONT_USE_SPACEFOM_ENCODERS
+// Either use encoding into opaque buffer (old way) or the EncoderFactory (preferred).
+// Default: DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
+#define DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
 // Print an error and terminate if the Conditional, Packing or LagCompenstion
 // user code is not initialized before use.

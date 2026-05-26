@@ -29,7 +29,7 @@ NASA, Johnson Space Center\n
 
 #include "sim_objects/default_trick_sys.sm"
 
-#define DONT_USE_SPACEFOM_ENCODERS
+#define DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
 //=============================================================================
 // Define the job calling intervals.

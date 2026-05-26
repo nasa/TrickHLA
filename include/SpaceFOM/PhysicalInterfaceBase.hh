@@ -45,13 +45,13 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Packing.hh"
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "TrickHLA/OpaqueBuffer.hh"
 #endif
 
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterfaceData.hh"
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/QuaternionEncoder.hh"
 #endif
 
@@ -59,7 +59,7 @@ namespace SpaceFOM
 {
 
 class PhysicalInterfaceBase : public TrickHLA::Packing
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    ,
                               public TrickHLA::OpaqueBuffer
 #endif
@@ -167,7 +167,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing
    // SpaceFOM TrickHLAObject data for the PhysicalInterface.
    PhysicalInterfaceData packing_data; ///< @trick_units{--} Physical interface packing data.
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Instantiate the attitude quaternion encoder.
    QuaternionEncoder quat_encoder; ///< @trick_units{--} Interface attitude quaternion encoder.
 #endif

@@ -54,7 +54,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 #else
 #   include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
@@ -76,7 +76,7 @@ SpaceTimeCoordinatePacking::SpaceTimeCoordinatePacking()
      working_data( NULL ),
      stc_attr( NULL ),
      packing_data()
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
      stc_encoder( packing_data )
 #endif
@@ -147,7 +147,7 @@ void SpaceTimeCoordinatePacking::base_config(
    //
    // Specify the attributes.
    //
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    object->attributes[0].FOM_name      = "state";
    trick_name_str                      = stc_name_str + string( ".stc_encoder.buffer" );
    object->attributes[0].trick_name    = trick_name_str;
@@ -165,7 +165,7 @@ void SpaceTimeCoordinatePacking::base_config(
                                          publishes,
                                          !publishes,
                                          publishes );
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
    return;
 }
@@ -287,7 +287,7 @@ void SpaceTimeCoordinatePacking::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Encode the data into the buffer.
    stc_encoder.encode();
 #endif
@@ -309,7 +309,7 @@ void SpaceTimeCoordinatePacking::unpack()
       }
    }
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Use the HLA encoder helpers to decode the STC fixed record.
    stc_encoder.decode();
 #endif

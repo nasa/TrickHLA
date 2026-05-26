@@ -47,26 +47,26 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Packing.hh"
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "TrickHLA/OpaqueBuffer.hh"
 #endif
 
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/QuaternionEncoder.hh"
 #   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
 namespace SpaceFOM
 {
 
 class PhysicalEntityBase : public TrickHLA::Packing
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    ,
                            public TrickHLA::OpaqueBuffer
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -210,10 +210,10 @@ class PhysicalEntityBase : public TrickHLA::Packing
    PhysicalEntityData pe_packing_data; ///< @trick_units{--} Physical entity packing data.
 
    // Instantiate the aggregate data encoders
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
-#endif                                      // USE_SPACEFOM_ENCODERS
+#endif                                      // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
    /*! @brief Print out the packing data debug information.
     *  @param stream Output stream. */

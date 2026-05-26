@@ -54,7 +54,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/QuaternionEncoder.hh"
 #else
 #   include "SpaceFOM/QuaternionConfig.hh"
@@ -76,7 +76,7 @@ QuaternionPacking::QuaternionPacking()
      working_data( NULL ),
      quat_attr( NULL ),
      packing_data()
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
      quat_encoder( packing_data )
 #endif
@@ -147,7 +147,7 @@ void QuaternionPacking::base_config(
    //
    // Specify the attributes.
    //
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    object->attributes[0].FOM_name      = "quaternion";
    trick_name_str                      = quat_name_str + string( ".quat_encoder.buffer" );
    object->attributes[0].trick_name    = trick_name_str;
@@ -165,7 +165,7 @@ void QuaternionPacking::base_config(
                                 publishes,
                                 !publishes,
                                 publishes );
-#endif // USE_SPACEFOM_ENCODERS
+#endif // USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 
    return;
 }
@@ -287,7 +287,7 @@ void QuaternionPacking::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Encode the data into the buffer.
    quat_encoder.encode();
 #endif
@@ -309,7 +309,7 @@ void QuaternionPacking::unpack()
       }
    }
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Use the HLA encoder helpers to decode the Quaternion fixed record.
    quat_encoder.decode();
 #endif

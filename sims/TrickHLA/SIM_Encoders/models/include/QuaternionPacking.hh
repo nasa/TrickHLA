@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionData.hh"
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 #   include "SpaceFOM/QuaternionEncoder.hh"
 #endif
 
@@ -153,7 +153,7 @@ class QuaternionPacking : public TrickHLA::Packing
    // SpaceFOM TrickHLAObject data for the Quaternion.
    QuaternionData packing_data; ///< @trick_units{--} STC packing data.
 
-#if defined( USE_SPACEFOM_ENCODERS )
+#if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
    // Instantiate the Space/Time Coordinate encoder
    SpaceFOM::QuaternionEncoder quat_encoder; ///< @trick_units{--} Encoder.
 #endif

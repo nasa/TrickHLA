@@ -49,7 +49,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
 
