@@ -155,7 +155,6 @@ class KnownFederate
    RTI1516_NAMESPACE::FederateHandle       federate_handle;        ///< @trick_io{**}    HLA Federate handle.
    RTI1516_NAMESPACE::ObjectInstanceHandle object_instance_handle; ///< @trick_io{**}    HLA Federate object instance handle.
    std::wstring                            MOM_instance_name;      ///< @trick_units{--} MOM instance name for the federate object.
-
 };
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, KnownFederate > KnownFederateMap;
