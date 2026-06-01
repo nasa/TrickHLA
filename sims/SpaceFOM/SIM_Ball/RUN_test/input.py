@@ -154,6 +154,13 @@ ball_sim_config.ball_graphics()
 
 
 #---------------------------------------------------------------------------
+# Setup the TrickHLA Master Control Panel and add to the Trick external
+# applications list.
+#---------------------------------------------------------------------------
+ball_sim_config.thlamcp()
+
+
+#---------------------------------------------------------------------------
 # Set the HLA information.
 #---------------------------------------------------------------------------
 # Configure the Ball HLA data

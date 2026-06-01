@@ -1012,6 +1012,10 @@ class Federate : public CheckpointConversionBase
    //
    /*! @brief Federate commmand to initiate a Federation wide save.
     *  @param label The Save label for the HLA save process. */
+   virtual void save( std::string const &label );
+
+   /*! @brief Federate commmand to initiate a Federation wide save.
+    *  @param label The Save label for the HLA save process. */
    virtual void save( std::wstring const &label );
 
    /*! @brief Initiate a Federation wide save at a specified simulation

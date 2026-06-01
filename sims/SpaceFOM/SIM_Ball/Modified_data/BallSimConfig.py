@@ -82,3 +82,29 @@ class BallSimConfig( TrickSimConfig ):
          
       return
    
+   def thlamcp( self ):
+      
+      # Set the Ball graphics command path.
+      self.command_path = '../../../scripts/thlamcp.py'
+      
+      # Check to see if the command exists.
+      if ( os.path.isfile( self.command_path ) ) :
+         
+         # Build the TrickHLA Master Control Panel command.
+         self.thlamcp_command = self.command_path
+         
+         # Set this up as a Trick external application.
+         self.thlamcpApp = trick.ExternalApplication()
+         self.thlamcpApp.set_startup_command( self.thlamcp_command )
+         self.thlamcpApp.set_arguments( '--auto' )
+         #self.thlamcpApp.set_arguments( str( self.variable_server_port ) )
+         #self.thlamcpApp.set_port( self.variable_server_port )
+         trick.add_external_application( self.thlamcpApp )
+                                      
+      else :
+         print('=====================================================================================')
+         print('BallDisplay needs to be built. Please \"cd\" into models/Ball/graphics and type \"make\".')
+         print('=====================================================================================')
+         
+      return
+   
