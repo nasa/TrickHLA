@@ -1452,6 +1452,39 @@ void ExecutionControlBase::restore_setup()
 }
 
 /*!
+ *  @job_class{scheduled}
+ */
+bool ExecutionControlBase::restore( wstring const &label )
+{
+   // If Federation SaveRestore is not supported then return without action.
+   if ( !is_save_and_restore_supported() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::restore():" << __LINE__
+                << " ERROR: SaveRetore NOT supported!" << endl
+                << " Label:'" << label_str << "'" << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      }
+      return( false );
+   }
+
+   // FIXME: Start the Restore process here.
+   {
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      ostringstream errmsg;
+      errmsg << "ExecutionControlBase::restore():" << __LINE__
+             << " ERROR: Restore not yet implemented!" << endl
+             << " Label:'" << label_str << "'" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+   }
+
+   return( false );
+}
+
+/*!
  * @job_class{scheduled}
  */
 void ExecutionControlBase::restore()

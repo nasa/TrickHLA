@@ -775,6 +775,11 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Perform setup for Federate restore. */
    virtual void restore_setup();
 
+   /*! @brief Federate commmand to initiate a Federation wide restore.
+    *  @return The success or failure of initiating the Federation Restore.
+    *  @param label The Restore label for the HLA restore process. */
+   virtual bool restore( std::wstring const &label );
+
    /*! @brief Federates that did not announce the restore, perform a restore. */
    virtual void restore();
 

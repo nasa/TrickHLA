@@ -3644,6 +3644,46 @@ void Federate::save_at_HLT(
    return;
 }
 
+/*!
+ *  @job_class{scheduled}
+ */
+void Federate::restore( string const &label )
+{
+   wstring label_wstr;
+
+   // Convert the string label to a wstring label.
+   StringUtilities::to_wstring( label_wstr, label );
+
+   // Call the wstring version.
+   this->restore( label_wstr );
+
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void Federate::restore( wstring const &label )
+{
+   
+   // Sanity checks.
+   if ( execution_control == NULL ){
+      ostringstream msg;
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      msg << "Federate::save():" << __LINE__
+          << " ERROR: No ExecutionControl for Saving \'"
+          << label_str << "\'!";
+      message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
+      return;
+   }
+
+   // Call the execution control Save method.
+   execution_control->restore( label );
+
+   return;
+}
+
 /*! @brief Convert data to a form Trick can checkpoint. */
 void Federate::convert_data_before_checkpoint()
 {

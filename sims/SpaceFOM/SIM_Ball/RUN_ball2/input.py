@@ -250,6 +250,9 @@ ball_fed_config.add_sim_object( ball3_hla )
 #...........................................................................
 ball_fed_config.initialize()
 
+# FIXME: Test making ball 3 object NOT required.
+ball3_config.hla_object.required = False
+
 
 #---------------------------------------------------------------------------
 # Manage simulation termination time.

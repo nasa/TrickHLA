@@ -481,6 +481,24 @@ class Federate : public CheckpointConversionBase
    void wait_for_time_advance_grant()
    {
       time_management_service.wait_for_time_advance_grant();
+      // Update the federate interface time values.
+      hla_logical_time = time_management_service.granted_time.get_base_time();
+      hlt_seconds = time_management_service.granted_time.get_time_in_seconds();
+      if ( execution_control ) {
+         if ( execution_control->sim_timeline ) {
+            elapsed_time = execution_control->sim_timeline->get_time();
+         }
+         else {
+            elapsed_time = 0.0;
+         }
+         if ( execution_control->scenario_timeline ) {
+            scenario_time = execution_control->scenario_timeline->get_time();
+         }
+         else {
+            scenario_time = elapsed_time;
+         }
+      }
+      return;
    }
 
    /*! @brief Increment the requested time by the lookahead time and make a
@@ -488,6 +506,33 @@ class Federate : public CheckpointConversionBase
    void time_advance_request()
    {
       time_management_service.time_advance_request();
+   }
+
+   /*! @brief Get the simulation elapsed time SET.
+    *. @return Simulation elapsed time. */
+   double get_SET()
+   {
+      if ( execution_control != NULL ){
+         return( execution_control->get_sim_time() );
+      }
+      return( 0.0 );
+   }
+
+   /*! @brief Get the current HLA Logical Time (HLT).
+    *. @return Current granted HLA Logical Time. */
+   Int64Time get_HLT()
+   {
+      return( time_management_service.get_granted_time() );
+   }
+
+   /*! @brief Get the simulation scenario time SST.
+    *. @return Simulation scenario time. */
+   double get_SST()
+   {
+      if ( execution_control != NULL ){
+         return( execution_control->get_scenario_time() );
+      }
+      return( 0.0 );
    }
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
@@ -1039,6 +1084,14 @@ class Federate : public CheckpointConversionBase
    virtual void save_at_HLT( std::wstring const                   &label,
                              RTI1516_NAMESPACE::LogicalTime const &time );
 
+   /*! @brief Federate commmand to initiate a Federation wide restore.
+    *  @param label The Restore label for the HLA restore process. */
+   virtual void restore( std::string const &label );
+
+   /*! @brief Federate commmand to initiate a Federation wide restore.
+    *  @param label The Restore label for the HLA restore process. */
+   virtual void restore( std::wstring const &label );
+
    //-------------------------------------------------------------------------
    // CheckpointConversionBase Interface.
    //
@@ -1133,6 +1186,17 @@ class Federate : public CheckpointConversionBase
    //
    ExecutionControlBase       *execution_control; ///< @trick_units{--} Associated TrickHLA Federate ExecutionControlBase implementation.
    ExecutionConfigurationBase *execution_config;  ///< @trick_units{--} Associated TrickHLA Federate ExecutionConfigurationBase implementation.
+
+   //
+   // Federate and federation time parameters.
+   // This are updated as part of the wait for time advance grant and are primarily
+   // intended for use as external interface variables accessible through the Trick
+   // variable server interface.
+   //
+   int64_t hla_logical_time; ///< @trick_units{--} Current granted HLA logical time (HLT).
+   double  hlt_seconds;      ///< @trick_units{s}  Current granted HLA logical time (HLT) in seconds.
+   double  elapsed_time;     ///< @trick_units{s}  Current simulation elapsed time (SET).
+   double  scenario_time;    ///< @trick_units{s}  Current simulation scenario time (SST).
 
    // Federation required associations.
    //
