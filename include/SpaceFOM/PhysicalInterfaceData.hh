@@ -39,6 +39,16 @@ class PhysicalInterfaceData
 {
 
   public:
+   PhysicalInterfaceData()
+      : name(),
+        parent_name(),
+        position{ 0.0, 0.0, 0.0 },
+        attitude()
+   {
+      return;
+   }
+
+  public:
    std::string    name;        ///< @trick_units{--} Name of the physical interface.
    std::string    parent_name; ///< @trick_units{--} Name of the parent entity or interface.
    double         position[3]; ///< @trick_units{m}  Position of the interface in the parent structural frame.

@@ -101,8 +101,8 @@ void RefFrameBase::base_config(
    std::string const &ref_frame_pkg_name,
    std::string const &ref_frame_fed_name,
    TrickHLA::Object  *mngr_object,
-   bool const         publish,
-   bool const         subscribe )
+   bool const         publish_config,
+   bool const         subscribe_config )
 {
    string ref_frame_full_name = sim_obj_name + "." + ref_frame_pkg_name;
 
@@ -140,8 +140,8 @@ void RefFrameBase::base_config(
    }
 
    // Determine the publish and subscribe attribute values.
-   bool publish_attr   = create || publish;
-   bool subscribe_attr = !create || subscribe;
+   bool const publish_attr   = create || publish_config;
+   bool const subscribe_attr = !create || subscribe_config;
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
