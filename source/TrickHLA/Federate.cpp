@@ -32,7 +32,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Edwin Z. Crues, Titan Systems Corp., DIS, Titan Systems Corp., --, Initial investigation.}
+@rev_entry{Edwin Z. Crues, Titan Systems Corp., DIS, Jan 2004, --, Initial investigation.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, SRFOM support & test.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}

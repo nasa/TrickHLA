@@ -526,7 +526,7 @@ class MasterControl( Frame ):
 
       # Close the connection to the simulation variable server.
       if self.variable_server :
-         print( 'MasterControl::federationSave:',
+         print( 'MasterControl::closeVarServerConnection:',
                 inspect.currentframe().f_lineno,
                 ': Disconnecting from sim on host:port: ' + self.hostname
                 + ':' + str( self.port) + '!' )

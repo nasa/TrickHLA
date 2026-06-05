@@ -219,6 +219,9 @@ ball3_config = BallObject(
    ball_S_define_instance_name = 'ball3_hla.packing' )
 ball_fed_config.add_fed_object( ball3_config )
 
+# Make ball 3 optional.
+ball3_config.set_required( False )
+
 
 #...........................................................................
 # Set up a trivial test reference frame tree.
@@ -249,9 +252,6 @@ ball_fed_config.add_sim_object( ball3_hla )
 # Make sure that the federate configuration object is initialized.
 #...........................................................................
 ball_fed_config.initialize()
-
-# FIXME: Test making ball 3 object NOT required.
-ball3_config.hla_object.required = False
 
 
 #---------------------------------------------------------------------------

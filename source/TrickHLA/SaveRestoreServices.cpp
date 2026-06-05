@@ -1830,7 +1830,7 @@ void SaveRestoreServices::initiate_restore_announce(
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
-   if ( !federate->get_execution_control()->is_save_and_restore_supported() ) {
+   if ( !execution_control->is_save_and_restore_supported() ) {
       return;
    }
 

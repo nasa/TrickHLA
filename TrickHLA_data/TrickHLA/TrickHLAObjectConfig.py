@@ -30,6 +30,7 @@ class TrickHLAObjectConfig( object ):
    hla_lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_NONE
    hla_ownership_instance   = None
    hla_deleted_instance     = None
+   hla_required             = True
    hla_thread_IDs           = None
    hla_attribute_publish    = False
    hla_attribute_subscribe  = False
@@ -54,6 +55,7 @@ class TrickHLAObjectConfig( object ):
                  thla_attribute_publish    = None,
                  thla_attribute_subscribe  = None,
                  thla_attribute_config     = None,
+                 thla_required             = True,
                  thla_blocking_cyclic_read = False ):
 
       # Allocate an empty attribute list.
@@ -122,6 +124,9 @@ class TrickHLAObjectConfig( object ):
          self.set_attribute_config( thla_attribute_config )
 
       # Specify if this object will block on cyclic reads.
+      self.set_required( thla_required )
+
+      # Specify if this object will block on cyclic reads.
       self.set_blocking_cyclic_read( thla_blocking_cyclic_read )
 
       # Still need to set the object attributes but this is left to the
@@ -148,6 +153,7 @@ class TrickHLAObjectConfig( object ):
       self.set_create( self.hla_create )
       self.set_thread_IDs( self.hla_thread_IDs )
       self.set_blocking_cyclic_read( self.hla_blocking_cyclic_read )
+      self.set_required( self.hla_required )
 
       # Set the object reference for the packing instance.
       if self.hla_packing_instance != None:
@@ -201,6 +207,15 @@ class TrickHLAObjectConfig( object ):
    def get_create( self ):
 
       return self.hla_create
+
+
+   def set_required( self, required_state ):
+
+      self.hla_required = required_state
+      if self.hla_object != None:
+         self.hla_object.required = self.hla_required
+
+      return
 
 
    def set_instance_name( self, name ):
