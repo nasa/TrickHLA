@@ -56,8 +56,8 @@ int ball_force_field(
 {
 
    /* GET SHORTHAND NOTATION FOR DATA STRUCTURES */
-   BallForce_In  *FI = &( force->input );
-   BallForce_Out *FO = &( force->output );
+   BallForce_In const *FI = &( force->input );
+   BallForce_Out      *FO = &( force->output );
 
    /* LOCAL VARIABLE DECLARATIONS */
    double mag;

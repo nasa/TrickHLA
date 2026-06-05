@@ -1467,7 +1467,7 @@ bool ExecutionControlBase::restore( wstring const &label )
                 << " Label:'" << label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       }
-      return( false );
+      return ( false );
    }
 
    // FIXME: Start the Restore process here.
@@ -1481,7 +1481,7 @@ bool ExecutionControlBase::restore( wstring const &label )
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
    }
 
-   return( false );
+   return ( false );
 }
 
 /*!

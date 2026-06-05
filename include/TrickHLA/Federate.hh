@@ -483,18 +483,16 @@ class Federate : public CheckpointConversionBase
       time_management_service.wait_for_time_advance_grant();
       // Update the federate interface time values.
       hla_logical_time = time_management_service.granted_time.get_base_time();
-      hlt_seconds = time_management_service.granted_time.get_time_in_seconds();
+      hlt_seconds      = time_management_service.granted_time.get_time_in_seconds();
       if ( execution_control ) {
          if ( execution_control->sim_timeline ) {
             elapsed_time = execution_control->sim_timeline->get_time();
-         }
-         else {
+         } else {
             elapsed_time = 0.0;
          }
          if ( execution_control->scenario_timeline ) {
             scenario_time = execution_control->scenario_timeline->get_time();
-         }
-         else {
+         } else {
             scenario_time = elapsed_time;
          }
       }
@@ -512,27 +510,27 @@ class Federate : public CheckpointConversionBase
     *. @return Simulation elapsed time. */
    double get_SET()
    {
-      if ( execution_control != NULL ){
-         return( execution_control->get_sim_time() );
+      if ( execution_control != NULL ) {
+         return ( execution_control->get_sim_time() );
       }
-      return( 0.0 );
+      return ( 0.0 );
    }
 
    /*! @brief Get the current HLA Logical Time (HLT).
     *. @return Current granted HLA Logical Time. */
    Int64Time get_HLT()
    {
-      return( time_management_service.get_granted_time() );
+      return ( time_management_service.get_granted_time() );
    }
 
    /*! @brief Get the simulation scenario time SST.
     *. @return Simulation scenario time. */
    double get_SST()
    {
-      if ( execution_control != NULL ){
-         return( execution_control->get_scenario_time() );
+      if ( execution_control != NULL ) {
+         return ( execution_control->get_scenario_time() );
       }
-      return( 0.0 );
+      return ( 0.0 );
    }
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
@@ -1072,10 +1070,10 @@ class Federate : public CheckpointConversionBase
 
    /*! @brief Initiate a Federation wide save at a specified simulation
     *  scenario time (SST).
-    *  @param label         The Save label for the HLA save process.
-    *  @param scenario_time The SST to initiate the save. */
+    *  @param label The Save label for the HLA save process.
+    *  @param sst   The simulation scenario time SST to initiate the save. */
    virtual void save_at_SST( std::wstring const &label,
-                             double              scenario_time );
+                             double              sst );
 
    /*! @brief Initiate a Federation wide save at a specified HLA logical
     *  time (HLT).

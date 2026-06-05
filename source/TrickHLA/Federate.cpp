@@ -199,7 +199,11 @@ Federate::Federate()
      save_restore_service( *this ),
      interaction_service( *this ),
      execution_control( NULL ),
-     execution_config( NULL )
+     execution_config( NULL ),
+     hla_logical_time( 0 ),
+     hlt_seconds( 0.0 ),
+     elapsed_time( 0.0 ),
+     scenario_time( 0.0 )
 #if defined( IEEE_1516_2010 )
      ,
      RTI_ambassador( NULL )
@@ -1162,7 +1166,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    //
    // Let's determine if this is a required federate.
    //
-   for ( KnownFederate known_fed : known_federates ) {
+   for ( KnownFederate const &known_fed : known_federates ) {
       if ( joined_federate.name == known_fed.name ) {
          joined_federate.required = known_fed.required;
       }
@@ -3564,11 +3568,11 @@ void Federate::save( string const &label )
  */
 void Federate::save( wstring const &label )
 {
-   
+
    // Sanity checks.
-   if ( execution_control == NULL ){
+   if ( execution_control == NULL ) {
       ostringstream msg;
-      string label_str;
+      string        label_str;
       StringUtilities::to_string( label_str, label );
       msg << "Federate::save():" << __LINE__
           << " ERROR: No ExecutionControl for Saving \'"
@@ -3608,7 +3612,7 @@ void Federate::save_at_SET(
  */
 void Federate::save_at_SST(
    wstring const &label,
-   double         scenario_time )
+   double         sst )
 {
    string label_str;
    StringUtilities::to_string( label_str, label );
@@ -3618,7 +3622,7 @@ void Federate::save_at_SST(
    errmsg << "Federate::save_at_SST():" << __LINE__
           << " ERROR: Not yet implemented!" << endl
           << " Label:'" << label_str << "'" << endl
-          << " scenario_time:" << scenario_time << endl;
+          << " scenario_time:" << sst << endl;
    DebugHandler::terminate_with_message( errmsg.str() );
    return;
 }
@@ -3665,11 +3669,11 @@ void Federate::restore( string const &label )
  */
 void Federate::restore( wstring const &label )
 {
-   
+
    // Sanity checks.
-   if ( execution_control == NULL ){
+   if ( execution_control == NULL ) {
       ostringstream msg;
-      string label_str;
+      string        label_str;
       StringUtilities::to_string( label_str, label );
       msg << "Federate::save():" << __LINE__
           << " ERROR: No ExecutionControl for Saving \'"
