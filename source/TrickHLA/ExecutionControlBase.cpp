@@ -1082,11 +1082,11 @@ void ExecutionControlBase::save_process()
 {
    std::string save_label_str;
 
-   // Convert the save label for use in messages.
-   StringUtilities::to_string( save_label_str, save_restore_service->get_save_label() );
-
    // NOTE: The Save label is assumed to be set outside this function in the
    // SaveRestroreService.
+
+   // Convert the save label for use in messages.
+   StringUtilities::to_string( save_label_str, save_restore_service->get_save_label() );
 
    // Manage the Federate HLA Save process state.
    switch ( save_restore_service->save_state ) {
@@ -1126,7 +1126,7 @@ void ExecutionControlBase::save_process()
 
       case THLASaveProcessEnum::SAVE_IN_PROGRESS:
          // A Save is in progress.  This routine checks status while waiting for
-         // the
+         // the save to complete.
          save_restore_service->save_in_progress_check();
          break;
 
@@ -1319,32 +1319,87 @@ void ExecutionControlBase::save_at_HLT(
  */
 void ExecutionControlBase::restore_process()
 {
+   std::string restore_label_str;
+
+   // NOTE: The Restore label is assumed to be set outside this function in the
+   // SaveRestroreService.
+
+   // Convert the save label for use in messages.
+   StringUtilities::to_string( restore_label_str, save_restore_service->get_restore_label() );
+
    switch ( save_restore_service->restore_state ) {
       case THLARestoreProcessEnum::RESTORE_NONE:
-         // Save has not been initiated.  So, just proceed without action.
+         // Restore process has not been activated.  So, just proceed without action.
+         break;
+
+      case THLARestoreProcessEnum::RESTORE_ACTIVATE:
+         // This federate is initiating the Federation Restore.
+         // Make the call to the RTI ambassador to request a Federation restore.
+         this->restore_request_status();
+         break;
+
+      case THLARestoreProcessEnum::RESTORE_REQUEST_STATUS:
+         // Continue checking the Restore status request state.
+         this->restore_request_status_check();
+         break;
+
+      case THLARestoreProcessEnum::RESTORE_STATUS_COMPLETE:
+         // Make the Restore request to the Federation through the RTI ambassador.
+         this->restore_request();
          break;
 
       case THLARestoreProcessEnum::RESTORE_REQUESTED:
-         // Call the ExecutionControl restore method.
-         restore();
+         // This marks the phase in the restore process where we are waiting for
+         // confirmation on the restore request.
+         this->restore_request_check();
          break;
 
       case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
+         // The Restore request failed.
+         this->restore_request_failed();
          break;
 
       case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
+         // The Restore request failed.  This is a transient phase as a
+         // FedAmb::federationRestoreBegun() callback should follow shortly.
+         this->restore_request_succeeded();
          break;
 
-      case THLARestoreProcessEnum::RESTORE_INITIATE:
+      case THLARestoreProcessEnum::RESTORE_BEGUN:
+         // The Federation wide Restore has begun.  This is also a transient phase as
+         // an FedAmb::initiateFederateRestore() callback should follow shortly.
+         this->restore_begun();
          break;
 
       case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
+         // The federate Restore is in progress.  This routine checks status while waiting for
+         // the restore to complete.  This phase is entered upon receiveing the
+         // FedAmb::initiateFederateRestore() callback and persists until we receive the
+         // FedAmb::federationRestored() callback.
+         this->restore_in_progress_check();
          break;
 
       case THLARestoreProcessEnum::RESTORE_COMPLETE:
+         // The Federation wide Restore was successfully completed.
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            message_publish( MSG_NORMAL, "ExecutionControlBase::restore_process():%d Restore: \'%s\' completed!\n",
+                             __LINE__, restore_label_str.c_str() );
+         }
+         // Restore actions when Restore completed successfully.
+         this->restore_succeded();
+
+         // Reset the Restore state to RESTORE_NONE.
+         save_restore_service->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
          break;
 
       case THLARestoreProcessEnum::RESTORE_FAILED:
+         // The Restore failed.
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            message_publish( MSG_ERROR, "ExecutionControlBase::restore_process():%d Restore: \'%s\' failed!\n",
+                             __LINE__, restore_label_str.c_str() );
+         }
+         // Restore actions when Restore failed.
+         this->restore_failed();
          break;
 
       case THLARestoreProcessEnum::RESTORE_UNSUPPORTED:
@@ -1354,7 +1409,7 @@ void ExecutionControlBase::restore_process()
       default:
          // Unknown Restore state.  This is bad, so exit with error.
          ostringstream errmsg;
-         errmsg << "Federate::freeze_restore():" << __LINE__
+         errmsg << "ExecutionControlBase::restore_process():" << __LINE__
                 << " ERROR: Unknown Restore state = "
                 << static_cast< int >( save_restore_service->restore_state ) << endl;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -1449,6 +1504,76 @@ void ExecutionControlBase::restore_setup()
    }
 
    save_restore_service->set_restore_process( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
+}
+
+   /*! @brief Requests a Federatation wide Restore. */
+void ExecutionControlBase::restore_request_status()
+{
+   save_restore_service->restore_request_status();
+   return;
+}
+
+   /*! @brief Requests a Federatation wide Restore. */
+bool ExecutionControlBase::restore_request_status_check()
+{
+   save_restore_service->restore_request_status_check();
+   return( false );
+}
+
+   /*! @brief Requests a Federatation wide Restore. */
+void ExecutionControlBase::restore_request( std::wstring const & label )
+{
+   save_restore_service->restore_request( label );
+   return;
+}
+
+   /*! @brief Checks for Restore request success or failure. */
+void ExecutionControlBase::restore_request_check()
+{
+   save_restore_service->restore_request_check();
+   return;
+}
+
+   /*! @brief Function called when a Restore request fails. */
+void ExecutionControlBase::restore_request_failed()
+{
+   save_restore_service->restore_request_failed();
+   return;
+}
+
+   /*! @brief Function called when a Restore request succeeds. */
+void ExecutionControlBase::restore_request_succeeded()
+{
+   save_restore_service->restore_request_succeeded();
+   return;
+}
+
+   /*! @brief Function called when a Restore has begun. */
+void ExecutionControlBase::restore_begun()
+{
+   save_restore_service->restore_begun();
+   return;
+}
+
+   /*! @brief Function called cyclicly checking on Restore process progress. */
+void ExecutionControlBase::restore_in_progress_check()
+{
+   save_restore_service->restore_in_progress_check();
+   return;
+}
+
+   /*! @brief Function called when a Restore process succeeds. */
+ void ExecutionControlBase::restore_succeded()
+{ 
+   save_restore_service->restore_succeded();
+   return;
+}
+
+   /*! @brief Function called when a Restore process fails. */
+ void ExecutionControlBase::restore_failed()
+ {
+   save_restore_service->restore_failed();
+   return;
 }
 
 /*!

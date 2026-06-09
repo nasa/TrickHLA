@@ -394,7 +394,7 @@ void FedAmb::requestFederationRestoreSucceeded(
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreSucceeded():%d\n",
                        __LINE__ );
    }
-   save_restore_service->set_restore_request_succeeded();
+   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED );
    save_restore_service->requested_federation_restore_status( true );
 }
 
@@ -408,7 +408,7 @@ void FedAmb::requestFederationRestoreFailed(
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreFailed():%d\n",
                        __LINE__ );
    }
-   save_restore_service->set_restore_request_failed();
+   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_REQUEST_FAILED );
    save_restore_service->requested_federation_restore_status( false );
 }
 
@@ -481,13 +481,16 @@ void FedAmb::federationRestoreStatusResponse(
       message_publish( MSG_NORMAL, "FedAmb::federationRestoreStatusResponse():%d\n",
                        __LINE__ );
    }
-   if ( !this->federation_restore_status_response_context_switch ) {
+   // FIXME:
+   //if ( !this->federation_restore_status_response_context_switch ) {
       // process
-      save_restore_service->process_requested_federation_restore_status( response );
-   } else {
+   //   save_restore_service->process_requested_federation_restore_status( response );
+   //} else {
       // echo
-      save_restore_service->print_requested_federation_restore_status( response );
-   }
+   //   save_restore_service->print_requested_federation_restore_status( response );
+   //}
+   // Process the Federation Restore status response.
+   save_restore_service->process_federation_restore_status_response( response );
 }
 
 /////////////////////////////////////

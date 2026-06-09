@@ -775,6 +775,36 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Perform setup for Federate restore. */
    virtual void restore_setup();
 
+   /*! @brief Request a Federation Restore status. */
+   virtual void restore_request_status();
+
+   /*! @brief Request a Federation Restore status. */
+   virtual bool restore_request_status_check();
+
+   /*! @brief Requests a Federatation wide Restore. */
+   virtual void restore_request( std::wstring const & label = L"" );
+
+   /*! @brief Checks for Restore request success or failure. */
+   virtual void restore_request_check();
+
+   /*! @brief Function called when a Restore request fails. */
+   virtual void restore_request_failed();
+
+   /*! @brief Function called when a Restore request succeeds. */
+   virtual void restore_request_succeeded();
+
+   /*! @brief Function called when a Restore has begun. */
+   virtual void restore_begun();
+
+   /*! @brief Function called cyclicly checking on Restore process progress. */
+   virtual void restore_in_progress_check();
+
+   /*! @brief Function called when a Restore process succeeds. */
+   virtual void restore_succeded();
+
+   /*! @brief Function called when a Restore process fails. */
+   virtual void restore_failed();
+
    /*! @brief Federate commmand to initiate a Federation wide restore.
     *  @return The success or failure of initiating the Federation Restore.
     *  @param label The Restore label for the HLA restore process. */

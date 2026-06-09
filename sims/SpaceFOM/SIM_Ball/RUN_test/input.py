@@ -171,6 +171,9 @@ ball_fed_config = BallFederateConfig(
    federation_name = 'BallFederation',
    enabled         = True )
 
+# Override the default CRC settings.
+#THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8988'
+
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 #ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_10_TRACE )
