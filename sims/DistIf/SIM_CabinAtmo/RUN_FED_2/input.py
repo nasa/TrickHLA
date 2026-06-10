@@ -206,7 +206,7 @@ cabinAtmo.conservation.isBsideHla = True
 
 # Configure the CRC, the default is the local host but can be overridden
 # with command line arguments --crcHost and --crcPort or --settings.
-# THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+# THLA.federate.local_settings = 'crcHost = localhost\:8989'
 THLA.federate.local_settings = local_settings
 
 # Configure the federate

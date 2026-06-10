@@ -215,7 +215,7 @@ federate.add_multiphase_init_sync_point( 'Propagated_init_phase' )
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost\:8989'
 
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
@@ -404,7 +404,7 @@ IMSim_A.interaction_handler.message = 'P-side: IMSim_A.interaction_hdlr.message'
 
 # Configure the CRC.
 # Pitch specific local settings designator:
-IMSim_THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+IMSim_THLA.federate.local_settings = 'crcHost = localhost\:8989'
 # MAK specific local settings designator, which is anything from the rid.mtl file:
 #IMSim_THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 IMSim_THLA.federate.lookahead_time = 0.250

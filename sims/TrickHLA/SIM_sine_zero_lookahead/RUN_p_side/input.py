@@ -87,7 +87,7 @@ THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_M
 
 # Configure the CRC.
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost\:8989'
 # MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 

@@ -274,7 +274,7 @@ federate.add_multiphase_init_sync_point( 'Propagated_init_phase' )
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost\:8989'
 
 #--------------------------------------------------------------------------
 # Set up federate time related parameters.

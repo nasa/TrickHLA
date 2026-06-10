@@ -50,8 +50,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
-#include <map>
-#include <memory>
 #include <string>
 
 // Trick includes.
