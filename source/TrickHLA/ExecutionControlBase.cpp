@@ -126,7 +126,7 @@ ExecutionControlBase::ExecutionControlBase()
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
-     execution_has_begun( false ),
+     // FIXME: execution_has_begun( false ),
      execution_configuration( NULL ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -163,7 +163,7 @@ ExecutionControlBase::ExecutionControlBase(
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
-     execution_has_begun( false ),
+     // FIXME: execution_has_begun( false ),
      execution_configuration( &exec_config ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -1439,7 +1439,8 @@ void ExecutionControlBase::restore_setup()
    }
 
    // if restoring at startup, do nothing here (that is handled in restore_checkpoint)
-   if ( !federate->is_federate_executing() ) {
+   if (    (current_execution_control_mode == EXECUTION_CONTROL_UNINITIALIZED)
+        || (current_execution_control_mode == EXECUTION_CONTROL_INITIALIZING) ) {
       return;
    }
 

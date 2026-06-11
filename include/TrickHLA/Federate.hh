@@ -688,11 +688,6 @@ class Federate : public CheckpointConversionBase
    /*! @brief Restore the backed up "auto-provide" state to the MOM. */
    void restore_orig_MOM_auto_provide_setting();
 
-   /*! @brief Checks for the existence 'startup' initialization sync point as
-    *  an indication if this federate is running.
-    *  @return True if federate is running; False otherwise. */
-   bool is_federate_executing() const;
-
    /*! @brief Ask for all federate handles from MOM after a checkpoint reload. */
    void restore_federate_handles_from_MOM();
 

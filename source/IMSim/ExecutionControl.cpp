@@ -559,7 +559,10 @@ Simulation has started and is now running...\n",
                }
             }
 
-            save_restore_service->set_federate_has_begun_execution();
+            // FIXME: This probably isn't correct even with the new code.
+            current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
+            save_restore_service->check_HLA_save_directory();
+            
          } else {
             ostringstream errmsg;
             errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
@@ -746,7 +749,10 @@ Simulation has started and is now running...\n",
             }
          }
 
-         save_restore_service->set_federate_has_begun_execution();
+         // FIXME: This probably isn't correct even with the new code.
+         current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
+         save_restore_service->check_HLA_save_directory();
+         
       } else { // non-MASTER federate; not restoring a checkpoint
 
          // Setup all the RTI handles for the objects, attributes and interaction

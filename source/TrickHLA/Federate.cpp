@@ -591,9 +591,7 @@ void Federate::post_multiphase_initialization()
       message_publish( MSG_NORMAL, "Federate::post_multiphase_initialization():%d\n     Simulation has started and is now running...\n",
                        __LINE__ );
    }
-
-   // Mark the federate as having begun execution.
-   save_restore_service.set_federate_has_begun_execution();
+   
 }
 
 /*!
@@ -5393,13 +5391,6 @@ void Federate::remove_MOM_HLAfederation_instance_handle(
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
    }
-}
-
-bool Federate::is_federate_executing() const
-{
-   // Check if the object_service has set a flag that the federate initialization has
-   // completed and the federate is now executing.
-   return execution_control->execution_has_begun;
 }
 
 bool Federate::is_MOM_HLAfederation_instance_handle(

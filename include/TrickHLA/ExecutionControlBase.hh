@@ -878,7 +878,8 @@ class ExecutionControlBase : public SyncPointManagerBase
       synchronize the federates in a federation execution to be on a common
       logical time boundary. */
 
-   bool execution_has_begun; ///< @trick_units{--} Flag to indicate if the federate has begun simulation execution.
+   // FIXME: This is probably covered with the current_execution_control_mode.
+   //bool execution_has_begun; ///< @trick_units{--} Flag to indicate if the federate has begun simulation execution.
 
    ExecutionConfigurationBase *execution_configuration; /**< @trick_units{--}
       Associates TrickHLA::ExecutionConfigurationBase class object instance.

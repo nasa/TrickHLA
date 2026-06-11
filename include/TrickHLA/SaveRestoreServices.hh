@@ -545,9 +545,6 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Converts checkpointed sync points into HLA sync points. */
    void reinstate_logged_sync_pts();
 
-   /*! @brief Set the federate has begun execution state. */
-   void set_federate_has_begun_execution();
-
    /*! @brief Get the name of the restore.
     *  @return Restore name. */
    std::wstring const &get_restore_name()

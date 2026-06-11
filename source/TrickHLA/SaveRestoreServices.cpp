@@ -2367,10 +2367,3 @@ void SaveRestoreServices::reinstate_logged_sync_pts()
    federate->get_execution_control()->reinstate_logged_sync_pts();
 }
 
-/*! @brief Set the federate has begun execution state. */
-void SaveRestoreServices::set_federate_has_begun_execution()
-{
-   execution_control->execution_has_begun = true;
-
-   check_HLA_save_directory();
-}
