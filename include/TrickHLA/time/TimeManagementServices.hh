@@ -38,11 +38,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_TIME_MANAGEMENT_SERVICES_HH
 #define TRICKHLA_TIME_MANAGEMENT_SERVICES_HH
 
-// System includes.
-//#include <map>
-//#include <memory>
-//#include <string>
-
 // Trick includes.
 #include "trick/Flag.h"
 

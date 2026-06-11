@@ -43,8 +43,13 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <climits>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <ostream>
+#include <set>
+#include <sstream>
+#include <string>
 #if defined( IEEE_1516_2025 )
 #   include <memory>
 #endif // IEEE_1516_2025
