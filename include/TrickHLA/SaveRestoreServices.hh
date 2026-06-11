@@ -150,6 +150,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    // and private data.
    friend class Federate;
    friend class ExecutionControlBase;
+   friend class FedAmb;
 
   public:
    //
@@ -348,6 +349,10 @@ class SaveRestoreServices : public CheckpointConversionBase
    // Restore functions.
    //..........................................................................
 
+   /*! @brief Set the Restore label.
+    *  @param label Desired Restore label. */
+   void set_restore_label( std::wstring const &label );
+
    /*! @brief Get the current Federate HLA Save label.
     *  @return Federate HLA Save lable. */
    std::wstring const &get_restore_label()
@@ -385,16 +390,15 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Routine to check if the restore request status in complete. */
    void restore_request_status_check();
 
+   /*! @brief Format a FederateRestore status response string. */
+   static std::string to_string( rti1516e::FederateRestoreStatus const &restore_status );
+
+   /*! @brief Format a FederateRestore status response string. */
+   static std::string to_string( rti1516e::FederateRestoreStatusVector const &response );
+
    /*! @brief Request that the Federation Restore with the associated Restore label.
     *  @param label The HLA Restore label. */
    void restore_request( std::wstring const &label );
-
-   /*! @brief Process the Federation Restore status response. */
-   void process_federation_restore_status_response(
-      rti1516e::FederateRestoreStatusVector const &response );
-
-   /*! @brief Format a FederateRestore status response string. */
-   static std::string to_string( rti1516e::FederateRestoreStatus const &restore_status );
 
    /*! @brief Checks for Restore request success or failure. */
    void restore_request_check();
@@ -491,45 +495,10 @@ class SaveRestoreServices : public CheckpointConversionBase
       return ( restore_state == THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED );
    }
 
-   /*! @brief Get the restore process state.
-    *  @return The Restore process state. */
-   THLARestoreProcessEnum get_restore_process()
-   {
-      return restore_state;
-   }
-
-   /*! @brief Set the restore process state.
-    *  @param process_state The Restore process state. */
-   void set_restore_process( THLARestoreProcessEnum process_state )
-   {
-      this->restore_state = process_state;
-   }
-
    /*! @brief Save the restore process state as a previous value. */
    void preserve_restore_process()
    {
       this->prev_restore_process = restore_state;
-   }
-
-   /*! @brief Set the restore begun state. */
-   void set_restore_begun();
-
-   /*! @brief Set the restore completed state. */
-   void set_restore_completed();
-
-   /*! @brief Set the restore failed state. */
-   void set_restore_failed();
-
-   /*! @brief Set the restore request failed state. */
-   void set_restore_request_failed()
-   {
-      this->restore_state = THLARestoreProcessEnum::RESTORE_REQUEST_FAILED;
-   }
-
-   /*! @brief Set the restore request succeeded state. */
-   void set_restore_request_succeeded()
-   {
-      this->restore_state = THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED;
    }
 
    /*! @brief Set the restore is imminent flag. */
@@ -686,6 +655,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    bool restore_status_response_complete; ///< @trick_units{--} Flag indicating if HLA Restore status response is complete.
    bool restore_status_process_response;  /**< @trick_units{--} Flag indicating to process HLA Restore status response.
                                                Otherwise, just echo out the response status. */
+   RTI1516_NAMESPACE::FederateRestoreStatusVector restore_status_response;  ///< @trick_units{--} Federation Restore status vector.
 
    //*************************************************************************
    // Possibly deprecated variables.

@@ -1196,7 +1196,7 @@ bool ExecutionControlBase::save( wstring const &label )
    }
 
    // Check the Federation Save state to ensure that a Save is applicable .
-   if ( ( current_save_state != THLASaveProcessEnum::SAVE_NONE )
+   if (    ( current_save_state != THLASaveProcessEnum::SAVE_NONE )
         && ( current_save_state != THLASaveProcessEnum::SAVE_REQUESTED )
         && ( current_save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) { // cppcheck-suppress [knownConditionTrueFalse]
 
@@ -1204,6 +1204,7 @@ bool ExecutionControlBase::save( wstring const &label )
          message_publish( MSG_WARNING, "ExecutionControlBase::save():%d : Save already in progress: \'%s\'!\n",
                           __LINE__, current_save_state_str.c_str() );
       }
+
       return ( false );
    }
 
@@ -1249,7 +1250,7 @@ void ExecutionControlBase::save_at_SET(
                 << " ERROR: SaveRetore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl
                 << " sim_time:" << sim_time << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
    }
@@ -1276,7 +1277,7 @@ void ExecutionControlBase::save_at_SST(
                 << " ERROR: SaveRetore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl
                 << " scenario_time:" << scenario_time << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
    }
@@ -1304,7 +1305,7 @@ void ExecutionControlBase::save_at_HLT(
                 << " ERROR: SaveRetore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl
                 << " time:" << time_str << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
    }
@@ -1328,13 +1329,14 @@ void ExecutionControlBase::restore_process()
    StringUtilities::to_string( restore_label_str, save_restore_service->get_restore_label() );
 
    switch ( save_restore_service->restore_state ) {
+      
       case THLARestoreProcessEnum::RESTORE_NONE:
          // Restore process has not been activated.  So, just proceed without action.
          break;
 
       case THLARestoreProcessEnum::RESTORE_ACTIVATE:
          // This federate is initiating the Federation Restore.
-         // Make the call to the RTI ambassador to request a Federation restore.
+         // The process begins with checking the Federation for a Restore status.
          this->restore_request_status();
          break;
 
@@ -1344,12 +1346,14 @@ void ExecutionControlBase::restore_process()
          break;
 
       case THLARestoreProcessEnum::RESTORE_STATUS_COMPLETE:
+         // The Federation Restore status is complete and compatible with
+         // proceeding with the Restore process.
          // Make the Restore request to the Federation through the RTI ambassador.
          this->restore_request();
          break;
 
       case THLARestoreProcessEnum::RESTORE_REQUESTED:
-         // This marks the phase in the restore process where we are waiting for
+         // This marks the phase in the Restore process where we are waiting for
          // confirmation on the restore request.
          this->restore_request_check();
          break;
@@ -1372,10 +1376,10 @@ void ExecutionControlBase::restore_process()
          break;
 
       case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
-         // The federate Restore is in progress.  This routine checks status while waiting for
-         // the restore to complete.  This phase is entered upon receiveing the
-         // FedAmb::initiateFederateRestore() callback and persists until we receive the
-         // FedAmb::federationRestored() callback.
+         // The federate Restore is in progress.  This routine checks status
+         // while waiting for the restore to complete.  This phase is entered
+         // upon receiveing the FedAmb::initiateFederateRestore() callback and
+         // persists until we receive the FedAmb::federationRestored() callback.
          this->restore_in_progress_check();
          break;
 
@@ -1425,6 +1429,12 @@ void ExecutionControlBase::restore_setup()
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !is_save_and_restore_supported() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::restore_setup():" << __LINE__
+                << " ERROR: SaveRestore NOT supported!" << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
       return;
    }
 
@@ -1434,7 +1444,7 @@ void ExecutionControlBase::restore_setup()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::setup_restore():%d Federate Restore Pre-load.\n",
+      message_publish( MSG_NORMAL, "ExecutionControlBase::restore_setup():%d Federate Restore Pre-load.\n",
                        __LINE__ );
    }
    // Determine if I am the federate that clicked Load Chkpnt on sim control panel
@@ -1503,7 +1513,7 @@ void ExecutionControlBase::restore_setup()
       }
    }
 
-   save_restore_service->set_restore_process( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
+   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
 }
 
    /*! @brief Requests a Federatation wide Restore. */
@@ -1581,6 +1591,9 @@ void ExecutionControlBase::restore_in_progress_check()
  */
 bool ExecutionControlBase::restore( wstring const &label )
 {
+   THLARestoreProcessEnum current_restore_state;
+   std::string            current_restore_state_str;
+
    // If Federation SaveRestore is not supported then return without action.
    if ( !is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -1590,23 +1603,33 @@ bool ExecutionControlBase::restore( wstring const &label )
          errmsg << "ExecutionControlBase::restore():" << __LINE__
                 << " ERROR: SaveRetore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return ( false );
    }
 
-   // FIXME: Start the Restore process here.
-   {
-      string label_str;
-      StringUtilities::to_string( label_str, label );
-      ostringstream errmsg;
-      errmsg << "ExecutionControlBase::restore():" << __LINE__
-             << " ERROR: Restore not yet implemented!" << endl
-             << " Label:'" << label_str << "'" << endl;
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
-   }
+   // Get the current Restore state.
+   current_restore_state = save_restore_service->get_restore_state();
 
-   return ( false );
+   // Convert the Restore label for use in messages.
+   current_restore_state_str = TrickHLA::to_string( current_restore_state );
+
+   // Check the Federation Restore state to ensure that a Restore is applicable .
+   if ( current_restore_state != THLARestoreProcessEnum::RESTORE_NONE ) {
+
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         message_publish( MSG_WARNING, "ExecutionControlBase::restore():%d : Restore already in progress: \'%s\'!\n",
+                          __LINE__, current_restore_state_str.c_str() );
+      }
+      
+      return ( false );
+   }
+   
+   // Initiate the Restore process.
+   save_restore_service->set_restore_label( label );
+   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_ACTIVATE );
+
+   return ( true );
 }
 
 /*!
@@ -1674,7 +1697,7 @@ void ExecutionControlBase::restore_after()
    }
 
    if ( save_restore_service->is_start_to_restore() ) {
-      save_restore_service->set_restore_process( THLARestoreProcessEnum::RESTORE_COMPLETE );
+      save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
 
       // Make a copy of restore_process because it is used in the
       // inform_RTI_of_restore_completion() function.

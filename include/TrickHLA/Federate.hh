@@ -180,7 +180,6 @@ class Federate : public CheckpointConversionBase
    void fix_FPU_control_word();
 
    /*! @brief Setup the required class instance associations.
-    *  @param federate_amb               Associated federate ambassador class instance.
     *  @param federate_execution_control Associated federate execution control class instance.
     *  @param federate_execution_config  Associated federate execution configuration class instance. */
    void setup( ExecutionControlBase       &federate_execution_control,
