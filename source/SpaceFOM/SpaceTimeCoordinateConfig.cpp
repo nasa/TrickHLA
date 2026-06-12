@@ -65,7 +65,7 @@ void SpaceTimeCoordinateConfig::configure(
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinateConfig::configure():" << __LINE__
              << " ERROR: Unexpected NULL attribute specified!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -90,7 +90,7 @@ void SpaceTimeCoordinateConfig::configure(
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinateConfig::configure():" << __LINE__
              << " ERROR: Unexpected NULL rec_element specified!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 

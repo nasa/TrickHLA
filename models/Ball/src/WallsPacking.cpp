@@ -232,7 +232,7 @@ void WallsPacking::pack()
       ostringstream errmsg;
       errmsg << "WallsPacking::pack():" << __LINE__
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Check for latency/lag compensation.
@@ -260,7 +260,7 @@ void WallsPacking::unpack()
       ostringstream errmsg;
       errmsg << "WallsPacking::unpack():" << __LINE__
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Transfer the packing data into the working data.

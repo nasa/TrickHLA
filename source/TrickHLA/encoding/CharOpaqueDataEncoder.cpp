@@ -81,7 +81,7 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_CHARACTER, "UNSUPPORTED_TYPE" )
              << "'." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -90,7 +90,7 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a dynamic variable array!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
    this->data_encoder = new HLAopaqueData();

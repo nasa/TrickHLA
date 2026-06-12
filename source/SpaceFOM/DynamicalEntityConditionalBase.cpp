@@ -133,7 +133,7 @@ bool DynamicalEntityConditionalBase::should_send(
       errmsg << "DynamicalEntityConditionalBase::should_send():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );

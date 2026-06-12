@@ -72,7 +72,7 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
              << " ERROR: The variable address is NULL for variable '"
              << data_name << "'. Please make sure the Trick variable"
              << " is allocated memory by the Trick Memory Manager." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( attr == NULL ) {
@@ -81,7 +81,7 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
              << " ERROR: Unexpected NULL Trick attributes. Please make sure the"
              << " variable is allocated memory by the Trick Memory Manager."
              << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -226,7 +226,7 @@ void VariableArrayEncoderBase::resize_trick_var(
                 << trickTypeCharString( type, type_name.c_str() )
                 << "', type:" << type << ") for user defined type '"
                 << type_name << "' for " << new_size << " elements!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    }
 }

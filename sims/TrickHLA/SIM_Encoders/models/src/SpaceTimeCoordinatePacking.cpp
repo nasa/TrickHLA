@@ -113,7 +113,7 @@ void SpaceTimeCoordinatePacking::base_config(
          ostringstream errmsg;
          errmsg << "SpaceFOM::SpaceTimeCoordinatePacking::base_config():" << __LINE__
                 << " WARNING: Unexpected NULL THLAManager object!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       // If the mngr_object is not set but the object is, use that.
    } else {
@@ -124,7 +124,7 @@ void SpaceTimeCoordinatePacking::base_config(
          ostringstream errmsg;
          errmsg << "SpaceFOM::SpaceTimeCoordinatePacking::base_config():" << __LINE__
                 << " WARNING: THLAManager object is already set!\n";
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    }
 
@@ -181,7 +181,7 @@ void SpaceTimeCoordinatePacking::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinatePacking::initialize():" << __LINE__
              << " ERROR: NULL latitude reference!\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Initialize from the initial state of the working data.

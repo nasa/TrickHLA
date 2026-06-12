@@ -77,7 +77,7 @@ void DynamicalEntityLagCompInteg::initialize()
              << " ERROR: Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Call the base class initialize routine.

@@ -249,7 +249,7 @@ void InteractionItem::checkpoint_queue()
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for a parm_items linear"
                 << " array of " << parm_items_count << " elements" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       size_t         i;
