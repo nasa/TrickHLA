@@ -92,7 +92,7 @@ void DynamicalEntity::initialize()
              << " ERROR: Unexpected NULL DynamicalEntityData: "
              << pe_packing_data.name << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -118,7 +118,7 @@ void DynamicalEntity::set_data(
              << " ERROR: Unexpected NULL DynamicalEntityData: "
              << pe_packing_data.name << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    this->dynamical_data = dynamics_data_ptr;
 

@@ -128,7 +128,7 @@ bool RefFrameConditionalBase::should_send(
       errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -150,7 +150,7 @@ bool RefFrameConditionalBase::should_send(
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
                 << " ERROR: Unexpected NULL Name for RefFrame!" << endl;
          // Print message and terminate.
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       if ( frame.packing_data.name != prev_data.name ) {
@@ -186,7 +186,7 @@ bool RefFrameConditionalBase::should_send(
              << attr->get_FOM_name() << "):" << __LINE__
              << "ERROR: Could not find the data for the specified FOM attribute!"
              << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return send_attr;

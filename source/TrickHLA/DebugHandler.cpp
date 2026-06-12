@@ -74,7 +74,7 @@ void DebugHandler::set(
    }
 }
 
-void DebugHandler::terminate_with_message(
+void DebugHandler::terminate(
    string const &message,
    int const     exit_code )
 {

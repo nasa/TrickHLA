@@ -171,7 +171,7 @@ void SpaceTimeCoordinateEncoder::encode()
              << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Copy the encoded data into the buffer.
@@ -215,7 +215,7 @@ void SpaceTimeCoordinateEncoder::decode()
              << " Error: Encoder exception!" << endl;
       errmsg << what_s;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return;

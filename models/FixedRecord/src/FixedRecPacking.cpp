@@ -76,7 +76,7 @@ void FixedRecPacking::pack()
       ostringstream errmsg;
       errmsg << "FixedRecPacking::pack():" << __LINE__
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // MainFixedRecObject
@@ -114,7 +114,7 @@ void FixedRecPacking::unpack()
       ostringstream errmsg;
       errmsg << "FixedRecPacking::unpack():" << __LINE__
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // MainFixedRecObject

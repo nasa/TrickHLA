@@ -98,7 +98,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
                 << " ERROR: Unexpected NULL Packing object!" << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
       
       if ( object == NULL ) {
@@ -106,7 +106,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          errmsg << "TrickHLAObjectBaseSimObject::set_object():" << __LINE__
                 << " ERROR: The TrickHLA::Object associated with object \'"
                 << name << "\' is NULL." << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
       
       // Set the references to the TrickHLA object.
@@ -121,7 +121,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
                 << " ERROR: Unexpected NULL Packing object!" << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
 
@@ -140,7 +140,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
                std::ostringstream errmsg;
                errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
                       << " ERROR: Object references do NOT match!" << std::endl;
-               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               TrickHLA::DebugHandler::terminate( errmsg.str() );
                return( -1 );
             }
             
@@ -194,7 +194,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
                 << " ERROR: The sim-object configure function must be called"
                 << " before calling this initialize function!" << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
 
@@ -203,7 +203,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
                 << " ERROR: Unexpected NULL Packing object!" << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       } else {
          packing_base_ptr->initialize();
@@ -224,7 +224,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
                std::ostringstream errmsg;
                errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
                       << " ERROR: Object references do NOT match!" << std::endl;
-               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               TrickHLA::DebugHandler::terminate( errmsg.str() );
                return( -1 );
             }
             
@@ -248,7 +248,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
                 << " ERROR: The TrickHLA::Object associated with object \'"
                 << name << "\' is NULL." << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
 

@@ -421,7 +421,7 @@ void SaveRestoreServices::save_request(
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save_request():" << __LINE__
                 << " ERROR: No Save label set!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       return;
    } else {
@@ -511,7 +511,7 @@ void SaveRestoreServices::save( wstring const &label )
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
                 << " ERROR: No Save label set!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    } else {
       this->save_label = label;
@@ -663,7 +663,7 @@ void SaveRestoreServices::save_succeded()
       errmsg << "SaveRestoreServices::save_succeded():" << __LINE__
              << " ERROR: Save state mismatch: "
              << TrickHLA::to_string( save_state ) << "!" << std::endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Restore the base Save state.
@@ -698,7 +698,7 @@ void SaveRestoreServices::save_failed()
       errmsg << "SaveRestoreServices::save_failed():" << __LINE__
              << " ERROR: Save state mismatch: "
              << TrickHLA::to_string( save_state ) << "!" << std::endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Print out an error message.
@@ -734,7 +734,7 @@ bool SaveRestoreServices::write_joined_federates_to_file(
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
                 << " ERROR: No Save label set!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       // Get the joined federates file name from the ExecutionControl service.
       file_name = execution_control->map_save_label_to_federates_file_name( this->save_label );
@@ -893,7 +893,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file():" << __LINE__
                 << " ERROR: No Restore label set!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       // Get the joined federates file name from the ExecutionControl service.
       file_name = execution_control->map_save_label_to_federates_file_name( this->restore_label );
@@ -1274,7 +1274,7 @@ void SaveRestoreServices::restore_request( wstring const &label )
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_request():" << __LINE__
                 << " ERROR: No Restore label set!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    } else {
       this->restore_label = label;
@@ -1404,7 +1404,7 @@ void SaveRestoreServices::restore_request_check()
    ostringstream errmsg;
    errmsg << "SaveRestoreServices::restore_request_check():" << __LINE__
           << " ERROR: Function not yet implemented!" << endl;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   DebugHandler::terminate( errmsg.str() );
    return;
 }
 
@@ -1420,7 +1420,7 @@ void SaveRestoreServices::restore_request_succeeded()
    ostringstream errmsg;
    errmsg << "SaveRestoreServices::restore_request_succeeded():" << __LINE__
           << " ERROR: Function not yet implemented!" << endl;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   DebugHandler::terminate( errmsg.str() );
    return;
 }
 
@@ -1436,7 +1436,7 @@ void SaveRestoreServices::restore_request_failed()
    ostringstream errmsg;
    errmsg << "SaveRestoreServices::restore_request_failed():" << __LINE__
           << " ERROR: Function not yet implemented!" << endl;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   DebugHandler::terminate( errmsg.str() );
 
    return;
 }
@@ -1495,7 +1495,7 @@ void SaveRestoreServices::restore_succeded()
    ostringstream errmsg;
    errmsg << "SaveRestoreServices::restore_succeded():" << __LINE__
           << " ERROR: Function not yet implemented!" << endl;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   DebugHandler::terminate( errmsg.str() );
 
    // Set the Restore process state to RESTORE_COMPLETE!
    restore_state = THLARestoreProcessEnum::RESTORE_COMPLETE;
@@ -1515,7 +1515,7 @@ void SaveRestoreServices::restore_failed()
    ostringstream errmsg;
    errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
           << " ERROR: Function not yet implemented!" << endl;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   DebugHandler::terminate( errmsg.str() );
 
    // Set the Restore process state to RESTORE_FAILED!
    restore_state = THLARestoreProcessEnum::RESTORE_FAILED;
@@ -1750,7 +1750,7 @@ void SaveRestoreServices::wait_for_federation_restore_begun()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1799,7 +1799,7 @@ void SaveRestoreServices::wait_until_federation_is_ready_to_restore()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1883,7 +1883,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -1946,7 +1946,7 @@ void SaveRestoreServices::wait_for_restore_request_callback()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1995,7 +1995,7 @@ void SaveRestoreServices::wait_for_restore_status_to_complete()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -2053,7 +2053,7 @@ void SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complet
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 

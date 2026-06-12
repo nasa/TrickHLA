@@ -156,7 +156,7 @@ void ExecutionConfiguration::configure_attributes(
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " ERROR: Unexpected empty sim_config_name." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Set the S_define instance name.
@@ -179,7 +179,7 @@ void ExecutionConfiguration::configure_attributes()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " ERROR: Unexpected empty S_define_name." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    string simconfig_name_str = string( S_define_name );
@@ -272,7 +272,7 @@ void ExecutionConfiguration::configure()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA::Federate." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // The Simulation Configuration object must have a name.
@@ -280,7 +280,7 @@ void ExecutionConfiguration::configure()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Simulation configuration must have a name!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Lag compensation is not supported for the Execution Configuration object.
@@ -314,7 +314,7 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::get_imsim_control():" << __LINE__
              << " ERROR: Dynamic cast error from base class reference to IMSim reference!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return imsim_exec_cntrl;
@@ -402,7 +402,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    ostringstream errormsg;
    errormsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
             << " ERROR: This routine does NOT work and should not be called!" << endl;
-   DebugHandler::terminate_with_message( errormsg.str() );
+   DebugHandler::terminate( errormsg.str() );
 }
 #pragma GCC diagnostic pop
 
@@ -473,7 +473,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -501,7 +501,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return true;

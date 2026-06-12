@@ -80,7 +80,7 @@ StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder(
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_STRING, "UNSUPPORTED_TYPE" )
              << "'." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -89,7 +89,7 @@ StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder(
       errmsg << "StringUnicodeVariableArrayEncoder::StringUnicodeVariableArrayEncoder():"
              << __LINE__ << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a dynamic array of 'std::string'!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 

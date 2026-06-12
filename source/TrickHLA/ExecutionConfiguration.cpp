@@ -137,7 +137,7 @@ void ExecutionConfiguration::configure_attributes()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " ERROR: Unexpected empty S_define_name." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -201,7 +201,7 @@ void ExecutionConfiguration::configure()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Null TrickHLA::Federate passed in!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 

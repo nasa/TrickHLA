@@ -101,7 +101,7 @@ void InteractionHandler::set_interaction( TrickHLA::Interaction *inter )
       errmsg << "TrickHLA::InteractionHandler::set_interaction():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Assign the object.
@@ -228,7 +228,7 @@ Parameter *InteractionHandler::get_parameter_and_validate(
       ostringstream errmsg;
       errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
              << " ERROR: Unexpected NULL parameter FOM name specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Get the parameter by FOM name.
@@ -244,7 +244,7 @@ Parameter *InteractionHandler::get_parameter_and_validate(
              << " correct, the FOM contains an parameter named '"
              << param_FOM_name << "' and that your input.py file is properly"
              << " configured for this parameter." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    return param;
 }

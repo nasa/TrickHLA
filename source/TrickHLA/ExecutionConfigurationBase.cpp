@@ -311,7 +311,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -367,7 +367,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -396,7 +396,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
              << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return true;

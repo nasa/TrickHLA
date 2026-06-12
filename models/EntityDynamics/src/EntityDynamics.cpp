@@ -93,7 +93,7 @@ void EntityDynamics::initialize()
       errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
              << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( errmsg.str() );
    }
 
    return;

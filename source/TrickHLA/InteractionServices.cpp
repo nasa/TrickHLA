@@ -114,7 +114,7 @@ void InteractionServices::restart_initialization()
       ostringstream errmsg;
       errmsg << "InteractionServices::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -154,7 +154,7 @@ void InteractionServices::verify_interaction_arrays()
              << " inter_count:" << inter_count << ". Please check your input or"
              << " modified-data files to make sure the 'InteractionServices::interactions'"
              << " array is correctly configured." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -168,7 +168,7 @@ void InteractionServices::verify_interaction_arrays()
              << " array. Please check your input or modified-data files to make"
              << " sure the 'InteractionServices::interactions' array is correctly configured."
              << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -179,7 +179,7 @@ void InteractionServices::verify_interaction_arrays()
              << ". Please check your input or modified-data files to make sure"
              << " the 'InteractionServices::interactions' array is correctly configured."
              << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Reset the TrickHLA Interaction count if negative.
@@ -204,7 +204,7 @@ void InteractionServices::verify_interaction_arrays()
                          << "' at array index " << k << ". Please check your"
                          << " input or modified-data files to make sure the"
                          << " interaction FOM names are unique with no duplicates." << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                   return;
                }
             }
@@ -232,7 +232,7 @@ void InteractionServices::verify_interaction_arrays()
                    << "'. Please check your Execution Control implementation to"
                    << " make sure only one interaction implementation exists per"
                    << " HLA interaction class FOM name." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             return;
          }
       }
@@ -250,7 +250,7 @@ void InteractionServices::verify_interaction_arrays()
                    << ". Please check your input or modified-data files to"
                    << " make sure the interaction FOM names are unique with"
                    << " no duplicates." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             return;
          }
       }
@@ -334,7 +334,7 @@ void InteractionServices::setup_interaction_RTI_handles(
       ostringstream errmsg;
       errmsg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -346,7 +346,7 @@ void InteractionServices::setup_interaction_RTI_handles(
       ostringstream errmsg;
       errmsg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL RTIambassador!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -438,7 +438,7 @@ void InteractionServices::setup_interaction_RTI_handles(
                    << " ERROR: Interaction FOM Name '" << inter_FOM_name << "' Not Found. Please"
                    << " check your input or modified-data files to make sure the"
                    << " Interaction FOM Name is correctly specified." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             break;
          }
          case 2: { // Parameter
@@ -449,7 +449,7 @@ void InteractionServices::setup_interaction_RTI_handles(
                    << "' Not Found. Please check your input or modified-data files"
                    << " to make sure the Interaction Parameter FOM Name is"
                    << " correctly specified." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             break;
          }
          default: { // FOM name we are working with is unknown.
@@ -458,7 +458,7 @@ void InteractionServices::setup_interaction_RTI_handles(
                    << " ERROR: Interaction or Parameter FOM Name Not Found. Please check your input"
                    << " or modified-data files to make sure the FOM Name is"
                    << " correctly specified." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             break;
          }
       }
@@ -470,7 +470,7 @@ void InteractionServices::setup_interaction_RTI_handles(
       ostringstream errmsg;
       errmsg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: FederateNotExecutionMember!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -479,7 +479,7 @@ void InteractionServices::setup_interaction_RTI_handles(
       ostringstream errmsg;
       errmsg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: NotConnected!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -490,7 +490,7 @@ void InteractionServices::setup_interaction_RTI_handles(
       ostringstream errmsg;
       errmsg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: RTIinternalError: '" << rti_err_msg << "'" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -501,7 +501,7 @@ void InteractionServices::setup_interaction_RTI_handles(
       ostringstream errmsg;
       errmsg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__
              << " ERROR: Exception for '" << rti_err_msg << "'" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -657,7 +657,7 @@ void InteractionServices::process_interactions()
                    << ". Verify that you are specifying the correct interaction "
                    << "type defined in 'InteractionServicesTypeOfInteractionEnum' enum "
                    << "found in 'InteractionServices.hh' and re-run." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             return;
          }
       }
@@ -770,7 +770,7 @@ void InteractionServices::convert_data_before_checkpoint()
          errmsg << "InteractionServices::convert_data_before_checkpoint():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
                 << " linear array of " << check_interactions_count << " elements." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 

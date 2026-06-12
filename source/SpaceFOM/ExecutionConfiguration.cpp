@@ -151,7 +151,7 @@ void ExecutionConfiguration::configure_attributes()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " ERROR: Unexpected empty S_define_name." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -230,7 +230,7 @@ void ExecutionConfiguration::configure()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA::Federate." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -288,7 +288,7 @@ void ExecutionConfiguration::pack()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
              << " ERROR: Invalid time constraints!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 }
 
@@ -341,7 +341,7 @@ void ExecutionConfiguration::verify_ExCO_data()
              << " CTE time of " << next_mode_cte_time << "! Please make sure"
              << " all your Central Timing Equipment is using the same"
              << " synchronized time source." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 }
 
@@ -463,7 +463,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    ostringstream errormsg;
    errormsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
             << " ERROR: This routine does NOT work and should not be called!" << endl;
-   DebugHandler::terminate_with_message( errormsg.str() );
+   DebugHandler::terminate( errormsg.str() );
 
    //
    // Set up object properties specifically for the ExCO.
@@ -511,7 +511,7 @@ void ExecutionConfiguration::setup_ref_attributes(
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the attributes of the ExCO!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -552,7 +552,7 @@ void ExecutionConfiguration::setup_ref_attributes(
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the REF2 structure for"
              << " the 'root_frame_name' value of the ExCO!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -568,7 +568,7 @@ void ExecutionConfiguration::setup_ref_attributes(
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"
              << " 'root_frame_name' value of the ExCO!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -694,7 +694,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -722,7 +722,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return true;

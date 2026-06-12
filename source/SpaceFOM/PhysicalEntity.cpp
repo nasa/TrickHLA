@@ -90,7 +90,7 @@ void PhysicalEntity::set_data( PhysicalEntityData *physical_data_ptr )
       errmsg << "SpaceFOM::PhysicalEntity::set_data():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: "
              << pe_packing_data.name << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
    this->physical_data = physical_data_ptr;
@@ -110,7 +110,7 @@ void PhysicalEntity::initialize()
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: "
              << pe_packing_data.name << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 

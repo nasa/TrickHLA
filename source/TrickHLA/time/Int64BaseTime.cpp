@@ -96,7 +96,7 @@ void Int64BaseTime::set(
       errmsg << "Int64BaseTime::set():" << __LINE__
              << " ERROR: The base-time multiplier specified (" << multiplier
              << ") must be greater than or equal to 1!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    base_time_multiplier = multiplier;
@@ -220,7 +220,7 @@ void Int64BaseTime::set(
          ostringstream errmsg;
          errmsg << "Int64BaseTime::set():" << __LINE__
                 << " ERROR: Unknown unit:" << unit << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          break;
       }
    }

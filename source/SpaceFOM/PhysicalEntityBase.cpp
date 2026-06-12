@@ -168,7 +168,7 @@ void PhysicalEntityBase::base_config(
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::base_config():" << __LINE__
              << " ERROR: Unexpected empty federation instance frame name!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } else {
       set_name( entity_fed_name );
    }
@@ -304,7 +304,7 @@ void PhysicalEntityBase::initialize()
              << " ERROR: Unexpected empty federation instance name!"
              << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Must have federation instance parent_ref_frame.
@@ -315,7 +315,7 @@ void PhysicalEntityBase::initialize()
              << " Setting parent_ref_frame to empty string."
              << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -409,7 +409,7 @@ void PhysicalEntityBase::pack()
       errmsg << "PhysicalEntityBase::pack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -450,7 +450,7 @@ void PhysicalEntityBase::unpack()
       errmsg << "PhysicalEntityBase::unpack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );

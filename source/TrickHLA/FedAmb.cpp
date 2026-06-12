@@ -154,7 +154,7 @@ void FedAmb::connectionLost(
       errmsg << "FedAmb::connectionLost():" << __LINE__
              << " ERROR: Lost the connection to the RTI. Reason:'"
              << fault_msg << "' Terminating the simulation!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       exit( -1 );
    }
 }

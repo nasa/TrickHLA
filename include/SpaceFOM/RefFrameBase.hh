@@ -112,16 +112,16 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
     *  @param ref_frame_parent_name Name of the parent frame for this ReferenceFrame instance.
     *  @param ref_frame_parent      Reference to parent frame for this ReferenceFrame instance.
     *  @param mngr_object           TrickHLA::Object associated with this reference frame.
-    *  @param publish_config        True to publish attributes, default will publish if create is true.
-    *  @param subscribe_config      True to subscribe attributes, default will subscribe if create if false.
+    *  @param publish_attr          True to publish attributes, default will publish if create is true.
+    *  @param subscribe_attr        True to subscribe attributes, default will subscribe if create if false.
     *  */
    virtual void base_config( bool               create,
                              std::string const &sim_obj_name,
                              std::string const &ref_frame_pkg_name,
                              std::string const &ref_frame_fed_name,
-                             TrickHLA::Object  *mngr_object      = NULL,
-                             bool const         publish_config   = false,
-                             bool const         subscribe_config = false );
+                             TrickHLA::Object  *mngr_object    = NULL,
+                             bool const         publish_attr   = false,
+                             bool const         subscribe_attr = false );
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */

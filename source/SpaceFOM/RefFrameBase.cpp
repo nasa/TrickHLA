@@ -101,8 +101,8 @@ void RefFrameBase::base_config(
    std::string const &ref_frame_pkg_name,
    std::string const &ref_frame_fed_name,
    TrickHLA::Object  *mngr_object,
-   bool const         publish_config,
-   bool const         subscribe_config )
+   bool const         publish_attr,
+   bool const         subscribe_attr )
 {
    string ref_frame_full_name = sim_obj_name + "." + ref_frame_pkg_name;
 
@@ -136,12 +136,12 @@ void RefFrameBase::base_config(
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::base_config():" << __LINE__
              << " ERROR: Unexpected empty federation instance frame name!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Determine the publish and subscribe attribute values.
-   bool const publish_attr   = create || publish_config;
-   bool const subscribe_attr = !create || subscribe_config;
+   bool const publish_item   = create || publish_attr;
+   bool const subscribe_item = !create || subscribe_attr;
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
@@ -161,16 +161,16 @@ void RefFrameBase::base_config(
    object->attributes[0].FOM_name      = "name";
    object->attributes[0].trick_name    = ref_frame_full_name + string( ".packing_data.name" );
    object->attributes[0].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
-   object->attributes[0].publish       = publish_attr;
-   object->attributes[0].subscribe     = subscribe_attr;
+   object->attributes[0].publish       = publish_item;
+   object->attributes[0].subscribe     = subscribe_item;
    object->attributes[0].locally_owned = create;
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[1].FOM_name      = "parent_name";
    object->attributes[1].trick_name    = ref_frame_full_name + string( ".packing_data.parent_name" );
    object->attributes[1].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
-   object->attributes[1].publish       = publish_attr;
-   object->attributes[1].subscribe     = subscribe_attr;
+   object->attributes[1].publish       = publish_item;
+   object->attributes[1].subscribe     = subscribe_item;
    object->attributes[1].locally_owned = create;
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
@@ -178,8 +178,8 @@ void RefFrameBase::base_config(
    object->attributes[2].FOM_name      = "state";
    object->attributes[2].trick_name    = ref_frame_full_name + string( ".stc_encoder.buffer" );
    object->attributes[2].config        = TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC;
-   object->attributes[2].publish       = publish_attr;
-   object->attributes[2].subscribe     = subscribe_attr;
+   object->attributes[2].publish       = publish_item;
+   object->attributes[2].subscribe     = subscribe_item;
    object->attributes[2].locally_owned = create;
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_NONE;
 #else
@@ -191,8 +191,8 @@ void RefFrameBase::base_config(
       fom_name,
       trick_name,
       TrickHLA::CONFIG_INITIALIZE_AND_CYCLIC,
-      publish_attr,
-      subscribe_attr,
+      publish_item,
+      subscribe_item,
       create );
 #endif
 
@@ -220,7 +220,7 @@ void RefFrameBase::initialize()
              << endl;
 
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Should have federation instance parent frame name or empty name for root.
@@ -270,7 +270,7 @@ void RefFrameBase::initialize()
              << "', detected unexpected NULL parent frame reference!" << endl;
 
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Associate the instantiated Manager object with this packing object.
@@ -279,7 +279,7 @@ void RefFrameBase::initialize()
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL THLAManager object for ReferenceFrame \""
              << this->packing_data.name << "\"!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Initialize from the initial state of the working data.
@@ -330,7 +330,7 @@ void RefFrameBase::set_name( std::string const &new_name )
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Set the names.
@@ -350,7 +350,7 @@ void RefFrameBase::set_parent_name( std::string const &name )
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Set the parent frame name appropriately.
@@ -374,7 +374,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
              << " ERROR: The initialize() function has already been called" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Set the parent frame reference pointer.
@@ -461,7 +461,7 @@ void RefFrameBase::publish()
          ostringstream errmsg;
          errmsg << "RefFrameBase::publish():" << __LINE__
                 << " ERROR: Unexpected NULL Object reference!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
       if ( object->attributes == NULL ) {
@@ -469,7 +469,7 @@ void RefFrameBase::publish()
          errmsg << "RefFrameBase::publish():" << __LINE__
                 << " ERROR: For Object '" << object->get_name()
                 << "', unexpected NULL object attribute reference!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
       if ( object->attr_count <= 0 ) {
@@ -478,7 +478,7 @@ void RefFrameBase::publish()
                 << " ERROR: For Object '" << object->get_name()
                 << "', unexpected non-zero object attribute count ("
                 << object->attr_count << ")" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 
@@ -508,7 +508,7 @@ void RefFrameBase::subscribe()
          ostringstream errmsg;
          errmsg << "RefFrameBase::subscribe():" << __LINE__
                 << " ERROR: Unexpected NULL Object reference!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
       if ( object->attributes == NULL ) {
@@ -516,7 +516,7 @@ void RefFrameBase::subscribe()
          errmsg << "RefFrameBase::subscribe():" << __LINE__
                 << " ERROR: For Object '" << object->get_name()
                 << "', unexpected NULL object attribute reference!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
       if ( object->attr_count <= 0 ) {
@@ -525,7 +525,7 @@ void RefFrameBase::subscribe()
                 << " ERROR: For Object '" << object->get_name()
                 << "', unexpected non-zero object attribute count ("
                 << object->attr_count << ")" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 
@@ -551,7 +551,7 @@ void RefFrameBase::pack()
       errmsg << "RefFrameBase::pack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -589,7 +589,7 @@ void RefFrameBase::unpack()
       errmsg << "RefFrameBase::unpack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );

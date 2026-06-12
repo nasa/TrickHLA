@@ -148,7 +148,7 @@ bool LRTreeBase::build_tree()
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
              << " ERROR: Failed to allocate the tree paths matrix!\"" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Find the root node for this tree.
@@ -157,7 +157,7 @@ bool LRTreeBase::build_tree()
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
              << " ERROR: Root node not found!\"" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Sweep through the nodes vector to populate the paths matrix.
