@@ -77,7 +77,7 @@ Enum16Data::Enum16Data(
       ostringstream errmsg;
       errmsg << "Enum16Data::Enum16Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum16!" << endl;
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( errmsg.str() );
       return;
    }
    for ( int i = 0; i < ptr_enum16_size; ++i ) {

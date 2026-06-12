@@ -141,7 +141,7 @@ bool PhysicalEntityConditionalBase::should_send(
       errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -274,7 +274,7 @@ bool PhysicalEntityConditionalBase::should_send(
              << "ERROR: Could not find the data for the specified FOM attribute!"
              << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return send_attr;

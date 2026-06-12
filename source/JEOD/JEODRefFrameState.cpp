@@ -109,7 +109,7 @@ void JEODRefFrameState::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Check for the JEOD time reference.
@@ -117,7 +117,7 @@ void JEODRefFrameState::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
              << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -249,7 +249,7 @@ void JEODRefFrameState::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    this->ref_frame_state = ref_frame_state_ptr;
 
@@ -258,7 +258,7 @@ void JEODRefFrameState::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    time_tt = time_tt_in;
 }

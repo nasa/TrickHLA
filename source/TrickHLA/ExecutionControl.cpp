@@ -206,7 +206,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       errmsg << "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
              << " ERROR: For this Master federate, the time padding ("
              << get_time_padding() << " seconds) must be greater than zero!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Verify the federate time constraints.
@@ -214,7 +214,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
              << " ERROR: Time constraints verification failed!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( is_master() ) {
@@ -310,7 +310,7 @@ void ExecutionControl::setup_object_RTI_handles()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::setup_object_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL ExCO!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
    manager->setup_object_RTI_handles( 1, ExCO );
@@ -468,7 +468,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::get_execution_configuration():" << __LINE__
              << " ERROR: Execution Configuration is not an TrickHLA ExCO." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    return ( ExCO );
 }
@@ -486,7 +486,7 @@ void ExecutionControl::set_least_common_time_step(
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an TrickHLA ExCO." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 
@@ -519,7 +519,7 @@ void ExecutionControl::set_time_padding( double t )
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << this->least_common_time_step
              << " " << Int64BaseTime::get_base_unit() << ")!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Need to check that time padding is valid.
@@ -530,7 +530,7 @@ void ExecutionControl::set_time_padding( double t )
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " "
              << Int64BaseTime::get_base_unit() << ")!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // The Master federate padding time must be 3 or more times the Least
@@ -547,7 +547,7 @@ void ExecutionControl::set_time_padding( double t )
              << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ") when the time padding is less than "
              << THLA_PADDING_DEFAULT << " seconds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // For a Master federate using CTE, we need to make sure the padding
@@ -576,7 +576,7 @@ void ExecutionControl::set_time_padding( double t )
             errmsg << "   federate.set_time_padding( " << t << " )" << endl
                    << "   trick.exec_set_freeze_frame( " << ( t / 4 ) << " )" << endl;
          }
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    }
 
@@ -592,6 +592,6 @@ void ExecutionControl::start_federation_save_at_scenario_time(
    ostringstream errmsg;
    errmsg << "TrickHLA::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << endl;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   DebugHandler::terminate( errmsg.str() );
 }
 #pragma GCC diagnostic pop

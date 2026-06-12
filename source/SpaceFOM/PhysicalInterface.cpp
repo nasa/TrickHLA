@@ -90,7 +90,7 @@ void PhysicalInterface::initialize()
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
              << packing_data.name << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -220,7 +220,7 @@ void PhysicalInterface::set_data( PhysicalInterfaceData *interface_data_ptr )
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
              << packing_data.name << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
    this->interface_data = interface_data_ptr;

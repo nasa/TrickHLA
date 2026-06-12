@@ -77,7 +77,7 @@ Enum64Data::Enum64Data(
       ostringstream errmsg;
       errmsg << "Enum64Data::Enum64Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum64!" << endl;
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( errmsg.str() );
       return;
    }
    for ( int i = 0; i < ptr_enum64_size; ++i ) {

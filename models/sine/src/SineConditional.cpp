@@ -100,7 +100,7 @@ void SineConditional::initialize()
       ostringstream errmsg;
       errmsg << "SineConditional::initialize():" << __LINE__
              << " ERROR: Unexpected NULL sim_data!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Make a copy of the incoming data so that we have a previous state
@@ -154,7 +154,7 @@ bool SineConditional::should_send(
       ostringstream errmsg;
       errmsg << "SineConditional::should_send():" << __LINE__
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( attr == NULL ) {
@@ -164,7 +164,7 @@ bool SineConditional::should_send(
       ostringstream errmsg;
       errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
              << " ERROR: Unexpected NULL sim_data!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    bool send_attr = false;
@@ -213,7 +213,7 @@ bool SineConditional::should_send(
       errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
              << " ERROR: Could not find the data for the specified FOM attribute!"
              << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_CONDITIONAL ) ) {

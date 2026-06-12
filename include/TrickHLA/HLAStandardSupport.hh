@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 
 // Insert a compile time error if more than one HLA Standard is defined.
 #if defined( IEEE_1516_2010 ) && defined( IEEE_1516_2025 )
-#   error "ERROR: Only one of IEEE_1516_2010 or IEEE_1516_2025 can be defined!"
+#   error ERROR: Only one of IEEE_1516_2010 or IEEE_1516_2025 can be defined!
 #endif
 
 #if defined( IEEE_1516_2010 )
@@ -49,7 +49,7 @@ NASA, Johnson Space Center\n
 // Define the namespace for the "HLA 4" IEEE 1516-2025 Standard.
 #   define RTI1516_NAMESPACE rti1516_2025
 #else
-#   error "ERROR: Unsupported HLA IEEE 1516 Standard!"
+#   error ERROR: Unsupported HLA IEEE 1516 Standard!
 #endif
 
 #endif // TRICKHLA_HLA_STANDARD_SUPPORT_HH
