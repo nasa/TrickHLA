@@ -47,7 +47,7 @@ FedAmbBase::FedAmbBase( Federate &fed )
      interaction_service( fed.get_interaction_service() ),
      save_restore_service( fed.get_save_restore_service() ),
      // FIXME:
-     //federation_restore_status_response_context_switch( false ), // process, not echo.
+     // federation_restore_status_response_context_switch( false ), // process, not echo.
      federation_restored_rebuild_federate_handle_set( false )
 {
    return;

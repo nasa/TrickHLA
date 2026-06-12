@@ -782,7 +782,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual bool restore_request_status_check();
 
    /*! @brief Requests a Federatation wide Restore. */
-   virtual void restore_request( std::wstring const & label = L"" );
+   virtual void restore_request( std::wstring const &label = L"" );
 
    /*! @brief Checks for Restore request success or failure. */
    virtual void restore_request_check();
@@ -879,7 +879,7 @@ class ExecutionControlBase : public SyncPointManagerBase
       logical time boundary. */
 
    // FIXME: This is probably covered with the current_execution_control_mode.
-   //bool execution_has_begun; ///< @trick_units{--} Flag to indicate if the federate has begun simulation execution.
+   // bool execution_has_begun; ///< @trick_units{--} Flag to indicate if the federate has begun simulation execution.
 
    ExecutionConfigurationBase *execution_configuration; /**< @trick_units{--}
       Associates TrickHLA::ExecutionConfigurationBase class object instance.

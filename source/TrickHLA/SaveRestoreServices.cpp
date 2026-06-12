@@ -198,12 +198,12 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      prev_restore_process( THLARestoreProcessEnum::RESTORE_UNSUPPORTED ),
      initiate_restore_flag( false ),
      restore_in_progress( false ),
-     //restore_failed( false ),
+     // restore_failed( false ),
      restore_is_imminent( false ),
      announce_restore( false ),
      restore_label_generated( false ),
-     //restore_begun( false ),
-     //restore_request_complete( false ),
+     // restore_begun( false ),
+     // restore_request_complete( false ),
      restore_completed( false ),
      federation_restore_failed_callback_complete( false ),
      federate_has_been_restarted( false ),
@@ -1204,20 +1204,18 @@ void SaveRestoreServices::restore_request_status_check()
    }
 
    // Check to see if we have received a Restore status response.
-   if ( !restore_status_response.empty() ){
+   if ( !restore_status_response.empty() ) {
 
       // Iterate through the response vector to check for ongoing restores.
-      for ( FederateRestoreStatus const & status : restore_status_response ) {
+      for ( FederateRestoreStatus const &status : restore_status_response ) {
 
-         if ( status.status != NO_RESTORE_IN_PROGRESS ){
+         if ( status.status != NO_RESTORE_IN_PROGRESS ) {
             restore_conflict = true;
             break;
          }
-             
       }
 
-   }
-   else {
+   } else {
       // An empty Restore status response means we are still waiting for the
       // FedAmb::federationRestoreStatusResponse callback.
       return;
@@ -1227,12 +1225,11 @@ void SaveRestoreServices::restore_request_status_check()
    if ( restore_conflict ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::restore_request_status_check():" << __LINE__
-                   << " ERROR: Federation NOT in state to Restore:" << endl;
+             << " ERROR: Federation NOT in state to Restore:" << endl;
       errmsg << to_string( restore_status_response ) << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       restore_failed();
-   }
-   else {
+   } else {
       restore_state = THLARestoreProcessEnum::RESTORE_STATUS_COMPLETE;
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream msg;
@@ -1324,7 +1321,7 @@ restore with label '%s'.\n",
       StringUtilities::to_string( rti_err_msg, e.what() );
 
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d EXCEPTION: RTIinternalError: '%s'\n",
-                          __LINE__, rti_err_msg.c_str() );
+                       __LINE__, rti_err_msg.c_str() );
       this->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
    }
 
@@ -1335,12 +1332,12 @@ restore with label '%s'.\n",
    return;
 }
 
-std::string SaveRestoreServices::to_string( RTI1516_NAMESPACE::FederateRestoreStatusVector const & response )
+std::string SaveRestoreServices::to_string( RTI1516_NAMESPACE::FederateRestoreStatusVector const &response )
 {
    ostringstream response_msg;
 
    // Iterate through the response vector to check for ongoing restores.
-   for ( FederateRestoreStatus const & status : response ) {
+   for ( FederateRestoreStatus const &status : response ) {
 
       // Get the individual federate status string.
       response_msg << to_string( status );
@@ -1349,7 +1346,7 @@ std::string SaveRestoreServices::to_string( RTI1516_NAMESPACE::FederateRestoreSt
       response_msg << endl;
    }
 
-   return( response_msg.str() );
+   return ( response_msg.str() );
 }
 
 std::string SaveRestoreServices::to_string( rti1516e::FederateRestoreStatus const &restore_status )
@@ -1364,7 +1361,7 @@ std::string SaveRestoreServices::to_string( rti1516e::FederateRestoreStatus cons
                       << "\tstatus: ";
 
    // Print the appropriate status string.
-   switch ( restore_status.status ){
+   switch ( restore_status.status ) {
 
       case NO_RESTORE_IN_PROGRESS:
          restore_status_str << "NO_RESTORE_IN_PROGRESS";
@@ -1393,10 +1390,9 @@ std::string SaveRestoreServices::to_string( rti1516e::FederateRestoreStatus cons
       default:
          restore_status_str << "UNKNOWN";
          break;
-
    }
 
-   return( restore_status_str.str() );
+   return ( restore_status_str.str() );
 }
 
 /*!
@@ -1450,13 +1446,13 @@ void SaveRestoreServices::restore_request_failed()
  */
 void SaveRestoreServices::restore_begun()
 {
-   
+
    // We need to turn off all HLA data processing.
    federate->publish_data = false;
 
    // Set the Restore process state to RESTORE_IN_PROGRESS!
    restore_state = THLARestoreProcessEnum::RESTORE_IN_PROGRESS;
-   
+
    return;
 }
 
@@ -1503,10 +1499,10 @@ void SaveRestoreServices::restore_succeded()
 
    // Set the Restore process state to RESTORE_COMPLETE!
    restore_state = THLARestoreProcessEnum::RESTORE_COMPLETE;
-   
+
    // Resume publishing HLA data.
    federate->publish_data = true;
-          
+
    return;
 }
 
@@ -1520,13 +1516,13 @@ void SaveRestoreServices::restore_failed()
    errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
           << " ERROR: Function not yet implemented!" << endl;
    DebugHandler::terminate_with_message( errmsg.str() );
-   
+
    // Set the Restore process state to RESTORE_FAILED!
    restore_state = THLARestoreProcessEnum::RESTORE_FAILED;
-   
+
    // Resume publishing HLA data.
    federate->publish_data = true;
-   
+
    return;
 }
 
@@ -1714,12 +1710,12 @@ void SaveRestoreServices::federation_restored()
                        __LINE__ );
    }
    complete_restore();
-   //this->start_to_restore    = false;
-   //this->announce_restore    = false;
-   //this->restore_begun       = false;
-   //this->restore_is_imminent = false;
-   this->restore_label       = L"";
-   this->restore_state       = THLARestoreProcessEnum::RESTORE_NONE;
+   // this->start_to_restore    = false;
+   // this->announce_restore    = false;
+   // this->restore_begun       = false;
+   // this->restore_is_imminent = false;
+   this->restore_label = L"";
+   this->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
 }
 
 void SaveRestoreServices::wait_for_federation_restore_begun()
@@ -2130,7 +2126,7 @@ void SaveRestoreServices::requested_federation_restore_status(
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // FIXME: This call is gone and the logic is broken.
-      //federate->get_fed_ambassador()->set_federation_restore_status_response_to_echo();
+      // federate->get_fed_ambassador()->set_federation_restore_status_response_to_echo();
       restore_status_process_response = false;
 
       try {
@@ -2155,7 +2151,6 @@ void SaveRestoreServices::requested_federation_restore_status(
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
    }
 }
-
 
 void SaveRestoreServices::print_requested_federation_restore_status(
    FederateRestoreStatusVector const &status_vector )
@@ -2269,8 +2264,8 @@ void SaveRestoreServices::initiate_restore_announce(
 
    // figure out if anybody else requested a RESTORE before initiating the RESTORE!
    // change context to process for the status request...
-   //this->restore_request_complete = false;
-   //federate->get_fed_ambassador()->set_federation_restore_status_response_to_process();
+   // this->restore_request_complete = false;
+   // federate->get_fed_ambassador()->set_federation_restore_status_response_to_process();
    restore_status_process_response = true;
    request_federation_restore_status();
    wait_for_restore_status_to_complete();
@@ -2366,4 +2361,3 @@ void SaveRestoreServices::reinstate_logged_sync_pts()
    // Dispatch to the ExecutionControl specific process.
    federate->get_execution_control()->reinstate_logged_sync_pts();
 }
-

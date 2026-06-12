@@ -1196,7 +1196,7 @@ bool ExecutionControlBase::save( wstring const &label )
    }
 
    // Check the Federation Save state to ensure that a Save is applicable .
-   if (    ( current_save_state != THLASaveProcessEnum::SAVE_NONE )
+   if ( ( current_save_state != THLASaveProcessEnum::SAVE_NONE )
         && ( current_save_state != THLASaveProcessEnum::SAVE_REQUESTED )
         && ( current_save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) { // cppcheck-suppress [knownConditionTrueFalse]
 
@@ -1329,7 +1329,7 @@ void ExecutionControlBase::restore_process()
    StringUtilities::to_string( restore_label_str, save_restore_service->get_restore_label() );
 
    switch ( save_restore_service->restore_state ) {
-      
+
       case THLARestoreProcessEnum::RESTORE_NONE:
          // Restore process has not been activated.  So, just proceed without action.
          break;
@@ -1439,8 +1439,8 @@ void ExecutionControlBase::restore_setup()
    }
 
    // if restoring at startup, do nothing here (that is handled in restore_checkpoint)
-   if (    (current_execution_control_mode == EXECUTION_CONTROL_UNINITIALIZED)
-        || (current_execution_control_mode == EXECUTION_CONTROL_INITIALIZING) ) {
+   if ( ( current_execution_control_mode == EXECUTION_CONTROL_UNINITIALIZED )
+        || ( current_execution_control_mode == EXECUTION_CONTROL_INITIALIZING ) ) {
       return;
    }
 
@@ -1517,72 +1517,72 @@ void ExecutionControlBase::restore_setup()
    save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
 }
 
-   /*! @brief Requests a Federatation wide Restore. */
+/*! @brief Requests a Federatation wide Restore. */
 void ExecutionControlBase::restore_request_status()
 {
    save_restore_service->restore_request_status();
    return;
 }
 
-   /*! @brief Requests a Federatation wide Restore. */
+/*! @brief Requests a Federatation wide Restore. */
 bool ExecutionControlBase::restore_request_status_check()
 {
    save_restore_service->restore_request_status_check();
-   return( false );
+   return ( false );
 }
 
-   /*! @brief Requests a Federatation wide Restore. */
-void ExecutionControlBase::restore_request( std::wstring const & label )
+/*! @brief Requests a Federatation wide Restore. */
+void ExecutionControlBase::restore_request( std::wstring const &label )
 {
    save_restore_service->restore_request( label );
    return;
 }
 
-   /*! @brief Checks for Restore request success or failure. */
+/*! @brief Checks for Restore request success or failure. */
 void ExecutionControlBase::restore_request_check()
 {
    save_restore_service->restore_request_check();
    return;
 }
 
-   /*! @brief Function called when a Restore request fails. */
+/*! @brief Function called when a Restore request fails. */
 void ExecutionControlBase::restore_request_failed()
 {
    save_restore_service->restore_request_failed();
    return;
 }
 
-   /*! @brief Function called when a Restore request succeeds. */
+/*! @brief Function called when a Restore request succeeds. */
 void ExecutionControlBase::restore_request_succeeded()
 {
    save_restore_service->restore_request_succeeded();
    return;
 }
 
-   /*! @brief Function called when a Restore has begun. */
+/*! @brief Function called when a Restore has begun. */
 void ExecutionControlBase::restore_begun()
 {
    save_restore_service->restore_begun();
    return;
 }
 
-   /*! @brief Function called cyclicly checking on Restore process progress. */
+/*! @brief Function called cyclicly checking on Restore process progress. */
 void ExecutionControlBase::restore_in_progress_check()
 {
    save_restore_service->restore_in_progress_check();
    return;
 }
 
-   /*! @brief Function called when a Restore process succeeds. */
- void ExecutionControlBase::restore_succeded()
-{ 
+/*! @brief Function called when a Restore process succeeds. */
+void ExecutionControlBase::restore_succeded()
+{
    save_restore_service->restore_succeded();
    return;
 }
 
-   /*! @brief Function called when a Restore process fails. */
- void ExecutionControlBase::restore_failed()
- {
+/*! @brief Function called when a Restore process fails. */
+void ExecutionControlBase::restore_failed()
+{
    save_restore_service->restore_failed();
    return;
 }
@@ -1622,10 +1622,10 @@ bool ExecutionControlBase::restore( wstring const &label )
          message_publish( MSG_WARNING, "ExecutionControlBase::restore():%d : Restore already in progress: \'%s\'!\n",
                           __LINE__, current_restore_state_str.c_str() );
       }
-      
+
       return ( false );
    }
-   
+
    // Initiate the Restore process.
    save_restore_service->set_restore_label( label );
    save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_ACTIVATE );

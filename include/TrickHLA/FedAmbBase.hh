@@ -78,15 +78,15 @@ class FedAmbBase
    }
 
    /*! @brief Switch to echo (versus process) in a federationRestoreStatusResponse() callback... */
-   //void set_federation_restore_status_response_to_echo()
+   // void set_federation_restore_status_response_to_echo()
    //{
-   //   this->federation_restore_status_response_context_switch = true;
-   //}
+   //    this->federation_restore_status_response_context_switch = true;
+   // }
    /*! @brief Switch to process (versus echo) in a federationRestoreStatusResponse() callback... */
-   //void set_federation_restore_status_response_to_process()
+   // void set_federation_restore_status_response_to_process()
    //{
-   //   this->federation_restore_status_response_context_switch = false;
-   //}
+   //    this->federation_restore_status_response_context_switch = false;
+   // }
 
    /*! @brief Enable the option to rebuild the federate handle set after a federation restore. */
    void set_federation_restored_rebuild_federate_handle_set()
@@ -105,7 +105,7 @@ class FedAmbBase
    InteractionServices *interaction_service;  ///< @trick_units{--} Associated TrickHLA::InteractionServices.
    SaveRestoreServices *save_restore_service; ///< @trick_units{--} Associated TrickHLA::SaveRestoreServices.
 
-   //bool federation_restore_status_response_context_switch;
+   // bool federation_restore_status_response_context_switch;
    bool federation_restored_rebuild_federate_handle_set;
 
   private:

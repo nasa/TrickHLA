@@ -443,7 +443,6 @@ void FedAmb::initiateFederateRestore(
    save_restore_service->restore_label = label;
 }
 
-
 void FedAmb::federationRestored()
 #if defined( IEEE_1516_2010 )
    throw( FederateInternalError )
@@ -455,7 +454,6 @@ void FedAmb::federationRestored()
    }
    save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
 }
-
 
 void FedAmb::federationNotRestored(
    RestoreFailureReason reason )
@@ -471,7 +469,6 @@ void FedAmb::federationNotRestored(
    save_restore_service->print_restore_failure_reason( reason );
 }
 
-
 void FedAmb::federationRestoreStatusResponse(
    FederateRestoreStatusVector const &response )
 #if defined( IEEE_1516_2010 )
@@ -485,7 +482,7 @@ void FedAmb::federationRestoreStatusResponse(
 
    // Clear the existing response vector and copy response.
    save_restore_service->restore_status_response.clear();
-   for ( FederateRestoreStatus const & status: response ){
+   for ( FederateRestoreStatus const &status : response ) {
       save_restore_service->restore_status_response.push_back( status );
    }
 }

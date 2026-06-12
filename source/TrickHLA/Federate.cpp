@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 #include <ostream>
 #include <set>
 #include <sstream>
@@ -591,7 +592,6 @@ void Federate::post_multiphase_initialization()
       message_publish( MSG_NORMAL, "Federate::post_multiphase_initialization():%d\n     Simulation has started and is now running...\n",
                        __LINE__ );
    }
-   
 }
 
 /*!
